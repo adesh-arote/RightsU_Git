@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="RightsU_NeoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="RightsU_NeoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Acq_Adv_Ancillary_Report">
           <Key>
             <PropertyRef Name="Acq_Adv_Ancillary_Report_Code" />
@@ -991,6 +991,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Title_Code" Type="int" />
           <Property Name="Episode_From" Type="int" />
           <Property Name="Episode_To" Type="int" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Supplementary">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Supplementary_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Supplementary_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acq_Deal_Code" Type="int" />
+          <Property Name="Title_code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
+          <Property Name="Remarks" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Supplementary_detail">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Supplementary_Detail_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Supplementary_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acq_Deal_Supplementary_Code" Type="int" />
+          <Property Name="Supplementary_Tab_Code" Type="int" />
+          <Property Name="Supplementary_Config_Code" Type="int" />
+          <Property Name="Supplementary_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="User_Value" Type="varchar(max)" />
+          <Property Name="Row_Num" Type="int" />
         </EntityType>
         <EntityType Name="Acq_Deal_Tab_Version">
           <Key>
@@ -4386,6 +4409,55 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Sub_License_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Sub_License_Name" Type="varchar" MaxLength="100" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Supplementary">
+          <Key>
+            <PropertyRef Name="Supplementary_Code" />
+          </Key>
+          <Property Name="Supplementary_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Code" Type="int" />
+          <Property Name="Supplementary_Tab_Code" Type="int" />
+          <Property Name="Page_Group" Type="nvarchar" MaxLength="50" />
+          <Property Name="Label_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Control_Type" Type="nvarchar" MaxLength="50" />
+          <Property Name="Is_Mandatory" Type="char" MaxLength="1" />
+          <Property Name="Is_Multiselect" Type="char" MaxLength="1" />
+          <Property Name="Max_Length" Type="int" />
+          <Property Name="Page_Control_Order" Type="int" />
+          <Property Name="Control_Field_Order" Type="int" />
+          <Property Name="Default_Values" Type="nvarchar" MaxLength="1000" />
+          <Property Name="View_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Text_Field" Type="varchar" MaxLength="100" />
+          <Property Name="Value_Field" Type="varchar" MaxLength="100" />
+          <Property Name="Whr_Criteria" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Supplementary_Data">
+          <Key>
+            <PropertyRef Name="Supplementary_Data_Code" />
+          </Key>
+          <Property Name="Supplementary_Data_Code" Type="int" Nullable="false" />
+          <Property Name="Supplementary_Type" Type="varchar" MaxLength="10" />
+          <Property Name="Data_Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Supplementary_Tab">
+          <Key>
+            <PropertyRef Name="Supplementary_Tab_Code" />
+          </Key>
+          <Property Name="Supplementary_Tab_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Short_Name" Type="nvarchar" MaxLength="20" />
+          <Property Name="Supplementary_Tab_Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Order_No" Type="int" />
+          <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
+          <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="Syn_Acq_Mapping">
           <Key>
@@ -7917,6 +7989,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
+          <End Role="Acq_Deal_Supplementary" Type="Self.Acq_Deal_Supplementary" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Supplementary_detail" Type="Self.Acq_Deal_Supplementary_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Supplementary">
+              <PropertyRef Name="Acq_Deal_Supplementary_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Supplementary_detail">
+              <PropertyRef Name="Acq_Deal_Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Acq_Deal_Vendor">
           <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
           <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="*" />
@@ -10002,6 +10086,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Sport_Ancillary_Config">
               <PropertyRef Name="Sport_Ancillary_Type_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary">
+          <End Role="Supplementary" Type="Self.Supplementary" Multiplicity="0..1" />
+          <End Role="Supplementary_Config" Type="Self.Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary">
+              <PropertyRef Name="Supplementary_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
+          <End Role="Supplementary_Tab" Type="Self.Supplementary_Tab" Multiplicity="0..1" />
+          <End Role="Supplementary_Config" Type="Self.Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary_Tab">
+              <PropertyRef Name="Supplementary_Tab_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Tab_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -12324,6 +12432,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Syn_Acq_Mapp" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Acq_SUPP_Tab" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Supplementary_Tab_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Add_ACQ_Milestone" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="IsDebug" Type="char" Mode="In" />
@@ -12575,6 +12686,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Deal_Type" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Edit_Row" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Acq_Deal_Supplementary_Code" Type="int" Mode="In" />
+          <Parameter Name="Row_Num" Type="int" Mode="In" />
+          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_Get_ExcelSrNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
           <Parameter Name="Keyword" Type="varchar(max)" Mode="In" />
@@ -12704,6 +12820,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_GET_TITLE_FOR_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_GET_TITLE_FOR_SUPPLEMENTARY" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
+          <Parameter Name="title_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_GET_TITLE_FOR_SYN_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SYN_DEAL_CODE" Type="int" Mode="In" />
@@ -13353,7 +13473,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar(max)" Mode="In" />
         </Function>
-        <Function Name="USP_List_Syn_Ancillary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+		<Function Name="USP_List_Syn_Ancillary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_List_Syn_Deal_Status" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -13621,6 +13741,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="IP_Address" Type="varchar" Mode="In" />
           <Parameter Name="FromMailId" Type="varchar" Mode="In" />
           <Parameter Name="ToMailId" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="USP_SUPP_Create_Table" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="tabCode" Type="int" Mode="In" />
+          <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+        </Function>
+        <Function Name="USP_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Syn_Acq_Mapping" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
@@ -14259,6 +14388,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Acq_Deal_Sport_Sales_Ancillary_Sponsor" EntityType="Self.Acq_Deal_Sport_Sales_Ancillary_Sponsor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Sport_Sales_Ancillary_Title" EntityType="Self.Acq_Deal_Sport_Sales_Ancillary_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Sport_Title" EntityType="Self.Acq_Deal_Sport_Title" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Deal_Supplementary" EntityType="Self.Acq_Deal_Supplementary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Deal_Supplementary_detail" EntityType="Self.Acq_Deal_Supplementary_detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Tab_Version" EntityType="Self.Acq_Deal_Tab_Version" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Rights_Template" EntityType="Self.Acq_Rights_Template" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Additional_Expense" EntityType="Self.Additional_Expense" Schema="dbo" store:Type="Tables" />
@@ -14471,6 +14602,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Sport_Ancillary_Type" EntityType="Self.Sport_Ancillary_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sql_Job_Parameters" EntityType="Self.Sql_Job_Parameters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Sub_License" EntityType="Self.Sub_License" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Supplementary" EntityType="Self.Supplementary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Supplementary_Config" EntityType="Self.Supplementary_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Supplementary_Data" EntityType="Self.Supplementary_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Supplementary_Tab" EntityType="Self.Supplementary_Tab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Acq_Mapping" EntityType="Self.Syn_Acq_Mapping" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal" EntityType="Self.Syn_Deal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Ancillary" EntityType="Self.Syn_Deal_Ancillary" Schema="dbo" store:Type="Tables" />
@@ -15649,6 +15784,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Title" EntitySet="Title" />
             <End Role="Acq_Deal_Sport_Title" EntitySet="Acq_Deal_Sport_Title" />
           </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" Association="Self.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
+            <End Role="Acq_Deal_Supplementary_detail" EntitySet="Acq_Deal_Supplementary_detail" />
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Vendor" Association="Self.FK_Acq_Deal_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
@@ -16344,6 +16483,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Sport_Ancillary_Config_Sport_Ancillary_Type" Association="Self.FK_Sport_Ancillary_Config_Sport_Ancillary_Type">
             <End Role="Sport_Ancillary_Type" EntitySet="Sport_Ancillary_Type" />
             <End Role="Sport_Ancillary_Config" EntitySet="Sport_Ancillary_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="Self.FK_Supplementary_Config_Supplementary">
+            <End Role="Supplementary" EntitySet="Supplementary" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="Self.FK_Supplementary_Config_Supplementary_Tab">
+            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
           </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Ancillary_Ancillary_Type" Association="Self.FK_Syn_Deal_Ancillary_Ancillary_Type">
             <End Role="Ancillary_Type" EntitySet="Ancillary_Type" />
@@ -17118,7 +17265,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Acq_Deal_Ancillary_Title" EntityType="RightsU_NeoModel.Acq_Deal_Ancillary_Title" />
           <EntitySet Name="Acq_Deal_Attachment" EntityType="RightsU_NeoModel.Acq_Deal_Attachment" />
           <EntitySet Name="Acq_Deal_Licensor" EntityType="RightsU_NeoModel.Acq_Deal_Licensor" />
-          <EntitySet Name="Acq_Deal_Movie" EntityType="RightsU_NeoModel.Acq_Deal_Movie" />          
+          <EntitySet Name="Acq_Deal_Movie" EntityType="RightsU_NeoModel.Acq_Deal_Movie" />
           <EntitySet Name="Acq_Deal_Rights" EntityType="RightsU_NeoModel.Acq_Deal_Rights" />
           <EntitySet Name="Acq_Deal_Rights_Blackout" EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout" />
           <EntitySet Name="Acq_Deal_Rights_Blackout_Platform" EntityType="RightsU_NeoModel.Acq_Deal_Rights_Blackout_Platform" />
@@ -17224,7 +17371,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Security_Group_Rel" EntityType="RightsU_NeoModel.Security_Group_Rel" />
           <EntitySet Name="Sql_Job_Parameters" EntityType="RightsU_NeoModel.Sql_Job_Parameters" />
           <EntitySet Name="Sub_License" EntityType="RightsU_NeoModel.Sub_License" />
-          <EntitySet Name="Syn_Acq_Mapping" EntityType="RightsU_NeoModel.Syn_Acq_Mapping" />          
+          <EntitySet Name="Syn_Acq_Mapping" EntityType="RightsU_NeoModel.Syn_Acq_Mapping" />
           <EntitySet Name="Syn_Deal" EntityType="RightsU_NeoModel.Syn_Deal" />
           <EntitySet Name="Syn_Deal_Ancillary" EntityType="RightsU_NeoModel.Syn_Deal_Ancillary" />
           <EntitySet Name="Syn_Deal_Ancillary_Platform" EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform" />
@@ -17383,7 +17530,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Acq_Deal_Licensor_Vendor" Association="RightsU_NeoModel.FK_Acq_Deal_Licensor_Vendor">
             <End Role="Vendor" EntitySet="Vendors" />
             <End Role="Acq_Deal_Licensor" EntitySet="Acq_Deal_Licensor" />
-          </AssociationSet>         
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Movie_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Movie_Title">
             <End Role="Title" EntitySet="Titles" />
             <End Role="Acq_Deal_Movie" EntitySet="Acq_Deal_Movie" />
@@ -17395,7 +17542,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Material_Order_Details_Deal_Movie" Association="RightsU_NeoModel.FK_Material_Order_Details_Deal_Movie">
             <End Role="Acq_Deal_Movie" EntitySet="Acq_Deal_Movie" />
             <End Role="Material_Order_Details" EntitySet="Material_Order_Details" />
-          </AssociationSet>         
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights" Association="RightsU_NeoModel.FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights">
             <End Role="Acq_Deal_Rights" EntitySet="Acq_Deal_Rights" />
             <End Role="Acq_Deal_Rights_Blackout" EntitySet="Acq_Deal_Rights_Blackout" />
@@ -17535,7 +17682,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Acq_Deal_Run_Yearwise_Run_Week_Acq_Deal_Run_Yearwise_Run" Association="RightsU_NeoModel.FK_Acq_Deal_Run_Yearwise_Run_Week_Acq_Deal_Run_Yearwise_Run">
             <End Role="Acq_Deal_Run_Yearwise_Run" EntitySet="Acq_Deal_Run_Yearwise_Run" />
             <End Role="Acq_Deal_Run_Yearwise_Run_Week" EntitySet="Acq_Deal_Run_Yearwise_Run_Week" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Aired_Details_Aired" Association="RightsU_NeoModel.FK_Aired_Details_Aired">
             <End Role="Aired" EntitySet="Aireds" />
             <End Role="Aired_Details" EntitySet="Aired_Details" />
@@ -17607,7 +17754,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Channel_Territory_Channel" Association="RightsU_NeoModel.FK_Channel_Territory_Channel">
             <End Role="Country" EntitySet="Countries" />
             <End Role="Channel_Territory" EntitySet="Channel_Territory" />
-          </AssociationSet>         
+          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Payment_Terms_Cost_Type" Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Cost_Type">
             <End Role="Cost_Type" EntitySet="Cost_Type" />
             <End Role="Syn_Deal_Payment_Terms" EntitySet="Syn_Deal_Payment_Terms" />
@@ -17767,7 +17914,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Module_Workflow_Detail_User_Master" Association="RightsU_NeoModel.FK_Module_Workflow_Detail_User_Master">
             <End Role="Users" EntitySet="Users" />
             <End Role="Module_Workflow_Detail" EntitySet="Module_Workflow_Detail" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Rights_Blackout_Platform_Platform" Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Blackout_Platform_Platform">
             <End Role="Platform" EntitySet="Platforms" />
             <End Role="Syn_Deal_Rights_Blackout_Platform" EntitySet="Syn_Deal_Rights_Blackout_Platform" />
@@ -17815,7 +17962,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Rights_Sub_License" Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Sub_License">
             <End Role="Sub_License" EntitySet="Sub_License" />
             <End Role="Syn_Deal_Rights" EntitySet="Syn_Deal_Rights" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Ancillary_Syn_Deal" Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Syn_Deal">
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
             <End Role="Syn_Deal_Ancillary" EntitySet="Syn_Deal_Ancillary" />
@@ -17863,7 +18010,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Movie_Title" Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title">
             <End Role="Title" EntitySet="Titles" />
             <End Role="Syn_Deal_Movie" EntitySet="Syn_Deal_Movie" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Right_Blackout_Syn_Deal_Rights" Association="RightsU_NeoModel.FK_Syn_Deal_Right_Blackout_Syn_Deal_Rights">
             <End Role="Syn_Deal_Rights" EntitySet="Syn_Deal_Rights" />
             <End Role="Syn_Deal_Rights_Blackout" EntitySet="Syn_Deal_Rights_Blackout" />
@@ -18040,7 +18187,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Acq_Deal_Payment_Terms_Acq_Deal" Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Acq_Deal">
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
             <End Role="Acq_Deal_Payment_Terms" EntitySet="Acq_Deal_Payment_Terms" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Cost_Additional_Exp_Acq_Deal_Cost" Association="RightsU_NeoModel.FK_Acq_Deal_Cost_Additional_Exp_Acq_Deal_Cost">
             <End Role="Acq_Deal_Cost" EntitySet="Acq_Deal_Cost" />
             <End Role="Acq_Deal_Cost_Additional_Exp" EntitySet="Acq_Deal_Cost_Additional_Exp" />
@@ -18259,7 +18406,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Acq_Deal_Pushback_Acq_Deal" Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Acq_Deal">
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
             <End Role="Acq_Deal_Pushback" EntitySet="Acq_Deal_Pushback" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Pushback_Dubbing_Acq_Deal_Pushback" Association="RightsU_NeoModel.FK_Acq_Deal_Pushback_Dubbing_Acq_Deal_Pushback">
             <End Role="Acq_Deal_Pushback" EntitySet="Acq_Deal_Pushback" />
             <End Role="Acq_Deal_Pushback_Dubbing" EntitySet="Acq_Deal_Pushback_Dubbing" />
@@ -21028,10 +21175,49 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Title_Objection_Adv_PreReq" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_PreReq_Result)">
           <Parameter Name="Type" Mode="In" Type="String" />
           </FunctionImport>
-          <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
+		  <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
-          </EntityContainer>
+          <FunctionImport Name="USP_GET_TITLE_FOR_SUPPLEMENTARY" ReturnType="Collection(RightsU_NeoModel.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result)">
+            <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="title_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Supplementary" EntityType="RightsU_NeoModel.Supplementary" />
+          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
+          <EntitySet Name="Supplementary_Data" EntityType="RightsU_NeoModel.Supplementary_Data" />
+          <EntitySet Name="Supplementary_Tab" EntityType="RightsU_NeoModel.Supplementary_Tab" />
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
+            <End Role="Supplementary" EntitySet="Supplementary" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
+            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
+          <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Edit_Row" ReturnType="Collection(RightsU_NeoModel.USP_Get_Edit_Row_Result)">
+            <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Row_Num" Mode="In" Type="Int32" />
+            <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_SUPP_Create_Table" ReturnType="Collection(RightsU_NeoModel.USP_SUPP_Create_Table_Result)">
+            <Parameter Name="tabCode" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Supplementary_List" ReturnType="Collection(RightsU_NeoModel.USP_Supplementary_List_Result)">
+            <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+          </FunctionImport>
+          <EntitySet Name="Acq_Deal_Supplementary" EntityType="RightsU_NeoModel.Acq_Deal_Supplementary" />
+          <EntitySet Name="Acq_Deal_Supplementary_detail" EntityType="RightsU_NeoModel.Acq_Deal_Supplementary_detail" />
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" Association="RightsU_NeoModel.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
+            <End Role="Acq_Deal_Supplementary_detail" EntitySet="Acq_Deal_Supplementary_detail" />
+          </AssociationSet>
+        </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
             <PropertyRef Name="Acq_Deal_Code" />
@@ -21561,7 +21747,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
-          <Property Name="Is_Active" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />          
+          <Property Name="Is_Active" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <NavigationProperty Name="Acq_Deal_Cost_Additional_Exp" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Additional_Exp_Additional_Expense" FromRole="Additional_Expense" ToRole="Acq_Deal_Cost_Additional_Exp" />
           <NavigationProperty Name="Syn_Deal_Revenue_Additional_Exp" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Additional_Exp_Additional_Expense" FromRole="Additional_Expense" ToRole="Syn_Deal_Revenue_Additional_Exp" />
         </EntityType>
@@ -21986,7 +22172,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Is_Active" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
-          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Center" FromRole="Cost_Center" ToRole="Acq_Deal" />          
+          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Center" FromRole="Cost_Center" ToRole="Acq_Deal" />
           <NavigationProperty Name="Acq_Deal_Cost" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Cost_Center" FromRole="Cost_Center" ToRole="Acq_Deal_Cost" />
           <NavigationProperty Name="Syn_Deal_Revenue" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Cost_Center" FromRole="Cost_Center" ToRole="Syn_Deal_Revenue" />
         </EntityType>
@@ -22070,10 +22256,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Is_Active" Type="String" Nullable="false" MaxLength="1" Unicode="false" FixedLength="true" />
           <Property Name="Is_Base_Currency" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
-          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Currency" FromRole="Currency" ToRole="Acq_Deal" />          
+          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Currency" FromRole="Currency" ToRole="Acq_Deal" />
           <NavigationProperty Name="Currency_Exchange_Rate" Relationship="RightsU_NeoModel.FK_Currency_Exchange_Rate_Currency" FromRole="Currency" ToRole="Currency_Exchange_Rate" />
           <NavigationProperty Name="Material_Order_Details" Relationship="RightsU_NeoModel.FK_Material_Order_Details_Currency" FromRole="Currency" ToRole="Material_Order_Details" />
-          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Currency" FromRole="Currency" ToRole="Syn_Deal" />          
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Currency" FromRole="Currency" ToRole="Syn_Deal" />
           <NavigationProperty Name="Acq_Deal_Cost" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Currency" FromRole="Currency" ToRole="Acq_Deal_Cost" />
           <NavigationProperty Name="Syn_Deal_Revenue" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Currency" FromRole="Currency" ToRole="Syn_Deal_Revenue" />
         </EntityType>
@@ -23169,8 +23355,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Inserted_By" Type="Int32" Nullable="false" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
-          <Property Name="Last_Action_By" Type="Int32" />         
-          <NavigationProperty Name="Royalty_Commission_Details" Relationship="RightsU_NeoModel.FK_Royalty_Commission_Details_Royalty_Commission" FromRole="Royalty_Commission" ToRole="Royalty_Commission_Details" />         
+          <Property Name="Last_Action_By" Type="Int32" />
+          <NavigationProperty Name="Royalty_Commission_Details" Relationship="RightsU_NeoModel.FK_Royalty_Commission_Details_Royalty_Commission" FromRole="Royalty_Commission" ToRole="Royalty_Commission_Details" />
           <NavigationProperty Name="Acq_Deal_Cost_Commission" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Commission_Royalty_Commission" FromRole="Royalty_Commission" ToRole="Acq_Deal_Cost_Commission" />
           <NavigationProperty Name="Syn_Deal_Revenue_Commission" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Commission_Royalty_Commission" FromRole="Royalty_Commission" ToRole="Syn_Deal_Revenue_Commission" />
         </EntityType>
@@ -23197,7 +23383,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Inserted_By" Type="Int32" Nullable="false" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
-          <Property Name="Last_Action_By" Type="Int32" />          
+          <Property Name="Last_Action_By" Type="Int32" />
           <NavigationProperty Name="Royalty_Recoupment_Details" Relationship="RightsU_NeoModel.FK_Royalty_Recoupment_Details_Royalty_Recoupment" FromRole="Royalty_Recoupment" ToRole="Royalty_Recoupment_Details" />
           <NavigationProperty Name="Acq_Deal_Cost" Relationship="RightsU_NeoModel.FK_Acq_Deal_Cost_Royalty_Recoupment" FromRole="Royalty_Recoupment" ToRole="Acq_Deal_Cost" />
           <NavigationProperty Name="Syn_Deal_Revenue" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Royalty_Recoupment" FromRole="Royalty_Recoupment" ToRole="Syn_Deal_Revenue" />
@@ -23293,7 +23479,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Deal_Rights_Code" Type="Int32" Nullable="false" />
           <Property Type="DateTime" Name="Right_Start_Date" Precision="3" />
           <Property Type="DateTime" Name="Right_End_Date" Precision="3" />
-        </EntityType>        
+        </EntityType>
         <EntityType Name="Syn_Deal">
           <Key>
             <PropertyRef Name="Syn_Deal_Code" />
@@ -23319,9 +23505,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Ref_No" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Attach_Workflow" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <Property Name="Deal_Workflow_Status" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
-          <Property Name="Work_Flow_Code" Type="Int32" />          
+          <Property Name="Work_Flow_Code" Type="Int32" />
           <Property Name="Is_Completed" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
-          <Property Name="Category_Code" Type="Int32" />          
+          <Property Name="Category_Code" Type="Int32" />
           <Property Name="Is_Migrated" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <Property Name="Payment_Terms_Conditions" Type="String" MaxLength="4000" Unicode="true" FixedLength="false" />
           <Property Name="Deal_Tag_Code" Type="Int32" />
@@ -24111,9 +24297,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="SAP_Vendor_Code" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
           <Property Name="Is_External" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Vendor" FromRole="Vendor" ToRole="Acq_Deal" />
-          <NavigationProperty Name="Acq_Deal_Licensor" Relationship="RightsU_NeoModel.FK_Acq_Deal_Licensor_Vendor" FromRole="Vendor" ToRole="Acq_Deal_Licensor" />          
+          <NavigationProperty Name="Acq_Deal_Licensor" Relationship="RightsU_NeoModel.FK_Acq_Deal_Licensor_Vendor" FromRole="Vendor" ToRole="Acq_Deal_Licensor" />
           <NavigationProperty Name="Material_Order" Relationship="RightsU_NeoModel.FK_Material_Order_Vendor" FromRole="Vendor" ToRole="Material_Order" />
-          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Vendor" FromRole="Vendor" ToRole="Syn_Deal" />          
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Vendor" FromRole="Vendor" ToRole="Syn_Deal" />
           <NavigationProperty Name="Vendor_Contacts" Relationship="RightsU_NeoModel.FK_Vender_Contacts_Vendor" FromRole="Vendor" ToRole="Vendor_Contacts" />
           <NavigationProperty Name="Vendor_Country" Relationship="RightsU_NeoModel.FK_Vendor_Country_Vendor" FromRole="Vendor" ToRole="Vendor_Country" />
           <NavigationProperty Name="Vendor_Role" Relationship="RightsU_NeoModel.FK_Vendor_Role_Vendor" FromRole="Vendor" ToRole="Vendor_Role" />
@@ -24553,7 +24739,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Vendor_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>      
+        </Association>
         <Association Name="FK_Acq_Deal_Movie_Title">
           <End Role="Title" Type="RightsU_NeoModel.Title" Multiplicity="0..1" />
           <End Role="Acq_Deal_Movie" Type="RightsU_NeoModel.Acq_Deal_Movie" Multiplicity="*" />
@@ -24589,7 +24775,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Acq_Deal_Movie_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Acq_Deal_Right_Blackout_Acq_Deal_Rights">
           <End Role="Acq_Deal_Rights" Type="RightsU_NeoModel.Acq_Deal_Rights" Multiplicity="0..1" />
           <End Role="Acq_Deal_Rights_Blackout" Type="RightsU_NeoModel.Acq_Deal_Rights_Blackout" Multiplicity="*" />
@@ -25009,7 +25195,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Acq_Deal_Run_Yearwise_Run_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Aired_Details_Aired">
           <End Role="Aired" Type="RightsU_NeoModel.Aired" Multiplicity="0..1" />
           <End Role="Aired_Details" Type="RightsU_NeoModel.Aired_Details" Multiplicity="*" />
@@ -25225,7 +25411,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Country_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Syn_Deal_Payment_Terms_Cost_Type">
           <End Role="Cost_Type" Type="RightsU_NeoModel.Cost_Type" Multiplicity="0..1" />
           <End Role="Syn_Deal_Payment_Terms" Type="RightsU_NeoModel.Syn_Deal_Payment_Terms" Multiplicity="*" />
@@ -25369,7 +25555,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Currency_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Role_Deal_Type">
           <End Role="Deal_Type" Type="RightsU_NeoModel.Deal_Type" Multiplicity="0..1" />
           <End Role="Role" Type="RightsU_NeoModel.Role" Multiplicity="*" />
@@ -25477,7 +25663,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Genres_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Title_Grade_Master">
           <End Role="Grade_Master" Type="RightsU_NeoModel.Grade_Master" Multiplicity="0..1" />
           <End Role="Title" Type="RightsU_NeoModel.Title" Multiplicity="*" />
@@ -25705,7 +25891,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Primary_User_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Syn_Deal_Rights_Blackout_Platform_Platform">
           <End Role="Platform" Type="RightsU_NeoModel.Platform" Multiplicity="0..1" />
           <End Role="Syn_Deal_Rights_Blackout_Platform" Type="RightsU_NeoModel.Syn_Deal_Rights_Blackout_Platform" Multiplicity="*" />
@@ -25849,7 +26035,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Sub_License_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>              
+        </Association>
         <Association Name="FK_Syn_Deal_Ancillary_Syn_Deal">
           <End Role="Syn_Deal" Type="RightsU_NeoModel.Syn_Deal" Multiplicity="0..1" />
           <End Role="Syn_Deal_Ancillary" Type="RightsU_NeoModel.Syn_Deal_Ancillary" Multiplicity="*" />
@@ -26606,7 +26792,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="DateTime" Name="Inserted_On" Nullable="false" Precision="3" />
           <Property Type="Int32" Name="Inserted_By" Nullable="false" />
           <Property Type="DateTime" Name="Last_Updated_Time" Precision="3" />
-          <Property Type="Int32" Name="Last_Action_By" />          
+          <Property Type="Int32" Name="Last_Action_By" />
           <NavigationProperty Name="Cost_Center" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Cost_Center" FromRole="Syn_Deal_Revenue" ToRole="Cost_Center" />
           <NavigationProperty Name="Currency" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Currency" FromRole="Syn_Deal_Revenue" ToRole="Currency" />
           <NavigationProperty Name="Royalty_Recoupment" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Royalty_Recoupment" FromRole="Syn_Deal_Revenue" ToRole="Royalty_Recoupment" />
@@ -26777,7 +26963,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Acq_Deal_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>        
+        </Association>
         <Association Name="FK_Acq_Deal_Cost_Additional_Exp_Acq_Deal_Cost">
           <End Type="RightsU_NeoModel.Acq_Deal_Cost" Role="Acq_Deal_Cost" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Acq_Deal_Cost_Additional_Exp" Role="Acq_Deal_Cost_Additional_Exp" Multiplicity="*" />
@@ -27566,7 +27752,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Acq_Deal_Code" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>       
+        </Association>
         <Association Name="FK_Acq_Deal_Pushback_Dubbing_Acq_Deal_Pushback">
           <End Type="RightsU_NeoModel.Acq_Deal_Pushback" Role="Acq_Deal_Pushback" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Acq_Deal_Pushback_Dubbing" Role="Acq_Deal_Pushback_Dubbing" Multiplicity="*" />
@@ -30890,7 +31076,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Genres_Name" Nullable="true" />
           <Property Type="String" Name="Music_Version" Nullable="true" />
           <Property Type="String" Name="Music_Theme" Nullable="true" />
-          </ComplexType>
+        </ComplexType>
         <ComplexType Name="USP_List_Amort_Rule_Result">
           <Property Type="Int32" Name="Amort_Rule_Code" Nullable="false" />
           <Property Type="String" Name="Rule_Type" Nullable="false" MaxLength="1" />
@@ -31294,7 +31480,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Play_Day" Nullable="false" />
           <Property Type="Int32" Name="Play_Run" Nullable="false" />
           <Property Type="String" Name="Error" Nullable="false" MaxLength="1" />
-          </ComplexType>
+        </ComplexType>
         <ComplexType Name="USP_GetContentsVersionData_Result">
           <Property Type="String" Name="House_Id" Nullable="true" MaxLength="1" />
           <Property Type="Decimal" Name="Duration" Nullable="true" Precision="18" Scale="2" />
@@ -33939,7 +34125,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="RU_PROGRAM_UPDATE_USER" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="RU_PROGRAM_CREATE_USER" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="RU_PROGRAM_IS_ARCHVIED" Nullable="false" MaxLength="1" />
-          </ComplexType>
+        </ComplexType>
         <EntityType Name="Title_Content_Version_Details">
           <Key>
             <PropertyRef Name="Title_Content_Version_Details_Code" />
@@ -36011,7 +36197,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Display_Text" Nullable="true" />
           <Property Type="String" Name="Data_For" Nullable="true" />
         </ComplexType>
-        <ComplexType Name="USP_List_Syn_Ancillary_Result">
+		<ComplexType Name="USP_List_Syn_Ancillary_Result">
           <Property Type="Int32" Name="Syn_Deal_Ancillary_Code" Nullable="false" />
           <Property Type="String" Name="TitleName" Nullable="false" MaxLength="1" />
           <Property Type="Int32" Name="Ancillary_Type_Code" Nullable="false" />
@@ -36022,7 +36208,139 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Platform_Name" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="Ancillary_Medium_Name" Nullable="false" MaxLength="1" />
         </ComplexType>
-        </Schema>
+        <ComplexType Name="USP_GET_TITLE_FOR_SUPPLEMENTARY_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+        </ComplexType>
+        <EntityType Name="Supplementary">
+          <Key>
+            <PropertyRef Name="Supplementary_Code" />
+          </Key>
+          <Property Name="Supplementary_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary" ToRole="Supplementary_Config" />
+        </EntityType>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
+          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+        </EntityType>
+        <EntityType Name="Supplementary_Data">
+          <Key>
+            <PropertyRef Name="Supplementary_Data_Code" />
+          </Key>
+          <Property Name="Supplementary_Data_Code" Type="Int32" Nullable="false" />
+          <Property Name="Supplementary_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Data_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Supplementary_Tab">
+          <Key>
+            <PropertyRef Name="Supplementary_Tab_Code" />
+          </Key>
+          <Property Name="Supplementary_Tab_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Short_Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Supplementary_Tab_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Order_No" Type="Int32" />
+          <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
+          <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_Supplementary_Config_Supplementary">
+          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
+          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+        </Association>
+        <ComplexType Name="USP_Acq_SUPP_Tab_Result">
+          <Property Type="String" Name="supplementary_name" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Page_Control_Order" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="false" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Text_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Value_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_SUPP_Create_Table_Result">
+          <Property Type="String" Name="Tab" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Edit_Row_Result">
+          <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="User_Value" Nullable="true" />
+          <Property Type="Int32" Name="Row_Num" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_Supplementary_List_Result">
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="SocialMedia" Nullable="true" />
+          <Property Type="String" Name="Commitments" Nullable="true" />
+          <Property Type="String" Name="OpeningClosingCredits" Nullable="true" />
+          <Property Type="String" Name="EssentialClauses" Nullable="true" />
+          <Property Type="Int32" Name="title_code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_code" Nullable="true" />
+        </ComplexType>
+        <EntityType Name="Acq_Deal_Supplementary">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Supplementary_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Supplementary_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acq_Deal_Code" Type="Int32" />
+          <Property Name="Title_code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <NavigationProperty Name="Acq_Deal_Supplementary_detail" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" FromRole="Acq_Deal_Supplementary" ToRole="Acq_Deal_Supplementary_detail" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Supplementary_detail">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Supplementary_Detail_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Supplementary_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Tab_Code" Type="Int32" />
+          <Property Name="Supplementary_Config_Code" Type="Int32" />
+          <Property Name="Supplementary_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="User_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Row_Num" Type="Int32" />
+          <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" FromRole="Acq_Deal_Supplementary_detail" ToRole="Acq_Deal_Supplementary" />
+        </EntityType>
+        <Association Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
+          <End Type="RightsU_NeoModel.Acq_Deal_Supplementary" Role="Acq_Deal_Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Supplementary_detail" Role="Acq_Deal_Supplementary_detail" Multiplicity="*" />
+        </Association>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -36709,7 +37027,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Month" ColumnName="Month" />
                 <ScalarProperty Name="Year" ColumnName="Year" />
                 <ScalarProperty Name="End_Of_Year" ColumnName="End_Of_Year" />
-                </MappingFragment>
+              </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Ancillary_Medium">
@@ -41613,7 +41931,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Genres_Name" ColumnName="Genres_Name" />
                 <ScalarProperty Name="Music_Version" ColumnName="Music_Version" />
                 <ScalarProperty Name="Music_Theme" ColumnName="Music_Theme" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_List_Amort_Rule" FunctionName="RightsU_NeoModel.Store.USP_List_Amort_Rule">
@@ -42089,7 +42407,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Play_Day" ColumnName="Play_Day" />
                 <ScalarProperty Name="Play_Run" ColumnName="Play_Run" />
                 <ScalarProperty Name="Error" ColumnName="Error" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_GetContentsVersionData" FunctionName="RightsU_NeoModel.Store.USP_GetContentsVersionData">
@@ -43736,7 +44054,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="RU_PROGRAM_UPDATE_USER" ColumnName="RU_PROGRAM_UPDATE_USER" />
                 <ScalarProperty Name="RU_PROGRAM_CREATE_USER" ColumnName="RU_PROGRAM_CREATE_USER" />
                 <ScalarProperty Name="RU_PROGRAM_IS_ARCHVIED" ColumnName="RU_PROGRAM_IS_ARCHVIED" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <EntitySetMapping Name="Title_Content_Version_Details">
@@ -45225,7 +45543,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="USP_List_Syn_Ancillary" FunctionName="RightsU_NeoModel.Store.USP_List_Syn_Ancillary">
+		  <FunctionImportMapping FunctionImportName="USP_List_Syn_Ancillary" FunctionName="RightsU_NeoModel.Store.USP_List_Syn_Ancillary">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_List_Syn_Ancillary_Result">
                 <ScalarProperty Name="Syn_Deal_Ancillary_Code" ColumnName="Syn_Deal_Ancillary_Code" />
@@ -45240,6 +45558,173 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_GET_TITLE_FOR_SUPPLEMENTARY" FunctionName="RightsU_NeoModel.Store.USP_GET_TITLE_FOR_SUPPLEMENTARY">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Supplementary">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary">
+              <MappingFragment StoreEntitySet="Supplementary">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Supplementary_Name" ColumnName="Supplementary_Name" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
+              <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
+                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Data">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Data">
+              <MappingFragment StoreEntitySet="Supplementary_Data">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Data_Description" ColumnName="Data_Description" />
+                <ScalarProperty Name="Supplementary_Type" ColumnName="Supplementary_Type" />
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Tab">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Tab">
+              <MappingFragment StoreEntitySet="Supplementary_Tab">
+                <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
+                <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" StoreEntitySet="Supplementary_Config">
+            <EndProperty Name="Supplementary_Config">
+              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+            </EndProperty>
+            <EndProperty Name="Supplementary">
+              <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+            </EndProperty>
+            <Condition ColumnName="Supplementary_Code" IsNull="false" />
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary_Tab" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" StoreEntitySet="Supplementary_Config">
+            <EndProperty Name="Supplementary_Config">
+              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+            </EndProperty>
+            <EndProperty Name="Supplementary_Tab">
+              <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+            </EndProperty>
+            <Condition ColumnName="Supplementary_Tab_Code" IsNull="false" />
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_SUPP_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_SUPP_Tab">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_SUPP_Tab_Result">
+                <ScalarProperty Name="supplementary_name" ColumnName="supplementary_name" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Edit_Row" FunctionName="RightsU_NeoModel.Store.USP_Get_Edit_Row" >
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Edit_Row_Result">
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_SUPP_Create_Table" FunctionName="RightsU_NeoModel.Store.USP_SUPP_Create_Table">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_SUPP_Create_Table_Result">
+                <ScalarProperty Name="Tab" ColumnName="Tab" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Supplementary_List" FunctionName="RightsU_NeoModel.Store.USP_Supplementary_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Supplementary_List_Result">
+                <ScalarProperty Name="title_name" ColumnName="title_name" />
+                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
+                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
+                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
+                <ScalarProperty Name="title_code" ColumnName="title_code" />
+                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Acq_Deal_Supplementary">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Supplementary">
+              <MappingFragment StoreEntitySet="Acq_Deal_Supplementary">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_code" ColumnName="Title_code" />
+                <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+                <ScalarProperty Name="Acq_Deal_Supplementary_Code" ColumnName="Acq_Deal_Supplementary_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Acq_Deal_Supplementary_detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Supplementary_detail">
+              <MappingFragment StoreEntitySet="Acq_Deal_Supplementary_detail">
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Acq_Deal_Supplementary_Detail_Code" ColumnName="Acq_Deal_Supplementary_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" TypeName="RightsU_NeoModel.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" StoreEntitySet="Acq_Deal_Supplementary_detail">
+            <EndProperty Name="Acq_Deal_Supplementary_detail">
+              <ScalarProperty Name="Acq_Deal_Supplementary_Detail_Code" ColumnName="Acq_Deal_Supplementary_Detail_Code" />
+            </EndProperty>
+            <EndProperty Name="Acq_Deal_Supplementary">
+              <ScalarProperty Name="Acq_Deal_Supplementary_Code" ColumnName="Acq_Deal_Supplementary_Code" />
+            </EndProperty>
+            <Condition ColumnName="Acq_Deal_Supplementary_Code" IsNull="false" />
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

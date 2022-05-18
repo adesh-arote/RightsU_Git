@@ -40,7 +40,7 @@ namespace RightsU_DAL
             return objContext.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
         }
 
-        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch, string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Title_Objection_Adv_List(strSearch, Type, pageNo, orderByCndition, isPaging, pageSize, recordCount, user_Code, exactMatch);
@@ -1624,12 +1624,46 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
-
         public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_List_Syn_Ancillary(syn_Deal_Code);
         }
 
+        public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_GET_TITLE_FOR_SUPPLEMENTARY(Acq_Deal_Code, title_code);
+        }
+
+        public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab_Result(Nullable<int> Supplementary_Tab_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Acq_SUPP_Tab(Supplementary_Tab_Code);
+        }
+
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_SUPP_Create_Table(Tab_Code, Acq_Deal_Code, TitleCode);
+        }
+
+        public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Edit_Row(Acq_Deal_Supplementary_Code, Row_Num, shortName);
+        }
+
+        //public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List_Result(Nullable<int> Deal_Code)
+        //{
+        //    RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+        //    return objContext.USP_Supplementary_List_Result(Deal_Code);
+        //}
+
+        public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Supplementary_List(Deal_Code, titlecode);
+        }
     }
 }

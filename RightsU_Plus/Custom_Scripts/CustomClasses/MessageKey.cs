@@ -54,6 +54,9 @@ public class MessageKey
     public string PleaseEnterTalentName { get; set; }
     public string RecordAlreadyExists { get; set; }
     public string Language { get; set; }
+
+    public string BusinessLayer { get; set; }
+    public string BusinessVertical { get; set; }
     public string Genres { get; set; }
     public string ApprovalList { get; set; }
     public string Settings { get; set; }
@@ -918,6 +921,7 @@ public class MessageKey
     public string PaymentTermsandConditions { get; set; }
     public string SaveApprove { get; set; }
     public string AddPaymentTerm { get; set; }
+    public string SupplementaryDetailssavedsuccesfully { get; set; }
     public string DaysbeforeorafterMilestone { get; set; }
     public string PercentageAmount { get; set; }
     public string DueDate { get; set; }
@@ -977,6 +981,8 @@ public class MessageKey
     public string TitleSponsor { get; set; }
     public string OfficialSponsor { get; set; }
     public string Validity { get; set; }
+    public string SpecialDetails { get; set; }
+    public string AddCommitments { get; set; }
     public string NoofdaysbeforetheTournament { get; set; }
     public string ValidityofFRO { get; set; }
     public string Days { get; set; }
@@ -1051,7 +1057,6 @@ public class MessageKey
     public string Theamountnotmatchexactlyin { get; set; }
     public string RoyaltyRecoupmentType { get; set; }
     public string CostInCurrency { get; set; }
-    public string SpecialDetails { get; set; }
     public string CostHead { get; set; }
     public string StandardReturns { get; set; }
     public string AreyousureyouwanttodeletethisCostHead { get; set; }
@@ -1083,6 +1088,8 @@ public class MessageKey
     public string PlatformTree { get; set; }
     public string Platformsselected { get; set; }
     public string AddRights { get; set; }
+
+    public string AddSupplementary { get; set;}
     public string ExclusiveRights { get; set; }
     public string BulkUpdate { get; set; }
     public string RightsDefinition { get; set; }
@@ -1240,6 +1247,8 @@ public class MessageKey
     public string SportsAncillary { get; set; }
     public string Ancillary { get; set; }
     public string Budget { get; set; }
+    public string Supplementary { get; set; }
+
     public string PaymentTerms { get; set; }
      
     public string DealArchive { get; set; }

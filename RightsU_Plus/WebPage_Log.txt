@@ -35827,3 +35827,327 @@
 08 May 2022 17:24:28
   :BindGridView() method if Acq_ListController has been executed
 -------------------------------
+18 May 2022 17:23:43
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 1 executing
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 1 executed
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 2 executing
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 2 executed
+-------------------------------
+18 May 2022 17:23:43
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 17:23:43
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 17:23:43
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 17:23:43
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 4 executing
+-------------------------------
+18 May 2022 17:23:43
+  :Condition 4 executed
+-------------------------------
+18 May 2022 17:23:43
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:23:45
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:23:45
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 17:23:48
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 17:23:48
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:23:54
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 17:23:54
+  :Calling Index method of Acq_DealController
+-------------------------------
+18 May 2022 17:43:24
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:43:24
+  :Condition 1 executing
+-------------------------------
+18 May 2022 17:43:24
+  :Condition 1 executed
+-------------------------------
+18 May 2022 17:43:24
+  :Condition 2 executing
+-------------------------------
+18 May 2022 17:43:24
+  :Condition 2 executed
+-------------------------------
+18 May 2022 17:43:24
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 17:43:25
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 17:43:25
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 17:43:25
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 17:43:25
+  :Condition 4 executing
+-------------------------------
+18 May 2022 17:43:25
+  :Condition 4 executed
+-------------------------------
+18 May 2022 17:43:25
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:43:27
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:43:27
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 17:43:29
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 17:43:29
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:43:32
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 17:43:32
+  :Calling Index method of Acq_DealController
+-------------------------------
+18 May 2022 17:47:18
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 1 executing
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 1 executed
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 2 executing
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 2 executed
+-------------------------------
+18 May 2022 17:47:18
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 17:47:18
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 17:47:18
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 17:47:18
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 4 executing
+-------------------------------
+18 May 2022 17:47:18
+  :Condition 4 executed
+-------------------------------
+18 May 2022 17:47:18
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:47:20
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:47:20
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 17:47:22
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 17:47:22
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:47:26
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 17:47:26
+  :Calling Index method of Acq_DealController
+-------------------------------
+18 May 2022 17:56:49
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 1 executing
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 1 executed
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 2 executing
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 2 executed
+-------------------------------
+18 May 2022 17:56:49
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 17:56:49
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 17:56:49
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 17:56:49
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 4 executing
+-------------------------------
+18 May 2022 17:56:49
+  :Condition 4 executed
+-------------------------------
+18 May 2022 17:56:49
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:56:52
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 17:56:52
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 17:56:54
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 17:56:54
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 17:57:01
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 17:57:01
+  :Calling Index method of Acq_DealController
+-------------------------------
+18 May 2022 18:00:29
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 1 executing
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 1 executed
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 2 executing
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 2 executed
+-------------------------------
+18 May 2022 18:00:29
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 18:00:29
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 18:00:29
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 18:00:29
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 4 executing
+-------------------------------
+18 May 2022 18:00:29
+  :Condition 4 executed
+-------------------------------
+18 May 2022 18:00:29
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 18:00:31
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 18:00:31
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 18:00:33
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 18:00:33
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 18:00:41
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 18:00:41
+  :Calling Index method of Acq_DealController
+-------------------------------
+18 May 2022 18:03:44
+  :Index method of Acq_ListController is executing
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 1 executing
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 1 executed
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 2 executing
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 2 executed
+-------------------------------
+18 May 2022 18:03:44
+  :USP_MODULE_RIGHTS executing
+-------------------------------
+18 May 2022 18:03:44
+  :USP_MODULE_RIGHTS executed
+-------------------------------
+18 May 2022 18:03:44
+  :BindBUList() method is executing
+-------------------------------
+18 May 2022 18:03:44
+  :BindBUList() method has been executed
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 4 executing
+-------------------------------
+18 May 2022 18:03:44
+  :Condition 4 executed
+-------------------------------
+18 May 2022 18:03:44
+  :Index method of Acq_ListController has been executed
+-------------------------------
+18 May 2022 18:03:46
+  :BindGridView() method of Acq_ListController is executing
+-------------------------------
+18 May 2022 18:03:46
+  :USP_List_Acq is executing
+-------------------------------
+18 May 2022 18:03:48
+  :USP_List_Acq has been executed
+-------------------------------
+18 May 2022 18:03:49
+  :BindGridView() method if Acq_ListController has been executed
+-------------------------------
+18 May 2022 18:03:53
+  :Called ButtonEvents method of Acq_ListController for CommandName = 'Edit'
+-------------------------------
+18 May 2022 18:03:53
+  :Calling Index method of Acq_DealController
+-------------------------------

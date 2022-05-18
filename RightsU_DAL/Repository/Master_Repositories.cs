@@ -3007,4 +3007,44 @@ namespace RightsU_DAL
             }
         }
     }
+
+    public class Attrib_Group_Repository : RightsU_Repository<Attrib_Group>
+    {
+        public Attrib_Group_Repository(string conStr) : base(conStr) { }
+        public override void Save(Attrib_Group objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+    }
+
+    public class Supplementary_Repository : RightsU_Repository<Supplementary>
+    {
+        public Supplementary_Repository(string constr) : base(constr) { }
+    }
+
+    public class Supplementary_Data_Repository : RightsU_Repository<Supplementary_Data>
+    {
+        public Supplementary_Data_Repository(string constr) : base(constr) { }
+    }
+
+    public class Supplementary_Tab_Repository : RightsU_Repository<Supplementary_Tab>
+    {
+        public Supplementary_Tab_Repository(string constr) : base(constr) { }
+    }
+
+    public class Supplementary_Config_Repository : RightsU_Repository<Supplementary_Config>
+    {
+        public Supplementary_Config_Repository(string constr) : base(constr) { }
+    }
 }

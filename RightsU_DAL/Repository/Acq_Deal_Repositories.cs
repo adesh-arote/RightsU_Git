@@ -539,7 +539,7 @@ namespace RightsU_DAL
                 //}
                 new Save_Entitiy_Lists_Generic<Acq_Deal_Rights_Blackout>().SetListFlagsCUD(objDr.Acq_Deal_Rights_Blackout, dbContext);
 
-                foreach(Acq_Deal_Rights_Promoter objADP in objDr.Acq_Deal_Rights_Promoter)
+                foreach (Acq_Deal_Rights_Promoter objADP in objDr.Acq_Deal_Rights_Promoter)
                 {
                     new Save_Entitiy_Lists_Generic<Acq_Deal_Rights_Promoter_Group>().SetListFlagsCUD(objADP.Acq_Deal_Rights_Promoter_Group, dbContext);
                     new Save_Entitiy_Lists_Generic<Acq_Deal_Rights_Promoter_Remarks>().SetListFlagsCUD(objADP.Acq_Deal_Rights_Promoter_Remarks, dbContext);
@@ -587,7 +587,7 @@ namespace RightsU_DAL
                 }
                 dbContext.Acq_Deal_Rights_Blackout.RemoveRange(objADR.Acq_Deal_Rights_Blackout);
 
-                foreach(Acq_Deal_Rights_Promoter objADRP in objADR.Acq_Deal_Rights_Promoter)
+                foreach (Acq_Deal_Rights_Promoter objADRP in objADR.Acq_Deal_Rights_Promoter)
                 {
                     dbContext.Acq_Deal_Rights_Promoter_Group.RemoveRange(objADRP.Acq_Deal_Rights_Promoter_Group);
                     dbContext.Acq_Deal_Rights_Promoter_Remarks.RemoveRange(objADRP.Acq_Deal_Rights_Promoter_Remarks);
@@ -828,6 +828,29 @@ namespace RightsU_DAL
             }
             dbContext.Acq_Deal_Sport_Sales_Ancillary.RemoveRange(deleteList);
         }
+
+        public ICollection<Acq_Deal_Supplementary> SaveSupplementary(ICollection<Acq_Deal_Supplementary> entitySaveSupplementary, DbContext dbContext)
+        {
+            ICollection<Acq_Deal_Supplementary> UpdatedSupplementary = entitySaveSupplementary;
+
+            foreach (Acq_Deal_Supplementary objADR in UpdatedSupplementary)
+            {
+                objADR.Acq_Deal_Supplementary_detail = (objADR.Acq_Deal_Supplementary_detail != null) ? new Save_Entitiy_Lists_Generic<Acq_Deal_Supplementary_detail>().SetListFlagsCUD(objADR.Acq_Deal_Supplementary_detail, dbContext) : null;
+            }
+
+            UpdatedSupplementary = new Save_Entitiy_Lists_Generic<Acq_Deal_Supplementary>().SetListFlagsCUD(UpdatedSupplementary, dbContext);
+
+            return UpdatedSupplementary;
+        }
+        public void DeleteSupplementary(ICollection<Acq_Deal_Supplementary> deleteList, RightsU_NeoEntities dbContext)
+        {
+            foreach (Acq_Deal_Supplementary objADR in deleteList)
+            {
+                dbContext.Acq_Deal_Supplementary_detail.RemoveRange(objADR.Acq_Deal_Supplementary_detail);
+            }
+            dbContext.Acq_Deal_Supplementary.RemoveRange(deleteList);
+        }
+
     }
 
     public class Acq_Deal_Mass_Territory_Update_Repository : RightsU_Repository<Acq_Deal_Mass_Territory_Update>
@@ -1140,6 +1163,33 @@ namespace RightsU_DAL
         {
             ICollection<Acq_Rights_Template> list = new HashSet<Acq_Rights_Template>();
             list.Add(obj);
+
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(list.FirstOrDefault());
+            }
+        }
+    }
+
+    public class Acq_Deal_Supplementary_Repository : RightsU_Repository<Acq_Deal_Supplementary>
+    {
+        public Acq_Deal_Supplementary_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Acq_Deal_Supplementary obj)
+        {
+            ICollection<Acq_Deal_Supplementary> list = new HashSet<Acq_Deal_Supplementary>();
+            list.Add(obj);
+
+            Save_Acq_Deal_Entities_Generic objSaveEntities = new Save_Acq_Deal_Entities_Generic();
+            obj = objSaveEntities.SaveSupplementary(list, base.DataContext).FirstOrDefault();
 
             if (obj.EntityState == State.Added)
             {

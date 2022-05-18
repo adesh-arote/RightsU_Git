@@ -1715,4 +1715,49 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Acq_Deal_Supplementary_Service : BusinessLogic<Acq_Deal_Supplementary>
+    {
+        private readonly Acq_Deal_Supplementary_Repository objRepository;
+
+        public Acq_Deal_Supplementary_Service(string Connection_Str)
+        {
+            this.objRepository = new Acq_Deal_Supplementary_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Deal_Supplementary> SearchFor(Expression<Func<Acq_Deal_Supplementary, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Acq_Deal_Supplementary GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Acq_Deal_Supplementary obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Acq_Deal_Supplementary obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Acq_Deal_Supplementary objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Acq_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Acq_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Acq_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
 }

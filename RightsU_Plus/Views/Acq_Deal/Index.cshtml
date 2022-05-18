@@ -32,6 +32,7 @@
     var pageGeneral = '@GlobalParams.Page_From_General';
     var pageRights_List = '@GlobalParams.Page_From_Rights';
     var pageRightsDetailAddEdit = '@GlobalParams.Page_From_Rights_Detail_AddEdit';
+    var pageSupplementaryAddEdit  = '@GlobalParams.Page_From_Supplementary_AddEdit';
     var pageRightsDetailView = '@GlobalParams.Page_From_Rights_Detail_View';
     var pagePushback = '@GlobalParams.Page_From_Pushback';
     var pageRun = '@GlobalParams.Page_From_Run';
@@ -44,6 +45,7 @@
     var pagePaymentTerm = '@GlobalParams.Page_From_PaymentTerm';
     var pageMaterial = '@GlobalParams.Page_From_Material';
     var pageStatusHistory = '@GlobalParams.Page_From_StatusHistory';
+    var pageSupplementary = '@GlobalParams.Page_From_Supplementary';
     var pageAmort = '@GlobalParams.Page_From_Amort';
     var pageAttachment = '@GlobalParams.Page_From_Attachment';
     var dealType_Sports = '@GlobalParams.Deal_Type_Sports'
@@ -61,12 +63,12 @@
     $(document).ready(function () {
         var url_page = "";
         if (isAmort == "Y") {
-            debugger;
+            //debugger;
             BindPartialTabs(pageAmort);
             BindTopAcqDetails();
         }
         else {
-            debugger;
+            //debugger;
             if ('@ViewBag.currentTab' != "") {
 
                 if (document.location.search == "") {
@@ -89,6 +91,9 @@
                 else if ('@ViewBag.currentTab' == "RGT_DTL_AE") {
                     BindPartialTabs(pageRightsDetailAddEdit);
                 }
+                else if ('@ViewBag.currntTab' == 'SUPP_DTL_AE') {
+                    BindPartialTabs(pageSupplementary);
+                }
                 else if ('@ViewBag.currentTab' == "RGT_DTL_VW") {
                     BindPartialTabs(pageRightsDetailView);
                 }
@@ -101,6 +106,7 @@
                 else if ('@ViewBag.currentTab' == "RUN_DTL_AE") {
                     BindPartialTabs(pageRunDetailAddEdit);
                 }
+
                 else if ('@ViewBag.currentTab' == "RUN_DTL_VW") {
                     BindPartialTabs(pageRunDetailView);
                 }
@@ -152,6 +158,9 @@
                 else if ('@ViewBag.currentTab' == "DGR") {
                     BindPartialTabs(digital_Rights);
                 }
+                else if ('@ViewBag.currentTab' == "SUPP") {
+                    BindPartialTabs(pageSupplementary);
+                }
                 else if ('@ViewBag.currentTab' == "GNR") {
                     BindPartialTabs(pageGeneral);
                 }
@@ -189,7 +198,7 @@
     }
 
     function GetWorkflowStatusFromServer() {
-        debugger;
+        //debugger;
         alert('GetWorkflowStatusFromServer')
         var dealTypeCode = 0;
         $.ajax({
@@ -282,12 +291,12 @@
     }
 
     function BindPartialTabs(tabName) {
-        debugger;
+        //debugger;
 
         $('#divPartialTabs').empty();
         CurrentTab = tabName;
         var URL_PartialView = "";
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liSupplementary,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
         if (tabName == pageGeneral) {
 
            // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_General');
@@ -305,6 +314,10 @@
 
             URL_PartialView = '@Url.Action("Index", "Acq_Rights")';
             $("#liRights").addClass("active");
+        }
+        else if (tabName == pageSupplementaryAddEdit) {
+            URL_PartialView = '@Url.Action("AddEditSupp", "Acq_Supplementary")';
+            $("#liSupplementary").addClass("active");
         }
         else if (tabName == pageRightsDetailView) {
 
@@ -358,6 +371,10 @@
            // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_SportsRights');
             URL_PartialView = '@Url.Action("Index", "Acq_Sports")';
             $("#liSports").addClass("active");
+        }
+        else if (tabName == pageSupplementary) {
+              URL_PartialView = '@Url.Action("Index", "Acq_Supplementary")';
+            $("#liSupplementary").addClass("active");
         }
         else if (tabName == pageAncillary) {
             var dealTypeCode = GetDealTypeCodeFromServer();
@@ -441,14 +458,14 @@
                     redirectToLogin();
                 }
                 else {
-                    debugger;
+                    //debugger;
                     $('#divPartialTabs').empty();
                     $('#divPartialTabs').html(result);
                     if (currentTabMultiLnag != "") {
                         BindTopAcqDetails();
                     }
                     else {
-                        debugger;
+                        //debugger;
                         if (tabName == pageGeneral) {
                             BindTopAcqDetails();
                         }
@@ -489,7 +506,7 @@
         catch (err) {
         }
     }
-  
+
 </script>
 <style>
     .container .grid_area {
