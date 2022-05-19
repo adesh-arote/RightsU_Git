@@ -11,12 +11,15 @@ namespace RightsU_BLL
     public class Syn_Deal_Service : BusinessLogic<Syn_Deal>
     {
         private readonly Syn_Deal_Repository objSDR;
+        private string _Connection_Str = "";
+
         //public Syn_Deal_Service()
         //{
         //    this.objSDR = new Syn_Deal_Repository(DBConnection.Connection_Str);
         //}
         public Syn_Deal_Service(string Connection_Str)
         {
+            _Connection_Str = Connection_Str;
             this.objSDR = new Syn_Deal_Repository(Connection_Str);
         }
         public IQueryable<Syn_Deal> SearchFor(Expression<Func<Syn_Deal, bool>> predicate)
@@ -241,12 +244,14 @@ namespace RightsU_BLL
     public class Syn_Deal_Ancillary_Service : BusinessLogic<Syn_Deal_Ancillary>
     {
         private readonly Syn_Deal_Ancillary_Repository objADAR;
+        private string _Connection_Str = "";
         //public Syn_Deal_Ancillary_Service()
         //{
         //    this.objADAR = new Syn_Deal_Ancillary_Repository(DBConnection.Connection_Str);
         //}
         public Syn_Deal_Ancillary_Service(string Connection_Str)
         {
+            _Connection_Str = Connection_Str;
             this.objADAR = new Syn_Deal_Ancillary_Repository(Connection_Str);
         }
         public IQueryable<Syn_Deal_Ancillary> SearchFor(Expression<Func<Syn_Deal_Ancillary, bool>> predicate)
@@ -276,8 +281,22 @@ namespace RightsU_BLL
 
         public override bool Validate(Syn_Deal_Ancillary objToValidate, out dynamic resultSet)
         {
+            USP_Service objValidateService = new USP_Service(_Connection_Str);
             resultSet = "";
-            return true;
+            IEnumerable<USP_Ancillary_Validate_Udt> objResult = objValidateService.USP_Ancillary_Validate_Udt(
+               objToValidate.LstDeal_Ancillary_Title_UDT,
+               objToValidate.LstDeal_Ancillary_Platform_UDT,
+               objToValidate.LstDeal_Ancillary_Platform_Medium_UDT,
+               (int)objToValidate.Ancillary_Type_code,
+               /*objToValidate.Catch_Up_From*/"",
+               objToValidate.Syn_Deal_Ancillary_Code,
+               (int)objToValidate.Syn_Deal_Code);
+            int DupCount = objResult.ToList<RightsU_Entities.USP_Ancillary_Validate_Udt>().ElementAt(0).dup_Count;
+            if (DupCount > 0)
+                resultSet = "DUPLICATE";
+            return !(DupCount > 0);
+            //resultSet = "";
+            //return true;
         }
 
         public override bool ValidateUpdate(Syn_Deal_Ancillary objToValidate, out dynamic resultSet)
