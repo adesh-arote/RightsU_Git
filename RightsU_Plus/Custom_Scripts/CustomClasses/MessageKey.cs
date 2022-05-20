@@ -7,6 +7,8 @@ public class MessageKey
 {
     #region --- Common ---
     public string From { get; set; }
+
+    public string ViewOperation { get; set; }
     public string To { get; set; }
     public string LayoutDirection { get; set; }
     public string Action { get; set; }

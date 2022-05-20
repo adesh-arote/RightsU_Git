@@ -1626,10 +1626,10 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Acq_SUPP_Tab_Result(Supplementary_Tab_Code);
         }
 
-        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode)
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode, string View)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_SUPP_Create_Table_Result(Tab_Code, Acq_Deal_Code, TitleCode);
+            return objUSPDAL.USP_SUPP_Create_Table_Result(Tab_Code, Acq_Deal_Code, TitleCode, View);
         }
 
         public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
@@ -1643,5 +1643,10 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Supplementary_List_Result(Deal_Code, titlecode);
         }
-    }
+        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Acq_Supplementary_Delete_Title(supplementaryCode);
+        }
+       }
 }

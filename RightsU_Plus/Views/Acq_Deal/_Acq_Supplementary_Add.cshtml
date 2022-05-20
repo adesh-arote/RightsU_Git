@@ -22,10 +22,14 @@
     var URL_SaveInSession = '@Url.Action("supplementarySave", "Acq_Supplementary")';
     var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Acq_Supplementary")';
     var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Acq_Supplementary")';
+    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Acq_Supplementary")';
 
 </script>
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
 <script>
     $(document).ready(function () {
         debugger;
@@ -34,7 +38,6 @@
         $('#ddSuppTitle').SumoSelect({ selectAll: true });
         var element = document.getElementById("TabValues");
         element.style.display = "none";
-
     });
     function BindAllPreReq_Async() {
         debugger;
@@ -65,8 +68,14 @@
                 $('#TabName').val(result.TabName);
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
-                $('#Remarks').val(result.Remarks);
+                $('#txtAcqRemarks').val(result.Remarks);
+                $('#ViewOperation').val(result.ViewOperation);
+                if ($('#ViewOperation').val() == "VIEW") {
+                    document.getElementById("HideForView").style.display = "none";
+                    document.getElementById("btnSaveDeal").style.display = "none";
+                }
 
+               
                 hideLoading();
             }
         });
@@ -75,6 +84,11 @@
     function ChangeTab(Short_Name) {
         debugger;
         showLoading();
+        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
         $('#TabName').val(Short_Name);
         var tabValues = $('#TabValues').val();
         let tabArray = tabValues.split(',');
@@ -97,7 +111,7 @@
 
     function SuppButtonEvents() {
         debugger;
-
+        $('#inputValidation').val("true");
         var shortName = $('#TabName').val();
         var wtName = $('#hdnwt' + shortName).val();
         $('#Operation').val("A");
@@ -153,6 +167,7 @@
                 }
             }
 
+
             let drCount = $("#hdn" + shortName).val();
 
             let drCount2 = parseInt(drCount)
@@ -166,6 +181,11 @@
 
     function SuppEdit(x, supplementary_Code, rowno, num) {
         debugger;
+        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
         var rwIndex = x.parentNode.parentNode.rowIndex;
         var shortName = $('#TabName').val();
         var wtName = $('#hdnwt' + shortName).val();
@@ -186,7 +206,7 @@
             $('#popupindex').val(rwIndex);
         }
 
-        
+
 
         if (wtName == "PopUp") {
             $.ajax({
@@ -265,9 +285,11 @@
             var rowclose = $($('#RowEdit').val());
             rowclose.insertBefore($(tblName + ' tbody tr:nth(' + (parseInt(rowNumber) + 1) + ')'));
             $(tblName + ' tr').eq(rowNumber + 2).remove();
+
         }
         else {
             $("#AddComm").modal('toggle');
+            $('#inputValidation').val("false");
         }
     }
 
@@ -319,6 +341,7 @@
 
     function hideaddsupp() {
         debugger;
+        $('#inputValidation').val("false");
         var shortName = $('#TabName').val();
         var tabValues = $('#TabValues').val();
         let tabArray = tabValues.split(',');
@@ -335,6 +358,32 @@
             }
         }
     }
+    //function duplicateValidation(vallist, shortName) {
+    //    debugger;
+    //    var success = false;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_DuplicateValidation,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            Value_list: vallist,
+    //            short_Name: shortName
+    //        }),
+    //        success: function (result) {
+    //            debugger;
+    //            if (result.ErrorCode == "500") {
+
+    //                success = true;
+    //            }
+    //            else {
+    //                success = false;
+    //            }
+    //        }
+    //    });
+    //    return success;
+    //}
 
     function SaveSupp(x,rownum)
     {
@@ -376,7 +425,12 @@
                 }
             }
         }
-
+        //if (duplicateValidation(vallist, shortName) ) {
+        //    showAlert('I', 'Duplicate Value Not allowed');
+        //    return;
+        //}
+        //else
+        //{
         $.ajax({
             type: "POST",
             url: URL_SaveInSession,
@@ -393,23 +447,31 @@
                 debugger;
                 var shortName = $('#TabName').val();
                 tblName = "#tbl" + shortName;
-                var row = $(result);
-                if (operation == "A") {
-                    $(tblName).append(row);
-                    hideaddsupp();
-                }
-                if (operation == "E") {
-                    row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
-                    $(tblName + ' tr').eq(rwIndex + 1).remove();
-                   // $('#' + shortName + rownum).remove();
 
-                    //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
-                    //$(tblName + ' tr').eq(rwIndex + 1).remove();
+                if (result != "Duplicate") {
+                    var row = $(result);
+                    if (operation == "A") {
+                        $(tblName).append(row);
+                        hideaddsupp();
+                    }
+                    if (operation == "E") {
+                        row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        $(tblName + ' tr').eq(rwIndex + 1).remove();
+                        // $('#' + shortName + rownum).remove();
+
+                        //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        //$(tblName + ' tr').eq(rwIndex + 1).remove();
+                    }
+                }
+                else {
+                    showAlert('I', 'Duplicate Value Not allowed');
                 }
             }
-        })
+        });
+
+
         if (wtName == "PopUp") $("#AddComm").modal('toggle');
-        hideLoading();
+            hideLoading();
     }
 
     function Cancel_Supplementaru() {
@@ -417,27 +479,32 @@
         showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
     }
 
-    function ValidateSave()
+    function SuppSave()
     {
         showLoading();
         debugger;
+        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
         if ($('#ddSuppTitle').val == "")
         {
-            showAlert('I', '@objMessageKey.Selecttitletosearch', 'OK');
+            showAlert('I', '@objMessageKey.Selecttitletosearch');
             return;
         }
         if ($('#ddSuppTitle').val() != null) {
             var title = $('#ddSuppTitle').val().toString();
         }
-       
+
         else {
-            showAlert('I', "Title not selected", 'OK');
+            showAlert('I', "Title not selected");
             hideLoading();
             return;
         }
 
-        if ($('#Remarks').val() != null) {
-            var Remarks = $('#Remarks').val();
+        if ($('#txtAcqRemarks').val() != null) {
+            var Remarks = $('#txtAcqRemarks').val();
         }
 
         $.ajax({
@@ -453,7 +520,7 @@
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully', 'OK');
+                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully');
                 else
                     showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
             }
@@ -462,7 +529,16 @@
         hideLoading();
 
     }
+    //function countChar(val) {
+    //    debugger;
+    //    var max = 4000;
+    //    var len = val.value.length;
 
+    //    if (len >= max)
+    //        val.value(val.value.substring(0, max));
+
+    //    $('.charNum').text(val.value.length.toString() + '/' + max.toString());
+    //}
 
 </script>
 <style type="text/css">
@@ -477,6 +553,8 @@
 <input type="hidden" id="FieldList" />
 <input type="hidden" id="Operation" />
 <input type="hidden" id="popupindex" />
+<input type="hidden" id="inputValidation" value="false" />
+<input type="hidden" id="ViewOperation" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -493,7 +571,9 @@
                         </div>
                         <br>
                         <label class="bold">@objMessageKey.SpecialDetails</label>
-                        <a class="glyphicon glyphicon-plus pull-right" style="margin-top: 20px;" onclick="SuppButtonEvents()"></a>
+
+                            <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="SuppButtonEvents()"></a>
+                        
                         <div class="scale_table_block">
                             <div id="tabValidity" class="tabbable">
 
@@ -502,11 +582,15 @@
                             </div>
                             <div class="tab-pane active scale_table_block" id="tabRestriction">
                                 @*@Html.TextAreaFor(Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
-                                <textarea cols="20" id="Remarks" onkeypress ="countChar(this)" name="Description" rows="4"></textarea>
+                                @*<textarea cols="20" id="Remarks" onkeypress="countChar(this)" name="Description" rows="4"></textarea>*@
+
                                 <div class="divBlock">
+                                    <div class="pull-left" style="padding-right: 87%;">@objMessageKey.Remarks</div>
                                     <div class="charNum">0/4000</div>
                                     <div style=""></div>
                                 </div>
+                                <textarea name="txtAcqRemarks" id="txtAcqRemarks" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
+
                             </div>
                         </div>
                         <br>
@@ -517,7 +601,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return ValidateSave();"> <!--ClearHidden();-->
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();"> 
                         </li>
                         <li>
                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementaru();" />

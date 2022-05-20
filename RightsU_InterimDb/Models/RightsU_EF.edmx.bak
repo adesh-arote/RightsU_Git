@@ -12432,6 +12432,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
           <Parameter Name="Is_Syn_Acq_Mapp" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Acq_Supplementary_Delete_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SupplementaryCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Acq_SUPP_Tab" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Supplementary_Tab_Code" Type="int" Mode="In" />
         </Function>
@@ -21177,6 +21180,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
 		  <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+		  <FunctionImport Name="USP_Acq_Supplementary_Delete_Title">
+            <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_GET_TITLE_FOR_SUPPLEMENTARY" ReturnType="Collection(RightsU_NeoModel.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result)">
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
