@@ -55,13 +55,13 @@ function Validate_Save_Ancillary_Adv() {
     else {
         $("#divlbTitle_Popup").removeClass("required");
 
-        if ($("#hdnTVCodes").val() == null || $("#hdnTVCodes").val() == "0" || $("#hdnTVCodes").val() == "") {
-            $("#divlbTree_Popup").addClass("required");
-            IsValid = false;
-        }
-        else {
-            $("#divlbTree_Popup").removeClass("required");
-        }
+        //if ($("#hdnTVCodes").val() == null || $("#hdnTVCodes").val() == "0" || $("#hdnTVCodes").val() == "") {
+        //    $("#divlbTree_Popup").addClass("required");
+        //    IsValid = false;
+        //}
+        //else {
+        //    $("#divlbTree_Popup").removeClass("required");
+        //}
     }
     if ($("#ddlAncillary_Type").val() == "0") {
         $("#ddlAncillary_Type").addClass('required');

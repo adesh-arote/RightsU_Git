@@ -283,7 +283,7 @@ namespace RightsU_BLL
         {
             USP_Service objValidateService = new USP_Service(_Connection_Str);
             resultSet = "";
-            IEnumerable<USP_Ancillary_Validate_Udt> objResult = objValidateService.USP_Ancillary_Validate_Udt(
+            IEnumerable<USP_Ancillary_Validate_Syn_Udt> objResult = objValidateService.USP_Ancillary_Validate_Syn_Udt(
                objToValidate.LstDeal_Ancillary_Title_UDT,
                objToValidate.LstDeal_Ancillary_Platform_UDT,
                objToValidate.LstDeal_Ancillary_Platform_Medium_UDT,
@@ -291,7 +291,7 @@ namespace RightsU_BLL
                /*objToValidate.Catch_Up_From*/"",
                objToValidate.Syn_Deal_Ancillary_Code,
                (int)objToValidate.Syn_Deal_Code);
-            int DupCount = objResult.ToList<RightsU_Entities.USP_Ancillary_Validate_Udt>().ElementAt(0).dup_Count;
+            int DupCount = objResult.ToList<RightsU_Entities.USP_Ancillary_Validate_Syn_Udt>().ElementAt(0).dup_Count;
             if (DupCount > 0)
                 resultSet = "DUPLICATE";
             return !(DupCount > 0);

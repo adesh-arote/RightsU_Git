@@ -671,6 +671,22 @@ namespace RightsU_DAL
             proc.Acq_Deal_Code = Acq_Deal_Code;
             return this.Database.ExecuteStoredProcedure<USP_Ancillary_Validate_Udt>(proc);
         }
+
+        public IEnumerable<USP_Ancillary_Validate_Syn_Udt> USP_Ancillary_Validate_Syn_Udt(
+        List<Deal_Ancillary_Title_UDT> lstAncillary_Title,
+        List<Deal_Ancillary_Platform_UDT> lstAncillary_Platform,
+        List<Deal_Ancillary_Platform_Medium_UDT> lstAncillary_Platform_Medium, int Ancillary_Type_code, string Catch_Up_From, int Acq_Deal_Ancillary_Code, int Acq_Deal_Code)
+        {
+            var proc = new USP_Ancillary_Validate_Syn_Udt();
+            proc.Ancillary_Title = lstAncillary_Title;
+            proc.Ancillary_Platform = lstAncillary_Platform;
+            proc.Ancillary_Platform_Medium = lstAncillary_Platform_Medium;
+            proc.Ancillary_Type_code = Ancillary_Type_code;
+            proc.Catch_Up_From = Catch_Up_From;
+            proc.Syn_Deal_Ancillary_Code = Acq_Deal_Ancillary_Code;
+            proc.Syn_Deal_Code = Acq_Deal_Code;
+            return this.Database.ExecuteStoredProcedure<USP_Ancillary_Validate_Syn_Udt>(proc);
+        }
         public IEnumerable<USP_Validate_Title_Talent_UDT> USP_Validate_Title_Talent_UDT(
           List<Title_Talent_Role_UDT> lst_Title_Talent_Role,
             string CallFrom

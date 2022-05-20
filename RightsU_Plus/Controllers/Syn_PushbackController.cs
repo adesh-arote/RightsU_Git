@@ -366,6 +366,7 @@ namespace RightsU_Plus.Controllers
 
             ViewBag.Title_List_Popup = BindTitle_Popup("");
             ViewBag.Title_Code_Search = Title_Code_Search;
+            ViewBag.perpetuity_years = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
             ViewBag.View_Type = View_Type_Search;
             BindAllViewBag("", "", "", "", "", "", 0, 0, 'A');
             objSyn_Deal_Rights.Region_Type = "I";
@@ -995,6 +996,17 @@ namespace RightsU_Plus.Controllers
                     objRights.Right_End_Date = Convert.ToDateTime(hdnRight_End_Date);
                 else
                     objRights.Right_End_Date = null;
+
+                if (objRights.Right_Type == "U")
+                {
+                    string isEnabled_Perpetuity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Enabled_Perpetuity").First().Parameter_Value;
+                    if(isEnabled_Perpetuity == "Y")
+                    {
+                        string perpetuity_years = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
+                        objRights.Right_End_Date = Convert.ToDateTime(objRights.Right_Start_Date).AddYears(Convert.ToInt32(perpetuity_years)).AddDays(-1);
+                    }
+                    
+                }
             }
             else
                 objRights.Right_Start_Date = null;
@@ -1017,11 +1029,42 @@ namespace RightsU_Plus.Controllers
                 }
                 objExistingRights.Actual_Right_End_Date = objExistingRights.Right_End_Date = objRights.Right_End_Date;
             }
-            else
+            else if (Right_Type == "M")
             {
                 objExistingRights.Milestone_Type_Code = Milestone_Type_Code;
                 objExistingRights.Milestone_No_Of_Unit = Milestone_No_Of_Unit;
                 objExistingRights.Milestone_Unit_Type = Milestone_Unit_Type;
+            }
+            else if (Right_Type == "U")
+            {
+                if (Right_Start_Date != null)
+                {
+                    objExistingRights.Right_Start_Date = Convert.ToDateTime(objRights.Right_Start_Date);
+                    objExistingRights.Actual_Right_Start_Date = objExistingRights.Right_Start_Date;
+                }
+
+                string isEnabled_Perpetuity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Enabled_Perpetuity").First().Parameter_Value;
+                if(isEnabled_Perpetuity == "Y")
+                {
+                    Year = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
+                    objExistingRights.Term = Year.ToString() + "." + Month.ToString() + "." + Day.ToString();
+
+                    if (Right_End_Date != null)
+                    {
+                        objExistingRights.Right_End_Date = Convert.ToDateTime(objRights.Right_End_Date);
+                        objExistingRights.Actual_Right_End_Date = objExistingRights.Right_End_Date;
+                    }
+                }
+
+                
+                
+                    
+                
+                    
+
+                objExistingRights.Milestone_Type_Code = null;
+                objExistingRights.Milestone_No_Of_Unit = null;
+                objExistingRights.Milestone_Unit_Type = null;
             }
 
             objExistingRights.Is_Title_Language_Right = Is_Title_Language_Right;
