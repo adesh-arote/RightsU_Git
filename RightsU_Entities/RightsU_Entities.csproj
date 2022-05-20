@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D8A4885D-9A36-4724-B464-6CB122E081F7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RightsU_Entities</RootNamespace>
+    <AssemblyName>RightsU_Entities</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFrameworkExtras.EF6, Version=3.0.5.0, Culture=neutral, PublicKeyToken=afc61983f100d280, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFrameworkExtras.EF6.3.0.5\lib\net45\EntityFrameworkExtras.EF6.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\RightsU_Plus\bin\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Acquisition_Entities\Acq_Deal.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Adv_Ancillary_Report.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary_Platform_Medium.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Ancillary_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Attachment.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Budget.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Additional_Exp.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Commission.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Costtype.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Costtype_Episode.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Variable_Cost.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Licensor.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Mass_Territory_Update.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Mass_Territory_Update_Details.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Mass_Update_ErrorLog.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Material.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Movie.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Movie_Music.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Movie_Music_Link.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Payment_Terms.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback_Dubbing.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback_Subtitling.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback_Territory.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Pushback_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Blackout.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Blackout_Dubbing.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Blackout_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Blackout_Subtitling.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Blackout_Territory.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Error_Details.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Holdback.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Holdback_Dubbing.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Holdback_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Holdback_Subtitling.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Holdback_Territory.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Promoter.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Promoter_Group.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Promoter_Remarks.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Territory.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Channel.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Shows.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Yearwise_Run.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_Yearwise_Run_Week.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Ancillary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Ancillary_Broadcast.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Ancillary_Source.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Ancillary_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Broadcast.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Language.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Monetisation_Ancillary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Monetisation_Ancillary_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Monetisation_Ancillary_Type.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Platform.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Sales_Ancillary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Sales_Ancillary_Sponsor.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Sales_Ancillary_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Supplementary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Supplementary_detail.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Tab_Version.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Rights_Template.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Sport_Ancillary_Wrapper.cs" />
+    <Compile Include="Acquisition_Entities\Avail_Acq.cs" />
+    <Compile Include="Acquisition_Entities\Avail_Acq_Details.cs" />
+    <Compile Include="Acquisition_Entities\Avail_Acq_Language.cs" />
+    <Compile Include="Acquisition_Entities\Deal_Rights_Process.cs" />
+    <Compile Include="Acquisition_Entities\Rights_Bulk_Update.cs" />
+    <Compile Include="Acq_Syn_List_Search.cs" />
+    <Compile Include="Assign_Music_List.cs" />
+    <Compile Include="Content_Entities\Content_Music_Link.cs" />
+    <Compile Include="Content_Entities\Content_Status_History.cs" />
+    <Compile Include="Content_Entities\Music_Override_Reason.cs" />
+    <Compile Include="Content_Entities\Music_Schedule_Exception.cs" />
+    <Compile Include="Content_Entities\Music_Schedule_Transaction.cs" />
+    <Compile Include="Content_Entities\Title_Content.cs" />
+    <Compile Include="Content_Entities\Title_Content_Mapping.cs" />
+    <Compile Include="Content_Entities\Title_Content_Version.cs" />
+    <Compile Include="Content_Entities\Title_Content_Version_Details.cs" />
+    <Compile Include="Content_Entities\USP_Music_Exception_Dashboard_Result.cs" />
+    <Compile Include="Deal_Schema.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="IPR\IPR_APP_STATUS.cs" />
+    <Compile Include="IPR\IPR_CLASS.cs" />
+    <Compile Include="IPR\IPR_Country.cs" />
+    <Compile Include="IPR\IPR_ENTITY.cs" />
+    <Compile Include="IPR\IPR_Opp.cs" />
+    <Compile Include="IPR\IPR_Opp_Attachment.cs" />
+    <Compile Include="IPR\IPR_Opp_Business_Unit.cs" />
+    <Compile Include="IPR\IPR_Opp_Channel.cs" />
+    <Compile Include="IPR\IPR_Opp_Email_Freq.cs" />
+    <Compile Include="IPR\IPR_Opp_Status.cs" />
+    <Compile Include="IPR\IPR_Opp_Status_History.cs" />
+    <Compile Include="IPR\IPR_REP.cs" />
+    <Compile Include="IPR\IPR_REP_ATTACHMENTS.cs" />
+    <Compile Include="IPR\IPR_Rep_Business_Unit.cs" />
+    <Compile Include="IPR\IPR_Rep_Channel.cs" />
+    <Compile Include="IPR\IPR_REP_CLASS.cs" />
+    <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
+    <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
+    <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\Supplementary.cs" />
+    <Compile Include="Master_Entities\Supplementary_Config.cs" />
+    <Compile Include="Master_Entities\Supplementary_Data.cs" />
+    <Compile Include="Master_Entities\Supplementary_Tab.cs" />
+    <Compile Include="Master_Entities\Title_Objection_List_Search.cs" />
+    <Compile Include="Master_Entities\Title_Objection.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Platform.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Rights_Period.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Status.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Territory.cs" />
+    <Compile Include="Master_Entities\Title_Objection_Type.cs" />
+    <Compile Include="Master_Entities\Platform_Broadcast.cs" />
+    <Compile Include="Master_Entities\DM_Title_Resolve_Conflict.cs" />
+    <Compile Include="Master_Entities\DM_Title_Import_Utility_Data.cs" />
+    <Compile Include="Master_Entities\DM_Title_Import_Utility.cs" />
+    <Compile Include="Master_Entities\Attrib_Group.cs" />
+    <Compile Include="Master_Entities\Users_Detail.cs" />
+    <Compile Include="Master_Entities\Revenue_Vertical.cs" />
+    <Compile Include="Master_Entities\Deal_Segment.cs" />
+    <Compile Include="Master_Entities\Deal_Description.cs" />
+    <Compile Include="Master_Entities\Additional_Expense.cs" />
+    <Compile Include="Master_Entities\Aired.cs" />
+    <Compile Include="Master_Entities\Aired_Details.cs" />
+    <Compile Include="Master_Entities\Alternate_Config.cs" />
+    <Compile Include="Master_Entities\Amort_Rule.cs" />
+    <Compile Include="Master_Entities\Amort_Rule_Details.cs" />
+    <Compile Include="Master_Entities\Ancillary_Medium.cs" />
+    <Compile Include="Master_Entities\Ancillary_Platform.cs" />
+    <Compile Include="Master_Entities\Ancillary_Platform_Medium.cs" />
+    <Compile Include="Master_Entities\Ancillary_Type.cs" />
+    <Compile Include="Master_Entities\AsRun_FileStatus.cs" />
+    <Compile Include="Master_Entities\ASRUN_Transaction.cs" />
+    <Compile Include="Master_Entities\ASRUN_Transaction_Shows.cs" />
+    <Compile Include="Master_Entities\BMS_All_Masters.cs" />
+    <Compile Include="Master_Entities\BMS_Asset.cs" />
+    <Compile Include="Master_Entities\BMS_Deal.cs" />
+    <Compile Include="Master_Entities\BMS_Deal_Content.cs" />
+    <Compile Include="Master_Entities\BMS_Deal_Content_Rights.cs" />
+    <Compile Include="Master_Entities\BMS_Log.cs" />
+    <Compile Include="Master_Entities\Broadcast_Mode.cs" />
+    <Compile Include="Master_Entities\Business_Unit.cs" />
+    <Compile Include="Master_Entities\BVException.cs" />
+    <Compile Include="Master_Entities\BVException_Channel.cs" />
+    <Compile Include="Master_Entities\BVException_Users.cs" />
+    <Compile Include="Master_Entities\BV_HouseId_Data.cs" />
+    <Compile Include="Master_Entities\BV_HouseId_Data_Shows.cs" />
+    <Compile Include="Master_Entities\BV_HouseId_Data_Temp.cs" />
+    <Compile Include="Master_Entities\BV_House_ID_Temp.cs" />
+    <Compile Include="Master_Entities\BV_Schedule_Transaction.cs" />
+    <Compile Include="Master_Entities\BV_Schedule_Transaction_Show.cs" />
+    <Compile Include="Master_Entities\BV_WBS.cs" />
+    <Compile Include="Master_Entities\Category.cs" />
+    <Compile Include="Master_Entities\Channel.cs" />
+    <Compile Include="Master_Entities\ChannelWiseConsumption_Report.cs" />
+    <Compile Include="Master_Entities\Channel_Category.cs" />
+    <Compile Include="Master_Entities\Channel_Category_Details.cs" />
+    <Compile Include="Master_Entities\Channel_Cluster.cs" />
+    <Compile Include="Master_Entities\Channel_Entity.cs" />
+    <Compile Include="Master_Entities\Channel_Region.cs" />
+    <Compile Include="Master_Entities\Channel_Region_Mapping.cs" />
+    <Compile Include="Master_Entities\Channel_Territory.cs" />
+    <Compile Include="Master_Entities\Cost_Center.cs" />
+    <Compile Include="Master_Entities\Cost_Type.cs" />
+    <Compile Include="Master_Entities\Country.cs" />
+    <Compile Include="Master_Entities\Country_Language.cs" />
+    <Compile Include="Master_Entities\Currency.cs" />
+    <Compile Include="Master_Entities\Currency_Exchange_Rate.cs" />
+    <Compile Include="Master_Entities\Deal_Tag.cs" />
+    <Compile Include="Master_Entities\Deal_Type.cs" />
+    <Compile Include="Master_Entities\Deal_Workflow_Status.cs" />
+    <Compile Include="Master_Entities\DM_AQDeal.cs" />
+    <Compile Include="Master_Entities\DM_Content_Music.cs" />
+    <Compile Include="Master_Entities\DM_Master_Import.cs" />
+    <Compile Include="Master_Entities\DM_Master_Log.cs" />
+    <Compile Include="Master_Entities\DM_Music_Title.cs" />
+    <Compile Include="Master_Entities\DM_Title.cs" />
+    <Compile Include="Master_Entities\Document_Type.cs" />
+    <Compile Include="Master_Entities\Email_Config.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail_Alert.cs" />
+    <Compile Include="Master_Entities\Email_Config_Detail_User.cs" />
+    <Compile Include="Master_Entities\Email_Notification_AsRun.cs" />
+    <Compile Include="Master_Entities\Email_Notification_AsRun_Shows.cs" />
+    <Compile Include="Master_Entities\Email_Notification_Log.cs" />
+    <Compile Include="Master_Entities\Email_Notification_Msg.cs" />
+    <Compile Include="Master_Entities\Email_Notification_Schedule.cs" />
+    <Compile Include="Master_Entities\Email_Notification_Schedule_Show.cs" />
+    <Compile Include="Master_Entities\Email_Template.cs" />
+    <Compile Include="Master_Entities\Entity.cs" />
+    <Compile Include="Master_Entities\ErrorOn_AsRun_Schedule.cs" />
+    <Compile Include="Master_Entities\ErrorOn_SendMail_For_Workflow.cs" />
+    <Compile Include="Master_Entities\Error_Code_Master.cs" />
+    <Compile Include="Master_Entities\Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Extended_Columns_Value.cs" />
+    <Compile Include="Master_Entities\Format_Show_Data.cs" />
+    <Compile Include="Master_Entities\Genre.cs" />
+    <Compile Include="Master_Entities\Glossary.cs" />
+    <Compile Include="Master_Entities\Glossary_AskExpert.cs" />
+    <Compile Include="Master_Entities\Grade_Master.cs" />
+    <Compile Include="Master_Entities\HouseID_Type.cs" />
+    <Compile Include="Master_Entities\Language.cs" />
+    <Compile Include="Master_Entities\Language_Deal_Log.cs" />
+    <Compile Include="Master_Entities\Language_Group.cs" />
+    <Compile Include="Master_Entities\Language_Group_Details.cs" />
+    <Compile Include="Master_Entities\Login_Details.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
+    <Compile Include="Master_Entities\Material_Medium.cs" />
+    <Compile Include="Master_Entities\Material_Order.cs" />
+    <Compile Include="Master_Entities\Material_Order_Details.cs" />
+    <Compile Include="Master_Entities\Material_Receipt.cs" />
+    <Compile Include="Master_Entities\Material_Receipt_Order.cs" />
+    <Compile Include="Master_Entities\Material_Type.cs" />
+    <Compile Include="Master_Entities\Milestone_Nature.cs" />
+    <Compile Include="Master_Entities\Milestone_Type.cs" />
+    <Compile Include="Master_Entities\Module_Status_History.cs" />
+    <Compile Include="Master_Entities\Module_Workflow_Detail.cs" />
+    <Compile Include="Master_Entities\Monetisation_Type.cs" />
+    <Compile Include="Master_Entities\MQ_Log.cs" />
+    <Compile Include="Master_Entities\Music_Album.cs" />
+    <Compile Include="Master_Entities\Music_Album_Talent.cs" />
+    <Compile Include="Master_Entities\Music_Label.cs" />
+    <Compile Include="Master_Entities\Music_Language.cs" />
+    <Compile Include="Master_Entities\Music_Theme.cs" />
+    <Compile Include="Master_Entities\Music_Title.cs" />
+    <Compile Include="Master_Entities\Music_Title_Label.cs" />
+    <Compile Include="Master_Entities\Music_Title_Language.cs" />
+    <Compile Include="Master_Entities\Music_Title_Talent.cs" />
+    <Compile Include="Master_Entities\Music_Title_Theme.cs" />
+    <Compile Include="Master_Entities\Music_Type.cs" />
+    <Compile Include="Master_Entities\Paf.cs" />
+    <Compile Include="Master_Entities\Paf_Cost_Type.cs" />
+    <Compile Include="Master_Entities\Paf_Cost_Type_Mapping.cs" />
+    <Compile Include="Master_Entities\Paf_Details.cs" />
+    <Compile Include="Master_Entities\PAF_Detail_Import_Temp.cs" />
+    <Compile Include="Master_Entities\Party_Category.cs" />
+    <Compile Include="Master_Entities\Payment_Terms.cs" />
+    <Compile Include="Master_Entities\Platform.cs" />
+    <Compile Include="Master_Entities\Platform_Group.cs" />
+    <Compile Include="Master_Entities\Platform_Group_Details.cs" />
+    <Compile Include="Master_Entities\Party_Group.cs" />
+    <Compile Include="Master_Entities\Program.cs" />
+    <Compile Include="Master_Entities\Promoter_Group.cs" />
+    <Compile Include="Master_Entities\Promoter_Remarks.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Run_Channel.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Type.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Title.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal_Licensor.cs" />
+    <Compile Include="Master_Entities\Provisional_Deal.cs" />
+    <Compile Include="Master_Entities\Report_Column.cs" />
+    <Compile Include="Master_Entities\Report_Column_Setup.cs" />
+    <Compile Include="Master_Entities\Report_Condition.cs" />
+    <Compile Include="Master_Entities\Report_Format.cs" />
+    <Compile Include="Master_Entities\Report_Query.cs" />
+    <Compile Include="Master_Entities\Report_Territory.cs" />
+    <Compile Include="Master_Entities\Report_Territory_Country.cs" />
+    <Compile Include="Master_Entities\Revenue_Heads.cs" />
+    <Compile Include="Master_Entities\Right_Rule.cs" />
+    <Compile Include="Master_Entities\ROFR.cs" />
+    <Compile Include="Master_Entities\Role.cs" />
+    <Compile Include="Master_Entities\Royalty_Commission.cs" />
+    <Compile Include="Master_Entities\Royalty_Commission_Details.cs" />
+    <Compile Include="Master_Entities\Royalty_Recoupment.cs" />
+    <Compile Include="Master_Entities\Royalty_Recoupment_Details.cs" />
+    <Compile Include="Master_Entities\RunData.cs" />
+    <Compile Include="Master_Entities\SAP_Export.cs" />
+    <Compile Include="Master_Entities\SAP_WBS.cs" />
+    <Compile Include="Master_Entities\Sponsor.cs" />
+    <Compile Include="Master_Entities\Sport_Ancillary_Broadcast.cs" />
+    <Compile Include="Master_Entities\Sport_Ancillary_Config.cs" />
+    <Compile Include="Master_Entities\Sport_Ancillary_Periodicity.cs" />
+    <Compile Include="Master_Entities\Sport_Ancillary_Source.cs" />
+    <Compile Include="Master_Entities\Sport_Ancillary_Type.cs" />
+    <Compile Include="Master_Entities\Sub_License.cs" />
+    <Compile Include="Master_Entities\Syn_Acq_Mapping.cs" />
+    <Compile Include="Master_Entities\System_Language.cs" />
+    <Compile Include="Master_Entities\System_Language_Message.cs" />
+    <Compile Include="Master_Entities\System_Message.cs" />
+    <Compile Include="Master_Entities\System_Module_Message.cs" />
+    <Compile Include="Master_Entities\Talent.cs" />
+    <Compile Include="Master_Entities\Talent_Role.cs" />
+    <Compile Include="Master_Entities\TAT.cs" />
+    <Compile Include="Master_Entities\TATSLA.cs" />
+    <Compile Include="Master_Entities\TATSLAMatrix.cs" />
+    <Compile Include="Master_Entities\TATSLAMatrixDetail.cs" />
+    <Compile Include="Master_Entities\TATSLAStatus.cs" />
+    <Compile Include="Master_Entities\TATStatusLog.cs" />
+    <Compile Include="Master_Entities\TblHouseIdMap.cs" />
+    <Compile Include="Master_Entities\TblHouseIdRange.cs" />
+    <Compile Include="Master_Entities\Territory.cs" />
+    <Compile Include="Master_Entities\Territory_Deal_Log.cs" />
+    <Compile Include="Master_Entities\Territory_Details.cs" />
+    <Compile Include="Master_Entities\Title.cs" />
+    <Compile Include="Master_Entities\TitleType_HouseId_Prefix.cs" />
+    <Compile Include="Master_Entities\Title_Alternate.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Content.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Country.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Genres.cs" />
+    <Compile Include="Master_Entities\Title_Alternate_Talent.cs" />
+    <Compile Include="Master_Entities\Title_Audio_Details.cs" />
+    <Compile Include="Master_Entities\Title_Audio_Details_Singers.cs" />
+    <Compile Include="Master_Entities\Title_Country.cs" />
+    <Compile Include="Master_Entities\Title_Geners.cs" />
+    <Compile Include="Master_Entities\Title_Milestone.cs" />
+    <Compile Include="Master_Entities\Title_Promotion.cs" />
+    <Compile Include="Master_Entities\Title_Release.cs" />
+    <Compile Include="Master_Entities\Title_Release_Platforms.cs" />
+    <Compile Include="Master_Entities\Title_Release_Region.cs" />
+    <Compile Include="Master_Entities\Title_Talent.cs" />
+    <Compile Include="Master_Entities\Title_Type.cs" />
+    <Compile Include="Master_Entities\Upload_Err_Detail.cs" />
+    <Compile Include="Master_Entities\Upload_Files.cs" />
+    <Compile Include="Master_Entities\User.cs" />
+    <Compile Include="Master_Entities\Users_Business_Unit.cs" />
+    <Compile Include="Master_Entities\Users_Channel.cs" />
+    <Compile Include="Master_Entities\Users_Configuration.cs" />
+    <Compile Include="Master_Entities\Users_Entity.cs" />
+    <Compile Include="Master_Entities\Users_Exclusion_Rights.cs" />
+    <Compile Include="Master_Entities\Users_Password_Detail.cs" />
+    <Compile Include="Master_Entities\Vendor.cs" />
+    <Compile Include="Master_Entities\Vendor_Contacts.cs" />
+    <Compile Include="Master_Entities\Vendor_Country.cs" />
+    <Compile Include="Master_Entities\Vendor_Role.cs" />
+    <Compile Include="Master_Entities\Version.cs" />
+    <Compile Include="Master_Entities\WBS_Type.cs" />
+    <Compile Include="Master_Entities\Workflow.cs" />
+    <Compile Include="Master_Entities\Workflow_BU.cs" />
+    <Compile Include="Master_Entities\Workflow_BU_Role.cs" />
+    <Compile Include="Master_Entities\Workflow_Module.cs" />
+    <Compile Include="Master_Entities\Workflow_Module_BU.cs" />
+    <Compile Include="Master_Entities\Workflow_Module_BU_Role.cs" />
+    <Compile Include="Master_Entities\Workflow_Module_Role.cs" />
+    <Compile Include="Master_Entities\Workflow_Role.cs" />
+    <Compile Include="MusicHub_Entities\MHCueSheet.cs" />
+    <Compile Include="MusicHub_Entities\MHCueSheetSong.cs" />
+    <Compile Include="MusicHub_Entities\MHPlayList.cs" />
+    <Compile Include="MusicHub_Entities\MHPlayListSong.cs" />
+    <Compile Include="MusicHub_Entities\MHRequest.cs" />
+    <Compile Include="MusicHub_Entities\MHRequestDetail.cs" />
+    <Compile Include="MusicHub_Entities\MHRequestStatu.cs" />
+    <Compile Include="MusicHub_Entities\MHRequestType.cs" />
+    <Compile Include="MusicHub_Entities\MHUser.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_Channel.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_Country.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_DealType.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_Language.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_LinkShow.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_Platform.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Deal_Vendor.cs" />
+    <Compile Include="Music_Deal_Entities\Music_Platform.cs" />
+    <Compile Include="ProjectMilestone\ProjectMilestone.cs" />
+    <Compile Include="ProjectMilestone\ProjectMilestoneDetail.cs" />
+    <Compile Include="ProjectMilestone\ProjectMilestoneTitle.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusMessage.cs" />
+    <Compile Include="StoreProcedure_Entities\USPBindJobAndExecute_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPExportToExcelBulkImport_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPGetAiredNotAiredDates_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPGetTitleCode_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPGetTitleEpisodes_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPListResolveConflict_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHCueSheetList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHMusicTitleAlbumSearch_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHGetChartPopupList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHRequisitionList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHRequistionTrackList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPMHStatusHistoryList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPPopulateTitleForMapping_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPRUBVMappingList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPTATList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_SUPPLEMENTARY_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Syn_Ancillary_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Supplementary_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_SUPP_Create_Table_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_PreReq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Objection_PreReq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Objection_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_IPR_Dashboard_Details_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_Import_Utility_AdvSearch_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Import_RCData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_ResolveConflict_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Release_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_List_Runs_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Add_ACQ_Milestone_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Udt.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Audit_Log_Report_for_Territory_and_Language_Group_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Bind_Extend_Column_Grid_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Bind_Title_Platform_Tree_Report_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Bind_Title_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Check_HoldBack_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Close_Deal_Movie_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Deal_Rights_Template_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Export_Table_To_Excel_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Generate_Deal_Type_Year_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentMetadata_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentRestrictionRemarks_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsAiringData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsMusicData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsRightData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsStatusHistoryData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsVersionData_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetMenu_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetMinMaxEpisode_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetRunDefinitonForContent_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetSystem_Language_Message_ByModule_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Rights_Details_Codes_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Syn_Status_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Avail_Titles_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_BUWise_Title_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Content_Cost_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Dashboard_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Dashboard_Detail_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_DATA_FOR_APPROVED_TITLES_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Login_Details_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Mapping_SubTitling_Dubbing_Languages_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Music_Platform_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Music_Reports_PreReq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Platform_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_PreReq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Promoter_Group_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Provisional_Deal_Title_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Release_Content_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Security_Group_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Rights_Errors_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Talent_Name_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Termination_Title_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Territory_ForDDL_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_Availability_LanguageWise_Filter_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_Avail_Language_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_Avail_Language_Data_Show_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_Content_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_DATA_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_RUN_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_SYN_RUN_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_PreReq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_WBS_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_User_Security_Group_Tree_Hierarchy_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Integration_Generate_XML_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Integration_Response_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Integration_SDM_Generate_XML_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_Ancillary_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_Budget_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_Deal_Status_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_Linear_Title_Status_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_PaymentTerms_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Acq_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Amort_Rule_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Approval_Acq_Syn_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Assign_Music_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_BMS_log_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_BV_WBS_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_ContentBulkImport_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Content_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Content_Version_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Cost_Colors_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Country_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Deal_Title_Content_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_DM_Master_Import_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_IPR_Opp_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_IPR_Opp_Status_History_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_IPR_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_IPR_Status_History_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_MusicTrackBulkImport_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_MusicTrack_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Music_Deal_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Music_Title_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Platform_Group_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Provisional_Deal_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Rights_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Sports_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Status_History_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Syn_Deal_Status_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Syn_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Territory_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_TitleBulkImport_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Title_Content_ExportToXml_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Title_Milestone_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_List_Validation_Error_Message_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Login_Details_Report_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Music_Deal_Link_Show_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Music_Deal_Schedule_Validation_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Music_Exception_Handling_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Music_Title_Contents_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_PopulateContent_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Populate_Master_Deal_Titles_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Populate_Music_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Populate_Titles_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_RollBack_Acq_Deal_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_RollBack_Syn_Deal_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_SAP_Export_Detail_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Schedule_AsRun_Report_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Schedule_ShowDetails_Sche_Report_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Search_Run_Shows_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Select_Mass_Territory_Update_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_SendMail_AskExpert_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Syn_Bulk_Populate_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Syn_Deal_Rights_Holdback_Validation_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Syn_List_Runs_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_Deal_Info_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_Detail_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_Error_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_ValidateIfHoldbackExist_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_And_Save_Assigned_Music_UDT.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_Close_Movie__Scheduled_Run_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_Duplicate_Syn_Run_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_Episode_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_Rights_Duplication_UDT.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_Run_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_SDM_Title_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_VALIDATE_SYN_TITLES_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_VALIDATE_TITLES_FOR_YEARWISE_RUN_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_YEARWISE_RIGHT_FOR_RUN_Result.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Ancillary.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Ancillary_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Ancillary_Platform_Medium.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Ancillary_Title.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Attachment.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Material.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Movie.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Payment_Terms.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Additional_Exp.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Commission.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Costtype.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Costtype_Episode.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Title.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Revenue_Variable_Cost.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Blackout.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Blackout_Dubbing.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Blackout_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Blackout_Subtitling.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Blackout_Territory.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Holdback.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Holdback_Dubbing.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Holdback_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Holdback_Subtitling.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Holdback_Territory.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Promoter.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Promoter_Group.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Promoter_Remarks.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Territory.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Rights_Title.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Run.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Run_Platform.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Run_Yearwise_Run.cs" />
+    <Compile Include="System_Setting_Entities\Security_Group.cs" />
+    <Compile Include="System_Setting_Entities\Security_Group_Rel.cs" />
+    <Compile Include="System_Setting_Entities\Sql_Job_Parameters.cs" />
+    <Compile Include="System_Setting_Entities\System_Module.cs" />
+    <Compile Include="System_Setting_Entities\System_Module_Right.cs" />
+    <Compile Include="System_Setting_Entities\System_Parameter_New.cs" />
+    <Compile Include="System_Setting_Entities\System_Right.cs" />
+    <Compile Include="System_Setting_Entities\System_Versions.cs" />
+    <Compile Include="Title_List.cs" />
+    <Compile Include="RightsU_Session.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
