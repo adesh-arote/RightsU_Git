@@ -69,5 +69,6 @@ namespace RightsU_Entities
         public List<Deal_Rights_Dubbing_UDT> LstDeal_Pushback_Dubbing_UDT { get; set; }
         public string str_Right_Start_Date { get; set; }
         public string str_Right_End_Date { get; set; }
+        public string Perpetuity_Date { get; set; }
     }
 }

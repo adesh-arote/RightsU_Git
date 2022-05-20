@@ -326,6 +326,31 @@
                 IsValid = false;
             }
         }
+        if (Selected_Right_Type_Tab == 'liTabPerpetuity') {
+            var txtPerpetuity_StartDate = $("#txtPerpetuity_StartDate").val();
+            if ((txtPerpetuity_StartDate == null || txtPerpetuity_StartDate == '' || txtPerpetuity_StartDate == undefined)) {
+                $("#txtPerpetuity_StartDate").attr('required', true);
+                //showAlert('E', 'Please select Start date');
+                IsValid = false;
+            }
+            else {
+                $('#hdnRight_Start_Date').val(txtPerpetuity_StartDate);
+                var rightSD = new Date(MakeDateFormate(txtPerpetuity_StartDate));
+                var year = rightSD.getFullYear();
+                var month = rightSD.getMonth();
+                var day = rightSD.getDate();
+                var rightED = new Date(year + @ViewBag.perpetuity_years, month, day);
+                
+
+                var term = CalculateTerm(rightSD, rightED);
+                var arr = term.split('.');
+                $('#Term_YY').val(arr[0]);
+                $('#Term_MM').val(arr[1]);
+                $('#Term_DD').val(arr[2]);
+            }
+        }
+
+
         if ($("#hdnTVCodes").val() == null || $("#hdnTVCodes").val() == '') {
             $('#Rights_Platform').addClass('required');
             //showAlert('E', 'Please select atleast one platform');
@@ -422,8 +447,10 @@
             var Selected_Right_Type_Tab = $('#ulRightType > li.active a').attr('id');
             if (Selected_Right_Type_Tab == 'liTabYear')
                 $('#Right_Type').val('Y');
-            else
+            else if (Selected_Right_Type_Tab == 'liTabMilestone')
                 $('#Right_Type').val('M');
+            else if (Selected_Right_Type_Tab == 'liTabPerpetuity')
+                $('#Right_Type').val('U');
 
             @*var formData = $("#frm_Save_Pushback").serializeArray();
             $.ajax({
@@ -750,15 +777,17 @@
     }
 </script>
 <style>
-    #Tree_Filter_Rights_Platform {   
-        width:413px;
-        position:relative!important;
-        margin-left:0px !important;
-        margin-top:0px !important;
+    #Tree_Filter_Rights_Platform {
+        width: 413px;
+        position: relative !important;
+        margin-left: 0px !important;
+        margin-top: 0px !important;
     }
-    #Rights_Platform{
-        margin:0px 0px 0px 0px!important;
+
+    #Rights_Platform {
+        margin: 0px 0px 0px 0px !important;
     }
+
     ul.col-md-6 {
         padding-left: 0;
     }
@@ -808,7 +837,7 @@
                             {
                                 <h2>@objMessageKey.AddReverseHoldback</h2>
                             }
-                            else if(ViewBag.Mode == "CLONE")
+                            else if (ViewBag.Mode == "CLONE")
                             {
                                 <h2>Clone Reverse Holdback </h2>
                             }
@@ -886,6 +915,9 @@
                                                     <li class="">
                                                         <a data-toggle="tab" id="liTabMilestone" href="#tabMilestone" onclick="ChangeRightType('Milestone')" role="tab">@objMessageKey.Milestone</a>
                                                     </li>
+                                                    <li class="">
+                                                        <a data-toggle="tab" id="liTabPerpetuity" href="#tabPerpetuity" onclick="ChangeRightType('Perpetuity')" role="tab">@objMessageKey.Perpetuity</a>
+                                                    </li>
                                                 </ul>
                                                 <div class="tab-content clearfix table-wrapper scale_table_container">
                                                     <div class="tab-pane active scale_table_block" id="tabYear">
@@ -922,23 +954,23 @@
                                                                 <label>@objMessageKey.EndDate</label>
                                                                 @{
                                                                     @(Model.Is_Tentative == "Y" ? @Html.TextBoxFor(model => model.Right_End_Date,
-                                                            new
-                                                            {
-                                                                @name = "Right_End_Date",
-                                                                @class = "isDatepicker",
-                                                                @placeholder = "DD/MM/YYYY",
-                                                                id = "txtRight_End_Date",
-                                                                @disabled = "disabled",
-                                                                Value = ""
-                                                            }) :
-                                                            @Html.TextBoxFor(model => model.Right_End_Date, new
-                                                            {
-                                                                @name = "Right_End_Date",
-                                                                @class = "isDatepicker",
-                                                                @placeholder = "DD/MM/YYYY",
-                                                                id = "txtRight_End_Date",
-                                                                Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
-                                                            }))
+new
+{
+@name = "Right_End_Date",
+@class = "isDatepicker",
+@placeholder = "DD/MM/YYYY",
+id = "txtRight_End_Date",
+@disabled = "disabled",
+Value = ""
+}) :
+@Html.TextBoxFor(model => model.Right_End_Date, new
+{
+@name = "Right_End_Date",
+@class = "isDatepicker",
+@placeholder = "DD/MM/YYYY",
+id = "txtRight_End_Date",
+Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
+}))
                                                                 }
                                                                 @Html.Hidden("hdnRight_Start_Date")
                                                                 @Html.Hidden("hdnRight_End_Date")
@@ -961,6 +993,18 @@
                                                                 @Html.DropDownList("Milestone_Unit_Type", (SelectList)ViewBag.Milestone_Unit_Popup, new { @id = "ddlMilestoneUnitType", @class = "form_input chosen-select" })
                                                             </li>
                                                         </ul>
+                                                    </div>
+                                                    <div class="tab-pane scale_table_block" id="tabPerpetuity">
+                                                        <ul style="height: 30px;">
+                                                            <li style="text-decoration: none;display: inline;width: 35%">
+                                                                <input type="hidden" value="@ViewBag.Allow_Perpetual_Date_Logic" id="hdnAllow_Perpetual_Date_Logic" />
+                                                                <label>@objMessageKey.StartDate</label>
+                                                                @*@Html.TextBox("Right_Start_Date", Model.Right_Start_Date, new { autocomplete = "off", @id = "txtPerpetuity_StartDate", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })*@
+                                                                @Html.TextBox("Perpetuity_Date", string.Format("{0:dd/MM/yyyy}", Model.Right_Start_Date), new { @class = "isDatepicker", @id = "txtPerpetuity_StartDate", @placeholder = "DD/MM/YYYY" })
+                                                            </li>
+
+                                                        </ul>
+
                                                     </div>
                                                 </div>
                                             </div>
