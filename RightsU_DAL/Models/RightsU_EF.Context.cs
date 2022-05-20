@@ -5402,16 +5402,7 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_PreReq_Result>("USP_Title_Objection_Adv_PreReq", typeParameter);
         }
-
-        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
-        {
-            var supplementaryCodeParameter = supplementaryCode.HasValue ?
-                new ObjectParameter("SupplementaryCode", supplementaryCode) :
-                new ObjectParameter("SupplementaryCode", typeof(int));
-
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Acq_Supplementary_Delete_Title", supplementaryCodeParameter);
-        }
-
+    
         public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
@@ -5450,25 +5441,21 @@ namespace RightsU_DAL
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Edit_Row_Result>("USP_Get_Edit_Row", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code)
         {
             var tabCodeParameter = tabCode.HasValue ?
                 new ObjectParameter("tabCode", tabCode) :
                 new ObjectParameter("tabCode", typeof(int));
-
+    
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-
+    
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-
-            var viewParameter = view != null ?
-                new ObjectParameter("View", view) :
-                new ObjectParameter("View", typeof(string));
-
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SUPP_Create_Table_Result>("USP_SUPP_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SUPP_Create_Table_Result>("USP_SUPP_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter);
         }
         public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List(Nullable<int> deal_Code, string title_Code)
         {
