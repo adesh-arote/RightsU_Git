@@ -108,13 +108,13 @@
 </script>
 
 <style>
-    .SumoSelect, #divlbTitle_Popup, #divlbMedium_Popup, #divlbRights_Popup {
+    /*.SumoSelect, #divlbMedium_Popup, #divlbRights_Popup {
         width: 80% !important;
-    }
+    }*/
 
-        #divlbTitle_Popup > div {
+        /*#divlbTitle_Popup > div {
             width: 100% !important;
-        }
+        }*/
 
         #divlbMedium_Popup > div {
             width: 100% !important;
@@ -183,7 +183,9 @@
         white-space: nowrap;
         line-height: 25px;
     }*/
-
+    .SumoSelect {
+        width: 385px !important;
+    }
 </style>
 <script src="~/Custom_Scripts/Syn_Deal_Ancillary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 @if (ViewBag.Mode != null && (ViewBag.Mode == "ADD" || ViewBag.Mode == "EDIT" || ViewBag.Mode == "CLONE"))

@@ -96,6 +96,15 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Ancillary_Validate_Udt(lstAncillary_Title, lstAncillary_Platform, lstAncillary_Platform_Medium, Ancillary_Type_code, Catch_Up_From, Acq_Deal_Ancillary_Code, Acq_Deal_Code);
         }
 
+        public IEnumerable<USP_Ancillary_Validate_Syn_Udt> USP_Ancillary_Validate_Syn_Udt(
+           List<Deal_Ancillary_Title_UDT> lstAncillary_Title,
+            List<Deal_Ancillary_Platform_UDT> lstAncillary_Platform,
+            List<Deal_Ancillary_Platform_Medium_UDT> lstAncillary_Platform_Medium, int Ancillary_Type_code, string Catch_Up_From, int Acq_Deal_Ancillary_Code, int Acq_Deal_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Ancillary_Validate_Syn_Udt(lstAncillary_Title, lstAncillary_Platform, lstAncillary_Platform_Medium, Ancillary_Type_code, Catch_Up_From, Acq_Deal_Ancillary_Code, Acq_Deal_Code);
+        }
+
         public IEnumerable<USP_Validate_Rights_Duplication_UDT> USP_Validate_Rights_Duplication_UDT(
             List<Deal_Rights_UDT> LstDeal_Rights_UDT,
             List<Deal_Rights_Title_UDT> LstDeal_Rights_Title_UDT,

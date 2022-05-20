@@ -102,7 +102,7 @@ $(document).ready(function () {
     $('#txtDay').numeric();
     $('#txtDuration').numeric();
     if (recordMode_G == "EDIT") {
-        if (acqDealAncillaryCode_G > 0) {
+        if (synDealAncillaryCode_G > 0) {
             var txtRemark = document.getElementById('txtRemarks');
             countChar(txtRemark);
         }
