@@ -1639,6 +1639,12 @@ namespace RightsU_DAL
             return objContext.USP_List_Syn_Ancillary(syn_Deal_Code);
         }
 
+        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Acq_Supplementary_Delete_Title(supplementaryCode);
+        }
+
         public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
@@ -1651,10 +1657,10 @@ namespace RightsU_DAL
             return objContext.USP_Acq_SUPP_Tab(Supplementary_Tab_Code);
         }
 
-        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode)
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode, string View)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_SUPP_Create_Table(Tab_Code, Acq_Deal_Code, TitleCode);
+            return objContext.USP_SUPP_Create_Table(Tab_Code, Acq_Deal_Code, TitleCode, View);
         }
 
         public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
