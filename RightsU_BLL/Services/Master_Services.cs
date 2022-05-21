@@ -7161,6 +7161,155 @@ namespace RightsU_BLL
             throw new NotImplementedException();
         }
     }
+
+
+    public class Attrib_Group_Service : BusinessLogic<Attrib_Group>
+    {
+        private readonly Attrib_Group_Repository objAttrib_Group_Repository;
+
+        public Attrib_Group_Service(string Connection_Str)
+        {
+            this.objAttrib_Group_Repository = new Attrib_Group_Repository(Connection_Str);
+        }
+        public IQueryable<Attrib_Group> SearchFor(Expression<Func<Attrib_Group, bool>> predicate)
+        {
+            return objAttrib_Group_Repository.SearchFor(predicate);
+        }
+
+        public Attrib_Group GetById(int id)
+        {
+            return objAttrib_Group_Repository.GetById(id);
+        }
+        public bool Save(Attrib_Group objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objAttrib_Group_Repository, out resultSet);
+        }
+        public override bool Validate(Attrib_Group objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Attrib_Group objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Attrib_Group objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Supplementary_Service : BusinessLogic<Supplementary>
+    {
+        private readonly Supplementary_Repository obj_Repository;
+
+        public Supplementary_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Supplementary_Repository(Connection_Str);
+        }
+
+        public IQueryable<Supplementary> SearchFor(Expression<Func<Supplementary, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Supplementary GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Supplementary objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Supplementary objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Supplementary objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Supplementary_Data_Service
+    {
+        private readonly Supplementary_Data_Repository obj_Repository;
+
+        public Supplementary_Data_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Supplementary_Data_Repository(Connection_Str);
+        }
+
+        public IQueryable<Supplementary_Data> SearchFor(Expression<Func<Supplementary_Data, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Supplementary_Data GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Supplementary_Tab_Service : BusinessLogic<Supplementary_Tab>
+    {
+        private readonly Supplementary_Tab_Repository obj_Repository;
+
+        public Supplementary_Tab_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Supplementary_Tab_Repository(Connection_Str);
+        }
+
+        public IQueryable<Supplementary_Tab> SearchFor(Expression<Func<Supplementary_Tab, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Supplementary_Tab GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Supplementary_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Supplementary_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Supplementary_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Supplementary_Config_Service
+    {
+        private readonly Supplementary_Config_Repository obj_Repository;
+
+        public Supplementary_Config_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Supplementary_Config_Repository(Connection_Str);
+        }
+
+        public IQueryable<Supplementary_Config> SearchFor(Expression<Func<Supplementary_Config, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Supplementary_Config GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
 }
-
-

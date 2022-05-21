@@ -180,7 +180,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForAcq_Rights_Template = 213;
         public const int ModuleCodeForDealWorkflowStausPending = 217;
         public const int ModuleCodeFor_IPR_Dashboard = 249;
-        public const int ModuleCodeForTitleObjection= 251;
+        public const int ModuleCodeForTitleObjection = 251;
         public const int ModuleCodeForDealDescription = 252;
         public const int ModuleCodeForTitleObjectionType = 253;
 
@@ -238,6 +238,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightCodeForAddLanguage = 117;
         public const int RightCodeForAcqSportsTab = 118;
         public const int RightCodeForAcqBudgetTab = 119;
+        public const int RightCodeForAcqSupplementaryTab = 172;
         public const int RightCodeForSynRunTab = 120;
         public const int RightCodeForExportToExcel = 121;
         public const int RightCodeForDomesticTab = 122;
@@ -270,6 +271,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightCodeForBulkUpdateRun = 161;
         public const int RightCodeForBulkDeleteRun = 162;
         public const int RightCodeForBulkAssignment = 163;
+        public const int RightCodeForAddSupplementaryButton = 173;
         public const int RightCodeForDealArchive = 164;
         public const int RightCodeForUserConfigurationTab = 165;
         public const int RightCodeForSendForArchive = 166;
@@ -295,6 +297,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const string Page_From_Rights = "RGT";
         public const string Page_From_Rights_Detail_View = "RGT_DTL_VW";
         public const string Page_From_Rights_Detail_AddEdit = "RGT_DTL_AE";
+        public const string Page_From_Supplementary_AddEdit = "SUPP_DTL_AE";
         public const string Page_From_Pushback = "PBK";
         public const string Page_From_Run = "RUN";
         public const string Page_From_Run_Detail_View = "RUN_DTL_VW";
@@ -307,6 +310,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const string Page_From_Material = "MTR";
         public const string Page_From_Attachment = "ATT";
         public const string Page_From_StatusHistory = "STH";
+        public const string Page_From_Supplementary = "SUPP";
         public const string Page_From_Amort = "AMORT";
         public const string Page_From_Revenue = "REV";
         public const string Page_From_Rights_Bulk_Update = "BLK";
@@ -1759,7 +1763,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "ACQUITION_DEAL_LIST_REPORT")
                 ReportPath = ReportFolder + "/rptAcquisition_Deal_List";
             else if (ReportName == "AUDIT_TRAIL_LIST_REPORT")
-                ReportPath = ReportFolder + "/rptAuditTrailAcqSyn";            
+                ReportPath = ReportFolder + "/rptAuditTrailAcqSyn";
             else if (ReportName == "SYNDICATION_DEAL_LIST_REPORT")
                 ReportPath = ReportFolder + "/rptSyndication_Deal_List";
             else if (ReportName == "rpt_AncillaryRightsReport")

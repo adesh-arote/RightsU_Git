@@ -37,7 +37,7 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_List_Acq(strSearch, pageNo, orderByCndition, isPaging, pageSize, user_Code, exactMatch, recordCount);
         }
-        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch,string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
+        public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch, string Type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, Nullable<int> user_Code, string exactMatch, ObjectParameter recordCount)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Title_Objection_Adv_List(strSearch, Type, pageNo, orderByCndition, isPaging, pageSize, user_Code, exactMatch, recordCount);
@@ -94,6 +94,15 @@ namespace RightsU_BLL
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Ancillary_Validate_Udt(lstAncillary_Title, lstAncillary_Platform, lstAncillary_Platform_Medium, Ancillary_Type_code, Catch_Up_From, Acq_Deal_Ancillary_Code, Acq_Deal_Code);
+        }
+
+        public IEnumerable<USP_Ancillary_Validate_Syn_Udt> USP_Ancillary_Validate_Syn_Udt(
+           List<Deal_Ancillary_Title_UDT> lstAncillary_Title,
+            List<Deal_Ancillary_Platform_UDT> lstAncillary_Platform,
+            List<Deal_Ancillary_Platform_Medium_UDT> lstAncillary_Platform_Medium, int Ancillary_Type_code, string Catch_Up_From, int Acq_Deal_Ancillary_Code, int Acq_Deal_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Ancillary_Validate_Syn_Udt(lstAncillary_Title, lstAncillary_Platform, lstAncillary_Platform_Medium, Ancillary_Type_code, Catch_Up_From, Acq_Deal_Ancillary_Code, Acq_Deal_Code);
         }
 
         public IEnumerable<USP_Validate_Rights_Duplication_UDT> USP_Validate_Rights_Duplication_UDT(
@@ -1609,11 +1618,46 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Title_Objection_PreReq(titleCode, record_Code, record_Type, pCodes);
         }
-
         public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_List_Syn_Ancillary(syn_Deal_Code);
+        }
+
+        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Acq_Supplementary_Delete_Title(supplementaryCode);
+        }
+
+        public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Acq_Deal_Code, title_code);
+        }
+
+        public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab_Result(Nullable<int> Supplementary_Tab_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Acq_SUPP_Tab_Result(Supplementary_Tab_Code);
+        }
+
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table_Result(Nullable<int> Tab_Code, Nullable<int> Acq_Deal_Code, string TitleCode, string View)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_SUPP_Create_Table_Result(Tab_Code, Acq_Deal_Code, TitleCode, View);
+        }
+
+        public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Get_Edit_Row_Result(Acq_Deal_Supplementary_Code, Row_Num, shortName);
+        }
+
+        public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Supplementary_List_Result(Deal_Code, titlecode);
         }
     }
 }

@@ -416,6 +416,12 @@
                                     <span style='color: red'>(@objMessageKey.Expired)</span>
                                 }
                             }
+                            else if (item.Right_Type == "U" && item.Rights_End_Date == null)
+                            {
+                                <text> (</text><span> from </span>
+                                @Convert.ToDateTime(item.Rights_Start_Date).ToString(GlobalParams.DateFormat_Display).Trim()
+                                <text>)</text>
+                            }
                         </div>
                     </td>
                     <td class="action" id="clsLiAction">
@@ -427,7 +433,7 @@
 
 
                             @*<a title="Edit" href="#" class="glyphicon glyphicon-pencil"  onclick="Edit_Pushback('@counter');"></a>
-            <a title="Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>*@
+                                <a title="Delete" href="#" class="glyphicon glyphicon-trash " id="" onclick="return ValidateDelete('@counter');"></a>*@
 
                             if (item.Right_Status == "P")
                             {

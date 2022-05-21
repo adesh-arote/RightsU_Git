@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -134,6 +134,8 @@
     <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Sales_Ancillary_Sponsor.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Sales_Ancillary_Title.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Sport_Title.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Supplementary.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Supplementary_detail.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Tab_Version.cs" />
     <Compile Include="Acquisition_Entities\Acq_Rights_Template.cs" />
     <Compile Include="Acquisition_Entities\Acq_Sport_Ancillary_Wrapper.cs" />
@@ -176,6 +178,10 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\Supplementary.cs" />
+    <Compile Include="Master_Entities\Supplementary_Config.cs" />
+    <Compile Include="Master_Entities\Supplementary_Data.cs" />
+    <Compile Include="Master_Entities\Supplementary_Tab.cs" />
     <Compile Include="Master_Entities\Title_Objection_List_Search.cs" />
     <Compile Include="Master_Entities\Title_Objection.cs" />
     <Compile Include="Master_Entities\Title_Objection_Platform.cs" />
@@ -447,7 +453,13 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_SUPPLEMENTARY_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_List_Syn_Ancillary_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Supplementary_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_SUPP_Create_Table_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_PreReq_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_PreReq_Result.cs" />
