@@ -315,6 +315,11 @@ namespace RightsU_Plus.Controllers
                     if (objAcq_Deal_Ancillary_Temp.Acq_Deal_Ancillary_Code > 0 && Ancillary_Mode == "EDIT")
                     {
                         objAcq_Deal_Ancillary = objAcq_Deal_Ancillary_Service.GetById(objAcq_Deal_Ancillary_Temp.Acq_Deal_Ancillary_Code);
+                        if(hdnTVCodes == "")
+                        {
+                            objAcq_Deal_Ancillary.Acq_Deal_Ancillary_Platform.Clear();
+                        }
+                        
                         objAcq_Deal_Ancillary.EntityState = State.Modified;
                     }
                     else
