@@ -25,6 +25,8 @@
     var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Acq_Supplementary")';
 
 </script>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -69,13 +71,17 @@
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
                 $('#txtAcqRemarks').val(result.Remarks);
+                $('#txtAcqRemarks').trigger("keyup");
+
                 $('#ViewOperation').val(result.ViewOperation);
                 if ($('#ViewOperation').val() == "VIEW") {
                     document.getElementById("HideForView").style.display = "none";
                     document.getElementById("btnSaveDeal").style.display = "none";
+                    $('#ddSuppTitle').attr('disabled', true);
+                    $('#txtAcqRemarks').attr('disabled', true);
                 }
 
-               
+
                 hideLoading();
             }
         });
@@ -84,7 +90,12 @@
     function ChangeTab(Short_Name) {
         debugger;
         showLoading();
-        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+        //var wtName = $('#hdnwt' + Short_Name).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+
+        if ($('#inputValidation').val() == "true") {
             showAlert('I', "Please Complete Add Edit Opration");
             hideLoading();
             return;
@@ -116,6 +127,7 @@
         var wtName = $('#hdnwt' + shortName).val();
         $('#Operation').val("A");
         if (wtName == "PopUp") {
+            $('#inputValidation').val("false");
             $.ajax({
                 type: "POST",
                 url: URL_BindAllPreReq_Dilog,
@@ -181,7 +193,12 @@
 
     function SuppEdit(x, supplementary_Code, rowno, num) {
         debugger;
-        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+        var shortName = $('#TabName').val();
+        //var wtName = $('#hdnwt' + shortName).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+        if ($('#inputValidation').val() == "true") {
             showAlert('I', "Please Complete Add Edit Opration");
             hideLoading();
             return;
@@ -242,6 +259,7 @@
 
         }
         else {
+            $('#inputValidation').val('true');
             $.ajax({
                 type: "POST",
                 url: URL_BindAllPreReq_Edit,
@@ -289,8 +307,8 @@
         }
         else {
             $("#AddComm").modal('toggle');
-            $('#inputValidation').val("false");
         }
+        $('#inputValidation').val("false");
     }
 
     function sumo(drCount, shortName) {
@@ -442,9 +460,11 @@
                 Short_Name: shortName,
                 Operation: operation,
                 Row_No: rownum,
+                rwIndex: rwIndex,
             }),
             success: function (result) {
                 debugger;
+                $('#inputValidation').val("false");
                 var shortName = $('#TabName').val();
                 tblName = "#tbl" + shortName;
 
@@ -474,16 +494,25 @@
             hideLoading();
     }
 
-    function Cancel_Supplementaru() {
+    function Cancel_Supplementary() {
         debugger;
         showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
     }
 
+    function Cancel_SupplementaryView() {
+
+        BindPartialTabs("SUPP");
+    }
     function SuppSave()
     {
         showLoading();
         debugger;
-        if ($('#inputValidation').val() == "true" && $('#AddComm').is(':visible') == true) {
+        var shortName = $('#TabName').val();
+        //var wtName = $('#hdnwt' + shortName).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+        if ($('#inputValidation').val() == "true") {
             showAlert('I', "Please Complete Add Edit Opration");
             hideLoading();
             return;
@@ -523,6 +552,7 @@
                     showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully');
                 else
                     showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
+
             }
         });
         BindPartialTabs("SUPP");
@@ -572,8 +602,8 @@
                         <br>
                         <label class="bold">@objMessageKey.SpecialDetails</label>
 
-                            <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="SuppButtonEvents()"></a>
-                        
+                        <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="SuppButtonEvents()"></a>
+
                         <div class="scale_table_block">
                             <div id="tabValidity" class="tabbable">
 
@@ -585,12 +615,11 @@
                                 @*<textarea cols="20" id="Remarks" onkeypress="countChar(this)" name="Description" rows="4"></textarea>*@
 
                                 <div class="divBlock">
-                                    <div class="pull-left" style="padding-right: 87%;">@objMessageKey.Remarks</div>
+                                    <div class="pull-left" style="padding-right: 87%;"><b>@objMessageKey.Remarks</b></div>
                                     <div class="charNum">0/4000</div>
                                     <div style=""></div>
                                 </div>
-                                <textarea name="txtAcqRemarks" id="txtAcqRemarks" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
-
+                                <textarea class="textarea" name="txtAcqRemarks" id="txtAcqRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
                             </div>
                         </div>
                         <br>
@@ -601,10 +630,10 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();"> 
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();">
                         </li>
                         <li>
-                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementaru();" />
+                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />
                         </li>
                     </ul>
                 </div>
