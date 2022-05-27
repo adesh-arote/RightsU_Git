@@ -1308,6 +1308,7 @@
     <Content Include="Views\Syn_Deal\_List_Ancillary_Syn.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Supplementary.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Supplementary_Add.cshtml" />
+    <Content Include="Views\Acq_Deal\_AmendmentHistory.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2307,5 +2307,10 @@ namespace RightsU_Plus.Controllers
             dynamic resultSet2;
             objADRSer.Update(objADR, out resultSet2);
         }
+
+        public PartialViewResult AddAmendmentHistory(int acqDealCode)
+        {
+            return PartialView("~/Views/Acq_Deal/_AmendmentHistory.cshtml");
+        }
     }
 }

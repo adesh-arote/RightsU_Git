@@ -245,7 +245,6 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
                 redirectToLogin();
 
             else {
-
                 $('#dvDealList').html(result);
                 $('[title]').tooltip();
                 initializeExpander();
@@ -1026,7 +1025,42 @@ function RollbackWOApp() {
 /*Confirmation Alert*/
 function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
     debugger;
+    $('#popDealAmendmentHistoryPopup').modal();
+    
+    //$('#popup').modal();
+    //$('#pupupHtml').empty();
+    //$('#pupupHtml').html('');
+
+
     var is_Duplicate = "";
+
+    if (commandName == "AddAmendmentHistory") {
+        $.ajax({
+            type: "POST",
+            url: URL_AddAmendmentHistory,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                acqDealCode: Acq_Deal_Code,
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popDealAmendmentHistoryPopup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                }
+            },
+            error: function (result) {
+                hideLoading();
+            }
+        });
+    }
+
     if (commandName == "SendForAuth") {
         $.ajax({
             type: "POST",
@@ -1098,7 +1132,7 @@ function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
         });
     }
 
-    if (is_Duplicate == "" || is_Duplicate == "VALID") {
+    if ((is_Duplicate == "" || is_Duplicate == "VALID") && commandName != "AddAmendmentHistory") {
         Command_Name_G = commandName;
         tmpAcqDealCode = Acq_Deal_Code;
         Command_Name = commandName;
