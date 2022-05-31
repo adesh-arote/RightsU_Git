@@ -1659,12 +1659,7 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Supplementary_List_Result(Deal_Code, titlecode);
         }
-        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
-        {
-            USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Acq_Supplementary_Delete_Title(supplementaryCode);
-        }
-
+        
         public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
         {
             USP_DAL objContext = new USP_DAL(conStr);
