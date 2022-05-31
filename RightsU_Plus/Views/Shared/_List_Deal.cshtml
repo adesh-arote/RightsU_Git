@@ -420,9 +420,14 @@
                                     else
                                     {
                                         Count = Count + 1;
-
-                                        @*<a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>*@
-                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('AddAmendmentHistory',@objAcqList.IntCode,0);"></a>
+                                        if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objAcqList.version) > 1)
+                                        {
+                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objAcqList.IntCode,0);"></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                        }
 
                                         if (Count > 3)
                                         {
@@ -568,7 +573,7 @@
 
 
                             if (@objAcqList.Show_Hide_Buttons != null && @objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAssignMusic_NonMusic + ",") &&
-                                objAcqList.Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
+                            objAcqList.Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
                             {
                                 Count = Count + 1;
                                 <a title="@objMessageKey.AssignMusic" id="AssignMusic_@tempCount" class="glyphicon glyphicon-music AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Assign_Music')"></a>
@@ -833,57 +838,6 @@
                             <h2>@objMessageKey.DealStatus</h2>
                         </div>
                         <div id="bindLinearStatus">
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popDealAmendmentHistoryPopup_remove" role="dialog" tabindex="-1" aria-hidden="false" onclick="hideStarCast();">
-    <div class="modal-dialog">
-        <div class="modal-content clearfix">
-            <form class="form" id="movie_popup">
-                <div class="form_wrapper">
-                    <div class="form_fields acq">
-                        <div class="modal_block modal_header">
-                            <a class="close" data-dismiss="modal" href="#">
-                                <span>×</span>
-                                <span class="sr-only">Close</span>
-                            </a>
-                            <h2>Agreement Amendment Details</h2>    
-                        </div>
-                        <div class="modal_block">
-                        <table class="add_title_popup">
-                            <tr>
-                                <td>Amendment Date</td>
-                                <td style="width:12%">
-                                    <input type="hidden" id="hdnStartDate" />
-                                    <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
-                                           title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Amended By</td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td>Remarks</td>
-                                <td></td>
-                            </tr>
-                        </table>
-                        </div>
-                        <div class="modal_block_full">
-                            <div class="form_links">
-                                <ul class="modal_block clearfix">
-                                    <li>
-                                        <a class="btn btn-primary" id="btnSaveTitle" href="#" onclick="btnSaveTitle_OnClick()">@objMessageKey.Save</a>
-                                    </li>
-                                    <li>
-                                        <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                     </div>
                 </div>

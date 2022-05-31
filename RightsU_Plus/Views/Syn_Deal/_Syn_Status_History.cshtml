@@ -13,6 +13,9 @@
 }
 
 <script type="text/javascript">
+        var URL_GetAmendmentDetails = '@Url.Action("GetAmendmentDetails", "Acq_Status_History")';
+
+
     $(document).ready(function () {
         //$("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
        // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_StatusHistory');
@@ -73,6 +76,35 @@
         return Isvalid;
 
     }
+
+    function GetAmendmentDetails(id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GetAmendmentDetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                id: id,
+                moduleCode: 35
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#popDealAmendmentDetailsPopup').modal();
+                    $('#pupupHtml').empty();
+                    $('#pupupHtml').html(result);
+                }
+            },
+            error: function (result) {
+                hideLoading();
+            }
+        });
+    }
 </script>
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -109,7 +141,14 @@
                                                     }
                                                 }
                                             }
-                                            <td>@item.Version</td>
+                                            @if (Convert.ToInt32(item.Version) > 1)
+                                            {
+                                                <td onclick="GetAmendmentDetails(@item.ID)" style="cursor:pointer">@item.Version</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.Version</td>
+                                            }
                                             <td>@Html.DisplayFor(modalitem => item.Status)</td>
                                             @{
                                                 System.Globalization.CultureInfo cultureinfo = new System.Globalization.CultureInfo("ar-AE");
@@ -155,6 +194,15 @@
                     </div>
                 }
                 <input type="hidden" id="hdnTabName" name="hdnTabName" />
+            </div>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popDealAmendmentDetailsPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
             </div>
         </div>
     </div>

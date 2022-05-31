@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Globalization;
 
 namespace RightsU_Plus.Controllers
 {
@@ -23,6 +24,28 @@ namespace RightsU_Plus.Controllers
                 return (Deal_Schema)Session[RightsU_Session.ACQ_DEAL_SCHEMA];
             }
             set { Session[RightsU_Session.ACQ_DEAL_SCHEMA] = value; }
+        }
+
+        private Module_Status_History_Type_Service objModule_Status_History_Type_Service
+        {
+            get
+            {
+                if (Session["objModule_Status_History_Type_Service"] == null)
+                    Session["objModule_Status_History_Type_Service"] = new Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName);
+                return (Module_Status_History_Type_Service)Session["objModule_Status_History_Type_Service"];
+            }
+            set { Session["objModule_Status_History_Type_Service"] = value; }
+        }
+
+        private Acq_Amendement_History_Service objAcq_Amendement_History_Service
+        {
+            get
+            {
+                if (Session["objAcq_Amendement_History_Service"] == null)
+                    Session["objAcq_Amendement_History_Service"] = new Acq_Amendement_History_Service(objLoginEntity.ConnectionStringName);
+                return (Acq_Amendement_History_Service)Session["objAcq_Amendement_History_Service"];
+            }
+            set { Session["objTerritory_Service"] = value; }
         }
         #endregion
         private string Module_Type
@@ -52,7 +75,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Record_Locking_Code = 0;
 
             Session["FileName"] = "";
-           // TempData.Remove("FileName");
+            // TempData.Remove("FileName");
             Session["FileName"] = "acq_StatusHistory";
 
             int prevAcq_Deal = 0;
@@ -97,6 +120,17 @@ namespace RightsU_Plus.Controllers
         public ActionResult ChangeTab(string hdnTabName)
         {
             return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().RedirectToControl(hdnTabName, objDeal_Schema.PageNo, objDeal_Schema.Deal_Type_Code);
+        }
+
+        public PartialViewResult GetAmendmentDetails(int id, int moduleCode)
+        {
+            Module_Status_History objModule_Status_History = new Module_Status_History();
+            objModule_Status_History = objModule_Status_History_Type_Service.GetById(id);
+
+            Acq_Amendement_History objAcq_Amendement_History = new Acq_Amendement_History();
+            objAcq_Amendement_History =  objAcq_Amendement_History_Service.SearchFor(x => x.Module_Code == moduleCode && x.Record_Code == objModule_Status_History.Record_Code && x.Version == objModule_Status_History.Version_No).FirstOrDefault();
+           
+            return PartialView("~/Views/Shared/_Module_Amendment_Details.cshtml", objAcq_Amendement_History);
         }
     }
 }

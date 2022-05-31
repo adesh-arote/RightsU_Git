@@ -1,10 +1,13 @@
-﻿@{
+﻿@model RightsU_Entities.Acq_Amendement_History
+@{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
 <script>
     $(document).ready(function () {
         initializeDatepicker();
@@ -13,12 +16,49 @@
     function ClosePopup() {
         // $('#ddlLanguages').val("");
         $('#popDealAmendmentHistoryPopup').modal('hide');
+        HideShow(ID, View_G, 'N');
 
     }
+
+    function ValidateSave() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        var returnVal = true;
+
+        var AmendmentDate = $.trim($('#txtAmendmentDate').val());
+        if (AmendmentDate == "") {
+            $("#txtAmendmentDate").val('').attr('required', true)
+            returnVal = false;
+        }
+
+        var AmendedBy = $.trim($('#txtAmendedBy').val());
+        if (AmendedBy == "") {
+            $("#txtAmendedBy").val('').attr('required', true)
+            returnVal = false;
+        }
+
+        var Remarks = $.trim($('#txtRemarks').val());
+        if (Remarks == "") {
+            $("#txtRemarks").val('').attr('required', true)
+            returnVal = false;
+        }
+
+        returnVal;
+    }
+
+    function SaveSuccessnew() {
+        debugger;
+        $('#popDealAmendmentHistoryPopup').modal('hide');
+
+        var Record_Code = $('#hdnRecordCode').val();
+        Ask_Confirmation('SendForAuth', Record_Code, 0)
+    }
+
 </script>
 <style>
-    td{
-        padding:1%
+    td {
+        padding: 1%
     }
 </style>
 <div class="modal_block modal_header">
@@ -28,7 +68,7 @@
     </a>
     <h2>Agreement Amendment Details</h2>
 </div>
-@using (Ajax.BeginForm("SaveTerritory", "Territory", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+@using (Ajax.BeginForm("SaveAmendmentHistory", "Acq_List", new AjaxOptions() { OnSuccess = "SaveSuccessnew" }))
 {
     <div class="modal_block sty" style="margin-left: 10px;margin-right: 10px;">
         <table class="add_title_popup">
@@ -36,19 +76,32 @@
                 <td style="width:2%"><b>Amendment Date</b></td>
                 <td style="width:12%">
                     <input type="hidden" id="hdnStartDate" />
-                    <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="DD/MM/YYYY" width="100"
-                           title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                    @*<input type="text" class="isDatepicker shortDate" value="@Model.Amendment_Date" id="txtAmendmentDate" name="AmendmentDate" placeholder="DD/MM/YYYY" width="100"
+                           title="@objMessageKey.StartDate" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" style="width:100%" />*@
+
+                    @Html.TextBoxFor(model => model.Amendment_Date, "{0:MM/dd/yyyy}", new {
+                   @name = "AmendmentDate", @class = "isDatepicker", @id = "txtAmendmentDate", @placeholder = "DD/MM/YYYY", @width = "100",
+                   @title = "@objMessageKey.StartDate", @ondrop = "return false", @onpaste = "return false", @onkeypress = "return false", @onkeydown = "return false",
+                   @style = "width:100%"
+               })
                 </td>
             </tr>
             <tr>
                 <td><b>Amended By</b></td>
-                <td><input type="text" name="AmendedBy" id="txtAmendedBy" class="textbox" maxlength="50" value="" /></td>
+                <td><input type="text" name="AmendedBy" id="txtAmendedBy" class="textbox" maxlength="100" value="@Model.Amended_By" style="width:100%" /></td>
             </tr>
             <tr>
                 <td><b>Remarks</b></td>
-                <td><input type="text" name="Remarks" id="txtRemarks" class="textbox" maxlength="50" value="" /></td>
+                <td>
+                    @*<input type="text" name="Remarks" id="txtRemarks" class="textbox" maxlength="4000" value="@Model.Remarks" style="width:100%" />*@
+                    <textarea style="width: 100%;" name="Remarks" id="txtRemarks" maxlength="4000">@Model.Remarks</textarea>
+                </td>
             </tr>
         </table>
+        <input type="hidden" name="Acq_Amendement_History_Code" value="@Model.Acq_Amendement_History_Code" />
+        <input type="hidden" id="hdnRecordCode" name="RecordCode" value="@ViewBag.RecordCode" />
+        <input type="hidden" name="Version" value="@ViewBag.Version" />
+        <input type="hidden" name="ModuleCode" value="@ViewBag.ModuleCode" />
     </div>
     <div class="modal_block_full" style="margin-top: 10px;">
         <div class="form_links">

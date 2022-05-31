@@ -30,6 +30,18 @@
           <Property Name="Generated_On" Type="datetime" />
           <Property Name="Ancillary_Type_Codes" Type="varchar(max)" />
         </EntityType>
+        <EntityType Name="Acq_Amendement_History">
+          <Key>
+            <PropertyRef Name="Acq_Amendement_History_Code" />
+          </Key>
+          <Property Name="Acq_Amendement_History_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Record_Code" Type="int" />
+          <Property Name="Module_Code" Type="int" />
+          <Property Name="Version" Type="int" />
+          <Property Name="Amendment_Date" Type="datetime" />
+          <Property Name="Amended_By" Type="nvarchar(max)" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
+        </EntityType>
         <EntityType Name="Acq_Deal">
           <Key>
             <PropertyRef Name="Acq_Deal_Code" />
@@ -4414,7 +4426,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Code" />
           </Key>
-          <Property Name="Supplementary_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Supplementary_Name" Type="nvarchar" MaxLength="200" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -4422,7 +4434,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Config_Code" />
           </Key>
-          <Property Name="Supplementary_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Config_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Supplementary_Code" Type="int" />
           <Property Name="Supplementary_Tab_Code" Type="int" />
           <Property Name="Page_Group" Type="nvarchar" MaxLength="50" />
@@ -4452,12 +4464,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Tab_Code" />
           </Key>
-          <Property Name="Supplementary_Tab_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Tab_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Short_Name" Type="nvarchar" MaxLength="20" />
           <Property Name="Supplementary_Tab_Description" Type="nvarchar" MaxLength="100" />
           <Property Name="Order_No" Type="int" />
           <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
           <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
+          <Property Name="Module_Code" Type="int" />
         </EntityType>
         <EntityType Name="Syn_Acq_Mapping">
           <Key>
@@ -14322,6 +14335,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <EntityContainer Name="RightsU_NeoModelStoreContainer">
           <EntitySet Name="Acq_Adv_Ancillary_Report" EntityType="Self.Acq_Adv_Ancillary_Report" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Amendement_History" EntityType="Self.Acq_Amendement_History" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal" EntityType="Self.Acq_Deal" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Ancillary" EntityType="Self.Acq_Deal_Ancillary" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Ancillary_Platform" EntityType="Self.Acq_Deal_Ancillary_Platform" Schema="dbo" store:Type="Tables" />
@@ -21225,6 +21239,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Acq_Supplementary_Delete_Title">
           <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="Acq_Amendement_History" EntityType="RightsU_NeoModel.Acq_Amendement_History" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -36270,6 +36285,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
           <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Module_Code" Type="Int32" />
         </EntityType>
         <Association Name="FK_Supplementary_Config_Supplementary">
           <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
@@ -36348,6 +36364,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <End Type="RightsU_NeoModel.Acq_Deal_Supplementary" Role="Acq_Deal_Supplementary" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Acq_Deal_Supplementary_detail" Role="Acq_Deal_Supplementary_detail" Multiplicity="*" />
         </Association>
+        <EntityType Name="Acq_Amendement_History">
+          <Key>
+            <PropertyRef Name="Acq_Amendement_History_Code" />
+          </Key>
+          <Property Name="Acq_Amendement_History_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Record_Code" Type="Int32" />
+          <Property Name="Module_Code" Type="Int32" />
+          <Property Name="Version" Type="Int32" />
+          <Property Name="Amendment_Date" Type="DateTime" Precision="3" />
+          <Property Name="Amended_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45616,6 +45644,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Supplementary_Tab">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Tab">
               <MappingFragment StoreEntitySet="Supplementary_Tab">
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
                 <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
                 <ScalarProperty Name="Order_No" ColumnName="Order_No" />
@@ -45734,6 +45763,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Condition ColumnName="Acq_Deal_Supplementary_Code" IsNull="false" />
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_Supplementary_Delete_Title" FunctionName="RightsU_NeoModel.Store.USP_Acq_Supplementary_Delete_Title" />
+          <EntitySetMapping Name="Acq_Amendement_History">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Amendement_History">
+              <MappingFragment StoreEntitySet="Acq_Amendement_History">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Amended_By" ColumnName="Amended_By" />
+                <ScalarProperty Name="Amendment_Date" ColumnName="Amendment_Date" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
+                <ScalarProperty Name="Acq_Amendement_History_Code" ColumnName="Acq_Amendement_History_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -45748,8 +45790,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
       </DesignerInfoPropertySet>

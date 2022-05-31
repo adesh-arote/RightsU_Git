@@ -1019,6 +1019,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

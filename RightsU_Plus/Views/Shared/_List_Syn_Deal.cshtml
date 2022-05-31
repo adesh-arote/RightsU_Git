@@ -200,11 +200,11 @@
                             {
                                 <span data-toggle="modal" data-target="#popDealStatus" class="deal_workflow_status pending" title="@objMessageKey.WorkflowStatus"
                                       onclick="BindDealStatusPopup(@objSynList.Syn_Deal_Code)">@objSynList.Final_Deal_Workflow_Status</span>
-                            }
-                            else
-                            {
-                                <span class="deal_workflow_status" title="@objMessageKey.WorkflowStatus">@objSynList.Final_Deal_Workflow_Status</span>
-                            }
+                                }
+                                else
+                                {
+                                    <span class="deal_workflow_status" title="@objMessageKey.WorkflowStatus">@objSynList.Final_Deal_Workflow_Status</span>
+                                }
                         }
                     </li>
                     <li class="deal_action clsTdAction_@objSynList.Syn_Deal_Code@objSynList.AT_Status TC_@tempCount" style="text-align: right;" id="divAction_@tempCount">
@@ -292,7 +292,7 @@
                                     Count = Count + 1;
 
                                     @*<a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objSynList.Syn_Deal_Code"
-                    href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objSynList.Syn_Deal_Code, ModuleCode = 35, Record_Locking_Code = "RecordLockingCode", Is_Menu = "N" })'></a>*@
+                                        href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objSynList.Syn_Deal_Code, ModuleCode = 35, Record_Locking_Code = "RecordLockingCode", Is_Menu = "N" })'></a>*@
                                     <a title="Archive" class="glyphicon glyphicon-briefcase AT_@objSynList.Syn_Deal_Code" id="Archive_Remark_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@objSynList.IntCode,0);"></a>
                                     if (Count > 3)
                                     {
@@ -364,7 +364,15 @@
                                 {
                                     Count = Count + 1;
                                     @*<a title="@apprName" id="ApproveName_@tempCount" class="glyphicon glyphicon-send" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
-                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
+                                    if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objSynList.version) > 1)
+                                    {
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objSynList.IntCode,0);"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
+                                    }
+
 
                                     if (Count > 3)
                                     {
@@ -547,7 +555,7 @@
                     </li>
                 </ul>
             </div>
-                            }
+        }
     }
 </div>
 
@@ -635,6 +643,15 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popDealAmendmentHistoryPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
         </div>
     </div>
 </div>

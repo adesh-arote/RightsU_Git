@@ -350,6 +350,7 @@ namespace RightsU_DAL
         public DbSet<Deal_Workflow_Status> Deal_Workflow_Status { get; set; }
         public DbSet<Title_Content> Title_Content { get; set; }
         public DbSet<Title_Content_Version> Title_Content_Version { get; set; }
+        public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
         public DbSet<Music_Deal> Music_Deal { get; set; }
         public DbSet<Music_Deal_Channel> Music_Deal_Channel { get; set; }
         public DbSet<Music_Deal_Country> Music_Deal_Country { get; set; }

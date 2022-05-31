@@ -66,7 +66,16 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["RLCode"] = value; }
         }
-
+        private Acq_Amendement_History_Service objAcq_Amendement_History_Service
+        {
+            get
+            {
+                if (Session["objAcq_Amendement_History_Service"] == null)
+                    Session["objAcq_Amendement_History_Service"] = new Acq_Amendement_History_Service(objLoginEntity.ConnectionStringName);
+                return (Acq_Amendement_History_Service)Session["objAcq_Amendement_History_Service"];
+            }
+            set { Session["objTerritory_Service"] = value; }
+        }
 
         #endregion
 
@@ -313,6 +322,7 @@ namespace RightsU_Plus.Controllers
             string[] arrTitleName = strTitles.Split('﹐');
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
             IEnumerable<RightsU_Entities.USP_List_Syn_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeArchiveDeal, Page, ClearSession, strBUCode);
+            ViewBag.Show_Amendment_Details = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Show_Amendment_Details").First().Parameter_Value;
             return PartialView("~/Views/Shared/_List_Syn_Deal.cshtml", objList);
         }
         public JsonResult ValidateTermination(int dealCode)
@@ -1231,7 +1241,70 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        public PartialViewResult AddAmendmentHistory(int acqDealCode)
+        {
+            ViewBag.RecordCode = acqDealCode;
+            string Version = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Syn_Deal_Code == acqDealCode).Select(s => s.Version).FirstOrDefault();
+            ViewBag.Version = Version;
+            ViewBag.ModuleCode = 35;
 
+            int VersionNumber = Convert.ToInt32(Version);
+            Acq_Amendement_History obj = new Acq_Amendement_History();
+            var Cnt = new Acq_Amendement_History_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 35 && x.Record_Code == acqDealCode && x.Version == VersionNumber).ToList();
+            if (Cnt.Count() > 0)
+            {
+                obj = Cnt.FirstOrDefault();
+            }
+
+            return PartialView("~/Views/Acq_Deal/_AmendmentHistory.cshtml", obj);
+        }
+
+        [HttpPost]
+        public ActionResult SaveAmendmentHistory(FormCollection objCollection)
+        {
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            dynamic resultSet;
+            Acq_Amendement_History objAcq_Amendement_History = new Acq_Amendement_History();
+            objAcq_Amendement_History.Record_Code = Convert.ToInt32(objCollection["RecordCode"]);
+            objAcq_Amendement_History.Version = Convert.ToInt32(objCollection["Version"]);
+            objAcq_Amendement_History.Module_Code = 30;
+            objAcq_Amendement_History.Amendment_Date = Convert.ToDateTime(objCollection["Amendment_Date"]);
+            objAcq_Amendement_History.Amended_By = Convert.ToString(objCollection["AmendedBy"]);
+            objAcq_Amendement_History.Remarks = Convert.ToString(objCollection["Remarks"]);
+
+            int Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
+            if (Acq_Amendement_History_Code > 0)
+            {
+                Acq_Amendement_History objAmendment = objAcq_Amendement_History_Service.GetById(Acq_Amendement_History_Code);
+                //objAcq_Amendement_History.Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
+
+                objAmendment.Record_Code = Convert.ToInt32(objCollection["RecordCode"]);
+                objAmendment.Version = Convert.ToInt32(objCollection["Version"]);
+                objAmendment.Module_Code = 30;
+                objAmendment.Amendment_Date = Convert.ToDateTime(objCollection["Amendment_Date"]);
+                objAmendment.Amended_By = Convert.ToString(objCollection["AmendedBy"]);
+                objAmendment.Remarks = Convert.ToString(objCollection["Remarks"]);
+
+                objAmendment.EntityState = State.Modified;
+                objAcq_Amendement_History_Service.Update(objAmendment, out resultSet);
+            }
+            else
+            {
+                objAcq_Amendement_History.EntityState = State.Added;
+                objAcq_Amendement_History_Service.Save(objAcq_Amendement_History, out resultSet);
+            }
+
+
+
+
+            var obj = new
+            {
+                RecordCount = 0,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
 
     }
 }
