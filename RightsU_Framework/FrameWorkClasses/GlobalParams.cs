@@ -238,7 +238,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightCodeForAddLanguage = 117;
         public const int RightCodeForAcqSportsTab = 118;
         public const int RightCodeForAcqBudgetTab = 119;
-        public const int RightCodeForAcqSupplementaryTab = 172;
+        public const int RightCodeForSupplementaryTab = 172;
         public const int RightCodeForSynRunTab = 120;
         public const int RightCodeForExportToExcel = 121;
         public const int RightCodeForDomesticTab = 122;

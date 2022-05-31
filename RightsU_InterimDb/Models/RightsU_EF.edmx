@@ -4414,7 +4414,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Code" />
           </Key>
-          <Property Name="Supplementary_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Supplementary_Name" Type="nvarchar" MaxLength="200" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -4422,7 +4422,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Config_Code" />
           </Key>
-          <Property Name="Supplementary_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Config_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Supplementary_Code" Type="int" />
           <Property Name="Supplementary_Tab_Code" Type="int" />
           <Property Name="Page_Group" Type="nvarchar" MaxLength="50" />
@@ -4452,12 +4452,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Tab_Code" />
           </Key>
-          <Property Name="Supplementary_Tab_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Supplementary_Tab_Code" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Short_Name" Type="nvarchar" MaxLength="20" />
           <Property Name="Supplementary_Tab_Description" Type="nvarchar" MaxLength="100" />
           <Property Name="Order_No" Type="int" />
           <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
           <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
+          <Property Name="Module_Code" Type="int" />
         </EntityType>
         <EntityType Name="Syn_Acq_Mapping">
           <Key>
@@ -4985,6 +4986,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="End_Date" Type="datetime" />
           <Property Name="No_Of_Runs" Type="int" />
           <Property Name="Year_No" Type="int" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Supplementary">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Supplementary_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Supplementary_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Syn_Deal_Code" Type="int" />
+          <Property Name="Title_code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
+          <Property Name="Remarks" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Supplementary_Detail">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Supplementary_Detail_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Supplementary_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Syn_Deal_Supplementary_Code" Type="int" />
+          <Property Name="Supplementary_Tab_Code" Type="int" />
+          <Property Name="Supplementary_Config_Code" Type="int" />
+          <Property Name="Supplementary_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="User_Value" Type="varchar(max)" />
+          <Property Name="Row_Num" Type="int" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -11229,6 +11253,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary">
+          <End Role="Syn_Deal_Supplementary" Type="Self.Syn_Deal_Supplementary" Multiplicity="0..1" />
+          <End Role="Syn_Deal_Supplementary_Detail" Type="Self.Syn_Deal_Supplementary_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal_Supplementary">
+              <PropertyRef Name="Syn_Deal_Supplementary_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Supplementary_Detail">
+              <PropertyRef Name="Syn_Deal_Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Syn_Deal_Vendor">
           <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
           <End Role="Syn_Deal" Type="Self.Syn_Deal" Multiplicity="*" />
@@ -12589,6 +12625,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Debug" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Delete_Syn_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Supplementary_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_DeleteContentMapping" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DealCode" Type="int" Mode="In" />
           <Parameter Name="DealType" Type="char" Mode="In" />
@@ -12762,6 +12801,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="ModuleCodes" Type="varchar" Mode="In" />
           <Parameter Name="Search_Module_Name" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Supplementary_Config" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Supplementary_Tab_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Syn_Deal_Supplementary_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Supplementary_Code" Type="int" Mode="In" />
+          <Parameter Name="Row_Num" Type="int" Mode="In" />
+          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Syn_PreReq" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Data_For" Type="varchar(max)" Mode="In" />
           <Parameter Name="Call_From" Type="varchar" Mode="In" />
@@ -12830,6 +12877,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_GET_TITLE_FOR_SYN_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SYN_DEAL_CODE" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Title_For_Syn_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Get_Title_Import_Utility_AdvSearch" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
@@ -13782,6 +13833,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="LanguageCode_Sub" Type="varchar" Mode="In" />
           <Parameter Name="Is_Exclusive" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Syn_Deal_Supplementary_Details_Data" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TabCode" Type="int" Mode="In" />
+          <Parameter Name="Syn_Deal_Supplementary_Code" Type="int" Mode="In" />
+          <Parameter Name="View" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="USP_Syn_Deal_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Syn_List_Runs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar(max)" Mode="In" />
@@ -14651,6 +14711,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Syn_Deal_Run_Platform" EntityType="Self.Syn_Deal_Run_Platform" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Run_Repeat_On_Day" EntityType="Self.Syn_Deal_Run_Repeat_On_Day" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Run_Yearwise_Run" EntityType="Self.Syn_Deal_Run_Yearwise_Run" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Syn_Deal_Supplementary" EntityType="Self.Syn_Deal_Supplementary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Syn_Deal_Supplementary_Detail" EntityType="Self.Syn_Deal_Supplementary_Detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="System_Language" EntityType="Self.System_Language" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="System_Language_Message" EntityType="Self.System_Language_Message" Schema="dbo" store:Type="Tables" />
@@ -16867,6 +16929,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Run_Yearwise_Run_Syn_Deal_Run" Association="Self.FK_Syn_Deal_Run_Yearwise_Run_Syn_Deal_Run">
             <End Role="Syn_Deal_Run" EntitySet="Syn_Deal_Run" />
             <End Role="Syn_Deal_Run_Yearwise_Run" EntitySet="Syn_Deal_Run_Yearwise_Run" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" Association="Self.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary">
+            <End Role="Syn_Deal_Supplementary" EntitySet="Syn_Deal_Supplementary" />
+            <End Role="Syn_Deal_Supplementary_Detail" EntitySet="Syn_Deal_Supplementary_Detail" />
           </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Vendor" Association="Self.FK_Syn_Deal_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
@@ -21224,6 +21290,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <FunctionImport Name="USP_Acq_Supplementary_Delete_Title">
           <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <EntitySet Name="Syn_Deal_Supplementary" EntityType="RightsU_NeoModel.Syn_Deal_Supplementary" />
+          <EntitySet Name="Syn_Deal_Supplementary_Detail" EntityType="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" />
+          <AssociationSet Name="FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary">
+            <End Role="Syn_Deal_Supplementary" EntitySet="Syn_Deal_Supplementary" />
+            <End Role="Syn_Deal_Supplementary_Detail" EntitySet="Syn_Deal_Supplementary_Detail" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Delete_Syn_Supplementary">
+          <Parameter Name="Supplementary_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Title_For_Syn_Supplementary" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Syn_Supplementary_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Syn_Deal_Supplementary_Details_Data" ReturnType="Collection(RightsU_NeoModel.USP_Syn_Deal_Supplementary_Details_Data_Result)">
+            <Parameter Name="TabCode" Mode="In" Type="Int32" />
+            <Parameter Name="Syn_Deal_Supplementary_Code" Mode="In" Type="Int32" />
+            <Parameter Name="View" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Supplementary_Config" ReturnType="Collection(RightsU_NeoModel.USP_Get_Supplementary_Config_Result)">
+          <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Syn_Deal_Supplementary_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Syn_Deal_Supplementary_Edit_Result)">
+            <Parameter Name="Syn_Deal_Supplementary_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Row_Num" Mode="In" Type="Int32" />
+            <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Syn_Deal_Supplementary_List" ReturnType="Collection(RightsU_NeoModel.USP_Syn_Deal_Supplementary_List_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -36270,6 +36366,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
           <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Module_Code" Type="Int32" />
         </EntityType>
         <Association Name="FK_Supplementary_Config_Supplementary">
           <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
@@ -36348,6 +36445,79 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <End Type="RightsU_NeoModel.Acq_Deal_Supplementary" Role="Acq_Deal_Supplementary" Multiplicity="0..1" />
           <End Type="RightsU_NeoModel.Acq_Deal_Supplementary_detail" Role="Acq_Deal_Supplementary_detail" Multiplicity="*" />
         </Association>
+        <EntityType Name="Syn_Deal_Supplementary">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Supplementary_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Supplementary_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Syn_Deal_Code" Type="Int32" />
+          <Property Name="Title_code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Syn_Deal_Supplementary_Detail" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" FromRole="Syn_Deal_Supplementary" ToRole="Syn_Deal_Supplementary_Detail" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Supplementary_Detail">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Supplementary_Detail_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Supplementary_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Tab_Code" Type="Int32" />
+          <Property Name="Supplementary_Config_Code" Type="Int32" />
+          <Property Name="Supplementary_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="User_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Row_Num" Type="Int32" />
+          <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" FromRole="Syn_Deal_Supplementary_Detail" ToRole="Syn_Deal_Supplementary" />
+        </EntityType>
+        <Association Name="FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary">
+          <End Type="RightsU_NeoModel.Syn_Deal_Supplementary" Role="Syn_Deal_Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" Role="Syn_Deal_Supplementary_Detail" Multiplicity="*" />
+        </Association>
+        <ComplexType Name="USP_Get_Title_For_Syn_Supplementary_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+        </ComplexType>
+        <ComplexType Name="USP_Syn_Deal_Supplementary_Details_Data_Result">
+          <Property Type="String" Name="Tab" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Supplementary_Config_Result">
+          <Property Type="String" Name="Supplementary_Name" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Page_Control_Order" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="false" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Text_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Value_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Syn_Deal_Supplementary_Edit_Result">
+          <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="User_Value" Nullable="true" />
+          <Property Type="Int32" Name="Row_Num" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_Syn_Deal_Supplementary_List_Result">
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="BusinessStatement" Nullable="false" />
+          <Property Type="String" Name="ExcludedRights" Nullable="false" />
+          <Property Type="String" Name="Miscellaneous" Nullable="false" />
+          <Property Type="String" Name="IPDetails" Nullable="false" />
+          <Property Type="Int32" Name="title_code" Nullable="false" />
+          <Property Type="Int32" Name="Supplementary_code" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45616,6 +45786,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Supplementary_Tab">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Tab">
               <MappingFragment StoreEntitySet="Supplementary_Tab">
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
                 <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
                 <ScalarProperty Name="Order_No" ColumnName="Order_No" />
@@ -45734,6 +45905,105 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Condition ColumnName="Acq_Deal_Supplementary_Code" IsNull="false" />
           </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_Supplementary_Delete_Title" FunctionName="RightsU_NeoModel.Store.USP_Acq_Supplementary_Delete_Title" />
+          <EntitySetMapping Name="Syn_Deal_Supplementary">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Supplementary">
+              <MappingFragment StoreEntitySet="Syn_Deal_Supplementary">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_code" ColumnName="Title_code" />
+                <ScalarProperty Name="Syn_Deal_Code" ColumnName="Syn_Deal_Code" />
+                <ScalarProperty Name="Syn_Deal_Supplementary_Code" ColumnName="Syn_Deal_Supplementary_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Syn_Deal_Supplementary_Detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Supplementary_Detail">
+              <MappingFragment StoreEntitySet="Syn_Deal_Supplementary_Detail">
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Syn_Deal_Supplementary_Detail_Code" ColumnName="Syn_Deal_Supplementary_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" TypeName="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" StoreEntitySet="Syn_Deal_Supplementary_Detail">
+            <EndProperty Name="Syn_Deal_Supplementary_Detail">
+              <ScalarProperty Name="Syn_Deal_Supplementary_Detail_Code" ColumnName="Syn_Deal_Supplementary_Detail_Code" />
+            </EndProperty>
+            <EndProperty Name="Syn_Deal_Supplementary">
+              <ScalarProperty Name="Syn_Deal_Supplementary_Code" ColumnName="Syn_Deal_Supplementary_Code" />
+            </EndProperty>
+            <Condition ColumnName="Syn_Deal_Supplementary_Code" IsNull="false" />
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Delete_Syn_Supplementary" FunctionName="RightsU_NeoModel.Store.USP_Delete_Syn_Supplementary" />
+          <FunctionImportMapping FunctionImportName="USP_Get_Title_For_Syn_Supplementary" FunctionName="RightsU_NeoModel.Store.USP_Get_Title_For_Syn_Supplementary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Title_For_Syn_Supplementary_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Syn_Deal_Supplementary_Details_Data" FunctionName="RightsU_NeoModel.Store.USP_Syn_Deal_Supplementary_Details_Data">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Supplementary_Details_Data_Result">
+                <ScalarProperty Name="Tab" ColumnName="Tab" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Supplementary_Config" FunctionName="RightsU_NeoModel.Store.USP_Get_Supplementary_Config">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Supplementary_Config_Result">
+                <ScalarProperty Name="Supplementary_Name" ColumnName="Supplementary_Name" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Syn_Deal_Supplementary_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Syn_Deal_Supplementary_Edit">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Syn_Deal_Supplementary_Edit_Result">
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Syn_Deal_Supplementary_List" FunctionName="RightsU_NeoModel.Store.USP_Syn_Deal_Supplementary_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Supplementary_List_Result">
+                <ScalarProperty Name="title_name" ColumnName="title_name" />
+                <ScalarProperty Name="BusinessStatement" ColumnName="BusinessStatement" />
+                <ScalarProperty Name="ExcludedRights" ColumnName="ExcludedRights" />
+                <ScalarProperty Name="Miscellaneous" ColumnName="Miscellaneous" />
+                <ScalarProperty Name="IPDetails" ColumnName="IPDetails" />
+                <ScalarProperty Name="title_code" ColumnName="title_code" />
+                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -45749,7 +46019,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="False" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
       </DesignerInfoPropertySet>

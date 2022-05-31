@@ -11,7 +11,7 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Supplementary_Tab
     {
         public Supplementary_Tab()
@@ -26,6 +26,7 @@ namespace RightsU_Entities
         public Nullable<int> Order_No { get; set; }
         public string Tab_Type { get; set; }
         public string EditWindowType { get; set; }
+        public Nullable<int> Module_Code { get; set; }
 
         public virtual ICollection<Supplementary_Config> Supplementary_Config { get; set; }
     }

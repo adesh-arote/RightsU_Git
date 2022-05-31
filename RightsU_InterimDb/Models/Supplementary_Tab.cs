@@ -25,6 +25,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Order_No { get; set; }
     	    public string Tab_Type { get; set; }
     	    public string EditWindowType { get; set; }
+    	    public Nullable<int> Module_Code { get; set; }
     
         public virtual ICollection<Supplementary_Config> Supplementary_Config { get; set; }
     }

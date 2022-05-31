@@ -1671,5 +1671,41 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Supplementary_List(Deal_Code, titlecode);
         }
+
+        public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Delete_Syn_Supplementary(supplementary_Code);
+        }
+
+        public virtual ObjectResult<USP_Get_Title_For_Syn_Supplementary_Result> USP_Get_Title_For_Syn_Supplementary(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Title_For_Syn_Supplementary(syn_Deal_Code, title_Code);
+        }
+
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_Details_Data_Result> USP_Syn_Deal_Supplementary_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Supplementary_Code, string view)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Syn_Deal_Supplementary_Details_Data(tabCode, syn_Deal_Supplementary_Code, view);
+        }
+
+        public virtual ObjectResult<USP_Get_Supplementary_Config_Result> USP_Get_Supplementary_Config(Nullable<int> supplementary_Tab_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Supplementary_Config(supplementary_Tab_Code);
+        }
+
+        public virtual ObjectResult<USP_Get_Syn_Deal_Supplementary_Edit_Result> USP_Get_Syn_Deal_Supplementary_Edit(Nullable<int> syn_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Syn_Deal_Supplementary_Edit(syn_Deal_Supplementary_Code, row_Num, tab_SM);
+        }
+
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
+        }
     }
 }
