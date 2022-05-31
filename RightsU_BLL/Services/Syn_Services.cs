@@ -641,5 +641,48 @@ namespace RightsU_BLL
         }
     }
 
+    public class Syn_Deal_Supplementary_Service : BusinessLogic<Syn_Deal_Supplementary>
+    {
+        private readonly Syn_Deal_Supplementary_Repository objRepository;
 
+        public Syn_Deal_Supplementary_Service(string Connection_Str)
+        {
+            this.objRepository = new Syn_Deal_Supplementary_Repository(Connection_Str);
+        }
+        public IQueryable<Syn_Deal_Supplementary> SearchFor(Expression<Func<Syn_Deal_Supplementary, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Syn_Deal_Supplementary GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Syn_Deal_Supplementary obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Syn_Deal_Supplementary obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Syn_Deal_Supplementary objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Syn_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Syn_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Syn_Deal_Supplementary objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
 }

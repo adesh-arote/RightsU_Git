@@ -457,10 +457,15 @@
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_SUPPLEMENTARY_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Syn_Supplementary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_List_Syn_Ancillary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Supplementary_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_SUPP_Create_Table_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Syn_Deal_Supplementary_Details_Data_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Syn_Deal_Supplementary_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_PreReq_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_Adv_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Objection_PreReq_Result.cs" />
@@ -648,6 +653,8 @@
     <Compile Include="Syndication_Entities\Syn_Deal_Run_Platform.cs" />
     <Compile Include="Syndication_Entities\Syn_Deal_Run_Repeat_On_Day.cs" />
     <Compile Include="Syndication_Entities\Syn_Deal_Run_Yearwise_Run.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Supplementary.cs" />
+    <Compile Include="Syndication_Entities\Syn_Deal_Supplementary_Detail.cs" />
     <Compile Include="System_Setting_Entities\Security_Group.cs" />
     <Compile Include="System_Setting_Entities\Security_Group_Rel.cs" />
     <Compile Include="System_Setting_Entities\Sql_Job_Parameters.cs" />

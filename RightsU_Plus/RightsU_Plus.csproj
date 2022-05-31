@@ -218,6 +218,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\Syn_AncillaryController.cs" />
@@ -1308,6 +1309,8 @@
     <Content Include="Views\Syn_Deal\_List_Ancillary_Syn.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Supplementary.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Supplementary_Add.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Supplementary.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Supplementary_Add.cshtml" />
     <Content Include="Views\Acq_Deal\_AmendmentHistory.cshtml" />
     <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
   </ItemGroup>

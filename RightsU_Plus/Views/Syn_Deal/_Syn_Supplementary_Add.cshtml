@@ -3,9 +3,9 @@
 @{
     RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
 
-    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
     {
-        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
     }
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -14,21 +14,20 @@
     }
 }
 <script type="text/javascript">
-    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_Supplementary")';
-    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Edit = '@Url.Action("supplementaryEdit", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Delete = '@Url.Action("supplementaryDelete", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Acq_Supplementary")';
-    var URL_SaveInSession = '@Url.Action("supplementarySave", "Acq_Supplementary")';
-    var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Acq_Supplementary")';
-    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Acq_Supplementary")';
-    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Acq_Supplementary")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Syn_Supplementary")';
+    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Edit = '@Url.Action("supplementaryEdit", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Delete = '@Url.Action("supplementaryDelete", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Syn_Supplementary")';
+    var URL_SaveInSession = '@Url.Action("supplementarySave", "Syn_Supplementary")';
+    var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Syn_Supplementary")';
+    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Syn_Supplementary")';
+    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Syn_Supplementary")';
 
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
 <link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
@@ -70,15 +69,15 @@
                 $('#TabName').val(result.TabName);
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
-                $('#txtAcqRemarks').val(result.Remarks);
-                $('#txtAcqRemarks').trigger("keyup");
+                $('#txtSynRemarks').val(result.Remarks);
+                $('#txtSynRemarks').trigger("keyup");
 
                 $('#ViewOperation').val(result.ViewOperation);
                 if ($('#ViewOperation').val() == "VIEW") {
                     document.getElementById("HideForView").style.display = "none";
                     document.getElementById("btnSaveDeal").style.display = "none";
                     $('#ddSuppTitle').attr('disabled', true);
-                    $('#txtAcqRemarks').attr('disabled', true);
+                    $('#txtSynRemarks').attr('disabled', true);
                 }
 
 
@@ -532,8 +531,8 @@
             return;
         }
 
-        if ($('#txtAcqRemarks').val() != null) {
-            var Remarks = $('#txtAcqRemarks').val();
+        if ($('#txtSynRemarks').val() != null) {
+            var Remarks = $('#txtSynRemarks').val();
         }
 
         $.ajax({
@@ -619,7 +618,7 @@
                                     <div class="charNum">0/4000</div>
                                     <div style=""></div>
                                 </div>
-                                <textarea class="textarea" name="txtAcqRemarks" id="txtAcqRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
+                                <textarea class="textarea" name="txtSynRemarks" id="txtSynRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
                             </div>
                         </div>
                         <br>

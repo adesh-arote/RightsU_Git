@@ -12,18 +12,16 @@ namespace RightsU_Entities
     using System;
     using System.Collections.Generic;
 
-    public partial class Supplementary
+    public partial class Syn_Deal_Supplementary_Detail
     {
-        public Supplementary()
-        {
-            this.Supplementary_Config = new HashSet<Supplementary_Config>();
-        }
-
         public State EntityState { get; set; }
-        public int Supplementary_Code { get; set; }
-        public string Supplementary_Name { get; set; }
-        public string Is_Active { get; set; }
+        public int Syn_Deal_Supplementary_Detail_Code { get; set; }
+        public Nullable<int> Supplementary_Tab_Code { get; set; }
+        public Nullable<int> Supplementary_Config_Code { get; set; }
+        public string Supplementary_Data_Code { get; set; }
+        public string User_Value { get; set; }
+        public Nullable<int> Row_Num { get; set; }
 
-        public virtual ICollection<Supplementary_Config> Supplementary_Config { get; set; }
+        public virtual Syn_Deal_Supplementary Syn_Deal_Supplementary { get; set; }
     }
 }

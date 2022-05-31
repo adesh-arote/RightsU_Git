@@ -8,43 +8,43 @@ using System.Linq;
 
 namespace RightsU_Plus.Controllers
 {
-    public class Acq_SupplementaryController : BaseController
+    public class Syn_SupplementaryController : BaseController
     {
         string _fieldList = "";
         public Deal_Schema objDeal_Schema
         {
             get
             {
-                if (Session[RightsU_Session.ACQ_DEAL_SCHEMA] == null)
-                    Session[RightsU_Session.ACQ_DEAL_SCHEMA] = new Deal_Schema();
-                return (Deal_Schema)Session[RightsU_Session.ACQ_DEAL_SCHEMA];
+                if (Session[RightsU_Session.Syn_DEAL_SCHEMA] == null)
+                    Session[RightsU_Session.Syn_DEAL_SCHEMA] = new Deal_Schema();
+                return (Deal_Schema)Session[RightsU_Session.Syn_DEAL_SCHEMA];
             }
             //get { return new Deal_Schema(); }
             set
             {
-                Session[RightsU_Session.ACQ_DEAL_SCHEMA] = value;
+                Session[RightsU_Session.Syn_DEAL_SCHEMA] = value;
             }
         }
 
-        //public Acq_Deal objAcq_Deal
+        //public Syn_Deal objSyn_Deal
         //{
         //    get
         //    {
         //        if (Session[RightsU_Session.SESS_DEAL] == null)
-        //            Session[RightsU_Session.SESS_DEAL] = new Acq_Deal();
-        //        return (Acq_Deal)Session[RightsU_Session.SESS_DEAL];
+        //            Session[RightsU_Session.SESS_DEAL] = new Syn_Deal();
+        //        return (Syn_Deal)Session[RightsU_Session.SESS_DEAL];
         //    }
         //    set { Session[RightsU_Session.SESS_DEAL] = value; }
         //}
-        //public int Acq_Deal_Code
+        //public int Syn_Deal_Code
         //{
         //    get
         //    {
-        //        if (Session["Acq_Deal_Code"] == null)
-        //            Session["Acq_Deal_Code"] = "0";
-        //        return Convert.ToInt32(Session["Acq_Deal_Code"]);
+        //        if (Session["Syn_Deal_Code"] == null)
+        //            Session["Syn_Deal_Code"] = "0";
+        //        return Convert.ToInt32(Session["Syn_Deal_Code"]);
         //    }
-        //    set { Session["Acq_Deal_Code"] = value; }
+        //    set { Session["Syn_Deal_Code"] = value; }
         //}
         public USP_Service objUspService
         {
@@ -65,29 +65,29 @@ namespace RightsU_Plus.Controllers
 
             //return PartialView("~/Views/Shared/_Rights_Filter.cshtml");
             ViewBag.RecordCount = 50;
-            return PartialView("~/Views/Acq_Deal/_Acq_Supplementary.cshtml");
+            return PartialView("~/Views/Syn_Deal/_Syn_Supplementary.cshtml");
         }
 
         public JsonResult BindSupplementary()
         {
-            List<USP_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").ToList();
-            int Count = objUspService.USP_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").Count();
+            List<USP_Syn_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "").ToList();
+            int Count = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "").Count();
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
-            strList = strList + "<TR><TH>Title Name</TH><TH>Social Media</TH><TH>Commitments</TH><TH>Opening & Closing Credits</TH><TH>Essential Clauses</TH><TH>Action</TH></TR>";
+            strList = strList + "<TR><TH>Title Name</TH><TH>IP Details</TH><TH>Miscellaneous</TH><TH>Excluded Rights</TH><TH>Business Statement</TH><TH>Action</TH></TR>";
 
 
-            foreach (USP_Supplementary_List_Result sl in objSupplementary_List)
+            foreach (USP_Syn_Deal_Supplementary_List_Result sl in objSupplementary_List)
             {
                 if (objDeal_Schema.Mode != "V")
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
+                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.IPDetails + "</TD><TD>" + sl.Miscellaneous + "</TD><TD>" + sl.ExcludedRights + "</TD><TD>" + sl.BusinessStatement + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
 
                 }
                 else
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
+                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.IPDetails + "</TD><TD>" + sl.Miscellaneous + "</TD><TD>" + sl.ExcludedRights + "</TD><TD>" + sl.BusinessStatement + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
 
                 }
             }
@@ -98,7 +98,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult AddEditSupp()
         {
-            return PartialView("~/Views/Acq_Deal/_Acq_Supplementary_Add.cshtml");
+            return PartialView("~/Views/Syn_Deal/_Syn_Supplementary_Add.cshtml");
         }
 
         public JsonResult BindAllPreReq_Async()
@@ -111,7 +111,7 @@ namespace RightsU_Plus.Controllers
 
             Operation = obj_Dictionary_RList["MODE"];
 
-            List<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> titleList = objUspService.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(objDeal_Schema.Deal_Code, title_code).ToList();
+            List<USP_Get_Title_For_Syn_Supplementary_Result> titleList = objUspService.USP_Get_Title_For_Syn_Supplementary(objDeal_Schema.Deal_Code, title_code).ToList();
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Title_List", new SelectList(titleList, "Title_Code", "Title_Name"));
@@ -122,19 +122,19 @@ namespace RightsU_Plus.Controllers
             string tabTable = "";
 
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForAcqDeal).OrderBy(a => a.Order_No).ToList();
+            List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForSynDeal).OrderBy(a => a.Order_No).ToList();
 
             Supplementary_Data_Service objDataService = new Supplementary_Data_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Data> objSupplementary_Data = objDataService.SearchFor(a => true).ToList();
 
-            //Acq_Deal_Supplementary_detail_Service objTransactionDetailService = new Acq_Deal_Supplementary_detail_Service(objLoginEntity.ConnectionStringName);
-            Acq_Deal_Supplementary_Service objTransactionService = new Acq_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
+            //Syn_Deal_Supplementary_Detail_Service objTransactionDetailService = new Syn_Deal_Supplementary_Detail_Service(objLoginEntity.ConnectionStringName);
+            Syn_Deal_Supplementary_Service objTransactionService = new Syn_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
 
-            Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
+            Syn_Deal_Supplementary objSupplementary = new Syn_Deal_Supplementary();
             objSupplementary = objTransactionService.GetById(supplementary_Code);
             if (objSupplementary == null)
             {
-                objSupplementary = new Acq_Deal_Supplementary();
+                objSupplementary = new Syn_Deal_Supplementary();
             }
             //int TabCode = (int)objSupplementary_Tab.Select(a => a.Supplementary_Tab_Code).FirstOrDefault();
             int dropcount = 0;
@@ -179,7 +179,7 @@ namespace RightsU_Plus.Controllers
                 }
 
                 strtableHeader = GetTableHeader(ST.Supplementary_Tab_Code, ST.Short_Name, objSupplementary_Data, ST.EditWindowType, ViewOperation);
-                List<USP_SUPP_Create_Table_Result> rowList = objUspService.USP_SUPP_Create_Table_Result(ST.Supplementary_Tab_Code, objDeal_Schema.Deal_Code, title_code.ToString(), ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
+                List<USP_Syn_Deal_Supplementary_Details_Data_Result> rowList = objUspService.USP_Syn_Deal_Supplementary_Details_Data(ST.Supplementary_Tab_Code, supplementary_Code, ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
 
                 arrStr = strtableHeader.Split('~');
 
@@ -197,12 +197,12 @@ namespace RightsU_Plus.Controllers
 
             strTabs = strTabs + "</ul>";
 
-            //List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
+            //List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
 
             //if (Operation == "E")
             //{
-            //    lstDetailObj = objSupplementary.Acq_Deal_Supplementary_detail.ToList();//(List<Acq_Deal_Supplementary_detail>)objTransactionDetailService.SearchFor(a => true).ToList();
-            //    //lstDetailObj = lstDetailObj.Where(a => a.Acq_Deal_Supplementary_Code == supplementary_Code).ToList();
+            //    lstDetailObj = objSupplementary.Syn_Deal_Supplementary_Detail.ToList();//(List<Syn_Deal_Supplementary_Detail>)objTransactionDetailService.SearchFor(a => true).ToList();
+            //    //lstDetailObj = lstDetailObj.Where(a => a.Syn_Deal_Supplementary_Code == supplementary_Code).ToList();
             //}
             Session["Supplementary"] = objSupplementary;
             Session["Supplementary_Service"] = objTransactionService;
@@ -224,26 +224,26 @@ namespace RightsU_Plus.Controllers
             string strtableHeader = "<tr>";
             string strAddRow = "<tr id = \"add" + Short_Name + "\" style=\"display:none;\">";
 
-            List<USP_Acq_SUPP_Tab_Result> columnList = objUspService.USP_Acq_SUPP_Tab_Result(tabCode).ToList();
+            List<USP_Get_Supplementary_Config_Result> columnList = objUspService.USP_Get_Supplementary_Config(tabCode).ToList();
             int i = 1, j = 1, k = 1, l = 1, m = 1;
-            foreach (USP_Acq_SUPP_Tab_Result ST in columnList)
+            foreach (USP_Get_Supplementary_Config_Result ST in columnList)
             {
-                if (strPrevHeader != "" && strPrevHeader == ST.supplementary_name)
+                if (strPrevHeader != "" && strPrevHeader == ST.Supplementary_Name)
                 {
                     strtableHeader = strtableHeader.Replace("UTOsplTag", " colspan=2 ");
                 }
                 else
                 {
                     strtableHeader = strtableHeader.Replace("UTOsplTag", "");
-                    strtableHeader = strtableHeader + "<th style=\"width:20%\" UTOsplTag> " + ST.supplementary_name + "</th>";
-                    strPrevHeader = ST.supplementary_name;
+                    strtableHeader = strtableHeader + "<th style=\"width:20%\" UTOsplTag> " + ST.Supplementary_Name + "</th>";
+                    strPrevHeader = ST.Supplementary_Name;
                 }
                 if (WindowType == "inLine")
                 {
                     strAddRow = strAddRow + "<td style=\"width:20%\">";
                     if (ST.Control_Type == "TXTDDL")
                     {
-                        strAddRow = strAddRow + getDDL(ListSupplementary_Data, Short_Name, i, ST.Whr_Criteria, "", "A", "multiple", ST.Supplementary_Config_Code);
+                        strAddRow = strAddRow + getDDL(ListSupplementary_Data, Short_Name, i, ST.Whr_Criteria, "", "A", ST.Is_Multiselect, ST.Supplementary_Config_Code);
                         i++;
                     }
                     else if (ST.Control_Type == "TXTAREA")
@@ -326,13 +326,14 @@ namespace RightsU_Plus.Controllers
         {
             string[] SelectedList = SelectedValues.Split(',');
             string strDDL;
-            if (multiple == "")
+            if (multiple == "N")
             {
                 strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
             {
+                multiple = "multiple";
                 strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
             }
             //strDDL = strDDL + "<option value=\"\" selected disabled hidden> Please Select</option>";
@@ -405,8 +406,8 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<string, object> Jsonobj = new Dictionary<string, object>();
 
-            List<USP_Get_Edit_Row_Result> EditRowList = new List<USP_Get_Edit_Row_Result>();
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
+            List<USP_Get_Syn_Deal_Supplementary_Edit_Result> EditRowList = new List<USP_Get_Syn_Deal_Supplementary_Edit_Result>();
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
 
             Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
@@ -415,17 +416,17 @@ namespace RightsU_Plus.Controllers
 
             //if (supplementary_Code != 0)
             //{
-            //    EditRowList = objUspService.USP_Get_Edit_Row_Result(supplementary_Code, rowno, Short_Name).ToList();
+            //    EditRowList = objUspService.USP_Get_Syn_Deal_Supplementary_Edit_Result(supplementary_Code, rowno, Short_Name).ToList();
             //}
             //else
             //{
-            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+            lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
 
             lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
-            foreach (Acq_Deal_Supplementary_detail obj in lstDetailObj)
+            foreach (Syn_Deal_Supplementary_Detail obj in lstDetailObj)
             {
-                USP_Get_Edit_Row_Result objEditRow = new USP_Get_Edit_Row_Result();
+                USP_Get_Syn_Deal_Supplementary_Edit_Result objEditRow = new USP_Get_Syn_Deal_Supplementary_Edit_Result();
                 objEditRow.Supplementary_Data_Code = obj.Supplementary_Data_Code;
                 objEditRow.User_Value = obj.User_Value;
                 objEditRow.Row_Num = obj.Row_Num;
@@ -450,13 +451,13 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.Supplementary_Data> objSupplementary_Data = objDataService.SearchFor(a => true).ToList();
 
             string strAddRow = "<tr id=\"Edit" + Short_Name + "\" name=" + Short_Name + rowno.ToString() + ">";
-            foreach (USP_Get_Edit_Row_Result ED in EditRowList)
+            foreach (USP_Get_Syn_Deal_Supplementary_Edit_Result ED in EditRowList)
             {
                 strAddRow = strAddRow + "<td>";
                 int i = 1, j = 1, k = 1, l = 1, m = 1;
                 if (ED.Control_Type == "TXTDDL")
                 {
-                    strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, ED.Whr_Criteria, ED.Supplementary_Data_Code, "E", "multiple", Convert.ToInt32(ED.Supplementary_Config_Code));
+                    strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, ED.Whr_Criteria, ED.Supplementary_Data_Code, "E", ED.Is_Multiselect, Convert.ToInt32(ED.Supplementary_Config_Code));
                     i++;
                 }
                 else if (ED.Control_Type == "TXTAREA")
@@ -493,23 +494,23 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult supplementaryDelete(int supplementary_Code, int rowno, int TabCode)
         {
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
 
             if (Session["Supplementary"] != null)
             {
-                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
             }
 
-            List<Acq_Deal_Supplementary_detail> objDelete = new List<Acq_Deal_Supplementary_detail>();
+            List<Syn_Deal_Supplementary_Detail> objDelete = new List<Syn_Deal_Supplementary_Detail>();
 
             objDelete = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
-            foreach (Acq_Deal_Supplementary_detail objDel in objDelete)
+            foreach (Syn_Deal_Supplementary_Detail objDel in objDelete)
             {
                 objDel.EntityState = State.Deleted;
             }
 
-            ((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail = lstDetailObj;
+            ((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail = lstDetailObj;
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
@@ -521,7 +522,7 @@ namespace RightsU_Plus.Controllers
 
         public string DeleteSupplementary(int supplementary_Code)
         {
-            objUspService.USP_Acq_Supplementary_Delete_Title(supplementary_Code);
+            objUspService.USP_Delete_Syn_Supplementary(supplementary_Code);
             var Mode = "A";
             BindSupplementary();
             string success = "201";
@@ -535,8 +536,8 @@ namespace RightsU_Plus.Controllers
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Supplementary_Tab objSupplementary_Tab = objService.SearchFor(a => a.Short_Name == Short_Name).ToList().FirstOrDefault();
 
-            List<USP_Get_Edit_Row_Result> EditRowList = new List<USP_Get_Edit_Row_Result>();
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
+            List<USP_Get_Syn_Deal_Supplementary_Edit_Result> EditRowList = new List<USP_Get_Syn_Deal_Supplementary_Edit_Result>();
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
 
             if (Operation == "E")
             {
@@ -544,13 +545,13 @@ namespace RightsU_Plus.Controllers
 
                 Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
-                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
 
                 lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
-                foreach (Acq_Deal_Supplementary_detail obj in lstDetailObj)
+                foreach (Syn_Deal_Supplementary_Detail obj in lstDetailObj)
                 {
-                    USP_Get_Edit_Row_Result objEditRow = new USP_Get_Edit_Row_Result();
+                    USP_Get_Syn_Deal_Supplementary_Edit_Result objEditRow = new USP_Get_Syn_Deal_Supplementary_Edit_Result();
                     objEditRow.Supplementary_Data_Code = obj.Supplementary_Data_Code;
                     objEditRow.User_Value = obj.User_Value;
                     objEditRow.Row_Num = obj.Row_Num;
@@ -572,7 +573,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            List<USP_Acq_SUPP_Tab_Result> columnList = objUspService.USP_Acq_SUPP_Tab_Result(objSupplementary_Tab.Supplementary_Tab_Code).ToList();
+            List<USP_Get_Supplementary_Config_Result> columnList = objUspService.USP_Get_Supplementary_Config(objSupplementary_Tab.Supplementary_Tab_Code).ToList();
 
             Supplementary_Data_Service objDataService = new Supplementary_Data_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Data> objSupplementary_Data = objDataService.SearchFor(a => true).ToList();
@@ -583,13 +584,13 @@ namespace RightsU_Plus.Controllers
             string prevRowTitle = "";
             int i = 1, j = 1, k = 1, l = 1, m = 1;
 
-            foreach (USP_Acq_SUPP_Tab_Result CM in columnList)
+            foreach (USP_Get_Supplementary_Config_Result CM in columnList)
             {
                 string utospltag = "";
                 string user_Value = "";
                 string supplementary_Data_Code = "";
 
-                USP_Get_Edit_Row_Result obj = new USP_Get_Edit_Row_Result();
+                USP_Get_Syn_Deal_Supplementary_Edit_Result obj = new USP_Get_Syn_Deal_Supplementary_Edit_Result();
 
                 if (Operation == "E")
                 {
@@ -598,16 +599,11 @@ namespace RightsU_Plus.Controllers
                     supplementary_Data_Code = obj.Supplementary_Data_Code;
                 }
 
-                if (prevRowTitle != "" && prevRowTitle == CM.supplementary_name)
+                if (prevRowTitle != "" && prevRowTitle == CM.Supplementary_Name)
                 {
-                    if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "Y")
+                    if (CM.Control_Type == "TXTDDL")
                     {
-                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "multiple", CM.Supplementary_Config_Code);
-                        i++;
-                    }
-                    else if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "N")
-                    {
-                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "", CM.Supplementary_Config_Code);
+                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, CM.Is_Multiselect, CM.Supplementary_Config_Code);
                         i++;
                     }
                     else if (CM.Control_Type == "TXTAREA")
@@ -638,19 +634,14 @@ namespace RightsU_Plus.Controllers
                     strAddRow = strAddRow.Replace("utospltag", "");
                     strAddRow = strAddRow + "<tr>";
                     strAddRow = strAddRow + "<td style=\"width: 40%;\">";
-                    strAddRow = strAddRow + CM.supplementary_name;
+                    strAddRow = strAddRow + CM.Supplementary_Name;
                     strAddRow = strAddRow + "</td>";
                     strAddRow = strAddRow + "<td>";
-                    prevRowTitle = CM.supplementary_name;
+                    prevRowTitle = CM.Supplementary_Name;
 
-                    if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "Y")
+                    if (CM.Control_Type == "TXTDDL")
                     {
-                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "multiple", CM.Supplementary_Config_Code);
-                        i++;
-                    }
-                    else if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "N")
-                    {
-                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "", CM.Supplementary_Config_Code);
+                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, CM.Is_Multiselect, CM.Supplementary_Config_Code);
                         i++;
                     }
                     else if (CM.Control_Type == "TXTAREA")
@@ -687,7 +678,7 @@ namespace RightsU_Plus.Controllers
             return strAddRow;
 
         }
-        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, string Is_Syn_Acq_Mapp = "")
+        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, string Is_Syn_Syn_Mapp = "")
         {
             Dictionary<string, string> obj_Dictionary_RList = new Dictionary<string, string>();
             obj_Dictionary_RList.Add("MODE", MODE);
@@ -697,7 +688,7 @@ namespace RightsU_Plus.Controllers
             obj_Dictionary_RList.Add("Episode_From", Episode_From == null ? "0" : Episode_From.ToString());
             obj_Dictionary_RList.Add("Episode_To", Episode_To == null ? "0" : Episode_To.ToString());
             obj_Dictionary_RList.Add("IsHB", IsHB);
-            obj_Dictionary_RList.Add("Is_Syn_Acq_Mapp", Is_Syn_Acq_Mapp);
+            obj_Dictionary_RList.Add("Is_Syn_Syn_Mapp", Is_Syn_Syn_Mapp);
             obj_Dictionary_RList.Add("Supplementary_code", Supplementary_code.ToString());
             obj_Dictionary_RList.Add("title_code", title_code.ToString());
             if (View != null)
@@ -719,13 +710,13 @@ namespace RightsU_Plus.Controllers
         }
         public bool supplementaryDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
         {
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
-            Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
+            Syn_Deal_Supplementary objSupplementary = new Syn_Deal_Supplementary();
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
-            objSupplementary = (Acq_Deal_Supplementary)Session["Supplementary"];
-            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
+            objSupplementary = (Syn_Deal_Supplementary)Session["Supplementary"];
+            lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementary.Syn_Deal_Supplementary_Detail.ToList();
 
             Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
@@ -786,11 +777,11 @@ namespace RightsU_Plus.Controllers
                 return "Duplicate";
             }
 
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
-            Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
+            Syn_Deal_Supplementary objSupplementary = new Syn_Deal_Supplementary();
 
-            objSupplementary = (Acq_Deal_Supplementary)Session["Supplementary"];
-            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
+            objSupplementary = (Syn_Deal_Supplementary)Session["Supplementary"];
+            lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementary.Syn_Deal_Supplementary_Detail.ToList();
 
             //"1~1,sai~2,"
             Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
@@ -821,7 +812,7 @@ namespace RightsU_Plus.Controllers
             }
             foreach (string str in columnValueList)
             {
-                Acq_Deal_Supplementary_detail obj = new Acq_Deal_Supplementary_detail();
+                Syn_Deal_Supplementary_Detail obj = new Syn_Deal_Supplementary_Detail();
                 string[] vals = str.Split('~');
                 int config_Code = Convert.ToInt32(vals[1]);
                 string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
@@ -857,7 +848,7 @@ namespace RightsU_Plus.Controllers
                     obj.EntityState = State.Added;
                     lstDetailObj.Add(obj);
                 }
-                else if (Operation == "E" && obj.Acq_Deal_Supplementary_Detail_Code > 0)
+                else if (Operation == "E" && obj.Syn_Deal_Supplementary_Detail_Code > 0)
                 {
                     objSupplementary.EntityState = State.Modified;
                     obj.EntityState = State.Modified;
@@ -874,16 +865,16 @@ namespace RightsU_Plus.Controllers
             }
             Output = Output + "</tr>";
 
-            objSupplementary.Acq_Deal_Supplementary_detail = lstDetailObj;
+            objSupplementary.Syn_Deal_Supplementary_Detail = lstDetailObj;
             Session["Supplementary"] = objSupplementary;
             return Output;
         }
         public JsonResult supplementarySaveDB(string Title_List, string Remarks)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            Acq_Deal_Supplementary objSupplementaryTemp = (Acq_Deal_Supplementary)Session["Supplementary"];
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementaryTemp.Acq_Deal_Supplementary_detail.ToList();
-            Acq_Deal_Supplementary_Service objTransactionService = new Acq_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
+            Syn_Deal_Supplementary objSupplementaryTemp = (Syn_Deal_Supplementary)Session["Supplementary"];
+            List<Syn_Deal_Supplementary_Detail> lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementaryTemp.Syn_Deal_Supplementary_Detail.ToList();
+            Syn_Deal_Supplementary_Service objTransactionService = new Syn_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
 
             if (Session["Supplementary"] == null)
             {
@@ -903,40 +894,40 @@ namespace RightsU_Plus.Controllers
             {
                 int[] titlecodes = Array.ConvertAll(Title_List.Split(','), x => int.Parse(x));
 
-                //lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                //lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
 
                 for (int t = 0; t < titlecodes.Length; t++)
                 {
                     dynamic resultSet;
                     int titleCode = titlecodes[t];
-                    //List<Acq_Deal_Supplementary_detail> lstDetailObjTemp = new List<Acq_Deal_Supplementary_detail>();
+                    //List<Syn_Deal_Supplementary_Detail> lstDetailObjTemp = new List<Syn_Deal_Supplementary_Detail>();
 
-                    //objSupplementaryTemp = (Acq_Deal_Supplementary)objTransactionService.SearchFor(a => a.Title_code == presId && a.Acq_Deal_Code == objDeal_Schema.Deal_Code).FirstOrDefault();
-                    Acq_Deal_Supplementary objSupplementary = null;
+                    //objSupplementaryTemp = (Syn_Deal_Supplementary)objTransactionService.SearchFor(a => a.Title_code == presId && a.Syn_Deal_Code == objDeal_Schema.Deal_Code).FirstOrDefault();
+                    Syn_Deal_Supplementary objSupplementary = null;
 
                     if (titleCode == objSupplementaryTemp.Title_code)
                     {
                         objSupplementary = objSupplementaryTemp;
-                        objTransactionService = (Acq_Deal_Supplementary_Service)Session["Supplementary_Service"];
+                        objTransactionService = (Syn_Deal_Supplementary_Service)Session["Supplementary_Service"];
                     }
                     else
                     {
-                        objTransactionService = new Acq_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
+                        objTransactionService = new Syn_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
                     }
 
                     if (objSupplementary == null)
                     {
-                        objSupplementary = new Acq_Deal_Supplementary();
+                        objSupplementary = new Syn_Deal_Supplementary();
                         objSupplementary.Title_code = titlecodes[t];
                         objSupplementary.Remarks = Remarks;
-                        objSupplementary.Acq_Deal_Code = objDeal_Schema.Deal_Code;
+                        objSupplementary.Syn_Deal_Code = objDeal_Schema.Deal_Code;
                         objSupplementary.Episode_From = 1;//Convert.ToInt32(objDeal_Schema.Title_List.Where(a => a.Title_Code == t).Select(a => a.Episode_From));
                         objSupplementary.Episode_To = 1;// Convert.ToInt32(objDeal_Schema.Title_List.Where(a => a.Title_Code == t).Select(a => a.Episode_To));
                         objSupplementary.EntityState = State.Added;
 
-                        foreach (Acq_Deal_Supplementary_detail objD in lstDetailObj)
+                        foreach (Syn_Deal_Supplementary_Detail objD in lstDetailObj)
                         {
-                            Acq_Deal_Supplementary_detail objTemp = new Acq_Deal_Supplementary_detail();
+                            Syn_Deal_Supplementary_Detail objTemp = new Syn_Deal_Supplementary_Detail();
 
                             objTemp.Row_Num = objD.Row_Num;
                             objTemp.Supplementary_Config_Code = objD.Supplementary_Config_Code;
@@ -946,7 +937,7 @@ namespace RightsU_Plus.Controllers
                             objTemp.EntityState = objD.EntityState;
                             if (objTemp.EntityState != State.Deleted)
                             {
-                                objSupplementary.Acq_Deal_Supplementary_detail.Add(objTemp);
+                                objSupplementary.Syn_Deal_Supplementary_Detail.Add(objTemp);
                             }
                         }
                     }
