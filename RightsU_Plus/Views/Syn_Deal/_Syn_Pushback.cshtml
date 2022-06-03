@@ -814,6 +814,10 @@
 </style>
 @if (ViewBag.Mode != null && (ViewBag.Mode == "ADD" || ViewBag.Mode == "EDIT" || ViewBag.Mode == "CLONE"))
 {
+    if (String.IsNullOrEmpty(Model.Right_Type))
+    {
+        Model.Right_Type = "Y";
+    }
     <div class="modal-dialog">
         <div class="modal-content clearfix">
 

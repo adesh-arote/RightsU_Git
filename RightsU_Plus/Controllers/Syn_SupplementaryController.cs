@@ -724,12 +724,14 @@ namespace RightsU_Plus.Controllers
             int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
             int config_Code = 0;
             String ErrorCode = "";
-            string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
             int[] dtextval;
 
             foreach (string str in columnValueList)
             {
-                string[] vals = str.Split('~');
+                //string[] vals = str.Split('~');
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
                 config_Code = Convert.ToInt32(vals[1]);
                 string tempVal = "";
 
@@ -740,28 +742,31 @@ namespace RightsU_Plus.Controllers
                     {
                         dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
 
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code).Select(K => K.Supplementary_Data_Code).ToList();
+                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && 
+                                                                           S.Supplementary_Config_Code == config_Code && 
+                                                                           S.Row_Num.Value != Row_No &&
+                                                                           S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
 
                         tempVal = string.Join(",", selectedDrp);
 
                         int i = 1;
-                        if (Operation != "E")
+                        //if (Operation != "E")
+                        //{
+                        foreach (int dt in dtextval)
                         {
-                            foreach (int dt in dtextval)
+                            if (tempVal.IndexOf(dt.ToString(), 0) > -1)
                             {
-                                if (tempVal.IndexOf(dt.ToString(), 0) > -1)
-                                {
-                                    return true;
+                                return true;
 
-                                }
-                                i++;
                             }
+                            i++;
                         }
-                        else
-                        {
-                            List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
+                        //}
+                        //else
+                        //{
+                        //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
 
-                        }
+                        //}
                     }
                 }
             }
@@ -800,7 +805,10 @@ namespace RightsU_Plus.Controllers
                 rowNum = Row_No;
                 //    lstDetailObj.RemoveAll(a => a.Row_Num == rowNum && a.Supplementary_Tab_Code == TabCode);
             }
-            string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
             string Output = "";
             if (rowNum == 0)
             {
@@ -813,7 +821,8 @@ namespace RightsU_Plus.Controllers
             foreach (string str in columnValueList)
             {
                 Syn_Deal_Supplementary_Detail obj = new Syn_Deal_Supplementary_Detail();
-                string[] vals = str.Split('~');
+                //string[] vals = str.Split('~');
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
                 int config_Code = Convert.ToInt32(vals[1]);
                 string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
 

@@ -230,9 +230,14 @@ namespace RightsU_Plus.Controllers
             List<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAcqDeal), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
             CommonUtil.WriteErrorLog("USP_MODULE_RIGHTS executed", Err_filename);
             bool srchaddRights = false;
+            bool srchArchieveRights = false;
             if (addRights.FirstOrDefault() != null)
+            {
                 srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForAdd) + "~");
+                srchArchieveRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForDealArchive) + "~");
+            }
             ViewBag.AddVisibility = srchaddRights;
+            ViewBag.ArchieveVisibility = (srchArchieveRights == true ? "block" : "none");
             ViewBag.UserSecurityCode = objLoginUser.Security_Group_Code;
             obj_Acq_Syn_List_Search.PageNo = 1;
             Dictionary<string, string> obj_Dic = new Dictionary<string, string>();
@@ -276,12 +281,12 @@ namespace RightsU_Plus.Controllers
             return View("~/Views/Acq_List/Index.cshtml");
         }
         [HttpPost]
-        public PartialViewResult PartialDealList(int Page, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1")
+        public PartialViewResult PartialDealList(int Page, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1", string strSrchEntity = "")
         {
             string[] arrTitleName = strTitles.Split('﹐');
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
             CommonUtil.WriteErrorLog("BindGridView() method of Acq_ListController is executing", Err_filename);
-            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode);
+            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode, strSrchEntity);
             CommonUtil.WriteErrorLog("BindGridView() method if Acq_ListController has been executed", Err_filename);
             ViewBag.Show_Amendment_Details = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Show_Amendment_Details").First().Parameter_Value;
             return PartialView("~/Views/Shared/_List_Deal.cshtml", objList);
@@ -304,7 +309,7 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
-        public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
+        public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1", string strSrchEntity = "")
         {
             string sql = "";
             if (ClearSession == "Y")
@@ -361,6 +366,10 @@ namespace RightsU_Plus.Controllers
                     if (obj_Acq_Syn_List_Search.DirectorCodes_Search != "")
                         sql += " and acq_deal_Code in (select acq_deal_Code from acq_deal_movie dm inner join title t on dm.title_code=t.title_code "
                             + "inner join Title_Talent tt on t.Title_Code = tt.Title_Code and tt.Talent_Code in (" + obj_Acq_Syn_List_Search.DirectorCodes_Search + "))";
+
+                    obj_Acq_Syn_List_Search.Entity_Search = !string.IsNullOrEmpty(strSrchEntity) ? strSrchEntity.Trim() : "";
+                    if (obj_Acq_Syn_List_Search.Entity_Search != "")
+                        sql += " AND XYZ.Entity_Code IN(" + obj_Acq_Syn_List_Search.Entity_Search + ")";
 
                     obj_Acq_Syn_List_Search.Status_Search = strSrchDealTag != "" ? strSrchDealTag : "0";
                     if (obj_Acq_Syn_List_Search.Status_Search != "0")
@@ -607,6 +616,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo;
             ViewBag.IncludeSubDeal = obj_Acq_Syn_List_Search.IncludeSubDeal;
             ViewBag.IncludeArchiveDeal = obj_Acq_Syn_List_Search.strIncludeArchiveDeal;
+            ViewBag.Entity_Search = obj_Acq_Syn_List_Search.Entity_Search;
         }
         private void Reset_Srch_Criteria()
         {
@@ -626,6 +636,7 @@ namespace RightsU_Plus.Controllers
             obj_Acq_Syn_List_Search.PageNo = 1;
             obj_Acq_Syn_List_Search.IncludeSubDeal = "false";
             obj_Acq_Syn_List_Search.strIncludeArchiveDeal = "false";
+            obj_Acq_Syn_List_Search.Entity_Search = "";
         }
 
         #endregion
@@ -1250,7 +1261,7 @@ namespace RightsU_Plus.Controllers
                     goto End;
             }
 
-            Archive:
+        Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -1272,7 +1283,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            End:
+        End:
             if (message == "" && Key == "AR")
             {
                 List<int?> lstTitle_Code = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -1501,7 +1512,7 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
+            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL,ENT", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
         public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode, string TitleSearch, params int?[] ddlBUMulti)
@@ -1524,7 +1535,7 @@ namespace RightsU_Plus.Controllers
                       .Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
 
                     obj_Acq_Syn_List_Search.TitleCodes_Search = String.Join(",", result.Select(x => x.Title_Code).ToList());
-                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x=>x.ToString()).ToArray());
+                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x => x.ToString()).ToArray());
                     string comma = result.Count > 0 ? "﹐" : "";
                     var obj = new
                     {
@@ -2323,14 +2334,14 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult AddAmendmentHistory(int acqDealCode)
         {
             ViewBag.RecordCode = acqDealCode;
-            string Version =  new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Acq_Deal_Code == acqDealCode).Select(s => s.Version).FirstOrDefault();
+            string Version = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Acq_Deal_Code == acqDealCode).Select(s => s.Version).FirstOrDefault();
             ViewBag.Version = Version;
             ViewBag.ModuleCode = 30;
 
             int VersionNumber = Convert.ToInt32(Version);
             Acq_Amendement_History obj = new Acq_Amendement_History();
             var Cnt = new Acq_Amendement_History_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 30 && x.Record_Code == acqDealCode && x.Version == VersionNumber).ToList();
-            if(Cnt.Count() > 0)
+            if (Cnt.Count() > 0)
             {
                 obj = Cnt.FirstOrDefault();
             }
@@ -2352,9 +2363,9 @@ namespace RightsU_Plus.Controllers
             objAcq_Amendement_History.Remarks = Convert.ToString(objCollection["Remarks"]);
 
             int Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
-            if(Acq_Amendement_History_Code > 0)
+            if (Acq_Amendement_History_Code > 0)
             {
-                Acq_Amendement_History objAmendment =  objAcq_Amendement_History_Service.GetById(Acq_Amendement_History_Code);
+                Acq_Amendement_History objAmendment = objAcq_Amendement_History_Service.GetById(Acq_Amendement_History_Code);
                 //objAcq_Amendement_History.Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
 
                 objAmendment.Record_Code = Convert.ToInt32(objCollection["RecordCode"]);
@@ -2372,9 +2383,9 @@ namespace RightsU_Plus.Controllers
                 objAcq_Amendement_History.EntityState = State.Added;
                 objAcq_Amendement_History_Service.Save(objAcq_Amendement_History, out resultSet);
             }
-            
 
-            
+
+
 
             var obj = new
             {
