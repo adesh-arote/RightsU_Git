@@ -988,6 +988,11 @@ namespace RightsU_Plus.Controllers
             objExistingRights.Actual_Right_Start_Date = null;
             objExistingRights.Actual_Right_End_Date = null;
 
+            if(objRights.Perpetuity_Date != null)
+            {
+                hdnRight_Start_Date = objRights.Perpetuity_Date;
+            }
+
             if (hdnRight_Start_Date != "")
             {
                 // CultureInfoFunction();
