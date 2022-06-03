@@ -763,7 +763,7 @@
                 <br />
 
                 <div style="text-align:center;">
-                    <label class="checkbox-inline">
+                    <label class="checkbox-inline" style="display: @ViewBag.ArchieveVisibility">
 
                         @if (ViewBag.IncludeArchiveDeal == "true")
                         {
@@ -878,12 +878,12 @@
                                 </span>
                             }
                             @*else
-                            {
-                                <span>
-                                    @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
-                                </span>
-                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
-                            }*@
+                                {
+                                    <span>
+                                        @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                                    </span>
+                                    @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>
+                                }*@
 
                             <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
                                    placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />

@@ -230,9 +230,14 @@ namespace RightsU_Plus.Controllers
             List<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAcqDeal), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
             CommonUtil.WriteErrorLog("USP_MODULE_RIGHTS executed", Err_filename);
             bool srchaddRights = false;
+            bool srchArchieveRights = false;
             if (addRights.FirstOrDefault() != null)
+            {
                 srchaddRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForAdd) + "~");
+                srchArchieveRights = addRights.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForDealArchive) + "~");
+            }
             ViewBag.AddVisibility = srchaddRights;
+            ViewBag.ArchieveVisibility = (srchArchieveRights == true ? "block" : "none");
             ViewBag.UserSecurityCode = objLoginUser.Security_Group_Code;
             obj_Acq_Syn_List_Search.PageNo = 1;
             Dictionary<string, string> obj_Dic = new Dictionary<string, string>();
@@ -1250,7 +1255,7 @@ namespace RightsU_Plus.Controllers
                     goto End;
             }
 
-            Archive:
+        Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -1272,7 +1277,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            End:
+        End:
             if (message == "" && Key == "AR")
             {
                 List<int?> lstTitle_Code = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -1524,7 +1529,7 @@ namespace RightsU_Plus.Controllers
                       .Select(x => new { Title_Name = x.Title.Title_Name, Title_Code = x.Title.Title_Code }).Distinct().ToList();
 
                     obj_Acq_Syn_List_Search.TitleCodes_Search = String.Join(",", result.Select(x => x.Title_Code).ToList());
-                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x=>x.ToString()).ToArray());
+                    obj_Acq_Syn_List_Search.BUCode = String.Join(",", ddlBUMulti.Select(x => x.ToString()).ToArray());
                     string comma = result.Count > 0 ? "﹐" : "";
                     var obj = new
                     {
@@ -2323,14 +2328,14 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult AddAmendmentHistory(int acqDealCode)
         {
             ViewBag.RecordCode = acqDealCode;
-            string Version =  new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Acq_Deal_Code == acqDealCode).Select(s => s.Version).FirstOrDefault();
+            string Version = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Acq_Deal_Code == acqDealCode).Select(s => s.Version).FirstOrDefault();
             ViewBag.Version = Version;
             ViewBag.ModuleCode = 30;
 
             int VersionNumber = Convert.ToInt32(Version);
             Acq_Amendement_History obj = new Acq_Amendement_History();
             var Cnt = new Acq_Amendement_History_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 30 && x.Record_Code == acqDealCode && x.Version == VersionNumber).ToList();
-            if(Cnt.Count() > 0)
+            if (Cnt.Count() > 0)
             {
                 obj = Cnt.FirstOrDefault();
             }
@@ -2352,9 +2357,9 @@ namespace RightsU_Plus.Controllers
             objAcq_Amendement_History.Remarks = Convert.ToString(objCollection["Remarks"]);
 
             int Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
-            if(Acq_Amendement_History_Code > 0)
+            if (Acq_Amendement_History_Code > 0)
             {
-                Acq_Amendement_History objAmendment =  objAcq_Amendement_History_Service.GetById(Acq_Amendement_History_Code);
+                Acq_Amendement_History objAmendment = objAcq_Amendement_History_Service.GetById(Acq_Amendement_History_Code);
                 //objAcq_Amendement_History.Acq_Amendement_History_Code = Convert.ToInt32(objCollection["Acq_Amendement_History_Code"]);
 
                 objAmendment.Record_Code = Convert.ToInt32(objCollection["RecordCode"]);
@@ -2372,9 +2377,9 @@ namespace RightsU_Plus.Controllers
                 objAcq_Amendement_History.EntityState = State.Added;
                 objAcq_Amendement_History_Service.Save(objAcq_Amendement_History, out resultSet);
             }
-            
 
-            
+
+
 
             var obj = new
             {

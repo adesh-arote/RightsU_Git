@@ -492,7 +492,8 @@
                     hdnIsRef: hdnIsRef,
                     hdnIsDefined_Values: hdnIsDefined_Values,
                     hdnIsMultipleSelect: hdnIsMultipleSelect,
-                    hdnRefTable: hdnExtendedColumnsCode == "5" ? "CBFC" : hdnRefTable,
+                    //hdnRefTable: hdnExtendedColumnsCode == "5" ? "CBFC" : hdnRefTable,
+                    hdnRefTable: hdnRefTable,
                     hdnRefDisplayField: hdnRefDisplayField,
                     hdnRefValueField: hdnRefValueField,
                     AdditionalCondition: Additional_Condition,
@@ -1103,11 +1104,11 @@
                     isCBFC = "N";
                 }
 
-                if (Columns_Code == "5") {
+                @*if (Columns_Code == "5") {
                     CallFor = "T";
                     MethodName = '@Url.Action("BinddlColumnsValue", "Title")';
                     isCBFC = "Y";
-                }
+                }*@
             }
             //Additional_Condition = columnValueCode;
             if (MethodName != "") {
@@ -1137,7 +1138,7 @@
                         if (result) {
                             debugger;
                             //initializeChosen();
-                            if (CallFor != "T" && isCBFC == "N") {
+                            if (Is_Multiple_Select == "N") {
                                 $(result).each(function (index, item) {
                                     select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
                                 });
@@ -1145,19 +1146,19 @@
                                 //$('.chosen-select').chosen();
                                 //select.trigger("chosen:updated");
                             }
-                            else if (CallFor == "T" && isCBFC == "Y") {
+                            else if (Is_Multiple_Select == "Y") {
                                 $("#" + select.attr("id")).attr("multiple", "multiple");
                                 $(result).each(function (index, item) {
                                     select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
                                 });
                             }
-                            else if (CallFor == "T" && isCBFC == "N") {
-                                $("#" + select.attr("id")).attr("multiple", "multiple");
-                                $(result).each(function (index, item) {
-                                    select.append($("<option>").val(item.Talent_Code).text(item.Talent_Name));
-                                });
-                                //$("#" + select.attr("id")).trigger("chosen:updated");
-                            }
+                            //else if (CallFor == "T" && isCBFC == "N") {
+                            //    $("#" + select.attr("id")).attr("multiple", "multiple");
+                            //    $(result).each(function (index, item) {
+                            //        select.append($("<option>").val(item.Talent_Code).text(item.Talent_Name));
+                            //    });
+                            //    //$("#" + select.attr("id")).trigger("chosen:updated");
+                            //}
 
                             var clone = select.prop('outerHTML');
                             select.remove();

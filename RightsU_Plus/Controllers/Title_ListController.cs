@@ -1136,10 +1136,23 @@ namespace RightsU_Plus.Controllers
             SelectList lstProgram = new SelectList(new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y")
             .Select(i => new { Display_Value = i.Program_Code, Display_Text = i.Program_Name }).ToList(), "Display_Value", "Display_Text");
             //lstDealType = new SelectList(lstUSP_Get_Title_PreReq.Where(x => x.Data_For == "DT"), "Display_Value", "Display_Text").ToList();
-            var lst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name == "Type of Film").First().Columns_Code;
-            SelectList lstTypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == lst)
-           .Select(i => new { Display_Value = i.Columns_Value_Code, Display_Text = i.Columns_Value }).ToList(), "Display_Value", "Display_Text");
+            var lst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name == "Type of Film").FirstOrDefault();
+            SelectList lstTypeOfFilm;
+            if (lst != null)
+            {
+                lstTypeOfFilm = new SelectList(new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == lst.Columns_Code)
+               .Select(i => new { Display_Value = i.Columns_Value_Code, Display_Text = i.Columns_Value }).ToList(), "Display_Value", "Display_Text");
+            }
+            else
+            {
+                Extended_Columns_Value obj = new Extended_Columns_Value();
+                obj.Columns_Value_Code = 0;
+                obj.Columns_Value = "Select";
+                List<Extended_Columns_Value> lstEV = new List<Extended_Columns_Value>();
+                lstEV.Add(obj);
 
+                lstTypeOfFilm = new SelectList(lstEV.Select(i => new { Display_Value = i.Columns_Value_Code, Display_Text = i.Columns_Value }).ToList(), "Display_Value", "Display_Text");
+            }
 
             objJson.Add("lstTStarCast", lstTStarCast);
             objJson.Add("lstTDirector", lstTDirector);
