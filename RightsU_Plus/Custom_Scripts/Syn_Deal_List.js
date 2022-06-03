@@ -1058,6 +1058,36 @@ function Ask_Confirmation(commandName, Syn_Deal_Code, IsZeroWorkFlow) {
     }
 }
 
+function AddAmendmentHistory(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
+
+
+    $.ajax({
+        type: "POST",
+        url: URL_AddAmendmentHistory,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            acqDealCode: Acq_Deal_Code,
+        }),
+        async: false,
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                $('#popDealAmendmentHistoryPopup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+            }
+        },
+        error: function (result) {
+            hideLoading();
+        }
+    });
+
+}
+
 function CommonSrch() {
     if ($('#srchCommon').val() == '')
         $('#hdnClearAll').val('Y');

@@ -24,5 +24,6 @@ namespace RightsU_Entities
         public int BUCodes_Search { get; set; }
         public int PageNo { get; set; }
         public string BUCode { get; set; }
+        public string Entity_Search { get; set; }
     }
 }

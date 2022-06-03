@@ -1760,4 +1760,50 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Acq_Amendement_History_Service : BusinessLogic<Acq_Amendement_History>
+    {
+        private readonly Acq_Amendement_History_Repository objRepository;
+
+        public Acq_Amendement_History_Service(string Connection_Str)
+        {
+            this.objRepository = new Acq_Amendement_History_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Amendement_History> SearchFor(Expression<Func<Acq_Amendement_History, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Acq_Amendement_History GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Acq_Amendement_History obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Acq_Amendement_History obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Acq_Amendement_History objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Acq_Amendement_History objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Acq_Amendement_History objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Acq_Amendement_History objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
 }

@@ -51,6 +51,10 @@
 </style>
 @if (ViewBag.Mode != null && (ViewBag.Mode == "ADD" || ViewBag.Mode == "EDIT" || ViewBag.Mode == "CLONE"))
 {
+    if(String.IsNullOrEmpty(Model.Right_Type))
+    {
+        Model.Right_Type = "Y";
+    }
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             @using (Html.BeginForm("Save_Pushback", "Acq_Pushback", new AjaxOptions { OnSuccess = "OnSuccess" }, FormMethod.Post, new { objAD_MVC = Model, @ID = "frm_Save_Pushback" }))
@@ -112,18 +116,18 @@
                                             <label class="bold small_title">@objMessageKey.Validity</label>
                                             <div class="tabbable">
                                                 <ul id="ulRightType" class="nav nav-tabs nav-tab pull-left">
-                                                    <li class="active">
+                                                    <li class="@(Model.Right_Type == "Y" ? "active" : "")" id="TabYear_li">
                                                         <a data-toggle="tab" id="liTabYear" href="#tabYear" onclick="ChangeRightType('Year')" role="tab">@objMessageKey.Yearbased</a>
                                                     </li>
-                                                    <li class="">
+                                                    <li class="@(Model.Right_Type == "M" ? "active" : "")">
                                                         <a data-toggle="tab" id="liTabMilestone" href="#tabMilestone" onclick="ChangeRightType('Milestone')" role="tab">@objMessageKey.Milestone</a>
                                                     </li>
-                                                    <li class="">
+                                                    <li class="@(Model.Right_Type == "U" ? "active" : "")">
                                                         <a data-toggle="tab" id="liTabPerpetuity" href="#tabPerpetuity" onclick="ChangeRightType('Perpetuity')" role="tab">@objMessageKey.Perpetuity</a>
                                                     </li>
                                                 </ul>
                                                 <div class="tab-content clearfix table-wrapper scale_table_container">
-                                                    <div class="tab-pane active scale_table_block" id="tabYear">
+                                                    <div class="@(Model.Right_Type == "Y" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabYear">
                                                         <ul class="clearfix" style="margin-bottom: 5px;">
                                                             <li>
                                                                 <div class="divBlock">
@@ -180,7 +184,7 @@ Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <div class="tab-pane scale_table_block" id="tabMilestone">
+                                                    <div class="@(Model.Right_Type == "M" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabMilestone">
                                                         <ul class="from_to clearfix">
                                                             <li class="form_li_sub" style="width: 160px;">
                                                                 <label>@objMessageKey.From</label>
@@ -197,7 +201,7 @@ Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
                                                             </li>
                                                         </ul>
                                                     </div>
-                                                    <div class="tab-pane scale_table_block" id="tabPerpetuity">
+                                                    <div class="@(Model.Right_Type == "U" ? "tab-pane active scale_table_block" : "tab-pane scale_table_block")" id="tabPerpetuity">
                                                         <ul style="height: 30px;">
                                                             <li style="text-decoration: none;display: inline;width: 35%">
                                                                 <input type="hidden" value="@ViewBag.Allow_Perpetual_Date_Logic" id="hdnAllow_Perpetual_Date_Logic" />
@@ -403,6 +407,9 @@ Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
         }
         fillTotal('HLS');
         fillTotal('HLD');
+
+      
+
     });
     $('#txtYear').change(function () {
         OnFocusLostTerm();
@@ -747,7 +754,7 @@ Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
                 var month = rightSD.getMonth();
                 var day = rightSD.getDate();
                 var rightED = new Date(year + @ViewBag.perpetuity_years, month, day);
-                
+
 
                 var term = CalculateTerm(rightSD, rightED);
                 var arr = term.split('.');

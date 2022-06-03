@@ -434,6 +434,15 @@ namespace RightsU_InterimDb.Models
         public DbSet<Title_Objection_Status> Title_Objection_Status { get; set; }
         public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
         public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
+        public DbSet<Supplementary> Supplementary { get; set; }
+        public DbSet<Supplementary_Config> Supplementary_Config { get; set; }
+        public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
+        public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
+        public DbSet<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
+        public DbSet<Acq_Deal_Supplementary_detail> Acq_Deal_Supplementary_detail { get; set; }
+        public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
+        public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
+        public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
@@ -5059,6 +5068,166 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Syn_Ancillary_Result>("USP_List_Syn_Ancillary", syn_Deal_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
+        {
+            var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
+                new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
+                new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
+    
+            var title_CodeParameter = title_Code.HasValue ?
+                new ObjectParameter("title_Code", title_Code) :
+                new ObjectParameter("title_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result>("USP_GET_TITLE_FOR_SUPPLEMENTARY", aCQ_DEAL_CODEParameter, title_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab(Nullable<int> supplementary_Tab_Code)
+        {
+            var supplementary_Tab_CodeParameter = supplementary_Tab_Code.HasValue ?
+                new ObjectParameter("Supplementary_Tab_Code", supplementary_Tab_Code) :
+                new ObjectParameter("Supplementary_Tab_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_SUPP_Tab_Result>("USP_Acq_SUPP_Tab", supplementary_Tab_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
+        {
+            var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Supplementary_Code", acq_Deal_Supplementary_Code) :
+                new ObjectParameter("Acq_Deal_Supplementary_Code", typeof(int));
+    
+            var row_NumParameter = row_Num.HasValue ?
+                new ObjectParameter("Row_Num", row_Num) :
+                new ObjectParameter("Row_Num", typeof(int));
+    
+            var tab_SMParameter = tab_SM != null ?
+                new ObjectParameter("Tab_SM", tab_SM) :
+                new ObjectParameter("Tab_SM", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Edit_Row_Result>("USP_Get_Edit_Row", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
+        {
+            var tabCodeParameter = tabCode.HasValue ?
+                new ObjectParameter("tabCode", tabCode) :
+                new ObjectParameter("tabCode", typeof(int));
+    
+            var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
+                new ObjectParameter("Acq_Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            var viewParameter = view != null ?
+                new ObjectParameter("View", view) :
+                new ObjectParameter("View", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SUPP_Create_Table_Result>("USP_SUPP_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
+        }
+    
+        public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List(Nullable<int> deal_Code, string title_Code)
+        {
+            var deal_CodeParameter = deal_Code.HasValue ?
+                new ObjectParameter("Deal_Code", deal_Code) :
+                new ObjectParameter("Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Supplementary_List_Result>("USP_Supplementary_List", deal_CodeParameter, title_CodeParameter);
+        }
+    
+        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
+        {
+            var supplementaryCodeParameter = supplementaryCode.HasValue ?
+                new ObjectParameter("SupplementaryCode", supplementaryCode) :
+                new ObjectParameter("SupplementaryCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Acq_Supplementary_Delete_Title", supplementaryCodeParameter);
+        }
+    
+        public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
+        {
+            var supplementary_CodeParameter = supplementary_Code.HasValue ?
+                new ObjectParameter("Supplementary_Code", supplementary_Code) :
+                new ObjectParameter("Supplementary_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Syn_Supplementary", supplementary_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Title_For_Syn_Supplementary_Result> USP_Get_Title_For_Syn_Supplementary(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
+        {
+            var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
+                new ObjectParameter("Syn_Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code.HasValue ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Syn_Supplementary_Result>("USP_Get_Title_For_Syn_Supplementary", syn_Deal_CodeParameter, title_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_Details_Data_Result> USP_Syn_Deal_Supplementary_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Supplementary_Code, string view)
+        {
+            var tabCodeParameter = tabCode.HasValue ?
+                new ObjectParameter("TabCode", tabCode) :
+                new ObjectParameter("TabCode", typeof(int));
+    
+            var syn_Deal_Supplementary_CodeParameter = syn_Deal_Supplementary_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Supplementary_Code", syn_Deal_Supplementary_Code) :
+                new ObjectParameter("Syn_Deal_Supplementary_Code", typeof(int));
+    
+            var viewParameter = view != null ?
+                new ObjectParameter("View", view) :
+                new ObjectParameter("View", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_Details_Data_Result>("USP_Syn_Deal_Supplementary_Details_Data", tabCodeParameter, syn_Deal_Supplementary_CodeParameter, viewParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Supplementary_Config_Result> USP_Get_Supplementary_Config(Nullable<int> supplementary_Tab_Code)
+        {
+            var supplementary_Tab_CodeParameter = supplementary_Tab_Code.HasValue ?
+                new ObjectParameter("Supplementary_Tab_Code", supplementary_Tab_Code) :
+                new ObjectParameter("Supplementary_Tab_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Supplementary_Config_Result>("USP_Get_Supplementary_Config", supplementary_Tab_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Syn_Deal_Supplementary_Edit_Result> USP_Get_Syn_Deal_Supplementary_Edit(Nullable<int> syn_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
+        {
+            var syn_Deal_Supplementary_CodeParameter = syn_Deal_Supplementary_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Supplementary_Code", syn_Deal_Supplementary_Code) :
+                new ObjectParameter("Syn_Deal_Supplementary_Code", typeof(int));
+    
+            var row_NumParameter = row_Num.HasValue ?
+                new ObjectParameter("Row_Num", row_Num) :
+                new ObjectParameter("Row_Num", typeof(int));
+    
+            var tab_SMParameter = tab_SM != null ?
+                new ObjectParameter("Tab_SM", tab_SM) :
+                new ObjectParameter("Tab_SM", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Deal_Supplementary_Edit_Result>("USP_Get_Syn_Deal_Supplementary_Edit", syn_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code)
+        {
+            var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
+                new ObjectParameter("Syn_Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
         }
     }
 }

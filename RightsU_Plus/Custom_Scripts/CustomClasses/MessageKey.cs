@@ -1334,6 +1334,8 @@ public class MessageKey
     public string Cineplay { get; set; }
 
     public string DueDiligence { get; set; }
+
+    public string AgreementAmendmentDetails { get; set; }
     #endregion
 
     #region Syndication Deal

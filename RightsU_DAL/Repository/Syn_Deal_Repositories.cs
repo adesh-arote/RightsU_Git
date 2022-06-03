@@ -625,5 +625,46 @@ namespace RightsU_DAL
         //    dbContext.Syn_Deal_Run.RemoveRange(deleteList);
         //}
         #endregion
-    } 
+
+        public ICollection<Syn_Deal_Supplementary> SaveSupplementary(ICollection<Syn_Deal_Supplementary> entitySaveSupplementary, DbContext dbContext)
+        {
+            ICollection<Syn_Deal_Supplementary> UpdatedSupplementary = entitySaveSupplementary;
+
+            foreach (Syn_Deal_Supplementary objADR in UpdatedSupplementary)
+            {
+                objADR.Syn_Deal_Supplementary_Detail = (objADR.Syn_Deal_Supplementary_Detail != null) ? new Save_Entitiy_Lists_Generic<Syn_Deal_Supplementary_Detail>().SetListFlagsCUD(objADR.Syn_Deal_Supplementary_Detail, dbContext) : null;
+            }
+
+            UpdatedSupplementary = new Save_Entitiy_Lists_Generic<Syn_Deal_Supplementary>().SetListFlagsCUD(UpdatedSupplementary, dbContext);
+
+            return UpdatedSupplementary;
+        }
+    }
+
+    public class Syn_Deal_Supplementary_Repository : RightsU_Repository<Syn_Deal_Supplementary>
+    {
+        public Syn_Deal_Supplementary_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Syn_Deal_Supplementary obj)
+        {
+            ICollection<Syn_Deal_Supplementary> list = new HashSet<Syn_Deal_Supplementary>();
+            list.Add(obj);
+
+            Save_Syn_Deal_Entities_Generic objSaveEntities = new Save_Syn_Deal_Entities_Generic();
+            obj = objSaveEntities.SaveSupplementary(list, base.DataContext).FirstOrDefault();
+
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(list.FirstOrDefault());
+            }
+        }
+    }
 }

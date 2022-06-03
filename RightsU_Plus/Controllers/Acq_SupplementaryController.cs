@@ -122,7 +122,7 @@ namespace RightsU_Plus.Controllers
             string tabTable = "";
 
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(a => true).OrderBy(a => a.Order_No).ToList();
+            List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForAcqDeal).OrderBy(a => a.Order_No).ToList();
 
             Supplementary_Data_Service objDataService = new Supplementary_Data_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Data> objSupplementary_Data = objDataService.SearchFor(a => true).ToList();
@@ -248,7 +248,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (ST.Control_Type == "TXTAREA")
                     {
-                        strAddRow = strAddRow + getTXTArea("", Short_Name, j, "A", ST.Supplementary_Config_Code);
+                        strAddRow = strAddRow + getTXTArea("", Short_Name, j, "A", ST.Supplementary_Config_Code, ST.Max_Length.ToString());
                         j++;
                     }
                     else if (ST.Control_Type == "DATE")
@@ -326,9 +326,16 @@ namespace RightsU_Plus.Controllers
         {
             string[] SelectedList = SelectedValues.Split(',');
             string strDDL;
-
-            strDDL = "<select style=\"width:300px !important\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
-
+            if (multiple == "")
+            {
+                strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
+                strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
+            }
+            else
+            {
+                strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
+            }
+            //strDDL = strDDL + "<option value=\"\" selected disabled hidden> Please Select</option>";
             foreach (Supplementary_Data LSD in ListSupplementary_Data.Where(a => a.Supplementary_Type == whrCond))
             {
                 if (SelectedList.Contains(LSD.Supplementary_Data_Code.ToString()))
@@ -351,9 +358,9 @@ namespace RightsU_Plus.Controllers
             string strTXT = "";
             return strTXT;
         }
-        public string getTXTArea(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
+        public string getTXTArea(string User_Value, string Short_Name, int i, string Operation, int ConfigCode, string MaxLength)
         {
-            string strTXTArea = "<textarea cols=\"1\" id=\"" + Operation + Short_Name + "txtAreaSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "txtAreaSupp" + i.ToString() + "\" rows=\"1\" style=\"min-height: 31px !important;\">" + User_Value + "</textarea>";
+            string strTXTArea = "<textarea cols=\"1\" maxlength=\"" + MaxLength + "\" id=\"" + Operation + Short_Name + "txtAreaSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "txtAreaSupp" + i.ToString() + "\" rows=\"1\" style=\"min-height: 31px !important;\">" + User_Value + "</textarea>";
             _fieldList = _fieldList + Short_Name + "txtAreaSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return strTXTArea;
         }
@@ -361,7 +368,7 @@ namespace RightsU_Plus.Controllers
         {
             if (User_Value != null && User_Value != "") { User_Value = (Convert.ToDateTime(User_Value)).ToString("yyyy-MM-dd"); }
             else { User_Value = ""; }
-            string getDATE = "<input type =\"date\"  data-val=\"true\" id =\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" value=\"" + User_Value + "\">";
+            string getDATE = "<input type =\"date\"  data-val=\"true\" id =\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" style=\"height: 31px; \" value=\"" + User_Value + "\">";
             _fieldList = _fieldList + Short_Name + "dtSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getDATE;
         }
@@ -454,7 +461,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else if (ED.Control_Type == "TXTAREA")
                 {
-                    strAddRow = strAddRow + getTXTArea(ED.User_Value, Short_Name, j, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
+                    strAddRow = strAddRow + getTXTArea(ED.User_Value, Short_Name, j, "E", Convert.ToInt32(ED.Supplementary_Config_Code), ED.Max_Length.ToString());
                     j++;
                 }
                 else if (ED.Control_Type == "DATE")
@@ -605,7 +612,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "TXTAREA")
                     {
-                        utospltag = getTXTArea(user_Value, Short_Name, j, Operation, CM.Supplementary_Config_Code);
+                        utospltag = getTXTArea(user_Value, Short_Name, j, Operation, CM.Supplementary_Config_Code, CM.Max_Length.ToString());
                         j++;
                     }
                     else if (CM.Control_Type == "DATE")
@@ -648,7 +655,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (CM.Control_Type == "TXTAREA")
                     {
-                        strAddRow = strAddRow + getTXTArea(user_Value, Short_Name, j, Operation, CM.Supplementary_Config_Code);
+                        strAddRow = strAddRow + getTXTArea(user_Value, Short_Name, j, Operation, CM.Supplementary_Config_Code, CM.Max_Length.ToString());
                         j++;
                     }
                     else if (CM.Control_Type == "DATE")
@@ -674,7 +681,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
             strAddRow = strAddRow.Replace("utospltag", "");
-            strAddRow = strAddRow + "<TR><td style=\"text-align: center;\" colspan=2><a class=\"glyphicon glyphicon-ok\" onclick = \"SaveSupp(this,'" + rowno.ToString() + "');\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove\" onclick = \"closeEdit(" + num + ");\"></a></td></TR>";
+            strAddRow = strAddRow + "<TR><td style=\"text-align: center;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
 
             strAddRow = strAddRow + "</Table>";
             return strAddRow;
@@ -710,7 +717,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("TabName", tabName);
             return Json(obj);
         }
-        public bool supplementaryDupliValidation(string Value_list, string Short_Name)
+        public bool supplementaryDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
         {
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
             Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
@@ -726,12 +733,15 @@ namespace RightsU_Plus.Controllers
             int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
             int config_Code = 0;
             String ErrorCode = "";
-            string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
             int[] dtextval;
 
             foreach (string str in columnValueList)
             {
-                string[] vals = str.Split('~');
+                //string[] vals = str.Split('~');
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
                 config_Code = Convert.ToInt32(vals[1]);
                 string tempVal = "";
 
@@ -742,10 +752,16 @@ namespace RightsU_Plus.Controllers
                     {
                         dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
 
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code).Select(K => K.Supplementary_Data_Code).ToList();
+                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
+                                                                           S.Supplementary_Config_Code == config_Code &&
+                                                                           S.Row_Num.Value != Row_No &&
+                                                                           S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
 
                         tempVal = string.Join(",", selectedDrp);
 
+                        int i = 1;
+                        //if (Operation != "E")
+                        //{
                         foreach (int dt in dtextval)
                         {
                             if (tempVal.IndexOf(dt.ToString(), 0) > -1)
@@ -753,7 +769,14 @@ namespace RightsU_Plus.Controllers
                                 return true;
 
                             }
+                            i++;
                         }
+                        //}
+                        //else
+                        //{
+                        //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
+
+                        //}
                     }
                 }
             }
@@ -761,10 +784,10 @@ namespace RightsU_Plus.Controllers
             //obj.Add("ErrorMsg", "Duplicate Value Not allowed");
             return false;
         }
-        public string supplementarySave(string Value_list, string Short_Name, string Operation, int Row_No)
+        public string supplementarySave(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex)
         {
             //check for duplicate
-            if (supplementaryDupliValidation(Value_list, Short_Name))
+            if (supplementaryDupliValidation(Value_list, Short_Name, Row_No, Operation))
             {
                 return "Duplicate";
             }
@@ -792,7 +815,10 @@ namespace RightsU_Plus.Controllers
                 rowNum = Row_No;
                 //    lstDetailObj.RemoveAll(a => a.Row_Num == rowNum && a.Supplementary_Tab_Code == TabCode);
             }
-            string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
             string Output = "";
             if (rowNum == 0)
             {
@@ -805,7 +831,8 @@ namespace RightsU_Plus.Controllers
             foreach (string str in columnValueList)
             {
                 Acq_Deal_Supplementary_detail obj = new Acq_Deal_Supplementary_detail();
-                string[] vals = str.Split('~');
+                //string[] vals = str.Split('~');
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
                 int config_Code = Convert.ToInt32(vals[1]);
                 string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
 

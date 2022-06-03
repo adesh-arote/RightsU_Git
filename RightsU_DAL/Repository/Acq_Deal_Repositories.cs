@@ -850,6 +850,13 @@ namespace RightsU_DAL
             }
             dbContext.Acq_Deal_Supplementary.RemoveRange(deleteList);
         }
+        public ICollection<Acq_Amendement_History> SaveAcq_Amendement_History(ICollection<Acq_Amendement_History> entityList, DbContext dbContext)
+        {
+            ICollection<Acq_Amendement_History> updatedList = entityList;
+
+            updatedList = new Save_Entitiy_Lists_Generic<Acq_Amendement_History>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
 
     }
 
@@ -1190,6 +1197,33 @@ namespace RightsU_DAL
 
             Save_Acq_Deal_Entities_Generic objSaveEntities = new Save_Acq_Deal_Entities_Generic();
             obj = objSaveEntities.SaveSupplementary(list, base.DataContext).FirstOrDefault();
+
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(list.FirstOrDefault());
+            }
+        }
+    }
+
+    public class Acq_Amendement_History_Repository : RightsU_Repository<Acq_Amendement_History>
+    {
+        public Acq_Amendement_History_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Acq_Amendement_History obj)
+        {
+            ICollection<Acq_Amendement_History> list = new HashSet<Acq_Amendement_History>();
+            list.Add(obj);
+
+            Save_Acq_Deal_Entities_Generic objSaveEntities = new Save_Acq_Deal_Entities_Generic();
+            obj = objSaveEntities.SaveAcq_Amendement_History(list, base.DataContext).FirstOrDefault();
 
             if (obj.EntityState == State.Added)
             {
