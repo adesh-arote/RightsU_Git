@@ -155,7 +155,7 @@
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.MoreActionDiv').css("left", "32px !important");
         }
-        $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
+        $('#ddlSrchDirector,#ddlSrchLicensor,#ddlSrchEntity').SumoSelect();
         if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
             $('#ddlGenBUMultiSelect').SumoSelect();
             $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
@@ -809,7 +809,10 @@
                         <label>@objMessageKey.Status:</label><br />
                         <select id="ddlSrchDealTag" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
-
+                    <li class="AdSearch">
+                        <label>Entity</label></br>
+                        <select id="ddlSrchEntity" multiple="multiple"></select>
+                    </li>
 
                     <li class="AdSearch">
                         <label>@objMessageKey.Director:</label><br>

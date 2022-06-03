@@ -44,7 +44,7 @@
                     </td>*@
                 <td>
                     @*<input type="text" name="AmendmentDate" id="txtAmendmentDate" class="textbox" maxlength="50" value="@Model.Amendment_Date" readonly style="width:85%"/>*@
-                    @Html.TextBoxFor(model => model.Amendment_Date, "{0:MM/dd/yyyy}", new
+                    @Html.TextBoxFor(model => model.Amendment_Date, "{0:dd/MM/yyyy}", new
                     {
                         @name = "AmendmentDate",
                         @id = "txtAmendmentDate",

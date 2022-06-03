@@ -281,12 +281,12 @@ namespace RightsU_Plus.Controllers
             return View("~/Views/Acq_List/Index.cshtml");
         }
         [HttpPost]
-        public PartialViewResult PartialDealList(int Page, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1")
+        public PartialViewResult PartialDealList(int Page, string commonSearch, string isTAdvanced, string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", string ClearSession = "N", string strBUCode = "1", string strSrchEntity = "")
         {
             string[] arrTitleName = strTitles.Split('﹐');
             string sstrTitles = string.Join(",", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Name)).Select(y => y.Title_Code).ToList());
             CommonUtil.WriteErrorLog("BindGridView() method of Acq_ListController is executing", Err_filename);
-            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode);
+            IEnumerable<RightsU_Entities.USP_List_Acq_Result> objList = BindGridView(commonSearch, isTAdvanced, strDealNo, strfrom, strto, strSrchDealType, strSrchDealTag, strWorkflowStatus, sstrTitles, strDirector, strLicensor, strBU, strShowAll, strIncludeSubDeal, strIncludeArchiveDeal, Page, ClearSession, strBUCode, strSrchEntity);
             CommonUtil.WriteErrorLog("BindGridView() method if Acq_ListController has been executed", Err_filename);
             ViewBag.Show_Amendment_Details = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Show_Amendment_Details").First().Parameter_Value;
             return PartialView("~/Views/Shared/_List_Deal.cshtml", objList);
@@ -309,7 +309,7 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
-        public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
+        public IEnumerable<RightsU_Entities.USP_List_Acq_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "", string strShowAll = "N", string strIncludeSubDeal = "", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1", string strSrchEntity = "")
         {
             string sql = "";
             if (ClearSession == "Y")
@@ -366,6 +366,10 @@ namespace RightsU_Plus.Controllers
                     if (obj_Acq_Syn_List_Search.DirectorCodes_Search != "")
                         sql += " and acq_deal_Code in (select acq_deal_Code from acq_deal_movie dm inner join title t on dm.title_code=t.title_code "
                             + "inner join Title_Talent tt on t.Title_Code = tt.Title_Code and tt.Talent_Code in (" + obj_Acq_Syn_List_Search.DirectorCodes_Search + "))";
+
+                    obj_Acq_Syn_List_Search.Entity_Search = !string.IsNullOrEmpty(strSrchEntity) ? strSrchEntity.Trim() : "";
+                    if (obj_Acq_Syn_List_Search.Entity_Search != "")
+                        sql += " AND XYZ.Entity_Code IN(" + obj_Acq_Syn_List_Search.Entity_Search + ")";
 
                     obj_Acq_Syn_List_Search.Status_Search = strSrchDealTag != "" ? strSrchDealTag : "0";
                     if (obj_Acq_Syn_List_Search.Status_Search != "0")
@@ -612,6 +616,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageNo = obj_Acq_Syn_List_Search.PageNo;
             ViewBag.IncludeSubDeal = obj_Acq_Syn_List_Search.IncludeSubDeal;
             ViewBag.IncludeArchiveDeal = obj_Acq_Syn_List_Search.strIncludeArchiveDeal;
+            ViewBag.Entity_Search = obj_Acq_Syn_List_Search.Entity_Search;
         }
         private void Reset_Srch_Criteria()
         {
@@ -631,6 +636,7 @@ namespace RightsU_Plus.Controllers
             obj_Acq_Syn_List_Search.PageNo = 1;
             obj_Acq_Syn_List_Search.IncludeSubDeal = "false";
             obj_Acq_Syn_List_Search.strIncludeArchiveDeal = "false";
+            obj_Acq_Syn_List_Search.Entity_Search = "";
         }
 
         #endregion
@@ -1506,7 +1512,7 @@ namespace RightsU_Plus.Controllers
         #region ---------------BIND DROPDOWNS---------------
         private List<USP_Get_Acq_PreReq_Result> BindAllDropDowns()
         {
-            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
+            List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Acq_PreReq("DTG,DTP,DTC,BUT,VEN,DIR,TIT,WFL,ENT", "LST", objLoginUser.Users_Code, 0, Convert.ToInt32(obj_Acq_Syn_List_Search.DealType_Search), obj_Acq_Syn_List_Search.BUCodes_Search).ToList();
             return obj_USP_Get_PreReq_Result;
         }
         public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode, string TitleSearch, params int?[] ddlBUMulti)
