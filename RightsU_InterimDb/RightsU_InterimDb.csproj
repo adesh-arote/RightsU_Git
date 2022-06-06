@@ -70,6 +70,9 @@
     <Compile Include="Models\Acq_Adv_Ancillary_Report.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Acq_Amendement_History.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Acq_Deal.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -281,6 +284,12 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Acq_Deal_Sport_Title.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Supplementary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Acq_Deal_Supplementary_detail.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Acq_Deal_Tab_Version.cs">
@@ -940,6 +949,18 @@
     <Compile Include="Models\Sub_License.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Supplementary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Supplementary_Config.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Supplementary_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Supplementary_Tab.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Syn_Acq_Mapping.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1061,6 +1082,12 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Syn_Deal_Run_Yearwise_Run.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Supplementary.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Syn_Deal_Supplementary_Detail.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">
@@ -1309,6 +1336,9 @@
     <Compile Include="Models\USP_Acq_List_Runs_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Acq_SUPP_Tab_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Add_ACQ_Milestone_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1408,6 +1438,9 @@
     <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_Edit_Row_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1438,6 +1471,12 @@
     <Compile Include="Models\USP_Get_Security_Group_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_Supplementary_Config_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_Syn_Rights_Errors_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1462,7 +1501,13 @@
     <Compile Include="Models\USP_GET_TITLE_FOR_RUN_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_GET_TITLE_FOR_SUPPLEMENTARY_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_GET_TITLE_FOR_SYN_RUN_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_For_Syn_Supplementary_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Get_Title_Import_Utility_AdvSearch_Result.cs">
@@ -1654,10 +1699,22 @@
     <Compile Include="Models\USP_SendMail_AskExpert_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Supplementary_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_SUPP_Create_Table_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Syn_Bulk_Populate_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Syn_Deal_Rights_Holdback_Validation_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Syn_Deal_Supplementary_Details_Data_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Syn_Deal_Supplementary_List_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Syn_List_Runs_Result.cs">

@@ -107,6 +107,8 @@ function BindAdvanced_Search_Controls(callfrom) {
                             $("#ddlSrchDirector").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                         if (this.Data_For == 'VEN')
                             $("#ddlSrchLicensor").append($("<option>").val(this.Display_Value).text(this.Display_Text));
+                        if (this.Data_For == 'ENT')
+                            $("#ddlSrchEntity").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                     });
 
                     $(result.lstWorkFlowStatus).each(function (index, item) {
@@ -138,6 +140,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                         }
                     }
                     $("#ddlSrchDirector").val(obj_Search[0].DirectorCodes_Search.split(','))[0].sumo.reload();
+                    $("#ddlSrchEntity").val(obj_Search[0].Entity_Search.split(','))[0].sumo.reload();
                     $("#ddlSrchLicensor").val(obj_Search[0].ProducerCodes_Search.split(','))[0].sumo.reload();
                     $("#ddlWorkflowStatus").val(obj_Search[0].WorkFlowStatus_Search).attr("selected", "true").trigger("chosen:updated");
                     if (result.strTitleNames != "") {
@@ -212,6 +215,11 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
         hideLoading();
         return false;
     }
+    if ($('#ddlSrchEntity').val() != null)
+        tmpSrchEntity = $('#ddlSrchEntity').val().join(',');
+    else
+        tmpSrchEntity = ''
+
     $.ajax({
         type: "POST",
         url: URL_PartialDealList,
@@ -238,14 +246,15 @@ function LoadDeals(pagenumber, isAdvanced, showAll) {
             strIncludeSubDeal: tmpChecked,
             strIncludeArchiveDeal: tmpArchiveChecked,
             ClearSession: $('#hdnClearAll').val(),
-            strBUCode: BUCode//$('#ddlBUUnit').val()
+            strBUCode: BUCode,
+            strSrchEntity: tmpSrchEntity
+            //$('#ddlBUUnit').val()
         }),
         success: function (result) {
             if (result == "true")
                 redirectToLogin();
 
             else {
-
                 $('#dvDealList').html(result);
                 $('[title]').tooltip();
                 initializeExpander();
@@ -1098,7 +1107,7 @@ function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
         });
     }
 
-    if (is_Duplicate == "" || is_Duplicate == "VALID") {
+    if ((is_Duplicate == "" || is_Duplicate == "VALID") && commandName != "AddAmendmentHistory") {
         Command_Name_G = commandName;
         tmpAcqDealCode = Acq_Deal_Code;
         Command_Name = commandName;
@@ -1127,6 +1136,36 @@ function Ask_Confirmation(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
             showAlert("I", 'Are you sure, you want to Archive this record?', "OKCANCEL");
         }
     }
+}
+
+function AddAmendmentHistory(commandName, Acq_Deal_Code, IsZeroWorkFlow) {
+
+
+    $.ajax({
+        type: "POST",
+        url: URL_AddAmendmentHistory,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            acqDealCode: Acq_Deal_Code,
+        }),
+        async: false,
+        success: function (result) {
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                $('#popDealAmendmentHistoryPopup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+            }
+        },
+        error: function (result) {
+            hideLoading();
+        }
+    });
+
 }
 
 function HideShow(id, View, IsHide) {

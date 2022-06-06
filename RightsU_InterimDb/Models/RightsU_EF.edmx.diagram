@@ -1019,6 +1019,10 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Territory_Title_Objection" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Status" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Objection_Title_Objection_Type" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Supplementary" Width="1.5" PointX="45.375" PointY="37" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" Width="1.5" PointX="47.625" PointY="37" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

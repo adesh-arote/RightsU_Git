@@ -465,6 +465,7 @@ function OpenPopup(id) {
 }
 
 function Edit_Pushback(obj) {
+    debugger;
     if (!ValidatePageSize())
         return false;
     showLoading();

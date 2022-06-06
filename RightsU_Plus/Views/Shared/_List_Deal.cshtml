@@ -3,6 +3,7 @@
 <script type="text/javascript">
     var IsCall = 'Y', RecordCount_PVG = '@ViewBag.RecordCount', PageNo_PVG = '@ViewBag.PageNo';
     $(document).ready(function () {
+        initializeDatepicker();
         if ($('.pagination'))
             SetPaging();
 
@@ -348,7 +349,7 @@
                                     Count = Count + 1;
 
                                     @*<a title="Archive" id="Archive_Remark_@tempCount" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code"
-                    href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>*@
+                                        href='@Url.Action("Deal_For_Approval", "Global", new { DealCode = objAcqList.Acq_Deal_Code, ModuleCode = 30, Record_Locking_Code = "RecordLockingCode", Is_Menu="N" })'></a>*@
 
                                     <a title="Archive" class="glyphicon glyphicon-briefcase AT_@objAcqList.Acq_Deal_Code" id="Archive_Remark_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Archive',@objAcqList.IntCode,0);"></a>
 
@@ -419,8 +420,15 @@
                                     else
                                     {
                                         Count = Count + 1;
+                                        if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objAcqList.version) > 1)
+                                        {
+                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objAcqList.IntCode,0);"></a>
+                                        }
+                                        else
+                                        {
+                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                        }
 
-                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
                                         if (Count > 3)
                                         {
                                             <script>
@@ -565,7 +573,7 @@
 
 
                             if (@objAcqList.Show_Hide_Buttons != null && @objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAssignMusic_NonMusic + ",") &&
-                                objAcqList.Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
+                            objAcqList.Deal_Type_Code != UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Type_Music)
                             {
                                 Count = Count + 1;
                                 <a title="@objMessageKey.AssignMusic" id="AssignMusic_@tempCount" class="glyphicon glyphicon-music AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Assign_Music')"></a>
@@ -617,17 +625,17 @@
                                 }
                             }
                             @*if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmort + ","))
-            {
-                Count = Count + 1;
-                <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
+                                {
+                                    Count = Count + 1;
+                                    <a title="@objMessageKey.Amort" id="Amort_@tempCount" class="glyphicon glyphicon-stats AT_@objAcqList.Acq_Deal_Code" onclick="return CheckRecordLock(@objAcqList.IntCode,'Amort')"></a>
 
-                if (Count > 3)
-                {
-                    <script>
-                        $("#extend_@tempCount").append($('#Amort_@tempCount'));
-                    </script>
-                }
-            }*@
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                            $("#extend_@tempCount").append($('#Amort_@tempCount'));
+                                        </script>
+                                    }
+                                }*@
                             if (objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAcqReleaseContent + ","))
                             {
                                 Count = Count + 1;
@@ -642,22 +650,22 @@
                             }
 
                             @*if (true)
-            {
-                Count = Count + 1;
-                <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Export Agreement" id="Export_@tempCount">
-                    @using (Html.BeginForm("ExportToWord", "Acq_List"))
-                    {
-                        <input type="submit" style="display: none" id="btnExportToXml" />
-                        <input type="hidden" name="DealTypeC" value="" id="DealTypeC" />
-                    }
-                </label>
-                if (Count > 3)
-                {
-                    <script>
-                        $("#extend_@tempCount").append($('#Export_@tempCount'));
-                    </script>
-                }
-            }*@
+                                {
+                                    Count = Count + 1;
+                                    <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Export Agreement" id="Export_@tempCount">
+                                        @using (Html.BeginForm("ExportToWord", "Acq_List"))
+                                        {
+                                            <input type="submit" style="display: none" id="btnExportToXml" />
+                                            <input type="hidden" name="DealTypeC" value="" id="DealTypeC" />
+                                        }
+                                    </label>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                            $("#extend_@tempCount").append($('#Export_@tempCount'));
+                                        </script>
+                                    }
+                                }*@
 
                         }
                         @if (Count > 3)
@@ -834,6 +842,15 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade" id="popDealAmendmentHistoryPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
         </div>
     </div>
 </div>

@@ -64,7 +64,8 @@
     , URL_Reprocess = '@Url.Action("Reprocess", "Acq_List")'
     , URL_SendForArchive = '@Url.Action("SendForArchive", "Acq_List")'
     , URL_Chk_Archive_Validation = '@Url.Action("Chk_Archive_Validation", "Acq_List")'
-    , URL_Archive = '@Url.Action("Archive", "Acq_List")';
+    , URL_Archive = '@Url.Action("Archive", "Acq_List")'
+    , URL_AddAmendmentHistory = '@Url.Action("AddAmendmentHistory", "Acq_List")';
 
     var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';
     var BUCode = '@ViewBag.BUCode';
@@ -154,7 +155,7 @@
         if ('@objMessageKey.LayoutDirection' == 'RTL') {
             $('.MoreActionDiv').css("left", "32px !important");
         }
-        $('#ddlSrchDirector,#ddlSrchLicensor').SumoSelect();
+        $('#ddlSrchDirector,#ddlSrchLicensor,#ddlSrchEntity').SumoSelect();
         if ('@ViewBag.Is_AllowMultiBUacqdeal' == 'Y') {
             $('#ddlGenBUMultiSelect').SumoSelect();
             $('#ddlGenBUMultiSelect').val('@ViewBag.BUCode'.split(','))
@@ -762,7 +763,7 @@
                 <br />
 
                 <div style="text-align:center;">
-                    <label class="checkbox-inline">
+                    <label class="checkbox-inline" style="display: @ViewBag.ArchieveVisibility">
 
                         @if (ViewBag.IncludeArchiveDeal == "true")
                         {
@@ -808,7 +809,10 @@
                         <label>@objMessageKey.Status:</label><br />
                         <select id="ddlSrchDealTag" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
-
+                    <li class="AdSearch">
+                        <label>Entity</label></br>
+                        <select id="ddlSrchEntity" multiple="multiple"></select>
+                    </li>
 
                     <li class="AdSearch">
                         <label>@objMessageKey.Director:</label><br>
@@ -877,12 +881,12 @@
                                 </span>
                             }
                             @*else
-                            {
-                                <span>
-                                    @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
-                                </span>
-                                @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select> 
-                            }*@
+                                {
+                                    <span>
+                                        @Html.DropDownList("BusineesUnitListMulti", ViewBag.BusineesUnitList as MultiSelectList, new { @id = "ddlGenBUMultiSelect", @multiple = "multiple" })
+                                    </span>
+                                    @*<select id="ddlGenBUMultiSelect" multiple="multiple" style="width: 174px;"></select>
+                                }*@
 
                             <input type="text" name="srchCommon" id="srchCommon" value="@ViewBag.Search" class="search" style="width:279px !important;"
                                    placeholder="@objMessageKey.SearchbyTitle, @objMessageKey.DealNo, @objMessageKey.Licensee, @objMessageKey.Licensor" />

@@ -48,6 +48,8 @@
     var pageRightsBulkUpdate = '@GlobalParams.Page_From_Rights_Bulk_Update';
     var currentTabMultiLnag = '@ViewBag.currentTab';
     var pageAncillary = '@GlobalParams.Page_From_Ancillary';
+    var pageSupplementary = '@GlobalParams.Page_From_Supplementary';
+    var pageSupplementaryAddEdit = '@GlobalParams.Page_From_Supplementary_AddEdit';
 
 
     $(document).ready(function () {
@@ -72,6 +74,9 @@
             }
             else if ('@ViewBag.currentTab' == "RGT_DTL_AE") {
                 BindPartialTabs(pageRightsDetailAddEdit);
+            }
+            else if ('@ViewBag.currntTab' == 'SUPP_DTL_AE') {
+                BindPartialTabs(pageSupplementaryAddEdit);
             }
             else if ('@ViewBag.currentTab' == "RGT_DTL_VW") {
                 BindPartialTabs(pageRightsDetailView);
@@ -129,6 +134,9 @@
             }
             else if ('@ViewBag.currentTab' == "GNR") {
                 BindPartialTabs(pageGeneral);
+            }
+            else if ('@ViewBag.currentTab' == "SUPP") {
+                BindPartialTabs(pageSupplementary);
             }
         }
         else
@@ -202,8 +210,8 @@
         debugger;
         CurrentTab = $.trim(tabName);
         var URL_PartialView = "";
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").removeAttr("disabled", "disabled").removeClass("active");
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").find("input:button").removeAttr("disabled", "disabled");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").removeAttr("disabled", "disabled").removeClass("active");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").find("input:button").removeAttr("disabled", "disabled");
         if (tabName == pageGeneral) {
             // $("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_General');
            // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_General');
@@ -248,6 +256,16 @@
             URL_PartialView = '@Url.Action("Index", "Syn_Pushback")';
             $("#liPushback").attr('disabled', 'disabled').addClass("active");
             $("#liPushback input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageSupplementary) {
+            URL_PartialView = '@Url.Action("Index", "Syn_Supplementary")';
+            $("#liSupplementary").attr('disabled', 'disabled').addClass("active");
+            $("#liSupplementary input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageSupplementaryAddEdit) {
+            URL_PartialView = '@Url.Action("AddEditSupp", "Syn_Supplementary")';
+            $("#liSupplementary").attr('disabled', 'disabled').addClass("active");
+            $("#liSupplementary input:button").attr('disabled', 'disabled');
         }
         else if (tabName == pageRun) {
             debugger;

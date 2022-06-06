@@ -11,18 +11,19 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Supplementary
     {
         public Supplementary()
         {
             this.Supplementary_Config = new HashSet<Supplementary_Config>();
         }
-    
-    	public State EntityState { get; set; }    public int Supplementary_Code { get; set; }
-    	    public string Supplementary_Name { get; set; }
-    	    public string Is_Active { get; set; }
-    
+
+        public State EntityState { get; set; }
+        public int Supplementary_Code { get; set; }
+        public string Supplementary_Name { get; set; }
+        public string Is_Active { get; set; }
+
         public virtual ICollection<Supplementary_Config> Supplementary_Config { get; set; }
     }
 }

@@ -1282,7 +1282,8 @@ namespace RightsU_Plus.Controllers
         public JsonResult BinddlColumnsValue(string ColumnsCode, string AdditionalCondition)
         {
             int Column_Code = Convert.ToInt32(ColumnsCode);
-            var lstextCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
+            var lstextCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code)
+                .Select(y => new { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
             ExtendedColumnsCode = Column_Code;
             //var ValueType = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y =>y.Ref_Table).ToList();
             //try
@@ -1302,7 +1303,8 @@ namespace RightsU_Plus.Controllers
 
             if (AdditionalCondition != "")
                 RoleCode = Convert.ToInt32(AdditionalCondition);
-            var lstextCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y").Select(i => new { Talent_Code = i.Talent_Code, Talent_Name = i.Talent_Name }).ToList();
+            var lstextCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y")
+                .Select(i => new { ColumnsValue = i.Talent_Code, Columns_Value_Code = i.Talent_Name }).ToList();
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 
