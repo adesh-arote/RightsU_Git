@@ -89,6 +89,8 @@
         $('#lbTerritory').SumoSelect();
         $('#lbTitles').SumoSelect();
        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
+
+        ShowHideCoExRemarks(@Model.Is_Exclusive);
     });
     function hideRegion() {
         $('.MoreRegionDiv').hide('slow');
@@ -260,23 +262,33 @@
                                                                         <tr>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" />Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" onclick="ShowHideCoExRemarks('E')" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" />Exclusive
                                                                                 </label>
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" onclick="ShowHideCoExRemarks('N')" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" onclick="ShowHideCoExRemarks('C')" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                         </tr>
                                                                     </table>
                                                                 </div>
                                                             </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="trCoExRemarks">
+                                                        <td colspan="2" id="CoExclusiveRemarks">
+                                                            <div class="bold" style="width: 90%; float: left;"><label>Co-Exclusive @objMessageKey.Remarks</label></div>
+                                                            <div class="divBlock" style="width: 8%;float:right;">
+                                                                <div class="CharCoExNum">0/4000</div>
+                                                                <div style=""></div>
+                                                            </div>
+                                                            @Html.TextAreaFor(m => Model.CoExclusive_Remarks, new { @id = "CoExclusive_Remarks", @class = "textarea", @onkeypress = "countCharWithLable(this, 'CharCoExNum')", @onkeyup = "countCharWithLable(this, 'CharCoExNum')", @maxlength = 4000, @style = "width: 98%;" })
                                                         </td>
                                                     </tr>
                                                 }
@@ -482,12 +494,12 @@
                                                                 @Html.TextBox("Perpetuity_EndDate", Model.End_Date, new { @id = "txtPerpetuity_EndDate", @placeholder = "DD/MM/YYYY", @readonly = "readonly", @style = "width:95px;" })
                                                             </li>
                                                         }
-                                                        else if (ViewBag.Allow_Perpetual_Date_Logic == "Y" )
+                                                        else if (ViewBag.Allow_Perpetual_Date_Logic == "Y")
                                                         {
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                                 Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                                        Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
                                                                 @if (ViewBag.Deal_Workflow_Flag == "AM")
                                                                 {

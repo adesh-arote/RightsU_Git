@@ -1,5 +1,5 @@
 ﻿@using UTOFrameWork.FrameworkClasses
-@model  RightsU_Entities.Supplementary_Tab
+@model  RightsU_Entities.Acq_Deal_Supplementary
 @{
     RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
 
@@ -525,7 +525,7 @@
         if ($('#ddSuppTitle').val() != null) {
             var title = $('#ddSuppTitle').val().toString();
         }
-
+        
         else {
             showAlert('I', "Title not selected");
             hideLoading();

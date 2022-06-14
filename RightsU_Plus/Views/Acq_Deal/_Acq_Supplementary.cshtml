@@ -197,7 +197,7 @@
                         <table class="table">
                             <tr>
                                 <td class="bold" style="width: 10%;">
-                                    @*objMessageKey.Titles*@Contractual Term
+                                    @*objMessageKey.Titles*@Contractual Term : @ViewBag.AcqLP
                                 </td>
                                 @if (objSchema.Mode != "V")
                                 {
@@ -228,11 +228,11 @@
                     @*<div class="tab-pane active scale_table_block" id="tabRestriction">*@
                     @*@Html.TextAreaFor(Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
                     @*<textarea cols="20" id="Description" name="Description" rows="4"></textarea>
-                            <div class="divBlock">
-                                <div class="charNum">0/4000</div>
-                                <div style=""></div>
-                            </div>
-                        </div>*@
+                <div class="divBlock">
+                    <div class="charNum">0/4000</div>
+                    <div style=""></div>
+                </div>
+            </div>*@
                     <div class="tab-pane scale_table_block" id="tabHoldback">
                     </div>
 
@@ -243,17 +243,24 @@
                     </div>
                 </div>
                 @*<div class="bottom_action">
-                        <ul class="form_link_nav clearfix">
-                            <li>
-                                <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return ValidateSave();">
-                            </li>
-                            <li>
-                                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Rights1();" />
-                            </li>
-                        </ul>
-                    </div>*@
-                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
-                       onclick="location.href='@Url.Action("Index", "Acq_List")    '">
+            <ul class="form_link_nav clearfix">
+                <li>
+                    <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return ValidateSave();">
+                </li>
+                <li>
+                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Rights1();" />
+                </li>
+            </ul>
+        </div>*@
+                @if (ViewBag.Deal_Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Approved_List")
+                }
+                else
+                {
+                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Back To List"
+                           onclick="location.href='@Url.Action("Index", "Acq_List")    '">
+                }
             </div>
         </div>
     </div>

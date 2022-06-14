@@ -26,6 +26,17 @@ namespace RightsU_Plus.Controllers
             }
         }
 
+        public Acq_Deal_Supplementary objAcq_Deal_Supplementary
+        {
+            get
+            {
+                if (Session["Acq_Supplementary"] == null)
+                    Session["Acq_Supplementary"] = new Acq_Deal_Supplementary();
+                return (Acq_Deal_Supplementary)Session["Acq_Supplementary"];
+            }
+            set { Session["Acq_Supplementary"] = value; }
+        }
+
         //public Acq_Deal objAcq_Deal
         //{
         //    get
@@ -60,8 +71,23 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult Index()
         {
             objDeal_Schema.Page_From = GlobalParams.Page_From_Supplementary;
+            ViewBag.Deal_Mode = objDeal_Schema.Mode;
 
+            objAcq_Deal_Supplementary = null;
             Session["SupplementaryDetail"] = null;
+
+            var lstAcqRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => x.Acq_Deal_Code == objDeal_Schema.Deal_Code)
+                        .Select(i => new { RightsStartDate = i.Actual_Right_Start_Date, RightsEndDate = i.Actual_Right_End_Date }).ToList();
+            //.Select(x => x.Title_Objection_Code).ToList();
+            if (lstAcqRights != null && lstAcqRights.Count > 0)
+            {
+                var startDate = lstAcqRights.Select(x => x.RightsStartDate.Value).Min();
+                DateTime perpDate = new DateTime(9999, 12, 31);
+                var endDate = lstAcqRights.Select(x => (x.RightsEndDate.Value == DateTime.MinValue ? perpDate : x.RightsEndDate.Value)).Max();
+
+                ViewBag.AcqLP = Convert.ToDateTime(startDate).ToString("dd-MMM-yyyy") + " To " + (Convert.ToDateTime(endDate) == perpDate ? " Perpetuity" : Convert.ToDateTime(endDate).ToString("dd-MMM-yyyy"));
+            }
 
             //return PartialView("~/Views/Shared/_Rights_Filter.cshtml");
             ViewBag.RecordCount = 50;
@@ -80,7 +106,7 @@ namespace RightsU_Plus.Controllers
 
             foreach (USP_Supplementary_List_Result sl in objSupplementary_List)
             {
-                if (objDeal_Schema.Mode != "V")
+                if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
                     strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
 
@@ -204,7 +230,7 @@ namespace RightsU_Plus.Controllers
             //    lstDetailObj = objSupplementary.Acq_Deal_Supplementary_detail.ToList();//(List<Acq_Deal_Supplementary_detail>)objTransactionDetailService.SearchFor(a => true).ToList();
             //    //lstDetailObj = lstDetailObj.Where(a => a.Acq_Deal_Supplementary_Code == supplementary_Code).ToList();
             //}
-            Session["Supplementary"] = objSupplementary;
+            objAcq_Deal_Supplementary = objSupplementary;
             Session["Supplementary_Service"] = objTransactionService;
             //Session["SupplementaryDetail"] = lstDetailObj;
 
@@ -419,7 +445,7 @@ namespace RightsU_Plus.Controllers
             //}
             //else
             //{
-            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)objAcq_Deal_Supplementary).Acq_Deal_Supplementary_detail.ToList();
 
             lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
@@ -495,9 +521,9 @@ namespace RightsU_Plus.Controllers
         {
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
 
-            if (Session["Supplementary"] != null)
+            if (objAcq_Deal_Supplementary != null)
             {
-                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)objAcq_Deal_Supplementary).Acq_Deal_Supplementary_detail.ToList();
             }
 
             List<Acq_Deal_Supplementary_detail> objDelete = new List<Acq_Deal_Supplementary_detail>();
@@ -509,7 +535,7 @@ namespace RightsU_Plus.Controllers
                 objDel.EntityState = State.Deleted;
             }
 
-            ((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail = lstDetailObj;
+            ((Acq_Deal_Supplementary)objAcq_Deal_Supplementary).Acq_Deal_Supplementary_detail = lstDetailObj;
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
@@ -544,7 +570,7 @@ namespace RightsU_Plus.Controllers
 
                 Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
-                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)objAcq_Deal_Supplementary).Acq_Deal_Supplementary_detail.ToList();
 
                 lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
@@ -724,7 +750,7 @@ namespace RightsU_Plus.Controllers
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
-            objSupplementary = (Acq_Deal_Supplementary)Session["Supplementary"];
+            objSupplementary = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
             lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
 
             Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
@@ -795,7 +821,7 @@ namespace RightsU_Plus.Controllers
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
             Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
 
-            objSupplementary = (Acq_Deal_Supplementary)Session["Supplementary"];
+            objSupplementary = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
             lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
 
             //"1~1,sai~2,"
@@ -885,17 +911,17 @@ namespace RightsU_Plus.Controllers
             Output = Output + "</tr>";
 
             objSupplementary.Acq_Deal_Supplementary_detail = lstDetailObj;
-            Session["Supplementary"] = objSupplementary;
+            objAcq_Deal_Supplementary = objSupplementary;
             return Output;
         }
         public JsonResult supplementarySaveDB(string Title_List, string Remarks)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            Acq_Deal_Supplementary objSupplementaryTemp = (Acq_Deal_Supplementary)Session["Supplementary"];
+            Acq_Deal_Supplementary objSupplementaryTemp = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
             List<Acq_Deal_Supplementary_detail> lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementaryTemp.Acq_Deal_Supplementary_detail.ToList();
             Acq_Deal_Supplementary_Service objTransactionService = new Acq_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
 
-            if (Session["Supplementary"] == null)
+            if (objAcq_Deal_Supplementary == null)
             {
                 obj.Add("ErrorCode", "440");
                 obj.Add("ErrorMsg", "Session Expired, login again");
@@ -913,7 +939,7 @@ namespace RightsU_Plus.Controllers
             {
                 int[] titlecodes = Array.ConvertAll(Title_List.Split(','), x => int.Parse(x));
 
-                //lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)Session["Supplementary"]).Acq_Deal_Supplementary_detail.ToList();
+                //lstDetailObj = (List<Acq_Deal_Supplementary_detail>)((Acq_Deal_Supplementary)objAcq_Deal_Supplementary).Acq_Deal_Supplementary_detail.ToList();
 
                 for (int t = 0; t < titlecodes.Length; t++)
                 {

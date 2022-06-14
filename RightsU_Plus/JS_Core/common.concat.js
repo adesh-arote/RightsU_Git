@@ -2135,6 +2135,17 @@ function countChar(val) {
     $('.charNum').text(val.value.length.toString() + '/' + max.toString());
 }
 
+/* Textarea Character Limitation with define label*/
+function countCharWithLable(val, lblCounter) {
+    var max = 4000;
+    var len = val.value.length;
+
+    if (len >= max)
+        val.value = val.value.substring(0, max);
+
+    $('.' + lblCounter).text(val.value.length.toString() + '/' + max.toString());
+}
+
 function showLoading() { $('.main_section').append('<div class="divLoading"></div>'); }
 function hideLoading() { $('.divLoading').remove(); }
 

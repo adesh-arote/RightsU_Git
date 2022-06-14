@@ -26,16 +26,17 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        //public Syn_Deal objSyn_Deal
-        //{
-        //    get
-        //    {
-        //        if (Session[RightsU_Session.SESS_DEAL] == null)
-        //            Session[RightsU_Session.SESS_DEAL] = new Syn_Deal();
-        //        return (Syn_Deal)Session[RightsU_Session.SESS_DEAL];
-        //    }
-        //    set { Session[RightsU_Session.SESS_DEAL] = value; }
-        //}
+        public Syn_Deal_Supplementary objSyn_Deal_Supplementary
+        {
+            get
+            {
+                if (Session["Syn_Supplementary"] == null)
+                    Session["Syn_Supplementary"] = new Syn_Deal_Supplementary();
+                return (Syn_Deal_Supplementary)Session["Syn_Supplementary"];
+            }
+            set { Session["Syn_Supplementary"] = value; }
+        }
+
         //public int Syn_Deal_Code
         //{
         //    get
@@ -62,8 +63,21 @@ namespace RightsU_Plus.Controllers
             objDeal_Schema.Page_From = GlobalParams.Page_From_Supplementary;
 
             Session["SupplementaryDetail"] = null;
+            objSyn_Deal_Supplementary = null;
+            ViewBag.Deal_Mode = objDeal_Schema.Mode;
 
-            //return PartialView("~/Views/Shared/_Rights_Filter.cshtml");
+            var lstSynRights = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName)
+                        .SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code)
+                        .Select(i => new { RightsStartDate = i.Actual_Right_Start_Date, RightsEndDate = i.Actual_Right_End_Date }).ToList();
+            //.Select(x => x.Title_Objection_Code).ToList();
+            if (lstSynRights != null && lstSynRights.Count > 0)
+            {
+                var startDate = lstSynRights.Select(x => x.RightsStartDate.Value).Min();
+                DateTime perpDate = new DateTime(9999, 12, 31);
+                var endDate = lstSynRights.Select(x => (x.RightsEndDate.Value == DateTime.MinValue ? perpDate : x.RightsEndDate.Value)).Max();
+
+                ViewBag.SynLP = Convert.ToDateTime(startDate).ToString("dd-MMM-yyyy") + " To " + (Convert.ToDateTime(endDate) == perpDate ? " Perpetuity" : Convert.ToDateTime(endDate).ToString("dd-MMM-yyyy"));
+            }
             ViewBag.RecordCount = 50;
             return PartialView("~/Views/Syn_Deal/_Syn_Supplementary.cshtml");
         }
@@ -80,7 +94,7 @@ namespace RightsU_Plus.Controllers
 
             foreach (USP_Syn_Deal_Supplementary_List_Result sl in objSupplementary_List)
             {
-                if (objDeal_Schema.Mode != "V")
+                if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
                     strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.IPDetails + "</TD><TD>" + sl.Miscellaneous + "</TD><TD>" + sl.ExcludedRights + "</TD><TD>" + sl.BusinessStatement + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
 
@@ -204,7 +218,7 @@ namespace RightsU_Plus.Controllers
             //    lstDetailObj = objSupplementary.Syn_Deal_Supplementary_Detail.ToList();//(List<Syn_Deal_Supplementary_Detail>)objTransactionDetailService.SearchFor(a => true).ToList();
             //    //lstDetailObj = lstDetailObj.Where(a => a.Syn_Deal_Supplementary_Code == supplementary_Code).ToList();
             //}
-            Session["Supplementary"] = objSupplementary;
+            objSyn_Deal_Supplementary = objSupplementary;
             Session["Supplementary_Service"] = objTransactionService;
             //Session["SupplementaryDetail"] = lstDetailObj;
 
@@ -420,7 +434,7 @@ namespace RightsU_Plus.Controllers
             //}
             //else
             //{
-            lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
+            lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)objSyn_Deal_Supplementary).Syn_Deal_Supplementary_Detail.ToList();
 
             lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
@@ -496,9 +510,9 @@ namespace RightsU_Plus.Controllers
         {
             List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
 
-            if (Session["Supplementary"] != null)
+            if (objSyn_Deal_Supplementary != null)
             {
-                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
+                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)objSyn_Deal_Supplementary).Syn_Deal_Supplementary_Detail.ToList();
             }
 
             List<Syn_Deal_Supplementary_Detail> objDelete = new List<Syn_Deal_Supplementary_Detail>();
@@ -510,7 +524,7 @@ namespace RightsU_Plus.Controllers
                 objDel.EntityState = State.Deleted;
             }
 
-            ((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail = lstDetailObj;
+            ((Syn_Deal_Supplementary)objSyn_Deal_Supplementary).Syn_Deal_Supplementary_Detail = lstDetailObj;
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
@@ -545,7 +559,7 @@ namespace RightsU_Plus.Controllers
 
                 Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
-                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
+                lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)objSyn_Deal_Supplementary).Syn_Deal_Supplementary_Detail.ToList();
 
                 lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Supplementary_Tab_Code == TabCode).ToList();
 
@@ -715,7 +729,7 @@ namespace RightsU_Plus.Controllers
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
-            objSupplementary = (Syn_Deal_Supplementary)Session["Supplementary"];
+            objSupplementary = (Syn_Deal_Supplementary)objSyn_Deal_Supplementary;
             lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementary.Syn_Deal_Supplementary_Detail.ToList();
 
             Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
@@ -742,8 +756,8 @@ namespace RightsU_Plus.Controllers
                     {
                         dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
 
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && 
-                                                                           S.Supplementary_Config_Code == config_Code && 
+                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
+                                                                           S.Supplementary_Config_Code == config_Code &&
                                                                            S.Row_Num.Value != Row_No &&
                                                                            S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
 
@@ -785,7 +799,7 @@ namespace RightsU_Plus.Controllers
             List<Syn_Deal_Supplementary_Detail> lstDetailObj = new List<Syn_Deal_Supplementary_Detail>();
             Syn_Deal_Supplementary objSupplementary = new Syn_Deal_Supplementary();
 
-            objSupplementary = (Syn_Deal_Supplementary)Session["Supplementary"];
+            objSupplementary = (Syn_Deal_Supplementary)objSyn_Deal_Supplementary;
             lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementary.Syn_Deal_Supplementary_Detail.ToList();
 
             //"1~1,sai~2,"
@@ -875,17 +889,17 @@ namespace RightsU_Plus.Controllers
             Output = Output + "</tr>";
 
             objSupplementary.Syn_Deal_Supplementary_Detail = lstDetailObj;
-            Session["Supplementary"] = objSupplementary;
+            objSyn_Deal_Supplementary = objSupplementary;
             return Output;
         }
         public JsonResult supplementarySaveDB(string Title_List, string Remarks)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            Syn_Deal_Supplementary objSupplementaryTemp = (Syn_Deal_Supplementary)Session["Supplementary"];
+            Syn_Deal_Supplementary objSupplementaryTemp = (Syn_Deal_Supplementary)objSyn_Deal_Supplementary;
             List<Syn_Deal_Supplementary_Detail> lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)objSupplementaryTemp.Syn_Deal_Supplementary_Detail.ToList();
             Syn_Deal_Supplementary_Service objTransactionService = new Syn_Deal_Supplementary_Service(objLoginEntity.ConnectionStringName);
 
-            if (Session["Supplementary"] == null)
+            if (objSyn_Deal_Supplementary == null)
             {
                 obj.Add("ErrorCode", "440");
                 obj.Add("ErrorMsg", "Session Expired, login again");
@@ -903,7 +917,7 @@ namespace RightsU_Plus.Controllers
             {
                 int[] titlecodes = Array.ConvertAll(Title_List.Split(','), x => int.Parse(x));
 
-                //lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)Session["Supplementary"]).Syn_Deal_Supplementary_Detail.ToList();
+                //lstDetailObj = (List<Syn_Deal_Supplementary_Detail>)((Syn_Deal_Supplementary)objSyn_Deal_Supplementary).Syn_Deal_Supplementary_Detail.ToList();
 
                 for (int t = 0; t < titlecodes.Length; t++)
                 {
