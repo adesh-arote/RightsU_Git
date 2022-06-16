@@ -319,7 +319,8 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objAcq_Deal_Rights.Term.Split('.');
                 objAcq_Deal_Rights.Term_YY = arr[0];
                 objAcq_Deal_Rights.Term_MM = arr[1];
-                objAcq_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length == 2)
+                    objAcq_Deal_Rights.Term_DD = "0";
 
                 if (objAcq_Deal_Rights.Original_Right_Type == "U")
                     objAcq_Deal_Rights.Perpetuity_Date = string.Format("{0:" + GlobalParams.DateFormat + "}", objAcq_Deal_Rights.Actual_Right_Start_Date).Replace("-", "/");
@@ -2465,7 +2466,7 @@ namespace RightsU_Plus.Controllers
                             var NewAcq_Deal_Rights_Code = (dynamic)null;
                             if (i > 0)
                             {
-                
+
                                 int? TCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Title_Code;
                                 if (objDeal_Schema.Deal_Type_Code == 11)
                                 {

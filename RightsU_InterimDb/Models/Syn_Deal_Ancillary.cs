@@ -27,6 +27,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<decimal> Day { get; set; }
     	    public string Remarks { get; set; }
     	    public Nullable<int> Group_No { get; set; }
+    	    public string Catch_Up_From { get; set; }
     
         public virtual Ancillary_Type Ancillary_Type { get; set; }
         public virtual Syn_Deal Syn_Deal { get; set; }

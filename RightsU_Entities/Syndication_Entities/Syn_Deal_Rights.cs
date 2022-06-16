@@ -65,6 +65,8 @@ namespace RightsU_Entities
         public string Is_Verified { get; set; }
         public string Original_Right_Type { get; set; }
         public string Promoter_Flag { get; set; }
+        public string CoExclusive_Remarks { get; set; }
+
 
         public virtual Milestone_Type Milestone_Type { get; set; }
         public virtual Sub_License Sub_License { get; set; }
