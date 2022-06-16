@@ -4779,6 +4779,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Is_Verified" Type="char" MaxLength="1" />
           <Property Name="Original_Right_Type" Type="char" MaxLength="1" />
           <Property Name="Promoter_Flag" Type="char" MaxLength="1" />
+          <Property Name="CoExclusive_Remarks" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="Syn_Deal_Rights_Blackout">
           <Key>
@@ -23796,6 +23797,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Original_Right_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Syn_Deal_Rights_Promoter" Relationship="RightsU_NeoModel.FK__Syn_Deal___Syn_D__08CBF2B0" FromRole="Syn_Deal_Rights" ToRole="Syn_Deal_Rights_Promoter" />
           <Property Name="Promoter_Flag" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="CoExclusive_Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Syn_Deal_Rights_Blackout">
           <Key>
@@ -38975,6 +38977,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal_Rights">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Rights">
               <MappingFragment StoreEntitySet="Syn_Deal_Rights">
+                <ScalarProperty Name="CoExclusive_Remarks" ColumnName="CoExclusive_Remarks" />
                 <ScalarProperty Name="Promoter_Flag" ColumnName="Promoter_Flag" />
                 <ScalarProperty Name="Original_Right_Type" ColumnName="Original_Right_Type" />
                 <ScalarProperty Name="Is_Verified" ColumnName="Is_Verified" />

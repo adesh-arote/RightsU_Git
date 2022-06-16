@@ -197,7 +197,7 @@
                         <table class="table">
                             <tr>
                                 <td class="bold" style="width: 10%;">
-                                    @*objMessageKey.Titles*@Contractual Term
+                                    @*objMessageKey.Titles*@Contractual Term : @ViewBag.SynLP
                                 </td>
                                 @if (objSchema.Mode != "V")
                                 {
@@ -252,8 +252,15 @@
                             </li>
                         </ul>
                     </div>*@
-                <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
-                       onclick="location.href='@Url.Action("Index", "Syn_List")    '">
+                @if (ViewBag.Deal_Mode == UTOFrameWork.FrameworkClasses.GlobalParams.DEAL_MODE_APPROVE)
+                {
+                    @Html.Partial("_Syn_Approved_List")
+                }
+                else
+                {
+                    <input type="button" id="btnCancelDeal" class="btn btn-primary" value="Back To List"
+                           onclick="location.href='@Url.Action("Index", "Syn_List")    '">
+                }
             </div>
         </div>
     </div>

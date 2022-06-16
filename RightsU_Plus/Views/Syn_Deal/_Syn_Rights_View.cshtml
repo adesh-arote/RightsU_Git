@@ -157,6 +157,14 @@
                                         {
                                             <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
                                         }
+                                        @if (Model.Is_Exclusive == "C")
+                                        {
+                                            <br />
+                                            <div class="bold" style="width: 90%; float: left;"><label>Co-Exclusive @objMessageKey.Remarks</label></div>
+                                            <br />
+                                            <label>@Model.CoExclusive_Remarks</label>
+                                            <br />
+                                        }
                                         <br />
                                         @objMessageKey.TitleLangauge :
                                         <input type="hidden" value="@Model.Is_Title_Language_Right" id="Is_Title_Language_Right" />

@@ -839,7 +839,7 @@ $(document).ready(function () {
             else {
                 $('#li_Perpetuity').hide();
             }
-        }    
+        }
 
         SetTitleLanguage();
         var Rmode = $('#hdn_RMODE').val();
@@ -2841,5 +2841,17 @@ function ShowHideSublicensingList(show) {
     }
     else {
         $('#divSublicensingList').hide();
+    }
+}
+
+function ShowHideCoExRemarks(radio) {
+    debugger;
+    if (radio == 'C') {
+        $('#trCoExRemarks').show()
+        //$('#trCoExRemarks').css("display", "block");
+    }
+    else {
+        $('#trCoExRemarks').hide()
+        //$('#trCoExRemarks').css("display", "none");
     }
 }

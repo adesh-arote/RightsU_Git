@@ -351,7 +351,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objSyn_Deal_Rights.Term.Split('.');
                 objSyn_Deal_Rights.Term_YY = arr[0];
                 objSyn_Deal_Rights.Term_MM = arr[1];
-                objSyn_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objSyn_Deal_Rights.Term_DD = arr[2];
+                else
+                    objSyn_Deal_Rights.Term_DD = "0";
 
                 if (objSyn_Deal_Rights.Original_Right_Type == "U")
                     objSyn_Deal_Rights.Perpetuity_Date = string.Format("{0:" + GlobalParams.DateFormat + "}", objSyn_Deal_Rights.Actual_Right_Start_Date).Replace("-", "/");
@@ -706,7 +709,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objSyn_Deal_Rights.Term.Split('.');
                 objSyn_Deal_Rights.Term_YY = arr[0];
                 objSyn_Deal_Rights.Term_MM = arr[1];
-                objSyn_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objSyn_Deal_Rights.Term_DD = arr[2];
+                else
+                    objSyn_Deal_Rights.Term_DD = "0";
             }
             else if (objSyn_Deal_Rights.Original_Right_Type == "U")
             {
@@ -856,7 +862,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objSyn_Deal_Rights.Term.Split('.');
                 objSyn_Deal_Rights.Term_YY = arr[0];
                 objSyn_Deal_Rights.Term_MM = arr[1];
-                objSyn_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objSyn_Deal_Rights.Term_DD = arr[2];
+                else
+                    objSyn_Deal_Rights.Term_DD = "0";
 
                 if (objSyn_Deal_Rights.Original_Right_Type == "U")
                     objSyn_Deal_Rights.Perpetuity_Date = string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objSyn_Deal_Rights.Actual_Right_Start_Date).Replace("-", "/");
@@ -1163,7 +1172,7 @@ namespace RightsU_Plus.Controllers
                         Result = lstTPD.Where(x => x.TitleCode == titleCodes.ElementAt(0)).Select(x => x.Perpetuity_Date).FirstOrDefault().ToString("dd/MM/yyyy");
                     }
                 }
-                
+
             }
             return Json(Result, JsonRequestBehavior.AllowGet);
         }
@@ -1526,12 +1535,8 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-
             if (TempData["QueryString_Rights"] != null)
                 TempData["QueryString_Rights"] = null;
-
-
-
 
             var Is_Valid = SaveDealRight(objRights, form);
             string strPlatform = string.Join(",", (objSyn_Deal_Rights.Syn_Deal_Rights_Platform.Where(p => p.EntityState != State.Deleted).Select(i => i.Platform_Code).Distinct().ToList()));
@@ -1793,7 +1798,7 @@ namespace RightsU_Plus.Controllers
                             var NewSyn_Deal_Rights_Code = (dynamic)null;
                             if (i > 0)
                             {
-                               
+
                                 int? TCode = objSyn_Deal_Rights.Syn_Deal_Rights_Title.ElementAt(i).Title_Code;
                                 if (objDeal_Schema.Deal_Type_Code == 11)
                                 {
@@ -1830,7 +1835,7 @@ namespace RightsU_Plus.Controllers
                             {
                                 objADR = ADRPS.GetById(Convert.ToInt32(NewSyn_Deal_Rights_Code));
                             }
-                            
+
                             objADR.EntityState = State.Modified;
                             int? TitCode = objADR.Syn_Deal_Rights_Title.ElementAt(0).Title_Code;
                             objADR.Actual_Right_End_Date = lstTPD.Where(x => x.TitleCode == TitCode).Select(x => x.Perpetuity_Date).FirstOrDefault();
@@ -2126,6 +2131,7 @@ namespace RightsU_Plus.Controllers
             objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;
             objDRUDT.Is_Title_Language_Right = objExistingRights.Is_Title_Language_Right = IsTitleLanguageRight ? "Y" : "N";
             objExistingRights.Is_Pushback = objMVCRights.Is_Pushback = "N";
+            objExistingRights.CoExclusive_Remarks = objMVCRights.CoExclusive_Remarks;
 
             objDRUDT.Is_Sub_License = objExistingRights.Is_Sub_License = form["rdoSublicensing"];
             objDRUDT.Sub_License_Code = objExistingRights.Sub_License_Code = null;
