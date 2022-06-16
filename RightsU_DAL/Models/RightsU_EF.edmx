@@ -4544,6 +4544,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Day" Type="numeric" Precision="4" Scale="0" />
           <Property Name="Remarks" Type="nvarchar" MaxLength="4000" />
           <Property Name="Group_No" Type="int" />
+          <Property Name="Catch_Up_From" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary_Platform">
           <Key>
@@ -23680,6 +23681,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Syn_Deal" FromRole="Syn_Deal_Ancillary" ToRole="Syn_Deal" />
           <NavigationProperty Name="Syn_Deal_Ancillary_Platform" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Platform_Syn_Deal_Ancillary" FromRole="Syn_Deal_Ancillary" ToRole="Syn_Deal_Ancillary_Platform" />
           <NavigationProperty Name="Syn_Deal_Ancillary_Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Syn_Deal_Ancillary" FromRole="Syn_Deal_Ancillary" ToRole="Syn_Deal_Ancillary_Title" />
+          <Property Name="Catch_Up_From" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary_Platform">
           <Key>
@@ -38902,6 +38904,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal_Ancillary">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Ancillary">
               <MappingFragment StoreEntitySet="Syn_Deal_Ancillary">
+                <ScalarProperty Name="Catch_Up_From" ColumnName="Catch_Up_From" />
                 <ScalarProperty Name="Syn_Deal_Ancillary_Code" ColumnName="Syn_Deal_Ancillary_Code" />
                 <ScalarProperty Name="Syn_Deal_Code" ColumnName="Syn_Deal_Code" />
                 <ScalarProperty Name="Ancillary_Type_code" ColumnName="Ancillary_Type_code" />
