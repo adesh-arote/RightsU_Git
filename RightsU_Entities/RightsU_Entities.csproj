@@ -454,12 +454,14 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Supplementary_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Deal_Supplementary_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs" />
-    <Compile Include="StoreProcedure_Entities\USP_GET_TITLE_FOR_SUPPLEMENTARY_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Acq_Supplemetary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Syn_Supplementary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_List_Syn_Ancillary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Supplementary_List_Result.cs" />

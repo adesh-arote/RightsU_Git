@@ -12470,6 +12470,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="LanguageCode_Sub" Type="varchar" Mode="In" />
           <Parameter Name="Is_Exclusive" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Acq_Deal_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_Acq_List_Runs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar(max)" Mode="In" />
@@ -12484,9 +12488,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_Acq_SUPP_Tab" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Supplementary_Tab_Code" Type="int" Mode="In" />
-        </Function>
-        <Function Name="USP_Acq_Supplementary_Delete_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="SupplementaryCode" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Add_ACQ_Milestone" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
@@ -12619,6 +12620,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Language_Group_Code" Type="int" Mode="In" />
           <Parameter Name="Language_Type" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Delete_Acq_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="SupplementaryCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_DELETE_Deal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Debug" Type="char" Mode="In" />
@@ -12668,6 +12672,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar(max)" Mode="In" />
           <Parameter Name="User_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Acq_Deal_Supplementary_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Acq_Deal_Supplementary_Code" Type="int" Mode="In" />
+          <Parameter Name="Row_Num" Type="int" Mode="In" />
+          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
         </Function>
         <Function Name="USP_Get_Acq_PreReq" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Data_For" Type="varchar(max)" Mode="In" />
@@ -12741,11 +12750,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Workflow_Status" Type="varchar" Mode="In" />
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Deal_Type" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="USP_Get_Edit_Row" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Acq_Deal_Supplementary_Code" Type="int" Mode="In" />
-          <Parameter Name="Row_Num" Type="int" Mode="In" />
-          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
         </Function>
         <Function Name="USP_Get_ExcelSrNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
@@ -12882,12 +12886,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="SearchTitle" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
         </Function>
-        <Function Name="USP_GET_TITLE_FOR_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
-        </Function>
-        <Function Name="USP_GET_TITLE_FOR_SUPPLEMENTARY" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Function Name="USP_Get_Title_For_Acq_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
           <Parameter Name="title_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_GET_TITLE_FOR_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_GET_TITLE_FOR_SYN_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SYN_DEAL_CODE" Type="int" Mode="In" />
@@ -13815,10 +13819,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
           <Parameter Name="View" Type="varchar" Mode="In" />
-        </Function>
-        <Function Name="USP_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Deal_Code" Type="int" Mode="In" />
-          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_Syn_Acq_Mapping" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
@@ -21282,7 +21282,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
           <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="USP_Get_Edit_Row" ReturnType="Collection(RightsU_NeoModel.USP_Get_Edit_Row_Result)">
+          <FunctionImport Name="USP_Get_Edit_Row">
             <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
@@ -21337,6 +21337,22 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Title_Code" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Acq_Amendement_History" EntityType="RightsU_NeoModel.Acq_Amendement_History" />
+          <FunctionImport Name="USP_Acq_Deal_Supplementary_List" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result)">
+            <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Acq_Deal_Supplementary_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Supplementary_Edit_Result)">
+            <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Row_Num" Mode="In" Type="Int32" />
+            <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Delete_Acq_Supplementary">
+          <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Title_For_Acq_Supplementary" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Acq_Supplementary_Result)">
+            <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="title_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -36411,21 +36427,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <ComplexType Name="USP_SUPP_Create_Table_Result">
           <Property Type="String" Name="Tab" Nullable="true" />
         </ComplexType>
-        <ComplexType Name="USP_Get_Edit_Row_Result">
-          <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="User_Value" Nullable="true" />
-          <Property Type="Int32" Name="Row_Num" Nullable="true" />
-          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="true" />
-          <Property Type="Int32" Name="Supplementary_Code" Nullable="true" />
-          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
-          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
-          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
-          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
-          <Property Type="Int32" Name="Max_Length" Nullable="true" />
-          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
-          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
-          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
-        </ComplexType>
         <ComplexType Name="USP_Supplementary_List_Result">
           <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
           <Property Type="String" Name="SocialMedia" Nullable="true" />
@@ -36548,6 +36549,34 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Amended_By" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
+        <ComplexType Name="USP_Acq_Deal_Supplementary_List_Result">
+          <Property Type="String" Name="title_name" Nullable="false" MaxLength="6" />
+          <Property Type="String" Name="SocialMedia" Nullable="false" MaxLength="12" />
+          <Property Type="String" Name="Commitments" Nullable="false" MaxLength="11" />
+          <Property Type="String" Name="OpeningClosingCredits" Nullable="false" MaxLength="21" />
+          <Property Type="String" Name="EssentialClauses" Nullable="false" MaxLength="16" />
+          <Property Type="Int32" Name="title_code" Nullable="false" />
+          <Property Type="Int32" Name="Supplementary_code" Nullable="false" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Acq_Deal_Supplementary_Edit_Result">
+          <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="User_Value" Nullable="true" />
+          <Property Type="Int32" Name="Row_Num" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Config_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Code" Nullable="true" />
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Title_For_Acq_Supplementary_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -45768,14 +45797,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="USP_GET_TITLE_FOR_SUPPLEMENTARY" FunctionName="RightsU_NeoModel.Store.USP_GET_TITLE_FOR_SUPPLEMENTARY">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result">
-                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
-                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <EntitySetMapping Name="Supplementary">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary">
               <MappingFragment StoreEntitySet="Supplementary">
@@ -45864,42 +45885,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="USP_Get_Edit_Row" FunctionName="RightsU_NeoModel.Store.USP_Get_Edit_Row" >
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Edit_Row_Result">
-                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
-                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
-                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
-                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
-                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
-                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
-                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
-                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
-                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
-                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
-                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
-                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
-                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_SUPP_Create_Table" FunctionName="RightsU_NeoModel.Store.USP_SUPP_Create_Table">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_SUPP_Create_Table_Result">
                 <ScalarProperty Name="Tab" ColumnName="Tab" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="USP_Supplementary_List" FunctionName="RightsU_NeoModel.Store.USP_Supplementary_List">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Supplementary_List_Result">
-                <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
-                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -45936,7 +45925,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </EndProperty>
             <Condition ColumnName="Acq_Deal_Supplementary_Code" IsNull="false" />
           </AssociationSetMapping>
-          <FunctionImportMapping FunctionImportName="USP_Acq_Supplementary_Delete_Title" FunctionName="RightsU_NeoModel.Store.USP_Acq_Supplementary_Delete_Title" />
           <EntitySetMapping Name="Syn_Deal_Supplementary">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Supplementary">
               <MappingFragment StoreEntitySet="Syn_Deal_Supplementary">
@@ -46049,6 +46037,47 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_Deal_Supplementary_List" FunctionName="RightsU_NeoModel.Store.USP_Acq_Deal_Supplementary_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result">
+                <ScalarProperty Name="title_name" ColumnName="title_name" />
+                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
+                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
+                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
+                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
+                <ScalarProperty Name="title_code" ColumnName="title_code" />
+                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Acq_Deal_Supplementary_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Acq_Deal_Supplementary_Edit">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Acq_Deal_Supplementary_Edit_Result">
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Delete_Acq_Supplementary" FunctionName="RightsU_NeoModel.Store.USP_Delete_Acq_Supplementary" />
+          <FunctionImportMapping FunctionImportName="USP_Get_Title_For_Acq_Supplementary" FunctionName="RightsU_NeoModel.Store.USP_Get_Title_For_Acq_Supplementary">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Title_For_Acq_Supplementary_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

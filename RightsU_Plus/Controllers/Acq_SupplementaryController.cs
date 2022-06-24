@@ -96,15 +96,15 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindSupplementary()
         {
-            List<USP_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").ToList();
-            int Count = objUspService.USP_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").Count();
+            List<USP_Acq_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").ToList();
+            int Count = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").Count();
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
             strList = strList + "<TR><TH>Title Name</TH><TH>Social Media</TH><TH>Commitments</TH><TH>Opening & Closing Credits</TH><TH>Essential Clauses</TH><TH>Action</TH></TR>";
 
 
-            foreach (USP_Supplementary_List_Result sl in objSupplementary_List)
+            foreach (USP_Acq_Deal_Supplementary_List_Result sl in objSupplementary_List)
             {
                 if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
@@ -137,7 +137,7 @@ namespace RightsU_Plus.Controllers
 
             Operation = obj_Dictionary_RList["MODE"];
 
-            List<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> titleList = objUspService.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(objDeal_Schema.Deal_Code, title_code).ToList();
+            List<USP_Get_Title_For_Acq_Supplemetary_Result> titleList = objUspService.USP_Get_Title_For_Acq_Supplemetary_Result(objDeal_Schema.Deal_Code, title_code).ToList();
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Title_List", new SelectList(titleList, "Title_Code", "Title_Name"));
@@ -431,7 +431,7 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<string, object> Jsonobj = new Dictionary<string, object>();
 
-            List<USP_Get_Edit_Row_Result> EditRowList = new List<USP_Get_Edit_Row_Result>();
+            List <USP_Get_Acq_Deal_Supplementary_Edit_Result> EditRowList = new List<USP_Get_Acq_Deal_Supplementary_Edit_Result>();
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
 
             Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
@@ -441,7 +441,7 @@ namespace RightsU_Plus.Controllers
 
             //if (supplementary_Code != 0)
             //{
-            //    EditRowList = objUspService.USP_Get_Edit_Row_Result(supplementary_Code, rowno, Short_Name).ToList();
+            //    EditRowList = objUspService.USP_Get_Acq_Deal_Supplementary_Edit_Result(supplementary_Code, rowno, Short_Name).ToList();
             //}
             //else
             //{
@@ -451,7 +451,7 @@ namespace RightsU_Plus.Controllers
 
             foreach (Acq_Deal_Supplementary_detail obj in lstDetailObj)
             {
-                USP_Get_Edit_Row_Result objEditRow = new USP_Get_Edit_Row_Result();
+                USP_Get_Acq_Deal_Supplementary_Edit_Result objEditRow = new USP_Get_Acq_Deal_Supplementary_Edit_Result();
                 objEditRow.Supplementary_Data_Code = obj.Supplementary_Data_Code;
                 objEditRow.User_Value = obj.User_Value;
                 objEditRow.Row_Num = obj.Row_Num;
@@ -476,7 +476,7 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.Supplementary_Data> objSupplementary_Data = objDataService.SearchFor(a => true).ToList();
 
             string strAddRow = "<tr id=\"Edit" + Short_Name + "\" name=" + Short_Name + rowno.ToString() + ">";
-            foreach (USP_Get_Edit_Row_Result ED in EditRowList)
+            foreach (USP_Get_Acq_Deal_Supplementary_Edit_Result ED in EditRowList)
             {
                 strAddRow = strAddRow + "<td>";
                 int i = 1, j = 1, k = 1, l = 1, m = 1;
@@ -547,7 +547,7 @@ namespace RightsU_Plus.Controllers
 
         public string DeleteSupplementary(int supplementary_Code)
         {
-            objUspService.USP_Acq_Supplementary_Delete_Title(supplementary_Code);
+            objUspService.USP_Delete_Acq_Supplementary(supplementary_Code);
             var Mode = "A";
             BindSupplementary();
             string success = "201";
@@ -561,7 +561,7 @@ namespace RightsU_Plus.Controllers
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Supplementary_Tab objSupplementary_Tab = objService.SearchFor(a => a.Short_Name == Short_Name).ToList().FirstOrDefault();
 
-            List<USP_Get_Edit_Row_Result> EditRowList = new List<USP_Get_Edit_Row_Result>();
+            List<USP_Get_Acq_Deal_Supplementary_Edit_Result> EditRowList = new List<USP_Get_Acq_Deal_Supplementary_Edit_Result>();
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
 
             if (Operation == "E")
@@ -576,7 +576,7 @@ namespace RightsU_Plus.Controllers
 
                 foreach (Acq_Deal_Supplementary_detail obj in lstDetailObj)
                 {
-                    USP_Get_Edit_Row_Result objEditRow = new USP_Get_Edit_Row_Result();
+                    USP_Get_Acq_Deal_Supplementary_Edit_Result objEditRow = new USP_Get_Acq_Deal_Supplementary_Edit_Result();
                     objEditRow.Supplementary_Data_Code = obj.Supplementary_Data_Code;
                     objEditRow.User_Value = obj.User_Value;
                     objEditRow.Row_Num = obj.Row_Num;
@@ -615,7 +615,7 @@ namespace RightsU_Plus.Controllers
                 string user_Value = "";
                 string supplementary_Data_Code = "";
 
-                USP_Get_Edit_Row_Result obj = new USP_Get_Edit_Row_Result();
+                USP_Get_Acq_Deal_Supplementary_Edit_Result obj = new USP_Get_Acq_Deal_Supplementary_Edit_Result();
 
                 if (Operation == "E")
                 {

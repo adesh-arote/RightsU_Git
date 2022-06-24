@@ -5092,7 +5092,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_SUPP_Tab_Result>("USP_Acq_SUPP_Tab", supplementary_Tab_CodeParameter);
         }
     
-        public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
+        public virtual int USP_Get_Edit_Row(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
         {
             var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Supplementary_Code", acq_Deal_Supplementary_Code) :
@@ -5106,7 +5106,7 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Edit_Row_Result>("USP_Get_Edit_Row", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Get_Edit_Row", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
     
         public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
@@ -5228,6 +5228,58 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Title_Code", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code)
+        {
+            var deal_CodeParameter = deal_Code.HasValue ?
+                new ObjectParameter("Deal_Code", deal_Code) :
+                new ObjectParameter("Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Acq_Deal_Supplementary_Edit_Result> USP_Get_Acq_Deal_Supplementary_Edit(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
+        {
+            var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Supplementary_Code", acq_Deal_Supplementary_Code) :
+                new ObjectParameter("Acq_Deal_Supplementary_Code", typeof(int));
+    
+            var row_NumParameter = row_Num.HasValue ?
+                new ObjectParameter("Row_Num", row_Num) :
+                new ObjectParameter("Row_Num", typeof(int));
+    
+            var tab_SMParameter = tab_SM != null ?
+                new ObjectParameter("Tab_SM", tab_SM) :
+                new ObjectParameter("Tab_SM", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Supplementary_Edit_Result>("USP_Get_Acq_Deal_Supplementary_Edit", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual int USP_Delete_Acq_Supplementary(Nullable<int> supplementaryCode)
+        {
+            var supplementaryCodeParameter = supplementaryCode.HasValue ?
+                new ObjectParameter("SupplementaryCode", supplementaryCode) :
+                new ObjectParameter("SupplementaryCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Acq_Supplementary", supplementaryCodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
+        {
+            var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
+                new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
+                new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
+    
+            var title_CodeParameter = title_Code.HasValue ?
+                new ObjectParameter("title_Code", title_Code) :
+                new ObjectParameter("title_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplementary_Result>("USP_Get_Title_For_Acq_Supplementary", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
     }
 }

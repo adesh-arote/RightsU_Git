@@ -7,13 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RightsU_Entities
+namespace RightsU_InterimDb.Models
 {
     using System;
     
-    public partial class USP_GET_TITLE_FOR_SUPPLEMENTARY_Result
+    public partial class USP_Acq_Deal_Supplementary_List_Result
     {
-        public Nullable<int> Title_Code { get; set; }
-        public string Title_Name { get; set; }
+        public string title_name { get; set; }
+        public string SocialMedia { get; set; }
+        public string Commitments { get; set; }
+        public string OpeningClosingCredits { get; set; }
+        public string EssentialClauses { get; set; }
+        public int title_code { get; set; }
+        public int Supplementary_code { get; set; }
     }
 }
