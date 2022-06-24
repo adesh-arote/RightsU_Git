@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RightsU_InterimDb.Models
+namespace RightsU_Entities
 {
     using System;
     

@@ -5430,7 +5430,7 @@ namespace RightsU_DAL
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Acq_Supplementary", supplementaryCodeParameter);
         }
 
-        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplemetary_Result> USP_Get_Title_For_Acq_Supplemetary_Result(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary_Result(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
@@ -5440,7 +5440,7 @@ namespace RightsU_DAL
                 new ObjectParameter("title_Code", title_Code) :
                 new ObjectParameter("title_Code", typeof(int));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplemetary_Result>("USP_Get_Title_For_Acq_Supplemetary", aCQ_DEAL_CODEParameter, title_CodeParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplementary_Result>("USP_Get_Title_For_Acq_Supplementary", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
 
         public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab(Nullable<int> supplementary_Tab_Code)

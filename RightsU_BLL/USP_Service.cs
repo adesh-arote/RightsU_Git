@@ -1630,10 +1630,10 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Delete_Acq_Supplementary(supplementaryCode);
         }
 
-        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplemetary_Result> USP_Get_Title_For_Acq_Supplemetary_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Get_Title_For_Acq_Supplemetary_Result(Acq_Deal_Code, title_code);
+            return objUSPDAL.USP_Get_Title_For_Acq_Supplementary_Result(Acq_Deal_Code, title_code);
         }
 
         public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab_Result(Nullable<int> Supplementary_Tab_Code)

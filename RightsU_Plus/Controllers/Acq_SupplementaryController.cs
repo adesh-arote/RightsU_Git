@@ -137,7 +137,7 @@ namespace RightsU_Plus.Controllers
 
             Operation = obj_Dictionary_RList["MODE"];
 
-            List<USP_Get_Title_For_Acq_Supplemetary_Result> titleList = objUspService.USP_Get_Title_For_Acq_Supplemetary_Result(objDeal_Schema.Deal_Code, title_code).ToList();
+            List<USP_Get_Title_For_Acq_Supplementary_Result> titleList = objUspService.USP_Get_Title_For_Acq_Supplementary_Result(objDeal_Schema.Deal_Code, title_code).ToList();
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Title_List", new SelectList(titleList, "Title_Code", "Title_Name"));

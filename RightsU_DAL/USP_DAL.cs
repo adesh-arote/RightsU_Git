@@ -1645,10 +1645,10 @@ namespace RightsU_DAL
             return objContext.USP_Delete_Acq_Supplementary(supplementaryCode);
         }
 
-        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplemetary_Result> USP_Get_Title_For_Acq_Supplemetary_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Get_Title_For_Acq_Supplemetary_Result(Acq_Deal_Code, title_code);
+            return objContext.USP_Get_Title_For_Acq_Supplementary_Result(Acq_Deal_Code, title_code);
         }
 
         public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab_Result(Nullable<int> Supplementary_Tab_Code)
