@@ -25,7 +25,26 @@
     $(document).ready(function () {
 
         BindGrid(0, false);
+
+        @*$('.SuppRemarks').expander({
+            slicePoint: 200,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });*@
+
     });
+
+    function initializeReadmore() {
+        $('.SuppRemarks').expander({
+            slicePoint: 200,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    }
 
     function BindGrid(page_index, isOnLoad) {
         debugger;
@@ -47,13 +66,49 @@
                 }
                 $('.div_BindGrid').html(result.List);
                 $('#suppTotal').text(result.TCount);
-                SetPaging();
+                initializeReadmore();
+                //SetPaging();
                 hideLoading();
             },
             error: function (result) {
             }
         });
     }
+
+    var IsCall = 'Y';
+    function SetPaging(txtPageSize) {
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        var Page_Index = 0;
+        PageNo = 1;
+        PageNo = '@ViewBag.PageNo';
+        recordCnt = '@ViewBag.RecordCount';
+        $("#lblTotal").text('@objMessageKey.TotalRecords : ' + recordCnt);
+        Page_Index = parseInt(PageNo) - 1;
+        $('#hdnCurrentPageNo').val(PageNo);
+        var opt = { callback: pageselectCallback };
+
+        opt["items_per_page"] = txtPageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = Page_Index;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (ValidatePageSize()) {
+            if (IsCall == 'Y') {
+                var hdnCurrentPageNo = parseInt(page_index) + 1;
+                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+                BindGridNew($("#G")[0], 'Y');
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
 
     function SuppButtonEvents(Supplementary_code, title_code, mode, rCode, tCode, episodeFrom, episodeTo, pCode, isHB, isSynSynMapp) {
         debugger;

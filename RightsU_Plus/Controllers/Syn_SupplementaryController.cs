@@ -66,15 +66,16 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal_Supplementary = null;
             ViewBag.Deal_Mode = objDeal_Schema.Mode;
 
+            DateTime perpDate = new DateTime(9999, 12, 31);
             var lstSynRights = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName)
                         .SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code)
-                        .Select(i => new { RightsStartDate = i.Actual_Right_Start_Date, RightsEndDate = i.Actual_Right_End_Date }).ToList();
+                        .Select(i => new { RightsStartDate = i.Actual_Right_Start_Date, RightsEndDate = (i.Actual_Right_End_Date == null ? perpDate : i.Actual_Right_End_Date) }).ToList();
             //.Select(x => x.Title_Objection_Code).ToList();
             if (lstSynRights != null && lstSynRights.Count > 0)
             {
                 var startDate = lstSynRights.Select(x => x.RightsStartDate.Value).Min();
-                DateTime perpDate = new DateTime(9999, 12, 31);
-                var endDate = lstSynRights.Select(x => (x.RightsEndDate.Value == DateTime.MinValue ? perpDate : x.RightsEndDate.Value)).Max();
+                var endDate = lstSynRights.Select(x => x.RightsEndDate.Value).Max();
+                //var endDate = lstSynRights.Select(x => ((x.RightsEndDate.Value == null || x.RightsEndDate.Value == DateTime.MinValue) ? perpDate : x.RightsEndDate.Value)).Max();
 
                 ViewBag.SynLP = Convert.ToDateTime(startDate).ToString("dd-MMM-yyyy") + " To " + (Convert.ToDateTime(endDate) == perpDate ? " Perpetuity" : Convert.ToDateTime(endDate).ToString("dd-MMM-yyyy"));
             }
@@ -96,13 +97,11 @@ namespace RightsU_Plus.Controllers
             {
                 if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.IPDetails + "</TD><TD>" + sl.Miscellaneous + "</TD><TD>" + sl.ExcludedRights + "</TD><TD>" + sl.BusinessStatement + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
-
+                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD><div class=\"SuppRemarks\"> " + sl.IPDetails + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.Miscellaneous + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.ExcludedRights + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.BusinessStatement + "</div></TD><TD style=\"text-align: center;\"><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
                 }
                 else
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.IPDetails + "</TD><TD>" + sl.Miscellaneous + "</TD><TD>" + sl.ExcludedRights + "</TD><TD>" + sl.BusinessStatement + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
-
+                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD><div class=\"SuppRemarks\"> " + sl.IPDetails + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.Miscellaneous + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.ExcludedRights + "</div></TD><TD><div class=\"SuppRemarks\"> " + sl.BusinessStatement + "</div></TD><TD style=\"text-align: center;\"><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
                 }
             }
             strList = strList + "</Table>";
@@ -123,18 +122,6 @@ namespace RightsU_Plus.Controllers
             supplementary_Code = Convert.ToInt32(obj_Dictionary_RList["Supplementary_code"]);
             title_code = Convert.ToInt32(obj_Dictionary_RList["title_code"]);
 
-            Operation = obj_Dictionary_RList["MODE"];
-
-            List<USP_Get_Title_For_Syn_Supplementary_Result> titleList = objUspService.USP_Get_Title_For_Syn_Supplementary(objDeal_Schema.Deal_Code, title_code).ToList();
-
-            Dictionary<string, object> obj = new Dictionary<string, object>();
-            obj.Add("Title_List", new SelectList(titleList, "Title_Code", "Title_Name"));
-
-            obj.Add("SelectedTitle", title_code);
-
-            string strTabs = "<ul class=\"nav nav-tabs nav-tab pull-left\">";
-            string tabTable = "";
-
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForSynDeal).OrderBy(a => a.Order_No).ToList();
 
@@ -150,6 +137,24 @@ namespace RightsU_Plus.Controllers
             {
                 objSupplementary = new Syn_Deal_Supplementary();
             }
+
+            if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+            {
+                title_code = objDeal_Schema.Title_List.Where(x => x.Title_Code == objSupplementary.Title_code && x.Episode_From == objSupplementary.Episode_From && x.Episode_To == objSupplementary.Episode_To).Select(s => s.Acq_Deal_Movie_Code).FirstOrDefault();
+            }
+
+            Operation = obj_Dictionary_RList["MODE"];
+
+            List<USP_Get_Title_For_Syn_Supplementary_Result> titleList = objUspService.USP_Get_Title_For_Syn_Supplementary(objDeal_Schema.Deal_Code, title_code).ToList();
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("Title_List", new SelectList(titleList, "Title_Code", "Title_Name"));
+
+            obj.Add("SelectedTitle", title_code);
+
+            string strTabs = "<ul class=\"nav nav-tabs nav-tab pull-left\">";
+            string tabTable = "";
+
             //int TabCode = (int)objSupplementary_Tab.Select(a => a.Supplementary_Tab_Code).FirstOrDefault();
             int dropcount = 0;
             var ViewOperation = "";
@@ -172,14 +177,11 @@ namespace RightsU_Plus.Controllers
                 if (i == 1)
                 {
                     strTabs = strTabs + "<li id = \"liCal" + ST.Short_Name + "\" class = \"active\" onclick = \"ChangeTab('" + ST.Short_Name + "');\" >";
-
                     obj.Add("TabName", ST.Short_Name);
-
                 }
                 else
                 {
                     strTabs = strTabs + "<li id = \"liCal" + ST.Short_Name + "\" class = \"\" onclick = \"ChangeTab('" + ST.Short_Name + "');\" >";
-
                 }
                 strTabs = strTabs + "<a data - toggle = \"tab\" href = \"#tab" + ST.Short_Name + "\" role = \"tab\" > " + ST.Supplementary_Tab_Description + " </ a >";
                 strTabs = strTabs + "</li>";
@@ -240,6 +242,16 @@ namespace RightsU_Plus.Controllers
 
             List<USP_Get_Supplementary_Config_Result> columnList = objUspService.USP_Get_Supplementary_Config(tabCode).ToList();
             int i = 1, j = 1, k = 1, l = 1, m = 1;
+            double width = 0, viewWidth = 5;
+            if (ViewOperation != "VIEW")
+                width = 100 / columnList.Count();
+            else
+            {
+                viewWidth = columnList.Count > 5 ? 5 : 10;
+                width = (100 - viewWidth) / columnList.Count();
+            }
+
+            width = Math.Round(width);
             foreach (USP_Get_Supplementary_Config_Result ST in columnList)
             {
                 if (strPrevHeader != "" && strPrevHeader == ST.Supplementary_Name)
@@ -249,12 +261,12 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     strtableHeader = strtableHeader.Replace("UTOsplTag", "");
-                    strtableHeader = strtableHeader + "<th style=\"width:20%\" UTOsplTag> " + ST.Supplementary_Name + "</th>";
+                    strtableHeader = strtableHeader + "<th style=\"width:" + width + "%\" UTOsplTag> " + ST.Supplementary_Name + "</th>";
                     strPrevHeader = ST.Supplementary_Name;
                 }
                 if (WindowType == "inLine")
                 {
-                    strAddRow = strAddRow + "<td style=\"width:20%\">";
+                    strAddRow = strAddRow + "<td style=\"width:" + width + "%\">";
                     if (ST.Control_Type == "TXTDDL")
                     {
                         strAddRow = strAddRow + getDDL(ListSupplementary_Data, Short_Name, i, ST.Whr_Criteria, "", "A", ST.Is_Multiselect, ST.Supplementary_Config_Code);
@@ -319,7 +331,7 @@ namespace RightsU_Plus.Controllers
             strtableHeader = strtableHeader.Replace("UTOsplTag", "");
             if (ViewOperation != "VIEW")
             {
-                strtableHeader = strtableHeader + "<th style=\"width:10%\"> Action </th>";
+                strtableHeader = strtableHeader + "<th style=\"width:" + viewWidth + "%\"> Action </th>";
             }
             strtableHeader = strtableHeader + "</tr>";
 
@@ -859,7 +871,7 @@ namespace RightsU_Plus.Controllers
                 }
                 if (ControlType == "TXTAREA" || ControlType == "INT" || ControlType == "DBL" || ControlType == "DATE" || ControlType == "CHK")
                 {
-                    Output = Output + "<td>" + vals[0] + "</td>";
+                    Output = Output + "<td><div class=\"SuppRemarks\">" + vals[0] + "</div></td>";
                     obj.User_Value = vals[0];
                 }
 
@@ -879,12 +891,11 @@ namespace RightsU_Plus.Controllers
             }
             if (Operation == "A")
             {
-                Output = Output + "<TD><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "','" + Short_Name + "' );\"></a></TD>";
+                Output = Output + "<td style=\"text-align:center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "','" + Short_Name + "' );\"></a></td>";
             }
             else if (Operation == "E")
             {
-                Output = Output + "<TD><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></TD>";
-
+                Output = Output + "<td style=\"text-align:center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></td>";
             }
             Output = Output + "</tr>";
 
@@ -922,13 +933,27 @@ namespace RightsU_Plus.Controllers
                 for (int t = 0; t < titlecodes.Length; t++)
                 {
                     dynamic resultSet;
-                    int titleCode = titlecodes[t];
+                    int titleCode = 0;
+                    int episodeFrom = 1;
+                    int episodeTo = 1;
+
+                    if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        Title_List objTL = null;
+                        objTL = objDeal_Schema.Title_List.Where(x => x.Acq_Deal_Movie_Code == titlecodes[t]).FirstOrDefault();
+                        episodeFrom = objTL.Episode_From;
+                        episodeTo = objTL.Episode_To;
+                        titleCode = objTL.Title_Code;
+                    }
+                    else
+                        titleCode = titlecodes[t];
+
                     //List<Syn_Deal_Supplementary_Detail> lstDetailObjTemp = new List<Syn_Deal_Supplementary_Detail>();
 
                     //objSupplementaryTemp = (Syn_Deal_Supplementary)objTransactionService.SearchFor(a => a.Title_code == presId && a.Syn_Deal_Code == objDeal_Schema.Deal_Code).FirstOrDefault();
                     Syn_Deal_Supplementary objSupplementary = null;
 
-                    if (titleCode == objSupplementaryTemp.Title_code)
+                    if (titleCode == objSupplementaryTemp.Title_code && episodeFrom == objSupplementaryTemp.Episode_From && episodeTo == objSupplementaryTemp.Episode_To)
                     {
                         objSupplementary = objSupplementaryTemp;
                         objTransactionService = (Syn_Deal_Supplementary_Service)Session["Supplementary_Service"];
@@ -941,11 +966,12 @@ namespace RightsU_Plus.Controllers
                     if (objSupplementary == null)
                     {
                         objSupplementary = new Syn_Deal_Supplementary();
-                        objSupplementary.Title_code = titlecodes[t];
+
+                        objSupplementary.Title_code = titleCode;
+                        objSupplementary.Episode_From = episodeFrom;
+                        objSupplementary.Episode_To = episodeTo;
                         objSupplementary.Remarks = Remarks;
                         objSupplementary.Syn_Deal_Code = objDeal_Schema.Deal_Code;
-                        objSupplementary.Episode_From = 1;//Convert.ToInt32(objDeal_Schema.Title_List.Where(a => a.Title_Code == t).Select(a => a.Episode_From));
-                        objSupplementary.Episode_To = 1;// Convert.ToInt32(objDeal_Schema.Title_List.Where(a => a.Title_Code == t).Select(a => a.Episode_To));
                         objSupplementary.EntityState = State.Added;
 
                         foreach (Syn_Deal_Supplementary_Detail objD in lstDetailObj)
@@ -983,5 +1009,11 @@ namespace RightsU_Plus.Controllers
             }
         }
 
+        public JsonResult supplementaryValidation()
+        {
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("detailsCnt", objSyn_Deal_Supplementary.Syn_Deal_Supplementary_Detail.Count);
+            return Json(obj);
+        }
     }
 }

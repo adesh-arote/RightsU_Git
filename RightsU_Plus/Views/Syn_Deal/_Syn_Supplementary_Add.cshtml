@@ -21,6 +21,7 @@
     var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Syn_Supplementary")';
     var URL_SaveInSession = '@Url.Action("supplementarySave", "Syn_Supplementary")';
     var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Syn_Supplementary")';
+    var URL_supplementaryValidation = '@Url.Action("supplementaryValidation", "Syn_Supplementary")';
     var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Syn_Supplementary")';
     var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Syn_Supplementary")';
 
@@ -40,6 +41,17 @@
         var element = document.getElementById("TabValues");
         element.style.display = "none";
     });
+
+    function initializeReadmore() {
+        $('.SuppRemarks').expander({
+            slicePoint: 200,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    }
+
     function BindAllPreReq_Async() {
         debugger;
 
@@ -80,7 +92,7 @@
                     $('#txtSynRemarks').attr('disabled', true);
                 }
 
-
+                initializeReadmore();
                 hideLoading();
             }
         });
@@ -279,6 +291,7 @@
                     var row = $(result.EditRow);
                     row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
                     $(tblName + ' tr').eq(rwIndex + 1).remove();
+                    initializeReadmore();
                     //$('#Edit' + shortName).remove();
                     //row.insertBefore($(tblName + ' tbody ' + x.parentNode.parentNode));
                 }
@@ -481,6 +494,7 @@
                         //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
                         //$(tblName + ' tr').eq(rwIndex + 1).remove();
                     }
+                    initializeReadmore();
                 }
                 else {
                     showAlert('I', 'Duplicate Value Not allowed');
@@ -527,6 +541,25 @@
 
         else {
             showAlert('I', "Title not selected");
+            hideLoading();
+            return;
+        }
+
+        var detailsCnt = 0
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: URL_supplementaryValidation,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                detailsCnt = result.detailsCnt;
+            }
+        });
+
+        if (detailsCnt < 1) {
+            showAlert('I', "Please add supplementary details to save.");
             hideLoading();
             return;
         }

@@ -465,6 +465,7 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal_Rights.Theatrical_Platform_Code = objSyn_Deal_Rights_Current.Theatrical_Platform_Code;
             objSyn_Deal_Rights.Title_Codes = objSyn_Deal_Rights_Current.Title_Codes;
             objSyn_Deal_Rights.Original_Right_Type = objSyn_Deal_Rights_Current.Original_Right_Type;
+            objSyn_Deal_Rights.CoExclusive_Remarks = objSyn_Deal_Rights_Current.CoExclusive_Remarks;
             objSyn_Deal_Rights_Current.Syn_Deal_Rights_Dubbing.ToList().ForEach(d =>
             {
                 Syn_Deal_Rights_Dubbing objDub = new Syn_Deal_Rights_Dubbing();
