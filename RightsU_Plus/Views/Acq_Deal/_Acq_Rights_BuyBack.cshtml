@@ -1,0 +1,93 @@
+﻿@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+
+<script>
+    function ClosePopup() {
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+
+</script>
+<style>
+    #ddlBuyBackTitles_chosen {
+        width: 96% !important
+    }
+</style>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @*@if (Model.Currency_Code > 0)
+        {
+            if (ViewBag.CommandName == "VIEW")
+            {
+                <h2>@objMessageKey.ViewCurrencyDetails</h2>
+            }
+            else
+            {
+                <h2>@objMessageKey.EditCurrencyDetails</h2>
+            }
+        }
+        else
+        {*@
+    <h2>@objMessageKey.AddDealTitle</h2>
+    @*}*@
+</div>
+<div class="scale_table_block">
+    <table class="add_title_popup">
+        <tr>
+            <td class="" style="width: 10%;"><b>@objMessageKey.Titles</b></td>
+            <td style="width:30%">
+                @Html.DropDownList("BuyBackTitles", (List<SelectListItem>)ViewBag.BuyBackTitles, "Please Select", new { @id = "ddlBuyBackTitles", @class = "form_input chosen-select", @multiple = "multiple" })
+            </td>
+            <td style="width:25%">
+                <input type="button" class="btn btn-primary" value="SHOW RESULT" onclick="ClosePopup()" />
+            </td>
+            <td>
+                <b>@objMessageKey.Licensor :</b>
+                <span>xyz</span>
+            </td>
+        </tr>
+    </table>
+    @*@Html.DropDownListFor(x = XhtmlMobileDocType, (List<SelectListItem>)ViewBag.BuyBackTitles, "Please Select", new { @id = "ddlLicensor", @class = "form_input chosen-select" })*@
+
+</div>
+<div class="paging_area clearfix" onclick="hideStarCast()">
+    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+    <span class="pull-left" id="lblTitleSearchCount"></span>
+    <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+    <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+    <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+    <div id="Pagination" class="pagination">
+    </div>
+    <span class="pull-right">
+        @objMessageKey.PageSize:
+        <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+    </span>
+</div>
+<div class="scale_table_block" id="subDealMovie">
+    <span>aa</span>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                @*@if (ViewBag.CommandName != "VIEW")
+                    {*@
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveCurrency()" />
+                @*}*@
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

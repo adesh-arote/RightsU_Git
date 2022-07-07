@@ -466,46 +466,55 @@ function AllowChosenRightClick() {
     });
 }
 
-function btnAddTitle_OnClick() {
-    $('#ddlTitle').SumoSelect();
-    //  $('#ddlTitle').each(function () {
+function btnAddTitle_OnClick(BuyBack) {
+    debugger;
+    var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
 
-    //// });
-    $('.required').removeClass('required');
-    $("[required='required']").removeAttr("required");
-    if (Command_Name == "") {
-        Command_Name = null;
+    if (Role_Code == BuyBack) {
+        AddBuyBackRights();
     }
-    if (Command_Name != null) {
-        showAlert("E", ShowMessage.MsgForAddEdit);//MsgForAddEdit = Please complete add/edit operation.
-        return false;
+    else {
+
+        $('#ddlTitle').SumoSelect();
+        //  $('#ddlTitle').each(function () {
+
+        //// });
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (Command_Name == "") {
+            Command_Name = null;
+        }
+        if (Command_Name != null) {
+            showAlert("E", ShowMessage.MsgForAddEdit);//MsgForAddEdit = Please complete add/edit operation.
+            return false;
+        }
+
+        var rblIsMasterDeal = $("input[name='Is_Master_Deal']:radio:checked").val();
+        var masterDealMovieCode = $("select[ID='ddlMaster_Deal_List'] option:selected").val();
+        var dealTypeCode = GetDealTypeCode();
+
+        var valid = BasicValidationForAddTitle()
+        if (!valid)
+            return false;
+
+        valid = ValidatePageSize();
+        if (!valid)
+            return false;
+
+        if (rblIsMasterDeal == "N" && dealTypeCode != Deal_Type_Music) {
+            var masterDealText = $("select[ID='ddlMaster_Deal_List'] option:selected").text();
+            var strNote = "( Rights will be copied from deal - {MASTER_DEAL_TEXT} )";
+            strNote = strNote.replace("{MASTER_DEAL_TEXT}", masterDealText);
+            $('#subDealNote').text(strNote)
+        }
+        else
+            $('#subDealNote').text("");
+
+        BindTitlePopup(masterDealMovieCode, dealTypeCode, 0, 'ddlTitle')
+
+        $('#popAddDealMovie').modal();
+        $('#ddlTitle')[0].sumo.reload();
     }
-
-    var rblIsMasterDeal = $("input[name='Is_Master_Deal']:radio:checked").val();
-    var masterDealMovieCode = $("select[ID='ddlMaster_Deal_List'] option:selected").val();
-    var dealTypeCode = GetDealTypeCode();
-
-    var valid = BasicValidationForAddTitle()
-    if (!valid)
-        return false;
-
-    valid = ValidatePageSize();
-    if (!valid)
-        return false;
-
-    if (rblIsMasterDeal == "N" && dealTypeCode != Deal_Type_Music) {
-        var masterDealText = $("select[ID='ddlMaster_Deal_List'] option:selected").text();
-        var strNote = "( Rights will be copied from deal - {MASTER_DEAL_TEXT} )";
-        strNote = strNote.replace("{MASTER_DEAL_TEXT}", masterDealText);
-        $('#subDealNote').text(strNote)
-    }
-    else
-        $('#subDealNote').text("");
-
-    BindTitlePopup(masterDealMovieCode, dealTypeCode, 0, 'ddlTitle')
-
-    $('#popAddDealMovie').modal();
-    $('#ddlTitle')[0].sumo.reload();
 }
 
 function ddlTitle_Search_List_OnChange() {
@@ -589,6 +598,15 @@ function ChangeLabelName() {
 
     else if (roleCode == Role_Own_Production)
         lblLicensor.innerHTML = ShowMessage.lblForProducerLineProducer;//lblForProducerLineProducer = Producer/ Line Producer
+
+    if (roleCode == BuyBack) {
+        $('#tdSynLicensor').show();
+        $('#tdAcqLicensor').hide();
+    }
+    else {
+        $('#tdSynLicensor').hide();
+        $('#tdAcqLicensor').show();
+    }
 
 }
 
@@ -1831,14 +1849,14 @@ function ValidateSavefromAcqGeneral(Type) {
 
     var IsTitleDurationMandatory = $("#IsTitleDurationMandatory").val();
     if (IsTitleDurationMandatory == 'Y') {
-    if ($("#txtDuration").val() != undefined) {
-        if ($.trim($('#txtDuration').val()) != "")
-            hdnTxtDuration = $("#txtDuration").val();
-        else {
-            $("#txtDuration").addClass("required");
-            Error = "E";
+        if ($("#txtDuration").val() != undefined) {
+            if ($.trim($('#txtDuration').val()) != "")
+                hdnTxtDuration = $("#txtDuration").val();
+            else {
+                $("#txtDuration").addClass("required");
+                Error = "E";
+            }
         }
-    }
     }
 
     if ($("#ddlLanguage").val() != "") {
@@ -1947,5 +1965,41 @@ function ValidateSavefromAcqGeneral(Type) {
             }
         });
     }
+}
+
+function AddBuyBackRights() {
+    debugger;
+
+    $.ajax({
+        type: "POST",
+        url: URL_AddBuyBackRights,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        dataType: "html",
+        data: JSON.stringify({
+        }),
+        success: function (result) {
+            debugger;
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                $('#popup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+            }
+
+            $('#ddlBuyBackTitles').chosen().trigger("chosen:updated");
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+        }
+    });
+
+    //$('#popup').modal();
+    //$('#pupupHtml').empty();
+
+   
 }
 

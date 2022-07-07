@@ -91,7 +91,7 @@
         Deal_Type_ContentMusic = @GlobalParams.Deal_Type_ContentMusic,
         Deal_Type_ShortFilm = @GlobalParams.Deal_Type_ShortFlim, Deal_Type_Webseries = @GlobalParams.Deal_Type_WebSeries,
         Deal_Type_Featurette = @GlobalParams.Deal_Type_Featurette, Deal_Type_Cineplay = @GlobalParams.Deal_Type_Cineplay,
-        Deal_Type_Drama_Play = @GlobalParams.Deal_Type_Drama_Play, Deal_Type_Tele_Film = @GlobalParams.Deal_Type_Tele_Film;
+        Deal_Type_Drama_Play = @GlobalParams.Deal_Type_Drama_Play, Deal_Type_Tele_Film = @GlobalParams.Deal_Type_Tele_Film, BuyBack = @GlobalParams.RoleCode_BuyBack;
 
     var Role_Assignment = @GlobalParams.RoleCode_Assignment, Role_License = @GlobalParams.RoleCode_License, Role_Own_Production = @GlobalParams.RoleCode_OwnProduction;
     var Deal_Program = '@GlobalParams.Deal_Program', Deal_Music = '@GlobalParams.Deal_Music',
@@ -131,6 +131,7 @@
     var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_General")';
     var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Title_List")';
     var URL_SaveTitleFromAcqGen = '@Url.Action("SaveTitle", "Title_List")';
+    var URL_AddBuyBackRights = '@Url.Action("AddBuyBackRights","Acq_General")';
 
     var ShowMessage = {
         "lblForAssignor": '@objMessageKey.Assignor',
@@ -367,8 +368,11 @@
                                     <tr>
                                         <td><span id="lblLicensor">@objMessageKey.Assignor</span></td>
                                         <td>
-                                            <span>
+                                            <span id="tdAcqLicensor">
                                                 <select name="Licensor_List" id="ddlLicensor" class="form_input chosen-select" multiple="multiple"></select>
+                                            </span>
+                                            <span id="tdSynLicensor" style="display:none;">
+                                                @Html.DropDownListFor(m => Model.Vendor_Code, (List<SelectListItem>)ViewBag.VendorList, "Please Select", new { @id = "ddlLicensor", @class = "form_input chosen-select" })
                                             </span>
                                             <input type="hidden" id="hdnVendorCodes" name="hdnVendorCodes" />
                                             <input type="hidden" id="hdnPrimaryVendorCode" name="hdnPrimaryVendorCode" />
@@ -496,7 +500,7 @@
                                         <td style="width: 10%; text-align: right">
                                             @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
                                             {
-                                                <input type="button" id="btnAddTitle" class="btn btn-primary" disabled="disabled" value="@objMessageKey.Add" onclick="btnAddTitle_OnClick()">
+                                                <input type="button" id="btnAddTitle" class="btn btn-primary" disabled="disabled" value="@objMessageKey.Add" onclick="btnAddTitle_OnClick(BuyBack)">
                                             }
                                         </td>
                                     </tr>
@@ -835,4 +839,14 @@
     </div>
 </div>
 <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitleDealPage" role="dialog" tabindex="-1" aria-hidden="false">
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
 </div>

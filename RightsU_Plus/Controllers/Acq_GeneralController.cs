@@ -140,6 +140,20 @@ namespace RightsU_Plus.Controllers
             int prevAcq_Deal = 0;
             Dictionary<string, string> obj_Dictionary = new Dictionary<string, string>();
             Dictionary<string, string> obj_Dictionary_Title = new Dictionary<string, string>();
+
+            //ViewBag.SynLicensorList = 
+
+            var a = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).Select(x => x.Syn_Deal_Code).ToList();
+
+            var b = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x=>true).Where(x=> a.Contains(x.Syn_Deal_Code) && x.Deal_Workflow_Status == "A").Select(x=> x.Vendor_Code).Distinct().ToList();
+            //List<Title_List> lstCostAddedTitle = (from Syn_Deal_Revenue objSDR in objSyn_Deal.Syn_Deal_Revenue
+            //                                      from Syn_Deal_Revenue_Title objSDRT in objSDR.Syn_Deal_Revenue_Title
+            //                                      select objSDRT).Select(s => new Title_List() { Title_Code = (int)s.Title_Code, Episode_From = (int)s.Episode_From, Episode_To = (int)s.Episode_To }
+            //                                    ).Distinct().ToList();
+
+            ViewBag.VendorList =  new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
+            //new SelectList(new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
+
             if (TempData["QueryString"] != null)
             {
                 obj_Dictionary = TempData["QueryString"] as Dictionary<string, string>;
@@ -1937,6 +1951,27 @@ namespace RightsU_Plus.Controllers
             obj.Add("DealWorkflowFlag", objDeal_Schema.Deal_Workflow_Flag);
             obj.Add("DealWorkflowStatus", objDeal_Schema.Deal_Workflow_Status);
             return Json(obj);
+        }
+
+        public PartialViewResult AddBuyBackRights()
+        {
+
+            //new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
+            ViewBag.BuyBackTitles = new SelectList( (from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).ToList()
+                     join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A").ToList()
+                     on x.Syn_Deal_Code equals y.Syn_Deal_Code
+                     join z in new Syn_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
+                     on x.Syn_Deal_Rights_Code equals z.Syn_Deal_Rights_Code
+                     join t in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
+                     on z.Title_Code equals t.Title_Code
+                     select new
+                     {
+                         z.Title_Code,
+                         t.Title_Name
+                     }), "Title_Code", "Title_Name").ToList();
+                    
+
+            return PartialView("~/Views/Acq_Deal/_Acq_Rights_BuyBack.cshtml");
         }
     }
 }
