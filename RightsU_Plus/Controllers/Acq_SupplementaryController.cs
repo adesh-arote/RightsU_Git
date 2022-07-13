@@ -1037,7 +1037,8 @@ namespace RightsU_Plus.Controllers
         public JsonResult supplementaryValidation()
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            obj.Add("detailsCnt", objAcq_Deal_Supplementary.Acq_Deal_Supplementary_detail.Count);
+            int count = objAcq_Deal_Supplementary.Acq_Deal_Supplementary_detail.Where(x => x.EntityState != State.Deleted).Count();
+            obj.Add("detailsCnt", count);
             return Json(obj);
         }
     }

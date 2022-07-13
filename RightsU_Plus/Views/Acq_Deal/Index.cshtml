@@ -292,9 +292,9 @@
 
     function BindPartialTabs(tabName) {
         //debugger;
-
         $('#divPartialTabs').empty();
         CurrentTab = tabName;
+        //supplementaryAddEditVisible = 'N';
         var URL_PartialView = "";
         $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liSupplementary,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
         if (tabName == pageGeneral) {
@@ -316,6 +316,7 @@
             $("#liRights").addClass("active");
         }
         else if (tabName == pageSupplementaryAddEdit) {
+            //supplementaryAddEditVisible = 'Y';
             URL_PartialView = '@Url.Action("AddEditSupp", "Acq_Supplementary")';
             $("#liSupplementary").addClass("active");
         }

@@ -8027,6 +8027,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Acq_Deal_Supplementary_Acq_Deal">
+          <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Supplementary" Type="Self.Acq_Deal_Supplementary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal">
+              <PropertyRef Name="Acq_Deal_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Supplementary">
+              <PropertyRef Name="Acq_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
           <End Role="Acq_Deal_Supplementary" Type="Self.Acq_Deal_Supplementary" Multiplicity="0..1" />
           <End Role="Acq_Deal_Supplementary_detail" Type="Self.Acq_Deal_Supplementary_detail" Multiplicity="*" />
@@ -8036,6 +8048,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Acq_Deal_Supplementary_detail">
               <PropertyRef Name="Acq_Deal_Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Acq_Deal_Supplementary_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Supplementary" Type="Self.Acq_Deal_Supplementary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Supplementary">
+              <PropertyRef Name="Title_code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15865,9 +15889,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Title" EntitySet="Title" />
             <End Role="Acq_Deal_Sport_Title" EntitySet="Acq_Deal_Sport_Title" />
           </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_Acq_Deal" Association="Self.FK_Acq_Deal_Supplementary_Acq_Deal">
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" Association="Self.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary">
             <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
             <End Role="Acq_Deal_Supplementary_detail" EntitySet="Acq_Deal_Supplementary_detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_Title" Association="Self.FK_Acq_Deal_Supplementary_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
           </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Vendor" Association="Self.FK_Acq_Deal_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
@@ -21353,6 +21385,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
             <Parameter Name="title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_Acq_Deal" Association="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Acq_Deal">
+            <End Role="Acq_Deal" EntitySet="Acq_Deal" />
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Supplementary_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -21443,6 +21483,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Revenue_Vertical_Code" Type="Int32" />
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Acq_Deal" ToRole="Revenue_Vertical" />
           <Property Name="Confirming_Party" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Acq_Deal" FromRole="Acq_Deal" ToRole="Acq_Deal_Supplementary" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -24204,6 +24245,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Milestone" Relationship="RightsU_NeoModel.FK__Title_Mil__Title__334C3C61" FromRole="Title" ToRole="Title_Milestone" />
           <Property Name="Original_Title_Code" Type="Int32" />
           <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title" ToRole="Title_Objection" />
+          <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Title" ToRole="Acq_Deal_Supplementary" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -36447,6 +36489,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Episode_To" Type="Int32" />
           <NavigationProperty Name="Acq_Deal_Supplementary_detail" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_detail_Acq_Deal_Supplementary" FromRole="Acq_Deal_Supplementary" ToRole="Acq_Deal_Supplementary_detail" />
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Acq_Deal" FromRole="Acq_Deal_Supplementary" ToRole="Acq_Deal" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Acq_Deal_Supplementary" ToRole="Title" />
         </EntityType>
         <EntityType Name="Acq_Deal_Supplementary_detail">
           <Key>
@@ -36577,6 +36621,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Title_Code" Nullable="false" />
           <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
         </ComplexType>
+        <Association Name="FK_Acq_Deal_Supplementary_Acq_Deal">
+          <End Type="RightsU_NeoModel.Acq_Deal" Role="Acq_Deal" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Supplementary" Role="Acq_Deal_Supplementary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal">
+              <PropertyRef Name="Acq_Deal_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Supplementary">
+              <PropertyRef Name="Acq_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Acq_Deal_Supplementary_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Supplementary" Role="Acq_Deal_Supplementary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Supplementary">
+              <PropertyRef Name="Title_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->

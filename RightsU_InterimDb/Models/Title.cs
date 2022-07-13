@@ -54,6 +54,7 @@ namespace RightsU_InterimDb.Models
             this.MHCueSheetSongs = new HashSet<MHCueSheetSong>();
             this.Title_Milestone = new HashSet<Title_Milestone>();
             this.Title_Objection = new HashSet<Title_Objection>();
+            this.Acq_Deal_Supplementary = new HashSet<Acq_Deal_Supplementary>();
         }
     
     	public State EntityState { get; set; }    public int Title_Code { get; set; }
@@ -123,5 +124,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<MHCueSheetSong> MHCueSheetSongs { get; set; }
         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
         public virtual ICollection<Title_Objection> Title_Objection { get; set; }
+        public virtual ICollection<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
     }
 }

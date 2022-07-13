@@ -72,6 +72,7 @@
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
                 $('#txtAcqRemarks').val(result.Remarks);
+                $('#lblTitle').val(result.Remarks);
                 $('#txtAcqRemarks').trigger("keyup");
 
                 $('#ViewOperation').val(result.ViewOperation);
@@ -350,7 +351,12 @@
         });
     }
     function handleOk() {
-        BindPartialTabs("SUPP");
+        debugger;
+        var tabName = $('#hdnTabName').val()
+        if ($('#hdnTabName').val() == '')
+            tabName = pageSupplementary;
+
+        BindPartialTabs(tabName);
     }
 
     function onSelect(x) {
@@ -501,8 +507,7 @@
     }
 
     function Cancel_SupplementaryView() {
-
-        BindPartialTabs("SUPP");
+        BindPartialTabs(pageSupplementary);
     }
     function SuppSave()
     {
@@ -569,13 +574,13 @@
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully');
+                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully', 'OK');
                 else
-                    showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
+                    showAlert('I', '@objMessageKey.CouldNotsavedRecord');
 
             }
         });
-        BindPartialTabs("SUPP");
+        //BindPartialTabs("SUPP");
         hideLoading();
 
     }
@@ -605,6 +610,7 @@
 <input type="hidden" id="popupindex" />
 <input type="hidden" id="inputValidation" value="false" />
 <input type="hidden" id="ViewOperation" />
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -616,6 +622,7 @@
                             <label class="bold">@objMessageKey.Titles</label>
                             <div id="divddlPTitle">
                                 <select id="ddSuppTitle" name="ddSuppTitle" multiple="multiple"></select>
+                                <label class="bold" id="lblTitle"></label>
                             </div>
                             <br>
                         </div>
@@ -650,7 +657,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();">
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return SuppSave();">
                         </li>
                         <li>
                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />

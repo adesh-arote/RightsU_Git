@@ -1484,6 +1484,22 @@ namespace RightsU_Plus.Controllers
                             });
                             #endregion
 
+                            #region --- Update Supplementary ---
+
+                            List<Acq_Deal_Supplementary> lstSupplementary = (from Acq_Deal_Supplementary objADA in objAD_Session.Acq_Deal_Supplementary
+                                                                       where objADA.Episode_From == oldEpisodeFrom && objADA.Episode_To == oldEpisodeTo
+                                                                          && objADA.Title_code == Title_Code
+                                                                       select objADA).ToList<Acq_Deal_Supplementary>();
+
+                            lstSupplementary.ForEach(x =>
+                            {
+                                x.EntityState = State.Modified;
+                                x.Episode_From = newEpisodeFrom;
+                                x.Episode_To = newEpisodeTo;
+                            });
+
+                            #endregion
+
                             #region --- Update Sports Title ---
                             List<Acq_Deal_Sport_Title> lstSport = (from Acq_Deal_Sport objADS in objAD_Session.Acq_Deal_Sport
                                                                    from Acq_Deal_Sport_Title objADST in objADS.Acq_Deal_Sport_Title

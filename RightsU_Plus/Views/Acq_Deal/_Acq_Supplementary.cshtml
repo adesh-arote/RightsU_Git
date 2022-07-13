@@ -29,7 +29,7 @@
 
     function BindGrid(page_index, isOnLoad) {
         debugger;
-
+        //supplementaryAddEditVisible = 'N';
         $.ajax({
             type: "POST",
             url: URL_BindSupplementary,
@@ -180,6 +180,13 @@
         //Code end for approval
         return Isvalid;
     }
+
+    function ClearHidden() {
+        if (!clickedOnTab) {
+            $("#hdnTabName").val('');
+        }
+    }
+
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
 <link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
@@ -211,7 +218,6 @@
                     <div class="paging_area clearfix">
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="suppTotal"></span>
-
                         <div id="Pagination" class="pagination"></div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
