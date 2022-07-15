@@ -5229,5 +5229,50 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
         }
+    
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code)
+        {
+            var right_TypeParameter = right_Type != null ?
+                new ObjectParameter("Right_Type", right_Type) :
+                new ObjectParameter("Right_Type", typeof(string));
+    
+            var view_TypeParameter = view_Type != null ?
+                new ObjectParameter("View_Type", view_Type) :
+                new ObjectParameter("View_Type", typeof(string));
+    
+            var deal_CodeParameter = deal_Code.HasValue ?
+                new ObjectParameter("Deal_Code", deal_Code) :
+                new ObjectParameter("Deal_Code", typeof(int));
+    
+            var deal_Movie_CodesParameter = deal_Movie_Codes != null ?
+                new ObjectParameter("Deal_Movie_Codes", deal_Movie_Codes) :
+                new ObjectParameter("Deal_Movie_Codes", typeof(string));
+    
+            var regionCodesParameter = regionCodes != null ?
+                new ObjectParameter("RegionCodes", regionCodes) :
+                new ObjectParameter("RegionCodes", typeof(string));
+    
+            var platformCodesParameter = platformCodes != null ?
+                new ObjectParameter("PlatformCodes", platformCodes) :
+                new ObjectParameter("PlatformCodes", typeof(string));
+    
+            var iSExclusiveParameter = iSExclusive != null ?
+                new ObjectParameter("ISExclusive", iSExclusive) :
+                new ObjectParameter("ISExclusive", typeof(string));
+    
+            var pageSizeParameter = pageSize.HasValue ?
+                new ObjectParameter("PageSize", pageSize) :
+                new ObjectParameter("PageSize", typeof(int));
+    
+            var searchTextParameter = searchText != null ?
+                new ObjectParameter("SearchText", searchText) :
+                new ObjectParameter("SearchText", typeof(string));
+    
+            var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
+                new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
+                new ObjectParameter("Deal_Type_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter);
+        }
     }
 }

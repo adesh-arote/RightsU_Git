@@ -1716,5 +1716,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
         }
+
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List_Rights(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string region_Code, string platform_Code, string IsExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_BuyBackRights_List(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText,1);
+        }
     }
 }

@@ -1357,6 +1357,9 @@
     <Compile Include="Models\USP_Bind_Title_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_BuyBackRights_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Check_HoldBack_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

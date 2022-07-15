@@ -456,6 +456,7 @@
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_BuyBackRights_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs" />

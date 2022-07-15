@@ -57,6 +57,7 @@ namespace RightsU_InterimDb.Models
     	    public string Promoter_Flag { get; set; }
     	    public string Right_Status { get; set; }
     	    public string Is_Under_Production { get; set; }
+    	    public string Buyback_Syn_Rights_Code { get; set; }
     
         public virtual Acq_Deal Acq_Deal { get; set; }
         public virtual ICollection<Acq_Deal_Rights_Blackout> Acq_Deal_Rights_Blackout { get; set; }
