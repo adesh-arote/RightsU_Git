@@ -1722,5 +1722,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_BuyBackRights_List(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText,1);
         }
+
+        public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_BuybackRightsInsert(acq_Deal_Code, synRightsCode, usersCode);
+        }
     }
 }

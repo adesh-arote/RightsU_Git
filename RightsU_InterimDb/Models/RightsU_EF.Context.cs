@@ -5274,5 +5274,22 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter);
         }
+    
+        public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)
+        {
+            var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
+                new ObjectParameter("Acq_Deal_Code", typeof(int));
+    
+            var synRightsCodeParameter = synRightsCode != null ?
+                new ObjectParameter("SynRightsCode", synRightsCode) :
+                new ObjectParameter("SynRightsCode", typeof(string));
+    
+            var usersCodeParameter = usersCode.HasValue ?
+                new ObjectParameter("UsersCode", usersCode) :
+                new ObjectParameter("UsersCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_BuybackRightsInsert", acq_Deal_CodeParameter, synRightsCodeParameter, usersCodeParameter);
+        }
     }
 }

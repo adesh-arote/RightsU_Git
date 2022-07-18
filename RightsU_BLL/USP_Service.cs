@@ -1702,5 +1702,11 @@ namespace RightsU_BLL
             return objUSPDAL.USP_BuyBackRights_List_Rights(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText);
                 
         }
+
+        public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_BuybackRightsInsert(acq_Deal_Code, synRightsCode, usersCode);
+        }
     }
 }

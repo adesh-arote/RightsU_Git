@@ -12563,6 +12563,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="SearchText" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_BuybackRightsInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="SynRightsCode" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="UsersCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_BV_Title_Mapping_Shows" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BV_HouseID_Data_Code" Type="varchar" Mode="In" />
         </Function>
@@ -21389,6 +21394,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TotalRecord" Mode="InOut" Type="Int32" />
             <Parameter Name="SearchText" Mode="In" Type="String" />
             <Parameter Name="Deal_Type_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_BuybackRightsInsert">
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="SynRightsCode" Mode="In" Type="String" />
+            <Parameter Name="UsersCode" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -46169,6 +46179,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_BuybackRightsInsert" FunctionName="RightsU_NeoModel.Store.USP_BuybackRightsInsert" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
