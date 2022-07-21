@@ -5230,7 +5230,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
         }
     
-        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code)
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code, string titleCodes)
         {
             var right_TypeParameter = right_Type != null ?
                 new ObjectParameter("Right_Type", right_Type) :
@@ -5272,7 +5272,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter);
+            var titleCodesParameter = titleCodes != null ?
+                new ObjectParameter("TitleCodes", titleCodes) :
+                new ObjectParameter("TitleCodes", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter, titleCodesParameter);
         }
     
         public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)

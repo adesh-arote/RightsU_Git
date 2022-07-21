@@ -12562,6 +12562,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="TotalRecord" Type="int" Mode="InOut" />
           <Parameter Name="SearchText" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
+          <Parameter Name="TitleCodes" Type="nvarchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_BuybackRightsInsert" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
@@ -21394,6 +21395,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TotalRecord" Mode="InOut" Type="Int32" />
             <Parameter Name="SearchText" Mode="In" Type="String" />
             <Parameter Name="Deal_Type_Code" Mode="In" Type="Int32" />
+            <Parameter Name="TitleCodes" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_BuybackRightsInsert">
             <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
