@@ -239,7 +239,7 @@
 
 @using (Ajax.BeginForm("Save_Rights", "Acq_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "", Is_Acq_Under_Production = "";
+    string ORightType = "", Promoter_Tab = "", Is_Acq_CoExclusive = "", Is_Acq_Under_Production = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -249,10 +249,10 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab").First().Parameter_Value;
-    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Acq_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_CoExclusive").FirstOrDefault().Parameter_Value;
     Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
 
-    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
+    @Html.Hidden("Is_Acq_CoExclusive", Is_Acq_CoExclusive);
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
     <div class="grid_area" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
@@ -285,7 +285,7 @@
                                         <div class="platform_checkbox">
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                @if (Is_Acq_CoExclusive == "Y")
                                                 {
                                                     <tr>
                                                         <td style="width: 102px;"><label>Exclusivity</label></td>

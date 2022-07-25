@@ -1176,7 +1176,7 @@ namespace RightsU_Plus.Controllers
                         if (objAD_Session.Is_Master_Deal == "Y")
                         {
                             var Rights_For_Own = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Add_Rights_For_Ownership").Select(x => x.Parameter_Value).SingleOrDefault();
-                            if (Rights_For_Own.ToString() == "Y")
+                            if (Rights_For_Own.ToString() == "Y" && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_CLONE)
                             {
                                 var objParameter_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Own_Production").Select(x => x.Parameter_Value).SingleOrDefault();
                                 if (objAD_Session.Role_Code == Convert.ToInt32(objParameter_Value))

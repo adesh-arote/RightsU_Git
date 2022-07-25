@@ -211,7 +211,7 @@
         <div class="container syn main_col" onclick="$('.leftPanel').css('left', panelHideCss);">*@
 @using (Ajax.BeginForm("Save_Rights", "Syn_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "";
+    string ORightType = "", Promoter_Tab = "", Is_Syn_CoExclusive = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -221,9 +221,9 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab_Syn").Select(x => x.Parameter_Value).FirstOrDefault();
-    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
 
-    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
+    @Html.Hidden("Is_Syn_CoExclusive", Is_Syn_CoExclusive);
 
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
@@ -251,7 +251,7 @@
                                             <input type="hidden" value="@ViewBag.MODE" id="Mode" />
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                @if (Is_Syn_CoExclusive == "Y")
                                                 {
                                                     <tr>
                                                         <td style="width: 102px;"><label>Exclusivity</label></td>
