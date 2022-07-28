@@ -444,7 +444,18 @@
                     vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
                     $(a)[0].sumo.unSelectAll();
                 }
-                else {
+                else
+                    if ($(a).is(":checkbox")) {
+                        if ($(a).is(':checked')) {
+                            vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                        else {
+                            vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                    }
+                    else {
                     vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
                     $(a).val('');
                 }

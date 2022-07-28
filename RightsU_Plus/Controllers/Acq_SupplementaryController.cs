@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
 using System.Linq;
+using System.Data.Entity.Core.Objects;
 
 namespace RightsU_Plus.Controllers
 {
@@ -91,14 +92,24 @@ namespace RightsU_Plus.Controllers
             }
 
             //return PartialView("~/Views/Shared/_Rights_Filter.cshtml");
-            ViewBag.RecordCount = 50;
+            //ViewBag.RecordCount = 50;
             return PartialView("~/Views/Acq_Deal/_Acq_Supplementary.cshtml");
         }
 
-        public JsonResult BindSupplementary()
+        public JsonResult BindSupplementary(int page_index, int page_size)
         {
-            List<USP_Acq_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").ToList();
-            int Count = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "").Count();
+            int PageNo = page_index <= 0 ? 1 : page_index + 1;
+            //int Count = 0;
+            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", 0);
+            //List<USP_List_Rights_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Rights("AR", objDeal_Schema.Rights_View, objDeal_Schema.Deal_Code,
+            //    objDeal_Schema.Rights_Titles, RegionCode, PlatformCode, objDeal_Schema.Rights_Exclusive, objPageNo, txtpageSize, objTotalRecord, "").ToList();
+
+            List<USP_Acq_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "",page_index, page_size, objRecordCount).ToList();
+            //Count = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "", page_index, page_size).Count();
+
+            ViewBag.RecordCount = Convert.ToInt32(objRecordCount.Value);
+            ViewBag.PageNo = PageNo;
+
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
@@ -120,7 +131,7 @@ namespace RightsU_Plus.Controllers
             }
             strList = strList + "</Table>";
             obj.Add("List", strList);
-            obj.Add("TCount", Count);
+            obj.Add("TCount", objRecordCount.Value);
             return Json(obj);
         }
         public PartialViewResult AddEditSupp()
@@ -299,9 +310,14 @@ namespace RightsU_Plus.Controllers
                         strAddRow = strAddRow + getDATE("", Short_Name, k, "A", ST.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (ST.Control_Type == "INT" || ST.Control_Type == "DBL")
+                    else if (ST.Control_Type == "INT")
                     {
                         strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (ST.Control_Type == "DBL")
+                    {
+                        strAddRow = strAddRow + getDBL("", Short_Name, l, "A", ST.Supplementary_Config_Code);
                         l++;
                     }
                     else if (ST.Control_Type == "CHK")
@@ -332,7 +348,12 @@ namespace RightsU_Plus.Controllers
                         _fieldList = _fieldList + Short_Name + "dtSupp" + k.ToString() + "~" + ST.Supplementary_Config_Code.ToString().ToString() + ",";
                         k++;
                     }
-                    else if (ST.Control_Type == "INT" || ST.Control_Type == "DBL")
+                    else if (ST.Control_Type == "INT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numSupp" + l.ToString() + "~" + ST.Supplementary_Config_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (ST.Control_Type == "DBL")
                     {
                         _fieldList = _fieldList + Short_Name + "numSupp" + l.ToString() + "~" + ST.Supplementary_Config_Code.ToString() + ",";
                         l++;
@@ -418,6 +439,12 @@ namespace RightsU_Plus.Controllers
         public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
         {
             string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
+            _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getDBL(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
+        {
+            string getNumber = "<input type=\"number\" value=\"0.00\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -512,9 +539,14 @@ namespace RightsU_Plus.Controllers
                     strAddRow = strAddRow + getDATE("", Short_Name, k, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
                     k++;
                 }
-                else if (ED.Control_Type == "INT" || ED.Control_Type == "DBL")
+                else if (ED.Control_Type == "INT")
                 {
                     strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
+                    l++;
+                }
+                else if (ED.Control_Type == "DBL")
+                {
+                    strAddRow = strAddRow + getDBL(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
                     l++;
                 }
                 else if (ED.Control_Type == "CHK")
@@ -562,11 +594,11 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public string DeleteSupplementary(int supplementary_Code)
+        public string DeleteSupplementary(int supplementary_Code,int page_index, int page_size)
         {
             objUspService.USP_Delete_Acq_Supplementary(supplementary_Code);
             var Mode = "A";
-            BindSupplementary();
+            BindSupplementary(page_index, page_size);
             string success = "201";
             return success;
         }
@@ -663,9 +695,14 @@ namespace RightsU_Plus.Controllers
                         utospltag = getDATE(user_Value, Short_Name, k, Operation, CM.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (CM.Control_Type == "INT" || CM.Control_Type == "DBL")
+                    else if (CM.Control_Type == "INT")
                     {
                         utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (CM.Control_Type == "DBL")
+                    {
+                        utospltag = getDBL(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
                         l++;
                     }
                     else if (CM.Control_Type == "CHK")
@@ -706,9 +743,14 @@ namespace RightsU_Plus.Controllers
                         strAddRow = strAddRow + getDATE(user_Value, Short_Name, k, Operation, CM.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (CM.Control_Type == "INT" || CM.Control_Type == "DBL")
+                    else if (CM.Control_Type == "INT")
                     {
                         strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (CM.Control_Type == "DBL")
+                    {
+                        strAddRow = strAddRow + getDBL(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
                         l++;
                     }
                     else if (CM.Control_Type == "CHK")

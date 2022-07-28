@@ -361,7 +361,11 @@
         });
     }
     function handleOk() {
-        BindPartialTabs("SUPP");
+        var tabName = $('#hdnTabName').val()
+        if ($('#hdnTabName').val() == '')
+            tabName = pageSupplementary;
+
+        BindPartialTabs(tabName);
     }
 
     function onSelect(x) {
@@ -581,13 +585,13 @@
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully');
+                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully','OK');
                 else
                     showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
 
             }
         });
-        BindPartialTabs("SUPP");
+        //BindPartialTabs("SUPP");
         hideLoading();
 
     }

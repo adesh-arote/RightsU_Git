@@ -12497,6 +12497,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Acq_Deal_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="pageNo" Type="int" Mode="In" />
+          <Parameter Name="pagesize" Type="int" Mode="In" />
+          <Parameter Name="RecordCount" Type="int" Mode="InOut" />
         </Function>
         <Function Name="USP_Acq_List_Runs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
@@ -21372,6 +21375,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Acq_Deal_Supplementary_List" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result)">
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
             <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="pageNo" Mode="In" Type="Int32" />
+            <Parameter Name="pagesize" Mode="In" Type="Int32" />
+            <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Acq_Deal_Supplementary_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Supplementary_Edit_Result)">
             <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />

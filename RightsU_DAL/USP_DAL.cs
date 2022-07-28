@@ -1675,10 +1675,10 @@ namespace RightsU_DAL
         //    return objContext.USP_Supplementary_List_Result(Deal_Code);
         //}
 
-        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode)
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode, int pageNo, int pagesize, ObjectParameter recordCount)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Acq_Deal_Supplementary_List(Deal_Code, titlecode);
+            return objContext.USP_Acq_Deal_Supplementary_List(Deal_Code, titlecode,pageNo,pagesize,recordCount);
         }
 
         public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)

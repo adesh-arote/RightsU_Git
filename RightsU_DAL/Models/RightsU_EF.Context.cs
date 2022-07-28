@@ -5484,7 +5484,7 @@ namespace RightsU_DAL
                 new ObjectParameter("View", typeof(string));
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SUPP_Create_Table_Result>("USP_SUPP_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
         }
-        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code)
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
@@ -5494,7 +5494,15 @@ namespace RightsU_DAL
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter);
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("pageNo", pageNo) :
+                new ObjectParameter("pageNo", typeof(int));
+
+            var pagesizeParameter = pagesize.HasValue ?
+                new ObjectParameter("pagesize", pagesize) :
+                new ObjectParameter("pagesize", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
         public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
         {

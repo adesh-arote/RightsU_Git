@@ -282,9 +282,14 @@ namespace RightsU_Plus.Controllers
                         strAddRow = strAddRow + getDATE("", Short_Name, k, "A", ST.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (ST.Control_Type == "INT" || ST.Control_Type == "DBL")
+                    else if (ST.Control_Type == "INT")
                     {
                         strAddRow = strAddRow + getNumber("", Short_Name, l, "A", ST.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (ST.Control_Type == "DBL")
+                    {
+                        strAddRow = strAddRow + getDBL("", Short_Name, l, "A", ST.Supplementary_Config_Code);
                         l++;
                     }
                     else if (ST.Control_Type == "CHK")
@@ -315,7 +320,12 @@ namespace RightsU_Plus.Controllers
                         _fieldList = _fieldList + Short_Name + "dtSupp" + k.ToString() + "~" + ST.Supplementary_Config_Code.ToString().ToString() + ",";
                         k++;
                     }
-                    else if (ST.Control_Type == "INT" || ST.Control_Type == "DBL")
+                    else if (ST.Control_Type == "INT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numSupp" + l.ToString() + "~" + ST.Supplementary_Config_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (ST.Control_Type == "DBL")
                     {
                         _fieldList = _fieldList + Short_Name + "numSupp" + l.ToString() + "~" + ST.Supplementary_Config_Code.ToString() + ",";
                         l++;
@@ -402,6 +412,12 @@ namespace RightsU_Plus.Controllers
         public string getNumber(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
         {
             string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
+            _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getDBL(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
+        {
+            string getNumber = "<input type=\"number\" value=\"0.00\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -496,9 +512,14 @@ namespace RightsU_Plus.Controllers
                     strAddRow = strAddRow + getDATE("", Short_Name, k, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
                     k++;
                 }
-                else if (ED.Control_Type == "INT" || ED.Control_Type == "DBL")
+                else if (ED.Control_Type == "INT")
                 {
                     strAddRow = strAddRow + getNumber(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
+                    l++;
+                }
+                else if (ED.Control_Type == "DBL")
+                {
+                    strAddRow = strAddRow + getDBL(ED.User_Value, Short_Name, l, "E", Convert.ToInt32(ED.Supplementary_Config_Code));
                     l++;
                 }
                 else if (ED.Control_Type == "CHK")
@@ -642,9 +663,14 @@ namespace RightsU_Plus.Controllers
                         utospltag = getDATE(user_Value, Short_Name, k, Operation, CM.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (CM.Control_Type == "INT" || CM.Control_Type == "DBL")
+                    else if (CM.Control_Type == "INT")
                     {
                         utospltag = getNumber(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (CM.Control_Type == "DBL")
+                    {
+                        utospltag = getDBL(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
                         l++;
                     }
                     else if (CM.Control_Type == "CHK")
@@ -680,9 +706,14 @@ namespace RightsU_Plus.Controllers
                         strAddRow = strAddRow + getDATE(user_Value, Short_Name, k, Operation, CM.Supplementary_Config_Code);
                         k++;
                     }
-                    else if (CM.Control_Type == "INT" || CM.Control_Type == "DBL")
+                    else if (CM.Control_Type == "INT")
                     {
                         strAddRow = strAddRow + getNumber(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
+                        l++;
+                    }
+                    else if (CM.Control_Type == "DBL")
+                    {
+                        strAddRow = strAddRow + getDBL(user_Value, Short_Name, l, Operation, CM.Supplementary_Config_Code);
                         l++;
                     }
                     else if (CM.Control_Type == "CHK")

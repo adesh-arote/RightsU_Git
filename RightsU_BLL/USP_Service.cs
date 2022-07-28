@@ -1654,10 +1654,10 @@ namespace RightsU_BLL
             return objContext.USP_Get_Acq_Deal_Supplementary_Edit_Result(Acq_Deal_Supplementary_Code, Row_Num, shortName);
         }
 
-        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode)
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode, int pageNo, int pagesize, ObjectParameter recordCount)
         {
             USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Acq_Deal_Supplementary_List_Result(Deal_Code, titlecode);
+            return objContext.USP_Acq_Deal_Supplementary_List_Result(Deal_Code, titlecode, pageNo, pagesize, recordCount);
         }
         
         public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
