@@ -79,8 +79,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Right_Type = "G";
             if (objDeal_Schema.Rights_View == null)
                 objDeal_Schema.Rights_View = "G";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
                 objDeal_Schema.Rights_Exclusive = "B";
 
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
@@ -164,8 +164,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Mode = objAcq_Deal.Is_Auto_Push == "Y" ? "V" : objDeal_Schema.Mode;
 
             ViewBag.RightsFlag = "AR";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y")
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y")
             {
                 ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
