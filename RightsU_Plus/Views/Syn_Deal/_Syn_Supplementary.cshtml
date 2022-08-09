@@ -23,7 +23,7 @@
     var URL_DeleteSupplementary = '@Url.Action("DeleteSupplementary", "Syn_Supplementary")';
 
     $(document).ready(function () {
-
+        $('#hdnCurrentPageNo').val(0);
         BindGrid(0, false);
 
         @*$('.SuppRemarks').expander({
@@ -46,8 +46,10 @@
         });
     }
 
-    function BindGrid(page_index, isOnLoad) {
+    function BindGrid() {
         debugger;
+        var txtPageSize = $('#txtPageSize').val();
+        var page_index = $('#hdnCurrentPageNo').val();
 
         $.ajax({
             type: "POST",
@@ -57,7 +59,8 @@
             contentType: "application/json; charset=utf-8",
 
             data: JSON.stringify({
-
+                page_index: page_index,
+                page_size: txtPageSize
             }),
             success: function (result) {
                 debugger;
@@ -66,8 +69,10 @@
                 }
                 $('.div_BindGrid').html(result.List);
                 $('#suppTotal').text(result.TCount);
+                $("#hdnRecordCount").val(result.TCount);
+                $('#hdnCurrentPageNo').val(page_index);
                 initializeReadmore();
-                //SetPaging();
+                SetPaging(txtPageSize);
                 hideLoading();
             },
             error: function (result) {
@@ -79,12 +84,8 @@
     function SetPaging(txtPageSize) {
         IsCall = 'N';
         var PageNo, recordCnt = 3;
-        var Page_Index = 0;
-        PageNo = 1;
-        PageNo = '@ViewBag.PageNo';
-        recordCnt = '@ViewBag.RecordCount';
-        $("#lblTotal").text('@objMessageKey.TotalRecords : ' + recordCnt);
-        Page_Index = parseInt(PageNo) - 1;
+        PageNo = $("#hdnCurrentPageNo").val();
+        recordCnt = $("#hdnRecordCount").val();
         $('#hdnCurrentPageNo').val(PageNo);
         var opt = { callback: pageselectCallback };
 
@@ -93,7 +94,7 @@
         opt["num"] = 1;
         opt["prev_text"] = "<<";
         opt["next_text"] = ">>";
-        opt["current_page"] = Page_Index;
+        opt["current_page"] = PageNo;
         $("#Pagination").pagination(recordCnt, opt);
     }
 
@@ -102,7 +103,7 @@
             if (IsCall == 'Y') {
                 var hdnCurrentPageNo = parseInt(page_index) + 1;
                 $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
-                BindGridNew($("#G")[0], 'Y');
+                BindGrid();
             }
             else
                 IsCall = 'Y';
@@ -176,6 +177,8 @@
     }
     function Delete(Supplementarycode) {
         debugger;
+        var Page_Size = $('#txtPageSize').val();
+        var Page_Index = $('#hdnCurrentPageNo').val();
 
         $.ajax({
             type: "POST",
@@ -185,7 +188,9 @@
             contentType: "application/json; charset=utf-8",
             async: true,
             data: JSON.stringify({
-                Supplementary_code: Supplementarycode
+                Supplementary_code: Supplementarycode,
+                Page_Size: Page_Size,
+                Page_Index: Page_Index
             }),
             success: function (result) {
                 if (result == "201") {
@@ -194,6 +199,19 @@
                 }
             }
         })
+    }
+
+    function PageSize_OnChange() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            $('#hdnCurrentPageNo').val(0);
+            BindGrid();
+        }
+        else
+            return false;
     }
     function ValidateSave() {
     debugger;
@@ -243,6 +261,9 @@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <input type="hidden" id="hdnTabName" name="hdnTabName" />
+<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
+<input type="hidden" id="hdnRecordCount" name="hdnRecordCount" />
+
 <div class="grid_area">
     <div class="navigation_tabs">
         <div class="tabbable">
@@ -266,7 +287,6 @@
                     <div class="paging_area clearfix">
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="suppTotal"></span>
-
                         <div id="Pagination" class="pagination"></div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:

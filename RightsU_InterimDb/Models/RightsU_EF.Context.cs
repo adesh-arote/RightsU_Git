@@ -5217,7 +5217,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Deal_Supplementary_Edit_Result>("USP_Get_Syn_Deal_Supplementary_Edit", syn_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
     
-        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code)
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
@@ -5227,30 +5227,38 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("pageNo", pageNo) :
+                new ObjectParameter("pageNo", typeof(int));
+    
+            var pagesizeParameter = pagesize.HasValue ?
+                new ObjectParameter("pagesize", pagesize) :
+                new ObjectParameter("pagesize", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-
+    
         public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-
+    
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-
+    
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("pageNo", pageNo) :
                 new ObjectParameter("pageNo", typeof(int));
-
+    
             var pagesizeParameter = pagesize.HasValue ?
                 new ObjectParameter("pagesize", pagesize) :
                 new ObjectParameter("pagesize", typeof(int));
-
+    
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-
+    
         public virtual ObjectResult<USP_Get_Acq_Deal_Supplementary_Edit_Result> USP_Get_Acq_Deal_Supplementary_Edit(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
         {
             var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?

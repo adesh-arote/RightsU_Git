@@ -27,5 +27,7 @@ namespace RightsU_InterimDb.Models
     	    public string Remarks { get; set; }
     
         public virtual ICollection<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
+        public virtual Syn_Deal Syn_Deal { get; set; }
+        public virtual Title Title { get; set; }
     }
 }

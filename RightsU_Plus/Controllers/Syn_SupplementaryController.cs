@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
 using System.Linq;
+using System.Data.Entity.Core.Objects;
 
 namespace RightsU_Plus.Controllers
 {
@@ -83,10 +84,17 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/Syn_Deal/_Syn_Supplementary.cshtml");
         }
 
-        public JsonResult BindSupplementary()
+        public JsonResult BindSupplementary(int page_index, int page_size)
         {
-            List<USP_Syn_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "").ToList();
-            int Count = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "").Count();
+            int PageNo = page_index <= 0 ? 1 : page_index + 1;
+            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", 0);
+
+            List<USP_Syn_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "", page_index, page_size, objRecordCount).ToList();
+            //int Count = objUspService.USP_Syn_Deal_Supplementary_List(objDeal_Schema.Deal_Code, "").Count();
+
+            ViewBag.RecordCount = Convert.ToInt32(objRecordCount.Value);
+            ViewBag.PageNo = PageNo;
+
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
@@ -106,7 +114,7 @@ namespace RightsU_Plus.Controllers
             }
             strList = strList + "</Table>";
             obj.Add("List", strList);
-            obj.Add("TCount", Count);
+            obj.Add("TCount", objRecordCount.Value);
             return Json(obj);
         }
         public PartialViewResult AddEditSupp()
@@ -567,11 +575,11 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public string DeleteSupplementary(int supplementary_Code)
+        public string DeleteSupplementary(int supplementary_Code, int Page_Index, int Page_Size)
         {
             objUspService.USP_Delete_Syn_Supplementary(supplementary_Code);
-            var Mode = "A";
-            BindSupplementary();
+            //var Mode = "A";
+            BindSupplementary(Page_Index, Page_Size);
             string success = "201";
             return success;
         }

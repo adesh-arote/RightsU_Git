@@ -1690,10 +1690,10 @@ namespace RightsU_BLL
             return objContext.USP_Get_Syn_Deal_Supplementary_Edit(syn_Deal_Supplementary_Code, row_Num, tab_SM);
         }
 
-        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code)
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code, int pageNo, int pagesize, ObjectParameter recordCount)
         {
             USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
+            return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code, pageNo, pagesize, recordCount);
         }
     }
 }
