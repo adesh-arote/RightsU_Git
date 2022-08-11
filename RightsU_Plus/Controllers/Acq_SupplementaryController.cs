@@ -444,7 +444,7 @@ namespace RightsU_Plus.Controllers
         }
         public string getDBL(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
         {
-            string getNumber = "<input type=\"number\" value=\"0.00\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" value=\""+ User_Value +"\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -452,7 +452,7 @@ namespace RightsU_Plus.Controllers
         {
             string strChecked = "";
 
-            if (User_Value == "" || User_Value == "NO")
+            if (User_Value == "" || User_Value.ToUpper() == "NO")
             {
                 strChecked = "";
             }

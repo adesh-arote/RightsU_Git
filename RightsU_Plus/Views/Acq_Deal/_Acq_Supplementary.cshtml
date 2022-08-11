@@ -126,7 +126,9 @@
     }
     function Delete(Supplementarycode) {
         debugger;
-
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
+        
         $.ajax({
             type: "POST",
             url: URL_DeleteSupplementary,
@@ -135,7 +137,9 @@
             contentType: "application/json; charset=utf-8",
             async: true,
             data: JSON.stringify({
-                Supplementary_code: Supplementarycode
+                Supplementary_code: Supplementarycode,
+                page_index: page_index,
+                page_size: page_size
             }),
             success: function (result) {
                 if (result == "201") {
