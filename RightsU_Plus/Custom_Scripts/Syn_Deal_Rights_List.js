@@ -74,7 +74,6 @@ function ClearTitleValues() {
 }
 
 function BindGrid(obj) {
-
     // showLoading();
     var ViewType = "";
     var regionCode = "";
@@ -229,7 +228,6 @@ function BindGrid(obj) {
 //}
 
 function BindGridNew(obj, IsCallFromPaging, ShowAll) {
-
     showLoading();
     var regionCode = "";
     var exclusiveRights = "";

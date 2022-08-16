@@ -710,7 +710,7 @@ namespace RightsU_Plus.Controllers
             obj_Dic.Add("Page_No", pageNo.ToString());
             obj_Dic.Add("ReleaseRecord", "Y");
             TempData[GlobalParams.Cancel_From_Deal] = obj_Dic;
-         
+
             if (TempData["TitleData"] != null)
             {
                 return RedirectToAction("View", "Title");
@@ -1419,7 +1419,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult ValidateRightsTitleWithAcq(int RCode, int? TCode, int? Episode_From, int? Episode_To)
         {
             int count = 0;
-            count = objUSP_Service.USP_Validate_Syn_Right_Title_With_Acq_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
+            count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
             if (count > 0)
                 return Json("INVALID");
             else
@@ -1433,6 +1433,9 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        #region----------Buy Back related functons-----------------------
+       
+        #endregion
     }
 
     public partial class Acq_Rights

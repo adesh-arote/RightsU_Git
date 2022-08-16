@@ -1728,5 +1728,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_BuybackRightsInsert(acq_Deal_Code, synRightsCode, usersCode);
         }
+
+        public virtual ObjectResult<Nullable<int>> USP_Validate_Acq_Right_Title_With_Syn_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(rCode, tCode, episode_From, episode_To);
+        }
     }
 }

@@ -42,7 +42,9 @@
     var txtRemark = document.getElementById('txtRemark');
     countChar(txtRemark);
     hideLoading();
+
     BindAllPreReq_Async(); // Always call this function last
+    
 
 
 });
@@ -72,6 +74,7 @@ function Enable_DisableControl(isDisable) {
     debugger
     $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', isDisable);
     $("input[name='Is_Master_Deal'][type=radio]").attr('disabled', isDisable);
+    $("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
 
     if (isDisable) {
         $("select[ID='ddlMaster_Deal_List']").attr('disabled', isDisable);
@@ -267,6 +270,10 @@ function BasicValidationForAddTitle() {
 
 function RequiredFieldValidation() {
     debugger;
+
+    var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+
+
     var returnVal = true;
     returnVal = BasicValidationForAddTitle();
     var agreementDate = $("#txtAgreement_Date").val();
@@ -276,6 +283,9 @@ function RequiredFieldValidation() {
     var licenseeCode = $("select[ID='ddlLicensee'] option:selected").val();
     var businessUnitCode = $("select[ID='ddlBusinessUnit'] option:selected").val();
     var licensorCode = $("#ddlLicensor").val();
+    if (Role_Code == BuyBack) {
+        licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
+    }
     var categoryCode = $("select[ID='ddlCategory'] option:selected").val();
     var titleCount = $("#tblMovie tr:not(:has(th))").length
     var DealSegmentCode = $("select[ID='ddlDealSegment'] option:selected").val();
@@ -332,7 +342,11 @@ function RequiredFieldValidation() {
         returnVal = false;
     }
     else {
+
         var plc = getPrimaryLicensor();
+        if (Role_Code == BuyBack) {
+            plc = licensorCode;
+        }
 
         if (plc == 0) {
             showAlert("E", ShowMessage.MsgForPrimLsr, 'ddlLicensor')//MsgForPrimLsr = Please select primary licensor
@@ -471,7 +485,16 @@ function btnAddTitle_OnClick(BuyBack) {
     var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
 
     if (Role_Code == BuyBack) {
-        AddBuyBackRights();
+        licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
+        if (licensorCode == null || licensorCode == "") {
+            //$('.chosen-select').attr('required', true);
+            $('#ddlLicensor_Buyback').attr('required', true);
+            showAlert("E", "Please select Licensor");
+            return false;
+        } else {
+            AddBuyBackRights(BuyBack);
+        }
+
     }
     else {
 
@@ -602,10 +625,12 @@ function ChangeLabelName() {
     if (roleCode == BuyBack) {
         $('#tdSynLicensor').show();
         $('#tdAcqLicensor').hide();
+        $('#btnAddTitleMaster').attr("disabled", true);
     }
     else {
         $('#tdSynLicensor').hide();
         $('#tdAcqLicensor').show();
+        $('#btnAddTitleMaster').attr("disabled", false);
     }
 
 }
@@ -1057,6 +1082,11 @@ function BindTitleLabel(bindSearch) {
 
 function BindContactDropDown() {
     var cpvc = getPrimaryLicensor();
+    var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+    if (Role_Code == BuyBack) {
+        cpvc = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
+    }
+
     var ppvc = $('#hdnPrimaryVendorCode').val();
     if (cpvc != ppvc) {
         $('#hdnPrimaryVendorCode').val(cpvc);
@@ -1093,6 +1123,7 @@ function BindContactDropDown() {
 }
 
 function ddlContact_OnChange() {
+    debugger;
     var vendorContactCode = $("select[ID='ddlContact'] option:selected").val();
     $.ajax({
         type: "POST",
@@ -1179,10 +1210,21 @@ function SearchTitle(titleCode) {
         }
     });
 }
+function btnSaveTitle_OnClick_Buyback(titleCodes, dealRightsCode) {
+    var dealRightsCode = dealRightsCode.join(',');
+    btnSaveTitle_OnClick(titleCodes, dealRightsCode);
+}
 
-function btnSaveTitle_OnClick() {
+function btnSaveTitle_OnClick(titleCodes, dealRightsCode) {
     debugger;
-    var arrTitleCodes = $("#ddlTitle").val();
+    var arrTitleCodes = [];
+
+    if (titleCodes != null) {
+        arrTitleCodes = titleCodes
+    } else {
+        arrTitleCodes = $("#ddlTitle").val();
+    }
+
     $("#divTitle").removeClass("required");
     if (arrTitleCodes != null) {
         showLoading();
@@ -1203,7 +1245,8 @@ function btnSaveTitle_OnClick() {
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 titleCodes: titleCodes,
-                dealTypeCode: dealTypeCode
+                dealTypeCode: dealTypeCode,
+                rightsCode: dealRightsCode
             }),
             async: false,
             success: function (result) {
@@ -1218,6 +1261,7 @@ function btnSaveTitle_OnClick() {
                         addNumeric();
                         BindTitleLabel(true);
                         hideLoading();
+                        $('#popup').modal('hide');
                     }
                 }
             },
@@ -1626,6 +1670,7 @@ function handleCancel() {
     SetNull();
 }
 function ValidateSave() {
+    //alert('Buyback_ValidateSave')
     debugger;
     if (!ValidatePageSize())
         return false;
@@ -1660,9 +1705,18 @@ function ValidateSave() {
     debugger;
     $('input[name=hdnIs_Master_Deal]').val($("input[name='Is_Master_Deal']:radio:checked").val());
     $('input[name=hdnMaster_Deal_Movie_Code]').val($("select[ID='ddlMaster_Deal_List'] option:selected").val());
+    $('input[name=hdnRole_Code]').val($("input[type='radio'][name='Role_Code']:checked").val());
     $('input[name=hdnDeal_Type_Code]').val(GetDealTypeCode());
     var vendorCodes = $("#ddlLicensor").val();
-    $('input[name=hdnVendorCodes]').val(vendorCodes.join(','));
+
+    var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+    if (Role_Code == BuyBack) {
+        var licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
+        $('input[name=hdnVendorCodes]').val(licensorCode);
+    } else {
+        $('input[name=hdnVendorCodes]').val(vendorCodes.join(','));
+    }
+
     $('input[name=hdnAgreementDate]').val($("input[ID='txtAgreement_Date']").val());
     if ($('#hdn_AcqSyn_Gen_Deal_Desc').val() === "Y") {
         $('input[name=hdnDealDesc]').val($("select[ID='txtDeal_Desc'] option:selected").val());
@@ -1672,6 +1726,7 @@ function ValidateSave() {
     }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
 
+   
     showLoading();
     return true;
 }
@@ -1741,6 +1796,7 @@ function Save_Success(result) {
     return false;
 }
 function BindAllPreReq_Async() {
+    debugger;
     showLoading();
     $.ajax({
         type: "POST",
@@ -1967,8 +2023,10 @@ function ValidateSavefromAcqGeneral(Type) {
     }
 }
 
-function AddBuyBackRights() {
+function AddBuyBackRights(BuyBack) {
     debugger;
+    showLoading();
+    licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
 
     $.ajax({
         type: "POST",
@@ -1978,6 +2036,7 @@ function AddBuyBackRights() {
         contentType: "application/json; charset=utf-8",
         dataType: "html",
         data: JSON.stringify({
+            licensorCode: licensorCode
         }),
         success: function (result) {
             debugger;
@@ -1989,8 +2048,10 @@ function AddBuyBackRights() {
                 $('#pupupHtml').empty();
                 $('#pupupHtml').html(result);
             }
-
+            $('#hdnIsBuybackPopupCalled').val('Y');
             $('#ddlBuyBackTitles').chosen().trigger("chosen:updated");
+
+            hideLoading();
         },
         error: function (result) {
             alert('Error: ' + result.responseText);
@@ -2000,6 +2061,6 @@ function AddBuyBackRights() {
     //$('#popup').modal();
     //$('#pupupHtml').empty();
 
-   
+
 }
 

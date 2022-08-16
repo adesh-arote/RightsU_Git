@@ -79,6 +79,18 @@
     #divTitle > div {
         width: 100%;
     }
+
+    /*#ddlLicensor_chosen {
+        width: 95%;
+        border: 1px solid red;
+        outline: none;
+        box-shadow: 0px 2px 8px rgb(200 0 0 / 85%);
+    }*/
+
+    #popup {
+        max-height: 520px;
+    }
+    
 </style>
 
 <script>
@@ -97,6 +109,7 @@
     var Deal_Program = '@GlobalParams.Deal_Program', Deal_Music = '@GlobalParams.Deal_Music',
         Deal_Movie = '@GlobalParams.Deal_Movie', Sub_Deal_Talent = '@GlobalParams.Sub_Deal_Talent';
 
+    var isBuyBackPopupCalled = false;
     var IsCall = 'Y';
 
     var txtMovie_Closed_Date, txtClosing_Remarks;
@@ -255,11 +268,22 @@
         $('.MoreActionDiv').hide('slow');
     }
 
+
+    $('#ddlLicensor_Buyback').on('change', function () {
+        debugger;
+        var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+        if (Role_Code == BuyBack) {
+            BindContactDropDown();
+        }
+    });
+
+    
+
 </script>
 
 @*<script src="~/JS_Core/common.concat.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
 
-@using (Ajax.BeginForm("Save", "Acq_General", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmGeneral" }))
+@using (Ajax.BeginForm("SaveDeal_Gen", "Acq_General", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmGeneral" }))
 {
 
     <div class="grid_area" id="no_Auto_Push">
@@ -301,6 +325,7 @@
                                                     @Html.RadioButtonFor(m => Model.Role_Code, (object)item.Value, new { @id = "rbMode_Acquisition_" + item.Value, @onclick = "ChangeLabelName()" })@item.Text
                                                 </label>
                                             }
+                                            <input type="hidden" id="hdnRole_Code" name="hdnRole_Code" value="@Model.Role_Code" />
                                         </td>
                                         <td>@objMessageKey.YearDefinition</td>
                                         <td>
@@ -372,7 +397,7 @@
                                                 <select name="Licensor_List" id="ddlLicensor" class="form_input chosen-select" multiple="multiple"></select>
                                             </span>
                                             <span id="tdSynLicensor" style="display:none;">
-                                                @Html.DropDownListFor(m => Model.Vendor_Code, (List<SelectListItem>)ViewBag.VendorList, "Please Select", new { @id = "ddlLicensor", @class = "form_input chosen-select" })
+                                                @Html.DropDownListFor(m => Model.Vendor_Code, (List<SelectListItem>)ViewBag.VendorList, "Please Select", new { @id = "ddlLicensor_Buyback", @class = "form_input chosen-select" })
                                             </span>
                                             <input type="hidden" id="hdnVendorCodes" name="hdnVendorCodes" />
                                             <input type="hidden" id="hdnPrimaryVendorCode" name="hdnPrimaryVendorCode" />
@@ -491,10 +516,10 @@
                                         </td>
                                         @if (ViewBag.IsAddTitle_AcqGen == "Y")
                                         {
-                                        <td>
-                                            <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
-                                            <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
-                                        </td>
+                                            <td>
+                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
+                                                <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
+                                            </td>
                                         }
 
                                         <td style="width: 10%; text-align: right">
@@ -546,6 +571,7 @@
                                     <input type="hidden" id="hdnDealDesc" name="hdnDealDesc" />
                                     <input type="hidden" id="hdnDealTagStatusCode" name="hdnDealTagStatusCode" />
                                     <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                    <input type="hidden" id="hdnIsBuybackPopupCalled" name="name" value="N" />
                                 </li>
                                 <li>
                                     <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"

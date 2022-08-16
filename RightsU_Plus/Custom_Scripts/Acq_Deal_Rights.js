@@ -246,6 +246,18 @@ $(document).ready(function () {
         maxDecimalPlaces: 0
     });
 
+    //setMinMaxDates('Start_Date', $('#Start_Date').val(), '');
+
+    setMinMaxDates('Start_Date', '', $('#End_Date').val());
+    setMinMaxDates('End_Date', $('#Start_Date').val(), '');
+    
+    //$("#" + datepickerID).datepicker("option", "minDate", $.datepicker.parseDate("dd/mm/yy", minDate));
+
+    //setMinMaxDates('End_Date', $('#Start_Date').val(), '');
+    //setMinMaxDates('End_Date', '', $('#Start_Date').val());
+    //setMinMaxDates('Start_Date', $('#End_Date').val(), '');
+    
+
     BindAllPreReq_Async();
 });
 
@@ -851,6 +863,7 @@ function Add_Holdback_Blackout(Call_FROM) {
         showAlert('E', ShowMessage.MsgForAddEdit);//MsgForAddEdit = Please complete Add/Edit operation first
 }
 function BindDropdown(radioType, callFrom) {
+    debugger;
     var selectedId = '';
     var Is_Thetrical = $('#Is_Theatrical_Right').prop('checked');
 
@@ -869,6 +882,36 @@ function BindDropdown(radioType, callFrom) {
         selectedId = 'lbSub_Language';
     }
 
+    //--For Buyback
+    var selectedTitles = '';
+    if ($("#lbTitles").val() != null)
+        selectedTitles = $("#lbTitles").val().join(',');
+    var platformCodes = $('#hdnTVCodes').val();
+    if (platformCodes == undefined)
+        platformCodes = "";
+    var region_type = $("#rdoCountryHB").prop('checked') ? 'I' : 'T';
+    var SL_Type = $("#rdoSubL").prop('checked') ? 'SL' : 'SG';
+    var DL_Type = $("#rdoDubbingL").prop('checked') ? 'DL' : 'DG';
+    
+    var Is_Thetrical = $('#Is_Theatrical_Right').prop('checked');
+
+    if (Is_Thetrical)
+        Is_Thetrical = 'Y'
+    else
+        Is_Thetrical = 'N'
+
+  
+    var selectedCodes = '';
+    var selected_Territory = '';
+    var selected_Sub_Lang = '';
+    var selected_Dub_Lang = '';
+    if (callFrom == 'PF') {
+        if (selectedCodes != "")
+            selectedCodes = $('#' + selectedId).val();
+    }
+
+    //--------------------
+
     $.ajax({
         type: "POST",
         url: URL_Bind_JSON_ListBox,
@@ -877,7 +920,12 @@ function BindDropdown(radioType, callFrom) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
             str_Type: radioType,
-            Is_Thetrical: Is_Thetrical
+            Is_Thetrical: Is_Thetrical,
+            titleCodes: selectedTitles,
+            platformCodes: platformCodes,
+            Region_Type: region_type,
+            rdbSubtitlingLanguage: SL_Type,
+            rdbDubbingLanguage: DL_Type
         }),
         async: false,
         success: function (result) {
@@ -2478,7 +2526,7 @@ function OnSuccess(message) {
 }
 
 function BindAllPreReq_Async() {
-
+    debugger;
     $.ajax({
         type: "POST",
         url: URL_BindAllPreReq_Async,

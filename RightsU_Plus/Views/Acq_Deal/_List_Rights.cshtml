@@ -472,7 +472,7 @@
                                 {
                                     int? Rights_Code = @item.Rights_Code;
                                     Acq_Deal_Rights objADR = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(Rights_Code));
-                                    int PlatFormCount = objADR.Acq_Deal_Rights_Platform.Select(s => s.Platform_Code).Count();
+                                    int PlatFormCount = objADR.Acq_Deal_Rights_Platform.Select(s => s.Platform_Code).Distinct().Count();
                                     <a id="@(counter)_aViewPlatform" href="#" title="@objMessageKey.ViewPlatforms" class="clsPlatformPopup"> ...  @PlatFormCount Platforms</a>
 
                                     @*<a id="@(counter)_aViewPlatform" title="View Platforms" class="glyphicon glyphicon-triangle-right clsPlatformPopup"></a>*@
@@ -572,7 +572,8 @@
                             {
                                 if (item.Is_Ref_Close_Title == "Y")
                                 {
-                                    <a title="@objMessageKey.Cannoteditthistitleasitisclosed" href="#" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    //<a title="@objMessageKey.Cannoteditthistitleasitisclosed" href="#" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                                    <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil disabled"  onclick="showLoading();return ValidateRightsTitleWithAcq(@(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0),'@(item.Is_Holdback == null ? "N" : item.Is_Holdback)','@(string.IsNullOrEmpty(item.Is_Syn_Acq_Mapp) ? "N" : item.Is_Syn_Acq_Mapp)','@GlobalParams.DEAL_MODE_EDIT');"></a>
                                     <a title="@objMessageKey.Cannotdeletethistitleasitisclosed" href="#" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
                                     <a title="@objMessageKey.Cannotclonethistitleasitisclosed" href="#" class="glyphicon glyphicon-duplicate disabled" onclick="return false;"></a>
                                 }
@@ -584,7 +585,8 @@
                                         <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                                         <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none;" onclick="showLoading();Show_Validation_Popup('',5, 0, @item.Rights_Code, true)"></a>
                                         <a id="btnReprocess" title="Reprocess" class="glyphicon glyphicon-check" style="display: none;" onclick="RightReprocess(@item.Rights_Code)"></a>
-                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="display:none;" onclick="showLoading();return ValidateRightsTitleWithAcq(@(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0),'@(item.Is_Holdback == null ? "N" : item.Is_Holdback)','@(string.IsNullOrEmpty(item.Is_Syn_Acq_Mapp) ? "N" : item.Is_Syn_Acq_Mapp)','@GlobalParams.DEAL_MODE_EDIT');"></a>
+                                        //<a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
                                         <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" style="display: none;" onclick="return ValidateDelete('@counter');"></a>
                                         <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
 
@@ -592,7 +594,8 @@
                                     else if (item.Right_Status == "E")
                                     {
                                         <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px; display: none;" />
-                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="showLoading();return ValidateRightsTitleWithAcq(@(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0),'@(item.Is_Holdback == null ? "N" : item.Is_Holdback)','@(string.IsNullOrEmpty(item.Is_Syn_Acq_Mapp) ? "N" : item.Is_Syn_Acq_Mapp)','@GlobalParams.DEAL_MODE_EDIT');"></a>
+                                        //<a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
                                         <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" onclick="return ValidateDelete('@counter');"></a>
                                         <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" style="display: none;" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
                                     }
@@ -601,7 +604,8 @@
                                         <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px; display: none;" />
                                         <a id="btnShowError" title="@objMessageKey.ShowError" class="glyphicon glyphicon-exclamation-sign" style="display: none;" onclick="showLoading();Show_Validation_Popup('',5, 0, @item.Rights_Code, true)"></a>
                                         <a id="btnReprocess" title="Reprocess" class="glyphicon glyphicon-check" style="display: none;" onclick="RightReprocess(@item.Rights_Code)"></a>
-                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
+                                        <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="showLoading();return ValidateRightsTitleWithAcq(@(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0),'@(item.Is_Holdback == null ? "N" : item.Is_Holdback)','@(string.IsNullOrEmpty(item.Is_Syn_Acq_Mapp) ? "N" : item.Is_Syn_Acq_Mapp)','@GlobalParams.DEAL_MODE_EDIT');"></a>
+                                        //<a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_EDIT', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', '@item.Is_Syn_Acq_Mapp')"></a>
                                         <a id="btnDelete" title="@objMessageKey.Delete" class="glyphicon glyphicon-trash " href="#" onclick="return ValidateDelete('@counter');"></a>
                                         <a id="btnClone" title="@objMessageKey.Clone" class="glyphicon glyphicon-duplicate" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_CLONE', @(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0), '@item.Is_Holdback', 'N')"></a>
                                     }

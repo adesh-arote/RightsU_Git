@@ -172,6 +172,10 @@
         font-style: italic;
         opacity: 0.5;
     }
+
+    #gridItem_BuyBack {
+        border-left-color : lawngreen;
+    }
     /*.modal .scale_table_block {
     margin: 5px !important;*/
     }
@@ -189,7 +193,13 @@
         {
             tempCount = tempCount + 1;
             counter += 1;
-            <div class="grid_item">
+
+            var contentType = "";
+            if(objAcqList.contentType == "Buy Back")
+            {
+                contentType = "BuyBack";
+            }
+            <div class="grid_item" id= "gridItem_@contentType">
                 <ul>
                     <li class="deal_no">
                         <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.IntCode }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>

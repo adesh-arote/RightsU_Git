@@ -214,7 +214,8 @@
         }).bind("mouseout", function () {
             $("span.PlatformExpand").hide();
         });
-        $('.clsPlatformPopup').on('click', function(e) {
+        $('.clsPlatformPopup').on('click', function (e) {
+            debugger;
             var btdId = e.target.id;
             var hdnRightCodeID = btdId.replace("_aViewPlatform", "_hdnRightCode");
             var rightCode = $('#' + hdnRightCodeID).val();

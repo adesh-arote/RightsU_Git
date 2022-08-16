@@ -12,6 +12,8 @@
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
 <style>
     .navigation_tabs {
@@ -291,8 +293,8 @@
     }
 
     function BindPartialTabs(tabName) {
-        //debugger;
-
+        debugger;
+        //alert('Buyback_BindPartialTabs')
         $('#divPartialTabs').empty();
         CurrentTab = tabName;
         var URL_PartialView = "";

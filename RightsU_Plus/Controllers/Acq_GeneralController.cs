@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity.Core.Objects;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -88,6 +89,20 @@ namespace RightsU_Plus.Controllers
             set { Session["closeMovieCount"] = value; }
         }
 
+        public Deal_Schema objDeal_Schema_Syn
+        {
+            get
+            {
+                if (Session[RightsU_Session.Syn_DEAL_SCHEMA] == null)
+                    Session[RightsU_Session.Syn_DEAL_SCHEMA] = new Deal_Schema();
+                return (Deal_Schema)Session[RightsU_Session.Syn_DEAL_SCHEMA];
+            }
+            set
+            {
+                Session[RightsU_Session.Syn_DEAL_SCHEMA] = value;
+            }
+        }
+
         private List<Deal_Rights_Title_UDT> lstCloneDealRightsTitle
         {
             get
@@ -108,6 +123,30 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstAcq_Deal_movie"] = value; }
         }
+
+
+        public string RightsCode_Buyback
+        {
+            get
+            {
+                if (Session["RightsCode_Buyback"] == null)
+                    Session["RightsCode_Buyback"] = "0";
+                return Convert.ToString(Session["RightsCode_Buyback"]);
+            }
+            set { Session["RightsCode_Buyback"] = value; }
+        }
+
+        public int RecordCount_BuybackList
+        {
+            get
+            {
+                if (Session["RecordCount_BuybackList"] == null)
+                    Session["RecordCount_BuybackList"] = 0;
+                return Convert.ToInt32(Session["RecordCount_BuybackList"]);
+            }
+            set { Session["RecordCount_BuybackList"] = value; }
+        }
+
 
         #endregion
 
@@ -145,13 +184,13 @@ namespace RightsU_Plus.Controllers
 
             var a = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).Select(x => x.Syn_Deal_Code).ToList();
 
-            var b = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x=>true).Where(x=> a.Contains(x.Syn_Deal_Code) && x.Deal_Workflow_Status == "A").Select(x=> x.Vendor_Code).Distinct().ToList();
+            var b = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => a.Contains(x.Syn_Deal_Code) && x.Deal_Workflow_Status == "A").Select(x => x.Vendor_Code).Distinct().ToList();
             //List<Title_List> lstCostAddedTitle = (from Syn_Deal_Revenue objSDR in objSyn_Deal.Syn_Deal_Revenue
             //                                      from Syn_Deal_Revenue_Title objSDRT in objSDR.Syn_Deal_Revenue_Title
             //                                      select objSDRT).Select(s => new Title_List() { Title_Code = (int)s.Title_Code, Episode_From = (int)s.Episode_From, Episode_To = (int)s.Episode_To }
             //                                    ).Distinct().ToList();
 
-            ViewBag.VendorList =  new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
+            ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
             //new SelectList(new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
 
             if (TempData["QueryString"] != null)
@@ -188,7 +227,15 @@ namespace RightsU_Plus.Controllers
                     Acq_Deal_Code = 0;
                 }
                 else if (Acq_Deal_Code > 0)
+                {
                     objAD_Session = objADS.GetById(Acq_Deal_Code);
+                    if (objAD_Session.Role_Code == GlobalParams.RoleCode_BuyBack)
+                    {
+                        ViewBag.IsBuyback = true;
+                    }
+                }
+
+
             }
             else
             {
@@ -219,7 +266,7 @@ namespace RightsU_Plus.Controllers
 
             if (IsConfirmingParty.ToUpper() == "Y")
             {
-                ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name} ).ToList(), "Vendor_Code", "Vendor_Name").ToList();
+                ViewBag.lstConfirmingParty = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active.ToUpper() == "Y").Select(x => new { Vendor_Code = x.Vendor_Code, Vendor_Name = x.Vendor_Name }).ToList(), "Vendor_Code", "Vendor_Name").ToList();
             }
 
             string AllowRevenueVertical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Gen_Revenue_Vertical").Select(x => x.Parameter_Value).FirstOrDefault();
@@ -261,7 +308,7 @@ namespace RightsU_Plus.Controllers
                 if (objAD_Session.Master_Deal_Movie_Code_ToLink == null)
                     objAD_Session.Master_Deal_Movie_Code_ToLink = 0;
 
-                if(IsConfirmingParty.ToUpper() == "Y")
+                if (IsConfirmingParty.ToUpper() == "Y")
                 {
                     int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
                     objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
@@ -947,9 +994,10 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region --- Save ---
-        public JsonResult Save(Acq_Deal objAD_MVC, FormCollection objFormCollection)
+        public JsonResult SaveDeal_Gen(Acq_Deal objAD_MVC, FormCollection objFormCollection)
         {
             string status = "S", mode = "";
+            bool isUpdate = false;
             //string agreementDate = objFormCollection["Agreement_Date"];
             string agreementDate = objFormCollection["hdnAgreementDate"];
             string isMasterDeal = objFormCollection["hdnIs_Master_Deal"];
@@ -957,6 +1005,12 @@ namespace RightsU_Plus.Controllers
             string dealTypeCode = objFormCollection["hdnDeal_Type_Code"];
             string vendorCodes = objFormCollection["hdnVendorCodes"];
             string primaryVendorCode = objFormCollection["hdnPrimaryVendorCode"];
+            string roleCode = objFormCollection["hdnRole_Code"];
+            if (!String.IsNullOrEmpty(roleCode))
+            {
+                objAD_MVC.Role_Code = Convert.ToInt32(roleCode);
+            }
+
             if (primaryVendorCode == "0")
             {
                 primaryVendorCode = objFormCollection["hdnVendorCodes"];
@@ -1016,7 +1070,11 @@ namespace RightsU_Plus.Controllers
             #endregion
 
             if (objAD_Session.Acq_Deal_Code > 0)
+            {
                 objAD_Session.EntityState = State.Modified;
+                isUpdate = true;
+            }
+
             else
             {
                 objAD_Session.EntityState = State.Added;
@@ -1049,8 +1107,17 @@ namespace RightsU_Plus.Controllers
                 {
                     Acq_Deal_Movie objADM_Old = objAD_Session.Acq_Deal_Movie.Where(x => x.Dummy_Guid == objADM_MVC.Dummy_Guid).FirstOrDefault();
 
-                    if (objADM_Old.EntityState == State.Deleted)
-                        objADM_MVC.EntityState = State.Deleted;
+                    if(objADM_Old != null)
+                    {
+                        if (objADM_Old.EntityState == State.Deleted)
+                            objADM_MVC.EntityState = State.Deleted;
+                    }
+                    else
+                    {
+                        returnVal = false;
+                    }
+
+
                 }
             }
             #endregion
@@ -1269,7 +1336,18 @@ namespace RightsU_Plus.Controllers
                     if (status.Equals("SA"))
                         TempData["RedirectAcqDeal"] = objAD_Session;
 
+                    if (Convert.ToInt32(roleCode) == GlobalParams.RoleCode_BuyBack)
+                    {
+                        if (isUpdate == false)
+                        {
+                            new USP_Service(objLoginEntity.ConnectionStringName).USP_BuybackRightsInsert(objAD_Session.Acq_Deal_Code, Convert.ToString(Session["RightsCode_Buyback"]), objAD_Session.Inserted_By);
+                        }
+                        ClearSession_Buyback();
+                    }
+                    //else
+                    //{
                     ClearSession();
+                    //}
                 }
             }
 
@@ -1546,8 +1624,17 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        public JsonResult SaveTitle(string titleCodes, int dealTypeCode)
+        public JsonResult SaveTitle(string titleCodes, int dealTypeCode, string rightsCode = "")
         {
+            if (!String.IsNullOrEmpty(rightsCode))
+            {
+                Session["RightsCode_Buyback"] = rightsCode;
+            }
+            else
+            {
+                Session["RightsCode_Buyback"] = null;
+            }
+
             string[] arrTitleCodes = titleCodes.Split(',');
             Deal_Type_Code = dealTypeCode;
             foreach (string code in arrTitleCodes)
@@ -1953,25 +2040,144 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public PartialViewResult AddBuyBackRights()
+        #region================Buy Back==================
+        public PartialViewResult AddBuyBackRights(int licensorCode)
         {
 
             //new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
-            ViewBag.BuyBackTitles = new SelectList( (from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).ToList()
-                     join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A").ToList()
-                     on x.Syn_Deal_Code equals y.Syn_Deal_Code
-                     join z in new Syn_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
-                     on x.Syn_Deal_Rights_Code equals z.Syn_Deal_Rights_Code
-                     join t in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
-                     on z.Title_Code equals t.Title_Code
-                     select new
-                     {
-                         z.Title_Code,
-                         t.Title_Name
-                     }), "Title_Code", "Title_Name").ToList();
-                    
+            ViewBag.BuyBackTitles =
+                new SelectList((from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).ToList()
+                                join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A" && x.Vendor_Code == licensorCode).ToList()
+                                on x.Syn_Deal_Code equals y.Syn_Deal_Code
+                                join z in new Syn_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
+                                on x.Syn_Deal_Rights_Code equals z.Syn_Deal_Rights_Code
+                                join t in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
+                                on z.Title_Code equals t.Title_Code
+                                select new
+                                {
+                                    z.Title_Code,
+                                    t.Title_Name
+                                }).Distinct(), "Title_Code", "Title_Name").ToList();
 
+            ViewBag.Licensor = new Vendor_Service(objLoginEntity.ConnectionStringName).GetById(licensorCode).Vendor_Name.ToString();
             return PartialView("~/Views/Acq_Deal/_Acq_Rights_BuyBack.cshtml");
         }
+
+
+        public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
+        {
+            //if (DPlatformCode == "D")
+            //    DPlatformCode = PlatformCode;
+            //ViewBag.Mode = "LIST";
+            //int PageNo = page_index <= 0 ? 1 : page_index + 1;
+            int PageNo = page_index;
+            //if (IsCallFromPaging == "N" || IsCallFromPaging == "C")            //Here C means Summary and Deatails)                
+            //    objDeal_Schema.List_Rights.Clear();
+            //Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo, ExclusiveRight);
+
+            int totalRcord = 0;
+            ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
+            ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
+            List<USP_BuyBackRights_List_Result> lst = new List<USP_BuyBackRights_List_Result>();
+            lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_BuyBackRights_List("SR", "G", objDeal_Schema.Deal_Code,
+                "", "", "", "B", objPageNo, 100, objTotalRecord, "", Selected_Title_Code).ToList();
+
+            ViewBag.RecordCount = lst.Count();//Convert.ToInt32(objTotalRecord.Value);
+            RecordCount_BuybackList = lst.Count();
+
+            if (lst.Count > 0)
+            {
+                int pageNo = PageNo;
+                int recordPerPage = txtpageSize;
+
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, lst.Count, out noOfRecordSkip, out noOfRecordTake);
+
+                lst = lst.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            ViewBag.PageNo = Convert.ToInt32(objPageNo.Value);
+
+            ViewBag.Deal_Mode = objDeal_Schema.Mode;
+            ViewBag.Page_View = objDeal_Schema.Rights_View;
+            objDeal_Schema.Rights_Titles = Selected_Title_Code;
+            objDeal_Schema.Rights_Region = RegionCode;
+            objDeal_Schema.Rights_Platform = PlatformCode;
+            objDeal_Schema.Rights_Exclusive = ExclusiveRight;
+
+            string[] regioncode = RegionCode.Split(',');
+            string[] arrSelectedCountryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I" && regioncode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Code.ToString()).ToArray();
+            string[] arrSelectedTerritoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G" && regioncode.Contains(x.Country_Code.ToString())).Select(s => s.Country_Code.ToString()).ToArray();
+            int?[] countryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "I").Select(s => s.Country_Code).ToArray();
+            int?[] territoryCode = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == objDeal_Schema.Deal_Code && x.Is_Pushback == "N").SelectMany(s => s.Syn_Deal_Rights_Territory).Where(x => x.Territory_Type == "G").Select(s => s.Territory_Code).ToArray();
+
+            List<GroupItem> lsts = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(s => countryCode.Contains(s.Country_Code)).Select(s => new GroupItem() { GroupName = "Country", Text = s.Country_Name, Value = "C" + "" + s.Country_Code.ToString() + "" }).ToList();
+            if (arrSelectedCountryCode.Count() > 0)
+                lsts.Where(s => s.GroupName == "Country" && arrSelectedCountryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
+            lsts.AddRange(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(s => territoryCode.Contains(s.Territory_Code)).Select(s => new GroupItem() { GroupName = "Territory", Text = s.Territory_Name, Value = "T" + "" + s.Territory_Code.ToString() + "" }).ToList());
+            if (arrSelectedTerritoryCode.Count() > 0)
+                lsts.Where(s => s.GroupName == "Territory" && arrSelectedTerritoryCode.Contains(s.Value)).ToList().ForEach(f => f.isSelected = true);
+            ViewBag.Region = lsts;
+            return PartialView("~/Views/Acq_Deal/_Acq_Rights_BuyBack_List.cshtml", lst);
+        }
+
+        private void ClearSession_Buyback()
+        {
+            Session["RightsCode_Buyback"] = null;
+        }
+
+
+        private void ClearSession_RecordCount_BuybackList()
+        {
+            Session["RecordCount_BuybackList"] = null;
+        }
+        public PartialViewResult BindPlatformTreePopup(int rightCode)
+        {
+            Syn_Deal_Rights objSDR = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(rightCode);
+            Platform_Tree_View objPTV = new Platform_Tree_View(objLoginEntity.ConnectionStringName);
+            string strPlatform = string.Join(",", objSDR.Syn_Deal_Rights_Platform.Select(s => s.Platform_Code).ToArray());
+            objPTV.PlatformCodes_Display = strPlatform;
+            objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            objPTV.Show_Selected = true;
+            ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y");
+            ViewBag.TreeId = "Rights_Platform_Buyback";//"Rights_Platform";
+            ViewBag.TreeValueId = "hdnTVCodes";
+            return PartialView("_TV_Platform");
+        }
+
+        private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
+        {
+            noOfRecordSkip = noOfRecordTake = 0;
+            if (recordCount > 0)
+            {
+                int cnt = pageNo * recordPerPage;
+                if (cnt >= recordCount)
+                {
+                    int v1 = recordCount / recordPerPage;
+                    if ((v1 * recordPerPage) == recordCount)
+                        pageNo = v1;
+                    else
+                        pageNo = v1 + 1;
+                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
+                if (recordCount < (noOfRecordSkip + recordPerPage))
+                    noOfRecordTake = recordCount - noOfRecordSkip;
+                else
+                    noOfRecordTake = recordPerPage;
+            }
+            return pageNo;
+        }
+
+        public JsonResult GetBuybackListCount()
+        {
+
+            var obj = new
+            {
+                Record_Count = RecordCount_BuybackList
+            };
+            return Json(obj);
+        }
+
+        #endregion
     }
 }

@@ -550,6 +550,7 @@ function Add_Holdback_Blackout(Call_FROM) {
 
 function BindDropdown(radioType, CallFrom) {
     debugger;
+    //alert('Bind dropdown')
     var selectedTitles = '';
     if ($("#lbTitles").val() != null)
         selectedTitles = $("#lbTitles").val().join(',');
@@ -668,7 +669,9 @@ function BindDropdown(radioType, CallFrom) {
 }
 
 function BindListandDdl() {
+
     debugger;
+    //alert('BindListandDdl');
     $.ajax({
         type: "POST",
         url: URL_Bind_JSON_ListBox,

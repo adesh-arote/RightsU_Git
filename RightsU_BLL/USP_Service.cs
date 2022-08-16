@@ -1708,5 +1708,11 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_BuybackRightsInsert(acq_Deal_Code, synRightsCode, usersCode);
         }
+
+        public virtual ObjectResult<Nullable<int>> USP_Validate_Acq_Right_Title_With_Syn_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(rCode, tCode, episode_From, episode_To);
+        }
     }
 }

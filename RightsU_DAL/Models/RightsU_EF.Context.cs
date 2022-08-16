@@ -2970,7 +2970,7 @@ namespace RightsU_DAL
             var dub_Lang_CodesParameter = dub_Lang_Codes != null ?
                 new ObjectParameter("Dub_Lang_Codes", dub_Lang_Codes) :
                 new ObjectParameter("Dub_Lang_Codes", typeof(string));
-
+            
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Syn_Rights_PreReq", syn_Deal_CodeParameter, deal_Type_CodeParameter, data_ForParameter, call_FromParameter, country_Territory_CodesParameter, sub_Lang_CodesParameter, dub_Lang_CodesParameter);
         }
 
@@ -5647,6 +5647,27 @@ namespace RightsU_DAL
                 new ObjectParameter("UsersCode", typeof(int));
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_BuybackRightsInsert", acq_Deal_CodeParameter, synRightsCodeParameter, usersCodeParameter);
+        }
+
+        public virtual ObjectResult<Nullable<int>> USP_Validate_Acq_Right_Title_With_Syn_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            var rCodeParameter = rCode.HasValue ?
+                new ObjectParameter("RCode", rCode) :
+                new ObjectParameter("RCode", typeof(int));
+
+            var tCodeParameter = tCode.HasValue ?
+                new ObjectParameter("TCode", tCode) :
+                new ObjectParameter("TCode", typeof(int));
+
+            var episode_FromParameter = episode_From.HasValue ?
+                new ObjectParameter("Episode_From", episode_From) :
+                new ObjectParameter("Episode_From", typeof(int));
+
+            var episode_ToParameter = episode_To.HasValue ?
+                new ObjectParameter("Episode_To", episode_To) :
+                new ObjectParameter("Episode_To", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Validate_Acq_Right_Title_With_Syn_On_Edit", rCodeParameter, tCodeParameter, episode_FromParameter, episode_ToParameter);
         }
     }
 }

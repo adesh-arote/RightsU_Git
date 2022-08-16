@@ -14182,6 +14182,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="IsPaging" Type="varchar" Mode="In" />
           <Parameter Name="PageSize" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Validate_Acq_Right_Title_With_Syn_On_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="RCode" Type="int" Mode="In" />
+          <Parameter Name="TCode" Type="int" Mode="In" />
+          <Parameter Name="Episode_From" Type="int" Mode="In" />
+          <Parameter Name="Episode_To" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Validate_Close_Movie__Scheduled_Run" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Movie_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Code" Type="int" Mode="In" />
@@ -21401,6 +21407,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
             <Parameter Name="SynRightsCode" Mode="In" Type="String" />
             <Parameter Name="UsersCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Validate_Acq_Right_Title_With_Syn_On_Edit" ReturnType="Collection(Int32)">
+            <Parameter Name="RCode" Mode="In" Type="Int32" />
+            <Parameter Name="TCode" Mode="In" Type="Int32" />
+            <Parameter Name="Episode_From" Mode="In" Type="Int32" />
+            <Parameter Name="Episode_To" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -46182,6 +46194,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_BuybackRightsInsert" FunctionName="RightsU_NeoModel.Store.USP_BuybackRightsInsert" />
+          <FunctionImportMapping FunctionImportName="USP_Validate_Acq_Right_Title_With_Syn_On_Edit" FunctionName="RightsU_NeoModel.Store.USP_Validate_Acq_Right_Title_With_Syn_On_Edit" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
