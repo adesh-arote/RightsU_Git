@@ -1333,6 +1333,9 @@
     <Compile Include="Models\USP_Acq_Deal_Rights_Holdback_Validation_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Acq_Deal_Supplementary_List_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Acq_List_Runs_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1408,6 +1411,9 @@
     <Compile Include="Models\USP_GetSystem_Language_Message_ByModule_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_Acq_Deal_Supplementary_Edit_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_Acq_PreReq_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1439,9 +1445,6 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_Result.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\USP_Get_Edit_Row_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs">
@@ -1499,6 +1502,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_GET_TITLE_DATA_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Title_For_Acq_Supplementary_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USP_GET_TITLE_FOR_RUN_Result.cs">

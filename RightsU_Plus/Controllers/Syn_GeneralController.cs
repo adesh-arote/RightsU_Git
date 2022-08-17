@@ -1215,6 +1215,21 @@ namespace RightsU_Plus.Controllers
                                     x.Episode_To = newEpisodeTo;
                                 });
                                 #endregion
+                                #region --- Update Supplementary ---
+
+                                List<Syn_Deal_Supplementary> lstSupplementary = (from Syn_Deal_Supplementary objADSU in objSD_Session.Syn_Deal_Supplementary
+                                                                                 where objADSU.Episode_From == oldEpisodeFrom && objADSU.Episode_To == oldEpisodeTo
+                                                                                    && objADSU.Title_code == Title_Code
+                                                                                 select objADSU).ToList<Syn_Deal_Supplementary>();
+
+                                lstSupplementary.ForEach(x =>
+                                {
+                                    x.EntityState = State.Modified;
+                                    x.Episode_From = newEpisodeFrom;
+                                    x.Episode_To = newEpisodeTo;
+                                });
+
+                                #endregion
                             }
                         }
                     }

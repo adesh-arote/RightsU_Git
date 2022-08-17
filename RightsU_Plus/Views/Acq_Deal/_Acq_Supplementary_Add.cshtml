@@ -21,6 +21,7 @@
     var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Acq_Supplementary")';
     var URL_SaveInSession = '@Url.Action("supplementarySave", "Acq_Supplementary")';
     var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Acq_Supplementary")';
+    var URL_supplementaryValidation = '@Url.Action("supplementaryValidation", "Acq_Supplementary")';
     var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Acq_Supplementary")';
     var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Acq_Supplementary")';
 
@@ -71,6 +72,7 @@
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
                 $('#txtAcqRemarks').val(result.Remarks);
+                $('#lblTitle').val(result.Remarks);
                 $('#txtAcqRemarks').trigger("keyup");
 
                 $('#ViewOperation').val(result.ViewOperation);
@@ -349,7 +351,12 @@
         });
     }
     function handleOk() {
-        BindPartialTabs("SUPP");
+        debugger;
+        var tabName = $('#hdnTabName').val()
+        if ($('#hdnTabName').val() == '')
+            tabName = pageSupplementary;
+
+        BindPartialTabs(tabName);
     }
 
     function onSelect(x) {
@@ -437,7 +444,18 @@
                     vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
                     $(a)[0].sumo.unSelectAll();
                 }
-                else {
+                else
+                    if ($(a).is(":checkbox")) {
+                        if ($(a).is(':checked')) {
+                            vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                        else {
+                            vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                    }
+                    else {
                     vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
                     $(a).val('');
                 }
@@ -500,8 +518,7 @@
     }
 
     function Cancel_SupplementaryView() {
-
-        BindPartialTabs("SUPP");
+        BindPartialTabs(pageSupplementary);
     }
     function SuppSave()
     {
@@ -525,9 +542,28 @@
         if ($('#ddSuppTitle').val() != null) {
             var title = $('#ddSuppTitle').val().toString();
         }
-        
+
         else {
             showAlert('I', "Title not selected");
+            hideLoading();
+            return;
+        }
+
+        var detailsCnt = 0
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: URL_supplementaryValidation,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                detailsCnt = result.detailsCnt;
+            }
+        });
+
+        if (detailsCnt < 1) {
+            showAlert('I', "Please add supplementary details to save.");
             hideLoading();
             return;
         }
@@ -549,13 +585,13 @@
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully');
+                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully', 'OK');
                 else
-                    showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
+                    showAlert('I', '@objMessageKey.CouldNotsavedRecord');
 
             }
         });
-        BindPartialTabs("SUPP");
+        //BindPartialTabs("SUPP");
         hideLoading();
 
     }
@@ -585,6 +621,7 @@
 <input type="hidden" id="popupindex" />
 <input type="hidden" id="inputValidation" value="false" />
 <input type="hidden" id="ViewOperation" />
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -596,6 +633,7 @@
                             <label class="bold">@objMessageKey.Titles</label>
                             <div id="divddlPTitle">
                                 <select id="ddSuppTitle" name="ddSuppTitle" multiple="multiple"></select>
+                                <label class="bold" id="lblTitle"></label>
                             </div>
                             <br>
                         </div>
@@ -630,7 +668,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();">
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return SuppSave();">
                         </li>
                         <li>
                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />

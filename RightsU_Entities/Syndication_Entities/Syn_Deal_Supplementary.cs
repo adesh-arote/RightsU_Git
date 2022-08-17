@@ -11,22 +11,24 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class Syn_Deal_Supplementary
     {
         public Syn_Deal_Supplementary()
         {
             this.Syn_Deal_Supplementary_Detail = new HashSet<Syn_Deal_Supplementary_Detail>();
         }
-
-        public State EntityState { get; set; }
+    
+    	public State EntityState { get; set; }
         public int Syn_Deal_Supplementary_Code { get; set; }
-        public Nullable<int> Syn_Deal_Code { get; set; }
-        public Nullable<int> Title_code { get; set; }
-        public Nullable<int> Episode_From { get; set; }
-        public Nullable<int> Episode_To { get; set; }
-        public string Remarks { get; set; }
-
+    	public Nullable<int> Syn_Deal_Code { get; set; }
+    	public Nullable<int> Title_code { get; set; }
+    	public Nullable<int> Episode_From { get; set; }
+    	public Nullable<int> Episode_To { get; set; }
+    	public string Remarks { get; set; }
+    
         public virtual ICollection<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
+        public virtual Syn_Deal Syn_Deal { get; set; }
+        public virtual Title Title { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class Title
     {
         public Title()
@@ -55,34 +55,33 @@ namespace RightsU_Entities
             this.Title_Milestone = new HashSet<Title_Milestone>();
             this.Title_Objection = new HashSet<Title_Objection>();
             this.Acq_Deal_Supplementary = new HashSet<Acq_Deal_Supplementary>();
+            this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
         }
-
-        public State EntityState { get; set; }    public int Title_Code { get; set; }
-        public string Original_Title { get; set; }
-        public string Title_Name { get; set; }
-        public string Title_Code_Id { get; set; }
-        public string Synopsis { get; set; }
-        public Nullable<int> Original_Language_Code { get; set; }
-        public Nullable<int> Title_Language_Code { get; set; }
-        public Nullable<int> Year_Of_Production { get; set; }
-        public Nullable<decimal> Duration_In_Min { get; set; }
-        public Nullable<int> Deal_Type_Code { get; set; }
-        public Nullable<int> Grade_Code { get; set; }
-        public Nullable<int> Reference_Key { get; set; }
-        public string Reference_Flag { get; set; }
-        public string Is_Active { get; set; }
-        public Nullable<int> Inserted_By { get; set; }
-        public Nullable<System.DateTime> Inserted_On { get; set; }
-        public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
-        public Nullable<int> Last_Action_By { get; set; }
-        public Nullable<System.DateTime> Lock_Time { get; set; }
-        public string Title_Image { get; set; }
-        public Nullable<int> Music_Label_Code { get; set; }
-
-        public Nullable<int> Program_Code { get; set; }
-        public Nullable<int> Original_Title_Code { get; set; }
-
-        public virtual Music_Label Music_Label { get; set; }
+    
+    	public State EntityState { get; set; }    public int Title_Code { get; set; }
+    	    public string Original_Title { get; set; }
+    	    public string Title_Name { get; set; }
+    	    public string Title_Code_Id { get; set; }
+    	    public string Synopsis { get; set; }
+    	    public Nullable<int> Original_Language_Code { get; set; }
+    	    public Nullable<int> Title_Language_Code { get; set; }
+    	    public Nullable<int> Year_Of_Production { get; set; }
+    	    public Nullable<decimal> Duration_In_Min { get; set; }
+    	    public Nullable<int> Deal_Type_Code { get; set; }
+    	    public Nullable<int> Grade_Code { get; set; }
+    	    public Nullable<int> Reference_Key { get; set; }
+    	    public string Reference_Flag { get; set; }
+    	    public string Is_Active { get; set; }
+    	    public Nullable<int> Inserted_By { get; set; }
+    	    public Nullable<System.DateTime> Inserted_On { get; set; }
+    	    public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
+    	    public Nullable<int> Last_Action_By { get; set; }
+    	    public Nullable<System.DateTime> Lock_Time { get; set; }
+    	    public string Title_Image { get; set; }
+    	    public Nullable<int> Music_Label_Code { get; set; }
+    	    public Nullable<int> Program_Code { get; set; }
+    	    public Nullable<int> Original_Title_Code { get; set; }
+    
         public virtual ICollection<Acq_Deal_Ancillary_Title> Acq_Deal_Ancillary_Title { get; set; }
         public virtual ICollection<Acq_Deal_Movie> Acq_Deal_Movie { get; set; }
         public virtual ICollection<Acq_Deal_Rights_Title> Acq_Deal_Rights_Title { get; set; }
@@ -116,7 +115,6 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Movie_Music_Link> Acq_Deal_Movie_Music_Link { get; set; }
         public virtual ICollection<Title_Release> Title_Release { get; set; }
         public virtual ICollection<Title_Content> Title_Content { get; set; }
-
         public virtual Program Program { get; set; }
         public virtual ICollection<Music_Deal_LinkShow> Music_Deal_LinkShow { get; set; }
         public virtual ICollection<Title_Alternate> Title_Alternate { get; set; }
@@ -125,8 +123,9 @@ namespace RightsU_Entities
         public virtual ICollection<MHRequest> MHRequests { get; set; }
         public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
         public virtual ICollection<MHCueSheetSong> MHCueSheetSongs { get; set; }
-         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
+        public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
         public virtual ICollection<Title_Objection> Title_Objection { get; set; }
         public virtual ICollection<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
+        public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
     }
 }

@@ -189,7 +189,7 @@ namespace RightsU_Plus.Controllers
             //                                      from Syn_Deal_Revenue_Title objSDRT in objSDR.Syn_Deal_Revenue_Title
             //                                      select objSDRT).Select(s => new Title_List() { Title_Code = (int)s.Title_Code, Episode_From = (int)s.Episode_From, Episode_To = (int)s.Episode_To }
             //                                    ).Distinct().ToList();
-
+            ViewBag.VendorList = null;
             ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
             //new SelectList(new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
 
@@ -229,6 +229,8 @@ namespace RightsU_Plus.Controllers
                 else if (Acq_Deal_Code > 0)
                 {
                     objAD_Session = objADS.GetById(Acq_Deal_Code);
+                    ViewBag.VendorList = null;
+                    ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code) || x.Vendor_Code == objAD_Session.Vendor_Code), "Vendor_Code", "Vendor_Name").ToList();
                     if (objAD_Session.Role_Code == GlobalParams.RoleCode_BuyBack)
                     {
                         ViewBag.IsBuyback = true;
@@ -1257,7 +1259,7 @@ namespace RightsU_Plus.Controllers
                         if (objAD_Session.Is_Master_Deal == "Y")
                         {
                             var Rights_For_Own = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Add_Rights_For_Ownership").Select(x => x.Parameter_Value).SingleOrDefault();
-                            if (Rights_For_Own.ToString() == "Y")
+                            if (Rights_For_Own.ToString() == "Y" && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_CLONE)
                             {
                                 var objParameter_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Own_Production").Select(x => x.Parameter_Value).SingleOrDefault();
                                 if (objAD_Session.Role_Code == Convert.ToInt32(objParameter_Value))
@@ -1574,6 +1576,22 @@ namespace RightsU_Plus.Controllers
                                 x.Episode_From = newEpisodeFrom;
                                 x.Episode_To = newEpisodeTo;
                             });
+                            #endregion
+
+                            #region --- Update Supplementary ---
+
+                            List<Acq_Deal_Supplementary> lstSupplementary = (from Acq_Deal_Supplementary objADA in objAD_Session.Acq_Deal_Supplementary
+                                                                       where objADA.Episode_From == oldEpisodeFrom && objADA.Episode_To == oldEpisodeTo
+                                                                          && objADA.Title_code == Title_Code
+                                                                       select objADA).ToList<Acq_Deal_Supplementary>();
+
+                            lstSupplementary.ForEach(x =>
+                            {
+                                x.EntityState = State.Modified;
+                                x.Episode_From = newEpisodeFrom;
+                                x.Episode_To = newEpisodeTo;
+                            });
+
                             #endregion
 
                             #region --- Update Sports Title ---

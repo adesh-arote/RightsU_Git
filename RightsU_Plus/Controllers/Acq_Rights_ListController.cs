@@ -79,8 +79,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Right_Type = "G";
             if (objDeal_Schema.Rights_View == null)
                 objDeal_Schema.Rights_View = "G";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
                 objDeal_Schema.Rights_Exclusive = "B";
 
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
@@ -164,8 +164,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Mode = objAcq_Deal.Is_Auto_Push == "Y" ? "V" : objDeal_Schema.Mode;
 
             ViewBag.RightsFlag = "AR";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y")
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y")
             {
                 ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
@@ -310,6 +310,12 @@ namespace RightsU_Plus.Controllers
                 objDeal_Schema.List_Rights.Clear();
 
             Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo, ExclusiveRight);
+
+             int Role_Code = Convert.ToInt32(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objDeal_Schema.Deal_Code).Role_Code);
+            if(Role_Code == GlobalParams.RoleCode_BuyBack)
+            {
+                objDeal_Schema.Rights_Titles = "";
+            }
 
             int totalRcord = 0;
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
@@ -1418,12 +1424,13 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ValidateRightsTitleWithAcq(int RCode, int? TCode, int? Episode_From, int? Episode_To)
         {
-            int count = 0;
-            count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
-            if (count > 0)
-                return Json("INVALID");
-            else
-                return Json("VALID");
+            //int count = 0;
+            //count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
+            //if (count > 0)
+            //    return Json("INVALID");
+            //else
+            //    return Json("VALID");
+            return Json("VALID");
         }
         public JsonResult GetSynRightStatus(int rightCode)
         {

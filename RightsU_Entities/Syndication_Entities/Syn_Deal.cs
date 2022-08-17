@@ -11,7 +11,7 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-
+    
     public partial class Syn_Deal
     {
         public Syn_Deal()
@@ -24,51 +24,52 @@ namespace RightsU_Entities
             this.Syn_Deal_Attachment = new HashSet<Syn_Deal_Attachment>();
             this.Syn_Deal_Material = new HashSet<Syn_Deal_Material>();
             this.Syn_Deal_Run = new HashSet<Syn_Deal_Run>();
+            this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
         }
-
-        public State EntityState { get; set; }
+    
+    	public State EntityState { get; set; }
         public int Syn_Deal_Code { get; set; }
-        public Nullable<int> Deal_Type_Code { get; set; }
-        public string Other_Deal { get; set; }
-        public string Agreement_No { get; set; }
-        public string Version { get; set; }
-        public Nullable<System.DateTime> Agreement_Date { get; set; }
-        public string Deal_Description { get; set; }
-        public string Status { get; set; }
-        public Nullable<double> Total_Sale { get; set; }
-        public string Year_Type { get; set; }
-        public Nullable<int> Customer_Type { get; set; }
-        public Nullable<int> Vendor_Code { get; set; }
-        public Nullable<int> Vendor_Contact_Code { get; set; }
-        public Nullable<int> Sales_Agent_Code { get; set; }
-        public Nullable<int> Sales_Agent_Contact_Code { get; set; }
-        public Nullable<int> Entity_Code { get; set; }
-        public Nullable<int> Currency_Code { get; set; }
-        public Nullable<decimal> Exchange_Rate { get; set; }
-        public string Ref_No { get; set; }
-        public string Attach_Workflow { get; set; }
-        public string Deal_Workflow_Status { get; set; }
-        public Nullable<int> Work_Flow_Code { get; set; }
-        public string Is_Completed { get; set; }
-        public Nullable<int> Category_Code { get; set; }
-        public string Is_Migrated { get; set; }
-        public string Payment_Terms_Conditions { get; set; }
-        public Nullable<int> Deal_Tag_Code { get; set; }
-        public string Is_Active { get; set; }
-        public string Ref_BMS_Code { get; set; }
-        public Nullable<System.DateTime> Inserted_On { get; set; }
-        public Nullable<int> Inserted_By { get; set; }
-        public Nullable<System.DateTime> Lock_Time { get; set; }
-        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
-        public Nullable<int> Last_Action_By { get; set; }
-        public string Remarks { get; set; }
-        public Nullable<int> Parent_Syn_Deal_Code { get; set; }
-        public string Rights_Remarks { get; set; }
-        public string Payment_Remarks { get; set; }
-        public Nullable<int> Business_Unit_Code { get; set; }
-        public string Deal_Complete_Flag { get; set; }
-        public Nullable<int> Deal_Segment_Code { get; set; }
-        public Nullable<int> Revenue_Vertical_Code { get; set; }
+    	public Nullable<int> Deal_Type_Code { get; set; }
+    	public string Other_Deal { get; set; }
+    	public string Agreement_No { get; set; }
+    	public string Version { get; set; }
+    	public Nullable<System.DateTime> Agreement_Date { get; set; }
+    	public string Deal_Description { get; set; }
+    	public string Status { get; set; }
+    	public Nullable<double> Total_Sale { get; set; }
+    	public string Year_Type { get; set; }
+    	public Nullable<int> Customer_Type { get; set; }
+    	public Nullable<int> Vendor_Code { get; set; }
+    	public Nullable<int> Vendor_Contact_Code { get; set; }
+    	public Nullable<int> Sales_Agent_Code { get; set; }
+    	public Nullable<int> Sales_Agent_Contact_Code { get; set; }
+    	public Nullable<int> Entity_Code { get; set; }
+    	public Nullable<int> Currency_Code { get; set; }
+    	public Nullable<decimal> Exchange_Rate { get; set; }
+    	public string Ref_No { get; set; }
+    	public string Attach_Workflow { get; set; }
+    	public string Deal_Workflow_Status { get; set; }
+    	public Nullable<int> Work_Flow_Code { get; set; }
+    	public string Is_Completed { get; set; }
+    	public Nullable<int> Category_Code { get; set; }
+    	public string Is_Migrated { get; set; }
+    	public string Payment_Terms_Conditions { get; set; }
+    	public Nullable<int> Deal_Tag_Code { get; set; }
+    	public string Is_Active { get; set; }
+    	public string Ref_BMS_Code { get; set; }
+    	public Nullable<System.DateTime> Inserted_On { get; set; }
+    	public Nullable<int> Inserted_By { get; set; }
+    	public Nullable<System.DateTime> Lock_Time { get; set; }
+    	public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+    	public Nullable<int> Last_Action_By { get; set; }
+    	public string Remarks { get; set; }
+    	public Nullable<int> Parent_Syn_Deal_Code { get; set; }
+    	public string Rights_Remarks { get; set; }
+    	public string Payment_Remarks { get; set; }
+    	public Nullable<int> Business_Unit_Code { get; set; }
+    	public string Deal_Complete_Flag { get; set; }
+    	public Nullable<int> Deal_Segment_Code { get; set; }
+    	public Nullable<int> Revenue_Vertical_Code { get; set; }
 
         private bool _SaveGeneralOnly = true;
         public bool SaveGeneralOnly
@@ -96,5 +97,6 @@ namespace RightsU_Entities
         public virtual ICollection<Syn_Deal_Run> Syn_Deal_Run { get; set; }
         public virtual Deal_Segment Deal_Segment { get; set; }
         public virtual Revenue_Vertical Revenue_Vertical { get; set; }
+        public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
     }
 }

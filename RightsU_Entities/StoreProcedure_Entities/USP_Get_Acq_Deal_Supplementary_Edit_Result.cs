@@ -7,11 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RightsU_InterimDb.Models
+namespace RightsU_Entities
 {
     using System;
     
-    public partial class USP_Get_Edit_Row_Result
+    public partial class USP_Get_Acq_Deal_Supplementary_Edit_Result
     {
         public string Supplementary_Data_Code { get; set; }
         public string User_Value { get; set; }

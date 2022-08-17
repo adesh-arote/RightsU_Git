@@ -1605,7 +1605,7 @@ namespace RightsU_Plus.Controllers
             string Result = "";
             if (perpetuityDate != "")
             {
-                if (objDeal_Schema.Deal_Type_Code == 11)
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     for (int i = 0; i < titleCodes.Length; i++)
                     {
@@ -2751,7 +2751,7 @@ namespace RightsU_Plus.Controllers
                             {
 
                                 int? TCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Title_Code;
-                                if (objDeal_Schema.Deal_Type_Code == 11)
+                                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                                 {
                                     int ADRTCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Acq_Deal_Rights_Title_Code;
                                     NewAcq_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
