@@ -42,7 +42,7 @@
     function PopulateBuybackRights() {
         debugger;
         var dealTypeCode = $("input[name='Deal_Type_Code']:radio:checked").val();
-
+        
         //var arrLicensor = $("#ddlLicensor").val();
         //var Licensor = arrLicensor.join(",");
 
@@ -101,6 +101,8 @@
         if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
             Rights_PageNo = $('#hdnCurrentPageNo').val();
 
+        var LicensorCode = $("#hdnLicensorCode").val();
+
         var page_Index = parseInt(Rights_PageNo) - 1;
 
         if (obj == null) {
@@ -120,7 +122,8 @@
                     IsCallFromPaging: 'N',
                     RegionCode: regionCode,
                     PlatformCode: platformcode,
-                    ExclusiveRight: exclusiveRights
+                    ExclusiveRight: exclusiveRights,
+                    LicensorCode: LicensorCode
                 }),
                 success: function (result) {
                     if (result == "true") {
@@ -323,6 +326,7 @@
             <td>
                 <b>@objMessageKey.Licensor :</b>
                 <span>@ViewBag.Licensor</span>
+                <input type="hidden" name="name" id="hdnLicensorCode" value="@ViewBag.LicensorCode" />
             </td>
         </tr>
     </table>
