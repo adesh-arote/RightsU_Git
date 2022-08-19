@@ -447,6 +447,11 @@
                 }
 
                 debugger;
+                if ($(a).val() == null || $(a).val() =="''") {
+                    showAlert('I', 'Please enter details');
+                    hideLoading();
+                    return;
+                }
                 let v = $(a).val().toString();
                 if ($(a).is("select")) {
                     vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
@@ -512,7 +517,8 @@
 
     function Cancel_Supplementary() {
         debugger;
-        showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        if(document.getElementById("btnSaveDeal").style.display != "none")
+            showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
     }
 
     function Cancel_SupplementaryView() {

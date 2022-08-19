@@ -23,7 +23,16 @@
     var URL_DeleteSupplementary = '@Url.Action("DeleteSupplementary", "Acq_Supplementary")';
 
     $(document).ready(function () {
-        $('#hdnCurrentPageNo').val(0);
+        debugger;
+        var page_size = parseInt(@ViewBag.page_size);
+
+        $('#txtPageSize').val(@ViewBag.page_size);
+
+        if (page_size > 0) {
+            $('#hdnCurrentPageNo').val(@ViewBag.page_index);
+        } else {
+            $('#hdnCurrentPageNo').val(0);
+        }
         BindGrid();
     });
 
@@ -62,6 +71,8 @@
 
     function SuppButtonEvents(Supplementary_code, title_code, mode, rCode, tCode, episodeFrom, episodeTo, pCode, isHB, isSynAcqMapp) {
         debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
         showLoading();
         $.ajax({
             //    $('#lbTerritory,#lbSub_Language,#lbDub_Language').SumoSelect({ selectAll: true, triggerChangeCombined: false });
@@ -75,7 +86,9 @@
             data: JSON.stringify({
                 Supplementary_code: 0,
                 title_code: 0,
-                MODE: 'A'
+                MODE: 'A',
+                page_size: page_size,
+                page_index: page_index
             }),
             success: function (result) {
                 if (result == "true") {
@@ -96,6 +109,8 @@
 
     function Edit(Supplementary_code, title_code,View) {
         debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
         $.ajax({
             type: "POST",
             url: URL_SuppButtonEvents,
@@ -107,7 +122,9 @@
                 Supplementary_code: Supplementary_code,
                 title_code: title_code,
                 view: View,
-                MODE: 'E'
+                MODE: 'E',
+                page_size: page_size,
+                page_index: page_index
             }),
             success: function (result) {
                 debugger;
@@ -128,7 +145,7 @@
         debugger;
         var page_index = $('#hdnCurrentPageNo').val();
         var page_size = $('#txtPageSize').val();
-        
+
         $.ajax({
             type: "POST",
             url: URL_DeleteSupplementary,
@@ -210,7 +227,7 @@
         opt["num"] = 1;
         opt["prev_text"] = "<<";
         opt["next_text"] = ">>";
-        opt["current_page"] = PageNo;
+        opt["current_page"] = PageNo - 1;
         $("#Pagination").pagination(recordCnt, opt);
     }
 

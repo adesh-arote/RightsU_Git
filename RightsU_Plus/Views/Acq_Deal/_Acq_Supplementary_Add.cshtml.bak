@@ -29,7 +29,7 @@
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
 <link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-@*<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
+<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
@@ -74,8 +74,6 @@
                 $('#txtAcqRemarks').val(result.Remarks);
                 $('#lblTitle').val(result.Remarks);
                 $('#txtAcqRemarks').trigger("keyup");
-                $('#hdnCurrentPageNo').val(result.page_index);
-                $('#hdnPageSize').val(result.page_size);
 
                 $('#ViewOperation').val(result.ViewOperation);
                 if ($('#ViewOperation').val() == "VIEW") {
@@ -441,32 +439,25 @@
                 }
 
                 debugger;
-                if ($(a).val() == null) {
-                    showAlert('I', 'Please enter details');
-                    hideLoading();
-                    return;
+                let v = $(a).val().toString();
+                if ($(a).is("select")) {
+                    vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                    $(a)[0].sumo.unSelectAll();
                 }
-                else {
-                    let v = $(a).val().toString();
-                    if ($(a).is("select")) {
-                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
-                        $(a)[0].sumo.unSelectAll();
-                    }
-                    else
-                        if ($(a).is(":checkbox")) {
-                            if ($(a).is(':checked')) {
-                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
-                                $(a).val('');
-                            }
-                            else {
-                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
-                                $(a).val('');
-                            }
-                        }
-                        else {
-                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                else
+                    if ($(a).is(":checkbox")) {
+                        if ($(a).is(':checked')) {
+                            vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
                             $(a).val('');
                         }
+                        else {
+                            vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                    }
+                    else {
+                    vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                    $(a).val('');
                 }
             }
         }
@@ -523,8 +514,7 @@
 
     function Cancel_Supplementary() {
         debugger;
-        if (document.getElementById("btnSaveDeal").style.display != "none")
-            showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
     }
 
     function Cancel_SupplementaryView() {
@@ -534,7 +524,6 @@
     {
         showLoading();
         debugger;
-        var page_size = 0; var page_index = 0;
         var shortName = $('#TabName').val();
         //var wtName = $('#hdnwt' + shortName).val();
         //if (wtName == "PopUp") {
@@ -583,9 +572,6 @@
             var Remarks = $('#txtAcqRemarks').val();
         }
 
-        page_index = $('#hdnCurrentPageNo').val();
-        page_size = $('#hdnPageSize').val();
-
         $.ajax({
             type: "POST",
             url: URL_SaveInDB,
@@ -594,9 +580,7 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 Title_List: title,
-                Remarks: Remarks,
-                page_size: page_size,
-                page_index: page_index
+                Remarks: Remarks
             }),
             success: function (result) {
                 debugger;
@@ -638,8 +622,6 @@
 <input type="hidden" id="inputValidation" value="false" />
 <input type="hidden" id="ViewOperation" />
 <input type="hidden" id="hdnTabName" name="hdnTabName" />
-<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
-<input type="hidden" id="hdnPageSize" name="hdnPageSize" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">

@@ -1,11 +1,11 @@
 ﻿@using UTOFrameWork.FrameworkClasses
-@model  RightsU_Entities.Acq_Deal_Supplementary
+@model  RightsU_Entities.Supplementary_Tab
 @{
     RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
 
-    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
     {
-        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
     }
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -14,22 +14,21 @@
     }
 }
 <script type="text/javascript">
-    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_Supplementary")';
-    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Edit = '@Url.Action("supplementaryEdit", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Delete = '@Url.Action("supplementaryDelete", "Acq_Supplementary")';
-    var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Acq_Supplementary")';
-    var URL_SaveInSession = '@Url.Action("supplementarySave", "Acq_Supplementary")';
-    var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Acq_Supplementary")';
-    var URL_supplementaryValidation = '@Url.Action("supplementaryValidation", "Acq_Supplementary")';
-    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Acq_Supplementary")';
-    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Acq_Supplementary")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Syn_Supplementary")';
+    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Edit = '@Url.Action("supplementaryEdit", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Delete = '@Url.Action("supplementaryDelete", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Syn_Supplementary")';
+    var URL_SaveInSession = '@Url.Action("supplementarySave", "Syn_Supplementary")';
+    var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Syn_Supplementary")';
+    var URL_supplementaryValidation = '@Url.Action("supplementaryValidation", "Syn_Supplementary")';
+    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Syn_Supplementary")';
+    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Syn_Supplementary")';
 
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
 <link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-@*<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Supplementary.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 
@@ -42,6 +41,17 @@
         var element = document.getElementById("TabValues");
         element.style.display = "none";
     });
+
+    function initializeReadmore() {
+        $('.SuppRemarks').expander({
+            slicePoint: 200,
+            expandPrefix: '',
+            expandText: '...@objMessageKey.readmore',
+            collapseTimer: 0,
+            userCollapseText: '<span>[^]</span>'
+        });
+    }
+
     function BindAllPreReq_Async() {
         debugger;
 
@@ -71,28 +81,25 @@
                 $('#TabName').val(result.TabName);
                 $('#dropdownCount').val(result.dropdown);
                 $('#FieldList').val(result.FieldList);
-                $('#txtAcqRemarks').val(result.Remarks);
-                $('#lblTitle').val(result.Remarks);
-                $('#txtAcqRemarks').trigger("keyup");
-                $('#hdnCurrentPageNo').val(result.page_index);
-                $('#hdnPageSize').val(result.page_size);
+                $('#txtSynRemarks').val(result.Remarks);
+                $('#txtSynRemarks').trigger("keyup");
 
                 $('#ViewOperation').val(result.ViewOperation);
                 if ($('#ViewOperation').val() == "VIEW") {
                     document.getElementById("HideForView").style.display = "none";
                     document.getElementById("btnSaveDeal").style.display = "none";
                     $('#ddSuppTitle').attr('disabled', true);
-                    $('#txtAcqRemarks').attr('disabled', true);
+                    $('#txtSynRemarks').attr('disabled', true);
                 }
 
-
+                initializeReadmore();
                 hideLoading();
             }
         });
     }
 
     function ChangeTab(Short_Name) {
-        debugger;
+        //debugger;
         showLoading();
         //var wtName = $('#hdnwt' + Short_Name).val();
         //if (wtName == "PopUp") {
@@ -125,7 +132,7 @@
     }
 
     function SuppButtonEvents() {
-        debugger;
+        //debugger;
         $('#inputValidation').val("true");
         var shortName = $('#TabName').val();
         var wtName = $('#hdnwt' + shortName).val();
@@ -166,7 +173,7 @@
         }
         else
         {
-            debugger;
+            //debugger;
             var tabValues = $('#TabValues').val();
             var div = document.getElementById('tabValidity').innerHTML;
             let tabArray = tabValues.split(',');
@@ -182,7 +189,6 @@
                     $(IS_Input_Name).hide();
                 }
             }
-
 
             let drCount = $("#hdn" + shortName).val();
 
@@ -284,6 +290,7 @@
                     var row = $(result.EditRow);
                     row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
                     $(tblName + ' tr').eq(rwIndex + 1).remove();
+                    initializeReadmore();
                     //$('#Edit' + shortName).remove();
                     //row.insertBefore($(tblName + ' tbody ' + x.parentNode.parentNode));
                 }
@@ -353,7 +360,6 @@
         });
     }
     function handleOk() {
-        debugger;
         var tabName = $('#hdnTabName').val()
         if ($('#hdnTabName').val() == '')
             tabName = pageSupplementary;
@@ -441,32 +447,14 @@
                 }
 
                 debugger;
-                if ($(a).val() == null) {
-                    showAlert('I', 'Please enter details');
-                    hideLoading();
-                    return;
+                let v = $(a).val().toString();
+                if ($(a).is("select")) {
+                    vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                    $(a)[0].sumo.unSelectAll();
                 }
                 else {
-                    let v = $(a).val().toString();
-                    if ($(a).is("select")) {
-                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
-                        $(a)[0].sumo.unSelectAll();
-                    }
-                    else
-                        if ($(a).is(":checkbox")) {
-                            if ($(a).is(':checked')) {
-                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
-                                $(a).val('');
-                            }
-                            else {
-                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
-                                $(a).val('');
-                            }
-                        }
-                        else {
-                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
-                            $(a).val('');
-                        }
+                    vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                    $(a).val('');
                 }
             }
         }
@@ -509,6 +497,7 @@
                         //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
                         //$(tblName + ' tr').eq(rwIndex + 1).remove();
                     }
+                    initializeReadmore();
                 }
                 else {
                     showAlert('I', 'Duplicate Value Not allowed');
@@ -523,18 +512,17 @@
 
     function Cancel_Supplementary() {
         debugger;
-        if (document.getElementById("btnSaveDeal").style.display != "none")
-            showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
     }
 
     function Cancel_SupplementaryView() {
-        BindPartialTabs(pageSupplementary);
+
+        BindPartialTabs("SUPP");
     }
     function SuppSave()
     {
         showLoading();
         debugger;
-        var page_size = 0; var page_index = 0;
         var shortName = $('#TabName').val();
         //var wtName = $('#hdnwt' + shortName).val();
         //if (wtName == "PopUp") {
@@ -579,12 +567,9 @@
             return;
         }
 
-        if ($('#txtAcqRemarks').val() != null) {
-            var Remarks = $('#txtAcqRemarks').val();
+        if ($('#txtSynRemarks').val() != null) {
+            var Remarks = $('#txtSynRemarks').val();
         }
-
-        page_index = $('#hdnCurrentPageNo').val();
-        page_size = $('#hdnPageSize').val();
 
         $.ajax({
             type: "POST",
@@ -594,16 +579,14 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 Title_List: title,
-                Remarks: Remarks,
-                page_size: page_size,
-                page_index: page_index
+                Remarks: Remarks
             }),
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully', 'OK');
+                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully','OK');
                 else
-                    showAlert('I', '@objMessageKey.CouldNotsavedRecord');
+                    showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
 
             }
         });
@@ -637,9 +620,6 @@
 <input type="hidden" id="popupindex" />
 <input type="hidden" id="inputValidation" value="false" />
 <input type="hidden" id="ViewOperation" />
-<input type="hidden" id="hdnTabName" name="hdnTabName" />
-<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
-<input type="hidden" id="hdnPageSize" name="hdnPageSize" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -651,7 +631,6 @@
                             <label class="bold">@objMessageKey.Titles</label>
                             <div id="divddlPTitle">
                                 <select id="ddSuppTitle" name="ddSuppTitle" multiple="multiple"></select>
-                                <label class="bold" id="lblTitle"></label>
                             </div>
                             <br>
                         </div>
@@ -675,7 +654,7 @@
                                     <div class="charNum">0/4000</div>
                                     <div style=""></div>
                                 </div>
-                                <textarea class="textarea" name="txtAcqRemarks" id="txtAcqRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
+                                <textarea class="textarea" name="txtSynRemarks" id="txtSynRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
                             </div>
                         </div>
                         <br>
@@ -686,7 +665,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return SuppSave();">
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();">
                         </li>
                         <li>
                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />

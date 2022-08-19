@@ -93,6 +93,14 @@ namespace RightsU_Plus.Controllers
 
             //return PartialView("~/Views/Shared/_Rights_Filter.cshtml");
             //ViewBag.RecordCount = 50;
+            if (TempData["page_size"] != null)
+            {
+                ViewBag.page_size = TempData["page_size"];
+            }
+            if (TempData["page_index"] != null)
+            {
+                ViewBag.page_index = TempData["page_index"];
+            }
             return PartialView("~/Views/Acq_Deal/_Acq_Supplementary.cshtml");
         }
 
@@ -141,11 +149,13 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindAllPreReq_Async()
         {
-            int supplementary_Code = 0, title_code = 0;
+            int supplementary_Code = 0, title_code = 0, page_size = 0, page_index=0;
             string Operation = "";
             Dictionary<string, string> obj_Dictionary_RList = (Dictionary<string, string>)TempData["QueryString_Rights"];
             supplementary_Code = Convert.ToInt32(obj_Dictionary_RList["Supplementary_code"]);
             title_code = Convert.ToInt32(obj_Dictionary_RList["title_code"]);
+            page_size = Convert.ToInt32(obj_Dictionary_RList["page_size"]);
+            page_index = Convert.ToInt32(obj_Dictionary_RList["page_index"]);
 
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForAcqDeal).OrderBy(a => a.Order_No).ToList();
@@ -259,6 +269,10 @@ namespace RightsU_Plus.Controllers
             obj.Add("FieldList", _fieldList.TrimEnd(','));
             obj.Add("Remarks", objSupplementary.Remarks);
             obj.Add("ViewOperation", ViewOperation);
+            obj.Add("page_size", page_size);
+            obj.Add("page_index", page_index);
+            TempData["page_size"] = page_size;
+            TempData["page_index"] = page_index;
             return Json(obj);
         }
 
@@ -272,7 +286,7 @@ namespace RightsU_Plus.Controllers
             int i = 1, j = 1, k = 1, l = 1, m = 1;
             double width = 0, viewWidth = 5;
             if (ViewOperation != "VIEW")
-                width = 100 / columnList.Count();
+                width = 100 / columnList.Count() - 10;
             else
             {
                 viewWidth = columnList.Count > 5 ? 5 : 10;
@@ -375,7 +389,7 @@ namespace RightsU_Plus.Controllers
 
             if (WindowType == "inLine")
             {
-                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok\" onclick = \"SaveSupp(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove\" onclick = \"hideaddsupp();\"></a></td>";
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" onclick = \"SaveSupp(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"hideaddsupp();\"></a></td>";
                 strAddRow = strAddRow + "</tr>";
                 strtableHeader = strtableHeader + strAddRow;
             }
@@ -558,7 +572,7 @@ namespace RightsU_Plus.Controllers
             }
             if (View != "View")
             {
-                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok\" id=\"A" + Short_Name + rowno.ToString() + "\" onclick = \"SaveSupp(this,'" + rowno.ToString() + "');\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove\" onclick = \"closeEdit(" + num + ");\"></a></td>";
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" id=\"A" + Short_Name + rowno.ToString() + "\" onclick = \"SaveSupp(this,'" + rowno.ToString() + "');\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"closeEdit(" + num + ");\"></a></td>";
             }
             strAddRow = strAddRow + "</tr>";
 
@@ -599,6 +613,10 @@ namespace RightsU_Plus.Controllers
             objUspService.USP_Delete_Acq_Supplementary(supplementary_Code);
             var Mode = "A";
             BindSupplementary(page_index, page_size);
+
+            TempData["page_size"] = page_size;
+            TempData["page_index"] = page_index;
+
             string success = "201";
             return success;
         }
@@ -772,7 +790,7 @@ namespace RightsU_Plus.Controllers
             return strAddRow;
 
         }
-        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, string Is_Syn_Acq_Mapp = "")
+        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, int page_size, int page_index, string Is_Syn_Acq_Mapp = "")
         {
             Dictionary<string, string> obj_Dictionary_RList = new Dictionary<string, string>();
             obj_Dictionary_RList.Add("MODE", MODE);
@@ -785,6 +803,8 @@ namespace RightsU_Plus.Controllers
             obj_Dictionary_RList.Add("Is_Syn_Acq_Mapp", Is_Syn_Acq_Mapp);
             obj_Dictionary_RList.Add("Supplementary_code", Supplementary_code.ToString());
             obj_Dictionary_RList.Add("title_code", title_code.ToString());
+            obj_Dictionary_RList.Add("page_size", page_size.ToString());
+            obj_Dictionary_RList.Add("page_index", page_index.ToString());
             if (View != null)
             {
                 obj_Dictionary_RList.Add("View", View.ToString());
@@ -970,7 +990,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Supplementary = objSupplementary;
             return Output;
         }
-        public JsonResult supplementarySaveDB(string Title_List, string Remarks)
+        public JsonResult supplementarySaveDB(string Title_List, string Remarks, int page_size, int page_index)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
             Acq_Deal_Supplementary objSupplementaryTemp = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
@@ -1071,7 +1091,10 @@ namespace RightsU_Plus.Controllers
 
                 obj.Add("ErrorCode", "100");
                 obj.Add("ErrorMsg", "Deal Saved successfully");
-
+                obj.Add("page_size",page_size);
+                obj.Add("page_index",page_index);
+                TempData["page_size"] = page_size;
+                TempData["page_index"] = page_index;
                 return Json(obj);
             }
         }
