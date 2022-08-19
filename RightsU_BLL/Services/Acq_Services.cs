@@ -294,8 +294,8 @@ namespace RightsU_BLL
                 .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
                 .FirstOrDefault().Parameter_Value;
 
-            if(objToValidate.Buyback_Syn_Rights_Code == null)
-            {
+            //if(objToValidate.Buyback_Syn_Rights_Code == null)
+            //{
                 if (Is_Acq_rights_delay_validation != "Y")
                 {
                     IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
@@ -311,13 +311,13 @@ namespace RightsU_BLL
                 }
                 else
                     return true;
-            }
-            else{
-                List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
-                resultSet = objResult;
-                return true;
+            //}
+            //else{
+            //    List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+            //    resultSet = objResult;
+            //    return true;
 
-            }
+            //}
 
             
         }

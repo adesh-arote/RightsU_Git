@@ -5689,5 +5689,38 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Validate_Acq_Right_Title_With_Syn_On_Edit", rCodeParameter, tCodeParameter, episode_FromParameter, episode_ToParameter);
         }
+
+        public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
+        {
+            var title_CodesParameter = title_Codes != null ?
+                new ObjectParameter("Title_Codes", title_Codes) :
+                new ObjectParameter("Title_Codes", typeof(string));
+
+            var platform_CodesParameter = platform_Codes != null ?
+                new ObjectParameter("Platform_Codes", platform_Codes) :
+                new ObjectParameter("Platform_Codes", typeof(string));
+
+            var platform_TypeParameter = platform_Type != null ?
+                new ObjectParameter("Platform_Type", platform_Type) :
+                new ObjectParameter("Platform_Type", typeof(string));
+
+            var region_TypeParameter = region_Type != null ?
+                new ObjectParameter("Region_Type", region_Type) :
+                new ObjectParameter("Region_Type", typeof(string));
+
+            var subtitling_TypeParameter = subtitling_Type != null ?
+                new ObjectParameter("Subtitling_Type", subtitling_Type) :
+                new ObjectParameter("Subtitling_Type", typeof(string));
+
+            var dubbing_TypeParameter = dubbing_Type != null ?
+                new ObjectParameter("Dubbing_Type", dubbing_Type) :
+                new ObjectParameter("Dubbing_Type", typeof(string));
+
+            var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
+                new ObjectParameter("Syn_Deal_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result>("USP_GET_DATA_FOR_APPROVED_TITLES_Buyback", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, region_TypeParameter, subtitling_TypeParameter, dubbing_TypeParameter, syn_Deal_CodeParameter);
+        }
     }
 }

@@ -86,7 +86,7 @@
     });
 
     var IsCall = 'Y';
-    function SetPaging(txtPageSize) {
+    @*function SetPaging(txtPageSize) {
         IsCall = 'N';
         var PageNo, recordCnt = 3;
         var Page_Index = 0;
@@ -105,36 +105,36 @@
         opt["next_text"] = ">>";
         opt["current_page"] = Page_Index;
         $("#Pagination").pagination(recordCnt, opt);
-    }
-    function Show_Restriction_Remark_popup(Counter) {
-        var Remark = $("#hdnRemarks_" + Counter).val();
-        if (Remark != "") {
-            $("#lblRestRemark").text(Remark);
-            $('#popAddDealMovie').modal();
-        }
-    }
-    function pageselectCallback(page_index, jq) {
-        if (ValidatePageSize()) {
-            if (IsCall == 'Y') {
-                var hdnCurrentPageNo = parseInt(page_index) + 1;
-                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
-                BindGridNew($("#G")[0], 'Y');
-            }
-            else
-                IsCall = 'Y';
-        }
-    }
+    }*@
+    //function Show_Restriction_Remark_popup(Counter) {
+    //    var Remark = $("#hdnRemarks_" + Counter).val();
+    //    if (Remark != "") {
+    //        $("#lblRestRemark").text(Remark);
+    //        $('#popAddDealMovie').modal();
+    //    }
+    //}
+    //function pageselectCallback(page_index, jq) {
+    //    if (ValidatePageSize()) {
+    //        if (IsCall == 'Y') {
+    //            var hdnCurrentPageNo = parseInt(page_index) + 1;
+    //            $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+    //            BindGridNew($("#G")[0], 'Y');
+    //        }
+    //        else
+    //            IsCall = 'Y';
+    //    }
+    //}
 
-    function PageSize_OnChange() {
-        $('.required').removeClass('required');
-        $("[required='required']").removeAttr("required");
-        var IsValid = ValidatePageSize();
-        if (IsValid) {
-            BindGridNew($("#G")[0], 'Y');
-        }
-        else
-            return false;
-    }
+    //function PageSize_OnChange() {
+    //    $('.required').removeClass('required');
+    //    $("[required='required']").removeAttr("required");
+    //    var IsValid = ValidatePageSize();
+    //    if (IsValid) {
+    //        BindGridNew($("#G")[0], 'Y');
+    //    }
+    //    else
+    //        return false;
+    //}
 </script>
 <script language="javascript" type="text/javascript">
     var URL_BindPlatformTreePopup = '@Url.Action("BindPlatformTreePopup", "Acq_General")';

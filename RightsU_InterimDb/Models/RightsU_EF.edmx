@@ -12809,6 +12809,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Dubbing_Type" Type="varchar" Mode="In" />
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_GET_DATA_FOR_APPROVED_TITLES_Buyback" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
+          <Parameter Name="Platform_Codes" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Platform_Type" Type="varchar" Mode="In" />
+          <Parameter Name="Region_Type" Type="varchar" Mode="In" />
+          <Parameter Name="Subtitling_Type" Type="varchar" Mode="In" />
+          <Parameter Name="Dubbing_Type" Type="varchar" Mode="In" />
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
           <Parameter Name="Platform_Codes" Type="varchar" Mode="In" />
@@ -21499,6 +21508,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="TCode" Mode="In" Type="Int32" />
             <Parameter Name="Episode_From" Mode="In" Type="Int32" />
             <Parameter Name="Episode_To" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_GET_DATA_FOR_APPROVED_TITLES_Buyback" ReturnType="Collection(RightsU_NeoModel.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result)">
+            <Parameter Name="Title_Codes" Mode="In" Type="String" />
+            <Parameter Name="Platform_Codes" Mode="In" Type="String" />
+            <Parameter Name="Platform_Type" Mode="In" Type="String" />
+            <Parameter Name="Region_Type" Mode="In" Type="String" />
+            <Parameter Name="Subtitling_Type" Mode="In" Type="String" />
+            <Parameter Name="Dubbing_Type" Mode="In" Type="String" />
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -36833,6 +36851,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="IsDelete" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="Is_Ref_Close_Title" Nullable="false" MaxLength="1" />
         </ComplexType>
+        <ComplexType Name="USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result">
+          <Property Type="String" Name="RequiredCodes" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="SubTitle_Lang_Code" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Dubb_Lang_Code" Nullable="false" MaxLength="1" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -46378,6 +46401,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_BuybackRightsInsert" FunctionName="RightsU_NeoModel.Store.USP_BuybackRightsInsert" />
           <FunctionImportMapping FunctionImportName="USP_Validate_Acq_Right_Title_With_Syn_On_Edit" FunctionName="RightsU_NeoModel.Store.USP_Validate_Acq_Right_Title_With_Syn_On_Edit" />
+          <FunctionImportMapping FunctionImportName="USP_GET_DATA_FOR_APPROVED_TITLES_Buyback" FunctionName="RightsU_NeoModel.Store.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result">
+                <ScalarProperty Name="RequiredCodes" ColumnName="RequiredCodes" />
+                <ScalarProperty Name="SubTitle_Lang_Code" ColumnName="SubTitle_Lang_Code" />
+                <ScalarProperty Name="Dubb_Lang_Code" ColumnName="Dubb_Lang_Code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -1441,6 +1441,9 @@
     <Compile Include="Models\USP_Get_Dashboard_Detail_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
