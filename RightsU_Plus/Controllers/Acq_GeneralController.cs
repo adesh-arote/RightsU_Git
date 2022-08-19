@@ -2078,11 +2078,12 @@ namespace RightsU_Plus.Controllers
                                 }).Distinct(), "Title_Code", "Title_Name").ToList();
 
             ViewBag.Licensor = new Vendor_Service(objLoginEntity.ConnectionStringName).GetById(licensorCode).Vendor_Name.ToString();
+            ViewBag.LicensorCode = licensorCode;
             return PartialView("~/Views/Acq_Deal/_Acq_Rights_BuyBack.cshtml");
         }
 
 
-        public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
+        public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int LicensorCode,int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
         {
             //if (DPlatformCode == "D")
             //    DPlatformCode = PlatformCode;
@@ -2098,7 +2099,7 @@ namespace RightsU_Plus.Controllers
             ObjectParameter objTotalRecord = new ObjectParameter("TotalRecord", totalRcord);
             List<USP_BuyBackRights_List_Result> lst = new List<USP_BuyBackRights_List_Result>();
             lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_BuyBackRights_List("SR", "G", objDeal_Schema.Deal_Code,
-                "", "", "", "B", objPageNo, 100, objTotalRecord, "", Selected_Title_Code).ToList();
+                "", "", "", "B", objPageNo, 100, objTotalRecord, "", Selected_Title_Code, LicensorCode).ToList();
 
             ViewBag.RecordCount = lst.Count();//Convert.ToInt32(objTotalRecord.Value);
             RecordCount_BuybackList = lst.Count();

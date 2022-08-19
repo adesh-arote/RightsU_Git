@@ -408,7 +408,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RoleCode_Assignment = 25;
         public const int RoleCode_License = 26;
         public const int RoleCode_OwnProduction = 27;
-        public const int RoleCode_BuyBack = 40;
+        public const int RoleCode_BuyBack = 39;
 
         public const string ROLE_TYPE_ENTITY = "E";
         public const string ROLE_TYPE_TALENT = "T";

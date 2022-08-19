@@ -1717,10 +1717,10 @@ namespace RightsU_DAL
             return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code, pageNo, pagesize, recordCount);
         }
 
-        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List_Rights(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string region_Code, string platform_Code, string IsExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, string titleCodes)
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List_Rights(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string region_Code, string platform_Code, string IsExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, string titleCodes, Nullable<int> licensorCode)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_BuyBackRights_List(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText,1, titleCodes);
+            return objContext.USP_BuyBackRights_List(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText,1, titleCodes, licensorCode);
         }
 
         public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)

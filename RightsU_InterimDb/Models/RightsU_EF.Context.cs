@@ -5298,7 +5298,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplementary_Result>("USP_Get_Title_For_Acq_Supplementary", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
     
-        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code, string titleCodes)
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code, string titleCodes, Nullable<int> licensorCode)
         {
             var right_TypeParameter = right_Type != null ?
                 new ObjectParameter("Right_Type", right_Type) :
@@ -5344,7 +5344,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("TitleCodes", titleCodes) :
                 new ObjectParameter("TitleCodes", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter, titleCodesParameter);
+            var licensorCodeParameter = licensorCode.HasValue ?
+                new ObjectParameter("LicensorCode", licensorCode) :
+                new ObjectParameter("LicensorCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter, titleCodesParameter, licensorCodeParameter);
         }
     
         public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)

@@ -1447,6 +1447,9 @@
     <Compile Include="Models\USP_GET_DATA_FOR_APPROVED_TITLES_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_Edit_Row_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_IPR_Class_Tree_Hierarchy_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
