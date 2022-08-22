@@ -344,6 +344,9 @@ namespace RightsU_Entities
         [UserDefinedTableTypeColumn(21)]
         public string Check_For { get; set; }
 
+        [UserDefinedTableTypeColumn(22)]
+        public string Buyback_Syn_Rights_Code { get; set; }
+
         //[UserDefinedTableTypeColumn(22)]
         //public string Original_Right_Type { get; set; }
     }

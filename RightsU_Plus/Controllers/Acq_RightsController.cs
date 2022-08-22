@@ -1146,7 +1146,10 @@ namespace RightsU_Plus.Controllers
                 }
                 if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
                 {
-                    objPTV.PlatformCodes_Display = strPlatform;
+                    var lstPlatforms = objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.ToList();
+                    string SyndicatedPlatforms = String.Join(",", objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(x=>x.Platform_Code)).ToString();
+
+                    objPTV.PlatformCodes_Display = SyndicatedPlatforms;//strPlatform;
                 }
 
                 ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
@@ -2250,6 +2253,7 @@ namespace RightsU_Plus.Controllers
                     objDRUDT.Is_ROFR = objRights.Is_ROFR;
                     objDRUDT.ROFR_Date = objRights.ROFR_Date;
                     objDRUDT.Restriction_Remarks = objRights.Restriction_Remarks;
+                    objDRUDT.Buyback_Syn_Rights_Code = objRights.Buyback_Syn_Rights_Code;
 
                     objRights.LstDeal_Rights_UDT = new List<Deal_Rights_UDT>();
                     objRights.LstDeal_Rights_UDT.Add(objDRUDT);
@@ -3901,16 +3905,16 @@ namespace RightsU_Plus.Controllers
         {
             // Here 'TPL' - 'Platform Applicable For Demestic Territory(Theatrical Platform)'
             platforms = string.Join(",", platforms.Split(',').Where(p => p != "0"));
-            List<USP_GET_DATA_FOR_APPROVED_TITLES_Result> objList = new List<USP_GET_DATA_FOR_APPROVED_TITLES_Result>();
+            List<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> objList = new List<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result>();
             if (titles != "" && titles != "0")
-                objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_GET_DATA_FOR_APPROVED_TITLES(titles, platforms, Platform_Type, Region_Type, Subtitling_Type, Dubbing_Type, objSyn_Deal_Rights_Buyback.Syn_Deal_Code).ToList();
+                objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(titles, platforms, Platform_Type, Region_Type, Subtitling_Type, Dubbing_Type, objSyn_Deal_Rights_Buyback.Syn_Deal_Code).ToList();
             else
                 AllCountry_Territory_Codes = AllPlatform_Codes = SubTitle_Lang_Codes = Dubb_Lang_Codes = "";
             if (Platform_Type == "PL" || Platform_Type == "TPL")
                 AllPlatform_Codes = objList.Select(i => i.RequiredCodes).FirstOrDefault();
             else
             {
-                foreach (USP_GET_DATA_FOR_APPROVED_TITLES_Result obj in objList)
+                foreach (USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result obj in objList)
                 {
                     AllCountry_Territory_Codes = obj.RequiredCodes;
                     SubTitle_Lang_Codes = obj.SubTitle_Lang_Code;

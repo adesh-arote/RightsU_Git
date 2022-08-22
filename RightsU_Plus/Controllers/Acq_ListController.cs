@@ -1439,6 +1439,7 @@ namespace RightsU_Plus.Controllers
             objDRUDT.Right_Type = objAcqRights.Right_Type;
             objDRUDT.Is_Tentative = objAcqRights.Is_Tentative;
             objDRUDT.Check_For = "M";
+            objDRUDT.Buyback_Syn_Rights_Code = objAcqRights.Buyback_Syn_Rights_Code;
 
             objDRUDT.Right_Start_Date = objAcqRights.Actual_Right_Start_Date;
             objDRUDT.Right_End_Date = objAcqRights.Actual_Right_End_Date;

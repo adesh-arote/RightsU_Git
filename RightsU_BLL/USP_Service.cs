@@ -1714,5 +1714,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(rCode, tCode, episode_From, episode_To);
         }
+
+        public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(title_Codes, platform_Codes, platform_Type, region_Type, subtitling_Type, dubbing_Type, syn_Deal_Code);
+        }
     }
 }
