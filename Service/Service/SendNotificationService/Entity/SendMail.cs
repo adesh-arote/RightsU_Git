@@ -46,6 +46,8 @@ namespace SendNotificationService
         }
         public void Send()
         {
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Inside Send"); }
+
             if (this.Port != 0)
                 Client = new SmtpClient(this.Ip, this.Port);
             else
@@ -67,7 +69,9 @@ namespace SendNotificationService
             Email.Body = this.Body;
             Email.Subject = this.Subject;
             Email.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
-            
+
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Before Send Enable SSL:" + this.EnableSsl.ToString()); }
+            if (Convert.ToBoolean(ConfigurationSettings.AppSettings["WriteLog"])) { UTONotificationService.LogService("Before Send Use Default Credentials:" + this.UseDefaultCredential.ToString()); }
             Client.Send(Email);
             Email.Dispose();
         }
