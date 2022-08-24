@@ -5421,5 +5421,14 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result>("USP_GET_DATA_FOR_APPROVED_TITLES_Buyback", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, region_TypeParameter, subtitling_TypeParameter, dubbing_TypeParameter, syn_Deal_CodeParameter);
         }
+    
+        public virtual ObjectResult<string> USP_Get_Mapping_Countries_Buyback(Nullable<int> syn_Deal_Right_Code)
+        {
+            var syn_Deal_Right_CodeParameter = syn_Deal_Right_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Right_Code", syn_Deal_Right_Code) :
+                new ObjectParameter("Syn_Deal_Right_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Mapping_Countries_Buyback", syn_Deal_Right_CodeParameter);
+        }
     }
 }

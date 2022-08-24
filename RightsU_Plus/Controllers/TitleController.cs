@@ -1304,7 +1304,7 @@ namespace RightsU_Plus.Controllers
             if (AdditionalCondition != "")
                 RoleCode = Convert.ToInt32(AdditionalCondition);
             var lstextCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y")
-                .Select(i => new { ColumnsValue = i.Talent_Code, Columns_Value_Code = i.Talent_Name }).ToList();
+                .Select(i => new { ColumnsValue = i.Talent_Name, Columns_Value_Code = i.Talent_Code }).ToList();
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 

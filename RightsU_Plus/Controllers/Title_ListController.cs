@@ -370,7 +370,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (objPage_Properties.isSearch == "Y")
             {
-                sql = "AND (T.Deal_Type_Code In(select DT.Deal_Type_Code from Deal_Type DT where Deal_Type_Name like N'" + objPage_Properties.genericSearch + "%') or T.Title_Language_Code IN(select L.Language_Code from [Language] L where " + newLanguage + " ) or " + newString + " OR T.Program_Code IN(select P.Program_Code from [Program] P where " + newLProgram + ") OR " + newOrigtitleString + " OR " + newTyopOfFilm + " )";
+                sql = "AND (T.Deal_Type_Code In(select DT.Deal_Type_Code from Deal_Type DT where Deal_Type_Name like N'" + objPage_Properties.genericSearch + "%') or T.Title_Language_Code IN(select L.Language_Code from [Language] L where " + newLanguage + " ) or " + newString + " OR T.Program_Code IN(select P.Program_Code from [Program] P where " + newLProgram + ") OR " + newOrigtitleString + (newTyopOfFilm == "" ? "" : " OR " + newTyopOfFilm) + " )";
+                
                 TitleList = objUSP.USP_Title_List(Convert.ToInt32(objPage_Properties.DealTypeCode), "", "", Selected_BU, objPage_Properties.PageNo, objRecordCount, "Y", recordPerPage, sql, ExactMatchStr).ToList();
             }
             else

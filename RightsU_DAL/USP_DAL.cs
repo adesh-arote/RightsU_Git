@@ -1740,5 +1740,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(title_Codes, platform_Codes, platform_Type, region_Type, subtitling_Type, dubbing_Type, syn_Deal_Code);
         }
+
+        public virtual ObjectResult<string> USP_Get_Mapping_Countries_Buyback(Nullable<int> syn_Deal_Right_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Mapping_Countries_Buyback(syn_Deal_Right_Code);
+        }
     }
 }
