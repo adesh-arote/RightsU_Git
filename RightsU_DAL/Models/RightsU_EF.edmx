@@ -12855,6 +12855,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Get_Mapping_Countries" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Right_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Mapping_Countries_Buyback" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Right_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Mapping_SubTitling_Dubbing_Languages" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Rights_Codes" Type="varchar" Mode="In" />
           <Parameter Name="Selected_SubTitling_Language_Codes" Type="varchar" Mode="In" />
@@ -21517,6 +21520,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Subtitling_Type" Mode="In" Type="String" />
             <Parameter Name="Dubbing_Type" Mode="In" Type="String" />
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Mapping_Countries_Buyback" ReturnType="Collection(String)">
+            <Parameter Name="Syn_Deal_Right_Code" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -46410,6 +46416,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Mapping_Countries_Buyback" FunctionName="RightsU_NeoModel.Store.USP_Get_Mapping_Countries_Buyback" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
