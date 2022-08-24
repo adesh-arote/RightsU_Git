@@ -5583,7 +5583,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Pushback.Value= "N", IIF(Fields!Exclusive.Value="Y", "Yes", "No"), "--")</Value>
+                                  <Value>=IIF(Fields!Pushback.Value= "N", IIF(Fields!Exclusive.Value="Y", "Exclusive", IIF(Fields!Exclusive.Value="N","Non-Exclusive","Co-Exclusive")), "--")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -10933,7 +10933,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Pushback.Value = "N", IIF(Fields!Exclusive.Value = "Y", "Yes", "No"), "--")</Value>
+                                  <Value>=IIF(Fields!Pushback.Value = "N", IIF(Fields!Exclusive.Value = "Y", "Exclusive",IIF(Fields!Exclusive.Value = "N", "Non-Exclusive","Co-Exclusive")), "--")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -10957,6 +10957,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
