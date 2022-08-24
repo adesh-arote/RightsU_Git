@@ -1314,6 +1314,8 @@
     <Content Include="Views\Syn_Deal\_Syn_Supplementary_Add.cshtml" />
     <Content Include="Views\Acq_Deal\_AmendmentHistory.cshtml" />
     <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Title_Content_View\_Material_Detail_List.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

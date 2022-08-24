@@ -154,6 +154,7 @@
     <Compile Include="Content_Entities\Music_Schedule_Transaction.cs" />
     <Compile Include="Content_Entities\Title_Content.cs" />
     <Compile Include="Content_Entities\Title_Content_Mapping.cs" />
+    <Compile Include="Content_Entities\Title_Content_Material.cs" />
     <Compile Include="Content_Entities\Title_Content_Version.cs" />
     <Compile Include="Content_Entities\Title_Content_Version_Details.cs" />
     <Compile Include="Content_Entities\USP_Music_Exception_Dashboard_Result.cs" />
@@ -457,6 +458,7 @@
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Supplementary_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_GetContentsMaterialDetailData_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Deal_Supplementary_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />

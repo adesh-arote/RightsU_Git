@@ -125,6 +125,6 @@ namespace RightsU_Entities
         //======== DISABLED END
 
         #endregion
-
+        public string Buyback_Syn_Rights_Code { get; set; }
     }
 }

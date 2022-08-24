@@ -142,6 +142,17 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstContentRunDefData"] = value; }
         }
+        private List<USP_GetContentsMaterialDetailData_Result> lstContentMaterialDetailData
+        {
+            get
+            {
+                if (Session["lstContentMaterialDetailData"] == null)
+                    Session["lstContentMaterialDetailData"] = new List<USP_GetContentsVersionData_Result>();
+                return (List<USP_GetContentsMaterialDetailData_Result>)Session["lstContentMaterialDetailData"];
+            }
+            set { Session["lstContentMaterialDetailData"] = value; }
+        }
+
         private const string Command_Search = "SEARCH";
         private const string Command_ShowAll = "SHOW_ALL";
         #endregion
@@ -914,6 +925,110 @@ namespace RightsU_Plus.Controllers
             List<USP_GetContentsMusicData_Result> lst = new List<USP_GetContentsMusicData_Result>();
             return PartialView("~/Views/Title_Content_View/_Run_Defintion_List.cshtml", lstContentRunDefData);
         }
+        public PartialViewResult BindMaterialDetailListData(string searchText, int materialmediumcode, int pageNo, int recordPerPage, string command, bool tabChanged)
+        {
+            ViewBag.materialmediumcode = materialmediumcode;
+            ViewBag.Command = command;
+            if (!objSearch.VisitedOn_Material_Detail)
+            {
+                lstContentMaterialDetailData = new USP_Service(objLoginEntity.ConnectionStringName).USP_GetContentsMaterialDetailData(objContentMetadata.Title_Content_Code).ToList();
+                objSearch.VisitedOn_Material_Detail = true;
+            }
+
+            if (tabChanged)
+            {
+                pageNo = objSearch.PageNo_Material_Detail;
+                recordPerPage = objSearch.PageSize_Material_Detail;
+                searchText = objSearch.SearchText_Material_Detail;
+            }
+            else
+            {
+                objSearch.PageNo_Material_Detail = pageNo;
+                objSearch.PageSize_Material_Detail = recordPerPage;
+                objSearch.SearchText_Material_Detail = searchText;
+            }
+            if (command == Command_Search)
+            {
+                lstContentMaterialDetailData = lstContentMaterialDetailData.Where(w => w.Material_Medium_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
+            }
+            else if (command == Command_ShowAll)
+            {
+                lstContentMaterialDetailData = new USP_Service(objLoginEntity.ConnectionStringName).USP_GetContentsMaterialDetailData(objContentMetadata.Title_Content_Code).ToList();
+            }
+            int RecordCount = lstContentMaterialDetailData.Count;
+            List<USP_GetContentsMaterialDetailData_Result> lst = new List<USP_GetContentsMaterialDetailData_Result>();
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                lst = lstContentMaterialDetailData.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            ViewBag.PageNo = pageNo;
+            ViewBag.PageSize = recordPerPage;
+            ViewBag.RecordCount = RecordCount;
+            ViewBag.SearchText = searchText;
+            ViewBag.TabChanged = (tabChanged) ? "Y" : "N";
+            return PartialView("~/Views/Title_Content_View/_Material_Detail_List.cshtml", lst);
+        }
+        public JsonResult SaveMaterialDetail(int MaterialMediumCode, DateTime? DeliveryDate, DateTime? TCQCDate, DateTime? SNPDate)
+        {
+            bool returnVal = true;
+            dynamic resultSet;
+            bool isValid;
+            int? titleContentCode = objContentMetadata.Title_Content_Code;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+
+            if (titleContentCode > 0)
+                message = objMessageKey.Recordupdatedsuccessfully;
+
+            int? Title_Content_Matreial_Code = new Title_Content_Material_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Content_Code == objContentMetadata.Title_Content_Code && x.Material_Medium_Code == MaterialMediumCode).Select(s => s.Title_Content_Matreial_Code).FirstOrDefault();
+
+            Title_Content_Material_Service objService = new Title_Content_Material_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Entities.Title_Content_Material objTCM = null;
+
+            if (returnVal)
+            {
+                if (Title_Content_Matreial_Code > 0)
+                {                    
+                    objTCM = objService.GetById(Convert.ToInt32(Title_Content_Matreial_Code));
+                    objTCM.EntityState = State.Modified;
+                }
+                else
+                {
+                    objTCM = new RightsU_Entities.Title_Content_Material();
+                    objTCM.EntityState = State.Added;
+                }
+                objTCM.Material_Medium_Code = MaterialMediumCode;
+                objTCM.Title_Content_Code = objContentMetadata.Title_Content_Code;
+                objTCM.Delivery_Date = DeliveryDate;
+                objTCM.TC_QC_Date = TCQCDate; 
+                objTCM.SNP_Date = SNPDate;
+                objTCM.Last_Updated_Time = DateTime.Now;
+                objTCM.Last_Action_By = objLoginUser.Users_Code;
+
+                isValid = objService.Save(objTCM, out resultSet);
+                //BindDDL();
+                if (isValid)
+                {
+                    lstContentMaterialDetailData = new USP_Service(objLoginEntity.ConnectionStringName).USP_GetContentsMaterialDetailData(objContentMetadata.Title_Content_Code).ToList();
+                }
+                else
+                {
+                    status = "E";
+                    message = resultSet;
+                }
+            }
+
+            var obj = new
+            {
+                RecordCount = lstContentMaterialDetailData.Count,
+                Status = status,
+                Message = message
+            };
+
+            return Json(obj);
+        }
         public void ExportToXML(FormCollection objFormCollection)
         {
             int Title_Content_Version = 0;
@@ -1291,7 +1406,36 @@ namespace RightsU_Plus.Controllers
         }
         #endregion
 
-       
+        #region --- Material Detail Tab ---
+        private int _PageNo_Material_Detail = 1;
+        internal int PageNo_Material_Detail
+        {
+            get { return _PageNo_Material_Detail; }
+            set { _PageNo_Material_Detail = value; }
+        }
+
+        private int _PageSize_Material_Detail = 10;
+        internal int PageSize_Material_Detail
+        {
+            get { return _PageSize_Material_Detail; }
+            set { _PageSize_Material_Detail = value; }
+        }
+
+        private bool _VisitedOn_Material_Detail = false;
+        internal bool VisitedOn_Material_Detail
+        {
+            get { return _VisitedOn_Material_Detail; }
+            set { _VisitedOn_Material_Detail = value; }
+        }
+
+        private string _SearchText_Material_Detail = "";
+        internal string SearchText_Material_Detail
+        {
+            get { return _SearchText_Material_Detail; }
+            set { _SearchText_Material_Detail = value; }
+        }
+        #endregion
+
     }
 
 

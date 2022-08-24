@@ -31,6 +31,7 @@
     var URL_BindTitleMetadata = '@Url.Action("BindTitleMetadata", "Title_Content_View")';
     var URL_BindTitleAlternatedata = '@Url.Action("BindTitleAlternatedata", "Title_Content_View")';
     var URL_BindRunDefinitionListData = '@Url.Action("BindRunDefinitionListData", "Title_Content_View")';
+    var URL_BindMaterialDetailListData = '@Url.Action("BindMaterialDetailListData", "Title_Content_View")';
     var URL_Reload_Current_Page = '@Url.Action("Index", "Title_Content_View", new { Title_Content_Code = ViewBag.TitleContentCode })';
     var command_Search = '@ViewBag.Command_Search';
     var command_ShowAll = '@ViewBag.Command_ShowAll';
@@ -101,6 +102,12 @@
             }
             if (Tab = 'False') {
                 $('.grid_area').hide();
+            }
+        }
+        if (Tab == 'False') {
+            Tab = '@Html.Raw(ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForMaterialDetailsContent + "~"))'
+            if (Tab == 'True') {
+                TabChange('MD');
             }
         }
     });
@@ -239,6 +246,9 @@
             case 'D':
                 BindRunDefinitionListData('', tabChanged,CurrentRunTab);
                 break;
+            case 'MD':
+                BindMaterialDetailListData('', 0, '', tabChanged);
+                break;
         }
     }
     function BindRightsListData(command, tabChanged) {
@@ -247,6 +257,7 @@
         $('#divAiringSerach').hide();
         $('#divCostSerach').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -278,6 +289,7 @@
         $('#divCostSerach').hide();
         $('#Paging').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -309,6 +321,7 @@
         $('#divCostSerach').hide();
         $('#Paging').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -341,6 +354,7 @@
         $('#divAiringSerach').hide();
         $('#divCostSerach').show();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -375,6 +389,7 @@
         $('#tdversion').show();
         $('#btnAdd').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         $('#btnExport').hide();
         $('#btnImport').hide();
         $("#txtSearchText_MV").attr("placeholder", "@objMessageKey.MusicTrack, @objMessageKey.MovieName, @objMessageKey.MusicLabel");
@@ -415,6 +430,7 @@
         $('#btnExport').show();
         $('#btnImport').show();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         $("#txtSearchText_MV").attr("placeholder", "Version");
 
         var pageNo = $('#hdnPageNo').val();
@@ -450,6 +466,7 @@
         $('#divAiringSerach').show();
         $('#divCostSerach').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -487,6 +504,7 @@
         $('#divAiringSerach').hide();
         $('#divCostSerach').hide();
         $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').hide();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         $.ajax({
@@ -519,7 +537,7 @@
         $('#divAiringSerach').hide();
         $('#divCostSerach').hide();
         $('#divRunDefinition').show();
-
+        $('#divMaterialDetailSearch').hide();
         $.ajax({
             url: URL_BindRunDefinitionListData,
             type: 'POST',
@@ -695,6 +713,19 @@
 
             BindAiringListData(startDate, endDate, versionId, channelCodes, command, false);
         }
+        if (currentTab == 'MD') {            
+            var searchText = '';
+            if (!showAll) {
+                searchText = $.trim($('#txtSearchText_MD').val());
+                if (searchText == "") {
+                    $('#txtSearchText_MD').val('').attr('required', true)
+                    return false;
+                }
+                $('#hdnPageNo').val(1);
+                command = command_Search;
+            }
+            BindMaterialDetailListData(searchText, 0, command, false);
+        }
     }
     function AddEditVersion(titleversioncode, commandName) {
         if (checkCurrentAction()) {
@@ -713,6 +744,51 @@
             return false;
         }
         return true;
+    }
+    function BindMaterialDetailListData(searchText, materialmediumcode, command, tabChanged) {
+        $('#Paging').show();
+        $('#divMusicVersionSearch').hide();
+        $('#divAiringSerach').hide();
+        $('#divCostSerach').hide();
+        $('#tdversion').hide();
+        $('#btnExport').show();
+        $('#btnImport').show();
+        $('#divRunDefinition').hide();
+        $('#divMaterialDetailSearch').show();
+        $("#txtSearchText_MD").attr("placeholder", "Material Detail");
+
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            url: URL_BindMaterialDetailListData,
+            type: 'POST',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                searchText: searchText,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                materialmediumcode: materialmediumcode,
+                command: command,
+                tabChanged: tabChanged
+            }),
+            success: function (result) {
+                if (result == "true")
+                    redirectToLogin();
+                else {
+                    $('#tabs').html(result);
+                }
+            }
+        });
+    }
+    function AddEditMaterialDetail(materialmediumcode, commandName) {
+        if (checkCurrentAction()) {
+            BindMaterialDetailListData('', materialmediumcode, commandName, false);
+            $('#hdnAction').val(commandName)
+        }
     }
 </script>
 <style>
@@ -858,6 +934,12 @@
                             <a data-toggle="tab" href="" role="tab" onclick="TabChange('D',0)">@objMessageKey.RunDefintion</a>
                         </li>
                     }
+                    @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForMaterialDetailsContent + "~"))
+                    {
+                        <li id="liTabMD" class="">
+                            <a data-toggle="tab" href="" role="tab" onclick="TabChange('MD',0)">Material Details</a>
+                        </li>
+                    }
                 </ul>
                 <div class="tab-content clearfix table-wrapper scale_table_container">
                     <div id="divCostSerach" class="scale_table_block" style="display:none">
@@ -896,21 +978,21 @@
                                         <a class="btn btn-primary" onclick="AddEditVersion(0, 'ADD')">@objMessageKey.Add</a>
                                     </div>
                                 </td>
-                                
+
                                 @*<td id="btnExport" style="width:10px;">
-                                    <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Save To Xml">
-                                        @using (Html.BeginForm("ExportToXml", "Title_Content_View"))
-                                        {
-                                            <input type="submit" style="display: none" id="btnExportToXml" />
-                                             <input type="hidden" name="DealTypeC" value="@Model.Title_Content_Code" id="DealTypeC" />
-                                        }
-                                    </label>
-                                </td>
-                                 
-                                <td id="btnImport">
-                                    <label for="btnTitleContentImport" class="glyphicon glyphicon-floppy-open" onclick="@("window.location.href='" + @Url.Action("UploadContentVersionTitle", "Title_Content_View") + "'");" title="Content Version Import">
-                                    </label>
-                                </td>*@
+                        <label for="btnExportToXml" class="glyphicon glyphicon-floppy-save" title="Save To Xml">
+                            @using (Html.BeginForm("ExportToXml", "Title_Content_View"))
+                            {
+                                <input type="submit" style="display: none" id="btnExportToXml" />
+                                 <input type="hidden" name="DealTypeC" value="@Model.Title_Content_Code" id="DealTypeC" />
+                            }
+                        </label>
+                    </td>
+
+                    <td id="btnImport">
+                        <label for="btnTitleContentImport" class="glyphicon glyphicon-floppy-open" onclick="@("window.location.href='" + @Url.Action("UploadContentVersionTitle", "Title_Content_View") + "'");" title="Content Version Import">
+                        </label>
+                    </td>*@
                             </tr>
                         </table>
                     </div>
@@ -991,6 +1073,19 @@
                             </div>
                         </div>
                     </div>
+                    <div id="divMaterialDetailSearch" class="scale_table_block" style="display:none">
+                        <table class="table">
+                            <tr>
+                                <td style="width:40%;">
+                                    <input type="text" style="width:100%" id="txtSearchText_MD" placeholder="Material Detail">
+                                </td>
+                                <td>
+                                    <input type="button" class="button" value="@objMessageKey.Search" id="btnSearch_MD" onclick="SearchData(false)">
+                                    <input type="button" class="button" value="@objMessageKey.ShowAll" id="btnShowAll_MD" onclick="SearchData(true)">
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                     <div class="paging_area clearfix" style="height:31px !important;" id="Paging">
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
@@ -1003,7 +1098,7 @@
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" 
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
                                    onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>

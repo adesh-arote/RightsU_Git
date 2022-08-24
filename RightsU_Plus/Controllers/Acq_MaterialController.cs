@@ -217,6 +217,12 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Type_Condition = objDeal_Schema.Deal_Type_Condition;
             ViewBag.PageMode = objDeal_Schema.Mode;
 
+            if (objDeal_Schema.Deal_Type_Code == GlobalParams.Deal_Type_Show || objDeal_Schema.Deal_Type_Code == GlobalParams.Deal_Type_FormatShow || objDeal_Schema.Deal_Type_Code == GlobalParams.Deal_Type_Content ||
+                objDeal_Schema.Deal_Type_Code == GlobalParams.Deal_Type_WebSeries || objDeal_Schema.Deal_Type_Code == GlobalParams.Deal_Type_Drama_Play)
+                ViewBag.EpisodeText = "(Material per Episode)";
+            else
+                ViewBag.EpisodeText = "";
+
             return PartialView("~/Views/Acq_Deal/_List_Material.cshtml", lst_Acq_Deal_Material);
         }
 

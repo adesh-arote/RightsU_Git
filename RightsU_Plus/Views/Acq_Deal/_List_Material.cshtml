@@ -12,7 +12,7 @@
     //var pageSize = 0;
     //var PageNo = 0;
     $(document).ready(function () {
-        $('#spanRecordCount').html('@objMessageKey.TotalRecords: @ViewBag.RecordCount');
+        $('#spanRecordCount').html('@objMessageKey.TotalRecords @ViewBag.EpisodeText : @ViewBag.RecordCount');
         $('#spanRecordCount').css("float", "right");
         $('#ddlTitle_Code').SumoSelect();
         $('#ddlTitle_Code')[0].sumo.reload();

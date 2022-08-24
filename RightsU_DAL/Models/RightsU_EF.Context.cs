@@ -5582,5 +5582,14 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
         }
+
+        public virtual ObjectResult<USP_GetContentsMaterialDetailData_Result> USP_GetContentsMaterialDetailData(Nullable<long> title_Content_Code)
+        {
+            var title_Content_CodeParameter = title_Content_Code.HasValue ?
+                new ObjectParameter("Title_Content_Code", title_Content_Code) :
+                new ObjectParameter("Title_Content_Code", typeof(long));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsMaterialDetailData_Result>("USP_GetContentsMaterialDetailData", title_Content_CodeParameter);
+        }
     }
 }

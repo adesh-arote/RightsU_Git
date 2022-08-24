@@ -265,4 +265,25 @@ namespace RightsU_DAL
             dbContext.Title_Content_Version_Details.RemoveRange(deleteList);
         }
     }
+    public class Title_Content_Material_Repository : RightsU_Repository<Title_Content_Material>
+    {
+        public Title_Content_Material_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Title_Content_Material obj)
+        {
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(obj);
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(obj);
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(obj);
+            }
+        }
+
+    }
 }

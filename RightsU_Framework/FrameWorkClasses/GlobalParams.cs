@@ -291,6 +291,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightCodeForAiringContent = 149;
         public const int RightCodeForStatusHistoryContent = 150;
         public const int RightCodeForRunDefinitionContent = 151;
+        public const int RightCodeForMaterialDetailsContent = 174;
 
         //Right Code For Acquisistion Deal
         public const string Page_From_General = "GNR";

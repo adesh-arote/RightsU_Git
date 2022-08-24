@@ -476,4 +476,66 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Title_Content_Material_Service : BusinessLogic<Title_Content_Material>
+    {
+        private readonly Title_Content_Material_Repository objRepository;
+        public Title_Content_Material_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Content_Material_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Content_Material> SearchFor(Expression<Func<Title_Content_Material, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Content_Material GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Content_Material objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Content_Material objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Content_Material objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Content_Material objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Content_Material objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Title_Content_Material objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Title_Content_Material objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            int count = this.SearchFor(w => w.Title_Content_Code == objToValidate.Title_Content_Code && w.Material_Medium_Code == objToValidate.Material_Medium_Code && w.Title_Content_Matreial_Code != objToValidate.Title_Content_Matreial_Code).Count();
+            if (count > 0)
+            {
+                resultSet = "Material already exists";
+                return false;
+            }
+
+            return true;
+        }
+    }
 }

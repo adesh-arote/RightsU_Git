@@ -1695,5 +1695,10 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
         }
+        public virtual ObjectResult<USP_GetContentsMaterialDetailData_Result> USP_GetContentsMaterialDetailData(Nullable<long> title_Content_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_GetContentsMaterialDetailData(title_Content_Code);
+        }
     }
 }

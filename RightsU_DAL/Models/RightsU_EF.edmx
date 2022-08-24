@@ -291,7 +291,7 @@
           <Property Name="Created_By" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.Acq_Deal_Mass_Territory_Update_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acq_Deal_Mass_Territory_Update_Details">
           <Key>
             <PropertyRef Name="Acq_Deal_Mass_Update_Det_Code" />
@@ -505,6 +505,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Promoter_Flag" Type="char" MaxLength="1" />
           <Property Name="Right_Status" Type="char" MaxLength="1" />
           <Property Name="Is_Under_Production" Type="char" MaxLength="1" />
+          <Property Name="Buyback_Syn_Rights_Code" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -1528,7 +1529,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Upload_Type" Type="varchar" MaxLength="10" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.BV_HouseId_Data_Temp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.BV_HouseId_Data_Temp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BV_HouseId_Data_Temp">
           <Key>
             <PropertyRef Name="BV_HouseId_Data_Code" />
@@ -1760,7 +1761,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.BV_HouseId_Data_Temp' does not
           <Property Name="Country_Code" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.ChannelWiseConsumption_Report' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ChannelWiseConsumption_Report">
           <Key>
             <PropertyRef Name="Deal_Movie_Code" />
@@ -1965,7 +1966,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Deal_Type" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DM_AQDeal">
           <Key>
             <PropertyRef Name="IntCode" />
@@ -2298,7 +2299,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a pri
           <Property Name="Public_Domain" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.DM_Title' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DM_Title">
           <Key>
             <PropertyRef Name="DM_Title_Code" />
@@ -3788,7 +3789,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="FileCode" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.Paf_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Paf_Details">
           <Key>
             <PropertyRef Name="Id" />
@@ -4286,7 +4287,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Position" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.RunData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RunData">
           <Key>
             <PropertyRef Name="Id" />
@@ -5450,6 +5451,22 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Acq_Deal_Movie_Code" Type="int" />
           <Property Name="Provisional_Deal_Title_Code" Type="int" />
         </EntityType>
+        <EntityType Name="Title_Content_Material">
+          <Key>
+            <PropertyRef Name="Title_Content_Matreial_Code" />
+          </Key>
+          <Property Name="Title_Content_Matreial_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Content_Code" Type="int" />
+          <Property Name="Material_Medium_Code" Type="int" />
+          <Property Name="Delivery_Date" Type="date" />
+          <Property Name="TC_QC_Date" Type="date" />
+          <Property Name="SNP_Date" Type="date" />
+          <Property Name="Inserted_On" Type="int" />
+          <Property Name="Inserted_By" Type="datetime" />
+          <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+        </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
             <PropertyRef Name="Title_Content_Version_Code" />
@@ -5641,7 +5658,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="HouseId_Prefix_Digits" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Err_Detail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.Upload_Err_Detail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Upload_Err_Detail">
           <Key>
             <PropertyRef Name="Upload_Detail_Code" />
@@ -5656,7 +5673,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Err_Detail' does not ha
           <Property Name="Upload_Title_Type" Type="varchar" MaxLength="5" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_LG.dbo.Upload_Files' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Upload_Files">
           <Key>
             <PropertyRef Name="File_Code" />
@@ -11735,6 +11752,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Title_Content_Material_Material_Medium">
+          <End Role="Material_Medium" Type="Self.Material_Medium" Multiplicity="0..1" />
+          <End Role="Title_Content_Material" Type="Self.Title_Content_Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material_Medium">
+              <PropertyRef Name="Material_Medium_Code" />
+            </Principal>
+            <Dependent Role="Title_Content_Material">
+              <PropertyRef Name="Material_Medium_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Content_Material_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="Title_Content_Material" Type="Self.Title_Content_Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="Title_Content_Material">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Title_Content_Title">
           <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
           <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="*" />
@@ -12497,6 +12538,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Acq_Deal_Supplementary_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="pageNo" Type="int" Mode="In" />
+          <Parameter Name="pagesize" Type="int" Mode="In" />
+          <Parameter Name="RecordCount" Type="int" Mode="InOut" />
         </Function>
         <Function Name="USP_Acq_List_Runs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
@@ -12958,6 +13002,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="End_Date" Type="varchar" Mode="In" />
           <Parameter Name="Version_ID" Type="varchar" Mode="In" />
           <Parameter Name="Channel_Codes" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="USP_GetContentsMaterialDetailData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Title_Content_Code" Type="bigint" Mode="In" />
         </Function>
         <Function Name="USP_GetContentsMusicData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Content_Code" Type="bigint" Mode="In" />
@@ -14785,6 +14832,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Title_Audio_Details_Singers" EntityType="Self.Title_Audio_Details_Singers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Content" EntityType="Self.Title_Content" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Content_Mapping" EntityType="Self.Title_Content_Mapping" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Content_Material" EntityType="Self.Title_Content_Material" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Content_Version" EntityType="Self.Title_Content_Version" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Content_Version_Details" EntityType="Self.Title_Content_Version_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Country" EntityType="Self.Title_Country" Schema="dbo" store:Type="Tables" />
@@ -17124,6 +17172,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Title_Content_Mapping_Title_Content" Association="Self.FK_Title_Content_Mapping_Title_Content">
             <End Role="Title_Content" EntitySet="Title_Content" />
             <End Role="Title_Content_Mapping" EntitySet="Title_Content_Mapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Content_Material_Material_Medium" Association="Self.FK_Title_Content_Material_Material_Medium">
+            <End Role="Material_Medium" EntitySet="Material_Medium" />
+            <End Role="Title_Content_Material" EntitySet="Title_Content_Material" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Content_Material_Title_Content" Association="Self.FK_Title_Content_Material_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="Title_Content_Material" EntitySet="Title_Content_Material" />
           </AssociationSet>
           <AssociationSet Name="FK_Title_Content_Title" Association="Self.FK_Title_Content_Title">
             <End Role="Title" EntitySet="Title" />
@@ -21372,6 +21428,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Acq_Deal_Supplementary_List" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result)">
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
             <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="pageNo" Mode="In" Type="Int32" />
+            <Parameter Name="pagesize" Mode="In" Type="Int32" />
+            <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Acq_Deal_Supplementary_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Supplementary_Edit_Result)">
             <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />
@@ -21393,6 +21452,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Title" EntitySet="Titles" />
             <End Role="Acq_Deal_Supplementary" EntitySet="Acq_Deal_Supplementary" />
           </AssociationSet>
+          <EntitySet Name="Title_Content_Material" EntityType="RightsU_NeoModel.Title_Content_Material" />
+          <AssociationSet Name="FK_Title_Content_Material_Material_Medium" Association="RightsU_NeoModel.FK_Title_Content_Material_Material_Medium">
+            <End Role="Material_Medium" EntitySet="Material_Medium" />
+            <End Role="Title_Content_Material" EntitySet="Title_Content_Material" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Content_Material_Title_Content" Association="RightsU_NeoModel.FK_Title_Content_Material_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="Title_Content_Material" EntitySet="Title_Content_Material" />
+          </AssociationSet>
+          <FunctionImport Name="USP_GetContentsMaterialDetailData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsMaterialDetailData_Result)">
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -21643,6 +21714,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Promoter_Flag" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Right_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Is_Under_Production" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Buyback_Syn_Rights_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Acq_Deal_Rights_Blackout">
           <Key>
@@ -23164,6 +23236,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Material_Order_Details" Relationship="RightsU_NeoModel.FK_Material_Order_Details_Material_Medium" FromRole="Material_Medium" ToRole="Material_Order_Details" />
           <NavigationProperty Name="Acq_Deal_Material" Relationship="RightsU_NeoModel.FK_Acq_Deal_Material_Material_Medium" FromRole="Material_Medium" ToRole="Acq_Deal_Material" />
           <NavigationProperty Name="Syn_Deal_Material" Relationship="RightsU_NeoModel.FK_Syn_Deal_Material_Material_Medium" FromRole="Material_Medium" ToRole="Syn_Deal_Material" />
+          <NavigationProperty Name="Title_Content_Material" Relationship="RightsU_NeoModel.FK_Title_Content_Material_Material_Medium" FromRole="Material_Medium" ToRole="Title_Content_Material" />
         </EntityType>
         <EntityType Name="Material_Order">
           <Key>
@@ -32250,6 +32323,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Synopsis" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Title_Content_Mapping" Relationship="RightsU_NeoModel.FK_Title_Content_Mapping_Title_Content" FromRole="Title_Content" ToRole="Title_Content_Mapping" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" FromRole="Title_Content" ToRole="MHCueSheetSong" />
+          <NavigationProperty Name="Title_Content_Material" Relationship="RightsU_NeoModel.FK_Title_Content_Material_Title_Content" FromRole="Title_Content" ToRole="Title_Content_Material" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -36645,6 +36719,56 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Title_Content_Material">
+          <Key>
+            <PropertyRef Name="Title_Content_Matreial_Code" />
+          </Key>
+          <Property Name="Title_Content_Matreial_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Content_Code" Type="Int32" />
+          <Property Name="Material_Medium_Code" Type="Int32" />
+          <Property Name="Delivery_Date" Type="DateTime" Precision="0" />
+          <Property Name="TC_QC_Date" Type="DateTime" Precision="0" />
+          <Property Name="SNP_Date" Type="DateTime" Precision="0" />
+          <Property Name="Inserted_On" Type="Int32" />
+          <Property Name="Inserted_By" Type="DateTime" Precision="3" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <NavigationProperty Name="Material_Medium" Relationship="RightsU_NeoModel.FK_Title_Content_Material_Material_Medium" FromRole="Title_Content_Material" ToRole="Material_Medium" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_Title_Content_Material_Title_Content" FromRole="Title_Content_Material" ToRole="Title_Content" />
+        </EntityType>
+        <Association Name="FK_Title_Content_Material_Material_Medium">
+          <End Type="RightsU_NeoModel.Material_Medium" Role="Material_Medium" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Content_Material" Role="Title_Content_Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Material_Medium">
+              <PropertyRef Name="Material_Medium_Code" />
+            </Principal>
+            <Dependent Role="Title_Content_Material">
+              <PropertyRef Name="Material_Medium_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Content_Material_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Content_Material" Role="Title_Content_Material" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="Title_Content_Material">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_GetContentsMaterialDetailData_Result">
+          <Property Type="Int32" Name="Title_Content_Matreial_Code" Nullable="true" />
+          <Property Type="Int32" Name="Material_Medium_Code" Nullable="false" />
+          <Property Type="String" Name="Material_Medium_Name" Nullable="true" MaxLength="100" />
+          <Property Type="DateTime" Name="Delivery_Date" Nullable="true" />
+          <Property Type="DateTime" Name="TC_QC_Date" Nullable="true" />
+          <Property Type="DateTime" Name="SNP_Date" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -36920,6 +37044,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal_Rights">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Rights">
               <MappingFragment StoreEntitySet="Acq_Deal_Rights">
+                <ScalarProperty Name="Buyback_Syn_Rights_Code" ColumnName="Buyback_Syn_Rights_Code" />
                 <ScalarProperty Name="Is_Under_Production" ColumnName="Is_Under_Production" />
                 <ScalarProperty Name="Right_Status" ColumnName="Right_Status" />
                 <ScalarProperty Name="Promoter_Flag" ColumnName="Promoter_Flag" />
@@ -46146,6 +46271,35 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Title_Content_Material">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Content_Material">
+              <MappingFragment StoreEntitySet="Title_Content_Material">
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="SNP_Date" ColumnName="SNP_Date" />
+                <ScalarProperty Name="TC_QC_Date" ColumnName="TC_QC_Date" />
+                <ScalarProperty Name="Delivery_Date" ColumnName="Delivery_Date" />
+                <ScalarProperty Name="Material_Medium_Code" ColumnName="Material_Medium_Code" />
+                <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
+                <ScalarProperty Name="Title_Content_Matreial_Code" ColumnName="Title_Content_Matreial_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_GetContentsMaterialDetailData" FunctionName="RightsU_NeoModel.Store.USP_GetContentsMaterialDetailData">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_GetContentsMaterialDetailData_Result">
+                <ScalarProperty Name="Title_Content_Matreial_Code" ColumnName="Title_Content_Matreial_Code" />
+                <ScalarProperty Name="Material_Medium_Code" ColumnName="Material_Medium_Code" />
+                <ScalarProperty Name="Material_Medium_Name" ColumnName="Material_Medium_Name" />
+                <ScalarProperty Name="Delivery_Date" ColumnName="Delivery_Date" />
+                <ScalarProperty Name="TC_QC_Date" ColumnName="TC_QC_Date" />
+                <ScalarProperty Name="SNP_Date" ColumnName="SNP_Date" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -46160,7 +46314,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

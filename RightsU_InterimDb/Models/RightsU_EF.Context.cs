@@ -443,6 +443,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
+        public DbSet<Title_Content_Material> Title_Content_Material { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
         {
@@ -5230,7 +5231,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter);
         }
     
-        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code)
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
@@ -5240,7 +5241,15 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter);
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("pageNo", pageNo) :
+                new ObjectParameter("pageNo", typeof(int));
+    
+            var pagesizeParameter = pagesize.HasValue ?
+                new ObjectParameter("pagesize", pagesize) :
+                new ObjectParameter("pagesize", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
     
         public virtual ObjectResult<USP_Get_Acq_Deal_Supplementary_Edit_Result> USP_Get_Acq_Deal_Supplementary_Edit(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
@@ -5280,6 +5289,15 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("title_Code", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplementary_Result>("USP_Get_Title_For_Acq_Supplementary", aCQ_DEAL_CODEParameter, title_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_GetContentsMaterialDetailData_Result> USP_GetContentsMaterialDetailData(Nullable<long> title_Content_Code)
+        {
+            var title_Content_CodeParameter = title_Content_Code.HasValue ?
+                new ObjectParameter("Title_Content_Code", title_Content_Code) :
+                new ObjectParameter("Title_Content_Code", typeof(long));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsMaterialDetailData_Result>("USP_GetContentsMaterialDetailData", title_Content_CodeParameter);
         }
     }
 }

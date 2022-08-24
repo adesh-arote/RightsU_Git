@@ -1023,6 +1023,9 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" Width="1.5" PointX="47.625" PointY="37" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Detail_Syn_Deal_Supplementary" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Material" Width="1.5" PointX="23.5" PointY="99.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Material_Material_Medium" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Material_Title_Content" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

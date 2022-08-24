@@ -1716,5 +1716,10 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
         }
+        public virtual ObjectResult<USP_GetContentsMaterialDetailData_Result> USP_GetContentsMaterialDetailData(Nullable<long> title_Content_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_GetContentsMaterialDetailData(title_Content_Code);
+        }
     }
 }

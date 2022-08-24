@@ -1,0 +1,168 @@
+﻿@model List<RightsU_Entities.USP_GetContentsMaterialDetailData_Result>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript">
+    var URL_SaveMaterialDetail = '@Url.Action("SaveMaterialDetail", "Title_Content_View")';
+    $(document).ready(function () {
+        $('#hdnPageNo').val('@ViewBag.PageNo');
+        $('#txtPageSize').val('@ViewBag.PageSize');
+        $('#hdnRecordCount').val('@ViewBag.RecordCount');
+        $('#lblRecordCount').text('@ViewBag.RecordCount');
+        initializeChosen();
+        initializeDatepicker();
+        if ('@ViewBag.TabChanged' == 'Y') {
+            $('#txtSearchText_MD').val('@ViewBag.SearchText');
+        }
+        $(".numeric_Duration").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            maxDecimalPlaces: 2,
+            max: 999,
+            min: 1
+        });
+        SetPaging();
+        initializeTooltip();
+        initializeExpander();
+    });
+</script>
+<style>
+    .numeric_Duration {
+        width: 65%;
+    }
+</style>
+<div class="scale_table_block">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th style="width:30%;">Material</th>
+                <th style="width:30%;">Delivery Date</th>
+                <th style="width:15%;">TC/QC Date</th>
+                <th style="width:15%;">SNP Date</th>
+                <th style="width:10%;">@objMessageKey.Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        @if (ViewBag.Command == "EDIT" && ViewBag.materialmediumcode == item.Material_Medium_Code)
+                        {
+                            <td>
+                                @item.Material_Medium_Name
+                            </td>
+                            <td align="center">
+                                <input type="text" id="txtDeliveryDate_@item.Material_Medium_Code" class="isDatepicker shortDate form-control input-sm"
+                                       value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.Delivery_Date)' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" title="Delivery Date"/>
+                            </td>
+                            <td align="center">
+                                <input type="text" id="txtTCQCDate_@item.Material_Medium_Code" class="isDatepicker shortDate form-control input-sm"
+                                       value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.TC_QC_Date)' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" title="TC/QC Date" />
+                            </td>
+                            <td align="center">
+                                <input type="text" id="txtSNPDate_@item.Material_Medium_Code" class="isDatepicker shortDate form-control input-sm"
+                                       value='@string.Format("{0:" + GlobalParams.DateFormat + "}", item.SNP_Date)' placeholder="DD/MM/YYYY" style="width:100px;text-align:center;" title="SNP Date" />
+                            </td>
+                            <td align="center">
+                                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveMaterialDetail(@item.Material_Medium_Code)"></a>
+                                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>
+                                @item.Material_Medium_Name
+                            </td>
+                            <td align="center">
+                                @string.Format("{0:" + GlobalParams.DateFormat + "}", item.Delivery_Date)
+                            </td>
+                            <td align="center">
+                                @string.Format("{0:" + GlobalParams.DateFormat + "}", item.TC_QC_Date)
+                            </td>
+                            <td align="center">
+                                @string.Format("{0:" + GlobalParams.DateFormat + "}", item.SNP_Date)
+                            </td>
+                            <td align="center">
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor:pointer;" onclick="AddEditMaterialDetail(@item.Material_Medium_Code, 'EDIT')"></a>
+                            </td>
+                        }
+                    </tr>
+                }
+            }
+
+            else
+            {
+                <tr>
+                    <td colspan="4">@objMessageKey.Norecordfound</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+    function SaveMaterialDetail(MaterialMediumCode) {
+        debugger
+        var returnVal = true;
+        var DeliveryDate = $.trim($('#txtDeliveryDate_' + MaterialMediumCode).val());
+        var TCQCDate = $.trim($('#txtTCQCDate_' + MaterialMediumCode).val());
+        var SNPDate = $('#txtSNPDate_' + MaterialMediumCode).val();
+
+        showLoading();
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveMaterialDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    MaterialMediumCode: MaterialMediumCode,
+                    DeliveryDate: DeliveryDate,
+                    TCQCDate: TCQCDate,
+                    SNPDate: SNPDate
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        hideLoading();
+                        if (result.Status == "S") {
+                            $('#hdnAction').val("")
+                            showAlert("S", result.Message);
+                            BindMaterialDetailListData('', 0, '', false);
+                            BindDDL();
+                            SetPaging();
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+        hideLoading();
+    }
+    function Cancel() {
+        debugger
+        $('#hdnAction').val("")
+        BindMaterialDetailListData('', 0, '', false);
+    }
+
+</script>

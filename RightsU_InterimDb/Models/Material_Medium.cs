@@ -19,6 +19,7 @@ namespace RightsU_InterimDb.Models
             this.Material_Order_Details = new HashSet<Material_Order_Details>();
             this.Acq_Deal_Material = new HashSet<Acq_Deal_Material>();
             this.Syn_Deal_Material = new HashSet<Syn_Deal_Material>();
+            this.Title_Content_Material = new HashSet<Title_Content_Material>();
         }
     
     	public State EntityState { get; set; }    public int Material_Medium_Code { get; set; }
@@ -36,5 +37,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
         public virtual ICollection<Acq_Deal_Material> Acq_Deal_Material { get; set; }
         public virtual ICollection<Syn_Deal_Material> Syn_Deal_Material { get; set; }
+        public virtual ICollection<Title_Content_Material> Title_Content_Material { get; set; }
     }
 }
