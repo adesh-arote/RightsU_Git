@@ -30,8 +30,14 @@ namespace UTO_Notification.API.AuthFilter
             startTime = DateTime.Now;
             IEnumerable<string> requstAuthKey = context.Request.Headers.GetValues("AuthKey");
             var myListrequstAuthKey = requstAuthKey.ToList();
+
+            WriteLog.Log("", "AuthenticateAsync :before service ", "");
+
             IEnumerable<string> requstService = context.Request.Headers.GetValues("Service");
             var myListrequstService = requstService.ToList();
+
+            WriteLog.Log("", "AuthenticateAsync :after service ", "");
+
             string storedKeys = ConfigurationManager.AppSettings["storedKeys"].ToString();
             string[] sKeys;
             sKeys = storedKeys.Split(',');
@@ -92,6 +98,8 @@ namespace UTO_Notification.API.AuthFilter
                     byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes);
 
                     string result = Convert.ToBase64String(bytesEncrypted);
+
+                    WriteLog.Log(result, "AuthenticateAsync :Encrypted string ", result);
 
                     if (result == myListrequstAuthKey[0].ToString() && sKeys.Contains(myListrequstAuthKey[0].ToString()))
                     {
