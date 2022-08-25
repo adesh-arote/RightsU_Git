@@ -298,6 +298,9 @@ namespace RightsU_Plus.Controllers
             }
             var Is_AllowMultiBUacqdealreport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdealreport").Select(x => x.Parameter_Value).FirstOrDefault();
             ViewBag.Is_AllowMultiBUacqdealreport = Is_AllowMultiBUacqdealreport;
+
+            ViewBag.ModeOfAcquisitionList = GetModeOfAcquisitionList();
+
             return View();
         }
         public ActionResult AuditTrailReport()
@@ -342,7 +345,7 @@ namespace RightsU_Plus.Controllers
 
         }
         public PartialViewResult BindAcqDealListReport(string businessUnitcode, string DealNo, string DealType, string Dealtag, string startDate, string endDate, string Title,
-            string IsPushBack, string subDeal, string DealSegment, string masterDeal, string dateformat, string IsCheckRight, string TypeOfFilm)
+            string IsPushBack, string subDeal, string DealSegment, string masterDeal, string dateformat, string IsCheckRight, string TypeOfFilm, string ModeOfAcquisitionCode)
         {
             if (businessUnitcode == "0")
             {
@@ -361,7 +364,7 @@ namespace RightsU_Plus.Controllers
 
             string title_names = TitleAutosuggest(Title);
             string Promoter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(t => true).Where(w => w.Parameter_Name == "Promoter_Tab").Select(s => s.Parameter_Value).FirstOrDefault();
-            ReportParameter[] parm = new ReportParameter[18];
+            ReportParameter[] parm = new ReportParameter[19];
 
             parm[0] = new ReportParameter("Agreement_No", DealNo);
             parm[1] = new ReportParameter("Is_Master_Deal", DealType);
@@ -381,6 +384,7 @@ namespace RightsU_Plus.Controllers
             parm[15] = new ReportParameter("IsCheckRight", IsCheckRight);
             parm[16] = new ReportParameter("DealSegment", DealSegment);
             parm[17] = new ReportParameter("TypeOfFilm", TypeOfFilm);
+            parm[18] = new ReportParameter("ModeOfAcquisition", ModeOfAcquisitionCode);
             ReportViewer rptViewer = BindReport(parm, "ACQUITION_DEAL_LIST_REPORT");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
@@ -922,6 +926,16 @@ namespace RightsU_Plus.Controllers
                     list.Insert(0, new SelectListItem() { Selected = true, Text = "All Business Unit", Value = "0" });
                 }
             }
+            return new SelectList(list, "Value", "Text");
+        }
+
+        public SelectList GetModeOfAcquisitionList()
+        {
+            List<SelectListItem> list = new SelectList(new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Role_Type == "A")
+            .Select(i => new { Display_Value = i.Role_Code, Display_Text = i.Role_Name }).ToList().Distinct(),"Display_Value", "Display_Text").ToList();
+
+            //list.Insert(0, new SelectListItem() { Selected = true, Text = "All Mode Of Acquisition", Value = "0" });
+             
             return new SelectList(list, "Value", "Text");
         }
         #region -------------- Platform Wise Syndication--------
