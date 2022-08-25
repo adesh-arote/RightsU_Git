@@ -19,6 +19,10 @@
     {
         ViewBag.Is_AcqSyn_Type_Of_Film = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_AcqSyn_Type_Of_Film").Select(s => s.Parameter_Value).FirstOrDefault();
     }
+    if (ViewBag.Is_Title_CoProd_AdvSearch == null)
+    {
+        ViewBag.Is_Title_CoProd_AdvSearch = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Title_CoProd_AdvSearch").Select(s => s.Parameter_Value).FirstOrDefault();
+    }
 }
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -785,6 +789,8 @@
         $("#ddlProgram").val('').trigger("chosen:updated");
         $("#ddlTypeofFilm").find("option").attr("selected", false);
         $("#ddlTypeofFilm").val('').trigger("chosen:updated");
+        $("#ddlCoProduction").find("option").attr("selected", false);
+        $("#ddlCoProduction").val('').trigger("chosen:updated");
         $('#srchCommon').val('');
         BindGrid(0, "Y", "N", "N");
     }
@@ -983,7 +989,7 @@
     }
     function AdvanceSearch() {
         debugger;
-        var tmpStarCast = '', tmpLanguage = '', tmpOrigLang = '', tmpDeal = '', tmpCountry = '', tmpDirector = '', tmpProgram = '',tmpTypeOfFilm = '' ;
+        var tmpStarCast = '', tmpLanguage = '', tmpOrigLang = '', tmpDeal = '', tmpCountry = '', tmpDirector = '', tmpProgram = '', tmpTypeOfFilm = '', tmpCoProduction = '' ;
         if ($('#ddlStarCast').val())
             tmpStarCast = $('#ddlStarCast').val().join(',');
 
@@ -1006,10 +1012,14 @@
         if ($('#ddlTypeofFilm').val())
             tmpTypeOfFilm = $('#ddlTypeofFilm').val();
 
+        if ($('#ddlCoProduction').val())
+            tmpCoProduction = $('#ddlCoProduction').val();
+
         var txtYearOfRelease = $('#txtYearOfRelease').val();
 
         tmpProgram = $('#ddlProgram').val();
         tmpTypeOfFilm = $('#ddlTypeofFilm').val();
+        tmpCoProduction = $('#ddlCoProduction').val();
 
 
         $.ajax({
@@ -1030,7 +1040,8 @@
                 srchProgram: tmpProgram,
                 SrchOrigLang: tmpOrigLang,
                 SrchOrigTitle: $('#txtOrigTitleSearch').val(),
-                sechTypeofFilm: tmpTypeOfFilm
+                sechTypeofFilm: tmpTypeOfFilm,
+                sechCoProduction: tmpCoProduction
             }),
             success: function (result) {
 
@@ -1082,6 +1093,7 @@
                         $("#ddlStarCast").empty();
                         $('#ddlProgram').empty();
                         $('#ddlTypeofFilm').empty();
+                        $('#ddlCoProduction').empty();
 
                         debugger;
                         var obj_Search = $(result.objPage_Properties);
@@ -1127,6 +1139,12 @@
                         });
 
                         $('#ddlTypeofFilm').val(obj_Search[0].Column_Name).trigger("chosen:updated");
+
+                        $(result.lstCoProduction).each(function (index, item) {
+                            $("#ddlCoProduction").append($("<option>").val(this.Value).text(this.Text));
+                        });
+
+                        $('#ddlCoProduction').val(obj_Search[0].CoProd_Search).trigger("chosen:updated");
                     }
                 },
                 error: function (result) {
@@ -1526,6 +1544,7 @@
                             <label>@objMessageKey.TitleName:</label>
                             <br>
                             <input type="hidden" value="@ViewBag.Is_AcqSyn_Type_Of_Film" id="hdnTypeof" />
+                            <input type="hidden" value="@ViewBag.Is_Title_CoProd_AdvSearch" id="hdnCoProduction" />
 
                             <input type="text" placeholder="@objMessageKey.TitleName" id="txtTitleSearch" autocomplete="on" style="width:250px" value='@ViewBag.SrchTitle' onkeyup="populateTitle(event)" />
                             <input type="text" id="lbTitle_Code" style="display: none;" />
@@ -1551,16 +1570,23 @@
                             <label>@objMessageKey.KeyStarCast:</label><br />
                             <select id="ddlStarCast" multiple="multiple"></select>
                         </li>
-                       
+
                         @if (ViewBag.Is_AcqSyn_Type_Of_Film == "Y")
                         {
                             <li class="AdSearch">
                                 <label>Type of Film:</label><br />
-                                <select id="ddlTypeofFilm" class="form_input chosen-select"></select> 
-                               
+                                <select id="ddlTypeofFilm" class="form_input chosen-select"></select>
+
                             </li>
                         }
+                        @if (ViewBag.Is_Title_CoProd_AdvSearch == "Y")
+                        {
+                            <li class="AdSearch">
+                                <label>Co-Production:</label><br />
+                                <select id="ddlCoProduction" class="form_input chosen-select"></select>
 
+                            </li>
+                        }
 
                         <li class="AdSearch">
                             <a onclick="ShowMore('pnlShowmore')" id="showMore">Show more...</a>
