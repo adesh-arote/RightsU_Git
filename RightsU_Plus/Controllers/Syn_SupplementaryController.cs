@@ -62,10 +62,10 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult Index()
         {
             objDeal_Schema.Page_From = GlobalParams.Page_From_Supplementary;
-
-            Session["SupplementaryDetail"] = null;
-            objSyn_Deal_Supplementary = null;
             ViewBag.Deal_Mode = objDeal_Schema.Mode;
+
+            objSyn_Deal_Supplementary = null;
+            Session["SupplementaryDetail"] = null;
 
             DateTime perpDate = new DateTime(9999, 12, 31);
             var lstSynRights = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName)
@@ -80,7 +80,16 @@ namespace RightsU_Plus.Controllers
 
                 ViewBag.SynLP = Convert.ToDateTime(startDate).ToString("dd-MMM-yyyy") + " To " + (Convert.ToDateTime(endDate) == perpDate ? " Perpetuity" : Convert.ToDateTime(endDate).ToString("dd-MMM-yyyy"));
             }
-            ViewBag.RecordCount = 50;
+            
+            //ViewBag.RecordCount = 50;
+            if (TempData["page_size"] != null)
+            {
+                ViewBag.page_size = TempData["page_size"];
+            }
+            if (TempData["page_index"] != null)
+            {
+                ViewBag.page_index = TempData["page_index"];
+            }
             return PartialView("~/Views/Syn_Deal/_Syn_Supplementary.cshtml");
         }
 
@@ -124,11 +133,13 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindAllPreReq_Async()
         {
-            int supplementary_Code = 0, title_code = 0;
+            int supplementary_Code = 0, title_code = 0, page_size = 0, page_index=0;
             string Operation = "";
             Dictionary<string, string> obj_Dictionary_RList = (Dictionary<string, string>)TempData["QueryString_Rights"];
             supplementary_Code = Convert.ToInt32(obj_Dictionary_RList["Supplementary_code"]);
             title_code = Convert.ToInt32(obj_Dictionary_RList["title_code"]);
+            page_size = Convert.ToInt32(obj_Dictionary_RList["page_size"]);
+            page_index = Convert.ToInt32(obj_Dictionary_RList["page_index"]);
 
             Supplementary_Tab_Service objService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Supplementary_Tab> objSupplementary_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForSynDeal).OrderBy(a => a.Order_No).ToList();
@@ -239,6 +250,10 @@ namespace RightsU_Plus.Controllers
             obj.Add("FieldList", _fieldList.TrimEnd(','));
             obj.Add("Remarks", objSupplementary.Remarks);
             obj.Add("ViewOperation", ViewOperation);
+            obj.Add("page_size", page_size);
+            obj.Add("page_index", page_index);
+            TempData["page_size"] = page_size;
+            TempData["page_index"] = page_index;
             return Json(obj);
         }
 
@@ -252,7 +267,7 @@ namespace RightsU_Plus.Controllers
             int i = 1, j = 1, k = 1, l = 1, m = 1;
             double width = 0, viewWidth = 5;
             if (ViewOperation != "VIEW")
-                width = 100 / columnList.Count();
+                width = 100 / columnList.Count() - 10;
             else
             {
                 viewWidth = columnList.Count > 5 ? 5 : 10;
@@ -355,7 +370,7 @@ namespace RightsU_Plus.Controllers
 
             if (WindowType == "inLine")
             {
-                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok\" onclick = \"SaveSupp(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove\" onclick = \"hideaddsupp();\"></a></td>";
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" onclick = \"SaveSupp(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"hideaddsupp();\"></a></td>";
                 strAddRow = strAddRow + "</tr>";
                 strtableHeader = strtableHeader + strAddRow;
             }
@@ -370,14 +385,13 @@ namespace RightsU_Plus.Controllers
         {
             string[] SelectedList = SelectedValues.Split(',');
             string strDDL;
-            if (multiple == "N")
+            if (multiple == "")
             {
                 strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
             {
-                multiple = "multiple";
                 strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
             }
             //strDDL = strDDL + "<option value=\"\" selected disabled hidden> Please Select</option>";
@@ -425,7 +439,7 @@ namespace RightsU_Plus.Controllers
         }
         public string getDBL(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
         {
-            string getNumber = "<input type=\"number\" value=\"0.00\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" value=\""+ User_Value +"\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -433,7 +447,7 @@ namespace RightsU_Plus.Controllers
         {
             string strChecked = "";
 
-            if (User_Value == "" || User_Value == "NO")
+            if (User_Value == "" || User_Value.ToUpper() == "NO")
             {
                 strChecked = "";
             }
@@ -539,7 +553,7 @@ namespace RightsU_Plus.Controllers
             }
             if (View != "View")
             {
-                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok\" id=\"A" + Short_Name + rowno.ToString() + "\" onclick = \"SaveSupp(this,'" + rowno.ToString() + "');\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove\" onclick = \"closeEdit(" + num + ");\"></a></td>";
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" id=\"A" + Short_Name + rowno.ToString() + "\" onclick = \"SaveSupp(this,'" + rowno.ToString() + "');\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"closeEdit(" + num + ");\"></a></td>";
             }
             strAddRow = strAddRow + "</tr>";
 
@@ -575,11 +589,15 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public string DeleteSupplementary(int supplementary_Code, int Page_Index, int Page_Size)
+        public string DeleteSupplementary(int supplementary_Code, int page_index, int page_size)
         {
             objUspService.USP_Delete_Syn_Supplementary(supplementary_Code);
             //var Mode = "A";
-            BindSupplementary(Page_Index, Page_Size);
+            BindSupplementary(page_index, page_size);
+
+            TempData["page_size"] = page_size;
+            TempData["page_index"] = page_index;
+
             string success = "201";
             return success;
         }
@@ -656,9 +674,14 @@ namespace RightsU_Plus.Controllers
 
                 if (prevRowTitle != "" && prevRowTitle == CM.Supplementary_Name)
                 {
-                    if (CM.Control_Type == "TXTDDL")
+                    if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "Y")
                     {
-                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, CM.Is_Multiselect, CM.Supplementary_Config_Code);
+                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "multiple", CM.Supplementary_Config_Code);
+                        i++;
+                    }
+                    else if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "N")
+                    {
+                        utospltag = getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "", CM.Supplementary_Config_Code);
                         i++;
                     }
                     else if (CM.Control_Type == "TXTAREA")
@@ -699,9 +722,14 @@ namespace RightsU_Plus.Controllers
                     strAddRow = strAddRow + "<td>";
                     prevRowTitle = CM.Supplementary_Name;
 
-                    if (CM.Control_Type == "TXTDDL")
+                    if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "Y")
                     {
-                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, CM.Is_Multiselect, CM.Supplementary_Config_Code);
+                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "multiple", CM.Supplementary_Config_Code);
+                        i++;
+                    }
+                    else if (CM.Control_Type == "TXTDDL" && CM.Is_Multiselect == "N")
+                    {
+                        strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, CM.Whr_Criteria, supplementary_Data_Code, Operation, "", CM.Supplementary_Config_Code);
                         i++;
                     }
                     else if (CM.Control_Type == "TXTAREA")
@@ -743,7 +771,7 @@ namespace RightsU_Plus.Controllers
             return strAddRow;
 
         }
-        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, string Is_Syn_Syn_Mapp = "")
+        public JsonResult SuppButtonEvents(int Supplementary_code, int title_code, string View, string MODE, int? RCode, int? PCode, int? TCode, int? Episode_From, int? Episode_To, string IsHB, int page_size, int page_index, string Is_Syn_Syn_Mapp = "")
         {
             Dictionary<string, string> obj_Dictionary_RList = new Dictionary<string, string>();
             obj_Dictionary_RList.Add("MODE", MODE);
@@ -756,6 +784,8 @@ namespace RightsU_Plus.Controllers
             obj_Dictionary_RList.Add("Is_Syn_Syn_Mapp", Is_Syn_Syn_Mapp);
             obj_Dictionary_RList.Add("Supplementary_code", Supplementary_code.ToString());
             obj_Dictionary_RList.Add("title_code", title_code.ToString());
+            obj_Dictionary_RList.Add("page_size", page_size.ToString());
+            obj_Dictionary_RList.Add("page_index", page_index.ToString());
             if (View != null)
             {
                 obj_Dictionary_RList.Add("View", View.ToString());
@@ -942,7 +972,7 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal_Supplementary = objSupplementary;
             return Output;
         }
-        public JsonResult supplementarySaveDB(string Title_List, string Remarks)
+        public JsonResult supplementarySaveDB(string Title_List, string Remarks, int page_size, int page_index)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
             Syn_Deal_Supplementary objSupplementaryTemp = (Syn_Deal_Supplementary)objSyn_Deal_Supplementary;
@@ -1043,7 +1073,10 @@ namespace RightsU_Plus.Controllers
 
                 obj.Add("ErrorCode", "100");
                 obj.Add("ErrorMsg", "Deal Saved successfully");
-
+                obj.Add("page_size",page_size);
+                obj.Add("page_index",page_index);
+                TempData["page_size"] = page_size;
+                TempData["page_index"] = page_index;
                 return Json(obj);
             }
         }
@@ -1051,7 +1084,8 @@ namespace RightsU_Plus.Controllers
         public JsonResult supplementaryValidation()
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            obj.Add("detailsCnt", objSyn_Deal_Supplementary.Syn_Deal_Supplementary_Detail.Count);
+            int count = objSyn_Deal_Supplementary.Syn_Deal_Supplementary_Detail.Where(x => x.EntityState != State.Deleted).Count();
+            obj.Add("detailsCnt", count);
             return Json(obj);
         }
     }

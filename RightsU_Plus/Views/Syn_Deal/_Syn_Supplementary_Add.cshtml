@@ -83,6 +83,8 @@
                 $('#FieldList').val(result.FieldList);
                 $('#txtSynRemarks').val(result.Remarks);
                 $('#txtSynRemarks').trigger("keyup");
+                $('#hdnCurrentPageNo').val(result.page_index);
+                $('#hdnPageSize').val(result.page_size);
 
                 $('#ViewOperation').val(result.ViewOperation);
                 if ($('#ViewOperation').val() == "VIEW") {
@@ -232,8 +234,6 @@
         if (wtName == "PopUp") {
             $('#popupindex').val(rwIndex);
         }
-
-
 
         if (wtName == "PopUp") {
             $.ajax({
@@ -517,18 +517,25 @@
 
     function Cancel_Supplementary() {
         debugger;
-        if(document.getElementById("btnSaveDeal").style.display != "none")
+        if (document.getElementById("btnSaveDeal").style.display != "none")
             showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        else {
+            var tabName = $('#hdnTabName').val()
+            if ($('#hdnTabName').val() == '')
+                tabName = pageSupplementary;
+
+            BindPartialTabs(tabName);
+        }
     }
 
     function Cancel_SupplementaryView() {
-
         BindPartialTabs("SUPP");
     }
     function SuppSave()
     {
         showLoading();
         debugger;
+        var page_size = 0; var page_index = 0;
         var shortName = $('#TabName').val();
         //var wtName = $('#hdnwt' + shortName).val();
         //if (wtName == "PopUp") {
@@ -567,15 +574,18 @@
             }
         });
 
-        if (detailsCnt < 1) {
-            showAlert('I', "Please add supplementary details to save.");
-            hideLoading();
-            return;
-        }
+        //if (detailsCnt < 1) {
+        //    showAlert('I', "Please add supplementary details to save.");
+        //    hideLoading();
+        //    return;
+        //}
 
         if ($('#txtSynRemarks').val() != null) {
             var Remarks = $('#txtSynRemarks').val();
         }
+
+        page_index = $('#hdnCurrentPageNo').val();
+        page_size = $('#hdnPageSize').val();
 
         $.ajax({
             type: "POST",
@@ -585,7 +595,9 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 Title_List: title,
-                Remarks: Remarks
+                Remarks: Remarks,
+                page_size: page_size,
+                page_index: page_index
             }),
             success: function (result) {
                 debugger;
@@ -626,6 +638,9 @@
 <input type="hidden" id="popupindex" />
 <input type="hidden" id="inputValidation" value="false" />
 <input type="hidden" id="ViewOperation" />
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
+<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
+<input type="hidden" id="hdnPageSize" name="hdnPageSize" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -671,7 +686,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SuppSave();">
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return SuppSave();">
                         </li>
                         <li>
                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />

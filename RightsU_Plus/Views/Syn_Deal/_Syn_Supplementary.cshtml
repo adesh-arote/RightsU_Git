@@ -23,17 +23,16 @@
     var URL_DeleteSupplementary = '@Url.Action("DeleteSupplementary", "Syn_Supplementary")';
 
     $(document).ready(function () {
-        $('#hdnCurrentPageNo').val(0);
-        BindGrid(0, false);
+        debugger;
+        var page_size = parseInt(@ViewBag.page_size);
+        $('#txtPageSize').val(@ViewBag.page_size);
 
-        @*$('.SuppRemarks').expander({
-            slicePoint: 200,
-            expandPrefix: '',
-            expandText: '...@objMessageKey.readmore',
-            collapseTimer: 0,
-            userCollapseText: '<span>[^]</span>'
-        });*@
-
+        if (page_size > 0) {
+            $('#hdnCurrentPageNo').val(@ViewBag.page_index);
+        } else {
+            $('#hdnCurrentPageNo').val(0);
+        }
+        BindGrid();
     });
 
     function initializeReadmore() {
@@ -79,40 +78,11 @@
             }
         });
     }
-
     var IsCall = 'Y';
-    function SetPaging(txtPageSize) {
-        IsCall = 'N';
-        var PageNo, recordCnt = 3;
-        PageNo = $("#hdnCurrentPageNo").val();
-        recordCnt = $("#hdnRecordCount").val();
-        $('#hdnCurrentPageNo').val(PageNo);
-        var opt = { callback: pageselectCallback };
-
-        opt["items_per_page"] = txtPageSize;
-        opt["num_display_entries"] = 5;
-        opt["num"] = 1;
-        opt["prev_text"] = "<<";
-        opt["next_text"] = ">>";
-        opt["current_page"] = PageNo;
-        $("#Pagination").pagination(recordCnt, opt);
-    }
-
-    function pageselectCallback(page_index, jq) {
-        if (ValidatePageSize()) {
-            if (IsCall == 'Y') {
-                var hdnCurrentPageNo = parseInt(page_index) + 1;
-                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
-                BindGrid();
-            }
-            else
-                IsCall = 'Y';
-        }
-    }
-
-
     function SuppButtonEvents(Supplementary_code, title_code, mode, rCode, tCode, episodeFrom, episodeTo, pCode, isHB, isSynSynMapp) {
         debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
         showLoading();
         $.ajax({
             //    $('#lbTerritory,#lbSub_Language,#lbDub_Language').SumoSelect({ selectAll: true, triggerChangeCombined: false });
@@ -126,7 +96,9 @@
             data: JSON.stringify({
                 Supplementary_code: 0,
                 title_code: 0,
-                MODE: 'A'
+                MODE: 'A',
+                page_size: page_size,
+                page_index: page_index
             }),
             success: function (result) {
                 if (result == "true") {
@@ -147,6 +119,8 @@
 
     function Edit(Supplementary_code, title_code,View) {
         debugger;
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
         $.ajax({
             type: "POST",
             url: URL_SuppButtonEvents,
@@ -158,7 +132,9 @@
                 Supplementary_code: Supplementary_code,
                 title_code: title_code,
                 view: View,
-                MODE: 'E'
+                MODE: 'E',
+                page_size: page_size,
+                page_index: page_index
             }),
             success: function (result) {
                 debugger;
@@ -177,8 +153,8 @@
     }
     function Delete(Supplementarycode) {
         debugger;
-        var Page_Size = $('#txtPageSize').val();
-        var Page_Index = $('#hdnCurrentPageNo').val();
+        var page_index = $('#hdnCurrentPageNo').val();
+        var page_size = $('#txtPageSize').val();
 
         $.ajax({
             type: "POST",
@@ -189,8 +165,8 @@
             async: true,
             data: JSON.stringify({
                 Supplementary_code: Supplementarycode,
-                Page_Size: Page_Size,
-                Page_Index: Page_Index
+                page_index: page_index,
+                page_size: page_size
             }),
             success: function (result) {
                 if (result == "201") {
@@ -201,18 +177,6 @@
         })
     }
 
-    function PageSize_OnChange() {
-        debugger;
-        $('.required').removeClass('required');
-        $("[required='required']").removeAttr("required");
-        var IsValid = ValidatePageSize();
-        if (IsValid) {
-            $('#hdnCurrentPageNo').val(0);
-            BindGrid();
-        }
-        else
-            return false;
-    }
     function ValidateSave() {
     debugger;
         showLoading();
@@ -252,6 +216,67 @@
 
         //Code end for approval
         return Isvalid;
+    }
+
+    function ClearHidden() {
+        if (!clickedOnTab) {
+            $("#hdnTabName").val('');
+        }
+    }
+
+    function SetPaging(txtPageSize) {
+        debugger;
+        IsCall = 'N';
+        var PageNo, recordCnt = 3;
+        PageNo = $("#hdnCurrentPageNo").val();
+        recordCnt = $("#hdnRecordCount").val();
+        $('#hdnCurrentPageNo').val(PageNo);
+        var opt = { callback: pageselectCallback };
+
+        opt["items_per_page"] = txtPageSize;
+        opt["num_display_entries"] = 5;
+        opt["num"] = 1;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = PageNo - 1;
+        $("#Pagination").pagination(recordCnt, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (ValidatePageSize()) {
+            if (IsCall == 'Y') {
+                var hdnCurrentPageNo = parseInt(page_index) + 1;
+                $('#hdnCurrentPageNo').val(hdnCurrentPageNo);
+                BindGrid();
+            }
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function PageSize_OnChange() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        var IsValid = ValidatePageSize();
+        if (IsValid) {
+            $('#hdnCurrentPageNo').val(0);
+            BindGrid();
+        }
+        else
+            return false;
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
     }
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
