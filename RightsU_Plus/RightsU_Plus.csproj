@@ -66,7 +66,7 @@
     </Reference>
     <Reference Include="AvailEntity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\ayush\Downloads\AvailEntity\AvailEntity.dll</HintPath>
+      <HintPath>..\..\Supp\AvailEntity.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -126,11 +126,11 @@
     </Reference>
     <Reference Include="RightsUAvailsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\RightsUAvailsProvider.dll</HintPath>
+      <HintPath>..\..\Supp\RightsUAvailsProvider.dll</HintPath>
     </Reference>
     <Reference Include="RightsUAvailsProviderContract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\RightsUAvailsProviderContract.dll</HintPath>
+      <HintPath>..\..\Supp\RightsUAvailsProviderContract.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -206,15 +206,15 @@
     </Reference>
     <Reference Include="UTO.Framework.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\UTO.Framework.Shared.dll</HintPath>
+      <HintPath>..\..\Supp\UTO.Framework.Shared.dll</HintPath>
     </Reference>
     <Reference Include="UTO.Framework.SharedInfrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\UTO.Framework.SharedInfrastructure.dll</HintPath>
+      <HintPath>..\..\Supp\UTO.Framework.SharedInfrastructure.dll</HintPath>
     </Reference>
     <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\ZeroFormatter.Interfaces.dll</HintPath>
+      <HintPath>..\..\Supp\ZeroFormatter.Interfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

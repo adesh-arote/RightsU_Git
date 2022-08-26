@@ -647,13 +647,16 @@ namespace UTOFrameWork.FrameworkClasses
             //    strDataBase = "Initial Catalog=" + ConfigurationManager.AppSettings["RightsU_VMPL"];
             //End
 
-            string strDataBase = strDataBase = "Initial Catalog=" + Convert.ToString(new ParentPage().ObjLoginEntity.DatabaseName);
+            //string strDataBase = strDataBase = "Initial Catalog=" + Convert.ToString(new ParentPage().ObjLoginEntity.DatabaseName);
 
-            string strServer = "Data Source=" + Convert.ToString(ConfigurationManager.AppSettings["DataServer"]);
-            string strUserId = "User Id=" + Convert.ToString(ConfigurationManager.AppSettings["UserId"]);
-            string strPassword = " Password=" + Convert.ToString(ConfigurationManager.AppSettings["Password"]);
-            string StrTimeOut = " Connection Timeout =" + Convert.ToString(ConfigurationManager.AppSettings["TimeOut"]);
-            string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
+            //string strServer = "Data Source=" + Convert.ToString(ConfigurationManager.AppSettings["DataServer"]);
+            //string strUserId = "User Id=" + Convert.ToString(ConfigurationManager.AppSettings["UserId"]);
+            //string strPassword = " Password=" + Convert.ToString(ConfigurationManager.AppSettings["LDAP_Auth"]);
+            //string StrTimeOut = " Connection Timeout =" + Convert.ToString(ConfigurationManager.AppSettings["TimeOut"]);
+            //string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
+
+            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.DatabaseName) + "Ado"].ConnectionString;
+
             return strConnectionString;
         }
         public static string GetDataBaseName()
@@ -1459,11 +1462,12 @@ namespace UTOFrameWork.FrameworkClasses
             //    strDataBase = "Initial Catalog=" + ConfigurationManager.AppSettings["RightsU_VMPL"];
 
             CommandTimeoutStatic = Convert.ToInt32(ConfigurationManager.AppSettings["CommandTimeout"]);
-            string strServer = "Data Source=" + ConfigurationManager.AppSettings["DataServer"];
-            string strUserId = "User Id=" + ConfigurationManager.AppSettings["UserId"];
-            string strPassword = " Password=" + ConfigurationManager.AppSettings["Password"];
-            string StrTimeOut = " Connection Timeout =" + ConfigurationManager.AppSettings["TimeOut"];
-            string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
+            //string strServer = "Data Source=" + ConfigurationManager.AppSettings["DataServer"];
+            //string strUserId = "User Id=" + ConfigurationManager.AppSettings["UserId"];
+            //string strPassword = " Password=" + ConfigurationManager.AppSettings["LDAP_Auth"];
+            //string StrTimeOut = " Connection Timeout =" + ConfigurationManager.AppSettings["TimeOut"];
+            //string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
+            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.DatabaseName) + "Ado"].ConnectionString;
             myConn.ConnectionString = strConnectionString;
             DataSet ds = new DataSet();
             SqlCommand ScalarCommand = new SqlCommand();
@@ -2839,7 +2843,7 @@ namespace UTOFrameWork.FrameworkClasses
         public static void Release_Record(int record_Locking_Code, bool Is_Infinite_Lock = false)
         {
             string strReleaseTime_Value = "GETDATE()";
-            if(Is_Infinite_Lock)
+            if (Is_Infinite_Lock)
                 strReleaseTime_Value = "NULL";
 
             string strQuery = "UPDATE Record_Locking SET Is_Active = 'N', Release_Time =  " + strReleaseTime_Value
