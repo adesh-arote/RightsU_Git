@@ -1019,7 +1019,7 @@ namespace RightsU_Plus.Controllers
             //    objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             //    objPTV.PlatformCodes_Display = strPlatform;
             //}
-
+            ViewBag.Title_Release_Platform_Codes = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Title_Release_Platform_Codes").First().Parameter_Value;
             objPTV.PlatformCodes_Selected = selectedPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             objPTV.PlatformCodes_Display = strPlatform;
             ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
@@ -1103,6 +1103,7 @@ namespace RightsU_Plus.Controllers
             {
                 title_List.Clear();
             }
+            ViewBag.Title_Release_Platform_Codes = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Title_Release_Platform_Codes").First().Parameter_Value;
             return PartialView("_List_Title_Release", title_List);
         }
 
@@ -1911,6 +1912,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.TabName = tabName;
             ViewBag.AlternateConfigCode = configCode;
             ConfigCode = configCode;
+            ViewBag.Title_Release_Platform_Codes = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name.ToUpper() == "Title_Release_Platform_Codes").First().Parameter_Value;
             if (tabName == "TA")
             {
                 ViewBag.Direction = "LTR";
