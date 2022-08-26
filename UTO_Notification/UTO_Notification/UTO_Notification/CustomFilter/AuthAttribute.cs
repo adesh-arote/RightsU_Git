@@ -42,6 +42,8 @@ namespace UTO_Notification.API.AuthFilter
             string[] sKeys;
             sKeys = storedKeys.Split(',');
 
+            WriteLog.Log("", "Outside condition ", myListrequstAuthKey[0]);
+
             if (myListrequstAuthKey[0] == "")
             {
                 var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
@@ -82,12 +84,6 @@ namespace UTO_Notification.API.AuthFilter
 
                     //*  return ip; *//
 
-                    //string strHostName = "";
-                    //strHostName = Dns.GetHostName();
-                    //IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
-                    //IPAddress[] addr = ipEntry.AddressList;
-                    //string ipAddress = addr[addr.Length - 1].ToString();
-
                     //* Encrypted *//
 
                     string salt = ConfigurationManager.AppSettings["salt"].ToString();
@@ -101,7 +97,7 @@ namespace UTO_Notification.API.AuthFilter
 
                     WriteLog.Log(result, "AuthenticateAsync :Encrypted string ", result);
 
-                    if (result == myListrequstAuthKey[0].ToString() && sKeys.Contains(myListrequstAuthKey[0].ToString()))
+                    if (sKeys.Contains(result))
                     {
                         return Task.FromResult<object>(null);
 
