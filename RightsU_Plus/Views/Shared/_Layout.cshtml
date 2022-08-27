@@ -870,9 +870,12 @@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
-                            if (objMessageKey.LayoutDirection.Equals("RTL"))
+                            if (objMessageKey.LayoutDirection != null)
                             {
-                                dataPlacement = "left";
+                                if (objMessageKey.LayoutDirection.Equals("RTL"))
+                                {
+                                    dataPlacement = "left";
+                                }
                             }
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForTitle))

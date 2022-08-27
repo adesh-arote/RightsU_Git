@@ -5730,5 +5730,22 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Mapping_Countries_Buyback", syn_Deal_Right_CodeParameter);
         }
+
+        public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(string acq_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
+        {
+            var acq_Deal_Rights_CodesParameter = acq_Deal_Rights_Codes != null ?
+                new ObjectParameter("Acq_Deal_Rights_Codes", acq_Deal_Rights_Codes) :
+                new ObjectParameter("Acq_Deal_Rights_Codes", typeof(string));
+
+            var selected_SubTitling_Language_CodesParameter = selected_SubTitling_Language_Codes != null ?
+                new ObjectParameter("Selected_SubTitling_Language_Codes", selected_SubTitling_Language_Codes) :
+                new ObjectParameter("Selected_SubTitling_Language_Codes", typeof(string));
+
+            var selected_Dubbing_Language_CodesParameter = selected_Dubbing_Language_Codes != null ?
+                new ObjectParameter("Selected_Dubbing_Language_Codes", selected_Dubbing_Language_Codes) :
+                new ObjectParameter("Selected_Dubbing_Language_Codes", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result>("USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback", acq_Deal_Rights_CodesParameter, selected_SubTitling_Language_CodesParameter, selected_Dubbing_Language_CodesParameter);
+        }
     }
 }

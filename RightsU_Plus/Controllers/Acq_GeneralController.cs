@@ -1655,7 +1655,7 @@ namespace RightsU_Plus.Controllers
 
             string[] arrTitleCodes = titleCodes.Split(',');
             Deal_Type_Code = dealTypeCode;
-            foreach (string code in arrTitleCodes)
+            foreach (string code in arrTitleCodes.Distinct())
             {
                 int titleCode = Convert.ToInt32(code);
                 Acq_Deal_Movie objAcq_Deal_Movie = new Acq_Deal_Movie();
@@ -1712,6 +1712,28 @@ namespace RightsU_Plus.Controllers
 
             if (titleList != null)
                 UpdateTitleCollection(titleList);
+            if(titleList != null)
+            {
+                if (Session["RightsCode_Buyback"] != null)
+                {
+                    string RightsCode = Convert.ToString(Session["RightsCode_Buyback"]);
+                    string[] arrTitleRights = RightsCode.Split(',');
+                    string newRightsCode = "";
+                    foreach (string item in arrTitleRights)
+                    {
+                        string[] a = item.Split('T');
+                        if (titleList.Select(x => x.Title_Code).Contains(Convert.ToInt32(a[0])))
+                        {
+                            newRightsCode = newRightsCode + "," + item;
+                        }
+                    }
+
+                    Session["RightsCode_Buyback"] = newRightsCode.TrimStart(',');
+
+                }
+            }
+
+            
 
             string status = "S", errorMessag = "";
             Dictionary<string, object> obj = new Dictionary<string, object>();

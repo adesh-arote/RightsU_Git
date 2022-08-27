@@ -1932,6 +1932,7 @@ function CalculateROFRDays() {
 
 function OnFocusLostTerm() {
 
+
     var canAssign = true;
     if ($('#Is_Tentative').prop('checked'))
         canAssign = false
@@ -1966,6 +1967,7 @@ function OnFocusLostTerm() {
 
             if (year > 0 || month > 0 || day > 0) {
                 var newDate = CalculateEndDate(rightSD, year, month, day);
+
                 if (canAssign) {
                     txtEndDate.val(newDate);
                 }
@@ -2513,6 +2515,21 @@ function ValidateSave() {
                 return false;
             }
         }
+
+        /**Code added for buyback**/
+        var msgSyn = "";
+        if (Term == Perpetuity) {
+            msgSyn = Validate_After_Syndication(selectedTitles, regionType, selectedRegion, subType, selectedSub, dubbingType, selectedDub,
+                $('#txtPerpetuity_Date').val(), $('#txtPerpetuity_EndDate').val())
+        }
+        else {
+            msgSyn = Validate_After_Syndication(selectedTitles, regionType, selectedRegion, subType, selectedSub, dubbingType, selectedDub,
+                $('#Start_Date').val(), $('#End_Date').val())
+        }
+        if (msgSyn != '') {
+            showAlert('E', msgSyn);
+            return false;
+        }
     }
 
     msgSyn = Validate_Acq_Right_Title_Platform($("#hdnTVCodes").val(), selectedTitles, Term, isTentative,
@@ -2577,7 +2594,8 @@ function ValidateGroups(RegionCodes, DubbingCodes, SubtitlingCodes) {
     return msg;
 }
 
-function Validate_After_Syndication(TitCodes, RegType, RegCodes, SubType, SubCodes, DubType, DubCodes, RightType, RightStartDate, RightEndDate, PerpetuityDate) {
+function Validate_After_Syndication(TitCodes, RegType, RegCodes, SubType, SubCodes, DubType, DubCodes, RightStartDate, RightEndDate) {
+    debugger;
     var msg = '';
     $.ajax({
         type: "POST",
@@ -2594,10 +2612,8 @@ function Validate_After_Syndication(TitCodes, RegType, RegCodes, SubType, SubCod
             Sub_Codes: SubCodes,
             Dub_Type: DubType,
             Dub_Codes: DubCodes,
-            Right_Type: RightType,
             Right_Start_Date: RightStartDate,
-            Right_End_Date: RightEndDate,
-            Perpetuity_Date: PerpetuityDate
+            Right_End_Date: RightEndDate
         }),
         success: function (result) {
             if (result == "true") {
