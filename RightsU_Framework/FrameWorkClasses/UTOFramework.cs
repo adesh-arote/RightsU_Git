@@ -655,7 +655,7 @@ namespace UTOFrameWork.FrameworkClasses
             //string StrTimeOut = " Connection Timeout =" + Convert.ToString(ConfigurationManager.AppSettings["TimeOut"]);
             //string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
 
-            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.DatabaseName) + "Ado"].ConnectionString;
+            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.ConnectionStringName) + "Ado"].ConnectionString;
 
             return strConnectionString;
         }
@@ -1467,7 +1467,7 @@ namespace UTOFrameWork.FrameworkClasses
             //string strPassword = " Password=" + ConfigurationManager.AppSettings["LDAP_Auth"];
             //string StrTimeOut = " Connection Timeout =" + ConfigurationManager.AppSettings["TimeOut"];
             //string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
-            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.DatabaseName) + "Ado"].ConnectionString;
+            string strConnectionString = ConfigurationManager.ConnectionStrings[(new ParentPage().ObjLoginEntity.ConnectionStringName) + "Ado"].ConnectionString;
             myConn.ConnectionString = strConnectionString;
             DataSet ds = new DataSet();
             SqlCommand ScalarCommand = new SqlCommand();
