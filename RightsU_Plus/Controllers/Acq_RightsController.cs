@@ -168,6 +168,8 @@ namespace RightsU_Plus.Controllers
             objPage_Properties = null;
             lstDupRecords = null;
             lstADRHV = null;
+            objSyn_Deal_Rights_Buyback = null;
+            Session["RightsCode_Buyback"] = false;
             Session["FileName"] = null;
 
             Dictionary<string, string> obj_Dictionary = new Dictionary<string, string>();
@@ -246,12 +248,20 @@ namespace RightsU_Plus.Controllers
 
             Syn_Deal_Rights objSyn_Deal_Rights = new Syn_Deal_Rights();
             Syn_Deal_Rights_Platform objSyn_Deal_Rights_Platform = new Syn_Deal_Rights_Platform();
+
+            objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
+
+
             if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
             {
                 objSyn_Deal_Rights_Buyback = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(objAcq_Deal_Rights.Buyback_Syn_Rights_Code));
                 string.Join(",", (objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(i => i.Platform_Code).Distinct().ToList()));
 
             }
+
+            ViewBag.StartDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date).ToString("dd/MM/yyyy");//objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date;
+            ViewBag.EndDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_End_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_End_Date).ToString("dd/MM/yyyy"); ;
+
 
             Session["FileName"] = "acq_Rights";
             ViewBag.TreeId = "Rights_Platform";
@@ -332,6 +342,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.Acq_Deal_Rights_Code = objPage_Properties.RCODE;
             objAcq_Deal_Rights = objADRS.GetById(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
 
+            objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
             if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
             {
                 Session["RightsCode_Buyback"] = true;
@@ -2341,7 +2352,7 @@ namespace RightsU_Plus.Controllers
         {
             if (TempData["QueryString_Rights"] != null)
                 TempData["QueryString_Rights"] = null;
-
+            objRights.Buyback_Syn_Rights_Code = form["hdnBuyback_Syn_Rights_Code"];
             string message = string.Empty;
             var Is_Valid = SaveDealRight(objRights, form);
             string strPlatform = string.Join(",", (objAcq_Deal_Rights.Acq_Deal_Rights_Platform.Where(p => p.EntityState != State.Deleted).Select(i => i.Platform_Code).Distinct().ToList()));
@@ -2352,6 +2363,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.MessageFrom = "SV";
             ViewBag.MODE = "E";
             string tabName = form["hdnTabName"];
+            
+
 
             if (!Is_Valid)
                 message = "ERROR";
@@ -2736,14 +2749,15 @@ namespace RightsU_Plus.Controllers
                         //}
 
                     }
+                    objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objRights.Buyback_Syn_Rights_Code;
 
                     objADRS.Save(objAcq_Deal_Rights, out resultSet);
-                    //int res = 0;
-                    //if (resultSet.Count != 0)
-                    //{
-                    //    res = resultSet.Count;
-                    //}
-                    int res = resultSet.Count;
+                    int res = 0;
+                    if (resultSet.Count != 0)
+                    {
+                        res = resultSet.Count;
+                    }
+                    //int res = resultSet.Count;
                     if (Is_Allow_Perpetual_Date_Logic == "Y" && objAcq_Deal_Rights.Right_Type == "U" && res == 0)
                     {
                         Acq_Deal_Rights_Perpetuity_Service ADRPS = new Acq_Deal_Rights_Perpetuity_Service(objLoginEntity.ConnectionStringName);
@@ -2820,18 +2834,10 @@ namespace RightsU_Plus.Controllers
 
                         return true;
                     }
-                    else
+                   else
                     {
                         UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
-                        if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code == null)
-                        {
-                            return ShowValidationPopup(resultSet);
-                        }
-                        else
-                        {
-                            return true;
-                        }
-
+                        return ShowValidationPopup(resultSet);
                     }
                 }
             }
@@ -3180,11 +3186,16 @@ namespace RightsU_Plus.Controllers
             string Is_Under_Production = Convert.ToString(form["Is_Under_Production"]) == "false" ? "N" : "Y";
             bool Is_Theatrical_Right = Convert.ToBoolean(form["hdnIs_Theatrical_Right"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
+            string Buyback_Syn_Rights_Code =  Convert.ToString(form["hdnBuyback_Syn_Rights_Code"]);
+
+
+
 
             objExistingRights.Region_Type = Region_Type;
             objExistingRights.Sub_Type = Sub_Type;
             objExistingRights.Dub_Type = Dub_Type;
             objExistingRights.Platform_Codes = Platform_Codes;
+            objExistingRights.Buyback_Syn_Rights_Code = Buyback_Syn_Rights_Code;
 
             Deal_Rights_UDT objDRUDT = new Deal_Rights_UDT();
 
@@ -3565,6 +3576,7 @@ namespace RightsU_Plus.Controllers
             }
 
             objDRUDT.Restriction_Remarks = objExistingRights.Restriction_Remarks = objMVCRights.Restriction_Remarks;
+            objDRUDT.Buyback_Syn_Rights_Code = objExistingRights.Buyback_Syn_Rights_Code;
 
             objExistingRights.LstDeal_Rights_UDT = new List<Deal_Rights_UDT>();
             objExistingRights.LstDeal_Rights_UDT.Add(objDRUDT);
@@ -3786,6 +3798,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights = null;
             objPage_Properties = null;
             lstDupRecords = null;
+            objSyn_Deal_Rights_Buyback = null;
             return Json(objDeal_Schema.PageNo);
             //return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().RedirectToControl(GlobalParams.Page_From_Rights, objDeal_Schema.PageNo);
         }

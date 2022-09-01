@@ -1424,13 +1424,23 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ValidateRightsTitleWithAcq(int RCode, int? TCode, int? Episode_From, int? Episode_To)
         {
-            //int count = 0;
-            //count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
-            //if (count > 0)
-            //    return Json("INVALID");
-            //else
-            //    return Json("VALID");
-            return Json("VALID");
+            int count = 0;
+
+            string BuybackCode = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(RCode).Buyback_Syn_Rights_Code;
+
+            if (!String.IsNullOrEmpty(BuybackCode))
+            {
+                count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
+                if (count > 0)
+                    return Json("INVALID");
+                else
+                    return Json("VALID");
+            }
+            else
+            {
+                return Json("VALID");
+            }
+            
         }
         public JsonResult GetSynRightStatus(int rightCode)
         {

@@ -1726,5 +1726,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Get_Mapping_Countries_Buyback(syn_Deal_Right_Code);
         }
+
+        public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(string acq_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(acq_Deal_Rights_Codes, selected_SubTitling_Language_Codes, selected_Dubbing_Language_Codes);
+        }
     }
 }

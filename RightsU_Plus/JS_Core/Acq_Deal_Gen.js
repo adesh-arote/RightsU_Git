@@ -75,6 +75,7 @@ function Enable_DisableControl(isDisable) {
     $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', isDisable);
     $("input[name='Is_Master_Deal'][type=radio]").attr('disabled', isDisable);
     $("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
+    $("select[ID='ddlLicensor_Buyback']").attr('disabled', isDisable);
 
     if (isDisable) {
         $("select[ID='ddlMaster_Deal_List']").attr('disabled', isDisable);

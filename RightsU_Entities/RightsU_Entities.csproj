@@ -461,6 +461,7 @@
     <Compile Include="StoreProcedure_Entities\USP_BuyBackRights_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Edit_Row_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Acq_Supplementary_Result.cs" />

@@ -12863,6 +12863,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Selected_SubTitling_Language_Codes" Type="varchar" Mode="In" />
           <Parameter Name="Selected_Dubbing_Language_Codes" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Acq_Deal_Rights_Codes" Type="varchar" Mode="In" />
+          <Parameter Name="Selected_SubTitling_Language_Codes" Type="varchar" Mode="In" />
+          <Parameter Name="Selected_Dubbing_Language_Codes" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Music_Platform_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="MusicPlatformCodes" Type="varchar" Mode="In" />
           <Parameter Name="Search_Music_Platform_Name" Type="nvarchar" Mode="In" />
@@ -21522,7 +21527,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Mapping_Countries_Buyback" ReturnType="Collection(String)">
-            <Parameter Name="Syn_Deal_Right_Code" Mode="In" Type="Int32" />
+          <Parameter Name="Syn_Deal_Right_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback" ReturnType="Collection(RightsU_NeoModel.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result)">
+            <Parameter Name="Acq_Deal_Rights_Codes" Mode="In" Type="String" />
+            <Parameter Name="Selected_SubTitling_Language_Codes" Mode="In" Type="String" />
+            <Parameter Name="Selected_Dubbing_Language_Codes" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -36862,6 +36872,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="SubTitle_Lang_Code" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="Dubb_Lang_Code" Nullable="false" MaxLength="1" />
         </ComplexType>
+        <ComplexType Name="USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result">
+          <Property Type="String" Name="Mapped_SubTitling_Language_Codes" Nullable="false" MaxLength="5" />
+          <Property Type="String" Name="Mapped_Dubbing_Language_Codes" Nullable="false" MaxLength="5" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -46417,6 +46431,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Get_Mapping_Countries_Buyback" FunctionName="RightsU_NeoModel.Store.USP_Get_Mapping_Countries_Buyback" />
+          <FunctionImportMapping FunctionImportName="USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback" FunctionName="RightsU_NeoModel.Store.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result">
+                <ScalarProperty Name="Mapped_SubTitling_Language_Codes" ColumnName="Mapped_SubTitling_Language_Codes" />
+                <ScalarProperty Name="Mapped_Dubbing_Language_Codes" ColumnName="Mapped_Dubbing_Language_Codes" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

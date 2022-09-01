@@ -23,6 +23,7 @@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Rights.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+@*<script type="text/javascript" src="~/JS_Core/common.concat.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
 
 <style type="text/css">
     #Tree_Filter_Rights_Platform {
@@ -114,8 +115,6 @@
         pointer-events: none;
         cursor: default;
     }
-
-
 </style>
 <script type="text/javascript">
     var treeID_G = '@ViewBag.TreeId';
@@ -145,6 +144,7 @@
     var disableRightType_G = '@Model.Disable_RightType';
     var existingRightType_G = '@Model.Existing_RightType';
     var isNullEmpty_milestoneStartDate_G = '@string.IsNullOrEmpty(Model.Milestone_Start_Date)';
+    var Buyback_Syn_Rights_Code = null;
 
 
     var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
@@ -275,7 +275,7 @@
                                         {
                                             <label class="bold">Template</label>
                                             @Html.DropDownList("Template_List", ViewBag.arr_Template_List as SelectList, "Please select",
-                                                               new { @id = "ddlTemplate_List", @onchange = "ApplyTemplate()", @class = "form_input chosen-select" })
+                                          new { @id = "ddlTemplate_List", @onchange = "ApplyTemplate()", @class = "form_input chosen-select" })
                                             <br>
                                             <br>
                                         }
@@ -286,6 +286,9 @@
                                         @Html.Hidden("hdnTitle_Code")
                                         @Html.Hidden("hdnCommandName")
                                         <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        <input type="hidden" id="hdnBuyback_Syn_Rights_Code" name="hdnBuyback_Syn_Rights_Code" value="@Model.Buyback_Syn_Rights_Code" />
+                                        <input type="hidden" id="hdnStartDate_Buyback" name="name" value="@ViewBag.StartDate_Buyback" />
+                                        <input type="hidden" id="hdnEndDate_Buyback" name="name" value="@ViewBag.EndDate_Buyback" />
                                         <br>
                                         <br>
                                         <label class="bold">@objMessageKey.RightsDefinition</label>
@@ -393,7 +396,7 @@
 
                                                             @if (isTitleLanguageDisabledForBuyback == "N")
                                                             {
-                                                            <input type="checkbox" name="name" value="" disabled />
+                                                                <input type="checkbox" name="name" value="" disabled />
                                                             }
                                                             else
                                                             {
@@ -610,7 +613,7 @@
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                                                     Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                    Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
 
                                                                 @if (ViewBag.Deal_Workflow_Flag == "AM")
