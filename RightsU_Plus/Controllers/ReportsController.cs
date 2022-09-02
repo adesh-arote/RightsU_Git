@@ -1006,6 +1006,8 @@ namespace RightsU_Plus.Controllers
         {
             string title_names = TitleAutosuggest(titleCodes);
 
+            if (title_names == "") title_names = " ";
+
             if (businessUnitcode == "0")
             {
                 businessUnitcode = "0";
