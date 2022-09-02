@@ -479,6 +479,7 @@ function CheckRightStatus() {
                             rightCode: rightCode
                         }),
                         success: function (result) {
+                            debugger;
                             if (result == "true") {
                                 redirectToLogin();
                             }
@@ -615,7 +616,7 @@ function ValidateRightsTitleWithAcq(RCode, TCode, Episode_From, Episode_To, PCod
             }
             else {
                 hideLoading();
-                showAlert('E', 'Cannot edit Rights as corresponding Acquisition Deal is in Amendment state.');
+                showAlert('E', 'Cannot edit Rights as corresponding Syndication Deal is in Amendment state.');
                 Isvalid = false;
             }
             //hideLoading();

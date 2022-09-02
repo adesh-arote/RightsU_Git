@@ -124,7 +124,7 @@
                 $('.sumo_Region  p .placeholder').removeAttr('class');
             }
         }
-   
+
         $('#hdnTVCode').val(rightsPlatform_G);
         rightsExclusive_G = rightsExclusive_G == "" ? "B" : rightsExclusive_G;
         if (rightsExclusive_G != "")
@@ -485,7 +485,15 @@
                     if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && objSchema.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
                     {
                         <td>
-                            <a class="btn btn-primary pull-right" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_ADD')">@objMessageKey.AddRights</a>
+                            @if (@ViewBag.Role_Code == GlobalParams.RoleCode_BuyBack)
+                            {
+                                <a class="btn btn-primary pull-right disabled" onclick="return false;">@objMessageKey.AddRights</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary pull-right" onclick="ButtonEvents('@GlobalParams.DEAL_MODE_ADD')">@objMessageKey.AddRights</a>
+                            }
+
 
                         </td>
                     }

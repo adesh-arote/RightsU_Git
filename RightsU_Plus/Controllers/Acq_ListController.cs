@@ -1261,7 +1261,7 @@ namespace RightsU_Plus.Controllers
                     goto End;
             }
 
-        Archive:
+            Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -1283,7 +1283,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-        End:
+            End:
             if (message == "" && Key == "AR")
             {
                 List<int?> lstTitle_Code = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -2301,35 +2301,41 @@ namespace RightsU_Plus.Controllers
 
             //List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Convert.ToInt32(Rights_Bulk_Update_Code)).ToList();
             List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).ToList();
-            foreach (Deal_Rights_Process item in lstDRP)
-            {
-                item.EntityState = State.Modified;
-                item.Record_Status = "P";
-                dynamic resultSet;
-                objDRPSer.Update(item, out resultSet);
-            }
 
-            Rights_Bulk_Update objRBU = objRBUSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).FirstOrDefault();
-            if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
+            if (String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
-                int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
-                if (ADRError_Count > 0)
+                foreach (Deal_Rights_Process item in lstDRP)
                 {
-                    objRBU.Action_For = "A";
-                    objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                    item.EntityState = State.Modified;
+                    item.Record_Status = "P";
+                    dynamic resultSet;
+                    objDRPSer.Update(item, out resultSet);
                 }
-            }
 
-            objRBU.EntityState = State.Modified;
-            objRBU.Is_Processed = "N";
-            dynamic resultSet1;
-            objRBUSer.Update(objRBU, out resultSet1);
+                Rights_Bulk_Update objRBU = objRBUSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).FirstOrDefault();
+                if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
+                {
+                    int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
+                    if (ADRError_Count > 0)
+                    {
+                        objRBU.Action_For = "A";
+                        objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                    }
+                }
+
+                objRBU.EntityState = State.Modified;
+                objRBU.Is_Processed = "N";
+                dynamic resultSet1;
+                objRBUSer.Update(objRBU, out resultSet1);
+            }
 
 
             objADR.Right_Status = "P";
             objADR.EntityState = State.Modified;
             dynamic resultSet2;
             objADRSer.Update(objADR, out resultSet2);
+
+
         }
 
         public PartialViewResult AddAmendmentHistory(int acqDealCode)

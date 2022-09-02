@@ -77,6 +77,11 @@ function Enable_DisableControl(isDisable) {
     $("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
     $("select[ID='ddlLicensor_Buyback']").attr('disabled', isDisable);
 
+    var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
+    if (roleCode == BuyBack) {
+        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', true);
+    }
+
     if (isDisable) {
         $("select[ID='ddlMaster_Deal_List']").attr('disabled', isDisable);
         $("select[ID='ddlOther']").attr('disabled', isDisable);
@@ -627,11 +632,13 @@ function ChangeLabelName() {
         $('#tdSynLicensor').show();
         $('#tdAcqLicensor').hide();
         $('#btnAddTitleMaster').attr("disabled", true);
+        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', true);
     }
     else {
         $('#tdSynLicensor').hide();
         $('#tdAcqLicensor').show();
         $('#btnAddTitleMaster').attr("disabled", false);
+        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', false);
     }
 
 }

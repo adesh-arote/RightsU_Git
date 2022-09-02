@@ -345,6 +345,9 @@ function DeleteRight(obj) {
                 }
                 hideLoading();
                 showAlert(result.ShowError, result.RightMsg);
+                if (result.ShowError == "E") {
+                    return false;
+                }
                 BindGridNew($("#G")[0], 'Y');
                 BindRightsFilterData();
 

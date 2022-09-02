@@ -1340,10 +1340,10 @@ namespace RightsU_Plus.Controllers
 
                     if (Convert.ToInt32(roleCode) == GlobalParams.RoleCode_BuyBack)
                     {
-                        if (isUpdate == false)
-                        {
+                        //if (isUpdate == false)
+                        //{
                             new USP_Service(objLoginEntity.ConnectionStringName).USP_BuybackRightsInsert(objAD_Session.Acq_Deal_Code, Convert.ToString(Session["RightsCode_Buyback"]), objAD_Session.Inserted_By);
-                        }
+                        //}
                         ClearSession_Buyback();
                     }
                     //else
@@ -1714,7 +1714,7 @@ namespace RightsU_Plus.Controllers
                 UpdateTitleCollection(titleList);
             if(titleList != null)
             {
-                if (Session["RightsCode_Buyback"] != null)
+                if (!String.IsNullOrEmpty(Convert.ToString(Session["RightsCode_Buyback"])))
                 {
                     string RightsCode = Convert.ToString(Session["RightsCode_Buyback"]);
                     string[] arrTitleRights = RightsCode.Split(',');

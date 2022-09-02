@@ -441,6 +441,19 @@ namespace RightsU_Plus.Controllers
 
             try
             {
+                var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == RightCode).ToList();
+
+                if(BuybackRights.Count() > 0)
+                {
+                    var objReturn = new
+                    {
+                        ShowError = "E",
+                        RightMsg = "Cannot delete Syndication Rights as it is in Buyback."
+                    };
+                    return Json(objReturn);
+
+                }
+
                 int Title_Code = Convert.ToInt32(TitleCode);
                 int Right_Code = Convert.ToInt32(RightCode);
                 int Deal_Code = Convert.ToInt32(DealCode);

@@ -103,9 +103,9 @@ namespace RightsU_Plus.Controllers
             {
                 if (Session["Is_Buyback"] == null)
                     Session["Is_Buyback"] = false;
-                return Convert.ToBoolean(Session["RightsCode_Buyback"]);
+                return Convert.ToBoolean(Session["Is_Buyback"]);
             }
-            set { Session["RightsCode_Buyback"] = value; }
+            set { Session["Is_Buyback"] = value; }
         }
 
         public string AllCountry_Territory_Codes
@@ -169,7 +169,7 @@ namespace RightsU_Plus.Controllers
             lstDupRecords = null;
             lstADRHV = null;
             objSyn_Deal_Rights_Buyback = null;
-            Session["RightsCode_Buyback"] = false;
+            Session["Is_Buyback"] = false;
             Session["FileName"] = null;
 
             Dictionary<string, string> obj_Dictionary = new Dictionary<string, string>();
@@ -260,7 +260,8 @@ namespace RightsU_Plus.Controllers
             }
 
             ViewBag.StartDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date).ToString("dd/MM/yyyy");//objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date;
-            ViewBag.EndDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_End_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_End_Date).ToString("dd/MM/yyyy"); ;
+            ViewBag.EndDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_End_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_End_Date).ToString("dd/MM/yyyy");
+            ViewBag.IsSynExclusive = objSyn_Deal_Rights_Buyback.Is_Exclusive;
 
 
             Session["FileName"] = "acq_Rights";
@@ -345,11 +346,11 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
             if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
             {
-                Session["RightsCode_Buyback"] = true;
+                Session["Is_Buyback"] = true;
             }
             else
             {
-                Session["RightsCode_Buyback"] = false;
+                Session["Is_Buyback"] = false;
             }
 
             if (objAcq_Deal_Rights.Original_Right_Type == null && objAcq_Deal_Rights.Right_Type == "U")
@@ -1155,7 +1156,7 @@ namespace RightsU_Plus.Controllers
                     if (b.Count() > 0)
                         objPTV.BudgetPlatformCodes_Reference = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_No_Of_Run == "Y").Select(p => p.Platform_Code.ToString()).ToArray();
                 }
-                if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                 {
                     var lstPlatforms = objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.ToList();
                     string SyndicatedPlatforms = String.Join(",", objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(x=>x.Platform_Code)).ToString();
@@ -1283,7 +1284,7 @@ namespace RightsU_Plus.Controllers
 
             List<USP_Get_Acq_PreReq_Result> lst_USP_Get_Acq_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
             string str_Type = "DR";
-            if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             {
                 string Data_For = "";//, country_Territory_Codes = "0", sub_Lang_Codes = "0", dub_Lang_Codes = "0";                
                 string Dub_type = "";
@@ -1340,7 +1341,7 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Title_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == "TIT"), "Display_Value", "Display_Text").ToList());
             obj.Add("Selected_Title_Code", selected_Title_Code);
-            if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             {
                 obj.Add("Region_List", new SelectList(lst_USP_Get_Acq_PreReq_Result.Where(x => x.Data_For == "RGN"), "Display_Value", "Display_Text").ToList());
             }
@@ -1363,7 +1364,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("Milestone_Unit_Type", (objAcq_Deal_Rights.Milestone_Unit_Type ?? 0));
             obj.Add("ROFR_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == "RFR"), "Display_Value", "Display_Text").ToList());
             obj.Add("ROFR_Code", (objAcq_Deal_Rights.ROFR_Code ?? 0));
-            if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             {
                 obj.Add("Subtitle_List", new SelectList(lst_USP_Get_Acq_PreReq_Result.Where(x => x.Data_For == "SL"), "Display_Value", "Display_Text").ToList());
             }
@@ -1373,7 +1374,7 @@ namespace RightsU_Plus.Controllers
             }
 
             obj.Add("Selected_Subtitling_Code", Selected_Subtitling_Code);
-            if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             {
                 obj.Add("Dubbing_List", new SelectList(lst_USP_Get_Acq_PreReq_Result.Where(x => x.Data_For == "DL"), "Display_Value", "Display_Text").ToList());
             }
@@ -1424,7 +1425,7 @@ namespace RightsU_Plus.Controllers
             //List<USP_Get_Acq_PreReq_Result> lst_USP_Get_Acq_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
             ////string str_Type = "";
             //string Data_For = "";
-            //if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            //if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             //{
             //    if (str_Type == "I")
             //        str_Type = (Is_Thetrical == "N") ? "C" : "THC";
@@ -1458,7 +1459,7 @@ namespace RightsU_Plus.Controllers
 
             //new functionality start
             List<USP_Get_Acq_PreReq_Result> Obj_USP_Result = new List<USP_Get_Acq_PreReq_Result>();
-            if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
             {
                 // I - Country // G -Territory // SL -Sub Lang // SG - Sub Lang Group // DL -Dub Lang // DG - Dubb Lang Group
 
@@ -1500,7 +1501,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (objAcq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(t => t.EntityState != State.Deleted).Count() == 0)
                 {
-                    if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+                    if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                     {
                         var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Territory_Code = i.Display_Value, Territory_Name = i.Display_Text }).OrderBy(x => x.Territory_Name).ToList(), "Territory_Code", "Territory_Name");
                         return Json(arr, JsonRequestBehavior.AllowGet);
@@ -1520,7 +1521,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (objAcq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(t => t.EntityState != State.Deleted).Count() == 0)
                 {
-                    if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+                    if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                     {
                         var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Territory_Code = i.Display_Value, Territory_Name = i.Display_Text }).OrderBy(x => x.Territory_Name).ToList(), "Territory_Code", "Territory_Name");
                         return Json(arr, JsonRequestBehavior.AllowGet);
@@ -1549,7 +1550,7 @@ namespace RightsU_Plus.Controllers
                         return Json("Holdback is already added.");
                 }
 
-                if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                 {
                     var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Language_Code = i.Display_Value, Language_Name = i.Display_Text }).OrderBy(x => x.Language_Name).ToList(), "Language_Code", "Language_Name");
                     return Json(arr, JsonRequestBehavior.AllowGet);
@@ -1574,7 +1575,7 @@ namespace RightsU_Plus.Controllers
                         return Json("Holdback is already added.");
                 }
 
-                if (Convert.ToBoolean(Session["RightsCode_Buyback"]) == true)
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                 {
                     var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Language_Group_Code = i.Display_Value, Language_Group_Name = i.Display_Text }).OrderBy(x => x.Language_Group_Name).ToList(), "Language_Group_Code", "Language_Group_Name");
                     return Json(arr, JsonRequestBehavior.AllowGet);

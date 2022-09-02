@@ -26,6 +26,7 @@ $(document).ready(function () {
     if (Buyback_Syn_Rights_Code == "")
         Buyback_Syn_Rights_Code = null;
     originalDate = $("#hdnEndDate_Buyback").val();
+    originalStartDate = $("#hdnStartDate_Buyback").val();
     originalYY = $("#Term_YY").val();
     originalMM = $("#Term_MM").val();
     originalDD = $("#Term_DD").val();
@@ -213,13 +214,28 @@ $(document).ready(function () {
     });
 
     $('#Start_Date').change(function () {
-        SetMinDt();
-        AutoPopulateTerm();
+        if (Buyback_Syn_Rights_Code != null) {
+            setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            AutoPopulateTerm();
+        }
+        else {
+            SetMinDt();
+            AutoPopulateTerm();
+        }
+        
     });
 
     $('#End_Date').change(function () {
-        SetMaxDt();
-        AutoPopulateTerm();
+        if (Buyback_Syn_Rights_Code != null) {
+            setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            AutoPopulateTerm();
+        }
+        else {
+            SetMaxDt();
+            AutoPopulateTerm();
+        }
     });
 
     $('#Milestone_Start_Date').change(function () {
@@ -276,8 +292,8 @@ $(document).ready(function () {
 
     debugger;
     if (Buyback_Syn_Rights_Code != null) {
-        setMinMaxDates('Start_Date', $('#Start_Date').val(), $('#hdnEndDate_Buyback').val());
-        setMinMaxDates('End_Date', $('#Start_Date').val(), $('#hdnEndDate_Buyback').val());
+        setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+        setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
         AutoPopulateTerm();
     }
 

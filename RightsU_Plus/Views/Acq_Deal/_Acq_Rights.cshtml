@@ -340,7 +340,7 @@
                                                                         string isExclusivityDisabledForBuyback = "";
                                                                         if (Model.Buyback_Syn_Rights_Code != null)
                                                                         {
-                                                                            isExclusivityDisabledForBuyback = (Model.Is_Exclusive == "N") ? "disabled" : "";
+                                                                            isExclusivityDisabledForBuyback = (@ViewBag.IsSynExclusive == "N") ? "disabled" : "";
                                                                         }
                                                                     }
 
@@ -394,7 +394,7 @@
                                                                 }
                                                             }
 
-                                                            @if (isTitleLanguageDisabledForBuyback == "N")
+                                                            @if (isTitleLanguageDisabledForBuyback == "disabled")
                                                             {
                                                                 <input type="checkbox" name="name" value="" disabled />
                                                             }
