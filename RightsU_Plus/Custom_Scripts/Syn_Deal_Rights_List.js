@@ -678,7 +678,7 @@ function Show_Restriction_Remark_popup(Counter) {
                     redirectToLogin();
                 }
                 var strHTML = '';
-                strHTML = strHTML + '<tr>'
+                strHTML = strHTML + '<thead><tr>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Title + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Platform + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Region + '</th>'
@@ -686,7 +686,7 @@ function Show_Restriction_Remark_popup(Counter) {
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.TitleLanguage + '</th>'
                 strHTML = strHTML + '<th style="width:10%;">' + ShowMessage.Subtitling + '</th>'
                 strHTML = strHTML + '<th style="width:15%;">' + ShowMessage.Dubbing + '</th>'
-                strHTML = strHTML + '</tr>'
+                strHTML = strHTML + '</tr></thead>'
                 if (result != '') {
                     for (var i = 0; i < result.length; i++) {
                         strHTML = strHTML + '<tr>'
