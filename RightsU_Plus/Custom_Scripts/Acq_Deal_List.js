@@ -90,6 +90,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                 else {
                     debugger;
                     $("#ddlSrchBUMultiSelect").empty();
+                    $("#ddlSrchDealType").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
