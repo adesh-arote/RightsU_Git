@@ -454,12 +454,14 @@ namespace RightsU_Plus.Controllers
             objDeal_Schema.List_Deal_Tag = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTG"), "Display_Value", "Display_Text", objSD_Session.Deal_Tag_Code == 0 ? 1 : objSD_Session.Deal_Tag_Code).ToList();
 
             #region --- Deal For ---
-            ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();
+            ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();            
 
             if (ViewBag.Deal_For_List.Count > 0)
                 ViewBag.Deal_For_List[0].Selected = true;
 
-            ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
+            string Chk_Other = lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP" && (x.Display_Text.ToUpper() == "OTHER" || x.Display_Text.ToUpper() == "OTHERS")).Select(x => x.Display_Text).FirstOrDefault();
+            if(Chk_Other != null)
+               ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
             #endregion
 
             #region --- Customer Type ---
@@ -473,7 +475,13 @@ namespace RightsU_Plus.Controllers
             ViewBag.Customer_Type_List_Other = lstCustomer_Type_List_Other;
 
             if (Syn_Deal_Code <= 0)
-                objSD_Session.Customer_Type = Convert.ToInt32(((List<SelectListItem>)ViewBag.Customer_Type_List).First().Value);
+            {
+                string Syn_Customer_Type = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Syn_Customer_Type").Select(x => x.Parameter_Value).FirstOrDefault();
+                if(Syn_Customer_Type!=null)
+                    objSD_Session.Customer_Type = Convert.ToInt32(Syn_Customer_Type);
+                else
+                    objSD_Session.Customer_Type = Convert.ToInt32(((List<SelectListItem>)ViewBag.Customer_Type_List).First().Value);
+            }                
             #endregion
 
             if (objSD_Session.Vendor_Contact_Code > 0)
