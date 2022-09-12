@@ -226,10 +226,13 @@
 
     string isExclusivityDisabledForBuyback = "";
     string IsTitleLanguageForBuyback = "";
+    string IsCoExclusiveDisabledForBuyback = "Y";
     if (@ViewBag.IsBuyback == "Y")
     {
         isExclusivityDisabledForBuyback = (@ViewBag.IsExclusiveDisabledForBuyback == "Y") ? "disabled" : "";
         IsTitleLanguageForBuyback = (@ViewBag.IsTitleLanguageForBuyback == "Y") ? "disabled" : "";
+        IsCoExclusiveDisabledForBuyback = "disabled";
+
     }
 
 
@@ -282,7 +285,7 @@
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" onclick="ShowHideCoExRemarks('C')" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" @isExclusivityDisabledForBuyback />Co-Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" onclick="ShowHideCoExRemarks('C')" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" @IsCoExclusiveDisabledForBuyback />Co-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                         </tr>
@@ -337,10 +340,10 @@
                                                                     else
                                                                     {
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @IsCoExclusiveDisabledForBuyback />@objMessageKey.Yes
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @IsCoExclusiveDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
                                                                     }
                                                                 </div>
@@ -355,11 +358,12 @@
                                                         <label class="checkbox-inline">
                                                             @if (IsTitleLanguageForBuyback == "disabled")
                                                             {
-                                                                <input type="checkbox" name="name" value="" disabled />
+                                                                @*<input type="checkbox" name="name" value="" checked />*@
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" , @disabled = "disabled"})
                                                             }
                                                             else
                                                             {
-                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" })
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);"})
                                                             }
 
                                                             @objMessageKey.TitleLanguage:

@@ -727,7 +727,6 @@ function Show_Restriction_Remark_popup(Counter) {
 }
 
 function CheckRightStatus() {
-    debugger;
     var pendingRecord = 0;
     $(".clsTdAction").each(function () {
         var refCloseTitle = $(this).find("input[id*='hdnRefCloseTitle']").val();

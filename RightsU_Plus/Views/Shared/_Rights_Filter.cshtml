@@ -414,11 +414,17 @@
             }
             else
             {
+                string isGroupDisabledForBuyback = "";
+                if(ViewBag.Role_Code == GlobalParams.RoleCode_BuyBack)
+                {
+                    isGroupDisabledForBuyback = "disabled";
+                }
+
                 <td style="width: 20%;" onclick="FadeOutPopup1();">
                     <div>
                         @Html.Hidden("ViewType", "")
                         <label class="radio-inline">
-                            <input type="radio" name="optViewType" id="G" value="G" checked />
+                            <input type="radio" name="optViewType" id="G" value="G" checked @isGroupDisabledForBuyback/>
                             @Html.Hidden("hdnCurrentPageNo")
                             @Html.Hidden("hdn_Command_Name")
                             <input type="hidden" id="hdnModuleCode" name="hdnModuleCode" />
@@ -427,11 +433,11 @@
                             @objMessageKey.Group
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="optViewType" id="S" value="S" />
+                            <input type="radio" name="optViewType" id="S" value="S" @isGroupDisabledForBuyback/>
                             @objMessageKey.Summary
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="optViewType" id="D" value="D" />
+                            <input type="radio" name="optViewType" id="D" value="D" @isGroupDisabledForBuyback/>
                             @objMessageKey.Detail
                         </label>
                     </div>

@@ -215,7 +215,7 @@
 
         var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
 
-        if (DealTypeCode == 1 || DealTypeCode == 11) {
+        if (DealTypeCode == 1 || DealTypeCode == 11 || DealTypeCode == Deal_Type_Webseries) {
             DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
         }
         else {
@@ -517,7 +517,7 @@
                                         @if (ViewBag.IsAddTitle_AcqGen == "Y")
                                         {
                                             <td>
-                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
+                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Create Title</a>
                                                 <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
                                             </td>
                                         }

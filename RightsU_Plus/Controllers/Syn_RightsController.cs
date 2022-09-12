@@ -1210,7 +1210,8 @@ namespace RightsU_Plus.Controllers
             string Result = "";
             if (perpetuityDate != "")
             {
-                if (objDeal_Schema.Deal_Type_Code == 11)
+                //if (objDeal_Schema.Deal_Type_Code == 11)
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     for (int i = 0; i < titleCodes.Length; i++)
                     {

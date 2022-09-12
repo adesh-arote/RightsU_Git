@@ -190,7 +190,7 @@ namespace RightsU_Plus.Controllers
             //                                      select objSDRT).Select(s => new Title_List() { Title_Code = (int)s.Title_Code, Episode_From = (int)s.Episode_From, Episode_To = (int)s.Episode_To }
             //                                    ).Distinct().ToList();
             ViewBag.VendorList = null;
-            ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
+            ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").OrderBy(x=>x.Text).ToList();
             //new SelectList(new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
 
             if (TempData["QueryString"] != null)
@@ -523,10 +523,11 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();
 
             if (ViewBag.Deal_For_List.Count > 0)
-                ViewBag.Deal_For_List[0].Selected = true;
+                ViewBag.Deal_For_List[0].Selected = true;            
 
-            ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
-
+            string Chk_Other = lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP" && (x.Display_Text.ToUpper() == "OTHER" || x.Display_Text.ToUpper() == "OTHERS")).Select(x => x.Display_Text).FirstOrDefault();
+            if (Chk_Other != null)
+                ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList(); 
             #endregion
 
             #region --- Bind Vendor Contact Metadata Data ---
@@ -1690,7 +1691,12 @@ namespace RightsU_Plus.Controllers
 
                 }
 
-                objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
+                var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode).ToList();
+                if(TitleList.Count() == 0)
+                {
+                    objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
+                }
+                
             }
 
             string toolTip;
@@ -2086,7 +2092,7 @@ namespace RightsU_Plus.Controllers
 
             //new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
             ViewBag.BuyBackTitles =
-                new SelectList((from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now).ToList()
+                new SelectList((from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now && x.Is_Exclusive != "C").ToList()
                                 join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A" && x.Vendor_Code == licensorCode).ToList()
                                 on x.Syn_Deal_Code equals y.Syn_Deal_Code
                                 join z in new Syn_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
@@ -2097,7 +2103,7 @@ namespace RightsU_Plus.Controllers
                                 {
                                     z.Title_Code,
                                     t.Title_Name
-                                }).Distinct(), "Title_Code", "Title_Name").ToList();
+                                }).Distinct(), "Title_Code", "Title_Name").OrderBy(x=>x.Text).ToList();
 
             ViewBag.Licensor = new Vendor_Service(objLoginEntity.ConnectionStringName).GetById(licensorCode).Vendor_Name.ToString();
             ViewBag.LicensorCode = licensorCode;
