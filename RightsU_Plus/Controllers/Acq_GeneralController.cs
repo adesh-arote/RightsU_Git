@@ -523,10 +523,11 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();
 
             if (ViewBag.Deal_For_List.Count > 0)
-                ViewBag.Deal_For_List[0].Selected = true;
+                ViewBag.Deal_For_List[0].Selected = true;            
 
-            ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
-
+            string Chk_Other = lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP" && (x.Display_Text.ToUpper() == "OTHER" || x.Display_Text.ToUpper() == "OTHERS")).Select(x => x.Display_Text).FirstOrDefault();
+            if (Chk_Other != null)
+                ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList(); 
             #endregion
 
             #region --- Bind Vendor Contact Metadata Data ---
