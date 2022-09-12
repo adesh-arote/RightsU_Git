@@ -106,11 +106,16 @@ namespace RightsU_BLL
         public string PopulateTreeNode(string IsView, string IS_Sport_Right = "", string Platform_Hiearachy_Search = "")
         {
             USP_Service objUS = new USP_Service(_Connection_Str);
-            if (IsView == "Y" && Show_Selected == false)
+            if(Platform_Hiearachy_Search != "Buyback")
             {
-                Platform_Hiearachy_Search = "";
-                PlatformCodes_Display = null;
+                if (IsView == "Y" && Show_Selected == false)
+                {
+                    Platform_Hiearachy_Search = "";
+                    PlatformCodes_Display = null;
+                }
             }
+            
+            
             List<USP_Get_Platform_Tree_Hierarchy_Result> lstPlatforms = objUS.USP_Get_Platform_Tree_Hierarchy(PlatformCodes_Display, Platform_Hiearachy_Search, IS_Sport_Right).ToList();
 
             //if (PlatformCodes_Display == "")

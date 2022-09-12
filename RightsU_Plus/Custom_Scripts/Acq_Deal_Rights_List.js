@@ -494,7 +494,7 @@ function CheckRightStatus() {
                                 $(this).find("input[id*='hdnRightStatus']").val("E");
 
                             }
-                            else if (result.RecordStatus == "D") {
+                            else if (result.RecordStatus == "D" || result.RecordStatus == "C") {
                                 // Completed
                                 btnEdit[0].style.display = '';
                                 btnDelete[0].style.display = '';

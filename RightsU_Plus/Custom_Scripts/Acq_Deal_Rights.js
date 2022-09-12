@@ -214,10 +214,16 @@ $(document).ready(function () {
     });
 
     $('#Start_Date').change(function () {
+        debugger;
         if (Buyback_Syn_Rights_Code != null) {
             setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
             setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
-            AutoPopulateTerm();
+
+            if (CheckGreaterStartDate()); {
+                AutoPopulateTerm();
+            }
+
+            
         }
         else {
             SetMinDt();
@@ -230,7 +236,10 @@ $(document).ready(function () {
         if (Buyback_Syn_Rights_Code != null) {
             setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
             setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
-            AutoPopulateTerm();
+            if (CheckGreaterStartDate()); {
+                AutoPopulateTerm();
+            }
+
         }
         else {
             SetMaxDt();
@@ -299,6 +308,26 @@ $(document).ready(function () {
 
     BindAllPreReq_Async();
 });
+
+function CheckGreaterStartDate() {
+    debugger;
+    var arrStart_Date = $("#Start_Date").val().split('/');
+    var Start_Date = new Date(arrStart_Date[1] + '/' + arrStart_Date[0] + '/' + arrStart_Date[2]);
+
+    var arrEnd_Date = $("#End_Date").val().split('/');
+    var End_Date = new Date(arrEnd_Date[1] + '/' + arrEnd_Date[0] + '/' + arrEnd_Date[2]);
+
+    if (Start_Date > End_Date) {
+        $('#Start_Date').val($("#hdnStartDate_Buyback").val());
+        $('#End_Date').val($("#hdnEndDate_Buyback").val());
+
+        showAlert("E", "Start Date Should not be greater than End Date");
+        return false;
+    }
+    else {
+        return true;
+    }
+} 
 
 function CalculateTerm(startDate, endDate) {
     debugger;
@@ -2219,9 +2248,13 @@ function ValidateSave() {
 
         var newPerLogic = $('#hdnAllow_Perpetual_Date_Logic').val();
         if (newPerLogic = "Y") {
-            CalculatePerpetuityEndDate("Y");
+            
 
             var Titles = $('#lbTitles').val() == null ? 0 : $('#lbTitles').val().length;
+
+            if (Titles != 0)
+                CalculatePerpetuityEndDate("Y");
+
             if (Titles == 1) {
                 if ($('#txtPer_Date_Logic_EndDate').val() == "" || $('#txtPer_Date_Logic_EndDate').val() == "DD/MM/YYYY") {
                     IsValidSave = false;
@@ -2690,6 +2723,7 @@ function OnSuccess(message) {
 
 function BindAllPreReq_Async() {
     debugger;
+
     $.ajax({
         type: "POST",
         url: URL_BindAllPreReq_Async,
