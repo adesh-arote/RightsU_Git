@@ -1780,7 +1780,7 @@ namespace UTOFrameWork.FrameworkClasses
             else if (ReportName == "Title_Availability_Languagewise_3")
                 ReportPath = ReportFolder + "/rptMovie_Availability";
             else if (ReportName == "Title_Availability_Languagewise_V18")
-                ReportPath = ReportFolder + "/rptMovie_Availability_V18";
+                ReportPath = ReportFolder + "/rptAvail_Movies";
             else if (ReportName == "Title_Availability_Languagewise_V18_Demo")
                 ReportPath = ReportFolder + "/rptMovie_Availability_V18_Demo";
             else if (ReportName == "Acquisition_Expiry_Reports")
