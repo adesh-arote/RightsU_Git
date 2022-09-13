@@ -173,8 +173,8 @@
                                                     @if (ViewBag.Other_Deal_Type_List != null)
                                                     {
                                                         @Html.DropDownListFor(m => Model.Deal_Type_Code, (List<SelectListItem>)ViewBag.Other_Deal_Type_List, new { @id = "ddlOther", @class = "form_input chosen-select", @onchange = "ddlOther_OnChange()" })
-                                                        <input type="hidden" id="hdnDeal_Type_Code" name="hdnDeal_Type_Code" />
                                                     }
+                                                    <input type="hidden" id="hdnDeal_Type_Code" name="hdnDeal_Type_Code" />
                                                 </label>
                                             </td>
                                             <td>@objMessageKey.ReferenceNo</td>
