@@ -174,7 +174,7 @@
     }
 
     #gridItem_BuyBack {
-        border-left-color : lawngreen;
+        border-left-color: lawngreen;
     }
     /*.modal .scale_table_block {
     margin: 5px !important;*/
@@ -194,12 +194,21 @@
             tempCount = tempCount + 1;
             counter += 1;
 
+            string isCloneDisabledforBuyback = "";
+            string tooltipMsg = "";
+
             var contentType = "";
-            if(objAcqList.contentType == "Buy Back")
+            if (objAcqList.contentType == "Buy Back")
             {
                 contentType = "BuyBack";
+                isCloneDisabledforBuyback = "disabled";
+                tooltipMsg = "Cannot clone Buyback deal";
             }
-            <div class="grid_item" id= "gridItem_@contentType">
+            else
+            {
+                tooltipMsg = objMessageKey.RenewClone;
+            }
+            <div class="grid_item" id="gridItem_@contentType">
                 <ul>
                     <li class="deal_no">
                         <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.IntCode }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
@@ -314,7 +323,10 @@
                             if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + ","))
                             {
                                 Count = Count + 1;
-                                <a title="@objMessageKey.RenewClone" class="glyphicon glyphicon-duplicate AT_@objAcqList.Acq_Deal_Code" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+                              
+                                <a title="@tooltipMsg" class="glyphicon glyphicon-duplicate AT_@objAcqList.Acq_Deal_Code @isCloneDisabledforBuyback" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @objAcqList.IntCode })" ></a>
+
+
                                 if (Count > 3)
                                 {
                                     <script>

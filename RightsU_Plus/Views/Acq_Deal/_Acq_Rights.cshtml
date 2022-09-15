@@ -259,6 +259,12 @@
     Is_Acq_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_CoExclusive").FirstOrDefault().Parameter_Value;
     Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
 
+    string isTitleDisabledForBuyback = "";
+    if (!String.IsNullOrEmpty(Model.Buyback_Syn_Rights_Code))
+    {
+        isTitleDisabledForBuyback = "disabled";
+    }
+
     @Html.Hidden("Is_Acq_CoExclusive", Is_Acq_CoExclusive);
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
@@ -281,7 +287,7 @@
                                         }
                                         <label class="bold">@objMessageKey.Titles</label>
                                         <div id="divlbTitles">
-                                            <select id="lbTitles" name="lbTitles" multiple="multiple"></select>
+                                            <select id="lbTitles" name="lbTitles" multiple="multiple" @isTitleDisabledForBuyback></select>
                                         </div>
                                         @Html.Hidden("hdnTitle_Code")
                                         @Html.Hidden("hdnCommandName")
@@ -340,7 +346,7 @@
                                                                         string isExclusivityDisabledForBuyback = "";
                                                                         if (Model.Buyback_Syn_Rights_Code != null)
                                                                         {
-                                                                            isExclusivityDisabledForBuyback = (Model.Is_Exclusive == "N") ? "disabled" : "";
+                                                                            isExclusivityDisabledForBuyback = (@ViewBag.IsSynExclusive == "N") ? "disabled" : "";
                                                                         }
                                                                     }
 
@@ -394,7 +400,7 @@
                                                                 }
                                                             }
 
-                                                            @if (isTitleLanguageDisabledForBuyback == "N")
+                                                            @if (isTitleLanguageDisabledForBuyback == "disabled")
                                                             {
                                                                 <input type="checkbox" name="name" value="" disabled />
                                                             }

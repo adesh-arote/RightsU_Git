@@ -218,6 +218,34 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Enabled_Perpetuity = "N";
             }
 
+            string BuybackSynRightsCode = Convert.ToString(obj_Dictionary["RCode"]);
+            var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == BuybackSynRightsCode).ToList();
+
+            string IsExclusiveDisabledForBuyback = "";
+            string IsBuyback = "";
+            string IsTitleLanguageForBuyback = "";
+
+            if (BuybackRights.Count() > 0)
+            {
+                IsBuyback = "Y";
+                var BuybackExclusiveRights = BuybackRights.Where(x => x.Is_Exclusive == "Y").ToList();
+                if(BuybackExclusiveRights.Count() > 0)
+                {
+                    IsExclusiveDisabledForBuyback = "Y";
+                }
+
+                var BuybackTitleLanguage = BuybackRights.Where(x => x.Is_Title_Language_Right == "Y").ToList();
+                if (BuybackTitleLanguage.Count() > 0)
+                {
+                    IsTitleLanguageForBuyback = "Y";
+                }
+            }
+
+            ViewBag.IsExclusiveDisabledForBuyback = IsExclusiveDisabledForBuyback;
+            ViewBag.IsBuyback = IsBuyback;
+            ViewBag.IsTitleLanguageForBuyback = IsTitleLanguageForBuyback;
+
+
             Session["FileName"] = "";
             Session["FileName"] = "syn_Rights";
             ViewBag.TreeId = "Rights_Platform";
@@ -1009,7 +1037,17 @@ namespace RightsU_Plus.Controllers
 
                 objPTV.PlatformCodes_Display = (AllPlatform_Codes == "") ? "0" : AllPlatform_Codes;
 
-                ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+                //ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+                if(lstAcq_Deal_Rights.Count() > 0)
+                {
+                    string strReplaceMessage = objPTV.PopulateTreeNode("N").Replace("Syndication","Buyback");
+                    ViewBag.TV_Platform = strReplaceMessage;
+                }
+                else
+                {
+                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+                }
+
             }
             else
             {
@@ -1172,7 +1210,8 @@ namespace RightsU_Plus.Controllers
             string Result = "";
             if (perpetuityDate != "")
             {
-                if (objDeal_Schema.Deal_Type_Code == 11)
+                //if (objDeal_Schema.Deal_Type_Code == 11)
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     for (int i = 0; i < titleCodes.Length; i++)
                     {

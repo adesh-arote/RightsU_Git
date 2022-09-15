@@ -130,6 +130,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleList = new MultiSelectList(titleList.ToList().Distinct(), "Title_Code", "Title_Name");
             int?[] acqdealrightCode = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == objDeal_Schema.Deal_Code).Select(x => (int?)x.Acq_Deal_Rights_Code).ToArray();
 
+            ViewBag.Role_Code = objAd.Role_Code;
+
             ViewBag.RegionId = "ddlRegionn";
             string[] regioncode = new string[] { "" };
             if (objDeal_Schema.Rights_Region != null)
@@ -315,6 +317,7 @@ namespace RightsU_Plus.Controllers
             if(Role_Code == GlobalParams.RoleCode_BuyBack)
             {
                 objDeal_Schema.Rights_Titles = "";
+                ViewBag.IsBuyback = "Y";
             }
 
             int totalRcord = 0;
@@ -1245,7 +1248,7 @@ namespace RightsU_Plus.Controllers
                              .OrderByDescending(x => x.Deal_Rights_Process_Code).Select(x => x.Rights_Bulk_Update_Code).FirstOrDefault();
 
             //List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Convert.ToInt32(Rights_Bulk_Update_Code)).ToList();
-            if (Rights_Bulk_Update_Code == null)
+            if (Rights_Bulk_Update_Code == null && String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
                 Deal_Rights_Process objDRP = objDRPSer.SearchFor(x => x.Deal_Code == objAcq_Deal.Acq_Deal_Code && x.Deal_Rights_Code == rightCode && x.Record_Status == "E")
                      .OrderByDescending(x => x.Deal_Rights_Process_Code).FirstOrDefault();
@@ -1254,7 +1257,7 @@ namespace RightsU_Plus.Controllers
                 dynamic resultSet;
                 objDRPSer.Update(objDRP, out resultSet);
             }
-            else
+            else if(String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
                 List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).ToList();
                 foreach (Deal_Rights_Process item in lstDRP)
@@ -1444,10 +1447,24 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetSynRightStatus(int rightCode)
         {
-            var recordStatus = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objDeal_Schema.Deal_Code
+            
+            var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(rightCode);
+
+            if(!String.IsNullOrEmpty(BuybackRights.Buyback_Syn_Rights_Code))
+            {
+                var recordStatus = BuybackRights.Right_Status;
+                var obj = new { RecordStatus = recordStatus };
+                return Json(obj);
+            }
+            else
+            {
+                var recordStatus = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objDeal_Schema.Deal_Code
                                 && x.Deal_Rights_Code == rightCode).OrderByDescending(x => x.Deal_Rights_Process_Code).Select(x => x.Record_Status).FirstOrDefault();
-            var obj = new { RecordStatus = recordStatus };
-            return Json(obj);
+                var obj = new { RecordStatus = recordStatus };
+                return Json(obj);
+            }
+            
+            
         }
 
         #region----------Buy Back related functons-----------------------

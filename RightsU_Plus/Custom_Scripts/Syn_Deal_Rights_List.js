@@ -345,6 +345,9 @@ function DeleteRight(obj) {
                 }
                 hideLoading();
                 showAlert(result.ShowError, result.RightMsg);
+                if (result.ShowError == "E") {
+                    return false;
+                }
                 BindGridNew($("#G")[0], 'Y');
                 BindRightsFilterData();
 
@@ -724,7 +727,6 @@ function Show_Restriction_Remark_popup(Counter) {
 }
 
 function CheckRightStatus() {
-    debugger;
     var pendingRecord = 0;
     $(".clsTdAction").each(function () {
         var refCloseTitle = $(this).find("input[id*='hdnRefCloseTitle']").val();

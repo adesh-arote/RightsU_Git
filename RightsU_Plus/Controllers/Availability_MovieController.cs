@@ -1708,9 +1708,9 @@ namespace RightsU_Plus.Controllers
             if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
             {
                 if (Availability_Ifta_And_Ancillary == "N")
-                    noOfParam = 37;
+                    noOfParam = 39;
                 else
-                    noOfParam = 41;
+                    noOfParam = 43;
             }
             else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
             {
@@ -1926,16 +1926,21 @@ namespace RightsU_Plus.Controllers
 
                     if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
                     {
+                        string Is_Allow_Title_Objection = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Title_Objection").ToList().FirstOrDefault().Parameter_Value;
+                        string Is_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name == "Is_Syn_CoExclusive").ToList().FirstOrDefault().Parameter_Value;
+
                         parm[35] = new ReportParameter("StartMonth", "0");
                         parm[36] = new ReportParameter("EndYear", "0");
+                        parm[37] = new ReportParameter("DisplayObjection", (Is_Allow_Title_Objection == "Y" ? "TRUE" : "FALSE"));
+                        parm[38] = new ReportParameter("DisplayCoExRemarks", (Is_Syn_CoExclusive == "Y" ? "TRUE" : "FALSE"));
                         if (Availability_Ifta_And_Ancillary == "Y")
                         {
                             if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
                             {
-                                parm[37] = new ReportParameter("Country_Level", chkCountryLevel);
-                                parm[38] = new ReportParameter("Territory_Level", chkTerritoryLevel);
-                                parm[39] = new ReportParameter("TabName", tabName);
-                                parm[40] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                parm[39] = new ReportParameter("Country_Level", chkCountryLevel);
+                                parm[40] = new ReportParameter("Territory_Level", chkTerritoryLevel);
+                                parm[41] = new ReportParameter("TabName", tabName);
+                                parm[42] = new ReportParameter("Include_Ancillary", IncludeAncillary);
                             }
                         }
                     }

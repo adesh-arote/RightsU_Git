@@ -749,6 +749,12 @@ function BindListandDdl() {
 
 $(document).ready(function () {
     setChosenWidth('#ROFR_Code', '40%');
+    debugger;
+    var Exclusive = $("input[type='radio'][name='hdnExclusive']:checked").val();
+    if (Exclusive != "C") {
+        $('#trCoExRemarks').hide();
+    }
+
     $("#lblCountry").text(ShowMessage.Country);
     if (Record_Locking_Code_G > 0) {
         var fullUrl = URL_Refresh_Lock;
