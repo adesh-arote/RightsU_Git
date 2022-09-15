@@ -420,9 +420,9 @@
             }
         });
     }
-    function Validate_Save() {
+    @*function Validate_Save() {
 
-
+        alert("@ViewBag.Is_ROP_Accessible");
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -471,7 +471,18 @@
             $('#ddlLanguage').addClass('required');
             returnVal = false;
         }
-
+        if ($('#ddlDepartment').val() == null) {
+            $('#divddlDepartment').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlBusinessLayer').val() == null) {
+            $('#divddlBusinessLayer').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlBusinessVertical').val() == null) {
+            $('#divddlBusinessVertical').addClass('required');
+            returnVal = false;
+        }
         if ($("#ddlVendor").val() != undefined) {
             if (document.getElementById("ProductionHouseUser").checked) {
                 if ($('#ddlVendors').val() == "") {
@@ -481,7 +492,7 @@
             }
         }
         return returnVal;
-    }
+    }*@
 
     function SaveSuccess(result) {
         debugger;
@@ -540,6 +551,7 @@
                     $('#pupupHtml').html(result);
                     $('#ddlBusinessUnit').SumoSelect();
                    // $('#ddlBusinessUnit')[0].sumo.reload();
+                    $('#ddlBusinessLayer').SumoSelect();
                     initializeChosen();
                 }
             },
@@ -647,26 +659,39 @@
     .form-control {
         display: inline-block !important;
     }
+
     #ddlSortType_chosen {
-        width: 74%!important;
+        width: 74% !important;
         text-align: left;
     }
-    .SumoSelect,#divddlBusinessUnit{
-        width : 95%!important;
+
+    .SumoSelect, #divddlBusinessUnit {
+        width: 95% !important;
     }
-    #divddlBusinessUnit > div{
-        width : 100% !important;
+
+        #divddlBusinessUnit > div {
+            width: 100% !important;
+        }
+
+    .SumoSelect, #divddlBusinessLayer {
+        width: 95% !important;
     }
-    #ddlVendor_chosen{
-        width : 13% !important;
-        position : absolute;
+
+        #divddlBusinessLayer > div {
+            width: 100% !important;
+        }
+
+    #ddlVendor_chosen {
+        width: 13% !important;
+        position: absolute;
     }
-    #ddlStatus_chosen
-    {
-        width:95%!important;
+
+    #ddlStatus_chosen {
+        width: 95% !important;
     }
-    #ddlSecGroup_chosen{
-        width: 99%!important;
+
+    #ddlSecGroup_chosen {
+        width: 99% !important;
     }
 </style>
 
