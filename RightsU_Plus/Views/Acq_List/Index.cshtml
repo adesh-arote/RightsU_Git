@@ -563,6 +563,11 @@
         width: 94% !important;
     }*/
 
+    .openTop div.optWrapper {
+        transform-origin: center bottom;
+        top: -180px !important;
+    }
+
     /*new added*/
     .search_area {
         border-bottom: 1px dotted #777;
@@ -750,7 +755,7 @@
                         <label>@objMessageKey.WorkflowStatus:</label><br>
                         <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
-                    <li class="AdSearch">
+                    <li class="AdSearch openTop">
                         <label>@objMessageKey.Licensor:</label><br>
                         <select id="ddlSrchLicensor" multiple="multiple"></select>
                     </li>
