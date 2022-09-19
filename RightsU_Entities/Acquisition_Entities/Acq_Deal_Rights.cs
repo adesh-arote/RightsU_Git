@@ -66,6 +66,7 @@ namespace RightsU_Entities
         public Nullable<int> ROFR_Code { get; set; }
         public string Original_Right_Type { get; set; }
         public string Promoter_Flag { get; set; }
+        public string Buyback_Syn_Rights_Code { get; set; }
 
         public virtual Acq_Deal Acq_Deal { get; set; }
         public virtual ICollection<Acq_Deal_Rights_Blackout> Acq_Deal_Rights_Blackout { get; set; }

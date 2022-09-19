@@ -211,7 +211,7 @@
         <div class="container syn main_col" onclick="$('.leftPanel').css('left', panelHideCss);">*@
 @using (Ajax.BeginForm("Save_Rights", "Syn_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "";
+    string ORightType = "", Promoter_Tab = "", Is_Syn_CoExclusive = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -221,9 +221,22 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab_Syn").Select(x => x.Parameter_Value).FirstOrDefault();
-    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
 
-    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
+
+    string isExclusivityDisabledForBuyback = "";
+    string IsTitleLanguageForBuyback = "";
+    string IsCoExclusiveDisabledForBuyback = "Y";
+    if (@ViewBag.IsBuyback == "Y")
+    {
+        isExclusivityDisabledForBuyback = (@ViewBag.IsExclusiveDisabledForBuyback == "Y") ? "disabled" : "";
+        IsTitleLanguageForBuyback = (@ViewBag.IsTitleLanguageForBuyback == "Y") ? "disabled" : "";
+        IsCoExclusiveDisabledForBuyback = "disabled";
+
+    }
+
+
+    @Html.Hidden("Is_Syn_CoExclusive", Is_Syn_CoExclusive);
 
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
@@ -251,7 +264,7 @@
                                             <input type="hidden" value="@ViewBag.MODE" id="Mode" />
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                @if (Is_Syn_CoExclusive == "Y")
                                                 {
                                                     <tr>
                                                         <td style="width: 102px;"><label>Exclusivity</label></td>
@@ -262,17 +275,17 @@
                                                                         <tr>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" onclick="ShowHideCoExRemarks('E')" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" />Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY" onclick="ShowHideCoExRemarks('E')" value="Y" checked="@(Model.Is_Exclusive == "Y" ? true : false)" class="exc" @isExclusivityDisabledForBuyback />Exclusive
                                                                                 </label>
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" onclick="ShowHideCoExRemarks('N')" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" />Non-Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN" onclick="ShowHideCoExRemarks('N')" value="N" checked="@(Model.Is_Exclusive == "N" ? true : false)" class="exc" @isExclusivityDisabledForBuyback />Non-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                             <td>
                                                                                 <label class="radio-inline">
-                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" onclick="ShowHideCoExRemarks('C')" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" />Co-Exclusive
+                                                                                    <input type="radio" name="hdnExclusive" id="rdoIsExclusiveC" onclick="ShowHideCoExRemarks('C')" value="C" checked="@(Model.Is_Exclusive == "C" ? true : false)" class="exc" @IsCoExclusiveDisabledForBuyback />Co-Exclusive
                                                                                 </label>
                                                                             </td>
                                                                         </tr>
@@ -299,35 +312,38 @@
                                                         <td id="tdExclusiveDiv" style="padding-right: 343px;">
                                                             <div style="width: 83%; float: right;">
                                                                 <div id="divExclusiveRights" style="width:90px">
-                                                                    @{ string displayStyle = "none"; }
+                                                                    @{ string displayStyle = "none";
+
+
+                                                                    }
                                                                     @if (Model.Is_Exclusive == "Y")
                                                                     {
                                                                         displayStyle = "";
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.Yes
 
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
                                                                     }
                                                                     else if (Model.Is_Exclusive == "N")
                                                                     {
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.Yes
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @isExclusivityDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
 
                                                                     }
                                                                     else
                                                                     {
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @IsCoExclusiveDisabledForBuyback />@objMessageKey.Yes
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @IsCoExclusiveDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
                                                                     }
                                                                 </div>
@@ -340,7 +356,16 @@
                                                 <tr style="margin-bottom: 4px;">
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
-                                                            @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" })
+                                                            @if (IsTitleLanguageForBuyback == "disabled")
+                                                            {
+                                                                @*<input type="checkbox" name="name" value="" checked />*@
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" , @disabled = "disabled"})
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);"})
+                                                            }
+
                                                             @objMessageKey.TitleLanguage:
                                                             @Html.Hidden("hdnIs_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false))
                                                             <label id="Title_Language">(-)</label>
@@ -499,7 +524,7 @@
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                                        Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                                           Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
                                                                 @if (ViewBag.Deal_Workflow_Flag == "AM")
                                                                 {

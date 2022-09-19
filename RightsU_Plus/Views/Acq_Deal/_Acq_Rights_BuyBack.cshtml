@@ -1,0 +1,376 @@
+﻿@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script>
+
+    var URL_GetBuybackListCount = '@Url.Action("GetBuybackListCount", "Acq_General")';
+
+      var Dealmode_G = '@objSchema.Mode'
+    , Record_Locking_Code_G = '@ViewBag.Record_Locking_Code'
+, Rights_View_G = '@objSchema.Rights_View'
+, Rights_Titles_G = '@objSchema.Rights_Titles'
+, Rights_PageSize_G = '@objSchema.Rights_PageSize'
+, Rights_PageNo_G = '@objSchema.Rights_PageNo';
+    var rightsRegion_G = '@objSchema.Rights_Region'.split(',');
+    var rightsPlatform_G = '@objSchema.Rights_Platform';
+   // var rightsTitle_G = '@objSchema.Rights_Titles'.split(',');
+    var rightsExclusive_G = '@objSchema.Rights_Exclusive';
+    var URL_BindGrid = '@Url.Action("BindGrid", "Acq_General")'
+
+    $(document).ready(function () {
+        debugger;
+
+    })
+    function ClosePopup() {
+
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    function PopulateBuybackRights() {
+        debugger;
+        var dealTypeCode = $("input[name='Deal_Type_Code']:radio:checked").val();
+        
+        //var arrLicensor = $("#ddlLicensor").val();
+        //var Licensor = arrLicensor.join(",");
+
+        var arrTitles = $("#ddlBuyBackTitles").val();
+        if (arrTitles == null) {
+            $('#ddlBuyBackTitles').attr('required', true);
+            return false
+        }
+
+        //var Titles = arrTitles.join(",");
+
+        BindGrid(null);
+        SetPaging_Buyback();
+
+
+    }
+
+
+    function BindGrid(obj) {
+        debugger;
+         showLoading();
+        var ViewType = "";
+        var regionCode = "";
+        var exclusiveRights = "";
+
+        exclusiveRights = "";
+        var platformcode = $('#hdnTVCode').val();
+        var Rights_PageNo = 0;
+        var TitleCode = '';
+        var page_index = $('#hdnPageNo_Buyback').val();
+
+        if (obj == null) {
+            ViewType = "G";
+
+            //if (Rights_View_G != null) {
+            //    $('#' + Rights_View_G)[0].checked = true;
+            //    ViewType = Rights_View_G;
+            //}
+
+            //if (Rights_Titles_G != null && Rights_Titles_G != '')
+            //    TitleCode = Rights_Titles_G;
+
+            //if (rightsExclusive_G != null && rightsExclusive_G != '')
+            //    exclusiveRights = rightsExclusive_G;
+
+            //if (Rights_PageSize_G != null && Rights_PageSize_G != '0')
+            //    $('#txtPageSize').val(Rights_PageSize_G);
+
+            //if (Rights_PageNo_G != null && Rights_PageNo_G != '0')
+            //    page_index = parseInt(Rights_PageNo_G) - 1;
+        }
+
+        if ($("#ddlBuyBackTitles").val() != null)
+            TitleCode = $("#ddlBuyBackTitles").val().join(',');
+
+        if ($('#hdnCurrentPageNo').val() != undefined && $('#hdnCurrentPageNo').val() != '')
+            Rights_PageNo = $('#hdnCurrentPageNo').val();
+
+        var LicensorCode = $("#hdnLicensorCode").val();
+
+        var page_Index = parseInt(Rights_PageNo) - 1;
+
+        if (obj == null) {
+            var txtpageSize = $("#txtPageSize_Buyback").val();
+            $.ajax({
+                type: "POST",
+                url: URL_BindGrid,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                asyn: false,
+                data: JSON.stringify({
+                    Selected_Title_Code: TitleCode,
+                    view_Type: ViewType,
+                    txtpageSize: txtpageSize,
+                    page_index: page_index,
+                    IsCallFromPaging: 'N',
+                    RegionCode: regionCode,
+                    PlatformCode: platformcode,
+                    ExclusiveRight: exclusiveRights,
+                    LicensorCode: LicensorCode
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    $('.div_BindGrid').html(result);
+                    //SetPaging_Buyback($('#txtPageSize').val());
+                    GetBuybackListCount();
+
+                    SetPaging_Buyback();
+                    setNumericForPagingSize();
+                    initializeExpander();
+                    //CheckRightStatus();
+                      hideLoading();
+                },
+                error: function (result) {
+                }
+            });
+        }
+    }
+
+    function GetRights() {
+        debugger;
+        var titleCodes = [];
+        var dealRightsCode = [];
+        $.each($("#tblConsiderRights tbody tr"), function (index, value) {
+            debugger;
+            //var i = $(value).children().last();
+            index = index + 1;
+
+            //var codes = $(this).find('#hdnTitleCode').val();
+            var rightsCode = $('#' + index + '_hdnRightCode').val();
+            var codes = '';
+            if ($('#chk_' + rightsCode).is(':checked') == true) {
+                codes = $('#' + index + '_hdnTitleCode').val();
+                titleCodes.push(codes);
+                var finalCodes = codes + 'T' + rightsCode;
+                dealRightsCode.push(finalCodes);
+            }
+
+        });
+
+        if (titleCodes.length == 0) {
+            showAlert("E", "Please select at least one title.");
+            return false;
+        }
+        else {
+            btnSaveTitle_OnClick_Buyback(titleCodes, dealRightsCode);
+        }
+
+
+    }
+
+    /**Paging related function***/
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function SetPaging_Buyback() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo_Buyback').val());
+        var recordCount =parseInt($('#hdnRecordCount_Buyback').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch_Buyback').val());
+        var recordPerPage = parseInt($('#txtPageSize_Buyback').val());
+
+        //$("#lblTotal").text('@objMessageKey.TotalRecords : ' + recordCount);
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo_Buyback').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback_Buyback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination_Buyback").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback_Buyback(page_index, jq) {
+        //if (checkCurrentAction()) {
+          //  $('.required').removeClass('required');
+
+            if (!ValidatePageSize_Buyback())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo_Buyback').val(pageNo);
+            if (IsCall == 'Y')
+                BindGrid(null);
+            else
+                IsCall = 'Y';
+        //}
+    }
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize_Buyback())
+            return false;
+
+        BindGrid(null);
+        SetPaging_Buyback();
+    }
+    function ValidatePageSize_Buyback() {
+        var recordPerPage = $('#txtPageSize_Buyback').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize_Buyback').attr('required', true)
+        return false
+    }
+
+    function GetBuybackListCount() {
+        $.ajax({
+            type: "POST",
+            url: URL_GetBuybackListCount,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount_Buyback").val(result.Record_Count);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+
+
+
+</script>
+@*<script src="~/JS_Core/Acq_Deal_Gen.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
+<style>
+    #ddlBuyBackTitles_chosen {
+        width: 96% !important
+    }
+
+    .big_popup {
+        max-width: 83% !important;
+    }
+
+    #div_BindGrid {
+        overflow-y: auto;
+        max-height: 300px;
+    }
+</style>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+
+    <h2>@objMessageKey.AddDealTitle</h2>
+
+</div>
+<div class="scale_table_block">
+    <table class="add_title_popup">
+        <tr>
+            <td class="" style="width: 10%;"><b>@objMessageKey.Titles</b></td>
+            <td style="width:30%">
+                @Html.DropDownList("BuyBackTitles", (List<SelectListItem>)ViewBag.BuyBackTitles,  new { @id = "ddlBuyBackTitles", @class = "form_input chosen-select", @multiple = "multiple" })
+            </td>
+            <td style="width:25%">
+                <input type="button" class="btn btn-primary" value="SHOW RESULT" onclick="PopulateBuybackRights()" />
+            </td>
+            <td>
+                <b>@objMessageKey.Licensor :</b>
+                <span>@ViewBag.Licensor</span>
+                <input type="hidden" name="name" id="hdnLicensorCode" value="@ViewBag.LicensorCode" />
+            </td>
+        </tr>
+    </table>
+    @*@Html.DropDownListFor(x = XhtmlMobileDocType, (List<SelectListItem>)ViewBag.BuyBackTitles, "Please Select", new { @id = "ddlLicensor", @class = "form_input chosen-select" })*@
+
+</div>
+@*<div class="paging_area clearfix">
+
+        <span class="pull-left" id="lblTotal"></span>
+        <div id="Pagination_Buyback" class="pagination">
+        </div>
+        <span class="pull-right">
+            @objMessageKey.PageSize:
+            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return PageSize_OnChange();" onblur="setDefaultPaging('txtPageSize')" />
+        </span>
+    </div>*@
+<div class="paging_area clearfix">
+    <span class="pull-left">@objMessageKey.TotalRecords: </span>
+    <span class="pull-left" id="lblTotal" style="font-weight:bold"></span>
+    <input type="hidden" id="hdnPageNo_Buyback" name="hdnPageNo" value="1" />
+    <input type="hidden" id="hdnPagePerBatch_Buyback" name="hdnPagePerBatch" value="5" />
+    <input type="hidden" id="hdnRecordCount_Buyback" name="hdnRecordCount" value="0" />
+
+    <div id="Pagination_Buyback" class="pagination">
+    </div>
+    <span class="pull-right">
+        <b>@objMessageKey.PageSize:</b>
+        <input type="text" id="txtPageSize_Buyback" name="txtPageSize" class="smallTextBox pagingSize" value="10" onfocus="checkCurrentAction()" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')" maxlength="98">
+    </span>
+</div>
+<div class="scale_table_block">
+    <div class="div_BindGrid" id="div_BindGrid">
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                @*@if (ViewBag.CommandName != "VIEW")
+                    {*@
+                <input type="button" class="btn btn-primary" value="ADD RIGHTS TO DEAL" onclick="GetRights()" />
+                @*}*@
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

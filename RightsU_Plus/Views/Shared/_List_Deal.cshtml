@@ -172,6 +172,10 @@
         font-style: italic;
         opacity: 0.5;
     }
+
+    #gridItem_BuyBack {
+        border-left-color: lawngreen;
+    }
     /*.modal .scale_table_block {
     margin: 5px !important;*/
     }
@@ -189,7 +193,22 @@
         {
             tempCount = tempCount + 1;
             counter += 1;
-            <div class="grid_item">
+
+            string isCloneDisabledforBuyback = "";
+            string tooltipMsg = "";
+
+            var contentType = "";
+            if (objAcqList.contentType == "Buy Back")
+            {
+                contentType = "BuyBack";
+                isCloneDisabledforBuyback = "disabled";
+                tooltipMsg = "Cannot clone Buyback deal";
+            }
+            else
+            {
+                tooltipMsg = objMessageKey.RenewClone;
+            }
+            <div class="grid_item" id="gridItem_@contentType">
                 <ul>
                     <li class="deal_no">
                         <h4 class="agreementNo Highlight" data-toggle="tooltip" title="@objMessageKey.AgreementNo"> <a href="#" onclick="window.location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = objAcqList.IntCode }) '">@Html.Label("id", objAcqList.Agreement_No, new { style = "cursor:pointer;" })</a></h4>
@@ -301,10 +320,63 @@
                                     </script>
                                 }
                             } @*onclick="return CheckRecordLocking(@objAcqList.Acq_Deal_Code)"*@
+
+                            if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
+                            {
+                                string apprName = objMessageKey.SendForApproval;
+                                if (objAcqList.dealWorkFlowStatus == "R")
+                                {
+                                    RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
+                                    int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@objAcqList.IntCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal).ElementAt(0));
+                                    string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+
+                                    if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
+                                    {
+                                        apprName = objMessageKey.ResendForApproval;
+                                    }
+                                }
+                                if (@objAcqList.IsZeroWorkFlow == "Y")
+                                {
+                                    Count = Count + 1;
+
+                                    <a title="@objMessageKey.Approve" id="Approve_Remark_@tempCount" class="glyphicon glyphicon-check AT_@objAcqList.Acq_Deal_Code" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Approve',@objAcqList.IntCode,0);"></a>
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                                $("#extend_@tempCount").append($('#Approve_@tempCount'));
+                                        </script>
+                                    }
+                                }
+                                else
+                                {
+                                    Count = Count + 1;
+                                    if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objAcqList.version) > 1)
+                                    {
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objAcqList.IntCode,0);"></a>
+                                    }
+                                    else
+                                    {
+                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
+                                    }
+
+                                    if (Count > 3)
+                                    {
+                                        <script>
+                                                $("#extend_@tempCount").append($('#approvename_@tempCount'));
+                                        </script>
+                                    }
+                                }
+                            }
+
+
+
                             if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRightGranted + ","))
                             {
                                 Count = Count + 1;
-                                <a title="@objMessageKey.RenewClone" class="glyphicon glyphicon-duplicate AT_@objAcqList.Acq_Deal_Code" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+
+                                <a title="@tooltipMsg" class="glyphicon glyphicon-duplicate AT_@objAcqList.Acq_Deal_Code @isCloneDisabledforBuyback" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @objAcqList.IntCode })"></a>
+
+
                                 if (Count > 3)
                                 {
                                     <script>
@@ -312,6 +384,12 @@
                                     </script>
                                 }
                             }
+
+
+
+
+
+
                             if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForAmendment + ","))
                             {
                                 Count = Count + 1;
@@ -391,52 +469,7 @@
 
                             @* DEAL ARCHIVE ENDS *@
                             {
-                                if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForSendForApproval + ","))
-                                {
-                                    string apprName = objMessageKey.SendForApproval;
-                                    if (objAcqList.dealWorkFlowStatus == "R")
-                                    {
-                                        RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
-                                        int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@objAcqList.IntCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAcqDeal).ElementAt(0));
-                                        string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
 
-                                        if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
-                                        {
-                                            apprName = objMessageKey.ResendForApproval;
-                                        }
-                                    }
-                                    if (@objAcqList.IsZeroWorkFlow == "Y")
-                                    {
-                                        Count = Count + 1;
-
-                                        <a title="@objMessageKey.Approve" id="Approve_Remark_@tempCount" class="glyphicon glyphicon-check AT_@objAcqList.Acq_Deal_Code" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Approve',@objAcqList.IntCode,0);"></a>
-                                        if (Count > 3)
-                                        {
-                                            <script>
-                                                $("#extend_@tempCount").append($('#Approve_@tempCount'));
-                                            </script>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Count = Count + 1;
-                                        if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objAcqList.version) > 1)
-                                        {
-                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objAcqList.IntCode,0);"></a>
-                                        }
-                                        else
-                                        {
-                                            <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objAcqList.Acq_Deal_Code" id="approvename_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objAcqList.IntCode,0);"></a>
-                                        }
-
-                                        if (Count > 3)
-                                        {
-                                            <script>
-                                                $("#extend_@tempCount").append($('#approvename_@tempCount'));
-                                            </script>
-                                        }
-                                    }
-                                }
                                 if (@objAcqList.Show_Hide_Buttons.Contains("," + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForRollback + ","))
                                 {
                                     double versionNo = Convert.ToDouble(objAcqList.Previous_Version);

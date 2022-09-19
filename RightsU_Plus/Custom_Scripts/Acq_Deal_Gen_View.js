@@ -158,7 +158,7 @@ function BindTitleLabel(bindSearch) {
 }
 
 function hideStarCast() {
-    debugger
+    //debugger
     $('.MoreActionDiv').hide('slow');
 }
 function BindTitleGridview() {

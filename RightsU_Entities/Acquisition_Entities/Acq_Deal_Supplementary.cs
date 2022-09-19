@@ -26,6 +26,9 @@ namespace RightsU_Entities
         public Nullable<int> Episode_From { get; set; }
         public Nullable<int> Episode_To { get; set; }
         public string Remarks { get; set; }
+
         public virtual ICollection<Acq_Deal_Supplementary_detail> Acq_Deal_Supplementary_detail { get; set; }
+        public virtual Acq_Deal Acq_Deal { get; set; }
+        public virtual Title Title { get; set; }
     }
 }

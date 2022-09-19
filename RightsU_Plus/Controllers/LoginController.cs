@@ -1181,7 +1181,7 @@ namespace RightsU_Plus.Controllers
                  || NewPassword.Trim().ToLower().Contains(objUser.First_Name.ToLower())
                  || (objUser.Last_Name != "" && NewPassword.ToLower().Trim().Contains(objUser.Last_Name.ToLower())))
             {
-                AlertMessage = "Please change your password, it should not be same as old Password";
+                AlertMessage = "Please change your password,it should not contain Login/First/Last name";
                 TempData["Focus"] = "OldPassword";
                 ViewBag.AlertMsg = AlertMessage;
                 return View("ChangePassword");

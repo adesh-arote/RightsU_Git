@@ -68,6 +68,11 @@ function BindAdvanced_Search_Controls(callfrom) {
                 }
                 else {
                     $("#ddlSrchBUMultiSelect").empty();
+                    $("#ddlSrchDealType").empty();
+                    $("#ddlSrchLicensor").empty();
+                    $("#ddlSrchDealTag").empty();
+                    $("#ddlSrchDirector").empty();
+                    $("#ddlSrchBU").empty();
                     $(result.USP_Result).each(function (index, item) {
                         if (this.Data_For == 'DTP' || this.Data_For == 'DTC')
                             $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
@@ -85,6 +90,7 @@ function BindAdvanced_Search_Controls(callfrom) {
                         if (this.Data_For == 'LAV')
                             $("#ddlSrchLicensor").append($("<option>").val(this.Display_Value).text(this.Display_Text));
                     });
+                    $("#ddlWorkflowStatus").empty();
                     $(result.lstWorkFlowStatus).each(function (index, item) {
                         $("#ddlWorkflowStatus").append($("<option>").val(this.Value).text(this.Text));
                     });

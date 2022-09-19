@@ -11,9 +11,9 @@ namespace RightsU_Entities
 {
     using System;
     
-    public partial class USP_GET_TITLE_FOR_SUPPLEMENTARY_Result
+    public partial class USP_Get_Title_For_Acq_Supplementary_Result
     {
-        public Nullable<int> Title_Code { get; set; }
+        public int Title_Code { get; set; }
         public string Title_Name { get; set; }
     }
 }

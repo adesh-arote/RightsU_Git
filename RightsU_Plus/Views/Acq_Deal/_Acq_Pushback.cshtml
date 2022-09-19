@@ -68,8 +68,18 @@
                                 <span>×</span>
                                 <span class="sr-only">Close</span>
                             </a>
-
-                            <h2>@Html.Label("HELLO", new { @id = "lblHeader", @name = "lblHeader" })</h2>
+                            @if (ViewBag.Mode != null && (ViewBag.Mode == "ADD"))
+                            {
+                                <h2>@Html.Label(@objMessageKey.AddReverseHoldback, new { @id = "lblHeader", @name = "lblHeader" })</h2>
+                            }
+                            @if (ViewBag.Mode != null && (ViewBag.Mode == "EDIT"))
+                            {
+                                <h2>@Html.Label(@objMessageKey.EditReverseHoldback, new { @id = "lblHeader", @name = "lblHeader" })</h2>
+                            }
+                            @if (ViewBag.Mode != null && (ViewBag.Mode == "CLONE"))
+                            {
+                                <h2>@Html.Label(@objMessageKey.CloneReverseHoldback, new { @id = "lblHeader", @name = "lblHeader" })</h2>
+                            }
                         </div>
                         <div class="modal_block">
                             <ul class="form_fields_wrapper">
@@ -360,7 +370,7 @@ Value = String.Format("{0:dd/MM/yyyy}", Model.Right_End_Date)
 <script>
     $(document).ready(function () {
        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=@Session["FileName"]');
-        $("#lblHeader")[0].innerHTML = PushbackText;
+        //$("#lblHeader")[0].innerHTML = PushbackText;
         initializeChosen();
         initializeDatepicker();
         initializeDateRange('txtRight_Start_Date', 'txtRight_End_Date');

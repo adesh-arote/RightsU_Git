@@ -1624,16 +1624,16 @@ namespace RightsU_BLL
             return objUSPDAL.USP_List_Syn_Ancillary(syn_Deal_Code);
         }
 
-        public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
+        public virtual int USP_Delete_Acq_Supplementary(Nullable<int> supplementaryCode)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Acq_Supplementary_Delete_Title(supplementaryCode);
+            return objUSPDAL.USP_Delete_Acq_Supplementary(supplementaryCode);
         }
 
-        public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary_Result(Nullable<int> Acq_Deal_Code, Nullable<int> title_code)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result(Acq_Deal_Code, title_code);
+            return objUSPDAL.USP_Get_Title_For_Acq_Supplementary_Result(Acq_Deal_Code, title_code);
         }
 
         public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab_Result(Nullable<int> Supplementary_Tab_Code)
@@ -1648,16 +1648,16 @@ namespace RightsU_BLL
             return objUSPDAL.USP_SUPP_Create_Table_Result(Tab_Code, Acq_Deal_Code, TitleCode, View);
         }
 
-        public virtual ObjectResult<USP_Get_Edit_Row_Result> USP_Get_Edit_Row_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
+        public virtual ObjectResult<USP_Get_Acq_Deal_Supplementary_Edit_Result> USP_Get_Acq_Deal_Supplementary_Edit_Result(Nullable<int> Acq_Deal_Supplementary_Code, Nullable<int> Row_Num, string shortName)
         {
             USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Get_Edit_Row_Result(Acq_Deal_Supplementary_Code, Row_Num, shortName);
+            return objContext.USP_Get_Acq_Deal_Supplementary_Edit_Result(Acq_Deal_Supplementary_Code, Row_Num, shortName);
         }
 
-        public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode)
+        public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List_Result(Nullable<int> Deal_Code, string titlecode, int pageNo, int pagesize, ObjectParameter recordCount)
         {
             USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Supplementary_List_Result(Deal_Code, titlecode);
+            return objContext.USP_Acq_Deal_Supplementary_List_Result(Deal_Code, titlecode, pageNo, pagesize, recordCount);
         }
         
         public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
@@ -1690,10 +1690,47 @@ namespace RightsU_BLL
             return objContext.USP_Get_Syn_Deal_Supplementary_Edit(syn_Deal_Supplementary_Code, row_Num, tab_SM);
         }
 
-        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code)
+        public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code, int pageNo, int pagesize, ObjectParameter recordCount)
         {
             USP_DAL objContext = new USP_DAL(conStr);
-            return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code);
+            return objContext.USP_Syn_Deal_Supplementary_List(syn_Deal_Code, title_Code, pageNo, pagesize, recordCount);
+        }
+
+        public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string region_Code, string platform_Code, string IsExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, string titleCodes, Nullable<int> licensorCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_BuyBackRights_List_Rights(right_Type, view_Type, deal_Code, deal_Movie_Codes, region_Code, platform_Code, IsExclusive, pageNo, pageSize, totalRecord, searchText, titleCodes, licensorCode);
+                
+        }
+
+        public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_BuybackRightsInsert(acq_Deal_Code, synRightsCode, usersCode);
+        }
+
+        public virtual ObjectResult<Nullable<int>> USP_Validate_Acq_Right_Title_With_Syn_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(rCode, tCode, episode_From, episode_To);
+        }
+
+        public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(title_Codes, platform_Codes, platform_Type, region_Type, subtitling_Type, dubbing_Type, syn_Deal_Code);
+        }
+
+        public virtual ObjectResult<string> USP_Get_Mapping_Countries_Buyback(Nullable<int> syn_Deal_Right_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Get_Mapping_Countries_Buyback(syn_Deal_Right_Code);
+        }
+
+        public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(string acq_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(acq_Deal_Rights_Codes, selected_SubTitling_Language_Codes, selected_Dubbing_Language_Codes);
         }
     }
 }

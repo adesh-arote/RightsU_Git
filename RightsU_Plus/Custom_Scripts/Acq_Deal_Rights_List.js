@@ -413,6 +413,7 @@ function Save_Success(message) {
     }
 }
 function ButtonEvents(mode, rCode, tCode, episodeFrom, episodeTo, pCode, isHB, isSynAcqMapp) {
+    debugger;
     $.ajax({
         //    $('#lbTerritory,#lbSub_Language,#lbDub_Language').SumoSelect({ selectAll: true, triggerChangeCombined: false });
         //$('#lbTerritory,#lbSub_Language,#lbDub_Language')[0].sumo.reload();
@@ -478,6 +479,7 @@ function CheckRightStatus() {
                             rightCode: rightCode
                         }),
                         success: function (result) {
+                            debugger;
                             if (result == "true") {
                                 redirectToLogin();
                             }
@@ -492,7 +494,7 @@ function CheckRightStatus() {
                                 $(this).find("input[id*='hdnRightStatus']").val("E");
 
                             }
-                            else if (result.RecordStatus == "D") {
+                            else if (result.RecordStatus == "D" || result.RecordStatus == "C") {
                                 // Completed
                                 btnEdit[0].style.display = '';
                                 btnDelete[0].style.display = '';
@@ -583,4 +585,46 @@ function RightReprocess(RightCode) {
         error: function (x, e) {
         }
     });
+}
+
+function ValidateRightsTitleWithAcq(RCode, TCode, Episode_From, Episode_To, PCode, IsHB, Is_Syn_Acq_Mapp, Mode) {
+    //  showLoading();
+    debugger;
+    var Isvalid = true;
+    $.ajax({
+        type: "POST",
+        url: URL_ValidateRightsTitleWithAcq,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        async: false,
+        data: JSON.stringify({
+            RCode: RCode,
+            TCode: TCode,
+            Episode_From: Episode_From,
+            Episode_To: Episode_To
+        }),
+        success: function (result) {
+            debugger;
+            if (result == "true") {
+                redirectToLogin();
+            }
+
+            if (result == "VALID") {
+                Isvalid = true;
+                ButtonEvents(Mode, RCode, TCode, Episode_From, Episode_To, PCode, IsHB, Is_Syn_Acq_Mapp)
+            }
+            else {
+                hideLoading();
+                showAlert('E', 'Cannot edit Rights as corresponding Syndication Deal is in Amendment state.');
+                Isvalid = false;
+            }
+            //hideLoading();
+        },
+        error: function (result) {
+            Isvalid = false;
+        }
+    });
+
+    return Isvalid;
 }

@@ -79,6 +79,17 @@
     #divTitle > div {
         width: 100%;
     }
+
+    /*#ddlLicensor_chosen {
+        width: 95%;
+        border: 1px solid red;
+        outline: none;
+        box-shadow: 0px 2px 8px rgb(200 0 0 / 85%);
+    }*/
+
+    #popup {
+        max-height: 520px;
+    }
 </style>
 
 <script>
@@ -91,12 +102,13 @@
         Deal_Type_ContentMusic = @GlobalParams.Deal_Type_ContentMusic,
         Deal_Type_ShortFilm = @GlobalParams.Deal_Type_ShortFlim, Deal_Type_Webseries = @GlobalParams.Deal_Type_WebSeries,
         Deal_Type_Featurette = @GlobalParams.Deal_Type_Featurette, Deal_Type_Cineplay = @GlobalParams.Deal_Type_Cineplay,
-        Deal_Type_Drama_Play = @GlobalParams.Deal_Type_Drama_Play, Deal_Type_Tele_Film = @GlobalParams.Deal_Type_Tele_Film;
+        Deal_Type_Drama_Play = @GlobalParams.Deal_Type_Drama_Play, Deal_Type_Tele_Film = @GlobalParams.Deal_Type_Tele_Film, BuyBack = @GlobalParams.RoleCode_BuyBack;
 
     var Role_Assignment = @GlobalParams.RoleCode_Assignment, Role_License = @GlobalParams.RoleCode_License, Role_Own_Production = @GlobalParams.RoleCode_OwnProduction;
     var Deal_Program = '@GlobalParams.Deal_Program', Deal_Music = '@GlobalParams.Deal_Music',
         Deal_Movie = '@GlobalParams.Deal_Movie', Sub_Deal_Talent = '@GlobalParams.Sub_Deal_Talent';
 
+    var isBuyBackPopupCalled = false;
     var IsCall = 'Y';
 
     var txtMovie_Closed_Date, txtClosing_Remarks;
@@ -131,6 +143,7 @@
     var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_General")';
     var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Title_List")';
     var URL_SaveTitleFromAcqGen = '@Url.Action("SaveTitle", "Title_List")';
+    var URL_AddBuyBackRights = '@Url.Action("AddBuyBackRights","Acq_General")';
 
     var ShowMessage = {
         "lblForAssignor": '@objMessageKey.Assignor',
@@ -201,7 +214,7 @@
 
         var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
 
-        if (DealTypeCode == 1 || DealTypeCode == 11) {
+        if (DealTypeCode == 1 || DealTypeCode == 11 || DealTypeCode == Deal_Type_Webseries) {
             DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
         }
         else {
@@ -254,11 +267,22 @@
         $('.MoreActionDiv').hide('slow');
     }
 
+
+    $('#ddlLicensor_Buyback').on('change', function () {
+        debugger;
+        var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+        if (Role_Code == BuyBack) {
+            BindContactDropDown();
+        }
+    });
+
+
+
 </script>
 
 @*<script src="~/JS_Core/common.concat.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
 
-@using (Ajax.BeginForm("Save", "Acq_General", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmGeneral" }))
+@using (Ajax.BeginForm("SaveDeal_Gen", "Acq_General", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmGeneral" }))
 {
 
     <div class="grid_area" id="no_Auto_Push">
@@ -300,6 +324,7 @@
                                                     @Html.RadioButtonFor(m => Model.Role_Code, (object)item.Value, new { @id = "rbMode_Acquisition_" + item.Value, @onclick = "ChangeLabelName()" })@item.Text
                                                 </label>
                                             }
+                                            <input type="hidden" id="hdnRole_Code" name="hdnRole_Code" value="@Model.Role_Code" />
                                         </td>
                                         <td>@objMessageKey.YearDefinition</td>
                                         <td>
@@ -332,8 +357,8 @@
                                                     @if (ViewBag.Other_Deal_Type_List != null)
                                                     {
                                                         @Html.DropDownListFor(m => Model.Deal_Type_Code, (List<SelectListItem>)ViewBag.Other_Deal_Type_List, new { @id = "ddlOther", @class = "form_input chosen-select", @onchange = "ddlOther_OnChange()" })
-                                                        <input type="hidden" id="hdnDeal_Type_Code" name="hdnDeal_Type_Code" />
                                                     }
+                                                    <input type="hidden" id="hdnDeal_Type_Code" name="hdnDeal_Type_Code" />
                                                 </label>
                                             </div>
                                         </td>
@@ -367,8 +392,11 @@
                                     <tr>
                                         <td><span id="lblLicensor">@objMessageKey.Assignor</span></td>
                                         <td>
-                                            <span>
+                                            <span id="tdAcqLicensor">
                                                 <select name="Licensor_List" id="ddlLicensor" class="form_input chosen-select" multiple="multiple"></select>
+                                            </span>
+                                            <span id="tdSynLicensor" style="display:none;">
+                                                @Html.DropDownListFor(m => Model.Vendor_Code, (List<SelectListItem>)ViewBag.VendorList, "Please Select", new { @id = "ddlLicensor_Buyback", @class = "form_input chosen-select" })
                                             </span>
                                             <input type="hidden" id="hdnVendorCodes" name="hdnVendorCodes" />
                                             <input type="hidden" id="hdnPrimaryVendorCode" name="hdnPrimaryVendorCode" />
@@ -487,16 +515,16 @@
                                         </td>
                                         @if (ViewBag.IsAddTitle_AcqGen == "Y")
                                         {
-                                        <td>
-                                            <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Add Title</a>
-                                            <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
-                                        </td>
+                                            <td>
+                                                <a class="btn btn-primary" href="#" id="btnAddTitleMaster" data-toggle="modal" onclick="AddTitleFromAcqGeneral()">Create Title</a>
+                                                <input type="hidden" name="name" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />
+                                            </td>
                                         }
 
                                         <td style="width: 10%; text-align: right">
                                             @if (ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_ADD || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_EDIT || ViewBag.Deal_Mode == GlobalParams.DEAL_MODE_CLONE)
                                             {
-                                                <input type="button" id="btnAddTitle" class="btn btn-primary" disabled="disabled" value="@objMessageKey.Add" onclick="btnAddTitle_OnClick()">
+                                                <input type="button" id="btnAddTitle" class="btn btn-primary" disabled="disabled" value="@objMessageKey.Add" onclick="btnAddTitle_OnClick(BuyBack)">
                                             }
                                         </td>
                                     </tr>
@@ -542,6 +570,7 @@
                                     <input type="hidden" id="hdnDealDesc" name="hdnDealDesc" />
                                     <input type="hidden" id="hdnDealTagStatusCode" name="hdnDealTagStatusCode" />
                                     <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                    <input type="hidden" id="hdnIsBuybackPopupCalled" name="name" value="N" />
                                 </li>
                                 <li>
                                     <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
@@ -835,4 +864,14 @@
     </div>
 </div>
 <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in small_popup" id="popAddTitleDealPage" role="dialog" tabindex="-1" aria-hidden="false">
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
 </div>

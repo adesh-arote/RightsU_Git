@@ -199,6 +199,7 @@ namespace RightsU_Plus.Controllers
                 FillFormDetails();
                 SetVisibility();
             }
+
             ViewBag.AcqSyn_Rights_Thetrical = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Rights_Thetrical").First().Parameter_Value;
             objDeal_Schema.Page_From = GlobalParams.Page_From_Rights;
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ADD && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW)
@@ -216,6 +217,37 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Term_Perputity = 0;
                 ViewBag.Enabled_Perpetuity = "N";
             }
+
+            string BuybackSynRightsCode = Convert.ToString(objPage_Properties.RCODE); //Convert.ToString(obj_Dictionary["RCode"]);
+            var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == BuybackSynRightsCode).ToList();
+
+            string IsExclusiveDisabledForBuyback = "";
+            string IsBuyback = "";
+            string IsTitleLanguageForBuyback = "";
+
+
+            if (BuybackRights.Count() > 0 && objPage_Properties.RMODE != GlobalParams.DEAL_MODE_CLONE)
+            {
+                IsBuyback = "Y";
+                var BuybackExclusiveRights = BuybackRights.Where(x => x.Is_Exclusive == "Y").ToList();
+                if (BuybackExclusiveRights.Count() > 0)
+                {
+                    IsExclusiveDisabledForBuyback = "Y";
+                }
+
+                var BuybackTitleLanguage = BuybackRights.Where(x => x.Is_Title_Language_Right == "Y").ToList();
+                if (BuybackTitleLanguage.Count() > 0)
+                {
+                    IsTitleLanguageForBuyback = "Y";
+                }
+            }
+
+
+            ViewBag.IsExclusiveDisabledForBuyback = IsExclusiveDisabledForBuyback;
+            ViewBag.IsBuyback = IsBuyback;
+            ViewBag.IsTitleLanguageForBuyback = IsTitleLanguageForBuyback;
+
+
 
             Session["FileName"] = "";
             Session["FileName"] = "syn_Rights";
@@ -465,6 +497,7 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal_Rights.Theatrical_Platform_Code = objSyn_Deal_Rights_Current.Theatrical_Platform_Code;
             objSyn_Deal_Rights.Title_Codes = objSyn_Deal_Rights_Current.Title_Codes;
             objSyn_Deal_Rights.Original_Right_Type = objSyn_Deal_Rights_Current.Original_Right_Type;
+            objSyn_Deal_Rights.CoExclusive_Remarks = objSyn_Deal_Rights_Current.CoExclusive_Remarks;
             objSyn_Deal_Rights_Current.Syn_Deal_Rights_Dubbing.ToList().ForEach(d =>
             {
                 Syn_Deal_Rights_Dubbing objDub = new Syn_Deal_Rights_Dubbing();
@@ -983,8 +1016,41 @@ namespace RightsU_Plus.Controllers
                         objPTV.RunPlatformCodes_Reference = strPlatform.Split(',').ToList().Where(x => lstPlatformCodes_isnoofrun.Contains(x)).ToArray();
                     }
                 }
+
+
+                //List<string> lst = new List<string>();
+                //lst.Add(Convert.ToString(objPage_Properties.RCODE));
+                string a = Convert.ToString(objPage_Properties.RCODE);
+                var lstAcq_Deal_Rights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == a).ToList();
+                string SyndicatedPlatforms = "";
+                if (lstAcq_Deal_Rights.Count() > 0)
+                {
+                    //SetAcquisition_Object();
+                    foreach (var item in lstAcq_Deal_Rights)
+                    {
+                        var lstPlatforms = item.Acq_Deal_Rights_Platform.ToList();
+                        SyndicatedPlatforms = SyndicatedPlatforms + "," + String.Join(",", item.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code)).ToString();
+
+                    }
+
+                    SyndicatedPlatforms = SyndicatedPlatforms.TrimStart(',');
+                    string[] strBuybackPlatforms = SyndicatedPlatforms.Split(',').Distinct().ToArray();
+                    objPTV.SynPlatformCodes_Reference = strBuybackPlatforms;
+                }
+
                 objPTV.PlatformCodes_Display = (AllPlatform_Codes == "") ? "0" : AllPlatform_Codes;
-                ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+
+                //ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+                if (lstAcq_Deal_Rights.Count() > 0)
+                {
+                    string strReplaceMessage = objPTV.PopulateTreeNode("N").Replace("Syndication", "Buyback");
+                    ViewBag.TV_Platform = strReplaceMessage;
+                }
+                else
+                {
+                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
+                }
+
             }
             else
             {
@@ -1147,7 +1213,8 @@ namespace RightsU_Plus.Controllers
             string Result = "";
             if (perpetuityDate != "")
             {
-                if (objDeal_Schema.Deal_Type_Code == 11)
+                //if (objDeal_Schema.Deal_Type_Code == 11)
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     for (int i = 0; i < titleCodes.Length; i++)
                     {
@@ -2693,6 +2760,206 @@ namespace RightsU_Plus.Controllers
             {
             };
             return Json(ob);
+        }
+
+        private void SetAcquisition_Object()
+        {
+            //Call From Page Load in Edit Mode
+            int[] arr_Acq_Rights_Code = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(i => Convert.ToInt32(i.Buyback_Syn_Rights_Code) == Convert.ToInt32(objPage_Properties.RCODE)).Select(i => i.Acq_Deal_Rights_Code).Distinct().ToArray();
+            //int[] arr_Syn_Rights_Code = (new Syn_Acq_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Deal_Rights_Code == objPage_Properties.RCODE).Select(i => i.Syn_Deal_Rights_Code).Distinct().ToArray());
+            objPage_Properties.Obj_Acq_Deal_Rights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(i => arr_Acq_Rights_Code.Contains(i.Acq_Deal_Rights_Code)).Select(i => i).ToList();
+            if (objPage_Properties.Is_Syn_Acq_Mapp == "Y")
+            {
+                objSyn_Deal_Rights.Disable_SubLicensing = "Y";
+                objSyn_Deal_Rights.Disable_Tentative = "Y";
+                objSyn_Deal_Rights.Disable_Thetrical = "Y";
+                objSyn_Deal_Rights.Disable_RightType = "Y";
+                objSyn_Deal_Rights.Existing_RightType = objSyn_Deal_Rights.Right_Type;
+
+                if (objSyn_Deal_Rights.Is_Exclusive == "Y" && objPage_Properties.obj_lst_Syn_Rights.Where(i => i.Is_Exclusive == "Y").Select(i => i.Is_Exclusive.ToString()).FirstOrDefault() == "Y")
+                    objSyn_Deal_Rights.Disable_IsExclusive = "Y";
+                if (objSyn_Deal_Rights.Is_Title_Language_Right == "Y" && objPage_Properties.obj_lst_Syn_Rights.Where(i => i.Is_Title_Language_Right == "Y").Select(i => i.Is_Title_Language_Right.ToString()).FirstOrDefault() == "Y")
+                    objSyn_Deal_Rights.Disable_TitleRights = "Y";
+            }
+        }
+
+        public string Validate_Acq_Rights_After_Syndication(string Tit_Codes, string Reg_Type, string Reg_Codes, string Sub_Type,
+           string Sub_Codes, string Dub_Type, string Dub_Codes, string Right_Start_Date, string Right_End_Date)
+        {
+
+            string message = "";
+            if (objPage_Properties.RCODE == 0)
+                return message;
+
+
+            var acqRightsList = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).ToList();
+            // var lstRightsCode = acqRightsList
+            //new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).Select(x => x.Acq_Deal_Rights_Code).Distinct().ToList();
+
+            if (acqRightsList.Count() > 0)
+            {
+                int Count = 0;
+
+
+                //Syn_Acq_Mapping_Service objSAMS = new Syn_Acq_Mapping_Service(objLoginEntity.ConnectionStringName);
+                var Min_Max_Date = acqRightsList.Where(j => j.Right_Start_Date != null).Select(i => new { Right_Start_Date = i.Right_Start_Date, Right_End_Date = i.Right_End_Date });
+                DateTime Min_R_SDate = Convert.ToDateTime(Min_Max_Date.Select(i => i.Right_Start_Date).Min());
+
+                if (Right_Start_Date != "")
+                {
+                    int result = DateTime.Compare(Convert.ToDateTime(GlobalUtil.MakedateFormat(Right_Start_Date)), Min_R_SDate);
+                    if (result <= 0)
+                    {
+                        if (Right_End_Date != "" && Right_End_Date != null)
+                        {
+                            DateTime Max_R_EDate = Convert.ToDateTime(Min_Max_Date.Where(i => i.Right_End_Date != null).Select(i => i.Right_End_Date).Max());
+                            result = DateTime.Compare(Convert.ToDateTime(GlobalUtil.MakedateFormat(Right_End_Date)), Max_R_EDate);
+                            if (result < 0)
+                            {
+                                message = "Can not reduce rights period as Buyback deal is created";
+                                return message;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        message = "Can not reduce rights period as Buyback deal is created";
+                        return message;
+                    }
+                }
+
+                //if (!string.IsNullOrEmpty(objPage_Properties.SyndicatedTitlesCode))
+                //{
+                //    Count = GetExceptValues(Tit_Codes, objPage_Properties.SyndicatedTitlesCode);
+                //    if (Count > 0)
+                //    {
+                //        message = "Can not remove title as Buyback deal is created";
+                //        return message;
+                //    }
+                //}
+
+                string Syn_Country_Code = "";
+                List<string> lst_Acq_Country_Code = new List<string>();
+                lst_Acq_Country_Code.AddRange(new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Mapping_Countries_Buyback(objPage_Properties.RCODE));
+
+                if (lst_Acq_Country_Code.Count() > 0)
+                    Syn_Country_Code = lst_Acq_Country_Code[0].ToString();
+
+                if (Syn_Country_Code != "")
+                {
+                    if (Reg_Type == "I")
+                        Count = GetExceptValues(Reg_Codes, Syn_Country_Code.Trim(','));
+                    else
+                    {
+                        string[] territory_Codes = Reg_Codes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        string Selected_Country_Codes = string.Join(",", new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(i => territory_Codes.Contains(i.Territory_Code.ToString()))
+                                                            .SelectMany(j => j.Territory_Details
+                                                                            .Where(TD => territory_Codes.Contains(TD.Territory_Code.ToString()))
+                                                                            .Select(TD => TD.Country_Code)
+                                                                            .Distinct()
+                                                                        ).Distinct().ToArray()
+                                                                   );
+                        Count = GetExceptValues(Selected_Country_Codes, Syn_Country_Code.Trim(','));
+                    }
+                    if (Count > 0)
+                    {
+                        message = "Can not remove region as Buyback deal is created";
+                        return message;
+                    }
+                }
+
+                if (objSyn_Deal_Rights.Sub_Type == "L")
+                    objPage_Properties.Acquired_Subtitling_Codes = objSyn_Deal_Rights.Sub_Codes;
+                else
+                    objPage_Properties.Acquired_Subtitling_Codes = GetLangCodes(objSyn_Deal_Rights.Sub_Codes);
+
+                if (objSyn_Deal_Rights.Dub_Type == "L")
+                    objPage_Properties.Acquired_Dubbing_Codes = objSyn_Deal_Rights.Dub_Codes;
+                else
+                    objPage_Properties.Acquired_Dubbing_Codes = GetLangCodes(objSyn_Deal_Rights.Dub_Codes);
+
+                string[] arr_Acq_Edit_Subtitling_Lang_Code = objPage_Properties.Acquired_Subtitling_Codes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                string Acq_Rights_Code = string.Join(",", acqRightsList.Select(x => x.Acq_Deal_Rights_Code).Distinct()).ToString();
+
+                List<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> lst_mapp = (new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(Acq_Rights_Code, objPage_Properties.Acquired_Subtitling_Codes, objPage_Properties.Acquired_Dubbing_Codes)).ToList<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result>();
+                string Syn_Sub_Lang_Code = "";
+                string Syn_Dub_Lang_Code = "";
+
+                if (lst_mapp != null && lst_mapp.Count() > 0)
+                    foreach (USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result obj in lst_mapp)
+                    {
+                        Syn_Sub_Lang_Code = lst_mapp[0].Mapped_SubTitling_Language_Codes == null ? "" : lst_mapp[0].Mapped_SubTitling_Language_Codes;
+                        Syn_Dub_Lang_Code = lst_mapp[0].Mapped_Dubbing_Language_Codes == null ? "" : lst_mapp[0].Mapped_Dubbing_Language_Codes;
+                    }
+
+                if (Syn_Sub_Lang_Code != "")
+                    if (Sub_Type == "L")
+                        Count = GetExceptValues(Sub_Codes, Syn_Sub_Lang_Code);
+                    else
+                    {
+                        string Selected_Sub_Lang_Codes = "";
+                        if (Sub_Codes != "")
+                            Selected_Sub_Lang_Codes = GetLangCodes(Sub_Codes);
+                        Count = GetExceptValues(Selected_Sub_Lang_Codes, Syn_Sub_Lang_Code);
+                    }
+
+                if (Count > 0)
+                {
+                    message = "Can not remove subtitling as Buyback deal is created";
+                    return message;
+                }
+
+                string[] arr_Acq_Edit_Dubb_Lang_Code = objPage_Properties.Acquired_Dubbing_Codes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (Syn_Dub_Lang_Code != "")
+                    if (Dub_Type == "L")
+                        Count = GetExceptValues(Dub_Codes, Syn_Dub_Lang_Code);
+                    else
+                    {
+                        string Selected_Dubb_Lang_Codes = "";
+                        if (Dub_Codes != "")
+                            Selected_Dubb_Lang_Codes = GetLangCodes(Dub_Codes);
+                        Count = GetExceptValues(Selected_Dubb_Lang_Codes, Syn_Dub_Lang_Code);
+                    }
+
+                if (Count > 0)
+                {
+                    message = "Can not remove dubbing as Buyback deal is created";
+                    return message;
+                }
+            }
+            //List<USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result> objScheduleDates = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode(objPage_Properties.RCODE).ToList();
+            //if (objScheduleDates.Count > 0)
+            //{
+            //    if (objScheduleDates[0].Start_Date != null && objScheduleDates[0].End_Date != null)
+            //    {
+            //        DateTime Min_R_SDate = objScheduleDates[0].Start_Date.Value;
+            //        if (Right_Start_Date != "")
+            //        {
+            //            int result = DateTime.Compare(Convert.ToDateTime(GlobalUtil.MakedateFormat(Right_Start_Date)), Min_R_SDate);
+            //            if (result <= 0)
+            //            {
+            //                if (Right_End_Date != "" && Right_End_Date != null)
+            //                {
+            //                    DateTime Max_R_EDate = objScheduleDates[0].End_Date.Value;
+            //                    result = DateTime.Compare(Convert.ToDateTime(GlobalUtil.MakedateFormat(Right_End_Date)), Max_R_EDate);
+            //                    if (result < 0)
+            //                    {
+            //                        message = "Can not reduce rights period as run Scheduled for selected title";
+            //                        return message;
+            //                    }
+            //                }
+            //            }
+            //            else
+            //            {
+            //                message = "Can not reduce rights period as run Scheduled for selected title";
+            //                return message;
+            //            }
+            //        }
+            //    }
+            //}
+            return message;
         }
     }
     public class Syn_Deal_Rights_Holdback_Validation
