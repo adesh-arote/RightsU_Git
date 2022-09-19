@@ -112,7 +112,7 @@ namespace RightsU_Plus.Controllers
             //List<USP_List_Rights_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Rights("AR", objDeal_Schema.Rights_View, objDeal_Schema.Deal_Code,
             //    objDeal_Schema.Rights_Titles, RegionCode, PlatformCode, objDeal_Schema.Rights_Exclusive, objPageNo, txtpageSize, objTotalRecord, "").ToList();
 
-            List<USP_Acq_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "",page_index, page_size, objRecordCount).ToList();
+            List<USP_Acq_Deal_Supplementary_List_Result> objSupplementary_List = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "", page_index, page_size, objRecordCount).ToList();
             //Count = objUspService.USP_Acq_Deal_Supplementary_List_Result(objDeal_Schema.Deal_Code, "", page_index, page_size).Count();
 
             ViewBag.RecordCount = Convert.ToInt32(objRecordCount.Value);
@@ -149,7 +149,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindAllPreReq_Async()
         {
-            int supplementary_Code = 0, title_code = 0, page_size = 0, page_index=0;
+            int supplementary_Code = 0, title_code = 0, page_size = 0, page_index = 0;
             string Operation = "";
             Dictionary<string, string> obj_Dictionary_RList = (Dictionary<string, string>)TempData["QueryString_Rights"];
             supplementary_Code = Convert.ToInt32(obj_Dictionary_RList["Supplementary_code"]);
@@ -406,12 +406,12 @@ namespace RightsU_Plus.Controllers
             string strDDL;
             if (multiple == "")
             {
-                strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
+                strDDL = "<select class=\"sumoUnder\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
             {
-                strDDL = "<select style=\"width:300px !important\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
+                strDDL = "<select style=\"sumoUnder\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
             }
             //strDDL = strDDL + "<option value=\"\" selected disabled hidden> Please Select</option>";
             foreach (Supplementary_Data LSD in ListSupplementary_Data.Where(a => a.Supplementary_Type == whrCond))
@@ -446,7 +446,8 @@ namespace RightsU_Plus.Controllers
         {
             if (User_Value != null && User_Value != "") { User_Value = (Convert.ToDateTime(User_Value)).ToString("yyyy-MM-dd"); }
             else { User_Value = ""; }
-            string getDATE = "<input type =\"date\"  data-val=\"true\" id =\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" style=\"height: 31px; \" value=\"" + User_Value + "\">";
+            string getDATE = "<input type=\"text\" class=\"datepicker\" id =\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" placeholder=\"DD / MM / YYYY\" style=\"height: 30px width:125px; \" value=\"" + User_Value + "\">";
+            //string getDATE = "<input type =\"date\"  data-val=\"true\" id =\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "dtSupp" + i.ToString() + "\" style=\"height: 31px; \" value=\"" + User_Value + "\">";
             _fieldList = _fieldList + Short_Name + "dtSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getDATE;
         }
@@ -458,7 +459,7 @@ namespace RightsU_Plus.Controllers
         }
         public string getDBL(string User_Value, string Short_Name, int i, string Operation, int ConfigCode)
         {
-            string getNumber = "<input type=\"number\" value=\""+ User_Value +"\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" value=\"" + User_Value + "\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + User_Value + "\" id=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "numSupp" + i.ToString() + "\">";
             _fieldList = _fieldList + Short_Name + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
@@ -608,7 +609,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public string DeleteSupplementary(int supplementary_Code,int page_index, int page_size)
+        public string DeleteSupplementary(int supplementary_Code, int page_index, int page_size)
         {
             objUspService.USP_Delete_Acq_Supplementary(supplementary_Code);
             var Mode = "A";
@@ -784,7 +785,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
             strAddRow = strAddRow.Replace("utospltag", "");
-            strAddRow = strAddRow + "<TR><td style=\"text-align: center;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
+            strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
 
             strAddRow = strAddRow + "</Table>";
             return strAddRow;
@@ -1091,8 +1092,8 @@ namespace RightsU_Plus.Controllers
 
                 obj.Add("ErrorCode", "100");
                 obj.Add("ErrorMsg", "Deal Saved successfully");
-                obj.Add("page_size",page_size);
-                obj.Add("page_index",page_index);
+                obj.Add("page_size", page_size);
+                obj.Add("page_index", page_index);
                 TempData["page_size"] = page_size;
                 TempData["page_index"] = page_index;
                 return Json(obj);

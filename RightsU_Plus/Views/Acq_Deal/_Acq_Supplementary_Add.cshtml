@@ -151,7 +151,8 @@
                     $("#CMPopup").append(result);
                     $("#AddComm").modal();
                     initializeExpander();
-
+                    $(".datepicker").datepicker();
+                    initializeDatepicker();
                     debugger;
                     let drCount = $("#hdn" + shortName).val();
 
@@ -250,6 +251,8 @@
                     $("#AddComm").modal();
                     initializeExpander();
 
+                    initializeDatepicker();
+                    $('.datepicker').datepicker();
                     debugger;
                     let drCount = $("#hdn" + shortName).val();
 
@@ -573,11 +576,11 @@
             }
         });
 
-        //if (detailsCnt < 1) {
-        //    showAlert('I', "Please add supplementary details to save.");
-        //    hideLoading();
-        //    return;
-        //}
+        if (detailsCnt < 1) {
+            showAlert('I', "Please add supplementary details to save.");
+            hideLoading();
+            return;
+        }
 
         if ($('#txtAcqRemarks').val() != null) {
             var Remarks = $('#txtAcqRemarks').val();
@@ -646,7 +649,7 @@
         <div class="tabbable">
             <div class="tab-content clearfix table-wrapper scale_table_container">
                 <div class="tab-pane active">
-                    <div class="scale_table_block">
+                    <div class="scale_table_block" style="padding-bottom:0% !important">
                         <div class="dotted_border">
                             <label class="bold">@objMessageKey.Titles</label>
                             <div id="divddlPTitle">
@@ -666,22 +669,19 @@
                             </div>
                             <div class="tab-content clearfix table-wrapper scale_table_container" id="tabTable">
                             </div>
-                            <div class="tab-pane active scale_table_block" id="tabRestriction">
+                            <div class="tab-pane active" id="tabRestriction">
                                 @*@Html.TextAreaFor(Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
                                 @*<textarea cols="20" id="Remarks" onkeypress="countChar(this)" name="Description" rows="4"></textarea>*@
 
                                 <div class="divBlock">
                                     <div class="pull-left" style="padding-right: 87%;"><b>@objMessageKey.Remarks</b></div>
                                     <div class="charNum">0/4000</div>
-                                    <div style=""></div>
+                                    @*<div style=""></div>*@
                                 </div>
                                 <textarea class="textarea" name="txtAcqRemarks" id="txtAcqRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
                             </div>
                         </div>
-                        <br>
-                        <br>
                     </div>
-
                 </div>
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
@@ -694,11 +694,13 @@
                     </ul>
                 </div>
             </div>
+            <br />
+            <br />
         </div>
     </div>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup scroll" id="AddComm" role="dialog" tabindex="-1" aria-hidden="false">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="AddComm" role="dialog" tabindex="-1" aria-hidden="false">
     <div class="modal-dialog">
         <div class="form_fields">
             <div class="modal-content clearfix">
