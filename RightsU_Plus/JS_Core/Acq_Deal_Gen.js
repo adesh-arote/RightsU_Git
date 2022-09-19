@@ -638,7 +638,7 @@ function ChangeLabelName() {
         $('#tdSynLicensor').hide();
         $('#tdAcqLicensor').show();
         $('#btnAddTitleMaster').attr("disabled", false);
-        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', false);
+        //$("input[name='Deal_Type_Code'][type=radio]").attr('disabled', false);
     }
 
 }

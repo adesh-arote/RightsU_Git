@@ -1691,7 +1691,7 @@ namespace RightsU_Plus.Controllers
 
                 }
 
-                var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode).ToList();
+                var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode && x.EntityState != State.Deleted).ToList();
                 if(TitleList.Count() == 0)
                 {
                     objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);

@@ -2891,7 +2891,7 @@ function CalculatePerpetuityEndDate(ValidateSave = "") {
                     if (ValidateSave == "Y") {
 
                         if (result != "") {
-                            showAlert("E", result + " does not has Release Date.")
+                            showAlert("E", result + " does not have Release Date.")
                         }
                     }
                     else {

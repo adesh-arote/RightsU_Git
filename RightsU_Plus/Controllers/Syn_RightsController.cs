@@ -218,18 +218,19 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Enabled_Perpetuity = "N";
             }
 
-            string BuybackSynRightsCode = Convert.ToString(obj_Dictionary["RCode"]);
+            string BuybackSynRightsCode = Convert.ToString(objPage_Properties.RCODE); //Convert.ToString(obj_Dictionary["RCode"]);
             var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == BuybackSynRightsCode).ToList();
 
             string IsExclusiveDisabledForBuyback = "";
             string IsBuyback = "";
             string IsTitleLanguageForBuyback = "";
 
-            if (BuybackRights.Count() > 0)
+
+            if (BuybackRights.Count() > 0 && objPage_Properties.RMODE != GlobalParams.DEAL_MODE_CLONE)
             {
                 IsBuyback = "Y";
                 var BuybackExclusiveRights = BuybackRights.Where(x => x.Is_Exclusive == "Y").ToList();
-                if(BuybackExclusiveRights.Count() > 0)
+                if (BuybackExclusiveRights.Count() > 0)
                 {
                     IsExclusiveDisabledForBuyback = "Y";
                 }
@@ -241,9 +242,11 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
+
             ViewBag.IsExclusiveDisabledForBuyback = IsExclusiveDisabledForBuyback;
             ViewBag.IsBuyback = IsBuyback;
             ViewBag.IsTitleLanguageForBuyback = IsTitleLanguageForBuyback;
+
 
 
             Session["FileName"] = "";
@@ -1038,9 +1041,9 @@ namespace RightsU_Plus.Controllers
                 objPTV.PlatformCodes_Display = (AllPlatform_Codes == "") ? "0" : AllPlatform_Codes;
 
                 //ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
-                if(lstAcq_Deal_Rights.Count() > 0)
+                if (lstAcq_Deal_Rights.Count() > 0)
                 {
-                    string strReplaceMessage = objPTV.PopulateTreeNode("N").Replace("Syndication","Buyback");
+                    string strReplaceMessage = objPTV.PopulateTreeNode("N").Replace("Syndication", "Buyback");
                     ViewBag.TV_Platform = strReplaceMessage;
                 }
                 else
@@ -2789,11 +2792,11 @@ namespace RightsU_Plus.Controllers
                 return message;
 
 
-            var acqRightsList  = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).ToList();
-           // var lstRightsCode = acqRightsList
-                //new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).Select(x => x.Acq_Deal_Rights_Code).Distinct().ToList();
+            var acqRightsList = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).ToList();
+            // var lstRightsCode = acqRightsList
+            //new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == objPage_Properties.RCODE.ToString()).Select(x => x.Acq_Deal_Rights_Code).Distinct().ToList();
 
-            if (acqRightsList.Count() > 0) 
+            if (acqRightsList.Count() > 0)
             {
                 int Count = 0;
 
@@ -2877,8 +2880,8 @@ namespace RightsU_Plus.Controllers
 
                 string[] arr_Acq_Edit_Subtitling_Lang_Code = objPage_Properties.Acquired_Subtitling_Codes.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-                string Acq_Rights_Code = string.Join(",", acqRightsList.Select(x=>x.Acq_Deal_Rights_Code).Distinct()).ToString();
-                
+                string Acq_Rights_Code = string.Join(",", acqRightsList.Select(x => x.Acq_Deal_Rights_Code).Distinct()).ToString();
+
                 List<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> lst_mapp = (new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(Acq_Rights_Code, objPage_Properties.Acquired_Subtitling_Codes, objPage_Properties.Acquired_Dubbing_Codes)).ToList<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result>();
                 string Syn_Sub_Lang_Code = "";
                 string Syn_Dub_Lang_Code = "";

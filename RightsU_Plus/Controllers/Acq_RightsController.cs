@@ -1367,6 +1367,10 @@ namespace RightsU_Plus.Controllers
 
                     str_Type_SL = str_Type_SL == "L" ? "SL" : str_Type_SL;
                     str_Type_DL = str_Type_DL == "L" ? "DL" : str_Type_DL;
+
+                    str_Type_SL = str_Type_SL == "G" ? "SG" : str_Type_SL;
+                    str_Type_DL = str_Type_DL == "G" ? "DG" : str_Type_DL;
+
                     string Sub_Type_SL = str_Type_SL;
                     string Sub_Type_DL = str_Type_DL;
 

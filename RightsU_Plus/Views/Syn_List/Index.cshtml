@@ -40,6 +40,11 @@
         var LeftpanelShowCsss = '350px';
         @*var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';*@
         $(document).ready(function () {
+            
+            $("#ddlSrchDirector,#ddlSrchLicensor,#ddlGenBUMultiSelect").click(function () {
+                $("input.search-txt").attr("placeholder", "Search");
+            });
+
             if ('@objMessageKey.LayoutDirection' == 'RTL') {
                 $('#AdSearch').css("padding-right", "11px");
                 $('.glyphicon-search').css("transform", "rotate(-360deg)");
@@ -126,6 +131,7 @@
                     }
                 });
             });
+
         });
         function AllsubmenuHide() {
             $('.RightPanel').css('right', RightpanelHideCss);
@@ -464,7 +470,7 @@
             top: -214px !important;
         }
 
-        .tinyADSearch {
+       .tinyADSearch {
             top: 40px;
         }
 

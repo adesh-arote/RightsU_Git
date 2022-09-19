@@ -589,9 +589,11 @@ namespace RightsU_Plus.Controllers
             string[] arrTitleName = obj_Acq_Syn_List_Search.TitleCodes_Search.Split(',');
             string strTitleNames = string.Join("﹐", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Code.ToString())).Select(y => y.Title_Name).ToList());
             // obj_Acq_Syn_List_Search.WorkFlowStatus_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "WFL").Select(i => i.Display_Value ?? 0).FirstOrDefault().ToString();
+
+            var Acquisition_DealWorkFlow = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Deal_Workflow_Status).Distinct().ToList();
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
             SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName)
-                .SearchFor(x => x.Deal_Type == "A")
+                .SearchFor(x => x.Deal_Type == "A" && Acquisition_DealWorkFlow.Contains(x.Deal_WorkflowFlag) || (x.Deal_WorkflowFlag == "0" &&x.Deal_Type == "A"))
               .Select(i => new { Display_Value = i.Deal_WorkflowFlag, Display_Text = i.Deal_Workflow_Status_Name }).ToList(),
               "Display_Value", "Display_Text");
 

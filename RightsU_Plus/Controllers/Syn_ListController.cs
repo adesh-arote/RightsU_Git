@@ -362,7 +362,10 @@ namespace RightsU_Plus.Controllers
             Set_Srch_Criteria();
             List<USP_Get_Acq_PreReq_Result> obj_USP_Get_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
             obj_USP_Get_PreReq_Result = BindAllDropDowns();
-            SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type == "S")
+
+            var Syndication_DealWorkFlow = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Deal_Workflow_Status).Distinct().ToList();
+            SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName)
+                .SearchFor(x => x.Deal_Type == "S" && Syndication_DealWorkFlow.Contains(x.Deal_WorkflowFlag) || (x.Deal_WorkflowFlag == "0" && x.Deal_Type == "S"))
              .Select(i => new { Display_Value = i.Deal_WorkflowFlag, Display_Text = i.Deal_Workflow_Status_Name }).ToList(),
              "Display_Value", "Display_Text");
             // obj_Acq_Syn_List_Search.WorkFlowStatus_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "WFL").Select(i => i.Display_Value ?? 0).FirstOrDefault().ToString();

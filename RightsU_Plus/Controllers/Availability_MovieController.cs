@@ -232,7 +232,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Code = moduleCode;
             module = moduleCode;
 
-            BindBusinessUnit();
+            BindBusinessUnit(moduleCode);
 
             lstTitles_Searched = lstTitles = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
 
@@ -250,12 +250,23 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        private void BindBusinessUnit()
+        private void BindBusinessUnit(string modulecode)
         {
             string rightsForAllBU = GetUserModuleRights();
 
+            string SelectedBU = "";
             System_Parameter_New_Service objSystemParamService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
-            string SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_BU").ToList().FirstOrDefault().Parameter_Value;
+
+            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForMovieAvailabilityReport)
+            {
+                SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_BU").ToList().FirstOrDefault().Parameter_Value;
+            }
+
+            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
+            {
+                SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_Show_BU").ToList().FirstOrDefault().Parameter_Value;
+            }
+            
             string[] arr_BU_Codes = SelectedBU.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             List<SelectListItem> list = new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(b => b.Users_Business_Unit.Any(UB => UB.Business_Unit_Code == b.Business_Unit_Code
