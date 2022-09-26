@@ -395,7 +395,8 @@
                                                                 string BuyBack = "";
                                                                 if (Model.Buyback_Syn_Rights_Code != null)
                                                                 {
-                                                                    isTitleLanguageDisabledForBuyback = (Model.Is_Title_Language_Right == "N") ? "disabled" : "";
+                                                                    //isTitleLanguageDisabledForBuyback = (Model.Is_Title_Language_Right == "N") ? "disabled" : "";
+                                                                    isTitleLanguageDisabledForBuyback = ViewBag.IsTitleLanguageForBuyback == "N" ? "disabled" : "";
                                                                     BuyBack = "BuyBack";
                                                                 }
                                                             }

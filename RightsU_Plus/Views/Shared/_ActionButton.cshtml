@@ -14,6 +14,14 @@
     int Deal_Type_Code = ViewBag.Deal_Type_Code;
     string Agreement_No = ViewBag.Agreement_No;
     string Controller = ViewBag.Type;
+    string BuybackDisabledForClone = "";
+
+    string toolTipTitle = "Renew / Clone";
+    if (ViewBag.RoleCode == GlobalParams.RoleCode_BuyBack)
+    {
+        BuybackDisabledForClone = "disabled";
+        toolTipTitle = "Cannot clone Buyback deal";
+    }
 }
 
 @if (Button_Visibility != null)
@@ -59,7 +67,7 @@
         }
         else
         {
-            <a title="Renew / Clone" class="glyphicon glyphicon-duplicate AT_@DealCode" id="RenewClone_@tempCount" href="@Url.Action("ButtonEvents","Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @DealCode })"></a>
+            <a title="@toolTipTitle" class="glyphicon glyphicon-duplicate AT_@DealCode @BuybackDisabledForClone" id="RenewClone_@tempCount"  href="@Url.Action("ButtonEvents","Acq_List", new { CommandName = "Clone", Acq_Deal_Code = @DealCode })"></a>
         }
         if (Count > 3)
         {

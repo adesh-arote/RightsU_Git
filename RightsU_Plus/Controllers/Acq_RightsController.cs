@@ -251,17 +251,19 @@ namespace RightsU_Plus.Controllers
 
             objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
 
+            string isTitleLanguageDisabledForBuyback = "";
 
             if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
             {
                 objSyn_Deal_Rights_Buyback = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(objAcq_Deal_Rights.Buyback_Syn_Rights_Code));
                 string.Join(",", (objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(i => i.Platform_Code).Distinct().ToList()));
-
+                isTitleLanguageDisabledForBuyback = objSyn_Deal_Rights_Buyback.Is_Title_Language_Right;
             }
 
             ViewBag.StartDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date).ToString("dd/MM/yyyy");//objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date;
             ViewBag.EndDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_End_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_End_Date).ToString("dd/MM/yyyy");
             ViewBag.IsSynExclusive = objSyn_Deal_Rights_Buyback.Is_Exclusive;
+            ViewBag.IsTitleLanguageForBuyback = isTitleLanguageDisabledForBuyback;
 
 
             Session["FileName"] = "acq_Rights";

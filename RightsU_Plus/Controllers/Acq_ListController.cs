@@ -2214,6 +2214,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.Button_Visibility = Button_Visibility;
             ViewBag.Deal_Type_Code = Acq_Deal_obj.Deal_Type_Code;
             ViewBag.Agreement_No = Acq_Deal_obj.Agreement_No;
+            ViewBag.RoleCode = Acq_Deal_obj.Role_Code;
+            
+
+
             return PartialView("~/Views/Shared/_ActionButton.cshtml");
         }
 

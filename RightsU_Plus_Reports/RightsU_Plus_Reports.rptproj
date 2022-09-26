@@ -68,6 +68,7 @@
     <Report Include="rptAttachment.rdl" />
     <Report Include="rptAuditTrailAcqSyn.rdl" />
     <Report Include="rptAvail_Movies.rdl" />
+    <Report Include="rptAvail_Shows.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise_English.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise_Sub.rdl" />
