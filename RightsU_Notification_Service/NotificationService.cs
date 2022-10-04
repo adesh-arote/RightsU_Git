@@ -19,10 +19,10 @@ namespace RightsU_Notification_Service
 {
     public partial class NotificationService : ServiceBase
     {
-        public static string IsAuthKeyRequired = "Y";//Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
+        public static string IsAuthKeyRequired = Convert.ToString(ConfigurationSettings.AppSettings["IsAuthKeyRequired"]);
         public static string AuthKey = "";//AES Encryption
 
-        public static string RequestUri = Convert.ToString("http://192.168.0.114/UTONotificationUI/UTONotificationAPI/api/Notification/");
+        public static string RequestUri = Convert.ToString(ConfigurationManager.AppSettings["NotificationURL"]);
         public static int Max_Retry_Limit = 5;
         public Timer timer = new Timer();
 
@@ -32,11 +32,13 @@ namespace RightsU_Notification_Service
             string hostName = Dns.GetHostName(); // Retrive the Name of HOST
             string myIP = Dns.GetHostByName(hostName).AddressList[0].ToString();
 
-            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes("abc123");
+            byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["salt"].ToString());
             byte[] passwordBytes = Encoding.UTF8.GetBytes(myIP);
 
             byte[] bytesEncrypted = AesOperation.AES_Encrypt(bytesToBeEncrypted, passwordBytes);
             AuthKey = Convert.ToBase64String(bytesEncrypted);
+
+            Error.WriteLog("IP Address" + myIP + AuthKey);
 
             Error.WriteLog("Service Started", includeTime: true, addSeperater: true);
         }
@@ -140,6 +142,8 @@ namespace RightsU_Notification_Service
                 var result = (dynamic)null;
                 List<Notification> lstNotification = context.Notifications.Where(x => x.API_Status == "P").ToList();
 
+                Error.WriteLog("List Found - " + lstNotification.Count().ToString(), includeTime: true, addSeperater: true);
+
                 if (lstNotification.Count > 0)
                 {
                     foreach (Notification x in lstNotification)
@@ -166,8 +170,16 @@ namespace RightsU_Notification_Service
                                 UserCode = x.UserCode
                             };
 
-                            result = client.UploadString(RequestUri + "NESendMessage", JsonConvert.SerializeObject(Response));
-                            Update_Notification(x.NotificationsCode, result);
+                            try
+                            {
+                                Error.WriteLog("Within Try " + lstNotification.Count().ToString(), includeTime: true, addSeperater: true);
+                                result = client.UploadString(RequestUri + "NESendMessage", JsonConvert.SerializeObject(Response));
+                                Update_Notification(x.NotificationsCode, result);
+                            }
+                            catch (Exception ex)
+                            {
+                                Error.WriteLog("Within Catch - " + ex.Message.ToString(), includeTime: true, addSeperater: true);
+                            }
                         }
                     }
                 }

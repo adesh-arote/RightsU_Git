@@ -27,7 +27,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <b>@objMessageKey.FirstName</b>                         
+                            <b>@objMessageKey.FirstName</b>
                             <input type="hidden" name="hdnUsers_Code" id="hdnUsers_Code" value="@Model.Users_Code" />
                         </td>
                         <td>
@@ -91,6 +91,41 @@
                             </td>
                         </tr>
                     }
+
+                    @if (ViewBag.Is_ROP_Accessible == "Y")
+                    {
+                        <tr>
+                            <td>
+                                <b>Department</b>
+                            </td>
+                            <td>
+                                <div id="divddlDepartment">
+                                    @Html.DropDownList("ddlDepartment", ViewBag.DepartmentList as MultiSelectList, new { @id = "ddlDepartment", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Business Layer</b>
+                            </td>
+                            <td>
+                                <div id="divddlBusinessLayer">
+                                    @Html.DropDownList("ddlBusinessLayer", ViewBag.BusinessLayerList as MultiSelectList, new { @id = "ddlBusinessLayer", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <b>Business Vertical</b>
+                            </td>
+                            <td>
+                                <div id="divddlBusinessVertical">
+                                    @Html.DropDownList("ddlBusinessVertical", ViewBag.BusinessVerticalList as MultiSelectList, new { @id = "ddlBusinessVertical", @multiple = "multiple" })
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
                     @if (ViewBag.AllowUSer == "Y")
                     {
                         <tr>
@@ -261,6 +296,92 @@
             min: 1
         });
     });
+
+    if ("@ViewBag.Is_ROP_Accessible" == "Y") {
+        $('#ddlBusinessLayer').SumoSelect();
+        $('#ddlBusinessLayer')[0].sumo.reload();
+        $('#ddlBusinessVertical').SumoSelect();
+        $('#ddlBusinessVertical')[0].sumo.reload();
+        $('#ddlDepartment').SumoSelect();
+        $('#ddlDepartment')[0].sumo.reload();
+    }
+
+    function Validate_Save() {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var loginName = $.trim($('#txtLoginName').val());
+        var firstName = $.trim($('#txtFirstName').val());
+        var lastName = $.trim($('#txtLastName').val());
+        var emailId = $.trim($('#txtEmailId').val());
+
+        var returnVal = true;
+        if (loginName == '') {
+            $('#txtLoginName').val('');
+            $('#txtLoginName').attr('required', true)
+            returnVal = false;
+        }
+        if (firstName == '') {
+            $('#txtFirstName').val('');
+            $('#txtFirstName').attr('required', true)
+            returnVal = false;
+        }
+        if (lastName == '') {
+            $('#txtLastName').val('');
+            $('#txtLastName').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId == '') {
+            $('#txtEmailId').val('');
+            $('#txtEmailId').attr('required', true)
+            returnVal = false;
+        }
+        if (emailId != '') {
+            if (!ValidateEmail(emailId)) {
+                showAlert("E","@objMessageKey.InvalidEmailId");
+                returnVal = false;
+            }
+        }
+        if ($('#ddlSecurityGroup').val() == "") {
+            $('#ddlSecurityGroup').addClass('required');
+            returnVal = false;
+        }
+        if ($('#ddlBusinessUnit').val() == null)
+        {
+            $('#divddlBusinessUnit').addClass('required');
+            returnVal = false;
+        }
+        if($('#ddlLanguage').val() == ""){
+            $('#ddlLanguage').addClass('required');
+            returnVal = false;
+        }
+
+        if ("@ViewBag.Is_ROP_Accessible" == "Y") {
+            if ($('#ddlDepartment').val() == null) {
+                $('#divddlDepartment').addClass('required');
+                returnVal = false;
+            }
+            if ($('#ddlBusinessLayer').val() == null) {
+                $('#divddlBusinessLayer').addClass('required');
+                returnVal = false;
+            }
+            if ($('#ddlBusinessVertical').val() == null) {
+                $('#divddlBusinessVertical').addClass('required');
+                returnVal = false;
+            }
+        }
+        
+        if ($("#ddlVendor").val() != undefined) {
+            if (document.getElementById("ProductionHouseUser").checked) {
+                if ($('#ddlVendors').val() == "") {
+                    $('#ddlVendors').addClass('required');
+                    returnVal = false;
+                }
+            }
+        }
+        return returnVal;
+    }
     function BindSecurityGroup() {
         debugger
         var UsersCode = $('#hdnUsers_Code').val();

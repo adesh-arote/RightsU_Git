@@ -38,8 +38,6 @@
 </style>
 <script type="text/javascript">
 
-
-
     $(document).ready(function () {
         $('#liDigitalRights').click(function () {
             debugger;
@@ -61,7 +59,7 @@
     })
 
     function LoadTab(tabName, IsActive) {
-        //debugger;
+        debugger;
         showLoading();
         if (document.location.search == "") {
             url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
@@ -94,6 +92,10 @@
                 }
                 else if (CurrentTab == pageRunDetailAddEdit) {
                     $('#btnSaveRun').click();
+                }
+                else if (CurrentTab == pageSupplementaryAddEdit) {
+                    //$('#btnSaveDeal').click();
+                    SuppSave();
                 }
                 else if (CurrentTab == pagePaymentTerm) {
                     $('#btnSaveDeal').click();

@@ -96,6 +96,66 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstADRHV"] = value; }
         }
+
+        public bool Is_Buyback
+        {
+            get
+            {
+                if (Session["Is_Buyback"] == null)
+                    Session["Is_Buyback"] = false;
+                return Convert.ToBoolean(Session["Is_Buyback"]);
+            }
+            set { Session["Is_Buyback"] = value; }
+        }
+
+        public string AllCountry_Territory_Codes
+        {
+            get
+            {
+                if (Session["AllCountry_Territory_Codes"] == null) return string.Empty;
+                return Convert.ToString(Session["AllCountry_Territory_Codes"]);
+            }
+            set { Session["AllCountry_Territory_Codes"] = value; }
+        }
+
+        public string AllPlatform_Codes
+        {
+            get
+            {
+                if (Session["AllPlatform_Codes"] == null) return string.Empty;
+                return Convert.ToString(Session["AllPlatform_Codes"]);
+            }
+            set { Session["AllPlatform_Codes"] = value; }
+        }
+        public string SubTitle_Lang_Codes
+        {
+            get
+            {
+                if (Session["SubTitle_Lang_Codes"] == null) return string.Empty;
+                return Convert.ToString(Session["SubTitle_Lang_Codes"]);
+            }
+            set { Session["SubTitle_Lang_Codes"] = value; }
+        }
+        public string Dubb_Lang_Codes
+        {
+            get
+            {
+                if (Session["Dubb_Lang_Codes"] == null) return string.Empty;
+                return Convert.ToString(Session["Dubb_Lang_Codes"]);
+            }
+            set { Session["Dubb_Lang_Codes"] = value; }
+        }
+
+        public Syn_Deal_Rights objSyn_Deal_Rights_Buyback
+        {
+            get
+            {
+                if (Session["Syn_Deal_Rights"] == null)
+                    Session["Syn_Deal_Rights"] = new Syn_Deal_Rights();
+                return (Syn_Deal_Rights)Session["Syn_Deal_Rights"];
+            }
+            set { Session["Syn_Deal_Rights"] = value; }
+        }
         #endregion
 
         #region --- New Changes ---
@@ -108,6 +168,8 @@ namespace RightsU_Plus.Controllers
             objPage_Properties = null;
             lstDupRecords = null;
             lstADRHV = null;
+            objSyn_Deal_Rights_Buyback = null;
+            Session["Is_Buyback"] = false;
             Session["FileName"] = null;
 
             Dictionary<string, string> obj_Dictionary = new Dictionary<string, string>();
@@ -184,6 +246,26 @@ namespace RightsU_Plus.Controllers
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ADD && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW)
                 ViewBag.Record_Locking_Code = objDeal_Schema.Record_Locking_Code;
 
+            Syn_Deal_Rights objSyn_Deal_Rights = new Syn_Deal_Rights();
+            Syn_Deal_Rights_Platform objSyn_Deal_Rights_Platform = new Syn_Deal_Rights_Platform();
+
+            objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
+
+            string isTitleLanguageDisabledForBuyback = "";
+
+            if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
+            {
+                objSyn_Deal_Rights_Buyback = new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(objAcq_Deal_Rights.Buyback_Syn_Rights_Code));
+                string.Join(",", (objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(i => i.Platform_Code).Distinct().ToList()));
+                isTitleLanguageDisabledForBuyback = objSyn_Deal_Rights_Buyback.Is_Title_Language_Right;
+            }
+
+            ViewBag.StartDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date).ToString("dd/MM/yyyy");//objSyn_Deal_Rights_Buyback.Actual_Right_Start_Date;
+            ViewBag.EndDate_Buyback = objSyn_Deal_Rights_Buyback.Actual_Right_End_Date == null ? "" : ((DateTime)objSyn_Deal_Rights_Buyback.Actual_Right_End_Date).ToString("dd/MM/yyyy");
+            ViewBag.IsSynExclusive = objSyn_Deal_Rights_Buyback.Is_Exclusive;
+            ViewBag.IsTitleLanguageForBuyback = isTitleLanguageDisabledForBuyback;
+
+
             Session["FileName"] = "acq_Rights";
             ViewBag.TreeId = "Rights_Platform";
             return PartialView("~/Views/Acq_Deal/_Acq_Rights.cshtml", objAcq_Deal_Rights);
@@ -205,6 +287,7 @@ namespace RightsU_Plus.Controllers
             lstDupRecords = null;
             lstADRHV = null;
             Session["FileName"] = null;
+            Session["Is_Buyback"] = false;
 
             objPage_Properties.RMODE = obj_Dictionary["MODE"];
             objPage_Properties.RCODE = Convert.ToInt32(obj_Dictionary["RCode"]);
@@ -263,6 +346,16 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.Acq_Deal_Rights_Code = objPage_Properties.RCODE;
             objAcq_Deal_Rights = objADRS.GetById(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
 
+            objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objAcq_Deal_Rights.Buyback_Syn_Rights_Code == "" ? null : objAcq_Deal_Rights.Buyback_Syn_Rights_Code;
+            if (objAcq_Deal_Rights.Buyback_Syn_Rights_Code != null)
+            {
+                Session["Is_Buyback"] = true;
+            }
+            else
+            {
+                Session["Is_Buyback"] = false;
+            }
+
             if (objAcq_Deal_Rights.Original_Right_Type == null && objAcq_Deal_Rights.Right_Type == "U")
                 objAcq_Deal_Rights.Original_Right_Type = "";
             else if (objAcq_Deal_Rights.Original_Right_Type == null)
@@ -319,7 +412,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objAcq_Deal_Rights.Term.Split('.');
                 objAcq_Deal_Rights.Term_YY = arr[0];
                 objAcq_Deal_Rights.Term_MM = arr[1];
-                objAcq_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objAcq_Deal_Rights.Term_DD = arr[2];
+                else
+                    objAcq_Deal_Rights.Term_DD = "0";
 
                 if (objAcq_Deal_Rights.Original_Right_Type == "U")
                     objAcq_Deal_Rights.Perpetuity_Date = string.Format("{0:" + GlobalParams.DateFormat + "}", objAcq_Deal_Rights.Actual_Right_Start_Date).Replace("-", "/");
@@ -715,7 +811,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objAcq_Deal_Rights.Term.Split('.');
                 objAcq_Deal_Rights.Term_YY = arr[0];
                 objAcq_Deal_Rights.Term_MM = arr[1];
-                objAcq_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objAcq_Deal_Rights.Term_DD = arr[2];
+                else
+                    objAcq_Deal_Rights.Term_DD = "0";
             }
             else if (objAcq_Deal_Rights.Original_Right_Type == "U")
             {
@@ -833,7 +932,10 @@ namespace RightsU_Plus.Controllers
                 string[] arr = objAcq_Deal_Rights.Term.Split('.');
                 objAcq_Deal_Rights.Term_YY = arr[0];
                 objAcq_Deal_Rights.Term_MM = arr[1];
-                objAcq_Deal_Rights.Term_DD = arr[2];
+                if (arr.Length > 2)
+                    objAcq_Deal_Rights.Term_DD = arr[2];
+                else
+                    objAcq_Deal_Rights.Term_DD = "0";
 
                 if (objAcq_Deal_Rights.Original_Right_Type == "U")
                     objAcq_Deal_Rights.Perpetuity_Date = string.Format("{0:" + GlobalParams.DateFormat_Display + "}", objAcq_Deal_Rights.Actual_Right_Start_Date).Replace("-", "/");
@@ -1057,6 +1159,14 @@ namespace RightsU_Plus.Controllers
                     if (b.Count() > 0)
                         objPTV.BudgetPlatformCodes_Reference = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_No_Of_Run == "Y").Select(p => p.Platform_Code.ToString()).ToArray();
                 }
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                {
+                    var lstPlatforms = objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.ToList();
+                    string SyndicatedPlatforms = String.Join(",", objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(x=>x.Platform_Code)).ToString();
+
+                    objPTV.PlatformCodes_Display = SyndicatedPlatforms;//strPlatform;
+                }
+
                 ViewBag.TV_Platform = objPTV.PopulateTreeNode("N");
             }
             else
@@ -1065,8 +1175,15 @@ namespace RightsU_Plus.Controllers
                     objPTV.PlatformCodes_Display = strPlatform;
 
                 objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
-                ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y");
+                //if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                if(!String.IsNullOrEmpty(objAcq_Deal_Rights.Buyback_Syn_Rights_Code))
+                {
+                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y","","Buyback");
+                }
+                else
+                {
+                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y");
+                }
             }
 
             ViewBag.TreeId = "Rights_Platform";
@@ -1175,13 +1292,141 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights.Sub_Codes = Selected_Subtitling_Code;
             objAcq_Deal_Rights.Dub_Codes = Selected_Dubbing_Code;
 
+            List<USP_Get_Acq_PreReq_Result> lst_USP_Get_Acq_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
+            string str_Type = "DR";
+            //if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            //{
+            //    string Data_For = "";//, country_Territory_Codes = "0", sub_Lang_Codes = "0", dub_Lang_Codes = "0";                
+            //    string Dub_type = "";
+            //    if (str_Type == "DR")
+            //    {
+            //        if (str_Type == "DR")
+            //        {
+            //            if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_ADD)
+            //                Data_For = "TIT,ROR,SBL";
+            //            else if (objPage_Properties.RMODE == GlobalParams.DEAL_MODE_EDIT || objPage_Properties.RMODE == GlobalParams.DEAL_MODE_CLONE)
+            //            {
+            //                string platform_Type = (isTheatrical.ToUpper() == "FALSE") ? "PL" : "TPL";
+            //                if (objAcq_Deal_Rights.Is_Theatrical_Right == "Y")
+            //                    Region_Type = objAcq_Deal_Rights.Region_Type == "G" ? "THT" : "THC";
+            //                else
+            //                    Region_Type = objAcq_Deal_Rights.Region_Type == "G" ? "T" : "C";
+            //                //if (platform_Type == "TPL")
+            //                //    GET_DATA_FOR_APPROVED_TITLES(objPage_Properties.Acquired_Title_Codes, "", "TPL", "", "", "");
+
+            //                Data_For = "TIT,ROR,SBL";
+            //                Sub_Type = objAcq_Deal_Rights.Sub_Type == "G" ? "SG" : "SL";
+            //                Dub_type = objAcq_Deal_Rights.Dub_Type == "G" ? "DG" : "DL";
+            //                Data_For = Data_For + "," + Region_Type + "," + Sub_Type + "," + Dub_type;
+            //            }
+
+            //            /*
+            //       ROR = ROFR(Rights for Refusal)
+            //       SBL	= SubLicencing					
+            //       SL  = SubTitle Lang.
+            //       SG  = SubTitle Lang. Group.
+            //       DL  = Dubbing Lang.				  
+            //       DG  = Dubbing Group.
+            //       T   = Territory
+            //       C   = Couuntry
+            //       THT = Theatrical Territory
+            //       THC = Theatrical Country             
+            //    */
+            //            //Call From - str_Type - "DR" - Document.Ready,"C" - Change Event                              
+            //            //No need to send strType to USP
+            //            lst_USP_Get_Acq_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Syn_Rights_PreReq(objDeal_Schema.Deal_Code,
+            //                                                                                                   objDeal_Schema.Deal_Type_Code,
+            //                                                                   Data_For, str_Type, objAcq_Deal_Rights.Region_Codes, objAcq_Deal_Rights.Sub_Codes, objAcq_Deal_Rights.Dub_Codes).ToList();
+
+            //        }
+            //    }
+            //}
+
+            // New Logic for buyback Region, SL , DL on Page load
+            List<USP_Get_Acq_PreReq_Result> Obj_USP_Result_RGN = new List<USP_Get_Acq_PreReq_Result>();
+            List<USP_Get_Acq_PreReq_Result> Obj_USP_Result_SL = new List<USP_Get_Acq_PreReq_Result>();
+            List<USP_Get_Acq_PreReq_Result> Obj_USP_Result_DL = new List<USP_Get_Acq_PreReq_Result>();
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            {
+                // I - Country // G -Territory // SL -Sub Lang // SG - Sub Lang Group // DL -Dub Lang // DG - Dubb Lang Group
+
+                //, country_Territory_Codes = "0", sub_Lang_Codes = "0", dub_Lang_Codes = "0";                
+                //string Sub_Type = ""; string Dub_type = "";
+                string PlatformCodes = String.Join(",", objAcq_Deal_Rights.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                {
+                    if (Region_Type == "I")
+                        Region_Type = (isTheatrical == "N") ? "C" : "THC";
+                    else
+                        Region_Type = (isTheatrical == "N") ? "T" : "THT";
+
+                    string str_Type_RGN = objAcq_Deal_Rights.Region_Type;
+                    string str_Type_SL = Sub_Type;
+                    string str_Type_DL = dubType;
+
+                    string Data_For_RGN = "";
+                    string Data_For_SL = "";
+                    string Data_For_DL = "";
+
+                    str_Type_SL = str_Type_SL == "L" ? "SL" : str_Type_SL;
+                    str_Type_DL = str_Type_DL == "L" ? "DL" : str_Type_DL;
+
+                    str_Type_SL = str_Type_SL == "G" ? "SG" : str_Type_SL;
+                    str_Type_DL = str_Type_DL == "G" ? "DG" : str_Type_DL;
+
+                    string Sub_Type_SL = str_Type_SL;
+                    string Sub_Type_DL = str_Type_DL;
+
+                    //Data_For = str_Type;
+                    if (str_Type_RGN == "I" || str_Type_RGN == "T" || str_Type_RGN == "G")
+                    {
+                        Data_For_RGN = Region_Type;
+
+                        GET_DATA_FOR_APPROVED_TITLES(selected_Title_Code, PlatformCodes, "", Region_Type, Sub_Type_SL, Sub_Type_DL);
+                        Obj_USP_Result_RGN = Get_USP_Get_Acq_PreReq_Result(Data_For_RGN, str_Type_RGN);
+
+                    }
+
+                    if (str_Type_SL == "SL" || str_Type_SL == "SG" || str_Type_SL == "L")
+                    {    
+                        Data_For_SL = str_Type_SL;
+
+                        GET_DATA_FOR_APPROVED_TITLES(selected_Title_Code, PlatformCodes, "", Region_Type, Sub_Type_SL, Sub_Type_DL);
+                        Obj_USP_Result_SL = Get_USP_Get_Acq_PreReq_Result(Data_For_SL, str_Type_SL);
+                    }
+
+                    if (str_Type_DL == "DL" || str_Type_DL == "DG")
+                    {
+                        Data_For_DL = str_Type_DL;
+
+                        GET_DATA_FOR_APPROVED_TITLES(selected_Title_Code, PlatformCodes, "", Region_Type, Sub_Type_SL, Sub_Type_DL);
+                        Obj_USP_Result_DL = Get_USP_Get_Acq_PreReq_Result(Data_For_DL, str_Type_DL);
+                    }
+
+                    //if (Data_For != "")
+                    //{
+                    //    GET_DATA_FOR_APPROVED_TITLES(selected_Title_Code, PlatformCodes, "", Region_Type, Sub_Type, dubType);
+                    //    Obj_USP_Result = Get_USP_Get_Acq_PreReq_Result(Data_For, str_Type);
+                    //}
+                }
+            }
+
+
+
             List<USP_Get_Acq_PreReq_Result> lstUSP_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Acq_Rights_PreReq(objDeal_Schema.Deal_Code, dataFor, objDeal_Schema.Deal_Type_Code, objPage_Properties.Is_Syn_Acq_Mapp).ToList();
             var subList = new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == "SBL"), "Display_Value", "Display_Text").ToList();
             //subList.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Title_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == "TIT"), "Display_Value", "Display_Text").ToList());
             obj.Add("Selected_Title_Code", selected_Title_Code);
-            obj.Add("Region_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Region), "Display_Value", "Display_Text").ToList());
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            {
+                obj.Add("Region_List", new SelectList(Obj_USP_Result_RGN.Where(x => x.Data_For == "RGN"), "Display_Value", "Display_Text").ToList());
+            }
+            else
+            {
+                obj.Add("Region_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Region), "Display_Value", "Display_Text").ToList());
+            }
+
             obj.Add("Selected_Region_Code", Selected_Region_Code);
             obj.Add("Sub_License_List", subList);
             if (objAcq_Deal_Rights.Acq_Deal_Code == 0)
@@ -1196,9 +1441,25 @@ namespace RightsU_Plus.Controllers
             obj.Add("Milestone_Unit_Type", (objAcq_Deal_Rights.Milestone_Unit_Type ?? 0));
             obj.Add("ROFR_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == "RFR"), "Display_Value", "Display_Text").ToList());
             obj.Add("ROFR_Code", (objAcq_Deal_Rights.ROFR_Code ?? 0));
-            obj.Add("Subtitle_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Sub), "Display_Value", "Display_Text").ToList());
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            {
+                obj.Add("Subtitle_List", new SelectList(Obj_USP_Result_SL.Where(x => x.Data_For == "SL"), "Display_Value", "Display_Text").ToList());
+            }
+            else
+            {
+                obj.Add("Subtitle_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Sub), "Display_Value", "Display_Text").ToList());
+            }
+
             obj.Add("Selected_Subtitling_Code", Selected_Subtitling_Code);
-            obj.Add("Dubbing_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Dub), "Display_Value", "Display_Text").ToList());
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            {
+                obj.Add("Dubbing_List", new SelectList(Obj_USP_Result_DL.Where(x => x.Data_For == "DL"), "Display_Value", "Display_Text").ToList());
+            }
+            else
+            {
+                obj.Add("Dubbing_List", new SelectList(lstUSP_PreReq_Result.Where(x => x.Data_For == dataFor_Dub), "Display_Value", "Display_Text").ToList());
+            }
+
             obj.Add("Selected_Dubbing_Code", Selected_Dubbing_Code);
             return Json(obj);
         }
@@ -1234,16 +1495,101 @@ namespace RightsU_Plus.Controllers
 
         #region ============== ASYNC & JSON CALLS ==============
 
-        public JsonResult Bind_JSON_ListBox(string str_Type, string Is_Thetrical)
+        public JsonResult Bind_JSON_ListBox(string str_Type, string Is_Thetrical, string titleCodes, string platformCodes, string Region_Type, string rdbSubtitlingLanguage, string rdbDubbingLanguage)
         {
             // I - Country // G -Territory // SL -Sub Lang // SG - Sub Lang Group // DL -Dub Lang // DG - Dubb Lang Group
+
+            //List<USP_Get_Acq_PreReq_Result> lst_USP_Get_Acq_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
+            ////string str_Type = "";
+            //string Data_For = "";
+            //if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            //{
+            //    if (str_Type == "I")
+            //        str_Type = (Is_Thetrical == "N") ? "C" : "THC";
+            //    else
+            //        str_Type = (Is_Thetrical == "N") ? "T" : "THT";
+
+            //    Data_For = str_Type;
+            //    if (str_Type == "I" || str_Type == "T" || str_Type == "G")
+            //    {
+            //        Data_For = str_Type;
+            //    }
+            //    else if (str_Type == "SL" || str_Type == "DL" || str_Type == "SG" || str_Type == "DG")
+            //    {
+            //        Data_For = str_Type;
+            //    }
+            //    //else if (str_Type == "A")
+            //    //{
+            //    //    Sub_Type = (rdbSubtitlingLanguage == "G" || rdbSubtitlingLanguage == "SG") ? "SG" : "SL";
+            //    //    Dub_type = (rdbDubbingLanguage == "G" || rdbDubbingLanguage == "DG") ? "DG" : "DL";
+            //    //    Data_For = Data_For + "," + Region_Type + "," + Sub_Type + "," + Dub_type;
+            //    //}
+            //    if (Data_For != "")
+            //    {
+            //        lst_USP_Get_Acq_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Syn_Rights_PreReq(objDeal_Schema.Deal_Code,
+            //                                                                                                   objDeal_Schema.Deal_Type_Code,
+            //                                                                   Data_For, str_Type, objAcq_Deal_Rights.Region_Codes, objAcq_Deal_Rights.Sub_Codes, objAcq_Deal_Rights.Dub_Codes).ToList();
+
+
+            //    }
+            //}
+
+            //new functionality start
+            List<USP_Get_Acq_PreReq_Result> Obj_USP_Result = new List<USP_Get_Acq_PreReq_Result>();
+            if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+            {
+                // I - Country // G -Territory // SL -Sub Lang // SG - Sub Lang Group // DL -Dub Lang // DG - Dubb Lang Group
+
+                string Data_For = "";//, country_Territory_Codes = "0", sub_Lang_Codes = "0", dub_Lang_Codes = "0";                
+                string Sub_Type = ""; string Dub_type = "";
+                {
+                    if (Region_Type == "I")
+                        Region_Type = (Is_Thetrical == "N") ? "C" : "THC";
+                    else
+                        Region_Type = (Is_Thetrical == "N") ? "T" : "THT";
+                    Data_For = str_Type;
+                    if (str_Type == "I" || str_Type == "T" || str_Type == "G")
+                    {
+                        Data_For = Region_Type;
+                    }
+                    else if (str_Type == "SL" || str_Type == "DL" || str_Type == "SG" || str_Type == "DG")
+                    {
+                        Data_For = str_Type;
+                    }
+                    else if (str_Type == "A")
+                    {
+                        Sub_Type = (rdbSubtitlingLanguage == "G" || rdbSubtitlingLanguage == "SG") ? "SG" : "SL";
+                        Dub_type = (rdbDubbingLanguage == "G" || rdbDubbingLanguage == "DG") ? "DG" : "DL";
+                        Data_For = Data_For + "," + Region_Type + "," + Sub_Type + "," + Dub_type;
+                    }
+                    if (Data_For != "")
+                    {
+                        GET_DATA_FOR_APPROVED_TITLES(titleCodes, platformCodes, "", Region_Type, rdbSubtitlingLanguage, rdbDubbingLanguage);
+                        Obj_USP_Result = Get_USP_Get_Acq_PreReq_Result(Data_For, str_Type);
+                    }
+                }
+            }
+
+
+            //end
+
 
             if (str_Type == "I")
             {
                 if (objAcq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(t => t.EntityState != State.Deleted).Count() == 0)
                 {
-                    var arr = BindCountry(Is_Thetrical);
-                    return Json(arr, JsonRequestBehavior.AllowGet);
+                    if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                    {
+                        var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Territory_Code = i.Display_Value, Territory_Name = i.Display_Text }).OrderBy(x => x.Territory_Name).ToList(), "Territory_Code", "Territory_Name");
+                        return Json(arr, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var arr = BindCountry(Is_Thetrical);
+                        return Json(arr, JsonRequestBehavior.AllowGet);
+                    }
+
+
                 }
                 else
                     return Json("Holdback is already added.");
@@ -1252,8 +1598,17 @@ namespace RightsU_Plus.Controllers
             {
                 if (objAcq_Deal_Rights.Acq_Deal_Rights_Holdback.Where(t => t.EntityState != State.Deleted).Count() == 0)
                 {
-                    var arr = BindTerritory(Is_Thetrical);
-                    return Json(arr, JsonRequestBehavior.AllowGet);
+                    if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                    {
+                        var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Territory_Code = i.Display_Value, Territory_Name = i.Display_Text }).OrderBy(x => x.Territory_Name).ToList(), "Territory_Code", "Territory_Name");
+                        return Json(arr, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        var arr = BindTerritory(Is_Thetrical);
+                        return Json(arr, JsonRequestBehavior.AllowGet);
+                    }
+
                 }
                 else
                     return Json("Holdback is already added.");
@@ -1272,8 +1627,16 @@ namespace RightsU_Plus.Controllers
                         return Json("Holdback is already added.");
                 }
 
-                var arr = BindLanguage();
-                return Json(arr, JsonRequestBehavior.AllowGet);
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                {
+                    var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Language_Code = i.Display_Value, Language_Name = i.Display_Text }).OrderBy(x => x.Language_Name).ToList(), "Language_Code", "Language_Name");
+                    return Json(arr, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var arr = BindLanguage();
+                    return Json(arr, JsonRequestBehavior.AllowGet);
+                }
             }
             else if (str_Type == "SG" || str_Type == "DG")
             {
@@ -1289,8 +1652,17 @@ namespace RightsU_Plus.Controllers
                         return Json("Holdback is already added.");
                 }
 
-                var arr = BindLanguage_Group();
-                return Json(arr, JsonRequestBehavior.AllowGet);
+                if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
+                {
+                    var arr = new MultiSelectList(Obj_USP_Result.Select(i => new { Language_Group_Code = i.Display_Value, Language_Group_Name = i.Display_Text }).OrderBy(x => x.Language_Group_Name).ToList(), "Language_Group_Code", "Language_Group_Name");
+                    return Json(arr, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var arr = BindLanguage_Group();
+                    return Json(arr, JsonRequestBehavior.AllowGet);
+                }
+
             }
             return Json("", JsonRequestBehavior.AllowGet);
         }
@@ -1325,7 +1697,7 @@ namespace RightsU_Plus.Controllers
             string Result = "";
             if (perpetuityDate != "")
             {
-                if (objDeal_Schema.Deal_Type_Code == 11)
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     for (int i = 0; i < titleCodes.Length; i++)
                     {
@@ -1970,6 +2342,7 @@ namespace RightsU_Plus.Controllers
                     objDRUDT.Is_ROFR = objRights.Is_ROFR;
                     objDRUDT.ROFR_Date = objRights.ROFR_Date;
                     objDRUDT.Restriction_Remarks = objRights.Restriction_Remarks;
+                    objDRUDT.Buyback_Syn_Rights_Code = objRights.Buyback_Syn_Rights_Code;
 
                     objRights.LstDeal_Rights_UDT = new List<Deal_Rights_UDT>();
                     objRights.LstDeal_Rights_UDT.Add(objDRUDT);
@@ -2057,7 +2430,7 @@ namespace RightsU_Plus.Controllers
         {
             if (TempData["QueryString_Rights"] != null)
                 TempData["QueryString_Rights"] = null;
-
+            objRights.Buyback_Syn_Rights_Code = form["hdnBuyback_Syn_Rights_Code"];
             string message = string.Empty;
             var Is_Valid = SaveDealRight(objRights, form);
             string strPlatform = string.Join(",", (objAcq_Deal_Rights.Acq_Deal_Rights_Platform.Where(p => p.EntityState != State.Deleted).Select(i => i.Platform_Code).Distinct().ToList()));
@@ -2068,6 +2441,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.MessageFrom = "SV";
             ViewBag.MODE = "E";
             string tabName = form["hdnTabName"];
+            
+
 
             if (!Is_Valid)
                 message = "ERROR";
@@ -2452,10 +2827,15 @@ namespace RightsU_Plus.Controllers
                         //}
 
                     }
+                    objAcq_Deal_Rights.Buyback_Syn_Rights_Code = objRights.Buyback_Syn_Rights_Code;
 
                     objADRS.Save(objAcq_Deal_Rights, out resultSet);
-
-                    int res = resultSet.Count;
+                    int res = 0;
+                    if (resultSet.Count != 0)
+                    {
+                        res = resultSet.Count;
+                    }
+                    //int res = resultSet.Count;
                     if (Is_Allow_Perpetual_Date_Logic == "Y" && objAcq_Deal_Rights.Right_Type == "U" && res == 0)
                     {
                         Acq_Deal_Rights_Perpetuity_Service ADRPS = new Acq_Deal_Rights_Perpetuity_Service(objLoginEntity.ConnectionStringName);
@@ -2465,9 +2845,9 @@ namespace RightsU_Plus.Controllers
                             var NewAcq_Deal_Rights_Code = (dynamic)null;
                             if (i > 0)
                             {
-                
+
                                 int? TCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Title_Code;
-                                if (objDeal_Schema.Deal_Type_Code == 11)
+                                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                                 {
                                     int ADRTCode = objAcq_Deal_Rights.Acq_Deal_Rights_Title.ElementAt(i).Acq_Deal_Rights_Title_Code;
                                     NewAcq_Deal_Rights_Code = new USP_Service(objLoginEntity.ConnectionStringName)
@@ -2532,7 +2912,7 @@ namespace RightsU_Plus.Controllers
 
                         return true;
                     }
-                    else
+                   else
                     {
                         UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
                         return ShowValidationPopup(resultSet);
@@ -2884,11 +3264,16 @@ namespace RightsU_Plus.Controllers
             string Is_Under_Production = Convert.ToString(form["Is_Under_Production"]) == "false" ? "N" : "Y";
             bool Is_Theatrical_Right = Convert.ToBoolean(form["hdnIs_Theatrical_Right"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
+            string Buyback_Syn_Rights_Code =  Convert.ToString(form["hdnBuyback_Syn_Rights_Code"]);
+
+
+
 
             objExistingRights.Region_Type = Region_Type;
             objExistingRights.Sub_Type = Sub_Type;
             objExistingRights.Dub_Type = Dub_Type;
             objExistingRights.Platform_Codes = Platform_Codes;
+            objExistingRights.Buyback_Syn_Rights_Code = Buyback_Syn_Rights_Code;
 
             Deal_Rights_UDT objDRUDT = new Deal_Rights_UDT();
 
@@ -3269,6 +3654,7 @@ namespace RightsU_Plus.Controllers
             }
 
             objDRUDT.Restriction_Remarks = objExistingRights.Restriction_Remarks = objMVCRights.Restriction_Remarks;
+            objDRUDT.Buyback_Syn_Rights_Code = objExistingRights.Buyback_Syn_Rights_Code;
 
             objExistingRights.LstDeal_Rights_UDT = new List<Deal_Rights_UDT>();
             objExistingRights.LstDeal_Rights_UDT.Add(objDRUDT);
@@ -3490,6 +3876,7 @@ namespace RightsU_Plus.Controllers
             objAcq_Deal_Rights = null;
             objPage_Properties = null;
             lstDupRecords = null;
+            objSyn_Deal_Rights_Buyback = null;
             return Json(objDeal_Schema.PageNo);
             //return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().RedirectToControl(GlobalParams.Page_From_Rights, objDeal_Schema.PageNo);
         }
@@ -3598,6 +3985,57 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("objAcq_Rights_Template", objAcq_Rights_Template);
             return Json(obj);
+        }
+
+        private void ClearSession_Is_Buyback()
+        {
+            Session["Is_Buyback"] = null;
+        }
+
+        private bool GET_DATA_FOR_APPROVED_TITLES(string titles, string platforms, string Platform_Type, string Region_Type, string Subtitling_Type, string Dubbing_Type, string CallFrom = "")
+        {
+            // Here 'TPL' - 'Platform Applicable For Demestic Territory(Theatrical Platform)'
+            platforms = string.Join(",", platforms.Split(',').Where(p => p != "0"));
+            List<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> objList = new List<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result>();
+            if (titles != "" && titles != "0")
+                objList = new USP_Service(objLoginEntity.ConnectionStringName).USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(titles, platforms, Platform_Type, Region_Type, Subtitling_Type, Dubbing_Type, objSyn_Deal_Rights_Buyback.Syn_Deal_Code).ToList();
+            else
+                AllCountry_Territory_Codes = AllPlatform_Codes = SubTitle_Lang_Codes = Dubb_Lang_Codes = "";
+            if (Platform_Type == "PL" || Platform_Type == "TPL")
+                AllPlatform_Codes = objList.Select(i => i.RequiredCodes).FirstOrDefault();
+            else
+            {
+                foreach (USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result obj in objList)
+                {
+                    AllCountry_Territory_Codes = obj.RequiredCodes;
+                    SubTitle_Lang_Codes = obj.SubTitle_Lang_Code;
+                    Dubb_Lang_Codes = obj.Dubb_Lang_Code;
+                }
+            }
+            return true;
+        }
+
+        private List<USP_Get_Acq_PreReq_Result> Get_USP_Get_Acq_PreReq_Result(string Data_For, string str_Type)
+        {
+            /*
+                ROR = ROFR(Rights for Refusal)
+				SBL	= SubLicencing					
+				SL  = SubTitle Lang.
+				SG  = SubTitle Lang. Group.
+				DL  = Dubbing Lang.				  
+				DG  = Dubbing Group.
+				T   = Territory
+				C   = Couuntry
+				THT = Theatrical Territory
+				THC = Theatrical Country             
+             */
+            //Call From - str_Type - "DR" - Document.Ready,"C" - Change Event                              
+            //No need to send strType to USP
+            List<USP_Get_Acq_PreReq_Result> lst_USP_Get_Acq_PreReq_Result = new List<USP_Get_Acq_PreReq_Result>();
+            lst_USP_Get_Acq_PreReq_Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Syn_Rights_PreReq(objSyn_Deal_Rights_Buyback.Syn_Deal_Code,
+                                                                                                   objDeal_Schema.Deal_Type_Code,
+                                                                   Data_For, str_Type, AllCountry_Territory_Codes, SubTitle_Lang_Codes, Dubb_Lang_Codes).ToList();
+            return lst_USP_Get_Acq_PreReq_Result;
         }
     }
 

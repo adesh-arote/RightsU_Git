@@ -79,8 +79,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Right_Type = "G";
             if (objDeal_Schema.Rights_View == null)
                 objDeal_Schema.Rights_View = "G";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y" && objDeal_Schema.Rights_Exclusive == null)
                 objDeal_Schema.Rights_Exclusive = "B";
 
             ViewBag.Acq_Deal_Code = objDeal_Schema.Deal_Code;
@@ -130,6 +130,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.TitleList = new MultiSelectList(titleList.ToList().Distinct(), "Title_Code", "Title_Name");
             int?[] acqdealrightCode = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == objDeal_Schema.Deal_Code).Select(x => (int?)x.Acq_Deal_Rights_Code).ToArray();
 
+            ViewBag.Role_Code = objAd.Role_Code;
+
             ViewBag.RegionId = "ddlRegionn";
             string[] regioncode = new string[] { "" };
             if (objDeal_Schema.Rights_Region != null)
@@ -164,8 +166,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_Mode = objAcq_Deal.Is_Auto_Push == "Y" ? "V" : objDeal_Schema.Mode;
 
             ViewBag.RightsFlag = "AR";
-            string Is_Acq_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
-            if (Is_Acq_Syn_CoExclusive == "Y")
+            string Is_Acq_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_CoExclusive").Select(x => x.Parameter_Value).FirstOrDefault();
+            if (Is_Acq_CoExclusive == "Y")
             {
                 ViewBag.Exclusive_Rights = new SelectList(new[]
                 {
@@ -310,6 +312,13 @@ namespace RightsU_Plus.Controllers
                 objDeal_Schema.List_Rights.Clear();
 
             Fill_Rights_Schema(view_Type, Selected_Title_Code, txtpageSize, PageNo, ExclusiveRight);
+
+             int Role_Code = Convert.ToInt32(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objDeal_Schema.Deal_Code).Role_Code);
+            if(Role_Code == GlobalParams.RoleCode_BuyBack)
+            {
+                objDeal_Schema.Rights_Titles = "";
+                ViewBag.IsBuyback = "Y";
+            }
 
             int totalRcord = 0;
             ObjectParameter objPageNo = new ObjectParameter("PageNo", PageNo);
@@ -710,7 +719,7 @@ namespace RightsU_Plus.Controllers
             obj_Dic.Add("Page_No", pageNo.ToString());
             obj_Dic.Add("ReleaseRecord", "Y");
             TempData[GlobalParams.Cancel_From_Deal] = obj_Dic;
-         
+
             if (TempData["TitleData"] != null)
             {
                 return RedirectToAction("View", "Title");
@@ -1239,16 +1248,21 @@ namespace RightsU_Plus.Controllers
                              .OrderByDescending(x => x.Deal_Rights_Process_Code).Select(x => x.Rights_Bulk_Update_Code).FirstOrDefault();
 
             //List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Convert.ToInt32(Rights_Bulk_Update_Code)).ToList();
-            if (Rights_Bulk_Update_Code == null)
+            if (Rights_Bulk_Update_Code == null && String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
                 Deal_Rights_Process objDRP = objDRPSer.SearchFor(x => x.Deal_Code == objAcq_Deal.Acq_Deal_Code && x.Deal_Rights_Code == rightCode && x.Record_Status == "E")
                      .OrderByDescending(x => x.Deal_Rights_Process_Code).FirstOrDefault();
-                objDRP.EntityState = State.Modified;
-                objDRP.Record_Status = "P";
-                dynamic resultSet;
-                objDRPSer.Update(objDRP, out resultSet);
+
+                if(objDRP != null)
+                {
+                    objDRP.EntityState = State.Modified;
+                    objDRP.Record_Status = "P";
+                    dynamic resultSet;
+                    objDRPSer.Update(objDRP, out resultSet);
+                }
+                
             }
-            else
+            else if(String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
                 List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).ToList();
                 foreach (Deal_Rights_Process item in lstDRP)
@@ -1419,20 +1433,48 @@ namespace RightsU_Plus.Controllers
         public JsonResult ValidateRightsTitleWithAcq(int RCode, int? TCode, int? Episode_From, int? Episode_To)
         {
             int count = 0;
-            count = objUSP_Service.USP_Validate_Syn_Right_Title_With_Acq_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
-            if (count > 0)
-                return Json("INVALID");
+
+            string BuybackCode = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(RCode).Buyback_Syn_Rights_Code;
+
+            if (!String.IsNullOrEmpty(BuybackCode))
+            {
+                count = objUSP_Service.USP_Validate_Acq_Right_Title_With_Syn_On_Edit(RCode, TCode, Episode_From, Episode_To).ElementAt(0).Value;
+                if (count > 0)
+                    return Json("INVALID");
+                else
+                    return Json("VALID");
+            }
             else
+            {
                 return Json("VALID");
+            }
+            
         }
         public JsonResult GetSynRightStatus(int rightCode)
         {
-            var recordStatus = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objDeal_Schema.Deal_Code
+            
+            var BuybackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).GetById(rightCode);
+
+            if(!String.IsNullOrEmpty(BuybackRights.Buyback_Syn_Rights_Code))
+            {
+                var recordStatus = BuybackRights.Right_Status;
+                var obj = new { RecordStatus = recordStatus };
+                return Json(obj);
+            }
+            else
+            {
+                var recordStatus = new Deal_Rights_Process_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objDeal_Schema.Deal_Code
                                 && x.Deal_Rights_Code == rightCode).OrderByDescending(x => x.Deal_Rights_Process_Code).Select(x => x.Record_Status).FirstOrDefault();
-            var obj = new { RecordStatus = recordStatus };
-            return Json(obj);
+                var obj = new { RecordStatus = recordStatus };
+                return Json(obj);
+            }
+            
+            
         }
 
+        #region----------Buy Back related functons-----------------------
+       
+        #endregion
     }
 
     public partial class Acq_Rights

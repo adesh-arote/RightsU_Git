@@ -309,7 +309,7 @@ namespace RightsU_Plus.Controllers
                 if (hdnTitles != "")
                 {
                     string[] arrCodes = hdnTitles.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (objAcq_Deal_Ancillary_Temp.Syn_Deal_Ancillary_Code > 0)
+                    if (objAcq_Deal_Ancillary_Temp.Syn_Deal_Ancillary_Code > 0 && Ancillary_Mode == "EDIT")
                     {
                         objAcq_Deal_Ancillary = objAcq_Deal_Ancillary_Service.GetById(objAcq_Deal_Ancillary_Temp.Syn_Deal_Ancillary_Code);
                         objAcq_Deal_Ancillary.EntityState = State.Modified;
@@ -321,7 +321,7 @@ namespace RightsU_Plus.Controllers
                     objAcq_Deal_Ancillary.Duration = objAcq_Deal_Ancillary_Temp.Duration;
                     objAcq_Deal_Ancillary.Day = objAcq_Deal_Ancillary_Temp.Day;
                     objAcq_Deal_Ancillary.Remarks = objAcq_Deal_Ancillary_Temp.Remarks;
-                    //objAcq_Deal_Ancillary.Catch_Up_From = CatchUp;
+                    objAcq_Deal_Ancillary.Catch_Up_From = CatchUp;
                     #region --- Title ---
                     if (objAcq_Deal_Ancillary.Syn_Deal_Ancillary_Title == null)
                         objAcq_Deal_Ancillary.Syn_Deal_Ancillary_Title = new HashSet<Syn_Deal_Ancillary_Title>();

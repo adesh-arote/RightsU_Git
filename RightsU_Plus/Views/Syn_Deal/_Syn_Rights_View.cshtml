@@ -146,16 +146,24 @@
                                     <label class="bold">@objMessageKey.RightsDefinition</label>
                                     <div class="platform_checkbox">
                                         @{
-                                            string Is_Acq_Syn_CoExclusive = "";
-                                            Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+                                            string Is_Syn_CoExclusive = "";
+                                            Is_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
                                         }
-                                        @if (Is_Acq_Syn_CoExclusive == "Y")
+                                        @if (Is_Syn_CoExclusive == "Y")
                                         {
                                             <label>Exclusivity : @(Model.Is_Exclusive == "Y" ? "Exclusive" : Model.Is_Exclusive == "C" ? "Co-Exclusive" : "Non-Exclusive")</label>
                                         }
                                         else
                                         {
                                             <label>@objMessageKey.ExclusiveRights : @(Model.Is_Exclusive == "Y" ? objMessageKey.Yes : objMessageKey.NO)</label>
+                                        }
+                                        @if (Model.Is_Exclusive == "C")
+                                        {
+                                            <br />
+                                            <div class="bold" style="width: 90%; float: left;"><label>Co-Exclusive @objMessageKey.Remarks</label></div>
+                                            <br />
+                                            <label>@Model.CoExclusive_Remarks</label>
+                                            <br />
                                         }
                                         <br />
                                         @objMessageKey.TitleLangauge :

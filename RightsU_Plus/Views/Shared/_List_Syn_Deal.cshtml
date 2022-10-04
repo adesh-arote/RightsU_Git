@@ -243,6 +243,59 @@
 
                         }
 
+                        @if (@objSynList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForSendForApproval + ","))
+                        {
+                            string apprName = objMessageKey.SendForApproval;
+
+                            if (objSynList.dealWorkFlowStatus == "R")
+                            {
+                                RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
+                                int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@objSynList.IntCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal).ElementAt(0));
+                                string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+
+                                if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
+                                {
+                                    apprName = objMessageKey.ResendForApproval;
+                                }
+                            }
+                            if (@objSynList.IsZeroWorkFlow == "Y")
+                            {
+                                Count = Count + 1;
+                                @*<a title="Approve" id="Approve_@tempCount" class="glyphicon glyphicon-check" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
+                                <a title="@objMessageKey.Approve" id="Approve_Remark_@tempCount" class="glyphicon glyphicon-check AT_@objSynList.Syn_Deal_Code" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Approve',@objSynList.IntCode,0);"></a>
+                                if (Count > 3)
+                                {
+                                    <script>
+                                            $("#extend_@tempCount").append($('#Approve_Remark_@tempCount'));
+                                    </script>
+                                }
+
+                            }
+                            else
+                            {
+                                Count = Count + 1;
+                                @*<a title="@apprName" id="ApproveName_@tempCount" class="glyphicon glyphicon-send" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
+                                if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objSynList.version) > 1)
+                                {
+                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objSynList.IntCode,0);"></a>
+                                }
+                                else
+                                {
+                                    <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
+                                }
+
+
+                                if (Count > 3)
+                                {
+                                    <script>
+                                            $("#extend_@tempCount").append($('#ApproveName_@tempCount'));
+                                    </script>
+                                }
+                            }
+                        }
+
+
+
                         @if (@objSynList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRightGranted + ","))
                         {
                             Count = Count + 1;
@@ -332,56 +385,7 @@
                         @* DEAL ARCHIVE ENDS *@
 
                         @{
-                            if (@objSynList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForSendForApproval + ","))
-                            {
-                                string apprName = objMessageKey.SendForApproval;
 
-                                if (objSynList.dealWorkFlowStatus == "R")
-                                {
-                                    RightsU_BLL.USP_Service objUSP = new RightsU_BLL.USP_Service(objLoginEntity.ConnectionStringName);
-                                    int CreatorGroupCode = Convert.ToInt32(objUSP.USP_Get_Creator_Group_Code_AfterReject(@objSynList.IntCode, UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSynDeal).ElementAt(0));
-                                    string Allow_Edit_All_On_Rejection = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Edit_All_On_Rejection" && x.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
-
-                                    if (CreatorGroupCode == @ViewBag.UserSecurityCode || Allow_Edit_All_On_Rejection == "Y")
-                                    {
-                                        apprName = objMessageKey.ResendForApproval;
-                                    }
-                                }
-                                if (@objSynList.IsZeroWorkFlow == "Y")
-                                {
-                                    Count = Count + 1;
-                                    @*<a title="Approve" id="Approve_@tempCount" class="glyphicon glyphicon-check" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
-                                    <a title="@objMessageKey.Approve" id="Approve_Remark_@tempCount" class="glyphicon glyphicon-check AT_@objSynList.Syn_Deal_Code" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('Approve',@objSynList.IntCode,0);"></a>
-                                    if (Count > 3)
-                                    {
-                                        <script>
-                                            $("#extend_@tempCount").append($('#Approve_Remark_@tempCount'));
-                                        </script>
-                                    }
-
-                                }
-                                else
-                                {
-                                    Count = Count + 1;
-                                    @*<a title="@apprName" id="ApproveName_@tempCount" class="glyphicon glyphicon-send" href="#" onclick="Ask_Confirmation('SendForAuth',@objSynList.IntCode,0)"></a>*@
-                                    if (@ViewBag.Show_Amendment_Details == "Y" && Convert.ToInt32(objSynList.version) > 1)
-                                    {
-                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');AddAmendmentHistory('AddAmendmentHistory',@objSynList.IntCode,0);"></a>
-                                    }
-                                    else
-                                    {
-                                        <a title="@apprName" class="glyphicon glyphicon-send approvename AT_@objSynList.Syn_Deal_Code" id="ApproveName_@tempCount" href="#" onclick="HideShow('divAction_@tempCount','View_@tempCount','Y');Ask_Confirmation('SendForAuth',@objSynList.IntCode,0);"></a>
-                                    }
-
-
-                                    if (Count > 3)
-                                    {
-                                        <script>
-                                            $("#extend_@tempCount").append($('#ApproveName_@tempCount'));
-                                        </script>
-                                    }
-                                }
-                            }
 
                             if (@objSynList.Show_Hide_Buttons.Contains("," + GlobalParams.RightCodeForRollback + ","))
                             {

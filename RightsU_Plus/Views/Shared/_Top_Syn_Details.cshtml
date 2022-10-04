@@ -40,6 +40,7 @@
 <script>
     function LoadTab(tabName, IsActive) {
         debugger;
+        //showLoading();
         if (document.location.search == "") {
             url_page = history.pushState({}, null, window.location.href + "?currentTab=GNR");
         }
@@ -75,6 +76,10 @@
                     $('#btnSaveRun').click();
                     return true;
                 }
+                else if (CurrentTab == pageSupplementaryAddEdit) {
+                    //$('#btnSaveDeal').click();
+                    SuppSave();
+                }
                 else if (CurrentTab == pagePaymentTerm) {
                     $('#btnSaveDeal').click();
                     return true;
@@ -101,6 +106,7 @@
             }
         }
         debugger;
+        hideLoading();
         return false;//false
     }
     function ImageExists(selector) {

@@ -23,6 +23,7 @@
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Rights.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+@*<script type="text/javascript" src="~/JS_Core/common.concat.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
 
 <style type="text/css">
     #Tree_Filter_Rights_Platform {
@@ -109,6 +110,11 @@
     .boldSubLcns {
         font-weight: 700;
     }
+
+    .BuyBack {
+        pointer-events: none;
+        cursor: default;
+    }
 </style>
 <script type="text/javascript">
     var treeID_G = '@ViewBag.TreeId';
@@ -138,6 +144,7 @@
     var disableRightType_G = '@Model.Disable_RightType';
     var existingRightType_G = '@Model.Existing_RightType';
     var isNullEmpty_milestoneStartDate_G = '@string.IsNullOrEmpty(Model.Milestone_Start_Date)';
+    var Buyback_Syn_Rights_Code = null;
 
 
     var URL_Global_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global", null, Request.Url.Scheme)'
@@ -239,7 +246,7 @@
 
 @using (Ajax.BeginForm("Save_Rights", "Acq_Rights", new AjaxOptions { OnSuccess = "OnSuccess" }, new { @id = "frmRights" }))
 {
-    string ORightType = "", Promoter_Tab = "", Is_Acq_Syn_CoExclusive = "", Is_Acq_Under_Production = "";
+    string ORightType = "", Promoter_Tab = "", Is_Acq_CoExclusive = "", Is_Acq_Under_Production = "";
     if (@ViewBag.Enabled_Perpetuity == "Y" && Model.Original_Right_Type != null && Model.Original_Right_Type != "")
     {
         ORightType = Model.Original_Right_Type;
@@ -249,10 +256,16 @@
         ORightType = Model.Right_Type;
     }
     Promoter_Tab = objSPNService.SearchFor(s => s.Parameter_Name == "Promoter_Tab").First().Parameter_Value;
-    Is_Acq_Syn_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Syn_CoExclusive").FirstOrDefault().Parameter_Value;
+    Is_Acq_CoExclusive = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_CoExclusive").FirstOrDefault().Parameter_Value;
     Is_Acq_Under_Production = objSPNService.SearchFor(s => s.Parameter_Name == "Is_Acq_Under_Production").FirstOrDefault().Parameter_Value;
 
-    @Html.Hidden("Is_Acq_Syn_CoExclusive", Is_Acq_Syn_CoExclusive);
+    string isTitleDisabledForBuyback = "";
+    if (!String.IsNullOrEmpty(Model.Buyback_Syn_Rights_Code))
+    {
+        isTitleDisabledForBuyback = "disabled";
+    }
+
+    @Html.Hidden("Is_Acq_CoExclusive", Is_Acq_CoExclusive);
     @Html.Hidden("IsPromoter", Promoter_Tab);
     @Html.Hidden("hdnPromoter", Model.Promoter_Flag);
     <div class="grid_area" onclick="hideRegion(); hideSubTitle(); hideDubbing();">
@@ -268,24 +281,27 @@
                                         {
                                             <label class="bold">Template</label>
                                             @Html.DropDownList("Template_List", ViewBag.arr_Template_List as SelectList, "Please select",
-                                           new { @id = "ddlTemplate_List", @onchange = "ApplyTemplate()", @class = "form_input chosen-select" })
+                                          new { @id = "ddlTemplate_List", @onchange = "ApplyTemplate()", @class = "form_input chosen-select" })
                                             <br>
                                             <br>
                                         }
                                         <label class="bold">@objMessageKey.Titles</label>
                                         <div id="divlbTitles">
-                                            <select id="lbTitles" name="lbTitles" multiple="multiple"></select>
+                                            <select id="lbTitles" name="lbTitles" multiple="multiple" @isTitleDisabledForBuyback></select>
                                         </div>
                                         @Html.Hidden("hdnTitle_Code")
                                         @Html.Hidden("hdnCommandName")
                                         <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        <input type="hidden" id="hdnBuyback_Syn_Rights_Code" name="hdnBuyback_Syn_Rights_Code" value="@Model.Buyback_Syn_Rights_Code" />
+                                        <input type="hidden" id="hdnStartDate_Buyback" name="name" value="@ViewBag.StartDate_Buyback" />
+                                        <input type="hidden" id="hdnEndDate_Buyback" name="name" value="@ViewBag.EndDate_Buyback" />
                                         <br>
                                         <br>
                                         <label class="bold">@objMessageKey.RightsDefinition</label>
                                         <div class="platform_checkbox">
                                             <input type="hidden" value="" id="hdnIs_Exclusive" name="hdnIs_Exclusive">
                                             <table>
-                                                @if (Is_Acq_Syn_CoExclusive == "Y")
+                                                @if (Is_Acq_CoExclusive == "Y")
                                                 {
                                                     <tr>
                                                         <td style="width: 102px;"><label>Exclusivity</label></td>
@@ -326,35 +342,42 @@
                                                                 <div id="divExclusiveRights" style="width:90px; height:23px">
                                                                     @{ string displayStyle = "none";
                                                                         string attrDisabled1 = (objPage_Properties.Is_Syn_Acq_Mapp == "Y") ? "disabled" : "";
+
+                                                                        string isExclusivityDisabledForBuyback = "";
+                                                                        if (Model.Buyback_Syn_Rights_Code != null)
+                                                                        {
+                                                                            isExclusivityDisabledForBuyback = (@ViewBag.IsSynExclusive == "N") ? "disabled" : "";
+                                                                        }
                                                                     }
+
                                                                     @if (Model.Is_Exclusive == "Y")
                                                                     {
                                                                         displayStyle = "";
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY1" value="Y" checked class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.Yes
 
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN1" value="N" class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
                                                                     }
                                                                     else if (Model.Is_Exclusive == "N")
                                                                     {
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY2" value="Y" class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.Yes
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN2" value="N" checked class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
 
                                                                     }
                                                                     else
                                                                     {
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @attrDisabled1 />@objMessageKey.Yes
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveY3" value="Y" class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.Yes
                                                                         </label>
                                                                         <label class="radio-inline">
-                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @attrDisabled1 />@objMessageKey.NO
+                                                                            <input type="radio" name="hdnExclusive" id="rdoIsExclusiveN3" value="N" class="exc" @attrDisabled1 @isExclusivityDisabledForBuyback />@objMessageKey.NO
                                                                         </label>
                                                                     }
                                                                 </div>
@@ -367,7 +390,25 @@
                                                 <tr>
                                                     <td colspan="2">
                                                         <label class="checkbox-inline">
-                                                            @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" })
+                                                            @{
+                                                                string isTitleLanguageDisabledForBuyback = "";
+                                                                string BuyBack = "";
+                                                                if (Model.Buyback_Syn_Rights_Code != null)
+                                                                {
+                                                                    //isTitleLanguageDisabledForBuyback = (Model.Is_Title_Language_Right == "N") ? "disabled" : "";
+                                                                    isTitleLanguageDisabledForBuyback = ViewBag.IsTitleLanguageForBuyback == "N" ? "disabled" : "";
+                                                                    BuyBack = "BuyBack";
+                                                                }
+                                                            }
+
+                                                            @if (isTitleLanguageDisabledForBuyback == "disabled")
+                                                            {
+                                                                <input type="checkbox" name="name" value="" disabled />
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" });
+                                                            }
                                                             @objMessageKey.TitleLanguage:
                                                             @Html.Hidden("hdnIs_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false))
                                                             <label id="Title_Language">(-)</label>
@@ -486,15 +527,15 @@
                                         <label class="bold">@objMessageKey.Validity</label>
                                         <div id="tabValidity" class="tabbable">
                                             <ul class="nav nav-tabs nav-tab pull-left">
-                                                <li class="@(ORightType == "Y" ? "active" : "")" id="liCal" onclick="SetRightPeriod('Y');">
+                                                <li class="@(ORightType == "Y" ? "active" : "") " id="liCal" onclick="SetRightPeriod('Y');">
                                                     <a data-toggle="tab" href="#tabCal" role="tab">@objMessageKey.Yearbased</a>
                                                 </li>
-                                                <li class="@(ORightType == "M" ? "active" : "")" id="liMile" onclick="SetRightPeriod('M');">
+                                                <li class="@(ORightType == "M" ? "active" : "") @BuyBack" id="liMile" onclick="SetRightPeriod('M');">
                                                     <a data-toggle="tab" href="#tabMile" role="tab">
                                                         @objMessageKey.Milestonebased
                                                     </a>
                                                 </li>
-                                                <li class="@(ORightType == "U" ? "active" : "")" id="liPerp" onclick="SetRightPeriod('U');">
+                                                <li class="@(ORightType == "U" ? "active" : "") @BuyBack" id="liPerp" onclick="SetRightPeriod('U');">
                                                     <a data-toggle="tab" href="#tabPerp" role="tab">@objMessageKey.Perpetuity</a>
                                                 </li>
                                             </ul>
@@ -579,7 +620,7 @@
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                                                 Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                    Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
 
                                                                 @if (ViewBag.Deal_Workflow_Flag == "AM")

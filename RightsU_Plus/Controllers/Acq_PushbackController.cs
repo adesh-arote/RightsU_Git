@@ -493,7 +493,10 @@ namespace RightsU_WebApp.Controllers
                     }
                     else if(obj.Right_Type == "U")
                     {
-
+                        if (obj.Right_Start_Date != null)
+                            objFirstRight.Right_Start_Date = Convert.ToDateTime(obj.Right_Start_Date);
+                        if (obj.Right_End_Date != null)
+                            objFirstRight.Right_End_Date = Convert.ToDateTime(obj.Right_End_Date);
                     }
 
                     objFirstRight.Right_Type = obj.Right_Type;
