@@ -1365,6 +1365,7 @@ public class MessageKey
     public string AreyousureyouwanttodeletethisRunDefinition { get; set; }
     public string EditReverseHoldback { get; set; }
     public string AddReverseHoldback { get; set; }
+    public string CloneReverseHoldback { get; set; }
     public string PeriodTerm { get; set; }
     public string ErrorDetails { get; set; }
     public string Reprocess { get; set; }

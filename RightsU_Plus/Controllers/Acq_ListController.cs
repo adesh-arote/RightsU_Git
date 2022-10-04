@@ -589,9 +589,11 @@ namespace RightsU_Plus.Controllers
             string[] arrTitleName = obj_Acq_Syn_List_Search.TitleCodes_Search.Split(',');
             string strTitleNames = string.Join("﹐", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => arrTitleName.Contains(x.Title_Code.ToString())).Select(y => y.Title_Name).ToList());
             // obj_Acq_Syn_List_Search.WorkFlowStatus_Search = obj_USP_Get_PreReq_Result.Where(i => i.Data_For == "WFL").Select(i => i.Display_Value ?? 0).FirstOrDefault().ToString();
+
+            var Acquisition_DealWorkFlow = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Deal_Workflow_Status).Distinct().ToList();
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
             SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName)
-                .SearchFor(x => x.Deal_Type == "A")
+                .SearchFor(x => x.Deal_Type == "A" && Acquisition_DealWorkFlow.Contains(x.Deal_WorkflowFlag) || (x.Deal_WorkflowFlag == "0" && x.Deal_Type == "A"))
               .Select(i => new { Display_Value = i.Deal_WorkflowFlag, Display_Text = i.Deal_Workflow_Status_Name }).ToList(),
               "Display_Value", "Display_Text");
 
@@ -1439,6 +1441,7 @@ namespace RightsU_Plus.Controllers
             objDRUDT.Right_Type = objAcqRights.Right_Type;
             objDRUDT.Is_Tentative = objAcqRights.Is_Tentative;
             objDRUDT.Check_For = "M";
+            objDRUDT.Buyback_Syn_Rights_Code = objAcqRights.Buyback_Syn_Rights_Code;
 
             objDRUDT.Right_Start_Date = objAcqRights.Actual_Right_Start_Date;
             objDRUDT.Right_End_Date = objAcqRights.Actual_Right_End_Date;
@@ -2211,6 +2214,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.Button_Visibility = Button_Visibility;
             ViewBag.Deal_Type_Code = Acq_Deal_obj.Deal_Type_Code;
             ViewBag.Agreement_No = Acq_Deal_obj.Agreement_No;
+            ViewBag.RoleCode = Acq_Deal_obj.Role_Code;
+
+
+
             return PartialView("~/Views/Shared/_ActionButton.cshtml");
         }
 
@@ -2300,35 +2307,47 @@ namespace RightsU_Plus.Controllers
 
             //List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Convert.ToInt32(Rights_Bulk_Update_Code)).ToList();
             List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).ToList();
-            foreach (Deal_Rights_Process item in lstDRP)
-            {
-                item.EntityState = State.Modified;
-                item.Record_Status = "P";
-                dynamic resultSet;
-                objDRPSer.Update(item, out resultSet);
-            }
 
-            Rights_Bulk_Update objRBU = objRBUSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).FirstOrDefault();
-            if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
+            var AcqDeal = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(Acq_Deal_Code);
+            //if (String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
+            if (AcqDeal.Role_Code != GlobalParams.RoleCode_BuyBack)
             {
-                int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
-                if (ADRError_Count > 0)
+                foreach (Deal_Rights_Process item in lstDRP)
                 {
-                    objRBU.Action_For = "A";
-                    objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                    item.EntityState = State.Modified;
+                    item.Record_Status = "P";
+                    dynamic resultSet;
+                    objDRPSer.Update(item, out resultSet);
                 }
-            }
 
-            objRBU.EntityState = State.Modified;
-            objRBU.Is_Processed = "N";
-            dynamic resultSet1;
-            objRBUSer.Update(objRBU, out resultSet1);
+                Rights_Bulk_Update objRBU = objRBUSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).FirstOrDefault();
+                if (objRBU != null)
+                {
+
+                    if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
+                    {
+                        int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
+                        if (ADRError_Count > 0)
+                        {
+                            objRBU.Action_For = "A";
+                            objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                        }
+                    }
+                    objRBU.EntityState = State.Modified;
+                    objRBU.Is_Processed = "N";
+                    dynamic resultSet1;
+                    objRBUSer.Update(objRBU, out resultSet1);
+                }
+
+            }
 
 
             objADR.Right_Status = "P";
             objADR.EntityState = State.Modified;
             dynamic resultSet2;
             objADRSer.Update(objADR, out resultSet2);
+
+
         }
 
         public PartialViewResult AddAmendmentHistory(int acqDealCode)

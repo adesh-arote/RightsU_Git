@@ -34,6 +34,7 @@ namespace RightsU_Entities
             this.Acq_Deal_Sport_Sales_Ancillary = new HashSet<Acq_Deal_Sport_Sales_Ancillary>();
             this.Acq_Deal_Budget = new HashSet<Acq_Deal_Budget>();
             this.Provisional_Deal = new HashSet<Provisional_Deal>();
+            this.Acq_Deal_Supplementary = new HashSet<Acq_Deal_Supplementary>();
         }
         
         public State EntityState { get; set; }
@@ -129,5 +130,6 @@ namespace RightsU_Entities
         public virtual ICollection<Provisional_Deal> Provisional_Deal { get; set; }
         public virtual Deal_Segment Deal_Segment { get; set; }
         public virtual Revenue_Vertical Revenue_Vertical { get; set; }
+        public virtual ICollection<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
     }
 }

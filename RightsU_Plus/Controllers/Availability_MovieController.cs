@@ -232,7 +232,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Code = moduleCode;
             module = moduleCode;
 
-            BindBusinessUnit();
+            BindBusinessUnit(moduleCode);
 
             lstTitles_Searched = lstTitles = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
 
@@ -250,12 +250,23 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        private void BindBusinessUnit()
+        private void BindBusinessUnit(string modulecode)
         {
             string rightsForAllBU = GetUserModuleRights();
 
+            string SelectedBU = "";
             System_Parameter_New_Service objSystemParamService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
-            string SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_BU").ToList().FirstOrDefault().Parameter_Value;
+
+            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForMovieAvailabilityReport)
+            {
+                SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_BU").ToList().FirstOrDefault().Parameter_Value;
+            }
+
+            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
+            {
+                SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_Show_BU").ToList().FirstOrDefault().Parameter_Value;
+            }
+            
             string[] arr_BU_Codes = SelectedBU.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             List<SelectListItem> list = new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(b => b.Users_Business_Unit.Any(UB => UB.Business_Unit_Code == b.Business_Unit_Code
@@ -279,7 +290,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            
+
 
             ViewBag.BusinessUnitList = list;
 
@@ -379,11 +390,11 @@ namespace RightsU_Plus.Controllers
         //}
 
         public ActionResult SearchTitles(string searchText, string BU_Code, string[] a, string CodeString, int dealTypeCode = 0)
-       {
+        {
             dynamic result = "";
             if (BU_Code == "0")
             {
-                BU_Code = "0" ;
+                BU_Code = "0";
                 //BU_Code = string.Join(",", new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Users_Business_Unit.Any(u => u.Users_Code == objLoginUser.Users_Code))
                 //     .Select(s => s.Business_Unit_Code.ToString()).ToArray());
             }
@@ -1708,9 +1719,9 @@ namespace RightsU_Plus.Controllers
             if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
             {
                 if (Availability_Ifta_And_Ancillary == "N")
-                    noOfParam = 37;
+                    noOfParam = 39;
                 else
-                    noOfParam = 41;
+                    noOfParam = 43;
             }
             else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
             {
@@ -1926,16 +1937,21 @@ namespace RightsU_Plus.Controllers
 
                     if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
                     {
+                        string Is_Allow_Title_Objection = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Title_Objection").ToList().FirstOrDefault().Parameter_Value;
+                        string Is_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name == "Is_Syn_CoExclusive").ToList().FirstOrDefault().Parameter_Value;
+
                         parm[35] = new ReportParameter("StartMonth", "0");
                         parm[36] = new ReportParameter("EndYear", "0");
+                        parm[37] = new ReportParameter("DisplayObjection", (Is_Allow_Title_Objection == "Y" ? "TRUE" : "FALSE"));
+                        parm[38] = new ReportParameter("DisplayCoExRemarks", (Is_Syn_CoExclusive == "Y" ? "TRUE" : "FALSE"));
                         if (Availability_Ifta_And_Ancillary == "Y")
                         {
                             if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
                             {
-                                parm[37] = new ReportParameter("Country_Level", chkCountryLevel);
-                                parm[38] = new ReportParameter("Territory_Level", chkTerritoryLevel);
-                                parm[39] = new ReportParameter("TabName", tabName);
-                                parm[40] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                parm[39] = new ReportParameter("Country_Level", chkCountryLevel);
+                                parm[40] = new ReportParameter("Territory_Level", chkTerritoryLevel);
+                                parm[41] = new ReportParameter("TabName", tabName);
+                                parm[42] = new ReportParameter("Include_Ancillary", IncludeAncillary);
                             }
                         }
                     }
@@ -2269,114 +2285,125 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchQueryList(int BU_Code, int pageNo, int recordPerPage)
         {
-            List<Avail_Report_Schedule_UDT> lst_Avail_Report_Schedule_UDT = new List<Avail_Report_Schedule_UDT>();
-            Avail_Report_Schedule_UDT objAvail_Report_Schedule_UDT = new Avail_Report_Schedule_UDT();
-            objAvail_Report_Schedule_UDT.Visibility = "PR";
-            objAvail_Report_Schedule_UDT.Module_Code = Convert.ToInt32(module); ;
-            lst_Avail_Report_Schedule_UDT.Add(objAvail_Report_Schedule_UDT);
-            string Right_Level = "";
-            if (ContryLevelRights == true && TerritoryLevelRights == true)
-                Right_Level = "B";
-            else if (ContryLevelRights)
-                Right_Level = "C";
-            else
-                Right_Level = "T";
-
-            int pageSize = 10;
-            int RecordCount = 0;
-            string isPaging = "Y";
-            //int PageNo = 1;
-            string strFilter = "";
-            string IsDuplicate = "";
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
-            //List<USP_Get_Title_Avail_Language_Data_Result> objAvailResult = new List<USP_Get_Title_Avail_Language_Data_Result>();
-            //List<USP_Get_Title_Avail_Language_Data_Show_Result> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show_Result>();
-            List<USP_Get_Title_Avail_Language_Data> objAvailResult = new List<USP_Get_Title_Avail_Language_Data>();
-            List<USP_Get_Title_Avail_Language_Data_Show> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show>();
-
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+            try
             {
-                strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                  " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                  "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                  + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'TH' AND Module_Code = " + Convert.ToInt32(module) + " ";
-
-            }
-            else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-            {
-                strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                       + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'Y' AND Module_Code = " + Convert.ToInt32(module) + " ";
-            }
-            else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-            {
+                List<Avail_Report_Schedule_UDT> lst_Avail_Report_Schedule_UDT = new List<Avail_Report_Schedule_UDT>();
+                Avail_Report_Schedule_UDT objAvail_Report_Schedule_UDT = new Avail_Report_Schedule_UDT();
+                objAvail_Report_Schedule_UDT.Visibility = "PR";
+                objAvail_Report_Schedule_UDT.Module_Code = Convert.ToInt32(module); ;
+                lst_Avail_Report_Schedule_UDT.Add(objAvail_Report_Schedule_UDT);
+                string Right_Level = "";
                 if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    Right_Level = "B";
+                else if (ContryLevelRights)
+                    Right_Level = "C";
+                else
+                    Right_Level = "T";
+
+                int pageSize = 10;
+                int RecordCount = 0;
+                string isPaging = "Y";
+                //int PageNo = 1;
+                string strFilter = "";
+                string IsDuplicate = "";
+                USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                //List<USP_Get_Title_Avail_Language_Data_Result> objAvailResult = new List<USP_Get_Title_Avail_Language_Data_Result>();
+                //List<USP_Get_Title_Avail_Language_Data_Show_Result> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show_Result>();
+                List<USP_Get_Title_Avail_Language_Data> objAvailResult = new List<USP_Get_Title_Avail_Language_Data>();
+                List<USP_Get_Title_Avail_Language_Data_Show> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show>();
+
+                ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+                if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
                 {
                     strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                      " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                      "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                      + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'TH' AND Module_Code = " + Convert.ToInt32(module) + " ";
+
                 }
-                else if (ContryLevelRights == true)
+                else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
                 {
                     strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'Y' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                }
+                else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+                {
+                    if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else if (ContryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
                 }
                 else
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else if (ContryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
                 }
-            }
-            else
-            {
-                if (ContryLevelRights == true && TerritoryLevelRights == true)
-                {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Module_Code = " + Convert.ToInt32(module) + " ";
-                }
-                else if (ContryLevelRights == true)
-                {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Module_Code = " + Convert.ToInt32(module) + " ";
-                }
+
+                if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
+                    objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
+                else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+                    objAvailResult_Show = objUSP.USP_Get_Title_Avail_Language_Data_Show(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
+                else if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+                    objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
+
+                if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                    RcCount = objAvailResult_Show.Select(s => s.Recordcount).FirstOrDefault();
                 else
+                    RcCount = objAvailResult.Select(s => s.Recordcount).FirstOrDefault();
+
+                //  RcCount = Convert.ToInt32(objRecordCount.Value);
+                var obj = new
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Module_Code = " + Convert.ToInt32(module) + " ";
-                }
+                    Record_Count = RcCount,
+                };
+                return Json(obj);
             }
-
-            if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
-                objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-            else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-                objAvailResult_Show = objUSP.USP_Get_Title_Avail_Language_Data_Show(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-            else if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
-                objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-
-            if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-                RcCount = objAvailResult_Show.Select(s => s.Recordcount).FirstOrDefault();
-            else
-                RcCount = objAvailResult.Select(s => s.Recordcount).FirstOrDefault();
-
-            //  RcCount = Convert.ToInt32(objRecordCount.Value);
-            var obj = new
+            catch
             {
-                Record_Count = RcCount,
-            };
-            return Json(obj);
+                var obj = new
+                {
+                    Record_Count = RcCount,
+                };
+                return Json(obj);
+            }
         }
 
         public JsonResult DeleteQuery(int queryCode)
@@ -2422,123 +2449,140 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindQueryList(int BU_Code, int pageNo, int recordPerPage)
         {
-            List<Avail_Report_Schedule_UDT> lst_Avail_Report_Schedule_UDT = new List<Avail_Report_Schedule_UDT>();
-            Avail_Report_Schedule_UDT objAvail_Report_Schedule_UDT = new Avail_Report_Schedule_UDT();
-            objAvail_Report_Schedule_UDT.Visibility = "PR";
-            objAvail_Report_Schedule_UDT.Module_Code = Convert.ToInt32(module); ;
-            lst_Avail_Report_Schedule_UDT.Add(objAvail_Report_Schedule_UDT);
-            string Right_Level = "";
-            if (ContryLevelRights == true && TerritoryLevelRights == true)
-                Right_Level = "B";
-            else if (ContryLevelRights)
-                Right_Level = "C";
-            else
-                Right_Level = "T";
-
-            int pageSize = 10;
-            int RecordCount = 0;
-            string isPaging = "Y";
-            //int PageNo = 1;
-            string strFilter = "";
-
-            USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
-            //List<USP_Get_Title_Avail_Language_Data_Result> objAvailResult = new List<USP_Get_Title_Avail_Language_Data_Result>();
-            //List<USP_Get_Title_Avail_Language_Data_Show_Result> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show_Result>();
-            List<USP_Get_Title_Avail_Language_Data> objAvailResult = new List<USP_Get_Title_Avail_Language_Data>();
-            List<USP_Get_Title_Avail_Language_Data_Show> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show>();
-            ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
-            if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+            try
             {
-                strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                  " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                  "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                  + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'TH' AND Module_Code = " + Convert.ToInt32(module) + " ";
-
-            }
-            else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-            {
-                strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                       + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'Y' AND Module_Code = " + Convert.ToInt32(module) + " ";
-            }
-            else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-            {
+                List<Avail_Report_Schedule_UDT> lst_Avail_Report_Schedule_UDT = new List<Avail_Report_Schedule_UDT>();
+                Avail_Report_Schedule_UDT objAvail_Report_Schedule_UDT = new Avail_Report_Schedule_UDT();
+                objAvail_Report_Schedule_UDT.Visibility = "PR";
+                objAvail_Report_Schedule_UDT.Module_Code = Convert.ToInt32(module); ;
+                lst_Avail_Report_Schedule_UDT.Add(objAvail_Report_Schedule_UDT);
+                string Right_Level = "";
                 if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    Right_Level = "B";
+                else if (ContryLevelRights)
+                    Right_Level = "C";
+                else
+                    Right_Level = "T";
+
+                int pageSize = 10;
+                int RecordCount = 0;
+                string isPaging = "Y";
+                //int PageNo = 1;
+                string strFilter = "";
+
+                USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
+                //List<USP_Get_Title_Avail_Language_Data_Result> objAvailResult = new List<USP_Get_Title_Avail_Language_Data_Result>();
+                //List<USP_Get_Title_Avail_Language_Data_Show_Result> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show_Result>();
+                List<USP_Get_Title_Avail_Language_Data> objAvailResult = new List<USP_Get_Title_Avail_Language_Data>();
+                List<USP_Get_Title_Avail_Language_Data_Show> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show>();
+                ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
+                if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
                 {
                     strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                      " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                      "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                      + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'TH' AND Module_Code = " + Convert.ToInt32(module) + " ";
+
                 }
-                else if (ContryLevelRights == true)
+                else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
                 {
                     strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'Y' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                }
+                else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+                {
+                    if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else if (ContryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
                 }
                 else
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Promoter_Code != '' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    if (ContryLevelRights == true && TerritoryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else if (ContryLevelRights == true)
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
+                    else
+                    {
+                        strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
+                           " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
+                           "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
+                               + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    }
                 }
-            }
-            else
-            {
-                if (ContryLevelRights == true && TerritoryLevelRights == true)
+                if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND (Region_On = 'CO' OR Region_On = 'IF') AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
                 }
-                else if (ContryLevelRights == true)
+                else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'CO' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    objAvailResult_Show = objUSP.USP_Get_Title_Avail_Language_Data_Show(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
+                }
+                else if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+                {
+                    objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
+                }
+                int RecCount = 0;
+                if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                    RecCount = objAvailResult_Show.Select(s => s.Recordcount).FirstOrDefault();
+                else
+                    RecCount = objAvailResult.Select(s => s.Recordcount).FirstOrDefault();
+
+
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+
+                if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                {
+                    return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult_Show);
                 }
                 else
                 {
-                    strFilter = "AND ((Visibility='PR' AND User_Code = " + objLoginUser.Users_Code +
-                       " ) or (Visibility='RO' AND User_Code IN(select Users_Code from Users where Security_Group_Code=" +
-                       "(Select Security_Group_Code from Users where Users_Code=" + objLoginUser.Users_Code
-                           + "))) or Visibility='PU') AND ISNULL(ReportName, '') <> '' AND Report_Status <> 'X' AND BU_CODE =" + BU_Code + " AND Report_Type = 'SQ' AND IndiaCast = 'N' AND Region_On = 'IF' AND Module_Code = " + Convert.ToInt32(module) + " ";
+                    return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult);
                 }
             }
-            if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
+            catch
             {
-                objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-            }
-            else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-            {
-                objAvailResult_Show = objUSP.USP_Get_Title_Avail_Language_Data_Show(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-            }
-            else if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
-            {
-                objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginUser.Users_Code, "F", strFilter, pageNo, "", isPaging, pageSize).ToList();
-            }
-            int RecCount = 0;
-            if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-                RecCount = objAvailResult_Show.Select(s => s.Recordcount).FirstOrDefault();
-            else
-                RecCount = objAvailResult.Select(s => s.Recordcount).FirstOrDefault();
+                List<USP_Get_Title_Avail_Language_Data> objAvailResult = new List<USP_Get_Title_Avail_Language_Data>();
+                List<USP_Get_Title_Avail_Language_Data_Show> objAvailResult_Show = new List<USP_Get_Title_Avail_Language_Data_Show>();
 
-
-            int noOfRecordSkip, noOfRecordTake;
-            pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-
-            if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-            {
-                return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult_Show);
-            }
-            else
-            {
-                return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult);
+                if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                {
+                    return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult_Show);
+                }
+                else
+                {
+                    return PartialView("~/Views/Availability_Movie/_QueryList.cshtml", objAvailResult);
+                }
             }
         }
 

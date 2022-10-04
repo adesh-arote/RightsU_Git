@@ -168,7 +168,7 @@ namespace UTO_Notification.Controllers
             }
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestId = Convert.ToString(obj.NECode);
                     logObj.UserId = Convert.ToString(obj.UserCode);
@@ -224,7 +224,7 @@ namespace UTO_Notification.Controllers
             }
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestId = Convert.ToString(obj.NECode);
                     logObj.UserId = Convert.ToString(obj.UserCode);
@@ -284,7 +284,7 @@ namespace UTO_Notification.Controllers
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
 
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestId = Convert.ToString(obj.NECode);
                     logObj.UserId = Convert.ToString(obj.UserCode);
@@ -338,7 +338,7 @@ namespace UTO_Notification.Controllers
             //}
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestUri = Request.RequestUri.AbsoluteUri;
                     logObj.RequestMethod = "api/Notification/NEGetMasters";
@@ -386,7 +386,7 @@ namespace UTO_Notification.Controllers
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
 
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestUri = Request.RequestUri.AbsoluteUri;
                     logObj.RequestMethod = "api/Notification/NEGetConfiguration";
@@ -433,7 +433,7 @@ namespace UTO_Notification.Controllers
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
 
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestId = Convert.ToString(obj.NotificationConfigCode);
                     logObj.RequestUri = Request.RequestUri.AbsoluteUri;
@@ -482,7 +482,7 @@ namespace UTO_Notification.Controllers
             if (Convert.ToInt16((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogLevel"]) <= 2)
             {
 
-                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "")
+                if ((HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != "" && (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["LogURL"] != null)
                 {
                     logObj.RequestUri = Request.RequestUri.AbsoluteUri;
                     logObj.RequestMethod = "api/Notification/NEGetSummarisedMessageStatus";

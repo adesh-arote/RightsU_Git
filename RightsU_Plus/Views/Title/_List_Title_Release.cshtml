@@ -268,7 +268,8 @@
                 //$("#hdnTVCodes").val(data);
                 if (data.length == 0 || data == '') {
                     //arrPlatform.push(data);
-                    $('#hdnTVCodes').val(arrPlatform.toString());
+                    //$('#hdnTVCodes').val(arrPlatform.toString());
+                    $('#hdnTVCodes').val('@ViewBag.Title_Release_Platform_Codes');
                     $("#hdnSelectedPlatforms").val(arrPlatform.toString());
                     BindPlatformTree();
                     $("#Rights_Platform").fancytree("disable");
@@ -282,7 +283,8 @@
                         arrPlatform.push(parseInt(data[i]));
                     }
                     //arrPlatform.push(parseInt(data.toString()));
-                    $('#hdnTVCodes').val(arrPlatform.toString());
+                    //$('#hdnTVCodes').val(arrPlatform.toString());
+                    $('#hdnTVCodes').val('@ViewBag.Title_Release_Platform_Codes');
                     $("#hdnSelectedPlatforms").val(strPlatform);
                     BindPlatformTree();
                     $("#Rights_Platform").fancytree("enable");

@@ -294,21 +294,32 @@ namespace RightsU_BLL
                 .SearchFor(x => x.Parameter_Name == "Is_Acq_rights_delay_validation")
                 .FirstOrDefault().Parameter_Value;
 
-            if (Is_Acq_rights_delay_validation != "Y")
-            {
-                IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
-                   objToValidate.LstDeal_Rights_UDT,
-                   objToValidate.LstDeal_Rights_Title_UDT,
-                   objToValidate.LstDeal_Rights_Platform_UDT,
-                   objToValidate.LstDeal_Rights_Territory_UDT,
-                   objToValidate.LstDeal_Rights_Subtitling_UDT,
-                   objToValidate.LstDeal_Rights_Dubbing_UDT
-                   , "AR");
-                resultSet = objResult;
-                return !(objResult.Count() > 0);
-            }
-            else
-                return true;
+            //if(objToValidate.Buyback_Syn_Rights_Code == null)
+            //{
+                if (Is_Acq_rights_delay_validation != "Y")
+                {
+                    IEnumerable<USP_Validate_Rights_Duplication_UDT> objResult = objValidateService.USP_Validate_Rights_Duplication_UDT(
+                       objToValidate.LstDeal_Rights_UDT,
+                       objToValidate.LstDeal_Rights_Title_UDT,
+                       objToValidate.LstDeal_Rights_Platform_UDT,
+                       objToValidate.LstDeal_Rights_Territory_UDT,
+                       objToValidate.LstDeal_Rights_Subtitling_UDT,
+                       objToValidate.LstDeal_Rights_Dubbing_UDT
+                       , "AR");
+                    resultSet = objResult;
+                    return !(objResult.Count() > 0);
+                }
+                else
+                    return true;
+            //}
+            //else{
+            //    List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
+            //    resultSet = objResult;
+            //    return true;
+
+            //}
+
+            
         }
 
         public override bool ValidateUpdate(Acq_Deal_Rights objToValidate, out dynamic resultSet)

@@ -46,9 +46,12 @@
         var titleList = $('#txtTitle').val();
         var platformCodes = platformCodes_G;
 
+        //if (titleList == "") {
+        //    $('#txtTitle').addClass('required');
+        //    returnVal = false;
+        //}
         if (titleList == "") {
-            $('#txtTitle').addClass('required');
-            returnVal = false;
+            titleList = " ";
         }
         if (titleList == 0) {
             titleList = " ";

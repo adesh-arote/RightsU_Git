@@ -30,11 +30,19 @@ namespace UTO_Notification.API.AuthFilter
             startTime = DateTime.Now;
             IEnumerable<string> requstAuthKey = context.Request.Headers.GetValues("AuthKey");
             var myListrequstAuthKey = requstAuthKey.ToList();
+
+            WriteLog.Log("", "AuthenticateAsync :before service ", "");
+
             IEnumerable<string> requstService = context.Request.Headers.GetValues("Service");
             var myListrequstService = requstService.ToList();
+
+            WriteLog.Log("", "AuthenticateAsync :after service ", "");
+
             string storedKeys = ConfigurationManager.AppSettings["storedKeys"].ToString();
             string[] sKeys;
             sKeys = storedKeys.Split(',');
+
+            WriteLog.Log("", "Outside condition ", myListrequstAuthKey[0]);
 
             if (myListrequstAuthKey[0] == "")
             {
@@ -76,12 +84,6 @@ namespace UTO_Notification.API.AuthFilter
 
                     //*  return ip; *//
 
-                    //string strHostName = "";
-                    //strHostName = Dns.GetHostName();
-                    //IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
-                    //IPAddress[] addr = ipEntry.AddressList;
-                    //string ipAddress = addr[addr.Length - 1].ToString();
-
                     //* Encrypted *//
 
                     string salt = ConfigurationManager.AppSettings["salt"].ToString();
@@ -93,7 +95,9 @@ namespace UTO_Notification.API.AuthFilter
 
                     string result = Convert.ToBase64String(bytesEncrypted);
 
-                    if (result == myListrequstAuthKey[0].ToString() && sKeys.Contains(myListrequstAuthKey[0].ToString()))
+                    WriteLog.Log(result, "AuthenticateAsync :Encrypted string ", result);
+
+                    if (sKeys.Contains(result))
                     {
                         return Task.FromResult<object>(null);
 

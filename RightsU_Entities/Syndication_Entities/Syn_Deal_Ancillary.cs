@@ -33,7 +33,9 @@ namespace RightsU_Entities
         public Nullable<int> Group_No { get; set; }
         public Nullable<int> Episode_From { get; set; }
         public Nullable<int> Episode_To { get; set; }
-    
+        public string Catch_Up_From { get; set; }
+
+
         public virtual Ancillary_Type Ancillary_Type { get; set; }
         public virtual Syn_Deal Syn_Deal { get; set; }
         public virtual ICollection<Syn_Deal_Ancillary_Platform> Syn_Deal_Ancillary_Platform { get; set; }

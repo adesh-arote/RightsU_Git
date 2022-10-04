@@ -39,7 +39,7 @@
                 }
             });
 
-            @*if('@Model.Catch_Up_From' != ""){
+            if('@Model.Catch_Up_From' != ""){
                 if('@Model.Catch_Up_From' =='E'){
                     $("#CatchUpEach").prop("checked", true)
                 }
@@ -51,21 +51,21 @@
             }
             else{
                 $('#divCatchup,#lblCatchup').hide();
-            }*@
+            }
         }
         @*if ('@ViewBag.Mode' == "EDIT" || '@ViewBag.Mode' == "CLONE") {
             BindPlatform();
         }*@
 
-        //if(isCatchUpright == "Y")
-        //{
-        //    $("#DivAncillaryMedium").hide();
-        //    $('#lblAncillryMedium').hide();
-        //}
-        //else{
-        //    $("#DivAncillaryMedium").show();
-        //    $('#lblAncillryMedium').show();
-        //}
+        if(isCatchUpright == "Y")
+        {
+            $("#DivAncillaryMedium").hide();
+            $('#lblAncillryMedium').hide();
+        }
+        else{
+            $("#DivAncillaryMedium").show();
+            $('#lblAncillryMedium').show();
+        }
     });
 
     //$('#lbTitle_Popup').change(function () {

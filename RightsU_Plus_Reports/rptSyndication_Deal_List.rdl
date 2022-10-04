@@ -55,8 +55,8 @@
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
-        <Field Name="Director">
-          <DataField>Director</DataField>
+        <Field Name="Agreement_No">
+          <DataField>Agreement_No</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Business_Unit_Name">
@@ -75,10 +75,6 @@
           <DataField>Reference No</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Genre">
-          <DataField>Genre</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="Agreement_Date">
           <DataField>Agreement Date</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
@@ -95,8 +91,12 @@
           <DataField>Revenue Vertical</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Agreement_No">
-          <DataField>Agreement_No</DataField>
+        <Field Name="Party">
+          <DataField>Party</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Party_Master">
+          <DataField>Party_Master</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Program">
@@ -107,16 +107,16 @@
           <DataField>Title</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Party_Master">
-          <DataField>Party_Master</DataField>
+        <Field Name="Director">
+          <DataField>Director</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Genre">
+          <DataField>Genre</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Star_Cast">
           <DataField>Star Cast</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Party">
-          <DataField>Party</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Title_Language">
@@ -143,8 +143,8 @@
           <DataField>Tentative</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Subtitling">
-          <DataField>Subtitling</DataField>
+        <Field Name="Term">
+          <DataField>Term</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Pushback">
@@ -163,21 +163,21 @@
           <DataField>Title Language Right</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Dubbing">
-          <DataField>Dubbing</DataField>
+        <Field Name="Subtitling">
+          <DataField>Subtitling</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Sub_Licensing">
           <DataField>Sub Licensing</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Dubbing">
+          <DataField>Dubbing</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="ROFR">
           <DataField>ROFR</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
-        </Field>
-        <Field Name="Blackout">
-          <DataField>Blackout</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Restriction_Remark">
           <DataField>Restriction Remark</DataField>
@@ -191,8 +191,8 @@
           <DataField>Rights Holdback Remarks</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Term">
-          <DataField>Term</DataField>
+        <Field Name="Blackout">
+          <DataField>Blackout</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Rights_Remarks">
@@ -205,11 +205,11 @@
         </Field>
         <Field Name="Reverse_Holdback_Start_Date">
           <DataField>Reverse Holdback Start Date</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Reverse_Holdback_End_Date">
           <DataField>Reverse Holdback End Date</DataField>
-          <rd:TypeName>System.DateTime</rd:TypeName>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Reverse_Holdback_Tentative">
           <DataField>Reverse Holdback Tentative</DataField>
@@ -277,6 +277,14 @@
         </Field>
         <Field Name="Under_Litigation">
           <DataField>Under Litigation</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Co_Exclusive_Remarks">
+          <DataField>Co-Exclusive Remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Co_Production">
+          <DataField>Co Production</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -885,6 +893,20 @@ WHERE  (Parameter_Name = 'Is_SelfUtilization_inReport')</CommandText>
         <CommandText>SELECT        TOP (1) Parameter_Value
 FROM            System_Parameter_New
 WHERE        (Parameter_Name = 'Is_Allow_Title_Objection')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowTitleCoProduction">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT TOP (1) Parameter_Value
+FROM     System_Parameter_New
+WHERE  (Parameter_Name = 'Is_Title_CoProd_AdvSearch')</CommandText>
       </Query>
       <Fields>
         <Field Name="Parameter_Value">
@@ -2278,6 +2300,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                   <Width>1.20833in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>2.02083in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -2294,6 +2319,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.71875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -3114,6 +3142,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox26">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Co Production</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox26</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox142">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -3364,6 +3430,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox130</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox24">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!Co_Exclusive_Remarks.Value, "DataSet1")</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox24</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -3805,7 +3909,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value EvaluationMode="Constant">Reverse Holdback Start Date</Value>
+                                  <Value>=First(Fields!Reverse_Holdback_Start_Date.Value,"DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -3843,7 +3947,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Reverse Holdback End Date</Value>
+                                  <Value>=First(Fields!Reverse_Holdback_End_Date.Value,"DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -5133,6 +5237,39 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Co_Production">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Co_Production.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Co_Production</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox143">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -5350,7 +5487,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Pushback.Value= "N", IIF(Fields!Exclusive.Value="Y", "Yes", "No"), "--")</Value>
+                                  <Value>=IIF(Fields!Pushback.Value= "N", IIF(Fields!Exclusive.Value="Y", "Exclusive", IIF(Fields!Exclusive.Value="N", "Non-Exclusive", "Co-Exclusive")), "--")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5363,6 +5500,41 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox131</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Co_Exclusive_Remarks">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Co_Exclusive_Remarks.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Co_Exclusive_Remarks</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -6411,6 +6583,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowTitleCoProduction") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -6495,7 +6673,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
             <Top>0.03in</Top>
             <Left>0.00372in</Left>
             <Height>0.5in</Height>
-            <Width>98.87875in</Width>
+            <Width>100.87875in</Width>
             <ZIndex>1</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", false, true)</Hidden>
@@ -7916,6 +8094,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                   <Width>1.20833in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>2.02083in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -7932,6 +8113,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.71875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -8585,6 +8769,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Textbox32">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Co Production</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox32</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox152">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -8835,6 +9057,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox130</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox28">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=First(Fields!Co_Exclusive_Remarks.Value, "DataSet1")</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox28</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -10274,6 +10534,39 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
+                        <Textbox Name="Co_Production1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Co_Production.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Co_Production1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
                         <Textbox Name="Textbox177">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
@@ -10303,6 +10596,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -10491,7 +10785,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Pushback.Value = "N", IIF(Fields!Exclusive.Value = "Y", "Yes", "No"), "--")</Value>
+                                  <Value>=IIF(Fields!Pushback.Value = "N", IIF(Fields!Exclusive.Value = "Y", "Exclusive", IIF(Fields!Exclusive.Value="N", "Non-Exclusive", "Co-Exclusive")), "--")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -10504,6 +10798,41 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox131</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Co_Exclusive_Remarks1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Co_Exclusive_Remarks.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Co_Exclusive_Remarks1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -11363,6 +11692,12 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowTitleCoProduction") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember />
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -11414,7 +11749,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
             <Top>0.61331in</Top>
             <Left>0.06853in</Left>
             <Height>0.5in</Height>
-            <Width>80.17852in</Width>
+            <Width>82.17852in</Width>
             <ZIndex>3</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "RTL", False, True)</Hidden>
@@ -11429,7 +11764,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
         <Height>7.74328in</Height>
         <Style />
       </Body>
-      <Width>99.5283in</Width>
+      <Width>100.88247in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

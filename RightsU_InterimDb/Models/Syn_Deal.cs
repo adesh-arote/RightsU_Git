@@ -24,6 +24,7 @@ namespace RightsU_InterimDb.Models
             this.Syn_Deal_Attachment = new HashSet<Syn_Deal_Attachment>();
             this.Syn_Deal_Material = new HashSet<Syn_Deal_Material>();
             this.Syn_Deal_Run = new HashSet<Syn_Deal_Run>();
+            this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
         }
     
     	public State EntityState { get; set; }    public int Syn_Deal_Code { get; set; }
@@ -88,5 +89,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Syn_Deal_Run> Syn_Deal_Run { get; set; }
         public virtual Deal_Segment Deal_Segment { get; set; }
         public virtual Revenue_Vertical Revenue_Vertical { get; set; }
+        public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
     }
 }

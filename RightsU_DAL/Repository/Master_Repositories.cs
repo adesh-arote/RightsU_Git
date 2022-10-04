@@ -761,7 +761,8 @@ namespace RightsU_DAL
             if (objUser.MHUsers != null) objUser.MHUsers = objSaveEntities.SaveMHUser(objUser.MHUsers, base.DataContext);
             if (objUser.Users_Configuration != null) objUser.Users_Configuration = objSaveEntities.SaveUserConfiguration(objUser.Users_Configuration, base.DataContext);
             if (objUser.Users_Exclusion_Rights != null) objUser.Users_Exclusion_Rights = objSaveEntities.SaveUserExclusionRights(objUser.Users_Exclusion_Rights, base.DataContext);
-
+            if (objUser.Users_Detail != null) objUser.Users_Detail = objSaveEntities.SaveUserUsers_Detail(objUser.Users_Detail, base.DataContext);
+            
 
             if (objUser.EntityState == State.Added)
             {
@@ -1634,6 +1635,13 @@ namespace RightsU_DAL
             return updatedList;
         }
 
+        public ICollection<Users_Detail> SaveUserUsers_Detail(ICollection<Users_Detail> entityList, DbContext dbContext)
+        {
+            ICollection<Users_Detail> updatedList = entityList;
+
+            updatedList = new Save_Entitiy_Lists_Generic<Users_Detail>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
         public ICollection<Vendor_Contacts> SaveVendorContact(ICollection<Vendor_Contacts> entityList, DbContext dbContext)
         {
             ICollection<Vendor_Contacts> updatedList = entityList;

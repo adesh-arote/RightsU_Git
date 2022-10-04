@@ -5,6 +5,11 @@ var MessageFrom = '';
 var TabType = 'RR';
 var Check = false;
 var Promoter_Check = false;
+var originalDate = ""
+var originalYY = "";
+var originalMM = "";
+var originalDD = "";
+
 
 $(document).ready(function () {
     showLoading();
@@ -15,6 +20,17 @@ $(document).ready(function () {
     if (recordLockingCode_G > 0) {
         Call_RefreshRecordReleaseTime(recordLockingCode_G, URL_Global_Refresh_Lock);
     }
+
+    debugger;
+    Buyback_Syn_Rights_Code = $('#hdnBuyback_Syn_Rights_Code').val();
+    if (Buyback_Syn_Rights_Code == "")
+        Buyback_Syn_Rights_Code = null;
+    originalDate = $("#hdnEndDate_Buyback").val();
+    originalStartDate = $("#hdnStartDate_Buyback").val();
+    originalYY = $("#Term_YY").val();
+    originalMM = $("#Term_MM").val();
+    originalDD = $("#Term_DD").val();
+
     // EDIT SECTION START
 
     if (mode_G == "E" || mode_G == "C") {
@@ -138,7 +154,7 @@ $(document).ready(function () {
             else {
                 $('#li_Perpetuity').hide();
             }
-        }    
+        }
     });
 
     $('#ddlMilestone_Unit_Type').change(function () {
@@ -170,28 +186,65 @@ $(document).ready(function () {
     });
 
     $('#Term_YY').change(function () {
-        OnFocusLostTerm();
-        Set_MinMax_ROFR();
+        if (Buyback_Syn_Rights_Code != null) {
+            OnFocusLostTermBuyback('Term_YY', originalDate, originalYY, originalMM, originalDD);
+        } else {
+            OnFocusLostTerm();
+            Set_MinMax_ROFR();
+        }
+
     });
 
     $('#Term_MM').change(function () {
-        OnFocusLostTerm();
-        Set_MinMax_ROFR();
+        if (Buyback_Syn_Rights_Code != null) {
+            OnFocusLostTermBuyback('Term_MM', originalDate, originalYY, originalMM, originalDD);
+        } else {
+            OnFocusLostTerm();
+            Set_MinMax_ROFR();
+        }
     });
     $('#Term_DD').change(function () {
         debugger;
-        OnFocusLostTerm();
-        Set_MinMax_ROFR();
+        if (Buyback_Syn_Rights_Code != null) {
+            OnFocusLostTermBuyback('Term_DD', originalDate, originalYY, originalMM, originalDD);
+        } else {
+            OnFocusLostTerm();
+            Set_MinMax_ROFR();
+        }
     });
 
     $('#Start_Date').change(function () {
-        SetMinDt();
-        AutoPopulateTerm();
+        debugger;
+        if (Buyback_Syn_Rights_Code != null) {
+            setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+
+            if (CheckGreaterStartDate()); {
+                AutoPopulateTerm();
+            }
+
+            
+        }
+        else {
+            SetMinDt();
+            AutoPopulateTerm();
+        }
+        
     });
 
     $('#End_Date').change(function () {
-        SetMaxDt();
-        AutoPopulateTerm();
+        if (Buyback_Syn_Rights_Code != null) {
+            setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+            if (CheckGreaterStartDate()); {
+                AutoPopulateTerm();
+            }
+
+        }
+        else {
+            SetMaxDt();
+            AutoPopulateTerm();
+        }
     });
 
     $('#Milestone_Start_Date').change(function () {
@@ -246,8 +299,35 @@ $(document).ready(function () {
         maxDecimalPlaces: 0
     });
 
+    debugger;
+    if (Buyback_Syn_Rights_Code != null) {
+        setMinMaxDates('Start_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+        setMinMaxDates('End_Date', $("#hdnStartDate_Buyback").val(), $('#hdnEndDate_Buyback').val());
+        AutoPopulateTerm();
+    }
+
     BindAllPreReq_Async();
 });
+
+function CheckGreaterStartDate() {
+    debugger;
+    var arrStart_Date = $("#Start_Date").val().split('/');
+    var Start_Date = new Date(arrStart_Date[1] + '/' + arrStart_Date[0] + '/' + arrStart_Date[2]);
+
+    var arrEnd_Date = $("#End_Date").val().split('/');
+    var End_Date = new Date(arrEnd_Date[1] + '/' + arrEnd_Date[0] + '/' + arrEnd_Date[2]);
+
+    if (Start_Date > End_Date) {
+        $('#Start_Date').val($("#hdnStartDate_Buyback").val());
+        $('#End_Date').val($("#hdnEndDate_Buyback").val());
+
+        showAlert("E", "Start Date Should not be greater than End Date");
+        return false;
+    }
+    else {
+        return true;
+    }
+} 
 
 function CalculateTerm(startDate, endDate) {
     debugger;
@@ -851,6 +931,7 @@ function Add_Holdback_Blackout(Call_FROM) {
         showAlert('E', ShowMessage.MsgForAddEdit);//MsgForAddEdit = Please complete Add/Edit operation first
 }
 function BindDropdown(radioType, callFrom) {
+    debugger;
     var selectedId = '';
     var Is_Thetrical = $('#Is_Theatrical_Right').prop('checked');
 
@@ -869,6 +950,36 @@ function BindDropdown(radioType, callFrom) {
         selectedId = 'lbSub_Language';
     }
 
+    //--For Buyback
+    var selectedTitles = '';
+    if ($("#lbTitles").val() != null)
+        selectedTitles = $("#lbTitles").val().join(',');
+    var platformCodes = $('#hdnTVCodes').val();
+    if (platformCodes == undefined)
+        platformCodes = "";
+    var region_type = $("#rdoCountryHB").prop('checked') ? 'I' : 'T';
+    var SL_Type = $("#rdoSubL").prop('checked') ? 'SL' : 'SG';
+    var DL_Type = $("#rdoDubbingL").prop('checked') ? 'DL' : 'DG';
+
+    var Is_Thetrical = $('#Is_Theatrical_Right').prop('checked');
+
+    if (Is_Thetrical)
+        Is_Thetrical = 'Y'
+    else
+        Is_Thetrical = 'N'
+
+
+    var selectedCodes = '';
+    var selected_Territory = '';
+    var selected_Sub_Lang = '';
+    var selected_Dub_Lang = '';
+    if (callFrom == 'PF') {
+        if (selectedCodes != "")
+            selectedCodes = $('#' + selectedId).val();
+    }
+
+    //--------------------
+
     $.ajax({
         type: "POST",
         url: URL_Bind_JSON_ListBox,
@@ -877,7 +988,12 @@ function BindDropdown(radioType, callFrom) {
         contentType: "application/json; charset=utf-8",
         data: JSON.stringify({
             str_Type: radioType,
-            Is_Thetrical: Is_Thetrical
+            Is_Thetrical: Is_Thetrical,
+            titleCodes: selectedTitles,
+            platformCodes: platformCodes,
+            Region_Type: region_type,
+            rdbSubtitlingLanguage: SL_Type,
+            rdbDubbingLanguage: DL_Type
         }),
         async: false,
         success: function (result) {
@@ -1531,6 +1647,7 @@ function OnFocusLostTerm() {
 
             if (year > 0 || month > 0 || day > 0) {
                 var newDate = CalculateEndDate(rightSD, year, month, day);
+
                 if (canAssign) {
                     txtEndDate.val(newDate);
                 }
@@ -1575,6 +1692,129 @@ function OnFocusLostTerm() {
     }
     CalculateROFRDate();
 }
+
+function OnFocusLostTermBuyback(textboxID, originalDate, originalYY, originalMM, originalDD) {
+    debugger;
+    var canAssign = true;
+    if ($('#Is_Tentative').prop('checked'))
+        canAssign = false
+
+    var txtStartDate = $('#Start_Date');
+    var txtEndDate = $('#End_Date');
+    var txtTermYear = $('#Term_YY');
+    var txtTermMonth = $('#Term_MM');
+    var txtTermDay = $('#Term_DD');
+
+    if (txtTermYear.val() == '' || isNaN(txtTermYear.val()))
+        txtTermYear.val('0');
+    if (txtTermMonth.val() == '' || isNaN(txtTermMonth.val()))
+        txtTermMonth.val('0');
+
+    if (txtTermDay.val() == '' || isNaN(txtTermDay.val()))
+        txtTermDay.val('0');
+
+    if (txtStartDate.val() != "") {
+        var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
+        if (!isNaN(rightSD)) {
+
+            var year = 0;
+            var month = 0;
+            var day = 0;
+
+            if (txtTermYear.val() != '')
+                year = parseInt(txtTermYear.val());
+            if (txtTermMonth.val() != '')
+                month = parseInt(txtTermMonth.val());
+
+            if (txtTermDay.val() != '')
+                day = parseInt(txtTermDay.val());
+
+            if (year > 0 || month > 0 || day > 0) {
+                var newDate = CalculateEndDate(rightSD, year, month, day);
+
+
+                var newBuybackDate = new Date(newDate);
+                var oldBuybackDate = new Date($("#End_Date").val());
+
+                if (newBuybackDate == "Invalid Date") {
+                    var arrnewBuybackDate = newDate.split('/');
+                    newBuybackDate = new Date(arrnewBuybackDate[1] + '/' + arrnewBuybackDate[0] + '/' + arrnewBuybackDate[2]);
+                }
+                else {
+                    var arrnewDate = newDate.split('/');
+                    newBuybackDate = new Date(arrnewDate[1] + '/' + arrnewDate[0] + '/' + arrnewDate[2]);
+                }
+
+
+                if (oldBuybackDate == "Invalid Date") {
+                    var arroldBuybackDate = $("#End_Date").val().split('/');
+                    oldBuybackDate = new Date(arroldBuybackDate[1] + '/' + arroldBuybackDate[0] + '/' + arroldBuybackDate[2]);
+                }
+
+                var arroriginalEndDate = originalDate.split('/');
+                originalEndDate = new Date(arroriginalEndDate[1] + '/' + arroriginalEndDate[0] + '/' + arroriginalEndDate[2]);
+
+                if (newBuybackDate > originalEndDate) {
+                    if (textboxID == "Term_YY") {
+                        $("#Term_YY").val(originalYY);
+                    }
+                    else if (textboxID == "Term_MM") {
+                        $("#Term_MM").val(originalMM);
+                    }
+                    else if (textboxID == "Term_DD") {
+                        $("#Term_DD").val(originalDD);
+                    }
+
+                    showAlert("E", "End Date should not be greater than " + originalDate);
+                    return false;
+                }
+
+
+                if (canAssign) {
+                    txtEndDate.val(newDate);
+                }
+                else {
+                    txtEndDate.val('');
+                }
+            }
+            else {
+                txtEndDate.val('');
+            }
+        }
+    }
+    else if (txtEndDate.val() != "") {
+        var rightED = new Date(MakeDateFormate(txtEndDate.val()));
+        if (!isNaN(rightED)) {
+
+            var year = 0;
+            var month = 0;
+            var day = 0;
+
+            if (txtTermYear.val() != '')
+                year = parseInt(txtTermYear.val());
+            if (txtTermMonth.val() != '')
+                month = parseInt(txtTermMonth.val());
+
+            if (txtTermDay.val() != '')
+                day = parseInt(txtTermDay.val());
+
+            if (year > 0 || month > 0 || day > 0) {
+                var newDate = CalculateStartDate(rightED, year, month, day);
+                txtStartDate.val(newDate);
+            }
+            else {
+                txtStartDate.val('');
+            }
+        }
+    }
+    else {
+        txtTermYear.val('0');
+        txtTermMonth.val('0');
+        txtTermDay.val('0');
+    }
+    CalculateROFRDate();
+}
+
 function OnFocusLostDate() {
     debugger
     var isRet = false;
@@ -2008,9 +2248,13 @@ function ValidateSave() {
 
         var newPerLogic = $('#hdnAllow_Perpetual_Date_Logic').val();
         if (newPerLogic = "Y") {
-            CalculatePerpetuityEndDate("Y");
+            
 
             var Titles = $('#lbTitles').val() == null ? 0 : $('#lbTitles').val().length;
+
+            if (Titles != 0)
+                CalculatePerpetuityEndDate("Y");
+
             if (Titles == 1) {
                 if ($('#txtPer_Date_Logic_EndDate').val() == "" || $('#txtPer_Date_Logic_EndDate').val() == "DD/MM/YYYY") {
                     IsValidSave = false;
@@ -2478,6 +2722,7 @@ function OnSuccess(message) {
 }
 
 function BindAllPreReq_Async() {
+    debugger;
 
     $.ajax({
         type: "POST",
@@ -2627,7 +2872,7 @@ function CalculatePerpetuityEndDate(ValidateSave = "") {
             Titles = 1;
         }
         if (Titles == 1) {
-            
+
             $.ajax({
                 type: "POST",
                 url: URL_GetPerpetuity_Logic_Date,
@@ -2637,7 +2882,7 @@ function CalculatePerpetuityEndDate(ValidateSave = "") {
                 data: JSON.stringify({
                     perpetuityDate: perpetuityDate,
                     titleCodes: $('#lbTitles').val(),
-                    callFromValidate : ValidateSave
+                    callFromValidate: ValidateSave
                 }),
                 success: function (result) {
                     if (result == "true") {
@@ -2646,13 +2891,13 @@ function CalculatePerpetuityEndDate(ValidateSave = "") {
                     if (ValidateSave == "Y") {
 
                         if (result != "") {
-                            showAlert("E", result + " does not has Release Date.")
+                            showAlert("E", result + " does not have Release Date.")
                         }
                     }
                     else {
-                        $('#txtPer_Date_Logic_EndDate').val(result);   
+                        $('#txtPer_Date_Logic_EndDate').val(result);
                     }
-                      
+
                 },
                 error: function (x, e) {
                 }

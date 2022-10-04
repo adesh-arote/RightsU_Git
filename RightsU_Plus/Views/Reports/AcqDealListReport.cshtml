@@ -21,6 +21,7 @@
     var URL_BindAcqDealListReport = '@Url.Action("BindAcqDealListReport", "Reports")';
     var Is_AllowMultiBUacqdealreport = '@ViewBag.Is_AllowMultiBUacqdealreport';
     $(document).ready(function () {
+        debugger;
         $('#txtStart').change(function () {
             SetMinDt();
         });
@@ -37,6 +38,14 @@
 
         $('#ddlBusinessUnitMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
         $('#ddlBusinessUnitMultiSelect').each(function () {
+            $(this)[0].sumo.reload();
+            $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
+            $('.SumoSelect .select-all').css({ paddingRight: '6px' });
+            $('.SumoSelect > .optWrapper > .options li.opt label').css({ direction: "LTR", paddingRight: '30px' });
+            $('.SumoSelect > .CaptionCont, .SumoSelect .select-all > label').css({ paddingRight: '35px', lineHeight: '15px' });
+        });
+        $('#ddlModeOfAcquisitionMultiSelect').SumoSelect({ selectAll: true, triggerChangeCombined: false }).sumo.selectAll();
+        $('#ddlModeOfAcquisitionMultiSelect').each(function () {
             $(this)[0].sumo.reload();
             $('.SumoSelect > .CaptionCont > span').css("padding-right", "0px");
             $('.SumoSelect .select-all').css({ paddingRight: '6px' });
@@ -64,6 +73,8 @@
             if ($('#ddlBusinessUnitMultiSelect').val())
                 businessUnitcode = $('#ddlBusinessUnitMultiSelect').val().join(',');
         }
+        var ModeOfAcquisitionCode = $('#ddlModeOfAcquisitionMultiSelect').val().join(',');
+        
         var DealNo = $('#txtDealNo').val();
         var AllowDealSegment = $('#AllowDealSegment').val();
         var IsAllowTypeOfFilm = $('#IsAllowTypeOfFilm').val();
@@ -161,7 +172,8 @@
                     masterDeal: masterDeal,
                     dateformat: $('#ddlDateFormat').val(),
                     IsCheckRight: IsCheckRight,
-                    TypeOfFilm: TypeOfFilm
+                    TypeOfFilm: TypeOfFilm,
+                    ModeOfAcquisitionCode: ModeOfAcquisitionCode
                 }),
                 async: false,
                 success: function (result) {
@@ -434,8 +446,10 @@
                                     @Html.DropDownList("TypeOfFilm", ViewBag.TypeOfFilm as SelectList, "Please Select", new { @id = "ddlTypeOfFilm", @class = "form_input chosen-select" })
                                 </td>
                             }
-                            <td></td>
-                            <td></td>
+                                <td><b>Mode Of Acquisition :</b></td>
+                                <td>
+                                    @Html.DropDownList("ModeOfAcquisition", ViewBag.ModeOfAcquisitionList as SelectList, new { @id = "ddlModeOfAcquisitionMultiSelect", @multiple = "multiple" })
+                                </td>
                             <td></td>
                             <td></td>
                             <td></td>

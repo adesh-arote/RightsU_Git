@@ -651,7 +651,7 @@ namespace UTOFrameWork.FrameworkClasses
 
             string strServer = "Data Source=" + Convert.ToString(ConfigurationManager.AppSettings["DataServer"]);
             string strUserId = "User Id=" + Convert.ToString(ConfigurationManager.AppSettings["UserId"]);
-            string strPassword = " Password=" + Convert.ToString(ConfigurationManager.AppSettings["Password"]);
+            string strPassword = " Password=" + Convert.ToString(ConfigurationManager.AppSettings["LDAP_Auth"]);
             string StrTimeOut = " Connection Timeout =" + Convert.ToString(ConfigurationManager.AppSettings["TimeOut"]);
             string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
             return strConnectionString;
@@ -1461,7 +1461,7 @@ namespace UTOFrameWork.FrameworkClasses
             CommandTimeoutStatic = Convert.ToInt32(ConfigurationManager.AppSettings["CommandTimeout"]);
             string strServer = "Data Source=" + ConfigurationManager.AppSettings["DataServer"];
             string strUserId = "User Id=" + ConfigurationManager.AppSettings["UserId"];
-            string strPassword = " Password=" + ConfigurationManager.AppSettings["Password"];
+            string strPassword = " Password=" + ConfigurationManager.AppSettings["LDAP_Auth"];
             string StrTimeOut = " Connection Timeout =" + ConfigurationManager.AppSettings["TimeOut"];
             string strConnectionString = strServer + ";" + strDataBase + ";" + strUserId + ";" + strPassword + ";" + StrTimeOut;
             myConn.ConnectionString = strConnectionString;

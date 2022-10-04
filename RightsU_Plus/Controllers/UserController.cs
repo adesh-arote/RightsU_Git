@@ -209,6 +209,21 @@ namespace RightsU_Plus.Controllers
             var businessUnitCodes = objUser.Users_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
             ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
 
+            var Is_ROP_Accessible = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Is_ROP_Accessible").Select(x => x.Parameter_Value).SingleOrDefault();
+            ViewBag.Is_ROP_Accessible = Is_ROP_Accessible;
+
+            List<Attrib_Group> lstBusinessLayer = new Attrib_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Attrib_Type == "BL").OrderBy(o => o.Attrib_Group_Name).ToList();
+            var businessLayerCodes = objUser.Users_Detail.Select(x => x.Attrib_Group_Code).ToArray();
+            ViewBag.BusinessLayerList = new MultiSelectList(lstBusinessLayer, "Attrib_Group_Code", "Attrib_Group_Name", businessLayerCodes);
+
+            List<Attrib_Group> lstBusinessVertical = new Attrib_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Attrib_Type == "BV").OrderBy(o => o.Attrib_Group_Name).ToList();
+            var businessVerticalCodes = objUser.Users_Detail.Select(x => x.Attrib_Group_Code).ToArray();
+            ViewBag.BusinessVerticalList = new MultiSelectList(lstBusinessVertical, "Attrib_Group_Code", "Attrib_Group_Name", businessVerticalCodes);
+
+            List<Attrib_Group> lstDepartment = new Attrib_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Attrib_Type == "DP").OrderBy(o => o.Attrib_Group_Name).ToList();
+            var DepartmentCodes = objUser.Users_Detail.Select(x => x.Attrib_Group_Code).ToArray();
+            ViewBag.DepartmentList = new MultiSelectList(lstDepartment, "Attrib_Group_Code", "Attrib_Group_Name", DepartmentCodes);
+
             List<RightsU_Entities.Vendor> lstProductionRoleVendor = (List<RightsU_Entities.Vendor>)Session["VendorData"];
             int? Vendor_Code = objUser.MHUsers.Select(s => s.Vendor_Code).FirstOrDefault();
             ViewBag.Vendor = new SelectList(lstProductionRoleVendor, "Vendor_Code", "Vendor_Name", Vendor_Code);
@@ -646,6 +661,53 @@ namespace RightsU_Plus.Controllers
             var Added_Users_Business_Unit = CompareLists<Users_Business_Unit>(BuisnessUnitList.ToList<Users_Business_Unit>(), objU.Users_Business_Unit.ToList<Users_Business_Unit>(), comparerBuisness_Unit, ref Deleted_Users_Business_Unit, ref Updated_Users_Business_Unit);
             Added_Users_Business_Unit.ToList<Users_Business_Unit>().ForEach(t => objU.Users_Business_Unit.Add(t));
             Deleted_Users_Business_Unit.ToList<Users_Business_Unit>().ForEach(t => t.EntityState = State.Deleted);
+
+            ICollection<Users_Detail> users_DetailsList = new HashSet<Users_Detail>();
+            if (objFormCollection["ddlDepartment"] != null)
+            {
+                string[] arrBuisnessCode = objFormCollection["ddlDepartment"].Split(',');
+                foreach (string BuisnessUnitCode in arrBuisnessCode)
+                {
+                    Users_Detail objTR = new Users_Detail();
+                    objTR.EntityState = State.Added;
+                    objTR.Attrib_Group_Code = Convert.ToInt32(BuisnessUnitCode);
+                    objTR.Attrib_Type = "DP";
+                    users_DetailsList.Add(objTR);
+                }
+            }
+
+            if (objFormCollection["ddlBusinessLayer"] != null)
+            {
+                string[] arrBusinessLayer = objFormCollection["ddlBusinessLayer"].Split(',');
+                foreach (var BusinessLayerCodes in arrBusinessLayer)
+                {
+                    Users_Detail objTR = new Users_Detail();
+                    objTR.EntityState = State.Added;
+                    objTR.Attrib_Group_Code = Convert.ToInt32(BusinessLayerCodes);
+                    objTR.Attrib_Type = "BL";
+                    users_DetailsList.Add(objTR);
+                }
+            }
+
+            if (objFormCollection["ddlBusinessVertical"] != null)
+            {
+                string[] arrBusinessVertical = objFormCollection["ddlBusinessVertical"].Split(',');
+                foreach (var BusinessLayerCodes in arrBusinessVertical)
+                {
+                    Users_Detail objTR = new Users_Detail();
+                    objTR.EntityState = State.Added;
+                    objTR.Attrib_Group_Code = Convert.ToInt32(BusinessLayerCodes);
+                    objTR.Attrib_Type = "BV";
+                    users_DetailsList.Add(objTR);
+                }
+            }
+
+            IEqualityComparer<Users_Detail> compareUsers_Detail = new LambdaComparer<Users_Detail>((x, y) => x.Attrib_Group_Code == y.Attrib_Group_Code && x.EntityState != State.Deleted);
+            var Deleted_Users_Detail = new List<Users_Detail>();
+            var Updated_Users_Detail = new List<Users_Detail>();
+            var Added_Users_Detail = CompareLists<Users_Detail>(users_DetailsList.ToList<Users_Detail>(), objU.Users_Detail.ToList<Users_Detail>(), compareUsers_Detail, ref Deleted_Users_Detail, ref Updated_Users_Detail);
+            Added_Users_Detail.ToList<Users_Detail>().ForEach(t => objU.Users_Detail.Add(t));
+            Deleted_Users_Detail.ToList<Users_Detail>().ForEach(t => t.EntityState = State.Deleted);
 
             ICollection<MHUser> MHUser = new HashSet<MHUser>();
             if (objFormCollection["ddlVendors"] != null)
