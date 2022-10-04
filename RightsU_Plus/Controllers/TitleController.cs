@@ -1628,10 +1628,10 @@ namespace RightsU_Plus.Controllers
                 obj.Columns_Name = hdnExtendedColumnName;
                 obj.Name = hdnName;
 
-                if(hdnType == "D")
-                {
-                    gvExtended.Remove(obj);
-                }
+                //if(hdnType == "D")
+                //{
+                //    gvExtended.Remove(obj);
+                //}
                 
                 
                 int MapExtendedColumnCode = 0;
