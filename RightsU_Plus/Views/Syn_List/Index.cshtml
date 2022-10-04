@@ -41,7 +41,7 @@
         @*var Is_AllowMultiBUacqdeal = '@ViewBag.Is_AllowMultiBUacqdeal';*@
         $(document).ready(function () {
             
-            $("#ddlSrchDirector,#ddlSrchLicensor,#ddlGenBUMultiSelect").click(function () {
+            $("#ddlSrchDirector,#ddlSrchLicensor,#ddlGenBUMultiSelect,#ddlSrchBUMultiSelect").click(function () {
                 $("input.search-txt").attr("placeholder", "Search");
             });
 
@@ -658,13 +658,13 @@
                         <li class="AdSearch">
                             <label>@objMessageKey.BusinessUnit:</label><br />
                             @if (ViewBag.Is_AllowMultiBUsyndeal != "Y")
-                            {
-                                <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 172px;"></select>
-                            }
-                            else
-                            {
-                                <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
-                            }
+        {
+                    <select id="ddlSrchBU" onchange="OnChangeBindTitle()" class="form_input chosen-select" style="width: 172px;"></select>
+}
+else
+{
+                    <select id="ddlSrchBUMultiSelect" onchange="OnChangeBindTitle()" multiple="multiple" style="width: 174px;"></select>
+}
                         </li>
                         <li class="AdSearch">
                             <label>@objMessageKey.DealType:</label><br />

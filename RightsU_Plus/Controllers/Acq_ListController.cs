@@ -593,7 +593,7 @@ namespace RightsU_Plus.Controllers
             var Acquisition_DealWorkFlow = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Deal_Workflow_Status).Distinct().ToList();
             obj_Dictionary.Add("USP_Result", obj_USP_Get_PreReq_Result);
             SelectList lstWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName)
-                .SearchFor(x => x.Deal_Type == "A" && Acquisition_DealWorkFlow.Contains(x.Deal_WorkflowFlag) || (x.Deal_WorkflowFlag == "0" &&x.Deal_Type == "A"))
+                .SearchFor(x => x.Deal_Type == "A" && Acquisition_DealWorkFlow.Contains(x.Deal_WorkflowFlag) || (x.Deal_WorkflowFlag == "0" && x.Deal_Type == "A"))
               .Select(i => new { Display_Value = i.Deal_WorkflowFlag, Display_Text = i.Deal_Workflow_Status_Name }).ToList(),
               "Display_Value", "Display_Text");
 
@@ -1263,7 +1263,7 @@ namespace RightsU_Plus.Controllers
                     goto End;
             }
 
-            Archive:
+        Archive:
             if (CommandName == "SendForArchive" || CommandName == "Archive")
             {
                 count = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Acq_Deal_Code == Acq_Deal_Code && (s.Deal_Workflow_Status == "AR" || s.Deal_Workflow_Status == "WA")).Count();
@@ -1285,7 +1285,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            End:
+        End:
             if (message == "" && Key == "AR")
             {
                 List<int?> lstTitle_Code = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName)
@@ -2214,6 +2214,10 @@ namespace RightsU_Plus.Controllers
             ViewBag.Button_Visibility = Button_Visibility;
             ViewBag.Deal_Type_Code = Acq_Deal_obj.Deal_Type_Code;
             ViewBag.Agreement_No = Acq_Deal_obj.Agreement_No;
+            ViewBag.RoleCode = Acq_Deal_obj.Role_Code;
+
+
+
             return PartialView("~/Views/Shared/_ActionButton.cshtml");
         }
 
@@ -2304,7 +2308,9 @@ namespace RightsU_Plus.Controllers
             //List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Convert.ToInt32(Rights_Bulk_Update_Code)).ToList();
             List<Deal_Rights_Process> lstDRP = objDRPSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).ToList();
 
-            if (String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
+            var AcqDeal = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(Acq_Deal_Code);
+            //if (String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
+            if (AcqDeal.Role_Code != GlobalParams.RoleCode_BuyBack)
             {
                 foreach (Deal_Rights_Process item in lstDRP)
                 {
@@ -2315,20 +2321,24 @@ namespace RightsU_Plus.Controllers
                 }
 
                 Rights_Bulk_Update objRBU = objRBUSer.SearchFor(x => x.Rights_Bulk_Update_Code == Rights_Bulk_Update_Code).FirstOrDefault();
-                if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
+                if (objRBU != null)
                 {
-                    int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
-                    if (ADRError_Count > 0)
+
+                    if (objRBU.Action_For.Replace(" ", "") == "D" && objRBU.Change_For.Replace(" ", "") == "P")
                     {
-                        objRBU.Action_For = "A";
-                        objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                        int ADRError_Count = new Acq_Deal_Rights_Error_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Rights_Code == rightCode).Where(x => x.ErrorMSG == "Rights Should have atleast one Platform").ToList().Count();
+                        if (ADRError_Count > 0)
+                        {
+                            objRBU.Action_For = "A";
+                            objRBU.Codes = String.Join(",", objADR.Acq_Deal_Rights_Platform.Select(x => x.Platform_Code).ToList());
+                        }
                     }
+                    objRBU.EntityState = State.Modified;
+                    objRBU.Is_Processed = "N";
+                    dynamic resultSet1;
+                    objRBUSer.Update(objRBU, out resultSet1);
                 }
 
-                objRBU.EntityState = State.Modified;
-                objRBU.Is_Processed = "N";
-                dynamic resultSet1;
-                objRBUSer.Update(objRBU, out resultSet1);
             }
 
 

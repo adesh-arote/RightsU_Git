@@ -1252,10 +1252,15 @@ namespace RightsU_Plus.Controllers
             {
                 Deal_Rights_Process objDRP = objDRPSer.SearchFor(x => x.Deal_Code == objAcq_Deal.Acq_Deal_Code && x.Deal_Rights_Code == rightCode && x.Record_Status == "E")
                      .OrderByDescending(x => x.Deal_Rights_Process_Code).FirstOrDefault();
-                objDRP.EntityState = State.Modified;
-                objDRP.Record_Status = "P";
-                dynamic resultSet;
-                objDRPSer.Update(objDRP, out resultSet);
+
+                if(objDRP != null)
+                {
+                    objDRP.EntityState = State.Modified;
+                    objDRP.Record_Status = "P";
+                    dynamic resultSet;
+                    objDRPSer.Update(objDRP, out resultSet);
+                }
+                
             }
             else if(String.IsNullOrEmpty(objADR.Buyback_Syn_Rights_Code))
             {
