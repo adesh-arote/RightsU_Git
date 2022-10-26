@@ -2087,13 +2087,13 @@ namespace RightsU_Plus.Controllers
         }
 
         #region================Buy Back==================
-        public PartialViewResult AddBuyBackRights(int licensorCode)
+        public PartialViewResult AddBuyBackRights(int licensorCode, int DealTypeCode)
         {
 
             //new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").ToList();
             ViewBag.BuyBackTitles =
                 new SelectList((from x in new Syn_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Actual_Right_Start_Date <= DateTime.Now && x.Actual_Right_End_Date >= DateTime.Now && x.Is_Exclusive != "C").ToList()
-                                join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A" && x.Vendor_Code == licensorCode).ToList()
+                                join y in new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Deal_Workflow_Status == "A" && x.Vendor_Code == licensorCode && x.Deal_Type_Code == DealTypeCode).ToList()
                                 on x.Syn_Deal_Code equals y.Syn_Deal_Code
                                 join z in new Syn_Deal_Rights_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList()
                                 on x.Syn_Deal_Rights_Code equals z.Syn_Deal_Rights_Code
