@@ -683,10 +683,10 @@ else
                             <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
 
                         </li>
-                        <li class="AdSearch openTop">
+                        @*<li class="AdSearch openTop">
                             <label>@objMessageKey.Licensee:</label><br />
                             <select id="ddlSrchLicensor" multiple="multiple"></select>
-                        </li>
+                        </li>*@
 
 
                         <li class="AdSearch">
@@ -696,7 +696,7 @@ else
                     </ul>
                     <br />
                     <div style="text-align:center;">
-                        <label class="checkbox-inline">
+                        <label class="checkbox-inline" style="display: @ViewBag.ArchieveVisibility">
 
                             @if (ViewBag.IncludeArchiveDeal == "true")
                             {
@@ -742,6 +742,10 @@ else
                                     <option value="" selected>Please Select </option>
                                 </select>
                             </li>*@
+                        <li class="AdSearch">
+                            <label>@objMessageKey.Licensee:</label><br />
+                            <select id="ddlSrchLicensor" multiple="multiple"></select>
+                        </li>
                     </ul>
                     <br />
 

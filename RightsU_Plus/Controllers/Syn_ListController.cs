@@ -164,6 +164,15 @@ namespace RightsU_Plus.Controllers
                     ViewBag.BUCode = obj_Acq_Syn_List_Search.BUCodes_Search;
                 }
             }
+
+            bool srchArchieveRights = false;
+            List<string> addRightsList = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForSynDeal), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            if (addRightsList.FirstOrDefault() != null)
+            {
+                srchArchieveRights = addRightsList.FirstOrDefault().Contains("~" + Convert.ToString(GlobalParams.RightCodeForDealArchive) + "~");
+            }
+            ViewBag.ArchieveVisibility = (srchArchieveRights == true ? "block" : "none");
+
             return View("~/Views/Syn_List/Index.cshtml");
         }
         public IEnumerable<RightsU_Entities.USP_List_Syn_Result> BindGridView(string commonSearch = "", string isTAdvanced = "N", string strDealNo = "", string strfrom = "", string strto = "", string strSrchDealType = "", string strSrchDealTag = "", string strWorkflowStatus = "", string strTitles = "", string strDirector = "", string strLicensor = "", string strBU = "1", string strShowAll = "N", string strIncludeArchiveDeal = "", int Page = 0, string ClearSession = "N", string strBUCode = "1")
