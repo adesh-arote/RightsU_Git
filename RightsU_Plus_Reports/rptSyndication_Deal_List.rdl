@@ -287,6 +287,10 @@
           <DataField>Co Production</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="Right_Status">
+          <DataField>Right Status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="DS_Filter">
@@ -2412,6 +2416,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.96875in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4584,6 +4591,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox29">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Right Status</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox29</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -6546,6 +6591,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Right_Status">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIf(Fields!Right_Status.Value = "P", "Pending",
+IIf(Fields!Right_Status.Value = "W", "Work In Progress",
+IIf(Fields!Right_Status.Value = "E", "Error",
+IIf(Fields!Right_Status.Value = "C", "Complete",""))))</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Right_Status</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
@@ -6653,6 +6736,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                     <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowTitleObjection") = "Y",false,true)</Hidden>
                   </Visibility>
                 </TablixMember>
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -6673,7 +6757,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
             <Top>0.03in</Top>
             <Left>0.00372in</Left>
             <Height>0.5in</Height>
-            <Width>100.87875in</Width>
+            <Width>101.87875in</Width>
             <ZIndex>1</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", false, true)</Hidden>
@@ -8191,6 +8275,9 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 </TablixColumn>
                 <TablixColumn>
                   <Width>2.14583in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -10021,6 +10108,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox34">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Right Status</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
@@ -10596,7 +10721,6 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -11667,6 +11791,44 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                         </Textbox>
                       </CellContents>
                     </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Right_Status1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIf(Fields!Right_Status.Value = "P", "Pending",
+IIf(Fields!Right_Status.Value = "W", "Work In Progress",
+IIf(Fields!Right_Status.Value = "E", "Error",
+IIf(Fields!Right_Status.Value = "C", "Complete",""))))</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Right_Status1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
                   </TablixCells>
                 </TablixRow>
               </TablixRows>
@@ -11729,6 +11891,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -11749,7 +11912,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
             <Top>0.61331in</Top>
             <Left>0.06853in</Left>
             <Height>0.5in</Height>
-            <Width>82.17852in</Width>
+            <Width>83.17852in</Width>
             <ZIndex>3</ZIndex>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "RTL", False, True)</Hidden>
@@ -11764,7 +11927,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
         <Height>7.74328in</Height>
         <Style />
       </Body>
-      <Width>100.88247in</Width>
+      <Width>101.88247in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>

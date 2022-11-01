@@ -449,6 +449,10 @@ namespace UTOFrameWork.FrameworkClasses
         public const int RightsCodeForSyndicationRightsEnd = 101;
         public const int RightsCodeForAcquisitionRightsROFR = 102;
         public const int RightsCodeForAcquisitionRightsTentative = 103;
+        public const int RightsCodeForSyndicationRevHB = 174;
+        public const int RightsCodeForAcquisitionRevHB = 175;
+        public const int RightsCodeForAcquisitionHB = 177;
+        public const int RightsCodeForSyndicationHB = 176;
         #endregion
 
         //View Deal Mode

@@ -489,6 +489,7 @@ function AllowChosenRightClick() {
 function btnAddTitle_OnClick(BuyBack) {
     debugger;
     var Role_Code = $("input[type='radio'][name='Role_Code']:checked").val();
+    
 
     if (Role_Code == BuyBack) {
         licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
@@ -2035,6 +2036,7 @@ function AddBuyBackRights(BuyBack) {
     debugger;
     showLoading();
     licensorCode = $("select[ID='ddlLicensor_Buyback'] option:selected").val();
+    var DealTypeCode = $('input[name="Deal_Type_Code"]:checked').val();
 
     $.ajax({
         type: "POST",
@@ -2044,7 +2046,8 @@ function AddBuyBackRights(BuyBack) {
         contentType: "application/json; charset=utf-8",
         dataType: "html",
         data: JSON.stringify({
-            licensorCode: licensorCode
+            licensorCode: licensorCode,
+            DealTypeCode: DealTypeCode
         }),
         success: function (result) {
             debugger;
