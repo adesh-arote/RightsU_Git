@@ -1522,7 +1522,26 @@ namespace RightsU_Plus.Controllers
             objSysVersion = new System_Versions_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.System_Name == "RightsU").OrderByDescending(x => x.Version_Code).FirstOrDefault();
             Session["VersionDetails"] = objSysVersion;
         }
-
+        public JsonResult GetPWDPolicyDetailList()
+        {
+            var PWDPolicyDetailList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name.Contains("PWD_Policy_")).ToList();
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("PWDPolicyDetailList", new SelectList(PWDPolicyDetailList, "Parameter_Value", "Parameter_Name"));
+            return Json(obj);
+        }
+        public JsonResult GetPWDHistoryCount(string data)
+        {
+            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;            
+            int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, data.Trim());
+            if (Lst5PwdsCnt > 0)
+            {
+                return Json(new { PWDHistoryCount = Lst5PwdsCnt, PWDHistoryMsg = "Please enter some other password, it matches your old password history" });
+            }  
+            else
+            {
+                return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
+            }
+        }        
     }
 
     public class LoginParameters : Controller
