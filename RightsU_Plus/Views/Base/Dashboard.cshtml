@@ -1065,7 +1065,7 @@
                                                 <td>
                                                     @if (item.Is_Deal_Rights == "Y")
                                                     {
-                                                        <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                        <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
                                                     }
                                                     else
                                                     {
@@ -1195,7 +1195,7 @@
                                                 <td>
                                                     @if (item.Is_Deal_Rights == "Y")
                                                     {
-                                                        <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                        <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
                                                     }
                                                     else
                                                     {
