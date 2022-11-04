@@ -31,7 +31,6 @@
             $('#btnSave').prop('disabled', true);
             return this.each(function() {
                 var o = options;
-                //o.infoMessage = 'The minimum password length is ' + o.numCharacters + ' characters and must contain at least 1 lowercase letter, 1 capital letter, 1 number, and 1 special character.';
                 o.infoMessage = 'The password must contain atleast ' + o.numCharacters + ' characters, Atleast ' + o.numMinAlphabet + ' Alphabet, Atleast ' + o.numMinNumber + ' Number (0-9), Atleast ' + o.numMinSpecialChar + ' Special Character (' + o.useSpecialChar.replace(/(.{1})/g, "$&,") +'), New and Confirm Password should same.';
 				// Add Variables for the li elements
                 var numCharactersUI = '<li class="pr-numCharacters"><span></span>Atleast ' + o.numCharacters +' Character</li>',
@@ -95,21 +94,38 @@
                 var checkCompleted = function () {
                     if (numCharactersDone === true && useNumbersDone === true && useSpecialDone === true && useAlphabetcaseDone === true && useNewConfirmPWDDone === true) {
                         if ($('#OldPassword').val() != '') {
-                            $('#btnSave').prop('disabled', false);
+                            deleteMessage();
+                            $('#btnSave').prop('disabled', false);                            
                         } else {
                             $('#btnSave').prop('disabled', true);
-                        }                        
-                        deleteMessage();
+                        }
+                        if ($("#NewPassword").val() == $("#ConfirmPassword").val() && $('#NewPassword').val() != '' && $('#ConfirmPassword').val() != '') {
+                            deleteMessage();
+                            $('#btnSave').prop('disabled', false);                            
+                        }
+                        else {
+                            useNewConfirmPWDDone = false
+                            showMessage();
+                            $('#btnSave').prop('disabled', true);                            
+                        }
+                        
                     } else {
-                        $('#btnSave').prop('disabled', true);
-                        showMessage(); 
+                        if ($("#NewPassword").val() == $("#ConfirmPassword").val() && $('#NewPassword').val() != '' && $('#ConfirmPassword').val() != '') {
+                            deleteMessage();
+                            $('#btnSave').prop('disabled', false);
+                        }
+                        else {
+                            useNewConfirmPWDDone = false
+                            showMessage();
+                            $('#btnSave').prop('disabled', true);
+                        }
 					}
 				};
 				
 				// Show password hint 
 				$(this).on("blur",function (){
 					deleteMessage();
-                });
+                });                
 
                 //var strSpecialChar = new Array(o.useSpecialChar.replace(/(.{1})/g, "$&,"));
 				// Show or Hide password hint based on user's event
