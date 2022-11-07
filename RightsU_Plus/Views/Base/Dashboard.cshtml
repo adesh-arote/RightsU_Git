@@ -15,6 +15,8 @@
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqRevHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList_SynHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result> MTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result> PTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>();
 
     if (@ViewBag.StartAcqDealList != null)
     { StartAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.StartAcqDealList; }
@@ -51,6 +53,12 @@
 
     if (ViewBag.ExpireSynDealDataList_SynHB != null)
     { ExpireSynDealDataList_SynHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList_SynHB; }
+
+    if (@ViewBag.MTAcqDealList != null)
+    { MTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>)ViewBag.MTAcqDealList; }
+
+    if (@ViewBag.PTAcqDealList != null)
+    { PTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>)ViewBag.PTAcqDealList; }
 
 }
 <html>
@@ -1291,7 +1299,107 @@
                                 {<h1>NO DATA</h1>}
                             </div>
                         }
+                        @if (ViewBag.MTAcqDealList != null)
+                        {
+                            <div class="dashboard acq">
+                                <span>
 
+                                    <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_MTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                    @Html.ActionLink((string)ViewBag.MTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+
+                                    <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_MTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                    <input type="hidden" id="currentPageIndex_MTAcqDealList" value="@ViewBag.MTAcqDealList_PageNo" />
+                                </span>
+
+                                @if (MTAcqDealList.Count > 0)
+                                {
+                                    <table id="MTAcqDealList_tbl">
+                                        <tr>
+                                            <th>Deal No.</th>
+                                            <th>Material Type_Name</th>
+                                            <th>Material Medium Name</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                        @foreach (var item in MTAcqDealList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @item.Agreement_No
+                                                </td>
+                                                <td>
+                                                    <h5 title="@item.Material_Type_Name">
+                                                        @Html.Raw(@item.Material_Type_Name.Length >= 33 ? @item.Material_Type_Name.Substring(0, 30) + "..." : @item.Material_Type_Name)
+                                                    </h5>
+                                                </td>
+                                                <td>
+                                                    <div title="@item.Material_Medium_Name">@Html.Raw(@item.Material_Medium_Name.Length >= 33 ? @item.Material_Medium_Name.Substring(0, 30) + "..." : @item.Material_Medium_Name)</div>
+                                                </td>
+                                                <td class="amount">
+                                                    @item.Quantity
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                }
+                                else
+                                {<h1>NO DATA</h1>}
+                            </div>
+                        }
+
+                        @if (ViewBag.PTAcqDealList != null)
+                        {
+                            <div class="dashboard acq">
+                                <span>
+
+                                    <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_PTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                    @Html.ActionLink((string)ViewBag.PTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                    <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_PTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                    <input type="hidden" id="currentPageIndex_PTAcqDealList" value="@ViewBag.PTAcqDealList_PageNo" />
+                                </span>
+
+                                @if (PTAcqDealList.Count > 0)
+                                {
+                                    <table id="PTAcqDealList_tbl">
+                                        <tr>
+                                            <th>Deal No.</th>
+                                            <th>Payment Terms</th>
+                                            <th>Days After</th>
+                                            <th>Cost Percentage</th>
+                                            <th>Due Date</th>
+
+                                        </tr>
+                                        @foreach (var item in PTAcqDealList)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @item.Agreement_No
+                                                </td>
+                                                <td>
+                                                    <h5 title="@item.Payment_Terms">
+                                                        @Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)
+                                                    </h5>
+                                                </td>
+                                                <td class="amount">
+                                                    @item.Days_After
+                                                </td>
+                                                <td>
+                                                    <div title="@item.Payment_Terms">@Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)</div>
+                                                </td>
+                                                <td>
+                                                    @(item.Due_Date.ToString().Substring(0, 10))
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                }
+                                else
+                                {<h1>NO DATA</h1>}
+                            </div>
+                        }
                     </section>
             </div>
         </section>
