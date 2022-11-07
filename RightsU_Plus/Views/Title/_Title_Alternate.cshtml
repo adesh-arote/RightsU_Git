@@ -12,7 +12,7 @@
     if (Session["objLoginEntity"] != null)
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
-    }      
+    }
 }
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -226,7 +226,7 @@
         URL = URL.replace("Code", pageNo);
         URL = URL.replace("amp;", "");
         window.location.href = URL;
-       
+
     }
 </script>
 <style>
@@ -276,6 +276,7 @@
     .sumo_ddlGenress {
         width: 292px !important;
     }
+
     .four_column td:nth-child(2n) {
         width: 36% !important;
     }
@@ -284,17 +285,18 @@
         width: 14% !important;
         font-weight: 700 !important;
     }
-    tr.spaceUnder > td
-{
-  padding-bottom: 1em;
-}
+
+    tr.spaceUnder > td {
+        padding-bottom: 1em;
+    }
+
     .form_input[type=checkbox], input[type=radio] {
-    padding: 0!important;
-    margin: 1px 0.5px 0!important;
-    line-height: normal!important;
-}
+        padding: 0 !important;
+        margin: 1px 0.5px 0 !important;
+        line-height: normal !important;
+    }
 </style>
-@{ 
+@{
     string textalignlast = "";
     if (objMessageKey.LayoutDirection == "RTL")
     {
@@ -323,7 +325,7 @@
                                         string Program_Name = new Program_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Program_Code == program_Code).Select(s => s.Program_Name).FirstOrDefault();
                                     }
                                     @if (Model.Title_Image != null)
-                                    {   <img id="AlternateImgTitle" alt="Image" src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + Model.Title_Image)" />}
+                                    {<img id="AlternateImgTitle" alt="Image" src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + Model.Title_Image)" />}
                                     else
                                     {
                                         if (Deal_type_Code == GlobalParams.Deal_Type_Music)
@@ -344,20 +346,20 @@
                             <td class="intro">
                                 <table class="four_column table">
                                     <tr>
-                                        <td style="padding-bottom:12px!important">Titre Type</td>
+                                        <td style="padding-bottom:12px!important">نوع العنوان</td>
                                         <td>
                                             <span id="Deal_Type_Code">@Deal_type_Name</span>
                                             @Html.HiddenFor(m => Model.Title_Alternate_Code)
                                             <input type="hidden" id="hdnAlternateDealTypeCode" value="@Deal_type_Code" />
                                         </td>
-                                        <td style="padding-bottom:12px!important">Programme</td>
+                                        <td style="padding-bottom:12px!important">ماجستير البرنامج</td>
                                         <td>
                                             <span id="Program_Code">@Program_Name</span>
                                         </td>
 
                                     </tr>
                                     <tr>
-                                        <td>Titre</td>
+                                        <td>عنوان</td>
                                         <td>
                                             @Html.TextBoxFor(m => Model.Title_Name, new { @id = "txtalternateTitle_Name" })
                                             @Html.Hidden("hdnmode")
@@ -365,7 +367,7 @@
                                             @Html.Hidden("hdnTitleAlternateConfigCode")
                                             @Html.Hidden("hdnTitleTabName")
                                         </td>
-                                        <td>Titre original</td>
+                                        <td>العنوان الأصلي</td>
                                         <td>
                                             @Html.TextBoxFor(m => Model.Original_Title)
                                         </td>
@@ -373,19 +375,19 @@
                                     <tr>
                                         @if (ViewBag.Direction == "RTL")
                                         {
-                                        <td>Durée (min)&#x200E;</td>@*(Duration (Min*@
+                                            <td>المدة (دقيقة)&#x200E;</td>@*(Duration (Min*@
                                         }
                                         else
                                         {
-                                        <td>Durée (min)</td>
+                                            <td>Durée (min)</td>
                                         }
                                         @{
                                             Decimal? Duration_In_Min = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Duration_In_Min).FirstOrDefault();
                                         }
-                                        <td style="padding-top:5px!important" >
-                                            <span id="txtAlternateDuration" >@Duration_In_Min</span>
+                                        <td style="padding-top:5px!important">
+                                            <span id="txtAlternateDuration">@Duration_In_Min</span>
                                         </td>
-                                        <td>Année de sortie</td>
+                                        <td>سنة الإصدار</td>
                                         @{
                                             int? Year_Of_Release = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == title_Code).Select(s => s.Year_Of_Production).FirstOrDefault();
                                             int? YOR = Model.Year_Of_Production;
@@ -400,17 +402,17 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Titre La langue</td>
+                                        <td>لغة العنوان</td>
                                         <td>
                                             @Html.DropDownList("Alternate_Title_Language_Code", (List<SelectListItem>)ViewBag.LanguageList, new { @id = "Alternate_Title_Language_Code", @class = "form_input chosen-select" })
                                         </td>
-                                        <td>Langue originale</td>
+                                        <td>اللغة الأصلية</td>
                                         <td>
                                             @Html.DropDownList("Alternate_Original_Language_Code", (List<SelectListItem>)ViewBag.OriginalLanguageList, new { @id = "Alternate_Original_Language_Code", @class = "form_input chosen-select" })
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Nom du producteur</td>
+                                        <td>اسم المنتج</td>
                                         <td>
                                             @Html.ListBox(
                                                                      "ddlProducers",
@@ -420,7 +422,7 @@
                                             @Html.Hidden("hdnAlternateProducer")
                                             <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddTalent" onclick="AddTalent(@GlobalParams.Role_code_Producer);" />
                                         </td>
-                                        <td>Nom du directeur</td>
+                                        <td>اسم المخرج</td>
                                         <td>
                                             @Html.ListBox(
                                                                      "ddlDirectors",
@@ -432,7 +434,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Pays d'origine</td>
+                                        <td>بلد المنشأ</td>
                                         <td>
                                             @Html.ListBox(
                                                                      "ddlCountrys",
@@ -441,7 +443,7 @@
                                                         )
                                             @Html.Hidden("hdnAlternateCountry")
                                         </td>
-                                        <td>Titre Genre</td>
+                                        <td>أنواع العنوان</td>
                                         <td>
                                             @Html.ListBox(
                                                                      "ddlGenress",
@@ -452,7 +454,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>starcast clé</td>
+                                        <td>النجم الرئيسي المصبوب</td>
                                         <td>
                                             @Html.ListBox(
                                                                      "ddlStarCasts",
@@ -464,7 +466,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Synopsis</td>
+                                        <td>ملخص</td>
                                         <td colspan="3">
                                             <div class="divBlock">
                                                 <div class="charNum">4000</div>
@@ -486,10 +488,10 @@
                 <div class="bottom_action" dir="@objMessageKey.LayoutDirection" style="text-align-last:@(textalignlast);">
                     <ul class="form_link_nav clearfix">
                         <li style="float:right">
-                            <input type="submit" class="btn btn-primary" value="enregistrer" id="btnAlternateSave" onclick="return SaveAlternate();" />
+                            <input type="submit" class="btn btn-primary" value="يحفظ" id="btnAlternateSave" onclick="return SaveAlternate();" />
                         </li>
                         <li style="float:right">
-                            <input type="button" class="btn btn-primary" value="Annuler" onclick="return btnAlternateCancel();" />
+                            <input type="button" class="btn btn-primary" value="يلغي" onclick="return btnAlternateCancel();" />
                         </li>
                     </ul>
                 </div>
@@ -499,14 +501,14 @@
                 <div class="bottom_action" style="float:left">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" class="btn btn-primary" value="enregistrer" id="btnAlternateSave" onclick="return SaveAlternate();" />
+                            <input type="submit" class="btn btn-primary" value="يحفظ" id="btnAlternateSave" onclick="return SaveAlternate();" />
                         </li>
                         <li>
-                            <input type="button" class="btn btn-primary" value="Annuler" onclick="return btnAlternateCancel();" />
+                            <input type="button" class="btn btn-primary" value="يلغي" onclick="return btnAlternateCancel();" />
                         </li>
                     </ul>
                 </div>
             }
-            }                 
+        }
     </section>
 </div>
