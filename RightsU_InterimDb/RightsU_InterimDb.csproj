@@ -1438,6 +1438,12 @@
     <Compile Include="Models\USP_Get_Dashboard_Data_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Get_Dashboard_Detail_Material_Type_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USP_Get_Dashboard_Detail_Payment_Term_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Get_Dashboard_Detail_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
