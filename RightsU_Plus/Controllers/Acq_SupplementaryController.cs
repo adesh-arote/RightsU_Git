@@ -121,7 +121,7 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
-            strList = strList + "<TR><TH>Title Name</TH><TH>Social Media</TH><TH>Commitments</TH><TH>Opening & Closing Credits</TH><TH>Essential Clauses</TH><TH>Action</TH></TR>";
+            strList = strList + "<TR><TH>Title Name</TH><TH>Platform Category</TH><TH>Distribution Modes</TH><TH>Devices</TH><TH>Categories Of Linear Content</TH><TH>Action</TH></TR>";
 
 
             foreach (USP_Acq_Deal_Supplementary_List_Result sl in objSupplementary_List)

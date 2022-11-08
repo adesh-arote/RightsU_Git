@@ -24,7 +24,7 @@ namespace UTO_Notification
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Debugger.Launch();
             Application["strHostName"] = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(Application["strHostName"].ToString());
             IPAddress[] addr = ipEntry.AddressList;
