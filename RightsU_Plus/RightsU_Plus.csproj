@@ -764,7 +764,6 @@
     <Content Include="Custom_Scripts\Title_Content_ImportExport.js" />
     <Content Include="Custom_Scripts\Title_Objection_Adv_List.js" />
     <Content Include="Custom_Scripts\Title_Objection_Generic.js" />
-    <Content Include="demo.html" />
     <Content Include="Download\TitleContentList .xml" />
     <Content Include="EntitiesList.xml">
       <SubType>Designer</SubType>
