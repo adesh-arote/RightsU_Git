@@ -85,6 +85,7 @@ namespace RightsU_Plus.Controllers
         public PartialViewResult Create(string isAdd, int txtPageSize, int pageNo)
         {
             ViewBag.CommandName = "Add";
+            string Material_Quantity_Default_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Material_Quantity_Default_Value").Select(x => x.Parameter_Value).FirstOrDefault();
             string Is_Acq_Syn_Material_MultiTitle = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Acq_Syn_Material_MultiTitle").Select(x => x.Parameter_Value).FirstOrDefault();
             if (Is_Acq_Syn_Material_MultiTitle == "Y")
             {
@@ -105,6 +106,14 @@ namespace RightsU_Plus.Controllers
             else
             {
                 ViewBag.CommandName = "";
+            }
+            if(Convert.ToInt32(Material_Quantity_Default_Value) > 0)
+            {
+                ViewBag.MaterialQtyDefaultValue = Material_Quantity_Default_Value;
+            }
+            else
+            {
+                ViewBag.MaterialQtyDefaultValue = "";
             }
             return BindGridAcqMaterial(txtPageSize, pageNo);
         }
