@@ -157,11 +157,12 @@
                     let drCount = $("#hdn" + shortName).val();
 
                     let drCount2 = parseInt(drCount)
-                    for (let i = 1; i <= drCount2; i++) {
+                    for (let i = 0; i <= drCount2; i++) {
                         var dropdown = "#CMPopup #A" + shortName + "ddSupp" + i;
-                        $(dropdown).SumoSelect({ selectAll: true });
+                        $(dropdown).chosen();
+                        initializeChosen();
                     }
-
+                    
                 }
             });
         }
@@ -257,10 +258,12 @@
                     let drCount = $("#hdn" + shortName).val();
 
                     let drCount2 = parseInt(drCount)
-                    for (let i = 1; i <= drCount2; i++) {
+                    for (let i = 0; i <= drCount2; i++) {
                         var dropdown = "#CMPopup #E" + shortName + "ddSupp" + i;
-                        $(dropdown).SumoSelect({ selectAll: true });
+                        $(dropdown).chosen();
+                        initializeChosen();
                     }
+                    
                 }
             });
 
