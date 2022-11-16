@@ -190,7 +190,7 @@ namespace RightsU_Plus.Controllers
             //                                      select objSDRT).Select(s => new Title_List() { Title_Code = (int)s.Title_Code, Episode_From = (int)s.Episode_From, Episode_To = (int)s.Episode_To }
             //                                    ).Distinct().ToList();
             ViewBag.VendorList = null;
-            ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").OrderBy(x=>x.Text).ToList();
+            ViewBag.VendorList = new SelectList(new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => b.Contains(x.Vendor_Code)), "Vendor_Code", "Vendor_Name").OrderBy(x => x.Text).ToList();
             //new SelectList(new Syn_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true), "Revenue_Vertical_Code", "Revenue_Vertical_Name").ToList();
 
             if (TempData["QueryString"] != null)
@@ -523,11 +523,11 @@ namespace RightsU_Plus.Controllers
             ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();
 
             if (ViewBag.Deal_For_List.Count > 0)
-                ViewBag.Deal_For_List[0].Selected = true;            
+                ViewBag.Deal_For_List[0].Selected = true;
 
             string Chk_Other = lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP" && (x.Display_Text.ToUpper() == "OTHER" || x.Display_Text.ToUpper() == "OTHERS")).Select(x => x.Display_Text).FirstOrDefault();
             if (Chk_Other != null)
-                ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList(); 
+                ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
             #endregion
 
             #region --- Bind Vendor Contact Metadata Data ---
@@ -1110,7 +1110,7 @@ namespace RightsU_Plus.Controllers
                 {
                     Acq_Deal_Movie objADM_Old = objAD_Session.Acq_Deal_Movie.Where(x => x.Dummy_Guid == objADM_MVC.Dummy_Guid).FirstOrDefault();
 
-                    if(objADM_Old != null)
+                    if (objADM_Old != null)
                     {
                         if (objADM_Old.EntityState == State.Deleted)
                             objADM_MVC.EntityState = State.Deleted;
@@ -1343,7 +1343,7 @@ namespace RightsU_Plus.Controllers
                     {
                         //if (isUpdate == false)
                         //{
-                            new USP_Service(objLoginEntity.ConnectionStringName).USP_BuybackRightsInsert(objAD_Session.Acq_Deal_Code, Convert.ToString(Session["RightsCode_Buyback"]), objAD_Session.Inserted_By);
+                        new USP_Service(objLoginEntity.ConnectionStringName).USP_BuybackRightsInsert(objAD_Session.Acq_Deal_Code, Convert.ToString(Session["RightsCode_Buyback"]), objAD_Session.Inserted_By);
                         //}
                         ClearSession_Buyback();
                     }
@@ -1582,9 +1582,9 @@ namespace RightsU_Plus.Controllers
                             #region --- Update Supplementary ---
 
                             List<Acq_Deal_Supplementary> lstSupplementary = (from Acq_Deal_Supplementary objADA in objAD_Session.Acq_Deal_Supplementary
-                                                                       where objADA.Episode_From == oldEpisodeFrom && objADA.Episode_To == oldEpisodeTo
-                                                                          && objADA.Title_code == Title_Code
-                                                                       select objADA).ToList<Acq_Deal_Supplementary>();
+                                                                             where objADA.Episode_From == oldEpisodeFrom && objADA.Episode_To == oldEpisodeTo
+                                                                                && objADA.Title_code == Title_Code
+                                                                             select objADA).ToList<Acq_Deal_Supplementary>();
 
                             lstSupplementary.ForEach(x =>
                             {
@@ -1691,12 +1691,20 @@ namespace RightsU_Plus.Controllers
 
                 }
 
-                var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode && x.EntityState != State.Deleted).ToList();
-                if(TitleList.Count() == 0)
+                if (Session["RightsCode_Buyback"] != null)
+                {
+                    var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode && x.EntityState != State.Deleted).ToList();
+                    if (TitleList.Count() == 0)
+                    {
+                        objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
+                    }
+                }
+                else
                 {
                     objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
                 }
-                
+
+
             }
 
             string toolTip;
@@ -1718,7 +1726,7 @@ namespace RightsU_Plus.Controllers
 
             if (titleList != null)
                 UpdateTitleCollection(titleList);
-            if(titleList != null)
+            if (titleList != null)
             {
                 if (!String.IsNullOrEmpty(Convert.ToString(Session["RightsCode_Buyback"])))
                 {
@@ -1739,7 +1747,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            
+
 
             string status = "S", errorMessag = "";
             Dictionary<string, object> obj = new Dictionary<string, object>();
@@ -2103,7 +2111,7 @@ namespace RightsU_Plus.Controllers
                                 {
                                     z.Title_Code,
                                     t.Title_Name
-                                }).Distinct(), "Title_Code", "Title_Name").OrderBy(x=>x.Text).ToList();
+                                }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
 
             ViewBag.Licensor = new Vendor_Service(objLoginEntity.ConnectionStringName).GetById(licensorCode).Vendor_Name.ToString();
             ViewBag.LicensorCode = licensorCode;
@@ -2111,7 +2119,7 @@ namespace RightsU_Plus.Controllers
         }
 
 
-        public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int LicensorCode,int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
+        public PartialViewResult BindGrid(string Selected_Title_Code, string view_Type, string RegionCode, string PlatformCode, string ExclusiveRight, int LicensorCode, int txtpageSize = 100, int page_index = 0, string IsCallFromPaging = "N")
         {
             //if (DPlatformCode == "D")
             //    DPlatformCode = PlatformCode;
