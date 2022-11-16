@@ -1691,11 +1691,19 @@ namespace RightsU_Plus.Controllers
 
                 }
 
-                var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode && x.EntityState != State.Deleted).ToList();
-                if(TitleList.Count() == 0)
+                if(Session["RightsCode_Buyback"] != null)
+                {
+                    var TitleList = objAD_Session.Acq_Deal_Movie.Where(x => x.Title_Code == titleCode && x.EntityState != State.Deleted).ToList();
+                    if (TitleList.Count() == 0)
+                    {
+                        objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
+                    }
+                }
+                else
                 {
                     objAD_Session.Acq_Deal_Movie.Add(objAcq_Deal_Movie);
                 }
+                
                 
             }
 

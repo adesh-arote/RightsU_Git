@@ -964,7 +964,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.StartAcqDealListTitle = startAcqDealListTitle + " " + startAcqDealListDays + " days";
                 ViewBag.StartSynDealListTitle = startSynDealListTitle + " " + startSynDealListDays + " days";
                 ViewBag.ExpireAcqDealListTitle = ExpireAcqDealListTitle + " " + ExpireAcqDealListDays + " days";
-                ViewBag.ExpireSynDealDataListTitle = ExpireSynDealListTitle_SynRevHB + " " + ExpireSynDealListDays + " days";
+                ViewBag.ExpireSynDealDataListTitle = ExpireSynDealListTitle + " " + ExpireSynDealListDays + " days";
                 ViewBag.ROFR_AcquisitionListTitle = ROFR_AcquisitionListTitle + " " + ROFR_AcquisitionListDays + " days";
                 ViewBag.TentativeStartAcquDealsListTitle = TentativeStartAcquDealsListTitle + " " + TentativeStartAcquDealsListDays + " days";
                 ViewBag.AproveAcqDealListTitle = AproveAcqDealListTitle + " " + AproveAcqDealListDays + " days";

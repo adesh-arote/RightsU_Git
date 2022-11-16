@@ -715,7 +715,7 @@
                                     @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
                                     <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
 
-                                    @Html.ActionLink((string)ViewBag.SynRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                    @Html.ActionLink((string)ViewBag.ExpireSynDealDataListTitle, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                     @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
                                     <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
