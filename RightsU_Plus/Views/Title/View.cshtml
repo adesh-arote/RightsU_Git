@@ -54,6 +54,7 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
+    var AlternateTabNameForActive = '';
     var chosenTerritory = [];
     var chosenCountry = [];
     $(document).ready(function () {
@@ -83,6 +84,7 @@
 
         showLoading();
         BindExtended('@ViewBag.Mode');
+        BindAlternateTab('TA', 0);
         var Synopsis = document.getElementById("Synopsis");
         if (Synopsis != null)
             countChar(Synopsis);
@@ -610,14 +612,19 @@
             $('#hdnAlternateTabName').val(tabName);
             $('#tabGeneral').hide();
             $('#divAlternateLanguage').show();
+            $('#tabtitle').removeClass('active');
+            $('#tabAlternate' + configCode).addClass('active');
         }
         else{
             $('#divAlternateLanguage').hide();
             $('#tabGeneral').show();
+            $('#tabAlternate' + AlternateTabNameForActive).removeClass('active');
+            $('#tabtitle').addClass('active');
         }
 
         $('#hdnTabName').val(tabName);
-        BindAlternateTab(tabName,configCode);
+        BindAlternateTab(tabName, configCode);
+        AlternateTabNameForActive = configCode;
     }
     function BindAlternateTab(tabName,configCode) {
         $('.required').removeClass('required');
@@ -723,7 +730,7 @@
                     <div class="navigation_tabs" dir="@objMessageKey.LayoutDirection">
                         <div class="tabbable">
                             <ul class="nav nav-tabs nav-tab pull-left">
-                                <li class="active">
+                                <li class="active" id="tabtitle">
                                     <a data-toggle="tab" href="#" role="tab" onclick="TabChange('TA',0);">@objMessageKey.Title</a>
                                 </li>
 
@@ -733,8 +740,9 @@
                                     int?[] alternateCode = ViewBag.PartialTabList;
                                     foreach (var item in alternateCode)
                                     {
+                                        string tabNameAlter = "tabAlternate" + item.ToString();
                                         string config_Name = new Alternate_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Alternate_Config_Code == item).Select(x => x.Alternate_Name).FirstOrDefault();
-                                        <li class="" id="tabAlternate">
+                                        <li class="" id="@tabNameAlter">
                                             <a data-toggle="tab" href="#" id="tab12" role="tab" onclick="TabChange('AL',@item);">@config_Name</a>
                                         </li>
                                     }

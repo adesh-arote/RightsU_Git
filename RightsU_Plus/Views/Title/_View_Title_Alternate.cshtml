@@ -63,12 +63,12 @@
                         <td class="intro">
                             <table class="four_column table">
                                 <tr>
-                                    <td>@objMessageKey.TitleType</td>
+                                    <td>نوع العنوان</td>
                                     <td>
                                         @Model.Deal_Type.Deal_Type_Name
                                     </td>
                                     <td>
-                                        @objMessageKey.Program
+                                        ماجستير البرنامج
                                     </td>
                                     <td>
                                         @{
@@ -85,11 +85,11 @@
 
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.Title</td>
+                                    <td>عنوان</td>
                                     <td class="expandable">
                                         @Model.Title_Name
                                     </td>
-                                    <td>@objMessageKey.OriginalTitle</td>
+                                    <td>العنوان الأصلي</td>
                                     @{
                                         string originaltitle = objMessageKey.NA;
                                         if (@Model.Original_Title != null && @Model.Original_Title != "")
@@ -104,7 +104,7 @@
                                 <tr>
                                     @if (ViewBag.Direction == "RTL")
                                     {
-                                        <td>@objMessageKey.DurationInMin&#x200E;</td>@*(Duration (Min*@
+                                        <td>المدة (دقيقة)&#x200E;</td>@*(Duration (Min*@
                                     }
                                     else
                                     {
@@ -116,7 +116,7 @@
                                     <td>
                                        @Duration_In_Min
                                     </td>
-                                    <td>@objMessageKey.YearOfRelease</td>
+                                    <td>سنة الإصدار</td>
                                     @{
                                         string YOR = objMessageKey.NA;
                                         if (@Model.Year_Of_Production != null && @Model.Year_Of_Production.ToString() != "")
@@ -129,7 +129,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.TitleLangauge</td>
+                                    <td>لغة العنوان</td>
                                     <td>
                                         @{
                                             string Language_Name = "";
@@ -140,7 +140,7 @@
                                         }
                                         @Html.Label("TitleLanguage", Language_Name)
                                     </td>
-                                    <td>@objMessageKey.OriginalLanguage</td>
+                                    <td>اللغة الأصلية</td>
                                     <td>
                                         @{
                                             string Original_language = objMessageKey.NA;
@@ -153,7 +153,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.ProducerName</td>
+                                    <td>اسم المنتج</td>
                                          @{
                                             string producername = objMessageKey.NA;
                                             if (@ViewBag.ProduceList != null && @ViewBag.ProduceList != "")
@@ -164,7 +164,7 @@
                                     <td class="expandable">
                                         @producername
                                     </td>
-                                    <td>@objMessageKey.DirectorName</td>
+                                    <td>اسم المخرج</td>
                                     @{
                                         string directorname = objMessageKey.NO + " " + objMessageKey.Director;
                                         if (@ViewBag.DirectorList != null && @ViewBag.DirectorList != "")
@@ -177,11 +177,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.CountryOfOrigin</td>
+                                    <td>بلد المنشأ</td>
                                     <td class="expandable">
                                         @ViewBag.CountryList
                                     </td>
-                                    <td>@objMessageKey.TitleGenres</td>
+                                    <td>أنواع العنوان</td>
                                     @{
                                         string genresname = objMessageKey.NO + " " + objMessageKey.Genres;
                                         if (@ViewBag.GenresList != null && @ViewBag.GenresList != "")
@@ -202,7 +202,7 @@
                                     }
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.KeyStarCast</td>
+                                    <td>النجم الرئيسي المصبوب</td>
                                     @{
                                         string talent = objMessageKey.NO + " " + objMessageKey.Talent;
                                         if (@ViewBag.StarCastList != null && @ViewBag.StarCastList != "")
@@ -215,7 +215,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>@objMessageKey.Synopsis</td>
+                                    <td>ملخص</td>
                                     @{
                                         string synopsis = objMessageKey.NA;
                                         if (@Model.Synopsis != null && @Model.Synopsis != "")
@@ -243,7 +243,7 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li style="float:right">
-                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnAlternateCancel();" />
+                            <input type="button" class="btn btn-primary" value="يلغي" onclick="return btnAlternateCancel();" />
                         </li>
                     </ul>
                 </div>
@@ -254,7 +254,7 @@
             <div class="bottom_action" style="float:left">
                 <ul class="form_link_nav clearfix">
                     <li>
-                        <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return btnAlternateCancel();" />
+                        <input type="button" class="btn btn-primary" value="يلغي" onclick="return btnAlternateCancel();" />
                     </li>
                 </ul>
             </div>

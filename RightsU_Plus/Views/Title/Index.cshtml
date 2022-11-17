@@ -41,6 +41,7 @@
     var title_Code = '@Model.Title_Code.ToString()'
     var rolesList = '@ViewBag.RolesList'
     var CommandName_G = "";
+    var AlternateTabNameForActive = '';
     var URL_TitleList_Ok = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
     //var URL_TitleList_Cancel = '@Url.Action("List", "Title_List", new { CallFrom = "T", Page_No = "Code", SearchedTitle =""})';
     //var URL_TitleList = '@Url.Action("Index", "Title_List", new { CallFrom = "T" })';
@@ -195,8 +196,8 @@
             $('.required').removeClass('required');
             $("[required='required']").removeAttr("required");
 
-           
-           
+
+
 
             showLoading();
             IsValidForTab = true;
@@ -224,7 +225,7 @@
                 IsValidForTab = false;
                 hideLoading();
             }
-            
+
             if ($.trim($('#txtTitle_Name').val()) == null || $.trim($('#txtTitle_Name').val()) == "") {
                 $('#txtTitle_Name').addClass('required');
                 IsValidForTab = false;
@@ -244,7 +245,7 @@
                     hideLoading();
                 }
             }
-           
+
             if (hdnmode == "C") {
                 var hdnTitleCode = $('#Title_Code').val();
                 $('#Title_Code').val() == "0";
@@ -385,7 +386,8 @@
                 error: function (result) { }
             });
         }
-        function TabChange(tabName,configCodes) {
+        function TabChange(tabName, configCodes) {
+            debugger;
             var isvalidate = true;
             var hdntabname = $('#hdnTitleTabName').val();
             $('#hdnAlternateTalenttab').val(tabName);
@@ -393,11 +395,14 @@
             {
                 if(validateAlternateSave())
                 {
+                    $('#tabAlternate' + AlternateTabNameForActive).removeClass('active');
                     $('#tabGeneral').hide();
                     $('#divAlternateLanguage').show();
                     $("#hdnTitleTabName").val(tabName);
+                    $('#tabtitle').removeClass('active');
                     $('#hdnTitleAlternateConfigCode').val(configCodes);
                     $('#hdnAlternateConfigCode').val(configCodes);
+                    $('#tabAlternate' + configCodes).addClass('active');
                     $('#btnAlternateSave').click();
                 }
             }
@@ -413,12 +418,16 @@
                     $('#hdnTitleAlternateConfigCode').val(configCodes);
                     $('#hdnTabName').val(tabName);
                     $('#btnSave').click();
+                    $('#tabtitle').removeClass('active');
+                    $('#tabAlternate' + configCodes).addClass('active');
                 }
             }
             if(tabName == "TA")
             {
                 if(validateAlternateSave())
                 {
+                    $('#tabAlternate' + AlternateTabNameForActive).removeClass('active');
+                    $('#tabtitle').addClass('active');
                     $('#divAlternateLanguage').show();
                     $("#hdnTitleTabName").val(tabName);
                     $('#hdnTitleAlternateConfigCode').val(configCodes);
@@ -427,6 +436,7 @@
                     $('#hdnTabName').val(tabName);
                 }
             }
+            AlternateTabNameForActive = configCodes;
         }
         function BindAlternateTab(tabName,configCode) {
 
@@ -601,8 +611,9 @@
                                         int[] alternateCode = ViewBag.PartialTabList;
                                         foreach (var item in alternateCode)
                                         {
+                                            string tabNameAlter = "tabAlternate" + item.ToString();
                                             string config_Name = new Alternate_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Alternate_Config_Code == item).Select(x => x.Alternate_Name).FirstOrDefault();
-                                            <li class="" id="tabAlternate">
+                                            <li class="" id="@tabNameAlter">
                                                 <a data-toggle="tab" href="#" id="tab12" role="tab" data-tabname="AL" data-configitem="@item">@config_Name</a>
                                             </li>
                                         }

@@ -104,6 +104,7 @@
         return true;
     }
     function SaveAlternate() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         showLoading();
@@ -201,6 +202,7 @@
         return IsValidForTab;
     }
     function SaveAlternateFile() {
+        debugger;
         var data = new FormData();
         var files = $("#AlternateUploadFile").get(0).files;
         if (files.length > 0) {
