@@ -1321,12 +1321,9 @@
     <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack_List.cshtml" />
-<<<<<<< HEAD
     <Content Include="Views\Login\ChangePasswordLink.cshtml" />
-=======
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
->>>>>>> 426d0cdb059adc06d9124295e1cdd748cd0f0e31
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
