@@ -1115,8 +1115,10 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
-                    int IsMailSend = sendNewPasswordMail(objUser, newPassword);
-                    alertMsg = alertMsg + "Password has been emailed to you.";
+                    //int IsMailSend = sendNewPasswordMail(objUser, newPassword);
+                    //alertMsg = alertMsg + "Password has been emailed to you.";
+                    //return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
+                    int IsMailSend = sendchangePasswordLinkMail(objUser, newPassword);
                     return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
                 }
                 catch (Exception ex)
@@ -1225,11 +1227,12 @@ namespace RightsU_Plus.Controllers
             }
         }
 
+        [AllowAnonymous]
         public ActionResult ChangePasswordIndex()
         {
             GetSystemVersion();
             User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
-            TempData["FromPage"] = "Base";
+            TempData["FromPage"] = "LOGIN";
             if (objUser != null)
             {
                 Session["FileName"] = "";
@@ -1237,9 +1240,35 @@ namespace RightsU_Plus.Controllers
                 return View("ChangePassword");
             }
             else
-                return RedirectToAction("Index", "Login");
+                //return RedirectToAction("Index", "Login");
+                return View("ChangePassword");
         }
 
+
+        public ActionResult ChangePasswordLinkIndex()
+        {
+            GetSystemVersion();
+            ViewBag.AlertMsg = "";
+            objLoginParam = null;
+            //LogErr("Index Login", "Login Indec method test ~" + alertMsg, "Line no 17:", Server.MapPath("~"));
+            Session["RedirectToApproval"] = null;
+            //LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
+            //if (objLoginEntity == null)
+            //    objLoginEntity = new LoginEntity();
+
+            //Session[RightsU_Session.CurrentLoginEntity] = objLoginEntity;
+            //User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
+            //TempData["FromPage"] = "LOGIN";
+            //if (objUser != null)
+            //{
+            //    Session["FileName"] = "";
+            //    Session["FileName"] = "ChangePasswordLink";
+            //    return View("ChangePasswordLink");
+            //}
+            //else
+            //return RedirectToAction("Index", "Login");
+            return View("ChangePasswordLink");
+        }
         #region --- --- Methods --- ---
 
         private void setDefaultProperty(HttpResponse resp, HttpRequest req)
@@ -1541,7 +1570,13 @@ namespace RightsU_Plus.Controllers
             {
                 return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
             }
-        }        
+        }
+
+        private int sendchangePasswordLinkMail(User objUser, string NewPassword)
+        {
+            int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "FPL", objUser.Email_Id.Trim());
+            return IsMailSend;
+        }
     }
 
     public class LoginParameters : Controller

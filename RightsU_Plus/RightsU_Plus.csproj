@@ -1320,6 +1320,7 @@
     <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack_List.cshtml" />
+    <Content Include="Views\Login\ChangePasswordLink.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
