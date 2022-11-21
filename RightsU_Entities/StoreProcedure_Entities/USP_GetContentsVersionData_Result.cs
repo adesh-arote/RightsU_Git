@@ -18,5 +18,6 @@ namespace RightsU_Entities
         public int Title_Content_Version_Code { get; set; }
         public int Version_Code { get; set; }
         public string Version_Name { get; set; }
+        public Nullable<int> StatusCode { get; set; }
     }
 }

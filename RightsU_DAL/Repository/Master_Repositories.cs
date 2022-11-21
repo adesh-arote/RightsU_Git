@@ -3055,4 +3055,23 @@ namespace RightsU_DAL
     {
         public Supplementary_Config_Repository(string constr) : base(constr) { }
     }
+    public class Digital_Repository : RightsU_Repository<Digital>
+    {
+        public Digital_Repository(string constr) : base(constr) { }
+    }
+
+    public class Digital_Data_Repository : RightsU_Repository<Digital_Data>
+    {
+        public Digital_Data_Repository(string constr) : base(constr) { }
+    }
+
+    public class Digital_Tab_Repository : RightsU_Repository<Digital_Tab>
+    {
+        public Digital_Tab_Repository(string constr) : base(constr) { }
+    }
+
+    public class Digital_Config_Repository : RightsU_Repository<Digital_Config>
+    {
+        public Digital_Config_Repository(string constr) : base(constr) { }
+    }
 }

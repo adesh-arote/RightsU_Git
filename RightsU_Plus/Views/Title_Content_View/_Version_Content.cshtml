@@ -23,10 +23,14 @@
     var URL_SaveVersion = '@Url.Action("SaveVersion", "Title_Content_View")';
     var URL_DeleteVersion = '@Url.Action("DeleteVersion", "Title_Content_View")';
     $(document).ready(function () {
+        debugger
         $('#hdnPageNo').val('@ViewBag.PageNo');
         $('#txtPageSize').val('@ViewBag.PageSize');
         $('#hdnRecordCount').val('@ViewBag.RecordCount');
         $('#lblRecordCount').text('@ViewBag.RecordCount');
+        if ('@ViewBag.Command' == 'EDIT') {
+            $('#Select32').val($('#hdnVersion_Code').val());
+        }
         initializeChosen();
         if ('@ViewBag.TabChanged' == 'Y') {
             $('#txtSearchText_MV').val('@ViewBag.SearchText');
@@ -76,8 +80,14 @@
                     <td>
                         <select name="" id="Select32" class="form_input chosen-select">
                             <option value="1">Please Select</option>
-                            <option value="2">Ready To Air</option>
-                            <option value="3">Rejected</option>
+                            <option value="2">Ingested</option>
+                            <option value="3">PGM Review Pending</option>
+                            <option value="4">S&P Review Pending</option>
+                            <option value="5">Tagging Finished</option>
+                            <option value="6">Delivered</option>
+                            <option value="7">Archived</option>
+                            <option value="8">MQC Approved</option>
+                            <option value="9">AQC Finished</option>
                         </select>
                     </td>
                     <td align="center">
@@ -95,7 +105,7 @@
                         {
                             string name = new RightsU_BLL.Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Title_Content_Version_Code == item.Title_Content_Version_Code).Select(x=>x.Version.Version_Name).FirstOrDefault();
                             <td>
-                                @if (name == "Standard")
+                                @if (name == "Branded")
                                 {
                                     <label for="ddlVersion" value="@item.Version_Code"  id="ddlVersion">@item.Version_Name</label>
                                     <input type="hidden" id="ddlVersion_@item.Title_Content_Version_Code" value="@item.Version_Code" />
@@ -116,11 +126,18 @@
                             <td>
                                 <select name="" id="Select32" class="form_input chosen-select">
                                     <option value="1">Please Select</option>
-                                    <option value="2">Ready To Air</option>
-                                    <option value="3">Rejected</option>
+                                    <option value="2">Ingested</option>
+                                    <option value="3">PGM Review Pending</option>
+                                    <option value="4">S&P Review Pending</option>
+                                    <option value="5">Tagging Finished</option>
+                                    <option value="6">Delivered</option>
+                                    <option value="7">Archived</option>
+                                    <option value="8">MQC Approved</option>
+                                    <option value="9">AQC Finished</option>
                                 </select>
                             </td>
                             <td align="center">
+                                <input type="hidden" id="hdnVersion_Code" value="@item.StatusCode">
                                 <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveVersion(@item.Title_Content_Version_Code)"></a>
                                 <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
                             </td>
@@ -135,13 +152,37 @@
                             </td>
                             <td>@item.Duration</td>
                             <td>
-                                @if (item.Version_Code == 3)
+                                @if (item.StatusCode == 2)
                                 {
-                                    <span>Rejected</span>
+                                    <span>Ingested</span>
                                 }
-                                else
+                                @if (item.StatusCode == 3)
                                 {
-                                    <span>Ready to Air</span>
+                                    <span>PGM Review Pending</span>
+                                }
+                                @if (item.StatusCode == 4)
+                                {
+                                    <span>S&P Review Pending</span>
+                                }
+                                @if (item.StatusCode == 5)
+                                {
+                                    <span>Tagging Finished</span>
+                                }
+                                @if (item.StatusCode == 6)
+                                {
+                                    <span>Delivered</span>
+                                }
+                                @if (item.StatusCode == 7)
+                                {
+                                    <span>Archived</span>
+                                }
+                                @if (item.StatusCode == 8)
+                                {
+                                    <span>MQC Approved</span>
+                                }
+                                @if (item.StatusCode == 9)
+                                {
+                                    <span>AQC Finished</span>
                                 }
                             </td>
                             <td align="center">
@@ -191,7 +232,8 @@
         var duration = $.trim($('#txtDuration_' + titleContentCode).val());
         var houseId = $.trim($('#txtHouseId_' + titleContentCode).val());
         var versioncode = $('#ddlVersion_' + titleContentCode).val();
-       
+        var statuscode = $('#Select32').val();
+
         if (duration == '') {
             $('#txtDuration_' + titleContentCode).val('')
             $('#txtDuration_' + titleContentCode).attr('required', true)
@@ -214,7 +256,8 @@
                     titleContentCode: titleContentCode,
                     versioncode: versioncode,
                     houseId: houseId,
-                    duration: duration
+                    duration: duration,
+                    statuscode: statuscode
                 }),
                 async: false,
                 success: function (result) {

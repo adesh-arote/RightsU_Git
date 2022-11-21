@@ -1,0 +1,724 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@model  RightsU_Entities.Acq_Deal_Digital
+@{
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+
+    if (Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.ACQ_DEAL_SCHEMA];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Acq_Digital")';
+    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Acq_Digital")';
+    var URL_BindAllPreReq_Edit = '@Url.Action("DigitalEdit", "Acq_Digital")';
+    var URL_BindAllPreReq_Delete = '@Url.Action("DigitalDelete", "Acq_Digital")';
+    var URL_BindAllPreReq_Dilog = '@Url.Action("DigitalDialogue", "Acq_Digital")';
+    var URL_SaveInSession = '@Url.Action("DigitalSave", "Acq_Digital")';
+    var URL_SaveInDB = '@Url.Action("DigitalSaveDB", "Acq_Digital")';
+    var URL_DigitalValidation = '@Url.Action("DigitalValidation", "Acq_Digital")';
+    var URL_BindDigital = '@Url.Action("BindDigital", "Acq_Digital")';
+    var URL_DuplicateValidation = '@Url.Action("DigitalDupliValidation", "Acq_Digital")';
+
+</script>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
+<link href="~/CSS/Rights_Tab.css" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+@*<script type="text/javascript" src="~/Custom_Scripts/Acq_Deal_Digital.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>*@
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<script type="text/javascript" src="~/JS_Core/jquery.fancytree.filter.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        showLoading();
+        BindAllPreReq_Async();
+        $('#ddDigitalTitle').SumoSelect({ selectAll: true });
+        var element = document.getElementById("TabValues");
+        element.style.display = "none";
+    });
+    function BindAllPreReq_Async() {
+        debugger;
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindAllPreReq_Async,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Digital_Code: 0,
+                title_code: 0
+            }),
+            success: function (result) {
+                debugger;
+                $.each(result.Title_List, function () {
+                    if (this.Value == result.SelectedTitle) {
+                        $("#ddDigitalTitle").append($("<option selected/>").val(this.Value).text(this.Text));
+                    } else {
+                        $("#ddDigitalTitle").append($("<option />").val(this.Value).text(this.Text));
+                    }
+                });
+                $("#ddDigitalTitle")[0].sumo.reload();
+                $('#tabValidity').append(result.Tabs);
+                $('#TabValues').val(result.tabNames);
+                $('#tabTable').append(result.Divs);
+                $('#TabName').val(result.TabName);
+                $('#dropdownCount').val(result.dropdown);
+                $('#FieldList').val(result.FieldList);
+                $('#txtAcqRemarks').val(result.Remarks);
+                $('#lblTitle').val(result.Remarks);
+                $('#txtAcqRemarks').trigger("keyup");
+                $('#hdnCurrentPageNo').val(result.page_index);
+                $('#hdnPageSize').val(result.page_size);
+
+                $('#ViewOperation').val(result.ViewOperation);
+                if ($('#ViewOperation').val() == "VIEW") {
+                    document.getElementById("HideForView").style.display = "none";
+                    document.getElementById("btnSaveDeal").style.display = "none";
+                    $('#ddDigitalTitle').attr('disabled', true);
+                    $('#txtAcqRemarks').attr('disabled', true);
+                }
+
+
+                hideLoading();
+            }
+        });
+    }
+
+    function ChangeTab(Short_Name) {
+        debugger;
+        showLoading();
+        //var wtName = $('#hdnwt' + Short_Name).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+
+        if ($('#inputValidation').val() == "true") {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
+        $('#TabName').val(Short_Name);
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Short_Name = "#liCal" + tabArray[i];
+            var IS_Table_Name = "#tblMain" + tabArray[i];
+
+            if (tabArray[i] == Short_Name) {
+                $(IS_Short_Name).addClass("active");
+                $(IS_Table_Name).show();
+            }
+            else {
+                $(IS_Short_Name).removeClass("active");
+                $(IS_Table_Name).hide();
+            }
+        }
+        hideLoading();
+    }
+
+    function DigitalButtonEvents() {
+        debugger;
+        $('#inputValidation').val("true");
+        var shortName = $('#TabName').val();
+        var wtName = $('#hdnwt' + shortName).val();
+        $('#Operation').val("A");
+        if (wtName == "PopUp") {
+            $('#inputValidation').val("false");
+            $.ajax({
+                type: "POST",
+                url: URL_BindAllPreReq_Dilog,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Digital_Code: 0,
+                    rowno: 0,
+                    Short_Name: shortName,
+                    num: 0,
+                }),
+                success: function (result) {
+                    debugger;
+                    // $("#AddComm").modal('hide');.val(result);
+                    $("#CMPopup").empty();
+                    $("#CMPopup").append(result);
+                    $("#AddComm").modal();
+                    initializeExpander();
+                    $(".datepicker").datepicker();
+                    initializeDatepicker();
+                    debugger;
+                    let drCount = $("#hdn" + shortName).val();
+
+                    let drCount2 = parseInt(drCount)
+                    for (let i = 0; i <= drCount2; i++) {
+                        var dropdown = "#CMPopup #A" + shortName + "ddDigital" + i;
+                        $(dropdown).chosen();
+                        initializeChosen();
+                    }
+
+                }
+            });
+        }
+        else
+        {
+            debugger;
+            var tabValues = $('#TabValues').val();
+            var div = document.getElementById('tabValidity').innerHTML;
+            let tabArray = tabValues.split(',');
+            for (let i = 0; i < tabArray.length; i++) {
+                var IS_Input_Name = "#add" + tabArray[i];
+
+                if (tabArray[i] == shortName) {
+                    $(IS_Input_Name).addClass("active");
+                    $(IS_Input_Name).show();
+                }
+                else {
+                    $(IS_Input_Name).removeClass("active");
+                    $(IS_Input_Name).hide();
+                }
+            }
+
+
+            let drCount = $("#hdn" + shortName).val();
+
+            let drCount2 = parseInt(drCount)
+            for (let i = 1; i <= drCount2; i++) {
+                var div = document.getElementById('tabValidity').innerHTML;
+                var dropdown = "#A" + shortName +"ddDigital" + i;
+                $(dropdown).SumoSelect({ selectAll: true });
+            }
+        }
+    }
+
+    function DigitalEdit(x, Digital_Code, rowno, num) {
+        debugger;
+        var shortName = $('#TabName').val();
+        //var wtName = $('#hdnwt' + shortName).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+        if ($('#inputValidation').val() == "true") {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        var shortName = $('#TabName').val();
+        var wtName = $('#hdnwt' + shortName).val();
+
+        //var count = parseInt(num, 10);
+
+        //if (wtName == "inLine") {
+        //    count = parseInt(num, 10) + 1;
+        //}
+
+        var tab = $('#tbl' + shortName + ' tbody tr')[rwIndex].outerHTML;
+        var row_no = parseInt(rowno, 10);
+        var num = parseInt(num, 10);
+        $('#RowEdit').val(tab);
+        $('#Operation').val("E");
+
+        if (wtName == "PopUp") {
+            $('#popupindex').val(rwIndex);
+        }
+
+
+
+        if (wtName == "PopUp") {
+            $.ajax({
+                type: "POST",
+                url: URL_BindAllPreReq_Dilog,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Digital_Code: Digital_Code,
+                    rowno: row_no,
+                    Short_Name: shortName,
+                    num: num,
+                }),
+                success: function (result) {
+                    debugger;
+                    // $("#AddComm").modal('hide');.val(result);
+                    $("#CMPopup").empty();
+                    $("#CMPopup").append(result);
+                    $("#AddComm").modal();
+                    initializeExpander();
+
+                    initializeDatepicker();
+                    $('.datepicker').datepicker();
+                    debugger;
+                    let drCount = $("#hdn" + shortName).val();
+
+                    let drCount2 = parseInt(drCount)
+                    for (let i = 0; i <= drCount2; i++) {
+                        var dropdown = "#CMPopup #E" + shortName + "ddDigital" + i;
+                        $(dropdown).chosen();
+                        initializeChosen();
+                    }
+
+                }
+            });
+
+        }
+        else {
+            $('#inputValidation').val('true');
+            $.ajax({
+                type: "POST",
+                url: URL_BindAllPreReq_Edit,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Digital_Code: Digital_Code,
+                    rowno: row_no,
+                    Short_Name: shortName,
+                    num: num,
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    var shortName = $('#TabName').val();
+                    tblName = "#tbl" + shortName;
+                    var row = $(result.EditRow);
+                    row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                    $(tblName + ' tr').eq(rwIndex + 1).remove();
+                    //$('#Edit' + shortName).remove();
+                    //row.insertBefore($(tblName + ' tbody ' + x.parentNode.parentNode));
+                }
+            });
+        }
+        let drCount = $("#hdn" + shortName).val();
+        let drCount2 = parseInt(drCount)
+
+        for (let i = 1; i <= drCount2; i++) {
+            var dropdown = "#E"+ shortName + "ddDigital" + i;
+            $(dropdown).SumoSelect({ selectAll: true });
+        }
+
+    }
+
+    function closeEdit(rowNumber) {
+        debugger;
+        var shortName = $('#TabName').val();
+        var wtName = $('#hdnwt' + shortName).val();
+        if (wtName == "inLine") {
+            var rowclose = $($('#RowEdit').val());
+            rowclose.insertBefore($(tblName + ' tbody tr:nth(' + (parseInt(rowNumber) + 1) + ')'));
+            $(tblName + ' tr').eq(rowNumber + 2).remove();
+
+        }
+        else {
+            $("#AddComm").modal('toggle');
+        }
+        $('#inputValidation').val("false");
+    }
+
+    function sumo(drCount, shortName) {
+        debugger;
+        var Table = document.getElementById('tabTable').innerHTML;
+        let drCount2 = parseInt(drCount)
+        for (let i = 1; i <= drCount2; i++) {
+            var dropdown = "#ddDigital" + shortName + i;
+            $(dropdown).SumoSelect({ selectAll: true });
+        }
+    }
+
+    function DigitalDelete(x,Digital_Code, rowno, i, TabCode, shortName) {
+        debugger;
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        var DShortName = shortName + rwIndex;
+        tblName = "#tbl" + shortName;
+
+        $(tblName + ' tr').eq(rwIndex).remove();
+        //$(tblName + ' tr#' + DShortName).remove();
+        $.ajax({
+            type: "POST",
+            url: URL_BindAllPreReq_Delete,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Digital_Code: Digital_Code,
+                rowno: rowno,
+                TabCode: TabCode
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                //showAlert('I', result.ErrorMsg);
+
+            }
+        });
+    }
+    function handleOk() {
+        debugger;
+        var tabName = $('#hdnTabName').val()
+        if ($('#hdnTabName').val() == '')
+            tabName = pageDigital;
+
+        BindPartialTabs(tabName);
+    }
+
+    function onSelect(x) {
+        debugger
+        var dvalue = x;
+    }
+
+    function hideaddDigital() {
+        debugger;
+        $('#inputValidation').val("false");
+        var shortName = $('#TabName').val();
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Input_Name = "#add" + tabArray[i];
+
+            if (tabArray[i] == shortName) {
+                $(IS_Input_Name).addClass("active");
+                $(IS_Input_Name).hide();
+            }
+            else {
+                $(IS_Input_Name).removeClass("active");
+                $(IS_Input_Name).hide();
+            }
+        }
+    }
+    //function duplicateValidation(vallist, shortName) {
+    //    debugger;
+    //    var success = false;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_DuplicateValidation,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            Value_list: vallist,
+    //            short_Name: shortName
+    //        }),
+    //        success: function (result) {
+    //            debugger;
+    //            if (result.ErrorCode == "500") {
+
+    //                success = true;
+    //            }
+    //            else {
+    //                success = false;
+    //            }
+    //        }
+    //    });
+    //    return success;
+    //}
+
+    function SaveDigital(x,rownum)
+    {
+        debugger;
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        showLoading();
+        var rownum = rownum;
+        var shortName = $('#TabName').val();
+        var operation = $('#Operation').val();
+        var wtName = $('#hdnwt' + shortName).val();
+
+        if (operation == "E" && wtName == "PopUp") {
+            rwIndex = parseInt($('#popupindex').val());
+        }
+
+        var fld = "";
+        var vallist="";
+        FieldList = $('#FieldList').val();
+        let FldArray = FieldList.split(',');
+        for (let i = 0; i < FldArray.length; i++) {
+            if (FldArray[i].substring(0, 2) == shortName){
+                fld = FldArray[i].split("~");
+                var a = "";
+                if (wtName == "PopUp") {
+                    a = '#CMPopup #' + operation + fld[0];
+                } else {
+                    a = '#' + operation + fld[0];
+                }
+
+                debugger;
+                if ($(a).val() == null) {
+                    showAlert('I', 'Please enter details');
+                    hideLoading();
+                    return;
+                }
+                else {
+                    let v = $(a).val().toString();
+                    if ($(a).is("select")) {
+                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                        $(a)[0].sumo.unSelectAll();
+                    }
+                    else
+                        if ($(a).is(":checkbox")) {
+                            if ($(a).is(':checked')) {
+                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                            else {
+                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                        }
+                        else {
+                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                }
+            }
+        }
+        //if (duplicateValidation(vallist, shortName) ) {
+        //    showAlert('I', 'Duplicate Value Not allowed');
+        //    return;
+        //}
+        //else
+        //{
+        $.ajax({
+            type: "POST",
+            url: URL_SaveInSession,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Value_list: vallist,
+                Short_Name: shortName,
+                Operation: operation,
+                Row_No: rownum,
+                rwIndex: rwIndex,
+            }),
+            success: function (result) {
+                debugger;
+                $('#inputValidation').val("false");
+                var shortName = $('#TabName').val();
+                tblName = "#tbl" + shortName;
+
+                if (result != "Duplicate") {
+                    var row = $(result);
+                    if (operation == "A") {
+                        $(tblName).append(row);
+                        hideaddDigital();
+                    }
+                    if (operation == "E") {
+                        row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        $(tblName + ' tr').eq(rwIndex + 1).remove();
+                        // $('#' + shortName + rownum).remove();
+
+                        //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        //$(tblName + ' tr').eq(rwIndex + 1).remove();
+                    }
+                }
+                else {
+                    showAlert('I', 'Duplicate Value Not allowed');
+                }
+            }
+        });
+
+
+        if (wtName == "PopUp") $("#AddComm").modal('toggle');
+            hideLoading();
+    }
+
+    function Cancel_Digital() {
+        debugger;
+        if (document.getElementById("btnSaveDeal").style.display != "none")
+            showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+    }
+
+    function Cancel_DigitalView() {
+        BindPartialTabs(pageDigital);
+    }
+    function DigitalSave()
+    {
+        showLoading();
+        debugger;
+        var page_size = 0; var page_index = 0;
+        var shortName = $('#TabName').val();
+        //var wtName = $('#hdnwt' + shortName).val();
+        //if (wtName == "PopUp") {
+        //    $('#inputValidation').val("false");
+        //}
+        if ($('#inputValidation').val() == "true") {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
+        if ($('#ddDigitalTitle').val == "")
+        {
+            showAlert('I', '@objMessageKey.Selecttitletosearch');
+            return;
+        }
+        if ($('#ddDigitalTitle').val() != null) {
+            var title = $('#ddDigitalTitle').val().toString();
+        }
+
+        else {
+            showAlert('I', "Title not selected");
+            hideLoading();
+            return;
+        }
+
+        var detailsCnt = 0
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: URL_DigitalValidation,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                detailsCnt = result.detailsCnt;
+            }
+        });
+
+        if (detailsCnt < 1) {
+            showAlert('I', "Please add Digital details to save.");
+            hideLoading();
+            return;
+        }
+
+        if ($('#txtAcqRemarks').val() != null) {
+            var Remarks = $('#txtAcqRemarks').val();
+        }
+
+        page_index = $('#hdnCurrentPageNo').val();
+        page_size = $('#hdnPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveInDB,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Title_List: title,
+                Remarks: Remarks,
+                page_size: page_size,
+                page_index: page_index
+            }),
+            success: function (result) {
+                debugger;
+                if(result.ErrorCode == "100")
+                    showAlert('I', '@objMessageKey.DigitalDetailssavedsuccesfully', 'OK');
+                else
+                    showAlert('I', '@objMessageKey.CouldNotsavedRecord');
+
+            }
+        });
+        //BindPartialTabs("Digital");
+        hideLoading();
+
+    }
+    //function countChar(val) {
+    //    debugger;
+    //    var max = 4000;
+    //    var len = val.value.length;
+
+    //    if (len >= max)
+    //        val.value(val.value.substring(0, max));
+
+    //    $('.charNum').text(val.value.length.toString() + '/' + max.toString());
+    //}
+
+</script>
+<style type="text/css">
+    .SumoSelect, #divlbTitles, #divCountry, #lbTitles, #lbTerritory {
+        width: 100% !important;
+    }
+</style>
+<input type="hidden" id="TabValues" />
+<input type="hidden" id="TabName" />
+<input type="hidden" id="dropdownCount" />
+<input type="hidden" id="RowEdit" />
+<input type="hidden" id="FieldList" />
+<input type="hidden" id="Operation" />
+<input type="hidden" id="popupindex" />
+<input type="hidden" id="inputValidation" value="false" />
+<input type="hidden" id="ViewOperation" />
+<input type="hidden" id="hdnTabName" name="hdnTabName" />
+<input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
+<input type="hidden" id="hdnPageSize" name="hdnPageSize" />
+@*<input type="hidden" id="Operation" />*@
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div class="tabbable">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="tab-pane active">
+                    <div class="scale_table_block" style="padding-bottom:0% !important">
+                        <div class="dotted_border">
+                            <label class="bold">@objMessageKey.Titles</label>
+                            <div id="divddlPTitle">
+                                <select id="ddDigitalTitle" name="ddDigitalTitle" multiple="multiple"></select>
+                                <label class="bold" id="lblTitle"></label>
+                            </div>
+                            <br>
+                        </div>
+                        <br>
+                        <label class="bold">@objMessageKey.SpecialDetails</label>
+
+                        <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="DigitalButtonEvents()"></a>
+
+                        <div class="scale_table_block">
+                            <div id="tabValidity" class="tabbable">
+
+                            </div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container" id="tabTable">
+                            </div>
+                            <div class="tab-pane active" id="tabRestriction">
+                                @*@Html.TextAreaFor(Restriction_Remarks, new { @id = "Restriction_Remarks", @class = "textarea", @onkeypress = "countChar(this)", @onkeyup = "countChar(this)", @maxlength = 4000 })*@
+                                @*<textarea cols="20" id="Remarks" onkeypress="countChar(this)" name="Description" rows="4"></textarea>*@
+
+                                <div class="divBlock">
+                                    <div class="pull-left" style="padding-right: 87%;"><b>@objMessageKey.Remarks</b></div>
+                                    <div class="charNum">0/4000</div>
+                                    @*<div style=""></div>*@
+                                </div>
+                                <textarea class="textarea" name="txtAcqRemarks" id="txtAcqRemarks" onkeypress="countChar(this)" onkeyup="countChar(this)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom_action">
+                    <ul class="form_link_nav clearfix">
+                        <li>
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return DigitalSave();">
+                        </li>
+                        <li>
+                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Digital();" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="AddComm" role="dialog" tabindex="-1" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="form_fields">
+            <div class="modal-content clearfix">
+                <div class="modal_block modal_header">
+                    <a class="close" data-dismiss="modal" href="#">
+                        <span>×</span>
+                        <span class="sr-only">Close</span>
+                    </a>
+                    <h2>@objMessageKey.AddCommitments</h2>
+                </div>
+                <div class="modal_block" style="padding: 17px;">
+                    <div id="CMPopup"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,7 +1,6 @@
 ﻿using RightsU_DAL;
 using RightsU_Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -7312,4 +7311,114 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+    public class Digital_Service : BusinessLogic<Digital>
+    {
+        private readonly Digital_Repository obj_Repository;
+
+        public Digital_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Digital_Repository(Connection_Str);
+        }
+
+        public IQueryable<Digital> SearchFor(Expression<Func<Digital, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Digital GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Digital objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Digital objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Digital objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Digital_Data_Service
+    {
+        private readonly Digital_Data_Repository obj_Repository;
+
+        public Digital_Data_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Digital_Data_Repository(Connection_Str);
+        }
+
+        public IQueryable<Digital_Data> SearchFor(Expression<Func<Digital_Data, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Digital_Data GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Digital_Tab_Service : BusinessLogic<Digital_Tab>
+    {
+        private readonly Digital_Tab_Repository obj_Repository;
+
+        public Digital_Tab_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Digital_Tab_Repository(Connection_Str);
+        }
+
+        public IQueryable<Digital_Tab> SearchFor(Expression<Func<Digital_Tab, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Digital_Tab GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Digital_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateUpdate(Digital_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ValidateDelete(Digital_Tab objToValidate, out dynamic resultSet)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Digital_Config_Service
+    {
+        private readonly Digital_Config_Repository obj_Repository;
+
+        public Digital_Config_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Digital_Config_Repository(Connection_Str);
+        }
+
+        public IQueryable<Digital_Config> SearchFor(Expression<Func<Digital_Config, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Digital_Config GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+    }
+
 }

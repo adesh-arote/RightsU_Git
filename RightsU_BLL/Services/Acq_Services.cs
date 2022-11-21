@@ -1817,4 +1817,48 @@ namespace RightsU_BLL
         }
     }
 
+    public class Acq_Deal_Digital_Service : BusinessLogic<Acq_Deal_Digital>
+    {
+        private readonly Acq_Deal_Digital_Repository objRepository;
+
+        public Acq_Deal_Digital_Service(string Connection_Str)
+        {
+            this.objRepository = new Acq_Deal_Digital_Repository(Connection_Str);
+        }
+        public IQueryable<Acq_Deal_Digital> SearchFor(Expression<Func<Acq_Deal_Digital, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Acq_Deal_Digital GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Acq_Deal_Digital obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Acq_Deal_Digital obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Acq_Deal_Digital objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Acq_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Acq_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Acq_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
 }

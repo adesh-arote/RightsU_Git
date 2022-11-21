@@ -219,6 +219,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Acq_DigitalController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -1320,6 +1321,8 @@
     <Content Include="Views\Shared\_Module_Amendment_Details.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack_List.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
+    <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

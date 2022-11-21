@@ -31,8 +31,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Title_Content_Version_Code { get; set; }
     
         public virtual Acq_Deal_Movie Acq_Deal_Movie { get; set; }
-        public virtual Title_Content_Version Title_Content_Version { get; set; }
         public virtual Title_Content Title_Content { get; set; }
         public virtual Music_Title Music_Title { get; set; }
+        public virtual Title_Content_Version Title_Content_Version { get; set; }
     }
 }

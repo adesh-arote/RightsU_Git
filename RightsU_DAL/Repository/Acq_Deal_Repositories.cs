@@ -857,7 +857,27 @@ namespace RightsU_DAL
             updatedList = new Save_Entitiy_Lists_Generic<Acq_Amendement_History>().SetListFlagsCUD(updatedList, dbContext);
             return updatedList;
         }
+        public ICollection<Acq_Deal_Digital> SaveDigital(ICollection<Acq_Deal_Digital> entitySaveDigital, DbContext dbContext)
+        {
+            ICollection<Acq_Deal_Digital> UpdatedDigital = entitySaveDigital;
 
+            foreach (Acq_Deal_Digital objADR in UpdatedDigital)
+            {
+                objADR.Acq_Deal_Digital_detail = (objADR.Acq_Deal_Digital_detail != null) ? new Save_Entitiy_Lists_Generic<Acq_Deal_Digital_detail>().SetListFlagsCUD(objADR.Acq_Deal_Digital_detail, dbContext) : null;
+            }
+
+            UpdatedDigital = new Save_Entitiy_Lists_Generic<Acq_Deal_Digital>().SetListFlagsCUD(UpdatedDigital, dbContext);
+
+            return UpdatedDigital;
+        }
+        public void DeleteDigital(ICollection<Acq_Deal_Digital> deleteList, RightsU_NeoEntities dbContext)
+        {
+            foreach (Acq_Deal_Digital objADR in deleteList)
+            {
+                dbContext.Acq_Deal_Digital_detail.RemoveRange(objADR.Acq_Deal_Digital_detail);
+            }
+            dbContext.Acq_Deal_Digital.RemoveRange(deleteList);
+        }
     }
 
     public class Acq_Deal_Mass_Territory_Update_Repository : RightsU_Repository<Acq_Deal_Mass_Territory_Update>
@@ -1224,6 +1244,33 @@ namespace RightsU_DAL
 
             Save_Acq_Deal_Entities_Generic objSaveEntities = new Save_Acq_Deal_Entities_Generic();
             obj = objSaveEntities.SaveAcq_Amendement_History(list, base.DataContext).FirstOrDefault();
+
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(list.FirstOrDefault());
+            }
+        }
+    }
+
+    public class Acq_Deal_Digital_Repository : RightsU_Repository<Acq_Deal_Digital>
+    {
+        public Acq_Deal_Digital_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Acq_Deal_Digital obj)
+        {
+            ICollection<Acq_Deal_Digital> list = new HashSet<Acq_Deal_Digital>();
+            list.Add(obj);
+
+            Save_Acq_Deal_Entities_Generic objSaveEntities = new Save_Acq_Deal_Entities_Generic();
+            obj = objSaveEntities.SaveDigital(list, base.DataContext).FirstOrDefault();
 
             if (obj.EntityState == State.Added)
             {
