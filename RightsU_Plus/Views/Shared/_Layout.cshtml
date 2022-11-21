@@ -816,6 +816,7 @@
         }*/
         .menu_margin {
             margin: 0px;
+            height: 47px;
         }
     </style>
 
@@ -853,6 +854,11 @@
         function DigitalInterim() {
             var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
             window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
+        }
+
+        function OpenMAMLink() {
+            var strWindowFeatures = "location=yes,toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=4000,height=4000";
+            window.open('https://www.flaticon.com/free-icon-font/video-camera_3917080', '_blank', strWindowFeatures);
         }
 
     </script>
@@ -958,6 +964,9 @@
                                     <a class="glyphicon glyphicon-copy" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Content", IsMenu = "Y" })"></a>
                                 </li>
                             }
+                            <li title="MAM" data-placement="@dataPlacement" class="menu_margin" onclick="OpenMAMLink()">
+                                <a class="glyphicon glyphicon-play-circle" href="#"></a>
+                            </li>
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters) ||
                                Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
                                Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
@@ -1034,7 +1043,7 @@
                         <a href="@Url.Action("Main", "Base")">
                             <img alt="Site-Logo" src="@Url.Content("~/Images/logo-rights.png")" />
                         </a>
-                        <span class="tag_line">@objMessageKey.RightsManagementSystem</span>
+                        <span class="tag_line">Content Management System</span>
                     </nav>
                 </div>
                 <div class="navbar-custom-menu">
@@ -1452,7 +1461,7 @@
 
     function showPrevious() {
         debugger;
-     
+
         $('#btnNext').attr('disabled', false);
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();

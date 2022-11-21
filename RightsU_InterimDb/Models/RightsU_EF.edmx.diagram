@@ -766,12 +766,9 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.BMS_All_Masters" Width="1.5" PointX="35.5" PointY="18.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.DM_Title" Width="1.5" PointX="35.375" PointY="21.75" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content" Width="1.5" PointX="11.25" PointY="121.75" />
-        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Version" Width="1.5" PointX="13.5" PointY="122.875" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Content_Music_Link_Title_Content_Version" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Program_Link_Acq_Deal_Movie_Contents1" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Content_Status_History_Acq_Deal_Movie_Contents1" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Title" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Title_Content" />
         <EntityTypeShape EntityType="RightsU_NeoModel.BV_Schedule_Transaction" Width="1.5" PointX="37" PointY="35" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Schedule_Exception" Width="1.5" PointX="34" PointY="1" />
         <EntityTypeShape EntityType="RightsU_NeoModel.BV_HouseId_Data" Width="1.5" PointX="36.625" PointY="29.125" />
@@ -801,7 +798,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Vendor_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Music_Deal_Deal_Tag" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Version" Width="1.5" PointX="33.375" PointY="38" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Version" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Program_Deal_Type" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Program_Genres" />
         <EntityTypeShape EntityType="RightsU_NeoModel.DM_Master_Log" Width="1.5" PointX="22.375" PointY="37.75" />
@@ -906,7 +902,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Music__24740D25" />
         <AssociationConnector Association="RightsU_NeoModel.FK__Music_Dea__Music__2568315E" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Version_Details" Width="1.5" PointX="16.375" PointY="123.25" />
-        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Platform" />
         <EntityTypeShape EntityType="RightsU_NeoModel.MHPlayList" Width="1.5" PointX="17.5" PointY="70.875" />
         <EntityTypeShape EntityType="RightsU_NeoModel.MHPlayListSong" Width="1.5" PointX="28.75" PointY="34.875" />
@@ -1025,6 +1020,23 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital" Width="1.5" PointX="46.375" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" Width="1.5" PointX="48.625" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" Width="1.5" PointX="45.375" PointY="41" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital_detail" Width="1.5" PointX="47.625" PointY="41" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital" Width="1.5" PointX="46.375" PointY="29.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Config" Width="1.5" PointX="48.625" PointY="28" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Data" Width="1.5" PointX="39.375" PointY="45.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Tab" Width="1.5" PointX="46.375" PointY="31.75" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Content_Version" Width="1.5" PointX="37.625" PointY="76.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Content_Music_Link_Title_Content_Version" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Version" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -349,7 +349,7 @@ namespace RightsU_DAL
         public DbSet<Music_Schedule_Transaction> Music_Schedule_Transaction { get; set; }
         public DbSet<Deal_Workflow_Status> Deal_Workflow_Status { get; set; }
         public DbSet<Title_Content> Title_Content { get; set; }
-        public DbSet<Title_Content_Version> Title_Content_Version { get; set; }
+        public DbSet<Title_Content_Version_Details> Title_Content_Version_Details { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
         public DbSet<Music_Deal> Music_Deal { get; set; }
         public DbSet<Music_Deal_Channel> Music_Deal_Channel { get; set; }
@@ -383,7 +383,6 @@ namespace RightsU_DAL
         public DbSet<Syn_Deal_Rights_Promoter_Remarks> Syn_Deal_Rights_Promoter_Remarks { get; set; }
         public DbSet<Music_Deal_Platform> Music_Deal_Platform { get; set; }
         public DbSet<Music_Platform> Music_Platform { get; set; }
-        public DbSet<Title_Content_Version_Details> Title_Content_Version_Details { get; set; }
         public DbSet<MHPlayList> MHPlayLists { get; set; }
         public DbSet<MHPlayListSong> MHPlayListSongs { get; set; }
         public DbSet<MHRequest> MHRequests { get; set; }
@@ -429,8 +428,16 @@ namespace RightsU_DAL
         public DbSet<Acq_Deal_Supplementary_detail> Acq_Deal_Supplementary_detail { get; set; }
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
-
-        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
+		public DbSet<Acq_Deal_Digital> Acq_Deal_Digital { get; set; }
+        public DbSet<Acq_Deal_Digital_detail> Acq_Deal_Digital_detail { get; set; }
+        public DbSet<AT_Acq_Deal_Digital> AT_Acq_Deal_Digital { get; set; }
+        public DbSet<AT_Acq_Deal_Digital_detail> AT_Acq_Deal_Digital_detail { get; set; }
+        public DbSet<Digital> Digital { get; set; }
+        public DbSet<Digital_Config> Digital_Config { get; set; }
+        public DbSet<Digital_Data> Digital_Data { get; set; }
+        public DbSet<Digital_Tab> Digital_Tab { get; set; }
+		public DbSet<Title_Content_Version> Title_Content_Version { get; set; }
+        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
@@ -440,11 +447,11 @@ namespace RightsU_DAL
                 new ObjectParameter("Search_Platform_Name", search_Platform_Name) :
                 new ObjectParameter("Search_Platform_Name", typeof(string));
 
-            var IS_Sport_RightParameter = IS_Sport_Right != null ?
-                new ObjectParameter("IS_Sport_Rights", IS_Sport_Right) :
+            var iS_Sport_RightsParameter = iS_Sport_Rights != null ?
+                new ObjectParameter("IS_Sport_Rights", iS_Sport_Rights) :
                 new ObjectParameter("IS_Sport_Rights", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, IS_Sport_RightParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, iS_Sport_RightsParameter);
         }
         public virtual ObjectResult<USP_Get_Promoter_Group_Tree_Hierarchy_Result> USP_Get_Promoter_Group_Tree_Hierarchy(string promoter_Group_Codes, string search_Promoter_Group_Name)
         {
@@ -5788,6 +5795,96 @@ namespace RightsU_DAL
                 new ObjectParameter("DashboardDays", typeof(int));
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Payment_Term_Result>("USP_Get_Dashboard_Detail_Payment_Term", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
+        }
+    
+        public virtual ObjectResult<USP_Acq_Deal_Digital_List_Result> USP_Acq_Deal_Digital_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
+        {
+            var deal_CodeParameter = deal_Code.HasValue ?
+                new ObjectParameter("Deal_Code", deal_Code) :
+                new ObjectParameter("Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            var pageNoParameter = pageNo.HasValue ?
+                new ObjectParameter("pageNo", pageNo) :
+                new ObjectParameter("pageNo", typeof(int));
+    
+            var pagesizeParameter = pagesize.HasValue ?
+                new ObjectParameter("pagesize", pagesize) :
+                new ObjectParameter("pagesize", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Digital_List_Result>("USP_Acq_Deal_Digital_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
+        }
+    
+        public virtual ObjectResult<USP_Acq_Digital_Tab_Result> USP_Acq_Digital_Tab(Nullable<int> digital_Tab_Code)
+        {
+            var digital_Tab_CodeParameter = digital_Tab_Code.HasValue ?
+                new ObjectParameter("Digital_Tab_Code", digital_Tab_Code) :
+                new ObjectParameter("Digital_Tab_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Digital_Tab_Result>("USP_Acq_Digital_Tab", digital_Tab_CodeParameter);
+        }
+    
+        public virtual int USP_Delete_Acq_Digital(Nullable<int> digitalCode)
+        {
+            var digitalCodeParameter = digitalCode.HasValue ?
+                new ObjectParameter("DigitalCode", digitalCode) :
+                new ObjectParameter("DigitalCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Acq_Digital", digitalCodeParameter);
+        }
+    
+        public virtual ObjectResult<USP_Digital_Create_Table_Result> USP_Digital_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
+        {
+            var tabCodeParameter = tabCode.HasValue ?
+                new ObjectParameter("tabCode", tabCode) :
+                new ObjectParameter("tabCode", typeof(int));
+    
+            var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
+                new ObjectParameter("Acq_Deal_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            var viewParameter = view != null ?
+                new ObjectParameter("View", view) :
+                new ObjectParameter("View", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Digital_Create_Table_Result>("USP_Digital_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Acq_Deal_Digital_Edit_Result> USP_Get_Acq_Deal_Digital_Edit(Nullable<int> acq_Deal_Digital_Code, Nullable<int> row_Num, string tab_SM)
+        {
+            var acq_Deal_Digital_CodeParameter = acq_Deal_Digital_Code.HasValue ?
+                new ObjectParameter("Acq_Deal_Digital_Code", acq_Deal_Digital_Code) :
+                new ObjectParameter("Acq_Deal_Digital_Code", typeof(int));
+    
+            var row_NumParameter = row_Num.HasValue ?
+                new ObjectParameter("Row_Num", row_Num) :
+                new ObjectParameter("Row_Num", typeof(int));
+    
+            var tab_SMParameter = tab_SM != null ?
+                new ObjectParameter("Tab_SM", tab_SM) :
+                new ObjectParameter("Tab_SM", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Digital_Edit_Result>("USP_Get_Acq_Deal_Digital_Edit", acq_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Digital_Result> USP_Get_Title_For_Acq_Digital(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
+        {
+            var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
+                new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
+                new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
+    
+            var title_CodeParameter = title_Code.HasValue ?
+                new ObjectParameter("title_Code", title_Code) :
+                new ObjectParameter("title_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Digital_Result>("USP_Get_Title_For_Acq_Digital", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
     }
 }

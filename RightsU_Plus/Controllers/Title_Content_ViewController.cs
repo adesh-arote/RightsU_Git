@@ -720,7 +720,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.TabChanged = (tabChanged) ? "Y" : "N";
             return PartialView("~/Views/Title_Content_View/_Version_Content.cshtml", lst);
         }
-        public JsonResult SaveVersion(int titleContentCode, string versioncode, string duration, string HouseId)
+        public JsonResult SaveVersion(int titleContentCode, string versioncode, string duration, string HouseId, int statuscode)
         {
             bool returnVal = true;
             dynamic resultSet;
@@ -750,6 +750,7 @@ namespace RightsU_Plus.Controllers
                     objTCV = new RightsU_Entities.Title_Content_Version();
                     objTCV.EntityState = State.Added;
                 }
+                objTCV.StatusCode = statuscode;
                 objTCV.Version_Code = VersionCode;
                 objTCV.Title_Content_Code = objContentMetadata.Title_Content_Code;
                 objTCV.Duration = Convert.ToDecimal(duration);

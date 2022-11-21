@@ -18,9 +18,9 @@ namespace RightsU_InterimDb.Models
         {
             this.Content_Music_Link = new HashSet<Content_Music_Link>();
             this.Content_Status_History = new HashSet<Content_Status_History>();
-            this.Title_Content_Version = new HashSet<Title_Content_Version>();
             this.Title_Content_Mapping = new HashSet<Title_Content_Mapping>();
             this.MHCueSheetSongs = new HashSet<MHCueSheetSong>();
+            this.Title_Content_Version = new HashSet<Title_Content_Version>();
         }
     
     	public State EntityState { get; set; }    public int Title_Content_Code { get; set; }
@@ -39,8 +39,8 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Content_Music_Link> Content_Music_Link { get; set; }
         public virtual ICollection<Content_Status_History> Content_Status_History { get; set; }
         public virtual Title Title { get; set; }
-        public virtual ICollection<Title_Content_Version> Title_Content_Version { get; set; }
         public virtual ICollection<Title_Content_Mapping> Title_Content_Mapping { get; set; }
         public virtual ICollection<MHCueSheetSong> MHCueSheetSongs { get; set; }
+        public virtual ICollection<Title_Content_Version> Title_Content_Version { get; set; }
     }
 }
