@@ -34,7 +34,8 @@
     var pageGeneral = '@GlobalParams.Page_From_General';
     var pageRights_List = '@GlobalParams.Page_From_Rights';
     var pageRightsDetailAddEdit = '@GlobalParams.Page_From_Rights_Detail_AddEdit';
-    var pageSupplementaryAddEdit  = '@GlobalParams.Page_From_Supplementary_AddEdit';
+    var pageSupplementaryAddEdit = '@GlobalParams.Page_From_Supplementary_AddEdit';
+    var pageDigitalAddEdit = '@GlobalParams.Page_From_Digital_AddEdit';
     var pageRightsDetailView = '@GlobalParams.Page_From_Rights_Detail_View';
     var pagePushback = '@GlobalParams.Page_From_Pushback';
     var pageRun = '@GlobalParams.Page_From_Run';
@@ -48,6 +49,7 @@
     var pageMaterial = '@GlobalParams.Page_From_Material';
     var pageStatusHistory = '@GlobalParams.Page_From_StatusHistory';
     var pageSupplementary = '@GlobalParams.Page_From_Supplementary';
+    var pageDigital = '@GlobalParams.Page_From_Digital';
     var pageAmort = '@GlobalParams.Page_From_Amort';
     var pageAttachment = '@GlobalParams.Page_From_Attachment';
     var dealType_Sports = '@GlobalParams.Deal_Type_Sports'
@@ -95,6 +97,9 @@
                 }
                 else if ('@ViewBag.currntTab' == 'SUPP_DTL_AE') {
                     BindPartialTabs(pageSupplementary);
+                }
+                else if ('@ViewBag.currntTab' == 'DIGI_DTL_AE') {
+                    BindPartialTabs(pageDigital);
                 }
                 else if ('@ViewBag.currentTab' == "RGT_DTL_VW") {
                     BindPartialTabs(pageRightsDetailView);
@@ -162,6 +167,9 @@
                 }
                 else if ('@ViewBag.currentTab' == "SUPP") {
                     BindPartialTabs(pageSupplementary);
+                }
+                else if ('@ViewBag.currentTab' == "DIGI") {
+                    BindPartialTabs(pageDigital);
                 }
                 else if ('@ViewBag.currentTab' == "GNR") {
                     BindPartialTabs(pageGeneral);
@@ -298,7 +306,7 @@
         $('#divPartialTabs').empty();
         CurrentTab = tabName;
         var URL_PartialView = "";
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liSupplementary,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liSports,#liAncillary,#liBudget,#liSupplementary,#liDigital,#liCost,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory,#liDigitalRights,#liAmort").removeClass("active");
         if (tabName == pageGeneral) {
 
            // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?acq_General');
@@ -320,6 +328,10 @@
         else if (tabName == pageSupplementaryAddEdit) {
             URL_PartialView = '@Url.Action("AddEditSupp", "Acq_Supplementary")';
             $("#liSupplementary").addClass("active");
+        }
+        else if (tabName == pageDigitalAddEdit) {
+            URL_PartialView = '@Url.Action("AddEditDigital", "Acq_Digital")';
+            $("#liDigital").addClass("active");
         }
         else if (tabName == pageRightsDetailView) {
 
@@ -377,6 +389,10 @@
         else if (tabName == pageSupplementary) {
               URL_PartialView = '@Url.Action("Index", "Acq_Supplementary")';
             $("#liSupplementary").addClass("active");
+        }
+        else if (tabName == pageDigital) {
+              URL_PartialView = '@Url.Action("Index", "Acq_Digital")';
+            $("#liDigital").addClass("active");
         }
         else if (tabName == pageAncillary) {
             var dealTypeCode = GetDealTypeCodeFromServer();

@@ -922,6 +922,8 @@ public class MessageKey
     public string SaveApprove { get; set; }
     public string AddPaymentTerm { get; set; }
     public string SupplementaryDetailssavedsuccesfully { get; set; }
+
+    public string DigitalDetailsSavedSuccessfully { get; set; }
     public string DaysbeforeorafterMilestone { get; set; }
     public string PercentageAmount { get; set; }
     public string DueDate { get; set; }
@@ -1090,6 +1092,7 @@ public class MessageKey
     public string AddRights { get; set; }
 
     public string AddSupplementary { get; set;}
+    public string AddDigital { get; set; }
     public string ExclusiveRights { get; set; }
     public string BulkUpdate { get; set; }
     public string RightsDefinition { get; set; }
@@ -1248,7 +1251,7 @@ public class MessageKey
     public string Ancillary { get; set; }
     public string Budget { get; set; }
     public string Supplementary { get; set; }
-
+    public string Digital { get; set; }
     public string PaymentTerms { get; set; }
      
     public string DealArchive { get; set; }

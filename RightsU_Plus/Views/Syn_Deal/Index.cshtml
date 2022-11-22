@@ -50,7 +50,8 @@
     var pageAncillary = '@GlobalParams.Page_From_Ancillary';
     var pageSupplementary = '@GlobalParams.Page_From_Supplementary';
     var pageSupplementaryAddEdit = '@GlobalParams.Page_From_Supplementary_AddEdit';
-
+    var pageDigitalAddEdit = '@GlobalParams.Page_From_Digital_AddEdit';
+    var digital_Rights = '@GlobalParams.Page_From_Digital_Rights';
 
     $(document).ready(function () {
         if ('@ViewBag.currentTab' != "") {
@@ -137,6 +138,9 @@
             }
             else if ('@ViewBag.currentTab' == "SUPP") {
                 BindPartialTabs(pageSupplementary);
+            }
+            else if ('@ViewBag.currentTab' == "DIGI") {
+                BindPartialTabs(pageDigital);
             }
         }
         else

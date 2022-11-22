@@ -453,7 +453,7 @@
                     let v = $(a).val().toString();
                     if ($(a).is("select")) {
                         vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
-                        $(a)[0].sumo.unSelectAll();
+                        //$(a)[0].sumo.unSelectAll();
                     }
                     else
                         if ($(a).is(":checkbox")) {
@@ -528,6 +528,8 @@
         debugger;
         if (document.getElementById("btnSaveDeal").style.display != "none")
             showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
+        else
+            Cancel_SupplementaryView();
     }
 
     function Cancel_SupplementaryView() {
