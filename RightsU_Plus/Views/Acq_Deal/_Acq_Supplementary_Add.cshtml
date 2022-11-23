@@ -453,7 +453,9 @@
                     let v = $(a).val().toString();
                     if ($(a).is("select")) {
                         vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
-                        //$(a)[0].sumo.unSelectAll();
+                        if ($(a).prop('multiple')) {
+                            $(a)[0].sumo.unSelectAll();
+                        }
                     }
                     else
                         if ($(a).is(":checkbox")) {

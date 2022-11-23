@@ -844,6 +844,8 @@ namespace RightsU_Plus.Controllers
             string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
             int[] dtextval;
 
+            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list)) { return true; }
+
             foreach (string str in columnValueList)
             {
                 //string[] vals = str.Split('~');
@@ -1106,6 +1108,12 @@ namespace RightsU_Plus.Controllers
             int count = objAcq_Deal_Digital.Acq_Deal_Digital_detail.Where(x => x.EntityState != State.Deleted).Count();
             obj.Add("detailsCnt", count);
             return Json(obj);
+        }
+
+        public bool RowDuplicateValidation(List<Acq_Deal_Digital_detail> lst, string Value_list)
+        {
+
+            return false;
         }
     }
 }
