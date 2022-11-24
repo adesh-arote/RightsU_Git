@@ -52,6 +52,7 @@ namespace RightsU_InterimDb.Models
     	    public string IsProductionHouseUser { get; set; }
     	    public Nullable<System.DateTime> Created_On { get; set; }
     	    public Nullable<int> Created_By { get; set; }
+    	    public string ChangePasswordLinkGUID { get; set; }
     
         public virtual ICollection<BVException_Users> BVException_Users { get; set; }
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail { get; set; }

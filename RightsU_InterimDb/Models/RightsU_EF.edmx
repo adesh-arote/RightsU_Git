@@ -5804,6 +5804,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Default_Entity_Code" Type="int" />
           <Property Name="User_Image" Type="varchar" MaxLength="500" />
           <Property Name="System_Language_Code" Type="int" />
+          <Property Name="ChangePasswordLinkGUID" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="Users_Business_Unit">
           <Key>
@@ -24831,6 +24832,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Users_Configuration" Relationship="RightsU_NeoModel.FK__Users_Con__Users__528FDD90" FromRole="User" ToRole="Users_Configuration" />
           <NavigationProperty Name="Users_Exclusion_Rights" Relationship="RightsU_NeoModel.FK__Users_Exc__Users__56606E74" FromRole="User" ToRole="Users_Exclusion_Rights" />
           <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Users" FromRole="User" ToRole="Users_Detail" />
+          <Property Name="ChangePasswordLinkGUID" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Users_Business_Unit">
           <Key>
@@ -40264,6 +40266,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RightsU_NeoModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ChangePasswordLinkGUID" ColumnName="ChangePasswordLinkGUID" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
                 <ScalarProperty Name="IsProductionHouseUser" ColumnName="IsProductionHouseUser" />
@@ -47139,7 +47142,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
