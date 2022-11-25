@@ -823,81 +823,75 @@ namespace RightsU_Plus.Controllers
             obj.Add("TabName", tabName);
             return Json(obj);
         }
-        public bool supplementaryDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
-        {
-            List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
-            Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
+        //public bool supplementaryDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
+        //{
+        //    List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
+        //    Acq_Deal_Supplementary objSupplementary = new Acq_Deal_Supplementary();
 
-            Dictionary<string, object> obj = new Dictionary<string, object>();
+        //    Dictionary<string, object> obj = new Dictionary<string, object>();
 
-            objSupplementary = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
-            lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
+        //    objSupplementary = (Acq_Deal_Supplementary)objAcq_Deal_Supplementary;
+        //    lstDetailObj = (List<Acq_Deal_Supplementary_detail>)objSupplementary.Acq_Deal_Supplementary_detail.ToList();
 
-            Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
+        //    Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
-            Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
-            int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
-            int config_Code = 0;
-            String ErrorCode = "";
-            //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
-            Value_list = Value_list.Substring(0, Value_list.Length - 2);
-            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
-            int[] dtextval;
+        //    Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
+        //    int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
+        //    int config_Code = 0;
+        //    String ErrorCode = "";
+        //    //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+        //    Value_list = Value_list.Substring(0, Value_list.Length - 2);
+        //    string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+        //    int[] dtextval;
 
-            foreach (string str in columnValueList)
-            {
-                //string[] vals = str.Split('~');
-                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
-                config_Code = Convert.ToInt32(vals[1]);
-                string tempVal = "";
+        //    foreach (string str in columnValueList)
+        //    {
+        //        //string[] vals = str.Split('~');
+        //        string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+        //        config_Code = Convert.ToInt32(vals[1]);
+        //        string tempVal = "";
 
-                string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
-                if (ControlType == "TXTDDL")
-                {
-                    if (vals[0] != "")
-                    {
-                        dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+        //        string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+        //        if (ControlType == "TXTDDL")
+        //        {
+        //            if (vals[0] != "")
+        //            {
+        //                dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
 
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
-                                                                           S.Supplementary_Config_Code == config_Code &&
-                                                                           S.Row_Num.Value != Row_No &&
-                                                                           S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
+        //                List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
+        //                                                                   S.Supplementary_Config_Code == config_Code &&
+        //                                                                   S.Row_Num.Value != Row_No &&
+        //                                                                   S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
 
-                        tempVal = string.Join(",", selectedDrp);
+        //                tempVal = string.Join(",", selectedDrp);
 
-                        int i = 1;
-                        //if (Operation != "E")
-                        //{
-                        foreach (int dt in dtextval)
-                        {
-                            if (tempVal.IndexOf(dt.ToString(), 0) > -1)
-                            {
-                                return true;
+        //                int i = 1;
+        //                //if (Operation != "E")
+        //                //{
+        //                foreach (int dt in dtextval)
+        //                {
+        //                    if (tempVal.IndexOf(dt.ToString(), 0) > -1)
+        //                    {
+        //                        return true;
 
-                            }
-                            i++;
-                        }
-                        //}
-                        //else
-                        //{
-                        //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
+        //                    }
+        //                    i++;
+        //                }
+        //                //}
+        //                //else
+        //                //{
+        //                //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
 
-                        //}
-                    }
-                }
-            }
-            //obj.Add("ErrorCode", ErrorCode);
-            //obj.Add("ErrorMsg", "Duplicate Value Not allowed");
-            return false;
-        }
+        //                //}
+        //            }
+        //        }
+        //    }
+        //    //obj.Add("ErrorCode", ErrorCode);
+        //    //obj.Add("ErrorMsg", "Duplicate Value Not allowed");
+        //    return false;
+        //}
         public string supplementarySave(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex)
         {
-            //check for duplicate
-            if (supplementaryDupliValidation(Value_list, Short_Name, Row_No, Operation))
-            {
-                return "Duplicate";
-            }
-
             Acq_Deal_Supplementary objSupplementary = objAcq_Deal_Supplementary;
             List<Acq_Deal_Supplementary_detail> lstDetailObj = objSupplementary.Acq_Deal_Supplementary_detail.ToList();
 
@@ -905,6 +899,15 @@ namespace RightsU_Plus.Controllers
             Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
             int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
 
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+            //check for duplicate
+            //if (DigitalDupliValidation(Value_list, Short_Name, Row_No, Operation))
+            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Supplementary_Tab_Code == TabCode).ToList(), Value_list, TabCode))
+            {
+                return "Duplicate";
+            }
+            
             Supplementary_Data_Service objDataService = new Supplementary_Data_Service(objLoginEntity.ConnectionStringName);
             Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
 
@@ -918,8 +921,6 @@ namespace RightsU_Plus.Controllers
                 rowNum = Row_No;
                 //    lstDetailObj.RemoveAll(a => a.Row_Num == rowNum && a.Supplementary_Tab_Code == TabCode);
             }
-            Value_list = Value_list.Substring(0, Value_list.Length - 2);
-            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
 
             //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
             string Output = "";
@@ -1106,6 +1107,72 @@ namespace RightsU_Plus.Controllers
             int count = objAcq_Deal_Supplementary.Acq_Deal_Supplementary_detail.Where(x => x.EntityState != State.Deleted).Count();
             obj.Add("detailsCnt", count);
             return Json(obj);
+        }
+
+        public bool RowDuplicateValidation(List<Acq_Deal_Supplementary_detail> lst, string Value_list, int TabCode)
+        {
+            Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
+            int roNum = 0;
+            if (lst.Count == 0)
+                roNum = 1;
+            else
+                roNum = Convert.ToInt32(lst.LastOrDefault().Row_Num) + 1;
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            foreach (string str in columnValueList)
+            {
+                Acq_Deal_Supplementary_detail objToBeChecked = new Acq_Deal_Supplementary_detail();
+
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                int config_Code = Convert.ToInt32(vals[1]);
+
+                string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                if (ControlType == "TXTDDL")
+                {
+                    objToBeChecked.Supplementary_Data_Code = vals[0].Replace('-', ',');
+                }
+                else
+                {
+                    objToBeChecked.User_Value = vals[0];
+                }
+                objToBeChecked.Supplementary_Config_Code = Convert.ToInt32(vals[1]);
+                objToBeChecked.Supplementary_Tab_Code = TabCode;
+                objToBeChecked.Row_Num = roNum;
+                lst.Add(objToBeChecked);
+            }
+
+            List<string> tempList = new List<string>();
+            List<string> newList = new List<string>();
+            int oldRow = 0; int dim = lst.Count(x => (x.Row_Num == roNum && x.Supplementary_Data_Code != null));
+
+            foreach (Acq_Deal_Supplementary_detail a in lst)
+            {
+                if (a.Supplementary_Data_Code != "" && a.Supplementary_Data_Code != null)
+                {
+                    if (tempList.Count > 0 && (oldRow == Convert.ToInt32(a.Row_Num) || oldRow == 0))
+                    {
+                        List<string> l = new List<string>();
+                        l = a.Supplementary_Data_Code.Split(',').ToList();
+                        foreach (string t in tempList)
+                        {
+                            foreach (string s in l)
+                            {
+                                newList.Add(t + "-" + s);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        tempList = a.Supplementary_Data_Code.Split(',').ToList();
+                        if (dim == 1) newList.AddRange(tempList);
+                    }
+                }
+                oldRow = Convert.ToInt32(a.Row_Num);
+            }
+            if (newList.Count != (newList.Distinct<string>().ToList()).Count())
+                return true;
+            else
+                return false;
         }
     }
 }

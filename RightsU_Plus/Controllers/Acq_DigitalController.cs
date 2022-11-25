@@ -2,10 +2,10 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Objects;
+using System.Linq;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
-using System.Linq;
-using System.Data.Entity.Core.Objects;
 
 namespace RightsU_Plus.Controllers
 {
@@ -494,7 +494,7 @@ namespace RightsU_Plus.Controllers
             List<Acq_Deal_Digital_detail> lstDetailObj = new List<Acq_Deal_Digital_detail>();
 
             Digital_Tab_Service objTabService = new Digital_Tab_Service(objLoginEntity.ConnectionStringName);
-            int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
+            int TabCode = objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
 
             Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
 
@@ -504,7 +504,7 @@ namespace RightsU_Plus.Controllers
             //}
             //else
             //{
-            lstDetailObj = (List<Acq_Deal_Digital_detail>)((Acq_Deal_Digital)objAcq_Deal_Digital).Acq_Deal_Digital_detail.ToList();
+            lstDetailObj = objAcq_Deal_Digital.Acq_Deal_Digital_detail.ToList();
 
             lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Digital_Tab_Code == TabCode).ToList();
 
@@ -587,7 +587,7 @@ namespace RightsU_Plus.Controllers
 
             if (objAcq_Deal_Digital != null)
             {
-                lstDetailObj = (List<Acq_Deal_Digital_detail>)((Acq_Deal_Digital)objAcq_Deal_Digital).Acq_Deal_Digital_detail.ToList();
+                lstDetailObj = objAcq_Deal_Digital.Acq_Deal_Digital_detail.ToList();
             }
 
             List<Acq_Deal_Digital_detail> objDelete = new List<Acq_Deal_Digital_detail>();
@@ -599,7 +599,7 @@ namespace RightsU_Plus.Controllers
                 objDel.EntityState = State.Deleted;
             }
 
-            ((Acq_Deal_Digital)objAcq_Deal_Digital).Acq_Deal_Digital_detail = lstDetailObj;
+            objAcq_Deal_Digital.Acq_Deal_Digital_detail = lstDetailObj;
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
 
@@ -634,11 +634,11 @@ namespace RightsU_Plus.Controllers
 
             if (Operation == "E")
             {
-                int TabCode = (int)objDigital_Tab.Digital_Tab_Code;
+                int TabCode = objDigital_Tab.Digital_Tab_Code;
 
                 Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
 
-                lstDetailObj = (List<Acq_Deal_Digital_detail>)((Acq_Deal_Digital)objAcq_Deal_Digital).Acq_Deal_Digital_detail.ToList();
+                lstDetailObj = objAcq_Deal_Digital.Acq_Deal_Digital_detail.ToList();
 
                 lstDetailObj = lstDetailObj.Where(a => a.Row_Num == rowno && a.Digital_Tab_Code == TabCode).ToList();
 
@@ -823,89 +823,92 @@ namespace RightsU_Plus.Controllers
             obj.Add("TabName", tabName);
             return Json(obj);
         }
-        public bool DigitalDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
-        {
-            List<Acq_Deal_Digital_detail> lstDetailObj = new List<Acq_Deal_Digital_detail>();
-            Acq_Deal_Digital objDigital = new Acq_Deal_Digital();
+        //////public bool DigitalDupliValidation(string Value_list, string Short_Name, int Row_No, string Operation)
+        //////{
+        //////    List<Acq_Deal_Digital_detail> lstDetailObj = new List<Acq_Deal_Digital_detail>();
+        //////    Acq_Deal_Digital objDigital = new Acq_Deal_Digital();
 
-            Dictionary<string, object> obj = new Dictionary<string, object>();
+        //////    Dictionary<string, object> obj = new Dictionary<string, object>();
 
-            objDigital = (Acq_Deal_Digital)objAcq_Deal_Digital;
-            lstDetailObj = (List<Acq_Deal_Digital_detail>)objDigital.Acq_Deal_Digital_detail.ToList();
+        //////    objDigital = objAcq_Deal_Digital;
+        //////    lstDetailObj = objDigital.Acq_Deal_Digital_detail.ToList();
 
-            Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
+        //////    Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
 
-            Digital_Tab_Service objTabService = new Digital_Tab_Service(objLoginEntity.ConnectionStringName);
-            int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
-            int config_Code = 0;
-            String ErrorCode = "";
+        //////    Digital_Tab_Service objTabService = new Digital_Tab_Service(objLoginEntity.ConnectionStringName);
+        //////    int TabCode = objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
+            //////int config_Code = 0;
+            //////String ErrorCode = "";
             //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
-            Value_list = Value_list.Substring(0, Value_list.Length - 2);
-            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
-            int[] dtextval;
+            //////Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            //////string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+            //////int[] dtextval;
 
-            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list)) { return true; }
+            //////if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list, TabCode)) { return true; }
 
-            foreach (string str in columnValueList)
-            {
-                //string[] vals = str.Split('~');
-                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
-                config_Code = Convert.ToInt32(vals[1]);
-                string tempVal = "";
+            //////foreach (string str in columnValueList)
+            //////{
+            //////    //string[] vals = str.Split('~');
+            //////    string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+            //////    config_Code = Convert.ToInt32(vals[1]);
+            //////    string tempVal = "";
 
-                string ControlType = objConfigService.SearchFor(a => a.Digital_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
-                if (ControlType == "TXTDDL")
-                {
-                    if (vals[0] != "")
-                    {
-                        dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+            //////    string ControlType = objConfigService.SearchFor(a => a.Digital_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+            //////    if (ControlType == "TXTDDL")
+            //////    {
+            //////        if (vals[0] != "")
+            //////        {
+            //////            dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
 
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Digital_Tab_Code == TabCode &&
-                                                                           S.Digital_Config_Code == config_Code &&
-                                                                           S.Row_Num.Value != Row_No &&
-                                                                           S.EntityState != State.Deleted).Select(K => K.Digital_Data_Code).ToList();
+            //////            List<string> selectedDrp = lstDetailObj.Where(S => S.Digital_Tab_Code == TabCode &&
+            //////                                                               S.Digital_Config_Code == config_Code &&
+            //////                                                               S.Row_Num.Value != Row_No &&
+            //////                                                               S.EntityState != State.Deleted).Select(K => K.Digital_Data_Code).ToList();
 
-                        tempVal = string.Join(",", selectedDrp);
+            //////            tempVal = string.Join(",", selectedDrp);
 
-                        int i = 1;
-                        //if (Operation != "E")
-                        //{
-                        foreach (int dt in dtextval)
-                        {
-                            if (tempVal.IndexOf(dt.ToString(), 0) > -1)
-                            {
-                                return true;
+            //////            int i = 1;
+            //////            //if (Operation != "E")
+            //////            //{
+            //////            foreach (int dt in dtextval)
+            //////            {
+            //////                if (tempVal.IndexOf(dt.ToString(), 0) > -1)
+            //////                {
+            //////                    return true;
 
-                            }
-                            i++;
-                        }
-                        //}
-                        //else
-                        //{
-                        //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Digital_Tab_Code == TabCode && S.Digital_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Digital_Data_Code).ToList();
+            //////                }
+            //////                i++;
+            //////            }
+            //////            //}
+            //////            //else
+            //////            //{
+            //////            //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Digital_Tab_Code == TabCode && S.Digital_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Digital_Data_Code).ToList();
 
-                        //}
-                    }
-                }
-            }
+            //////            //}
+            //////        }
+            //////    }
+            //////}
             //obj.Add("ErrorCode", ErrorCode);
             //obj.Add("ErrorMsg", "Duplicate Value Not allowed");
-            return false;
-        }
+            //////return false;
+        //////}
         public string DigitalSave(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex)
         {
-            //check for duplicate
-            if (DigitalDupliValidation(Value_list, Short_Name, Row_No, Operation))
-            {
-                return "Duplicate";
-            }
-
             Acq_Deal_Digital objDigital = objAcq_Deal_Digital;
             List<Acq_Deal_Digital_detail> lstDetailObj = objDigital.Acq_Deal_Digital_detail.ToList();
 
             //"1~1,sai~2,"
             Digital_Tab_Service objTabService = new Digital_Tab_Service(objLoginEntity.ConnectionStringName);
-            int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
+            int TabCode = objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Digital_Tab_Code).FirstOrDefault();
+
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+            //check for duplicate
+            //if (DigitalDupliValidation(Value_list, Short_Name, Row_No, Operation))
+            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list, TabCode))
+            {
+                return "Duplicate";
+            }
 
             Digital_Data_Service objDataService = new Digital_Data_Service(objLoginEntity.ConnectionStringName);
             Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
@@ -913,15 +916,13 @@ namespace RightsU_Plus.Controllers
             int rowNum = 0;
             if (lstDetailObj.Count(b => b.Digital_Tab_Code == TabCode) != 0 && Operation == "A")
             {
-                rowNum = (int)lstDetailObj.Where(b => b.Digital_Tab_Code == TabCode).Max(a => a.Row_Num).Value;
+                rowNum = lstDetailObj.Where(b => b.Digital_Tab_Code == TabCode).Max(a => a.Row_Num).Value;
             }
             else
             {
                 rowNum = Row_No;
                 //    lstDetailObj.RemoveAll(a => a.Row_Num == rowNum && a.Digital_Tab_Code == TabCode);
             }
-            Value_list = Value_list.Substring(0, Value_list.Length - 2);
-            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
 
             //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
             string Output = "";
@@ -996,8 +997,8 @@ namespace RightsU_Plus.Controllers
         public JsonResult DigitalSaveDB(string Title_List, string Remarks, int page_size, int page_index)
         {
             Dictionary<string, object> obj = new Dictionary<string, object>();
-            Acq_Deal_Digital objDigitalTemp = (Acq_Deal_Digital)objAcq_Deal_Digital;
-            List<Acq_Deal_Digital_detail> lstDetailObj = (List<Acq_Deal_Digital_detail>)objDigitalTemp.Acq_Deal_Digital_detail.ToList();
+            Acq_Deal_Digital objDigitalTemp = objAcq_Deal_Digital;
+            List<Acq_Deal_Digital_detail> lstDetailObj = objDigitalTemp.Acq_Deal_Digital_detail.ToList();
             Acq_Deal_Digital_Service objTransactionService = new Acq_Deal_Digital_Service(objLoginEntity.ConnectionStringName);
 
             if (objAcq_Deal_Digital == null)
@@ -1110,10 +1111,73 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public bool RowDuplicateValidation(List<Acq_Deal_Digital_detail> lst, string Value_list)
+        public bool RowDuplicateValidation(List<Acq_Deal_Digital_detail> lst, string Value_list, int TabCode)
         {
+            Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
 
-            return false;
+            int roNum = 0;
+            if (lst.Count == 0)
+                roNum = 1;
+            else
+                roNum = Convert.ToInt32(lst.LastOrDefault().Row_Num) + 1;
+            
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            foreach (string str in columnValueList)
+            {
+                Acq_Deal_Digital_detail objToBeChecked = new Acq_Deal_Digital_detail();
+
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                int config_Code = Convert.ToInt32(vals[1]);
+
+                string ControlType = objConfigService.SearchFor(a => a.Digital_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                if (ControlType == "TXTDDL")
+                {
+                    objToBeChecked.Digital_Data_Code = vals[0].Replace('-', ',');
+                }
+                else
+                {
+                    objToBeChecked.User_Value = vals[0];
+                }
+                objToBeChecked.Digital_Config_Code = Convert.ToInt32(vals[1]);
+                objToBeChecked.Digital_Tab_Code = TabCode;
+                objToBeChecked.Row_Num = roNum;
+                lst.Add(objToBeChecked);
+            }
+
+
+            List<string> tempList = new List<string>();
+            List<string> newList = new List<string>();
+            int oldRow = 0; int dim = lst.Count(x => (x.Row_Num == roNum && x.Digital_Data_Code != null));
+
+            foreach (Acq_Deal_Digital_detail a in lst)
+            {
+                if (a.Digital_Data_Code != "" && a.Digital_Data_Code != null)
+                {
+                    if (tempList.Count > 0 && (oldRow == Convert.ToInt32(a.Row_Num) || oldRow == 0))
+                    {
+                        List<string> l = new List<string>();
+                        l = a.Digital_Data_Code.Split(',').ToList();
+                        foreach (string t in tempList)
+                        {
+                            foreach (string s in l)
+                            {
+                                newList.Add( t + "-" + s);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        tempList = a.Digital_Data_Code.Split(',').ToList();
+                        if (dim == 1) newList.AddRange(tempList);
+                    }
+                }
+                oldRow = Convert.ToInt32(a.Row_Num);
+            }
+            if (newList.Count != (newList.Distinct<string>().ToList()).Count())
+                return true;
+            else
+                return false;
         }
     }
 }
