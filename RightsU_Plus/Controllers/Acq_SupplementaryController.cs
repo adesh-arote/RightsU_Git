@@ -489,7 +489,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult supplementaryEdit(int supplementary_Code, int rowno, int num, string Short_Name, string View)
         {
             Dictionary<string, object> Jsonobj = new Dictionary<string, object>();
-
+            int i = 1, j = 1, k = 1, l = 1, m = 1;
             List<USP_Get_Acq_Deal_Supplementary_Edit_Result> EditRowList = new List<USP_Get_Acq_Deal_Supplementary_Edit_Result>();
             List<Acq_Deal_Supplementary_detail> lstDetailObj = new List<Acq_Deal_Supplementary_detail>();
 
@@ -538,7 +538,6 @@ namespace RightsU_Plus.Controllers
             foreach (USP_Get_Acq_Deal_Supplementary_Edit_Result ED in EditRowList)
             {
                 strAddRow = strAddRow + "<td>";
-                int i = 1, j = 1, k = 1, l = 1, m = 1;
                 if (ED.Control_Type == "TXTDDL")
                 {
                     strAddRow = strAddRow + getDDL(objSupplementary_Data, Short_Name, i, ED.Whr_Criteria, ED.Supplementary_Data_Code, "E", "multiple", Convert.ToInt32(ED.Supplementary_Config_Code));
