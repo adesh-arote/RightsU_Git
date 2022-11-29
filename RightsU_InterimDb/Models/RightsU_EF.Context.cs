@@ -444,7 +444,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
     
-        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
@@ -454,7 +454,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Search_Platform_Name", search_Platform_Name) :
                 new ObjectParameter("Search_Platform_Name", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter);
+            var iS_Sport_RightsParameter = iS_Sport_Rights != null ?
+                new ObjectParameter("IS_Sport_Rights", iS_Sport_Rights) :
+                new ObjectParameter("IS_Sport_Rights", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, iS_Sport_RightsParameter);
         }
     
         public virtual ObjectResult<USP_Get_Territory_ForDDL_Result> USP_Get_Territory_ForDDL(string is_Theatrical)

@@ -99,6 +99,7 @@
           <Property Name="Deal_Segment_Code" Type="int" />
           <Property Name="Revenue_Vertical_Code" Type="int" />
           <Property Name="Confirming_Party" Type="nvarchar(max)" />
+          <Property Name="Material_Remarks" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -4533,6 +4534,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Deal_Segment_Code" Type="int" />
           <Property Name="Revenue_Vertical_Code" Type="int" />
+          <Property Name="Material_Remarks" Type="nvarchar" MaxLength="4000" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -5460,6 +5462,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Version_Code" Type="int" />
           <Property Name="Duration" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MusicSystemCode" Type="int" />
+          <Property Name="StatusCode" Type="int" />
         </EntityType>
         <EntityType Name="Title_Content_Version_Details">
           <Key>
@@ -5705,6 +5708,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Default_Entity_Code" Type="int" />
           <Property Name="User_Image" Type="varchar" MaxLength="500" />
           <Property Name="System_Language_Code" Type="int" />
+          <Property Name="ChangePasswordLinkGUID" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="Users_Business_Unit">
           <Key>
@@ -12896,7 +12900,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_Get_Platform_Tree_Hierarchy" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PlatformCodes" Type="varchar" Mode="In" />
-          <Parameter Name="Search_Platform_Name" Type="varchar" Mode="In" />
+          <Parameter Name="Search_Platform_Name" Type="nvarchar" Mode="In" />
+          <Parameter Name="IS_Sport_Rights" Type="char" Mode="In" />
         </Function>
         <Function Name="USP_Get_PlatformCodes_For_Ancillary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Title_Codes" Type="varchar" Mode="In" />
@@ -18597,6 +18602,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Get_Platform_Tree_Hierarchy" ReturnType="Collection(RightsU_NeoModel.USP_Get_Platform_Tree_Hierarchy_Result)">
             <Parameter Name="PlatformCodes" Mode="In" Type="String" />
             <Parameter Name="Search_Platform_Name" Mode="In" Type="String" />
+            <Parameter Name="IS_Sport_Rights" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Territory_ForDDL" ReturnType="Collection(RightsU_NeoModel.USP_Get_Territory_ForDDL_Result)">
           <Parameter Name="Is_Theatrical" Mode="In" Type="String" />
@@ -21649,6 +21655,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Acq_Deal_Revenue_Vertical" FromRole="Acq_Deal" ToRole="Revenue_Vertical" />
           <Property Name="Confirming_Party" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Acq_Deal" FromRole="Acq_Deal" ToRole="Acq_Deal_Supplementary" />
+          <Property Name="Material_Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Acq_Deal_Ancillary">
           <Key>
@@ -23889,6 +23896,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Revenue_Vertical_Code" Type="Int32" />
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" FromRole="Syn_Deal" ToRole="Revenue_Vertical" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Supplementary" />
+          <Property Name="Material_Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -24578,6 +24586,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Users_Configuration" Relationship="RightsU_NeoModel.FK__Users_Con__Users__528FDD90" FromRole="User" ToRole="Users_Configuration" />
           <NavigationProperty Name="Users_Exclusion_Rights" Relationship="RightsU_NeoModel.FK__Users_Exc__Users__56606E74" FromRole="User" ToRole="Users_Exclusion_Rights" />
           <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Users" FromRole="User" ToRole="Users_Detail" />
+          <Property Name="ChangePasswordLinkGUID" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Users_Business_Unit">
           <Key>
@@ -32432,6 +32441,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Version" Relationship="RightsU_NeoModel.FK_Title_Content_Version_Version" FromRole="Title_Content_Version" ToRole="Version" />
           <NavigationProperty Name="Title_Content_Version_Details" Relationship="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" FromRole="Title_Content_Version" ToRole="Title_Content_Version_Details" />
           <Property Name="MusicSystemCode" Type="Int32" />
+          <Property Name="StatusCode" Type="Int32" />
         </EntityType>
         <Association Name="FK_Content_Music_Link_Title_Content_Version">
           <End Type="RightsU_NeoModel.Title_Content_Version" Role="Title_Content_Version" Multiplicity="0..1" />
@@ -36924,6 +36934,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <MappingFragment StoreEntitySet="Acq_Deal">
+                <ScalarProperty Name="Material_Remarks" ColumnName="Material_Remarks" />
                 <ScalarProperty Name="Confirming_Party" ColumnName="Confirming_Party" />
                 <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
@@ -39133,6 +39144,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <MappingFragment StoreEntitySet="Syn_Deal">
+                <ScalarProperty Name="Material_Remarks" ColumnName="Material_Remarks" />
                 <ScalarProperty Name="Revenue_Vertical_Code" ColumnName="Revenue_Vertical_Code" />
                 <ScalarProperty Name="Deal_Segment_Code" ColumnName="Deal_Segment_Code" />
                 <ScalarProperty Name="Deal_Complete_Flag" ColumnName="Deal_Complete_Flag" />
@@ -39846,6 +39858,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="RightsU_NeoModel.User">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ChangePasswordLinkGUID" ColumnName="ChangePasswordLinkGUID" />
                 <ScalarProperty Name="Created_By" ColumnName="Created_By" />
                 <ScalarProperty Name="Created_On" ColumnName="Created_On" />
                 <ScalarProperty Name="IsProductionHouseUser" ColumnName="IsProductionHouseUser" />
@@ -43455,6 +43468,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Title_Content_Version">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Content_Version">
               <MappingFragment StoreEntitySet="Title_Content_Version">
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
                 <ScalarProperty Name="MusicSystemCode" ColumnName="MusicSystemCode" />
                 <ScalarProperty Name="Duration" ColumnName="Duration" />
                 <ScalarProperty Name="Version_Code" ColumnName="Version_Code" />
