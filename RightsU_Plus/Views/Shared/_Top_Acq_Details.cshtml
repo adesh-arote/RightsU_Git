@@ -100,6 +100,10 @@
                 else if (CurrentTab == pagePaymentTerm) {
                     $('#btnSaveDeal').click();
                 }
+                else if (CurrentTab == pageMaterial) {
+                    $('#btnSaveDeal').click();
+                    return true;
+                }
                 else if (CurrentTab == pageCost && GetCostTabConfigFromServer() != 'Y') {
                     //var isDirectCostGrid = GetCostTabConfigFromServer();
                     //if (isDirectCostGrid != "Y") {

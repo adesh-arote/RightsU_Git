@@ -64,6 +64,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageMode = objDeal_Schema.Mode;
             ViewBag.Approver_Remark = objDeal_Schema.Approver_Remark;
             ViewBag.Deal_Type_Condition = objDeal_Schema.Deal_Type_Condition;
+            ViewBag.Remark = objDeal.Material_Remarks;
             if (objDeal_Schema.Mode != GlobalParams.DEAL_MODE_ADD && objDeal_Schema.Mode != GlobalParams.DEAL_MODE_VIEW)
             {
                 ViewBag.Record_Locking_Code = objDeal_Schema.Record_Locking_Code;
@@ -181,10 +182,45 @@ namespace RightsU_Plus.Controllers
             }
             return BindGridAcqMaterial(txtPageSize, pageNo);
         }
-
-        public ActionResult ChangeTab(string hdnTabName)
+        
+        public JsonResult ChangeTab(string hdnMaterialRemark, string hdnTabName, string hdnReopenMode = "")
         {
-            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().RedirectToControl(hdnTabName, objDeal_Schema.PageNo, objDeal_Schema.Deal_Type_Code);
+            string msg = "", mode = "", status = "S";
+            if (hdnReopenMode == "RO")
+            {
+                mode = GlobalParams.DEAL_MODE_EDIT;
+                status = "SA";
+            }
+            else
+                mode = objDeal_Schema.Mode;
+
+            if (mode == GlobalParams.DEAL_MODE_REOPEN)
+            {
+                objDeal_Schema.Deal_Workflow_Flag = objDeal.Deal_Workflow_Status = Convert.ToString(mode).Trim();
+            }
+
+            if (objDeal_Schema.Mode != "V")
+            SaveRemark(hdnMaterialRemark);              
+            
+            if (hdnTabName == "")
+            {
+                Dictionary<string, string> obj_Dic = new Dictionary<string, string>();
+                obj_Dic.Add("Page_No", objDeal_Schema.PageNo.ToString());
+                TempData[GlobalParams.Cancel_From_Deal] = obj_Dic;
+                string Mode = objDeal_Schema.Mode;
+                TempData["RedirectAcqDeal"] = objDeal;
+                msg = "Deal saved successfully";
+                if (Mode == GlobalParams.DEAL_MODE_EDIT)
+                    msg = "Deal updated successfully";
+            }
+
+            string redirectUrl = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetRedirectURL(hdnTabName, objDeal_Schema.PageNo, null, objDeal_Schema.Deal_Type_Code);
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("Status", status);
+            obj.Add("Success_Message", msg);
+            obj.Add("Redirect_URL", redirectUrl);
+            return Json(obj);
         }
 
         [HttpPost]
@@ -526,6 +562,16 @@ namespace RightsU_Plus.Controllers
             objDeal = null;
         }
 
+        private bool SaveRemark(string HdnRemark)
+        {
+            Acq_Deal_Service objADS = new Acq_Deal_Service(objLoginEntity.ConnectionStringName);
+            objDeal = objADS.GetById(objDeal_Schema.Deal_Code);
+            objDeal.Material_Remarks = HdnRemark.Trim().Substring(0, Math.Min(HdnRemark.Trim().Length, 4000));
+            objDeal.EntityState = State.Modified;
+            dynamic resultSet;
+            bool Result = objADS.Save(objDeal, out resultSet);
+            return Result;
+        }
         #endregion
     }
 }

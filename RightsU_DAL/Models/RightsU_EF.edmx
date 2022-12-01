@@ -14079,6 +14079,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
           <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_Update_IPR_Opp" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="IPR_Opp_Code" Type="int" Mode="In" />
@@ -14240,6 +14241,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_UpdateContentHouseID" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="BV_HouseId_Data_Code" Type="int" Mode="In" />
@@ -37046,6 +37048,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_ACQ_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" Version="Current" />
                   <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" Version="Current" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
@@ -39236,6 +39239,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                   <ResultBinding Name="Agreement_No" ColumnName="Agreement_No" />
                 </InsertFunction>
                 <UpdateFunction FunctionName="RightsU_NeoModel.Store.USP_UPDATE_SYN_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" Version="Current" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" Version="Current" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" Version="Current" />
                   <ScalarProperty Name="Last_Action_By" ParameterName="Last_Action_By" Version="Current" />
