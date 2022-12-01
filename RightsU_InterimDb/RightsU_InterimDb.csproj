@@ -598,6 +598,9 @@
     <Compile Include="Models\HouseID_Type.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ImgPathData.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\IPR_APP_STATUS.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

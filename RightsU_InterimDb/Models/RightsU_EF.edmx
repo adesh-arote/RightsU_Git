@@ -2961,6 +2961,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="ImgPathData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ImgPath" Type="varchar" MaxLength="500" />
+          <Property Name="ImgData" Type="varchar(max)" />
+        </EntityType>
         <EntityType Name="IPR_APP_STATUS">
           <Key>
             <PropertyRef Name="IPR_App_Status_Code" />
@@ -14855,6 +14863,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Glossary_AskExpert" EntityType="Self.Glossary_AskExpert" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Grade_Master" EntityType="Self.Grade_Master" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="HouseID_Type" EntityType="Self.HouseID_Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ImgPathData" EntityType="Self.ImgPathData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IPR_APP_STATUS" EntityType="Self.IPR_APP_STATUS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IPR_CLASS" EntityType="Self.IPR_CLASS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="IPR_Country" EntityType="Self.IPR_Country" Schema="dbo" store:Type="Tables" />
@@ -21812,6 +21821,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Version" EntitySet="Versions" />
             <End Role="Title_Content_Version" EntitySet="Title_Content_Version" />
           </AssociationSet>
+          <EntitySet Name="ImgPathDatas" EntityType="RightsU_NeoModel.ImgPathData" />
           </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -37335,6 +37345,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ImgPathData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ImgPath" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="ImgData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -47125,6 +47143,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Version_Code" ColumnName="Version_Code" />
                 <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
                 <ScalarProperty Name="Title_Content_Version_Code" ColumnName="Title_Content_Version_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ImgPathDatas">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.ImgPathData">
+              <MappingFragment StoreEntitySet="ImgPathData">
+                <ScalarProperty Name="ImgData" ColumnName="ImgData" />
+                <ScalarProperty Name="ImgPath" ColumnName="ImgPath" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

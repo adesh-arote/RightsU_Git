@@ -2024,7 +2024,7 @@ function ValidateSavefromAcqGeneral(Type) {
 
 
                 $('#popAddTitleDealPage').modal('hide');
-                showAlert("S", result.Message, "");
+                showAlert("S", result.Message);
             },
             error: function (result) {
             }

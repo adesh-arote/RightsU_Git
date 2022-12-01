@@ -252,7 +252,8 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "";
             Session["FileName"] = "Acq_General";
             CommonUtil.WriteErrorLog("BindBUList() method is executing", Err_filename);
-            string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            //string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            string Is_AllowMultiBUacqdeal = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdeal").First().Parameter_Value;
             ViewBag.Is_AllowMultiBUacqdeal = Is_AllowMultiBUacqdeal;
             ViewBag.BusineesUnitList = BindBUList();
             CommonUtil.WriteErrorLog("BindBUList() method has been executed", Err_filename);
@@ -430,7 +431,8 @@ namespace RightsU_Plus.Controllers
                         else
                             sql += " and Deal_Workflow_Status not in ('A','W','R')";
                     }
-                    string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    //string Is_AllowMultiBUsyndeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUsyndeal").ToUpper();
+                    string Is_AllowMultiBUsyndeal = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdeal").First().Parameter_Value;
                     if (Is_AllowMultiBUsyndeal != "Y")
                     {
                         obj_Acq_Syn_List_Search.BUCodes_Search = strBU != "" ? Convert.ToInt32(strBU) : 0;
@@ -759,7 +761,8 @@ namespace RightsU_Plus.Controllers
             }
             if (RLCode > 0)
             {
-                string Pushback_Text = DBUtil.GetSystemParameterValue("Pushback_Text").ToUpper();
+                //string Pushback_Text = DBUtil.GetSystemParameterValue("Pushback_Text").ToUpper();
+                string Pushback_Text = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Pushback_Text").First().Parameter_Value;
 
                 obj.Add("Mode", Mode);
                 obj.Add("Acq_Deal_Code", Acq_Deal_Code.ToString());
@@ -1522,7 +1525,8 @@ namespace RightsU_Plus.Controllers
         {
 
             Title_Service objTS = new Title_Service(objLoginEntity.ConnectionStringName);
-            string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            //string Is_AllowMultiBUacqdeal = DBUtil.GetSystemParameterValue("Is_AllowMultiBUacqdeal").ToUpper();
+            string Is_AllowMultiBUacqdeal = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdeal").First().Parameter_Value;
             if (Is_AllowMultiBUacqdeal == "Y")
             {
                 var arrTitleSearch = TitleSearch.Split('﹐').Where(x => x != "").ToList();

@@ -1,7 +1,7 @@
 <RightsUEntities>
   <Entity>
     <ShortName>VMP</ShortName>
-    <FullName>Viacom18 Motion Pictures</FullName>
+    <FullName>VMP</FullName>
     <DatabaseName>RightsU_Plus_Testing</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>

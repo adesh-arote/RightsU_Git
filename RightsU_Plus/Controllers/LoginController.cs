@@ -15,8 +15,6 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.Caching;
 using System.Web.SessionState;
 using System.IO;
-
-
 using System.Globalization;
 using System.Web.SessionState;
 using System.DirectoryServices;
@@ -300,6 +298,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.AlertMsg = alertMsg;
                 LogErr("Index Login", "Login Indec method test ~" + alertMsg, "Line no 17:", Server.MapPath("~"));
                 Session["RedirectToApproval"] = null;
+
             }
             catch (Exception ex)
             {
@@ -314,6 +313,7 @@ namespace RightsU_Plus.Controllers
         {
             ViewBag.BindEntity = BindEntity("");
             GetSystemVersion();
+            SetClientLogo();
             LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
             if (objLoginEntity == null)
                 objLoginEntity = new LoginEntity();
@@ -1072,9 +1072,10 @@ namespace RightsU_Plus.Controllers
             //System.Windows.Forms.MessageBox.Show("Error found:" + msg);
         }
 
+        
         public ActionResult ForgetPassword(string txtLoginID = "", string hdnEntity = "")
         {
-
+            string ChangePasswordLink = "";
             Session["Entity_Type"] = hdnEntity;
             objUser_Service = null;
             objLDS_Service = null;
@@ -1110,20 +1111,21 @@ namespace RightsU_Plus.Controllers
                     objUser.Password_Fail_Count = 0;
                     objUser.Last_Updated_Time = DateTime.Now;
                     objUser.EntityState = State.Modified;
+                    objUser.ChangePasswordLinkGUID = Convert.ToString(Guid.NewGuid());
                     objUser_Service.Save(objUser);
+                    string baseString = ConfigurationManager.AppSettings["SiteAddress"].ToString().ToUpper();
+                    ChangePasswordLink = baseString + "ForgetPasswordLink/?Entype=" + hdnEntity.Trim() + "&Linkid=" + objUser.ChangePasswordLinkGUID.Trim();
                 }
 
                 try
                 {
-                    //int IsMailSend = sendNewPasswordMail(objUser, newPassword);
-                    //alertMsg = alertMsg + "Password has been emailed to you.";
-                    //return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
-                    int IsMailSend = sendchangePasswordLinkMail(objUser, newPassword);
+                    alertMsg = alertMsg + "Email link send for password reset.";
+                    int IsMailSend = sendchangePasswordLinkMail(objUser, newPassword, ChangePasswordLink);
                     return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
                 }
                 catch (Exception ex)
                 {
-                    alertMsg = alertMsg + "Email sending failed, Your new password is '" + newPassword + "'";
+                    alertMsg = alertMsg + "Email sending failed,please go to forget password agian.";
                     return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
                 }
             }
@@ -1134,7 +1136,7 @@ namespace RightsU_Plus.Controllers
             }
 
         }
-
+     
         public ActionResult ChangePasswordCancel(string FromPage = "")
         {
             GetSystemVersion();
@@ -1227,6 +1229,7 @@ namespace RightsU_Plus.Controllers
             }
         }
 
+        #region --- --- Methods --- ---
         [AllowAnonymous]
         public ActionResult ChangePasswordIndex()
         {
@@ -1243,34 +1246,32 @@ namespace RightsU_Plus.Controllers
                 //return RedirectToAction("Index", "Login");
                 return View("ChangePassword");
         }
+        //public ActionResult ChangePasswordLinkIndex()
+        //{
+        //    GetSystemVersion();
+        //    ViewBag.AlertMsg = "";
+        //    objLoginParam = null;
+        //    //LogErr("Index Login", "Login Indec method test ~" + alertMsg, "Line no 17:", Server.MapPath("~"));
+        //    Session["RedirectToApproval"] = null;
+        //    //LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
+        //    //if (objLoginEntity == null)
+        //    //    objLoginEntity = new LoginEntity();
 
+        //    //Session[RightsU_Session.CurrentLoginEntity] = objLoginEntity;
+        //    //User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
+        //    //TempData["FromPage"] = "LOGIN";
+        //    //if (objUser != null)
+        //    //{
+        //    //    Session["FileName"] = "";
+        //    //    Session["FileName"] = "ChangePasswordLink";
+        //    //    return View("ChangePasswordLink");
+        //    //}
+        //    //else
+        //    //return RedirectToAction("Index", "Login");
+        //    return View("ChangePasswordLink");
+        //}
 
-        public ActionResult ChangePasswordLinkIndex()
-        {
-            GetSystemVersion();
-            ViewBag.AlertMsg = "";
-            objLoginParam = null;
-            //LogErr("Index Login", "Login Indec method test ~" + alertMsg, "Line no 17:", Server.MapPath("~"));
-            Session["RedirectToApproval"] = null;
-            //LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
-            //if (objLoginEntity == null)
-            //    objLoginEntity = new LoginEntity();
-
-            //Session[RightsU_Session.CurrentLoginEntity] = objLoginEntity;
-            //User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
-            //TempData["FromPage"] = "LOGIN";
-            //if (objUser != null)
-            //{
-            //    Session["FileName"] = "";
-            //    Session["FileName"] = "ChangePasswordLink";
-            //    return View("ChangePasswordLink");
-            //}
-            //else
-            //return RedirectToAction("Index", "Login");
-            return View("ChangePasswordLink");
-        }
         #region --- --- Methods --- ---
-
         private void setDefaultProperty(HttpResponse resp, HttpRequest req)
         {
             DateTime d = DateTime.Now;
@@ -1320,8 +1321,6 @@ namespace RightsU_Plus.Controllers
 
         #endregion
 
-        #region ------- New Methods ---------
-
         private bool isAdAuthenticated(string username, string pwd)
         {
             string ldap = ConfigurationManager.AppSettings["LDAP_adLdapPath"].ToString().Trim();
@@ -1352,6 +1351,21 @@ namespace RightsU_Plus.Controllers
         {
             //BindEntity("");
             User objUser = objUser_Service.SearchFor(x => x.Login_Name.ToUpper() == strUserName.ToUpper()).FirstOrDefault();
+            //User objUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Login_Name.ToUpper() == strUserName.ToUpper()).FirstOrDefault();
+
+            if (objUser != null)
+            {
+                return objUser;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private User GetUserByGuid(string guid)
+        {
+            //BindEntity("");
+            User objUser = objUser_Service.SearchFor(x => x.ChangePasswordLinkGUID.ToUpper() == guid.ToUpper()).FirstOrDefault();
             //User objUser = new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Login_Name.ToUpper() == strUserName.ToUpper()).FirstOrDefault();
 
             if (objUser != null)
@@ -1551,6 +1565,29 @@ namespace RightsU_Plus.Controllers
             objSysVersion = new System_Versions_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.System_Name == "RightsU").OrderByDescending(x => x.Version_Code).FirstOrDefault();
             Session["VersionDetails"] = objSysVersion;
         }
+
+        #region Methdo Added for seting Seeion for base64 Images
+        public void SetClientLogo()
+        {
+
+            Session["CLientImgpathData"] = null;
+            ImgPathData objImgpathData = null;
+
+            objImgpathData = new ImgPathData_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.ImgPath.Length > 0).OrderByDescending(x => x.Id).FirstOrDefault();
+
+            if (objImgpathData != null)
+            {
+                Session["CLientImgpathData"] = objImgpathData;
+            }
+            else
+            {
+                ImgPathData objImgpathDatanull = new ImgPathData();
+                objImgpathDatanull.ImgPath = "Client_Logo.jpg";
+                Session["CLientImgpathData"] = objImgpathDatanull;
+            }
+
+        }
+        #endregion
         public JsonResult GetPWDPolicyDetailList()
         {
             var PWDPolicyDetailList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name.Contains("PWD_Policy_")).ToList();
@@ -1560,21 +1597,21 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetPWDHistoryCount(string data)
         {
-            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;            
+            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
             int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, data.Trim());
             if (Lst5PwdsCnt > 0)
             {
                 return Json(new { PWDHistoryCount = Lst5PwdsCnt, PWDHistoryMsg = "Please enter some other password, it matches your old password history" });
-            }  
+            }
             else
             {
                 return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
             }
         }
 
-        private int sendchangePasswordLinkMail(User objUser, string NewPassword)
+        private int sendchangePasswordLinkMail(User objUser, string NewPassword, string ChangePasswordLink)
         {
-            int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "FPL", objUser.Email_Id.Trim());
+            int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString(), ChangePasswordLink, ConfigurationManager.AppSettings["SystemName"].ToString(), "FPL", objUser.Email_Id.Trim());
             return IsMailSend;
         }
     }

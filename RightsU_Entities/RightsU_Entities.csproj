@@ -187,6 +187,7 @@
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />
     <Compile Include="Master_Entities\Digital_Tab.cs" />
+    <Compile Include="Master_Entities\ImgPathData.cs" />
     <Compile Include="Master_Entities\Supplementary.cs" />
     <Compile Include="Master_Entities\Supplementary_Config.cs" />
     <Compile Include="Master_Entities\Supplementary_Data.cs" />

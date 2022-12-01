@@ -451,6 +451,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Digital_Data> Digital_Data { get; set; }
         public DbSet<Digital_Tab> Digital_Tab { get; set; }
         public DbSet<Title_Content_Version> Title_Content_Version { get; set; }
+        public DbSet<ImgPathData> ImgPathDatas { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

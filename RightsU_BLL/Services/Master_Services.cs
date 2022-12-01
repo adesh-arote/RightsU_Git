@@ -7421,4 +7421,59 @@ namespace RightsU_BLL
         }
     }
 
+    public class ImgPathData_Service : BusinessLogic<ImgPathData>
+    {
+        private readonly ImgPathData_Repository objImgPathDataR;
+
+        public ImgPathData_Service(string Connection_Str)
+        {
+            this.objImgPathDataR = new ImgPathData_Repository(Connection_Str);
+        }
+
+        public IQueryable<ImgPathData> SearchFor(Expression<Func<ImgPathData, bool>> predicate)
+        {
+            return objImgPathDataR.SearchFor(predicate);
+        }
+
+        public ImgPathData GetById(int id)
+        {
+            return objImgPathDataR.GetById(id);
+        }
+
+        public bool Save(ImgPathData objImgPathData, out dynamic resultSet)
+        {
+            return base.Save(objImgPathData, objImgPathDataR, out resultSet);
+        }
+
+
+        public bool Update(ImgPathData objImgPathData, out dynamic resultSet)
+        {
+            return base.Update(objImgPathData, objImgPathDataR, out resultSet);
+        }
+
+        public bool Delete(ImgPathData objImgPathData, out dynamic resultSet)
+        {
+            return base.Delete(objImgPathData, objImgPathDataR, out resultSet);
+        }
+
+        public override bool Validate(ImgPathData objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(ImgPathData objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(ImgPathData objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+    }
+
 }

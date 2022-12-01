@@ -3074,4 +3074,30 @@ namespace RightsU_DAL
     {
         public Digital_Config_Repository(string constr) : base(constr) { }
     }
+    #region Added for File uplaod in demo setup 
+    public class ImgPathData_Repository : RightsU_Repository<ImgPathData>
+    {
+        public ImgPathData_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(ImgPathData objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(ImgPathData objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+    #endregion
 }

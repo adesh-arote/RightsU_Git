@@ -1037,6 +1037,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Title_Content" />
         <AssociationConnector Association="RightsU_NeoModel.FK__Title_Con__Title__5146B39C" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Version" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ImgPathData" Width="1.5" PointX="46.625" PointY="45" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -40,6 +40,7 @@
     var URL_Execute = '@Url.Action("Execute", "DemoSetup")';
     $(document).ready(function () {
         $("#DDBusinessName_chosen").css('display', 'none');
+        $('#imgThumbnail').css('display', 'none');
         $('[name="searchBy"]').change(function (event) {
             if ($('[name="searchBy"]:checked').val() == 'New') {
                 $("#txtbusinessname").css('display', '');
@@ -52,17 +53,29 @@
         });
     });
     function fileCheck(obj) {
-        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif'];
         if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) != -1) {
+
+            if (obj.files && obj.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imgThumbnail').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(obj.files[0]);
+                $('#imgThumbnail').css('display', '');
+            }
+
             return true;
         }
         else {
-            showAlert("E", "Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            showAlert("E", "Only '.jpeg','.jpg', '.png', '.gif' formats are allowed.");
             var input = $("#uploadFile");
             input.replaceWith(input.val('').clone(true));
             return false;
         }
     }
+  
     function saveEntity() {
         debugger;
         $('.required').removeClass('required');
@@ -205,6 +218,7 @@
                                     <td>
                                         <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this)">
                                     </td>
+                                    <td><img class="clientLogo" alt="Client Logo" id="imgThumbnail" src="" style="padding-left:10px;" /></td>
                                 </tr>
                             </tbody>
                         </table>

@@ -34,7 +34,7 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
-
+    ImgPathData imgLogo = (ImgPathData)Session["CLientImgpathData"];
 }
 <!DOCTYPE html>
 <link type="image/ico" rel="icon" href="~/Images/u-to.ico" />
@@ -1195,7 +1195,9 @@
                                 </ul><!-- .my-menu -->
                             </div><!-- .slider -->
                         <li style="padding-top:0px!important">
-                            <img class="clientLogo" alt="Client Logo" src="~/Logo/@objLoginUser.DefaultEntityLogoName" style="padding-left:10px;" />
+                            @*<img class="clientLogo" alt="Client Logo" src="~/Logo/@objLoginUser.DefaultEntityLogoName" style="padding-left:10px;" />*@
+                            <img class="clientLogo" alt="Client Logo" src="data:Image/png;base64,@imgLogo.ImgData" style="padding-left:10px;" />
+                           
                         </li>
                     </ul>
                 </div>
