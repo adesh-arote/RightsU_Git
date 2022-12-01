@@ -1661,4 +1661,13 @@ public class MessageKey
     #endregion
     #endregion
 
+    public string FPLinkExpire { get; set; }
+    public string FPAlUpdatePassword { get; set; }
+    public string FPSamePassword { get; set; }
+    public string FPContainFirstLastNm { get; set; }
+    public string FPHistory { get; set; }
+    public string FPNewPasswrdSuccess { get; set; }
+    public string FPLinkexpireSuccess { get; set; }
+    public string FPLinkexpireOrAlrChange { get; set; }
+
 }

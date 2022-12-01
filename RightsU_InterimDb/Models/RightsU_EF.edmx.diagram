@@ -1025,6 +1025,7 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Amendement_History" Width="1.5" PointX="46" PointY="11.125" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.ImgPathData" Width="1.5" PointX="39.625" PointY="45.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

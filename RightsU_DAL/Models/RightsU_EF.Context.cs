@@ -429,6 +429,7 @@ namespace RightsU_DAL
         public DbSet<Acq_Deal_Supplementary_detail> Acq_Deal_Supplementary_detail { get; set; }
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
+        public DbSet<ImgPathData> ImgPathDatas { get; set; }
 
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {

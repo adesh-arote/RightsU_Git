@@ -443,6 +443,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
+        public DbSet<ImgPathData> ImgPathDatas { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
