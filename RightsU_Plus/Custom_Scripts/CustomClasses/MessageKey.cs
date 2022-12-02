@@ -1248,7 +1248,7 @@ public class MessageKey
     public string Ancillary { get; set; }
     public string Budget { get; set; }
     public string Supplementary { get; set; }
-
+    public string PushbackText { get; set; }
     public string PaymentTerms { get; set; }
      
     public string DealArchive { get; set; }
