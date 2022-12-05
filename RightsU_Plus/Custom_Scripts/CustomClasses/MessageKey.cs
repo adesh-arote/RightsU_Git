@@ -1248,7 +1248,7 @@ public class MessageKey
     public string Ancillary { get; set; }
     public string Budget { get; set; }
     public string Supplementary { get; set; }
-
+    public string PushbackText { get; set; }
     public string PaymentTerms { get; set; }
      
     public string DealArchive { get; set; }
@@ -1660,5 +1660,14 @@ public class MessageKey
 
     #endregion
     #endregion
+
+    public string FPLinkExpire { get; set; }
+    public string FPAlUpdatePassword { get; set; }
+    public string FPSamePassword { get; set; }
+    public string FPContainFirstLastNm { get; set; }
+    public string FPHistory { get; set; }
+    public string FPNewPasswrdSuccess { get; set; }
+    public string FPLinkexpireSuccess { get; set; }
+    public string FPLinkexpireOrAlrChange { get; set; }
 
 }

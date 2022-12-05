@@ -70,6 +70,7 @@ namespace RightsU_Entities
     	public string Deal_Complete_Flag { get; set; }
     	public Nullable<int> Deal_Segment_Code { get; set; }
     	public Nullable<int> Revenue_Vertical_Code { get; set; }
+        public string Material_Remarks { get; set; }
 
         private bool _SaveGeneralOnly = true;
         public bool SaveGeneralOnly

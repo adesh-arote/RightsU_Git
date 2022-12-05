@@ -363,3 +363,5 @@ MigrationBackup/
 [Pp]roposal[Ff]iles
 [Uu]ploads
 /RightsU_Plus/UploadFolder
+*.dll
+*.xml

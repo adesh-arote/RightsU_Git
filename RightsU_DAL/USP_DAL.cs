@@ -1752,5 +1752,17 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(acq_Deal_Rights_Codes, selected_SubTitling_Language_Codes, selected_Dubbing_Language_Codes);
         }
+
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Material_Type_Result> USP_Get_Dashboard_Detail_Material_Type(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Dashboard_Detail_Material_Type(dashboardType, searchFor, user_Code, dashboardDays);
+        }
+
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Payment_Term_Result> USP_Get_Dashboard_Detail_Payment_Term(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Dashboard_Detail_Payment_Term(dashboardType, searchFor, user_Code, dashboardDays);
+        }
     }
 }
