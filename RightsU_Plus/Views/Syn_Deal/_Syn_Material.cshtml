@@ -587,7 +587,11 @@
                                 {
                                     <br />
                                     <div class="expand_MaterialRemarks" style="margin-left:0px;">
-                                        @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+
+                                        @if (ViewBag.Remark != null)
+                                        {
+                                            @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+                                        }
                                     </div>
                                 }
                             </div>
