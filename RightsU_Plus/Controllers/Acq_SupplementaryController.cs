@@ -406,12 +406,12 @@ namespace RightsU_Plus.Controllers
             string strDDL;
             if (multiple == "")
             {
-                strDDL = "<select class=\"sumoUnder\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
             {
-                strDDL = "<select style=\"sumoUnder\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
+                strDDL = "<select style=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Short_Name + "ddSupp" + i.ToString() + "\" " + multiple + ">";
             }
             //strDDL = strDDL + "<option value=\"\" selected disabled hidden> Please Select</option>";
             foreach (Supplementary_Data LSD in ListSupplementary_Data.Where(a => a.Supplementary_Type == whrCond))

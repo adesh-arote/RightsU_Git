@@ -406,7 +406,7 @@ function rblIsMasterDeal_OnChange() {
 }
 
 function rblDeal_For_OnChange() {
-
+    debugger;
     BindTopBand();
     var selectedValue = $("input[name='Deal_Type_Code']:radio:checked").val();
 
@@ -436,6 +436,13 @@ function rblDeal_For_OnChange() {
         $("#btnAddTitleMaster").attr("disabled", false);
     }
 
+    var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
+    if (selectedValue != Deal_Type_Movie && roleCode == BuyBack) {
+        $("#btnAddTitle").attr("disabled", true);
+    }
+    else {
+        $("#btnAddTitle").attr("disabled", false);
+    }
     BindTitleGridview();
 }
 
@@ -629,6 +636,8 @@ function ChangeLabelName() {
     else if (roleCode == Role_Own_Production)
         lblLicensor.innerHTML = ShowMessage.lblForProducerLineProducer;//lblForProducerLineProducer = Producer/ Line Producer
 
+    var Deal_Type_Code = $("input[name='Deal_Type_Code']:radio:checked").val();
+
     if (roleCode == BuyBack) {
         $('#tdSynLicensor').show();
         $('#tdAcqLicensor').hide();
@@ -639,7 +648,14 @@ function ChangeLabelName() {
         $('#tdSynLicensor').hide();
         $('#tdAcqLicensor').show();
         $('#btnAddTitleMaster').attr("disabled", false);
-        //$("input[name='Deal_Type_Code'][type=radio]").attr('disabled', false);
+        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', false);
+    }
+
+    if (roleCode == BuyBack && Deal_Type_Code != Deal_Type_Movie) {
+        $('#btnAddTitle').attr("disabled", true);
+    }
+    else {
+        $('#btnAddTitle').attr("disabled", false);
     }
 
 }
@@ -2024,7 +2040,7 @@ function ValidateSavefromAcqGeneral(Type) {
 
 
                 $('#popAddTitleDealPage').modal('hide');
-                showAlert("S", result.Message, "");
+                showAlert("S", result.Message);
             },
             error: function (result) {
             }

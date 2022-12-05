@@ -100,6 +100,10 @@
                 else if (CurrentTab == pagePaymentTerm) {
                     $('#btnSaveDeal').click();
                 }
+                else if (CurrentTab == pageMaterial) {
+                    $('#btnSaveDeal').click();
+                    return true;
+                }
                 else if (CurrentTab == pageCost && GetCostTabConfigFromServer() != 'Y') {
                     //var isDirectCostGrid = GetCostTabConfigFromServer();
                     //if (isDirectCostGrid != "Y") {
@@ -372,9 +376,9 @@
             @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqPushbackTab))
             {
                 cssclass = objSchema.Page_From == GlobalParams.Page_From_Pushback ? "active" : "";
-                string Pushback_Text = objSchema.Pushback_Text;
+
                 <li class="@cssclass" id="liPushback">
-                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Pushback    ','@cssclass    ');" value="@Pushback_Text" />
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Pushback    ','@cssclass    ');" value="@objMessageKey.PushbackText" />
                     <span></span>
                 </li>
             }

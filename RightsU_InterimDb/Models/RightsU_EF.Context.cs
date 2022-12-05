@@ -443,8 +443,9 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
+        public DbSet<ImgPathData> ImgPathDatas { get; set; }
     
-        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name)
+        public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
@@ -454,7 +455,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Search_Platform_Name", search_Platform_Name) :
                 new ObjectParameter("Search_Platform_Name", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter);
+            var iS_Sport_RightsParameter = iS_Sport_Rights != null ?
+                new ObjectParameter("IS_Sport_Rights", iS_Sport_Rights) :
+                new ObjectParameter("IS_Sport_Rights", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, iS_Sport_RightsParameter);
         }
     
         public virtual ObjectResult<USP_Get_Territory_ForDDL_Result> USP_Get_Territory_ForDDL(string is_Theatrical)
@@ -5446,6 +5451,48 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Selected_Dubbing_Language_Codes", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result>("USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback", acq_Deal_Rights_CodesParameter, selected_SubTitling_Language_CodesParameter, selected_Dubbing_Language_CodesParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Material_Type_Result> USP_Get_Dashboard_Detail_Material_Type(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            var dashboardTypeParameter = dashboardType != null ?
+                new ObjectParameter("DashboardType", dashboardType) :
+                new ObjectParameter("DashboardType", typeof(string));
+    
+            var searchForParameter = searchFor != null ?
+                new ObjectParameter("SearchFor", searchFor) :
+                new ObjectParameter("SearchFor", typeof(string));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var dashboardDaysParameter = dashboardDays.HasValue ?
+                new ObjectParameter("DashboardDays", dashboardDays) :
+                new ObjectParameter("DashboardDays", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Material_Type_Result>("USP_Get_Dashboard_Detail_Material_Type", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
+        }
+    
+        public virtual ObjectResult<USP_Get_Dashboard_Detail_Payment_Term_Result> USP_Get_Dashboard_Detail_Payment_Term(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
+        {
+            var dashboardTypeParameter = dashboardType != null ?
+                new ObjectParameter("DashboardType", dashboardType) :
+                new ObjectParameter("DashboardType", typeof(string));
+    
+            var searchForParameter = searchFor != null ?
+                new ObjectParameter("SearchFor", searchFor) :
+                new ObjectParameter("SearchFor", typeof(string));
+    
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            var dashboardDaysParameter = dashboardDays.HasValue ?
+                new ObjectParameter("DashboardDays", dashboardDays) :
+                new ObjectParameter("DashboardDays", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Payment_Term_Result>("USP_Get_Dashboard_Detail_Payment_Term", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
     }
 }
