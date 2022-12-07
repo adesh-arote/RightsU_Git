@@ -1,5 +1,13 @@
 ﻿@model List<RightsU_Entities.Syn_Deal_Material>
+@using UTOFrameWork.FrameworkClasses
 @{
+    /**/
+
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+    if (Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA] != null)
+    {
+        objSchema = (RightsU_Entities.Deal_Schema)Session[RightsU_Entities.RightsU_Session.Syn_DEAL_SCHEMA];
+    }
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -8,7 +16,8 @@
 }
 <script type="text/javascript">
     var PaymentIntCode = 0;
-    var IsAddEditMode="N";
+    var IsAddEditMode = "N";
+    var MessageFrom = '';
     $(document).ready(function () {
        // $("#ancFileName").attr('href', 'Help/index.html?IntCode=Login');
         if ('@ViewBag.Record_Locking_Code' != '')
@@ -25,6 +34,12 @@
             }
             else
                 showAlert("S","@ViewBag.Message");
+        }
+
+        if('@ViewBag.PageMode' !="V" && '@ViewBag.PageMode' !="APRV")
+        {
+            var txtRemark = document.getElementById('txtMaterialRemarks');
+            countChar(txtRemark);
         }
 
         $("#Quantity").numeric({
@@ -104,7 +119,7 @@
         });
     }
 
-    function CheckEditMode(){
+    function CheckEditMode() {
         if(IsAddEditMode == 'Y'){
             message = '@objMessageKey.PleasecompletetheAddEditfirst';
             showAlert('E',message);
@@ -239,12 +254,28 @@
     {
         if(CheckEditMode())
         {
+            $('#hdn_Command_Name').val('DELETE');
             PaymentIntCode = Syn_Deal_Material_Code;
             showAlert("I",'@objMessageKey.Areyousureyouwanttodeletethismaterial',"OKCANCEL");
         }
     }
 
     function handleOk() {
+        if (MessageFrom == 'SV') {
+            if ($('#hdnTabName').val() == '') {
+                $('#hdn_Command_Name').val('');
+                window.location.href = '@Url.Action("Index", "Syn_List")';
+            }
+        }
+        if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "CANCEL_SAVE_DEAL") {
+            location.href = '@Url.Action("Cancel", "Syn_Material")';
+        } else if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "DELETE") {
+            DeleteMaterial();
+        }
+        
+    }
+
+    function DeleteMaterial() {
         showLoading();
         var txtPageSize = $("#txtPageSize").val();
         var pageNo = $('#hdnpage_index').val();
@@ -276,54 +307,64 @@
                 alert('Error: ' + result.responseText);
             }
         });
+
     }
+
     function handleCancel() {
         return false;
     }
 
     function ValidateSave() {
-        if(CheckEditMode())
-        {
-            showLoading();
-            var Isvalid = true;
-            // Code for Maintaining approval remarks in session
-            var Mode = '@ViewBag.PageMode';
-            if (Mode == 'APRV') {
-                var approvalremarks = $('#approvalremarks').val();
-                $.ajax({
-                    type: "POST",
-                    url: '@Url.Action("SetSynApprovalRemarks", "Global")',
-                    traditional: true,
-                    enctype: 'multipart/form-data',
-                    contentType: "application/json; charset=utf-8",
-                    async: true,
-                    data: JSON.stringify({
-                        approvalremarks: $('#approvalremarks').val()
-                    }),
-                    success: function (result) {
-                        if (result == "true")
-                        {
-                            redirectToLogin();
-                        }
-                        else{
-                            Isvalid = true;
-                        }
-                    },
-                    error: function (result) {
-                        Isvalid = false;
-                    }
-                });
-            }
-            else
-                Isvalid = true;
-            if(Isvalid)
-            {
-                hideLoading();
-                var tabName = $('#hdnTabName').val();
-                BindPartialTabs(tabName);
-            }
+        showLoading();
+        var Isvalid = true;
+        var Mode = '@ViewBag.PageMode';
+        if (Mode == dealMode_View || Mode == 'APRV') {
             hideLoading();
-            return Isvalid;
+            var tabName = $('#hdnTabName').val();
+            BindPartialTabs(tabName);
+        }
+        else {
+            if (CheckEditMode()) {
+                showLoading();
+                $("#hdnMaterialRemark").val($("#txtMaterialRemarks").val());
+                var Isvalid = true;
+                // Code for Maintaining approval remarks in session
+                var Mode = '@ViewBag.PageMode';
+                if (Mode == 'APRV') {
+                    var approvalremarks = $('#approvalremarks').val();
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("SetSynApprovalRemarks", "Global")',
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: true,
+                        data: JSON.stringify({
+                            approvalremarks: $('#approvalremarks').val()
+                        }),
+                        success: function (result) {
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            else {
+                                Isvalid = true;
+                            }
+                        },
+                        error: function (result) {
+                            Isvalid = false;
+                        }
+                    });
+                }
+                else
+                    Isvalid = true;
+                if (Isvalid) {
+                    hideLoading();
+                    var tabName = $('#hdnTabName').val();
+                    BindPartialTabs(tabName);
+                }
+                hideLoading();
+                return Isvalid;
+            }
         }
     }
 
@@ -408,6 +449,75 @@
             });
         }
     }
+
+    function CancelSaveDeal() {
+        $('#hdn_Command_Name').val('CANCEL_SAVE_DEAL');
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', "OKCANCEL");
+    }
+
+    function OnFinalSaveClick() {
+        var Isvalid = true;
+
+        if (!clickedOnTab) {
+            if ($(event.target).val().toUpperCase() == "SAVE & APPROVE") {
+                $('input[name=hdnReopenMode]').val('RO');
+            }
+            else {
+                $('input[name=hdnReopenMode]').val('E');
+            }
+        }
+        else {
+            $('input[name=hdnReopenMode]').val('E');
+        }
+
+        if (CheckEditMode()) {
+            $("#hdnMaterialRemark").val($("#txtMaterialRemarks").val());
+        }
+        else {
+            Isvalid = false;
+        }
+        return Isvalid;
+    }
+
+    function ClearHidden() {
+        $("#hdnTabName").val('');
+    }
+
+    function Save_Success(message) {
+        debugger;
+        hideLoading();
+        if (message == "true") {
+            redirectToLogin();
+        }
+        else {
+            if (message.Status == "SA") {
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: URL_Syn_Approve_Reject,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        user_Action: 'A',
+                        approvalremarks: ""
+                    }),
+                    async: false,
+                    success: function (data) {
+                    }
+                });
+            }
+            if (message.Success_Message != "") {
+                MessageFrom = "SV"
+                showAlert('S', message.Success_Message, 'OK');
+            }
+            else {
+                var tabName = $('#hdnTabName').val();
+                BindPartialTabs(tabName);
+            }
+        }
+    }
+
 </script>
 <style>
     span::after {
@@ -422,53 +532,116 @@
         content: "\200E‎";
     }
 </style>
-<input type="hidden" id="hdnTabName" name="hdnTabName" />
-<div class="grid_area">
-    <div class="navigation_tabs">
-        <div class="tabbable">
-            <div class="tab-content clearfix table-wrapper scale_table_container syn">
-                <div class="tab-pane active" id="tabPayTerm">
-                    <div class="scale_table_block">
-                        <div class="sub_block clearfix">
-                            <div class="pull-right">
+<script>
+    $('.expand_MaterialRemarks').expander({
+        slicePoint: 520,
+        expandPrefix: '',
+        expandText: '@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+@using (Ajax.BeginForm("ChangeTab", "Syn_Material", new AjaxOptions { OnSuccess = "Save_Success" }))
+{    
+    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+    @Html.Hidden("hdnMaterialRemark")
+    @Html.Hidden("hdn_Command_Name")
+    <div class="grid_area">
+        <div class="navigation_tabs">
+            <div class="tabbable">
+                <div class="tab-content clearfix table-wrapper scale_table_container syn">
+                    <div class="tab-pane active" id="tabPayTerm">
+                        <div class="scale_table_block">
+                            <div class="sub_block clearfix">
+                                <div class="pull-right">
+                                    @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                    {
+                                        <a class="btn btn-primary" title="@objMessageKey.AddMaterial" onclick="return AddCancelMaterial(1);">@objMessageKey.Add</a>
+                                    }
+                                </div>
+                            </div>
+                            <div class="paging_area clearfix">
+                                <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
+                                <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
+                                <div class="pagination" id="Pagination"></div>
+                                <span class="pull-right">
+                                    @objMessageKey.PageSize:
+                                    <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" onfocus="CheckEditMode()"
+                                           onblur="setDefaultPaging('txtPageSize')" />
+                                </span>
+                            </div>
+                            <div class="scale_table_block" id="dvDealSynMaterialList">
+                            </div>
+                            <br>
+                            <div>
+                                <span class="remarks">@objMessageKey.Remarks:</span>
                                 @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
                                 {
-                                    <a class="btn btn-primary" title="@objMessageKey.AddMaterial" onclick="return AddCancelMaterial(1);">@objMessageKey.Add</a>
+                                    <textarea name="txtMaterialRemarks" id="txtMaterialRemarks" style="margin-left:0px;" class="textarea" onkeypress="countChar(this)" onkeyup="countChar(this)">@ViewBag.Remark</textarea>
+                                    <div class="divBlock">
+                                        <div id="CharNum" class="charNum">4000</div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <br />
+                                    <div class="expand_MaterialRemarks" style="margin-left:0px;">
+
+                                        @if (ViewBag.Remark != null)
+                                        {
+                                            @Html.Raw(ViewBag.Remark.Replace("\r\n", "<br/>").Replace("\n", "<br/>"))
+                                        }
+                                    </div>
                                 }
                             </div>
                         </div>
-                        <div class="paging_area clearfix">
-                            <span id="spanRecordCount" class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
-                            <input type="hidden" id="hdnpage_index" name="hdnpage_index" value="1" />
-                            <div class="pagination" id="Pagination"></div>
-                            <span class="pull-right">
-                                @objMessageKey.PageSize:
-                                <input type="text" class="smallTextBox pagingSize" value="10" id="txtPageSize" onchange="return PageSize_OnChange();" onfocus="CheckEditMode()" 
-                                       onblur="setDefaultPaging('txtPageSize')"/>
-                            </span>
-                        </div>
-                        <div class="scale_table_block" id="dvDealSynMaterialList">
-                        </div>
                     </div>
-                </div>
-                @if (ViewBag.PageMode == "APRV")
-                {
-                    @Html.Partial("_Syn_Approved_List")
-                    <br />
-                }
-                <div class="bottom_action">
-                    <ul class="form_link_nav clearfix">
-                        <li>
-                            @if (ViewBag.PageMode != "APRV")
-                            {
-                                <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
-                                       onclick="if(CheckEditMode())  location.href='@Url.Action("Cancel", "Syn_Material")    '">
-                            }
-                        </li>
-                    </ul>
-                    <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                    @if (ViewBag.PageMode == "APRV")
+                    {
+                        @Html.Partial("_Syn_Approved_List")
+                        <br />
+                    }
+                    else
+                    {
+
+                        <div class="bottom_action">
+
+                            @Html.Hidden("HdnRemark")
+                            <ul class="form_link_nav clearfix">
+                                @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV")
+                                {
+                                    <li>
+                                        <input type="submit" id="btnSaveDeal" title="@objMessageKey.Save" value="@objMessageKey.Save" class="btn btn-primary save" onclick="return OnFinalSaveClick();" />
+                                        <input type="hidden" id="hdnReopenMode" name="hdnReopenMode" value="E" />
+                                        @*<input type="submit" value="Save" class="btn btn-primary"  />*@
+
+                                    </li>
+                                    if (objSchema.Deal_Workflow_Flag.ToUpper() == GlobalParams.DEAL_MODE_REOPEN)
+                                    {
+                                        <li>
+                                            <input type="submit" id="btnSaveApproveDeal" class="btn btn-primary saveapprove" value="Save & Approve" onclick="ClearHidden(); return OnFinalSaveClick();">
+                                        </li>
+                                    }
+                                    <li>
+                                        <input type="button" id="btnCancelDeal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="if(CheckEditMode()) CancelSaveDeal()">
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li>
+                                        <input type="button" id="btnCancel_Deal" title="@objMessageKey.Cancel" class="btn btn-primary" value="@objMessageKey.Cancel"
+                                               onclick="if(CheckEditMode()) location.href='@Url.Action("Cancel", "Syn_Material")    '">
+                                    </li>
+                                }
+                            </ul>
+
+                        </div>
+                    }
+                    
                 </div>
             </div>
         </div>
     </div>
-</div>
+}

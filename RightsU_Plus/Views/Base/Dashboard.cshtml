@@ -11,6 +11,12 @@
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> TentativeStartAcquDealsList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> AproveAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
     List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> AproveSynDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList_SynRevHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqRevHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireAcqDealDataList_AcqHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Result> ExpireSynDealDataList_SynHB = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result> MTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>();
+    List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result> PTAcqDealList = new List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>();
 
     if (@ViewBag.StartAcqDealList != null)
     { StartAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.StartAcqDealList; }
@@ -35,6 +41,24 @@
 
     if (@ViewBag.AproveSynDealList != null)
     { AproveSynDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.AproveSynDealList; }
+
+    if (ViewBag.ExpireSynDealDataList_SynRevHB != null)
+    { ExpireSynDealDataList_SynRevHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList_SynRevHB; }
+
+    if (ViewBag.ExpireAcqDealDataList_AcqRevHB != null)
+    { ExpireAcqDealDataList_AcqRevHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireAcqDealDataList_AcqRevHB; }
+
+    if (ViewBag.ExpireAcqDealDataList_AcqHB != null)
+    { ExpireAcqDealDataList_AcqHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireAcqDealDataList_AcqHB; }
+
+    if (ViewBag.ExpireSynDealDataList_SynHB != null)
+    { ExpireSynDealDataList_SynHB = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Result>)ViewBag.ExpireSynDealDataList_SynHB; }
+
+    if (@ViewBag.MTAcqDealList != null)
+    { MTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Material_Type_Result>)ViewBag.MTAcqDealList; }
+
+    if (@ViewBag.PTAcqDealList != null)
+    { PTAcqDealList = (List<RightsU_Entities.USP_Get_Dashboard_Detail_Payment_Term_Result>)ViewBag.PTAcqDealList; }
 
 }
 <html>
@@ -1013,6 +1037,369 @@
                             {<h1>NO DATA</h1>}
                         </div>
                     }
+
+
+
+                    @if (ViewBag.ExpireAcqDealDataList_AcqRevHB != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AcqRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireAcqDealDataList_AcqRevHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireAcqDealDataList_AcqRevHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireSynDealDataList_SynRevHB != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.SynRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireSynDealDataList_SynRevHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Period</th>
+                                    </tr>
+                                    @foreach (var item in ExpireSynDealDataList_SynRevHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireAcqDealDataList_AcqHB != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.AcqHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireAcqDealDataList_AcqHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Holdback expiry date</th>
+                                    </tr>
+                                    @foreach (var item in ExpireAcqDealDataList_AcqHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.ExpireSynDealDataList_SynHB != null)
+                    {
+                        <div class="dashboard syn">
+                            <span>
+                                @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.SynHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_ExpireSynDealDataList" value="@ViewBag.ExpireSynDealDataList_PageNo" />
+                            </span>
+
+                            @if (ExpireSynDealDataList_SynHB.Count > 0)
+                            {
+                                <table id="ExpireSynDealDataList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Title</th>
+                                        <th>Party Name</th>
+                                        @if (ViewBag.CostVisibility)
+                                        {
+                                            <th>Amount</th>
+                                        }
+                                        <th>Holdback expiry date</th>
+                                    </tr>
+                                    @foreach (var item in ExpireSynDealDataList_SynHB)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (item.Is_Deal_Rights == "Y")
+                                                {
+                                                    <h5><a href="@Url.Action("ButtonEvents", "Syn_List", new { CommandName = "View", Syn_Deal_Code = @item.Deal_Code })">@item.Agreement_No</a></h5>
+                                                }
+                                                else
+                                                {
+                                                    @item.Agreement_No
+                                                }
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.TitleName">
+                                                    @Html.Raw(@item.TitleName.Length >= 33 ? @item.TitleName.Substring(0, 30) + "..." : @item.TitleName)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Customer">@Html.Raw(@item.Customer.Length >= 33 ? @item.Customer.Substring(0, 30) + "..." : @item.Customer)</div>
+                                            </td>
+                                            @if (ViewBag.CostVisibility)
+                                            {
+                                                <td class="amount">
+                                                    @String.Format("{0:n}", item.Deal_Movie_Cost)
+                                                </td>}
+                                            <td>
+                                                @item.RightPeriod
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+                    @*@if (ViewBag.MTAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_MTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.MTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_MTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_MTAcqDealList" value="@ViewBag.MTAcqDealList_PageNo" />
+                            </span>
+
+                            @if (MTAcqDealList.Count > 0)
+                            {
+                                <table id="MTAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Material Type_Name</th>
+                                        <th>Material Medium Name</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                    @foreach (var item in MTAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Agreement_No
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.Material_Type_Name">
+                                                    @Html.Raw(@item.Material_Type_Name.Length >= 33 ? @item.Material_Type_Name.Substring(0, 30) + "..." : @item.Material_Type_Name)
+                                                </h5>
+                                            </td>
+                                            <td>
+                                                <div title="@item.Material_Medium_Name">@Html.Raw(@item.Material_Medium_Name.Length >= 33 ? @item.Material_Medium_Name.Substring(0, 30) + "..." : @item.Material_Medium_Name)</div>
+                                            </td>
+                                            <td class="amount">
+                                                @item.Quantity
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }
+
+                    @if (ViewBag.PTAcqDealList != null)
+                    {
+                        <div class="dashboard acq">
+                            <span>
+
+                                <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_PTAcqDealList" style="float:left;padding-top:1px;"></a>
+
+                                @Html.ActionLink((string)ViewBag.PTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+
+                                <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_PTAcqDealList" style="float:right;padding-top:1px;"></a>
+                                <input type="hidden" id="currentPageIndex_PTAcqDealList" value="@ViewBag.PTAcqDealList_PageNo" />
+                            </span>
+
+                            @if (PTAcqDealList.Count > 0)
+                            {
+                                <table id="PTAcqDealList_tbl">
+                                    <tr>
+                                        <th>Deal No.</th>
+                                        <th>Payment Terms</th>
+                                        <th>Days After</th>
+                                        <th>Cost Percentage</th>
+                                        <th>Due Date</th>
+
+                                    </tr>
+                                    @foreach (var item in PTAcqDealList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @item.Agreement_No
+                                            </td>
+                                            <td>
+                                                <h5 title="@item.Payment_Terms">
+                                                    @Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)
+                                                </h5>
+                                            </td>
+                                            <td class="amount">
+                                                @item.Days_After
+                                            </td>
+                                            <td>
+                                                <div title="@item.Payment_Terms">@Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)</div>
+                                            </td>
+                                            <td>
+                                                @(item.Due_Date.ToString().Substring(0, 10))
+                                            </td>
+                                        </tr>
+                                    }
+                                </table>
+                            }
+                            else
+                            {<h1>NO DATA</h1>}
+                        </div>
+                    }*@
                 </section>
             </div>
         </section>

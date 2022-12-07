@@ -755,10 +755,10 @@
                         <label>@objMessageKey.WorkflowStatus:</label><br>
                         <select id="ddlWorkflowStatus" class="form_input chosen-select" style="width: 174px;"></select>
                     </li>
-                    <li class="AdSearch openTop">
+                    @*<li class="AdSearch openTop">
                         <label>@objMessageKey.Licensor:</label><br>
                         <select id="ddlSrchLicensor" multiple="multiple"></select>
-                    </li>
+                    </li>*@
                     <li class="AdSearch">
                         <a onclick="ShowMore('pnlShowmore')" id="showMore" value="Show more..">Show more...</a>
                     </li>
@@ -829,6 +829,10 @@
                                 <option value="" selected>Please Select </option>
                             </select>
                         </li>*@
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Licensor:</label><br>
+                        <select id="ddlSrchLicensor" multiple="multiple"></select>
+                    </li>
 
                 </ul>
                 <br />

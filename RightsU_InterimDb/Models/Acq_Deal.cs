@@ -90,6 +90,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Deal_Segment_Code { get; set; }
     	    public Nullable<int> Revenue_Vertical_Code { get; set; }
     	    public string Confirming_Party { get; set; }
+    	    public string Material_Remarks { get; set; }
     
         public virtual Deal_Tag Deal_Tag { get; set; }
         public virtual Deal_Type Deal_Type1 { get; set; }

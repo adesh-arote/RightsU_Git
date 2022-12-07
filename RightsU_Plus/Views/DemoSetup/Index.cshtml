@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
     MessageKey objMessageKey = new MessageKey();
@@ -16,23 +16,29 @@
     label {
         margin: 0 5px 0 5px;
     }
+
     td {
         padding: 10px 0 10px 0;
     }
-        #DDJobName_chosen {
+
+    #DDJobName_chosen {
         width: 50% !important;
     }
+
     #DDBusinessName_chosen {
         width: 50% !important;
     }
+
     #txtentityname {
-        width:46%;
+        width: 46%;
     }
+
     #uploadFile {
-        width:46%;
+        width: 46%;
     }
+
     .table-wrapper {
-       margin-bottom:-50px;
+        margin-bottom: -50px;
     }
 </style>
 <script>
@@ -40,6 +46,7 @@
     var URL_Execute = '@Url.Action("Execute", "DemoSetup")';
     $(document).ready(function () {
         $("#DDBusinessName_chosen").css('display', 'none');
+        $('#imgThumbnail').css('display', 'none');
         $('[name="searchBy"]').change(function (event) {
             if ($('[name="searchBy"]:checked').val() == 'New') {
                 $("#txtbusinessname").css('display', '');
@@ -52,17 +59,29 @@
         });
     });
     function fileCheck(obj) {
-        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif'];
         if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) != -1) {
+
+            if (obj.files && obj.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imgThumbnail').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(obj.files[0]);
+                $('#imgThumbnail').css('display', '');
+            }
+
             return true;
         }
         else {
-            showAlert("E", "Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            showAlert("E", "Only '.jpeg','.jpg', '.png', '.gif' formats are allowed.");
             var input = $("#uploadFile");
             input.replaceWith(input.val('').clone(true));
             return false;
         }
     }
+
     function saveEntity() {
         debugger;
         $('.required').removeClass('required');
@@ -86,7 +105,7 @@
             if (businessentity === null || businessentity==="") {
                 if (searchby === "Existing")
                 {
-                    businessentity = $("#DDBusinessName").val();                   
+                    businessentity = $("#DDBusinessName").val();
                 }
                 else
                 { isValid = false; }
@@ -118,7 +137,7 @@
                                 showAlert("S", "Record saved successfully. You will now be redirected to login page", "OK");
                             } else {
                                 showAlert("E", "Business Unit Name already exists");
-                            }                           
+                            }
                         }
                     },
                     error: function (er) { }
@@ -163,77 +182,78 @@
 </script>
 <div class="main_section">
     <section class="rightsU_container clearfix">
-        <div class="container acq main_col">           
-                <div class="title_block dotted_border clearfix">
-                    <h2 class="pull-left">
-                        Client Demo Setup
-                        <span> </span>
-                    </h2>
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <h2 class="pull-left">
+                    Client Demo Setup
+                    <span> </span>
+                </h2>
+            </div>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
+                    <table style="width:80%;height:0 auto;">
+                        <tbody>
+                            <tr>
+                                <td width="20%">
+                                    <b> Entity</b>
+                                </td>
+                                <td width="80%">
+                                    <input type="text" name="txtentityname" id="txtentityname" placeholder="Entity Name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>Business Unit</b>
+                                </td>
+                                <td>
+                                    <label>
+                                        <text>New</text> @Html.RadioButton("searchBy", "New", new { @checked = "checked" })
+                                    </label>
+                                    <label>
+                                        <text>Existing</text> @Html.RadioButton("searchBy", "Existing", new { @required = true })
+                                    </label>
+                                    <input type="text" id="txtbusinessname" placeholder="Business Unit Name">
+                                    @Html.DropDownList("Business_Unit_Name", (SelectList)ViewBag.BusinessNameSelect, new { @id = "DDBusinessName", @class = "form_input chosen-select" })
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b>New Logo</b>
+                                </td>
+                                <td>
+                                    <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this)">
+                                </td>
+                                <td><img class="clientLogo" alt="Client Logo" id="imgThumbnail" src="" style="padding-left:10px;" /></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="tab-content clearfix table-wrapper scale_table_container">
-                    <div class="scale_table_block">
-                        <table style="width:80%;height:0 auto;">
-                            <tbody>
-                                <tr>
-                                    <td width="20%">
-                                        <b> Entity</b>
-                                    </td>
-                                    <td width="80%">
-                                        <input type="text" name="txtentityname" id="txtentityname" placeholder="Entity Name" />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <b>Business Unit</b>
-                                    </td>
-                                    <td>
-                                        <label>
-                                            <text>New</text> @Html.RadioButton("searchBy", "New", new { @checked = "checked" })
-                                        </label>
-                                        <label>
-                                            <text>Existing</text> @Html.RadioButton("searchBy", "Existing", new { @required = true })
-                                        </label>
-                                        <input type="text" id="txtbusinessname" placeholder="Business Unit Name">
-                                        @Html.DropDownList("Business_Unit_Name", (SelectList)ViewBag.BusinessNameSelect, new { @id = "DDBusinessName", @class = "form_input chosen-select" })
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <b>New Logo</b>
-                                    </td>
-                                    <td>
-                                        <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this)">
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="saveEntity()">
-                </div>                
-            </div>              
-                <div class="container acq main_col">
-                     <div class="tab-content clearfix table-wrapper scale_table_container">
-                            <div class="scale_table_block">
+                <input type="button" id="btnSave" class="btn btn-primary" value="Save" onclick="saveEntity()">
+            </div>
+        </div>
+        <div class="container acq main_col">
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
 
-                                <table style="width:80%;height:0 auto;">
-                                    <tbody>
-                                        <tr>
-                                            <td width="20%">
-                                                <b>SQL Server Job</b>
-                                            </td>
-                                            <td width="80%">
-                                                @Html.DropDownList("JobName", (SelectList)ViewBag.JobNameSelect, new { @id = "DDJobName", @class = "form_input chosen-select" })
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <input type="button" id="btnexecute" class="btn btn-primary" value="Execute Job" onclick="executeJob()">
+                    <table style="width:80%;height:0 auto;">
+                        <tbody>
+                            <tr>
+                                <td width="20%">
+                                    <b>SQL Server Job</b>
+                                </td>
+                                <td width="80%">
+                                    @Html.DropDownList("JobName", (SelectList)ViewBag.JobNameSelect, new { @id = "DDJobName", @class = "form_input chosen-select" })
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <input type="button" id="btnexecute" class="btn btn-primary" value="Execute Job" onclick="executeJob()">
 
-                        </div>
-                        <br />
-                        </div>
-                    </section>
+            </div>
+            <br />
+        </div>
+    </section>
 </div>

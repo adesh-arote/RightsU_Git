@@ -313,6 +313,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult Login(string Entitycode = "", string Username = "", string Password = "")
         {
             ViewBag.BindEntity = BindEntity("");
+            SetClientLogo();
             GetSystemVersion();
             LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
             if (objLoginEntity == null)
@@ -1074,7 +1075,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult ForgetPassword(string txtLoginID = "", string hdnEntity = "")
         {
-
+            string ChangePasswordLink = "";
             Session["Entity_Type"] = hdnEntity;
             objUser_Service = null;
             objLDS_Service = null;
@@ -1110,18 +1111,21 @@ namespace RightsU_Plus.Controllers
                     objUser.Password_Fail_Count = 0;
                     objUser.Last_Updated_Time = DateTime.Now;
                     objUser.EntityState = State.Modified;
+                    objUser.ChangePasswordLinkGUID = Convert.ToString(Guid.NewGuid());
                     objUser_Service.Save(objUser);
+                    string baseString = ConfigurationManager.AppSettings["SiteAddress"].ToString().ToUpper();
+                    ChangePasswordLink = baseString + "ForgetPasswordLink/?Entype=" + hdnEntity.Trim() + "&Linkid=" + objUser.ChangePasswordLinkGUID.Trim();
                 }
 
                 try
                 {
-                    int IsMailSend = sendNewPasswordMail(objUser, newPassword);
-                    alertMsg = alertMsg + "Password has been emailed to you.";
+                    alertMsg = alertMsg + "Email link send for password reset.";
+                    int IsMailSend = sendchangePasswordLinkMail(objUser, newPassword, ChangePasswordLink);
                     return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
                 }
                 catch (Exception ex)
                 {
-                    alertMsg = alertMsg + "Email sending failed, Your new password is '" + newPassword + "'";
+                    alertMsg = alertMsg + "Email sending failed,please go to forget password agian.";
                     return RedirectToAction("Index", "Login", new { alertMsg = alertMsg });
                 }
             }
@@ -1132,6 +1136,7 @@ namespace RightsU_Plus.Controllers
             }
 
         }
+
 
         public ActionResult ChangePasswordCancel(string FromPage = "")
         {
@@ -1494,11 +1499,13 @@ namespace RightsU_Plus.Controllers
             { }
         }
 
-        private int sendNewPasswordMail(User objUser, string NewPassword)
+       
+        private int sendchangePasswordLinkMail(User objUser, string NewPassword, string ChangePasswordLink)
         {
-            int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().ToUpper(), ConfigurationManager.AppSettings["SiteAddress"].ToString(), ConfigurationManager.AppSettings["SystemName"].ToString(), "FP", objUser.Email_Id.Trim());
+            int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString(), ChangePasswordLink, ConfigurationManager.AppSettings["SystemName"].ToString(), "FPL", objUser.Email_Id.Trim());
             return IsMailSend;
         }
+
 
         private void ReleaseUser(string loginName)
         {
@@ -1523,6 +1530,49 @@ namespace RightsU_Plus.Controllers
             Session["VersionDetails"] = objSysVersion;
         }
 
+        #region Methdo Added for seting Seeion for base64 Images
+        public void SetClientLogo()
+        {
+
+            Session["CLientImgpathData"] = null;
+            ImgPathData objImgpathData = null;
+
+            objImgpathData = new ImgPathData_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.ImgPath.Length > 0).OrderByDescending(x => x.Id).FirstOrDefault();
+
+            if (objImgpathData != null)
+            {
+                Session["CLientImgpathData"] = objImgpathData;
+            }
+            else
+            {
+                ImgPathData objImgpathDatanull = new ImgPathData();
+                objImgpathDatanull.ImgPath = "Client_Logo.jpg";
+                Session["CLientImgpathData"] = objImgpathDatanull;
+            }
+
+        }
+#endregion
+
+        public JsonResult GetPWDPolicyDetailList()
+        {
+            var PWDPolicyDetailList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name.Contains("PWD_Policy_")).ToList();
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("PWDPolicyDetailList", new SelectList(PWDPolicyDetailList, "Parameter_Value", "Parameter_Name"));
+            return Json(obj);
+        }
+        public JsonResult GetPWDHistoryCount(string data)
+        {
+            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;            
+            int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, data.Trim());
+            if (Lst5PwdsCnt > 0)
+            {
+                return Json(new { PWDHistoryCount = Lst5PwdsCnt, PWDHistoryMsg = "Please enter some other password, it matches your old password history" });
+            }  
+            else
+            {
+                return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
+            }
+        }        
     }
 
     public class LoginParameters : Controller
