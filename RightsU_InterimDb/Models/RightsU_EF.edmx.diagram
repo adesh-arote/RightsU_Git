@@ -1026,6 +1026,18 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" />
         <EntityTypeShape EntityType="RightsU_NeoModel.ImgPathData" Width="1.5" PointX="39.625" PointY="45.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital" Width="1.5" PointX="46.625" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" Width="1.5" PointX="48.875" PointY="18" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" Width="1.5" PointX="45.625" PointY="41" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital_detail" Width="1.5" PointX="47.875" PointY="41" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital" Width="1.5" PointX="46.625" PointY="29.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Config" Width="1.5" PointX="48.875" PointY="28" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Data" Width="1.5" PointX="46.625" PointY="44.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Digital_Tab" Width="1.5" PointX="46.625" PointY="32" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
