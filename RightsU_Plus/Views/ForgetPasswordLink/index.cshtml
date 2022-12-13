@@ -2,18 +2,14 @@
 @using RightsU_Entities
 @{
     Layout = null;
-    TempData.Keep("Entype");
-    TempData.Keep("Linkid");
-
 }
-
 <html>
 <head>
     <title>RightsU</title>
-   
+    @*<link rel="shortcut icon" href="#">*@
+    <link type="image/ico" rel="icon" href="~/Images/u-to.ico" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/minty/bootstrap.min.css">
     <link rel="stylesheet" href="~/CSS/jquery.passwordRequirements.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-
     <link rel="stylesheet" type="text/css" href="~/CSS/common.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
     <link href="~/CSS/CommonLTR.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
     @*<link href="~/CSS/CommonRTL.css" rel="stylesheet" />*@
@@ -289,9 +285,9 @@
                         success: function (result) {
                                 if (result.Status == "S") {
                                     showAlert("S", result.msg, "OK");
-                                   
+
                                 } else {
-                                    
+
                                     showAlert("E", result.msg);
                                     $('#NewPassword').focus();
                                 }
@@ -319,6 +315,7 @@
     }
     </script>
     <style>
+
         td {
             padding: 5px 0;
             font-size: 13px;
@@ -366,11 +363,9 @@
         }
     </style>
 
-
 </head>
 <body>
     <div class="main_section">
-
         <header class="rightsU_header clearfix">
             <div class="header-nav">
                 <div class="pull-left">
@@ -381,17 +376,14 @@
                 </div>
             </div>
         </header>
-
         <section class="rightsU_container clearfix">
             <div class="container main_col">
                 <div class="top_area">
                     <h2 class="pull-left">Change Password</h2>
                 </div>
                 <div class="grid_area acq">
-
                     <table style="width:50%;max-width: 325px;" align="center">
                         <tr>
-
                             <td></td>
                         </tr>
                         <tr>
@@ -416,17 +408,13 @@
                         <tr>
                             <td colspan="2" align="center">
                                 <button type="submit" id="btnSave" class="btn btn-primary" value="Save" onclick="return SaveClick();">Save</button>
-
                             </td>
                         </tr>
                     </table>
-
                 </div>
-
             </div>
         </section>
     </div>
-
     <footer class="rightsU_footer clearfix">
         <div class="footer_content pull-right">
             <ul class="nav nav-pills pull-left">
@@ -442,5 +430,4 @@
             </div>
         </div>
     </footer>
-
 </body>
