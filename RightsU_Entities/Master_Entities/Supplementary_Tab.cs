@@ -27,6 +27,8 @@ namespace RightsU_Entities
         public string Tab_Type { get; set; }
         public string EditWindowType { get; set; }
         public Nullable<int> Module_Code { get; set; }
+        public Nullable<int> Key_Config_Code { get; set; }
+        public string Is_Show { get; set; }
 
         public virtual ICollection<Supplementary_Config> Supplementary_Config { get; set; }
     }

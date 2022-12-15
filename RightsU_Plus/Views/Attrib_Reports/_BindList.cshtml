@@ -1,0 +1,112 @@
+﻿@model IEnumerable<RightsU_Entities.Attrib_Report_Column>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>
+            DP Attrib Group Name
+        </th>
+        <th>
+            BV Attrib Group Name
+        </th>
+        <th>
+            Display Name
+        </th>
+        <th>
+            Control Type
+        </th>
+        <th>
+            Display Order
+        </th>
+        <th>
+            Output Group
+        </th>
+        <th>
+            IsMandatory
+        </th>
+        <th>
+            Icon
+        </th>
+        <th>
+            Css Class
+        </th>
+        <th>
+           Type
+        </th>
+        @*<th>
+                @Html.DisplayNameFor(model => model.IsSelectCriteria)
+            </th>*@
+        <th>Actions</th>
+    </tr>
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td align="center">
+                    
+                    @Html.DisplayFor(modelItem => item.DP_Attrib_Group_Code)
+                </td>
+                <td align="center">
+                   
+                    @Html.DisplayFor(modelItem => item.BV_Attrib_Group_Code)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Report_Column_Setup_IT.Display_Name)
+                </td>
+                <td align="center">
+                    @if (item.Control_Type == 3)
+                    {
+                        <span>DDL</span>
+                    }
+                    else if (item.Control_Type == 5)
+                    {
+                        <span>Typable Search</span>
+                    }
+                    else if (item.Control_Type == 8)
+                    {
+                        <span>Date Range</span>
+                    }
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Order)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Output_Group)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Is_Mandatory)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Icon)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Css_Class)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.IsSelectCriteria)
+                    </td>*@
+                <td align="center">
+                    @Html.ActionLink(" ", "Edit", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" }) |
+                    @Html.ActionLink(" ", "Details", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "Details" }) |
+                    @Html.ActionLink(" ", "Delete", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">No Record ound</td>
+        </tr>
+    }
+</table>

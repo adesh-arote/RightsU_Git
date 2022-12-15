@@ -27,7 +27,7 @@ namespace RightsU_DAL
     public class Ancillary_Platform_Medium_Repository : RightsU_Repository<Ancillary_Platform_Medium>
     {
         public Ancillary_Platform_Medium_Repository(string conStr) : base(conStr) { }
-    }
+    }   
 
     public class Language_Repository : RightsU_Repository<Language>
     {
@@ -3020,6 +3020,46 @@ namespace RightsU_DAL
     {
         public Attrib_Group_Repository(string conStr) : base(conStr) { }
         public override void Save(Attrib_Group objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+    }
+
+    public class Attrib_Report_Column_Repository : RightsU_Repository<Attrib_Report_Column>
+    {
+        public Attrib_Report_Column_Repository(string conStr) : base(conStr) { }
+        public override void Save(Attrib_Report_Column objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+    }
+
+    public class Report_Column_Setup_IT_Repository : RightsU_Repository<Report_Column_Setup_IT>
+    {
+        public Report_Column_Setup_IT_Repository(string conStr) : base(conStr) { }
+        public override void Save(Report_Column_Setup_IT objToSave)
         {
             if (objToSave.EntityState == State.Added)
             {

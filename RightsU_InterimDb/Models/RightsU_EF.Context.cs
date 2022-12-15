@@ -444,6 +444,8 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<Acq_Amendement_History> Acq_Amendement_History { get; set; }
         public DbSet<ImgPathData> ImgPathDatas { get; set; }
+        public DbSet<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public DbSet<Report_Column_Setup_IT> Report_Column_Setup_IT { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

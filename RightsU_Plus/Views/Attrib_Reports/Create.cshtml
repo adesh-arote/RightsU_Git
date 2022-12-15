@@ -1,0 +1,195 @@
+﻿@model RightsU_Entities.Attrib_Report_Column
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    var URL_SaveReport = '@Url.Action("Create", "Attrib_Reports")';
+
+    function SaveReport() {
+        debugger;
+        //var returnVal = true;
+        var attribTypeDP = $('#AttribTypeDP').val();
+        var attribTypeBV = $('#AttribTypeBV').val();
+        var displayName = $('#DisplayName').val();
+        var controlType = $('#ControlType').val();
+        var displayOrder = $('#DisplayOrder').val();
+        var outputGroup = $('#OutputGroup').val();
+        var isMandatory = $('#IsMandatory').val();
+        var icon = $('#Icon').val();
+        var cssClass = $('#CssClass').val();
+        var type = $('#Type').val();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveReport,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                //Id: Attrib_Report_Column_Code,
+                DP_Attrib_Group_Code: attribTypeDP,
+                BV_Attrib_Group_Code: attribTypeBV,
+                Column_Code: displayName,
+                Control_Type: controlType,
+                Display_Order: displayOrder,
+                Output_Group: outputGroup,
+                Is_Mandatory: isMandatory,
+                Icon: icon,
+                Css_Class: cssClass,
+                Type: type
+            }),
+            async: false,
+            success: function (result) {
+                if (result.Status == "S") {
+                    $('#hdnAction').val("");
+
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="title_block dotted_border clearfix">
+                    <h4>Create Attrib Report</h4>
+                    <hr />
+                    <br />
+                    <table class="table table-bordered table-hover">
+                        <tbody>
+                            <tr>
+                                <td style="width:25%">
+                                    DP Attrib Group Name
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownList("lstAttribTypeDP", (IEnumerable<SelectListItem>)ViewBag.AttribTypeDP, "---Please Select---", htmlAttributes: new { @id = "AttribTypeDP", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                    @*@Html.DropDownList("lstAttribTypeDP", ViewBag.AttribTypeDP as SelectList, new { @id = "AttribTypeDp" })*@
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    BV Attrib Group Name
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownList("lstAttribTypeBV", (IEnumerable<SelectListItem>)ViewBag.AttribTypeBV, "---Please Select---", htmlAttributes: new { @id = "AttribTypeBV", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Display Name
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownList("lstDisplaypName", (IEnumerable<SelectListItem>)ViewBag.DisplayName, "---Please Select---", htmlAttributes: new { @id = "DisplayName", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Control Type
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
+                                {
+                                    new SelectListItem{Text = "DDL", Value = "3"},
+                                    new SelectListItem{Text = "Typable Search", Value = "5"},
+                                    new SelectListItem{Text = "Date Range", Value = "8"}
+                                }, "---Please Select---", htmlAttributes: new { @id = "ControlType", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Display Order
+                                </td>
+                                <td style="text-align:left; ">
+                                    @Html.EditorFor(model => model.Display_Order, new { htmlAttributes = new { @id = "DisplayOrder", @class = "form-control input-sm", @style = "width:100px text-align:center" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Output Group
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.EditorFor(model => model.Output_Group, new { htmlAttributes = new { @id = "OutputGroup", @class = "form-control input-sm" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    IsMandatory
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownListFor(m => m.Is_Mandatory, new List<SelectListItem>
+                               {
+                                   new SelectListItem{Text = "Yes", Value = "Y"},
+                                   new SelectListItem{Text = "No", Value = "N"},
+                               }, "---Please Select---", htmlAttributes: new { @id = "IsMandatory", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Icon
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.TextBoxFor(model => model.Icon, new { htmlAttributes = new { @id = "Icon", @class = "form-control input-sm" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Css Class
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.TextBoxFor(model => model.Css_Class, new { htmlAttributes = new { @id = "CssClass", @class = "form-control input-sm" } })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:25%">
+                                    Type
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownListFor(m => m.Type, new List<SelectListItem>
+                                {
+                                    new SelectListItem{Text = "PR", Value = "PR"},
+                                    new SelectListItem{Text = "RP", Value = "RP"},
+                                    new SelectListItem{Text = "AR", Value = "AR"}
+                                }, "---Please Select---", htmlAttributes: new { @id = "Type", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                </td>
+                            </tr>
+                            @*<tr>
+                                <td style="width:25%">
+                                    Is Select Criteria
+                                </td>
+                                <td style="text-align:left;">
+                                    @Html.DropDownListFor(m => m.IsSelectCriteria, new List<SelectListItem>
+                               {
+                                   new SelectListItem{Text = "Yes", Value = "Y"},
+                                   new SelectListItem{Text = "No", Value = "N"},
+                               }, "---Please Select---", htmlAttributes: new { @id = "IsSelectCriteria", @class = "chosen-single", @style = "width:100px text-align:center" })
+                                    @Html.TextBoxFor(model => model.Attrib_Report_Column_Code, new { htmlAttributes = new { @class = "form-control input-sm" } })
+                                </td>
+                            </tr>*@
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <div style="margin:20px; text-align:center">
+                            <input type="submit" value="Submit" class="btn btn-primary" style="width:100px;" onclick="SaveReport()" />
+                            @Html.ActionLink("Back to List", "Index", "", new { @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}

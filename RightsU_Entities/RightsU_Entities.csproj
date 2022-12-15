@@ -179,7 +179,9 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\Attrib_Report_Column.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />
+    <Compile Include="Master_Entities\Report_Column_Setup_IT.cs" />
     <Compile Include="Master_Entities\Supplementary.cs" />
     <Compile Include="Master_Entities\Supplementary_Config.cs" />
     <Compile Include="Master_Entities\Supplementary_Data.cs" />
