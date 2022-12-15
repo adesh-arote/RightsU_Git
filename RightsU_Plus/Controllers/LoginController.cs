@@ -313,7 +313,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult Login(string Entitycode = "", string Username = "", string Password = "")
         {
             ViewBag.BindEntity = BindEntity("");
-            SetClientLogo();
+
             GetSystemVersion();
             LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entitycode).FirstOrDefault();
             if (objLoginEntity == null)
@@ -321,9 +321,9 @@ namespace RightsU_Plus.Controllers
 
             Session[RightsU_Session.CurrentLoginEntity] = objLoginEntity;
             Session["objLoginEntity"] = objLoginEntity;
-
             Session["Entity_Type"] = Entitycode.Trim();
             string alertMsg = "";
+            SetClientLogo();
             TempData["FromPage"] = "Login";
             Session["lstEmail_Notification_Log"] = null;
             HttpCookie myCookie = null;
@@ -1075,6 +1075,14 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult ForgetPassword(string txtLoginID = "", string hdnEntity = "")
         {
+            if (Session["objLoginEntity"] == null)
+            {
+                ViewBag.BindEntity = BindEntity("");
+                LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == hdnEntity).FirstOrDefault();
+                if (objLoginEntity == null)
+                    objLoginEntity = new LoginEntity();
+                Session["objLoginEntity"] = objLoginEntity;
+            }
             string ChangePasswordLink = "";
             Session["Entity_Type"] = hdnEntity;
             objUser_Service = null;
@@ -1095,8 +1103,8 @@ namespace RightsU_Plus.Controllers
 
                 string newPassword = getEncrptedPass(objUser.First_Name, objUser.Last_Name).Trim();
 
-                objUser.Password = newPassword;
-                objUser.Is_System_Password = "Y";
+                //objUser.Password = newPassword;
+                //objUser.Is_System_Password = "Y";
 
                 string status = Convert.ToString(objUser.Is_Active);
 
@@ -1107,7 +1115,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    objUser.Password = getEncriptedStr(objUser.Password);
+                    //objUser.Password = getEncriptedStr(objUser.Password);
                     objUser.Password_Fail_Count = 0;
                     objUser.Last_Updated_Time = DateTime.Now;
                     objUser.EntityState = State.Modified;
@@ -1499,7 +1507,7 @@ namespace RightsU_Plus.Controllers
             { }
         }
 
-       
+
         private int sendchangePasswordLinkMail(User objUser, string NewPassword, string ChangePasswordLink)
         {
             int IsMailSend = new USP_Service(objLoginEntity.ConnectionStringName).usp_GetUserEMail_Body(objUser.Login_Name, objUser.First_Name, objUser.Last_Name, NewPassword, ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString(), ChangePasswordLink, ConfigurationManager.AppSettings["SystemName"].ToString(), "FPL", objUser.Email_Id.Trim());
@@ -1551,7 +1559,7 @@ namespace RightsU_Plus.Controllers
             }
 
         }
-#endregion
+        #endregion
 
         public JsonResult GetPWDPolicyDetailList()
         {
@@ -1562,17 +1570,17 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetPWDHistoryCount(string data)
         {
-            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;            
+            User objUser = ((RightsU_Session)Session[RightsU_Session.SESS_KEY]).Objuser;
             int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, data.Trim());
             if (Lst5PwdsCnt > 0)
             {
                 return Json(new { PWDHistoryCount = Lst5PwdsCnt, PWDHistoryMsg = "Please enter some other password, it matches your old password history" });
-            }  
+            }
             else
             {
                 return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
             }
-        }        
+        }
     }
 
     public class LoginParameters : Controller
