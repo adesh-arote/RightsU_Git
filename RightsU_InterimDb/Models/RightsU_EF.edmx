@@ -13338,6 +13338,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
           <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -13542,6 +13543,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_INSERT_UPLOAD_ERR_DETAIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="File_Code" Type="bigint" Mode="In" />
@@ -21808,7 +21810,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Acq_Digital_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Digital_Tab_Result)">
-            <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
+          <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_For_Acq_Digital" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Acq_Digital_Result)">
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
@@ -21821,7 +21823,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="View" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Delete_Acq_Digital">
-            <Parameter Name="DigitalCode" Mode="In" Type="Int32" />
+          <Parameter Name="DigitalCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Acq_Deal_Digital_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Digital_Edit_Result)">
             <Parameter Name="Acq_Deal_Digital_Code" Mode="In" Type="Int32" />
@@ -37466,6 +37468,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_ACQ_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" />
                   <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
@@ -39666,6 +39669,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_SYN_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Last_Action_By" ParameterName="Last_Action_By" />
@@ -47187,7 +47191,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
+         <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
