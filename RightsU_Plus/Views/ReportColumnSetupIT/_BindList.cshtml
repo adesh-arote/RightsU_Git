@@ -29,7 +29,7 @@
            Display Order
         </th>
         <th>
-            IsPartofSelectOnly
+            Is Part of Select Only?
         </th>
         <th>
             List Source
@@ -84,7 +84,14 @@
                     @Html.DisplayFor(modelItem => item.Display_Order)
                 </td>
                 <td align="center">
-                    @Html.DisplayFor(modelItem => item.IsPartofSelectOnly)
+                    @if (item.IsPartofSelectOnly == "Y")
+                    {
+                    <span>Yes</span>
+                    }
+                    else
+                    {
+                    <span>No</span>
+                    }
                 </td>
                 <td align="center">
                     @Html.DisplayFor(modelItem => item.List_Source)
@@ -114,9 +121,10 @@
                     @Html.DisplayFor(modelItem => item.Display_Type)
                 </td>*@
                 <td align="center">
-                    @Html.ActionLink(" ", "Edit", new { id=item.Column_Code}, new { @class = "glyphicon glyphicon-pencil", title = "Edit" }) 
-                    @Html.ActionLink(" ", "Details", new { id=item.Column_Code}, new { @class = "glyphicon glyphicon-eye-open", title = "Details" }) 
-                    @Html.ActionLink(" ", "Delete", new { id=item.Column_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })
+                    @Html.ActionLink(" ", "Edit", new { id = item.Column_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" })
+                    @Html.ActionLink(" ", "Details", new { id = item.Column_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "Details" })
+                    @*@Html.ActionLink(" ", "Delete", new { id=item.Column_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })*@
+                    <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureAttribReportColumn('@item.Column_Code', '@item.Display_Name', 'config')"></a>
                 </td>
             </tr>
         }

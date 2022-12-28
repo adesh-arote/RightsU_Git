@@ -151,12 +151,29 @@ namespace RightsU_Plus.Controllers
         // GET: Attrib_Reports
         public ActionResult Index()
         {
-            FetchData();
+            string config = "";
+            config = Convert.ToString(TempData["config"]);
+            Session["Configuration"] = config;
+
+            if (Convert.ToString(Session["Configuration"]) ==  "config")
+            {
+                FetchConfigureList();
+                //Session["Configuration"] = null;
+            }
+            else
+            {
+                FetchData();
+            }
             List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = "LatestModified", Value = "T" });
-            lstSort.Add(new SelectListItem { Text = "SortNameAsc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "SortNameDesc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
+            if (Session["Message"] != null)
+            {
+                ViewBag.Message = Session["Message"];
+                Session["Message"] = null;
+            }
             return View();
         }
 
@@ -177,6 +194,10 @@ namespace RightsU_Plus.Controllers
                 else
                     lst = lstAttrib_Report_Column_Searched.OrderByDescending(o => o.Control_Type).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+
+            List<Attrib_Group> lstAttribGrp = new Attrib_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+            ViewBag.BindAttribLst = lstAttribGrp;
+
             return PartialView("~/Views/Attrib_Reports/_BindList.cshtml", lst);
         }
 
@@ -207,14 +228,30 @@ namespace RightsU_Plus.Controllers
         {
             //lstAttrib_Group_Searched = lstAttrib_Group = objAttrib_Group_Service.SearchFor(x => true).OrderByDescending(o => o.Attrib_Group_Code).ToList();
             //lstReport_Column_Setup_IT_Searched = lstReport_Column_Setup_IT = objReport_Column_Setup_IT_Service.SearchFor(x => true).OrderBy(o => o.Column_Code).ToList();
-            lstAttrib_Report_Column_Searched = lstAttrib_Report_Column = objAttrib_Report_Column_Service.SearchFor(x => true).OrderBy(o => o.Attrib_Report_Column_Code).ToList();            
+            lstAttrib_Report_Column_Searched = lstAttrib_Report_Column = objAttrib_Report_Column_Service.SearchFor(x => true).OrderBy(o => o.Attrib_Report_Column_Code).ToList();
         }
+
+        private void FetchConfigureList()
+        {
+            int ColumnCode = 0;
+            string DisplayName = "";
+            
+
+            if (TempData["DisplayName"] != null && TempData["config"] != null && TempData["ColumnCode"] != null)
+            {
+                ColumnCode = Convert.ToInt32(TempData["ColumnCode"]);
+                DisplayName = Convert.ToString(TempData["DisplayName"]);
+                lstAttrib_Report_Column_Searched = lstAttrib_Report_Column = objAttrib_Report_Column_Service.SearchFor(x => true).Where(a => a.Column_Code == ColumnCode).ToList();
+            }
+        }
+
 
         public JsonResult SearchAttribReport(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstAttrib_Report_Column_Searched = lstAttrib_Report_Column.Where(w => w.Icon.ToUpper().Contains(searchText.ToUpper())).ToList();
+                lstAttrib_Report_Column_Searched = lstAttrib_Report_Column.Where(w => w.Type != null && w.Type.ToUpper().Contains(searchText.ToUpper()) || w.Attrib_Group.Attrib_Group_Name != null && w.Attrib_Group.Attrib_Group_Name.ToUpper().Contains(searchText.ToUpper())
+                || w.Report_Column_Setup_IT.Display_Name != null && w.Report_Column_Setup_IT.Display_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
             else
                 lstAttrib_Report_Column_Searched = lstAttrib_Report_Column;
@@ -231,54 +268,95 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Create()
         {
+            int AttribGrpCode = 0;
+            string AttribType = "";
+            string config = "";
+
+            if (TempData["AttribType"] != null && TempData["config"] != null && TempData["AttribGrpCode"] != null)
+            {
+                AttribGrpCode = Convert.ToInt32(TempData["AttribGrpCode"]);
+                AttribType = Convert.ToString(TempData["AttribType"]);
+                config = Convert.ToString(TempData["config"]);
+                ViewBag.Configuration = config;
+            }
+
             List<Attrib_Group> lstAttribGrpName = objAttrib_Group_Service.SearchFor(s => true).ToList();
-            var lstAttribTypeDP = lstAttribGrpName.Where(a => a.Attrib_Type == "DP").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
-            ViewBag.AttribTypeDP = new SelectList(lstAttribTypeDP, "Attrib_Group_Code", "Attrib_Group_Name");
-            var lstAttribTypeBV = lstAttribGrpName.Where(a => a.Attrib_Type == "BV").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
-            ViewBag.AttribTypeBV = new SelectList(lstAttribTypeBV, "Attrib_Group_Code", "Attrib_Group_Name");
+
+            Attrib_Report_Column objARC = new Attrib_Report_Column();
+            ViewBag.Title = "Create";
+
+            if (AttribType == "DP")
+            {
+                objARC.DP_Attrib_Group_Code = AttribGrpCode;
+                var lstAttribTypeBV = lstAttribGrpName.Where(a => a.Attrib_Type == "BV").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+                ViewBag.AttribTypeBV = new SelectList(lstAttribTypeBV, "Attrib_Group_Code", "Attrib_Group_Name");
+                ViewBag.DP = lstAttribGrpName.Where(a => a.Attrib_Group_Code == AttribGrpCode).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+            }
+            else if (AttribType == "BV")
+            {
+                objARC.BV_Attrib_Group_Code = AttribGrpCode;
+                var lstAttribTypeDP = lstAttribGrpName.Where(a => a.Attrib_Type == "DP").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+                ViewBag.AttribTypeDP = new SelectList(lstAttribTypeDP, "Attrib_Group_Code", "Attrib_Group_Name");
+                ViewBag.BV = lstAttribGrpName.Where(a => a.Attrib_Group_Code == AttribGrpCode).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+            }
+            else
+            {
+                var lstAttribTypeDP = lstAttribGrpName.Where(a => a.Attrib_Type == "DP").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+                ViewBag.AttribTypeDP = new SelectList(lstAttribTypeDP, "Attrib_Group_Code", "Attrib_Group_Name");
+                var lstAttribTypeBV = lstAttribGrpName.Where(a => a.Attrib_Type == "BV").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+                ViewBag.AttribTypeBV = new SelectList(lstAttribTypeBV, "Attrib_Group_Code", "Attrib_Group_Name");
+            }
 
             List<Report_Column_Setup_IT> lstDspName = objReport_Column_Setup_IT_Service.SearchFor(s => true).ToList();
             var lstDisplaypName = lstDspName.Select(a => new { a.Display_Name, a.Column_Code }).ToList();
             ViewBag.DisplayName = new SelectList(lstDisplaypName, "Column_Code", "Display_Name");
 
-
-            return View();
+            return View(objARC);
         }
 
         [HttpPost]
-        public ActionResult Create( int DP_Attrib_Group_Code, int BV_Attrib_Group_Code, int Column_Code, int Control_Type, int Display_Order,int Output_Group, string Is_Mandatory, string Icon, string Css_Class, string Type)
+        public ActionResult Create(Attrib_Report_Column objARC)
         {
-            string status = "S", message = "";
+            string status = "", message = "";
             List<Attrib_Report_Column> lstAttribReportColumn = objAttrib_Report_Column_Service.SearchFor(s => true).ToList();
+            List<Attrib_Report_Column> tempList = objAttrib_Report_Column_Service.SearchFor(x => true).Where(a => (a.DP_Attrib_Group_Code == objARC.DP_Attrib_Group_Code) && (a.BV_Attrib_Group_Code == objARC.BV_Attrib_Group_Code) && (a.Column_Code == objARC.Column_Code) && (a.Control_Type == objARC.Control_Type)).ToList();
             var LastIdArc = lstAttribReportColumn.OrderBy(a => a.Attrib_Report_Column_Code).LastOrDefault();
-            objAttrib_Report_Column_Service = null;
-            objAttrib_Report_Column.EntityState = State.Added;
 
+            if (tempList.Count == 0)
+            {
+                objAttrib_Report_Column_Service = null;
+                objAttrib_Report_Column = objARC;
+                objAttrib_Report_Column.EntityState = State.Added;
 
-            objAttrib_Report_Column.Attrib_Report_Column_Code = LastIdArc.Attrib_Report_Column_Code + 1;
-            objAttrib_Report_Column.DP_Attrib_Group_Code = DP_Attrib_Group_Code;
-            objAttrib_Report_Column.BV_Attrib_Group_Code = BV_Attrib_Group_Code;
-            objAttrib_Report_Column.Column_Code = Column_Code;
-            objAttrib_Report_Column.Control_Type = Control_Type;
-            objAttrib_Report_Column.Display_Order = Display_Order;
-            objAttrib_Report_Column.Output_Group = Output_Group;
-            objAttrib_Report_Column.Is_Mandatory = Is_Mandatory;
-            objAttrib_Report_Column.Icon = Icon;
-            objAttrib_Report_Column.Css_Class = Css_Class;
-            objAttrib_Report_Column.Type = Type;
+                objAttrib_Report_Column.Attrib_Report_Column_Code = LastIdArc.Attrib_Report_Column_Code + 1;
 
-            dynamic resultSet;
-            if (!objAttrib_Report_Column_Service.Save(objAttrib_Report_Column, out resultSet))
+                dynamic resultSet;
+                if (!objAttrib_Report_Column_Service.Save(objAttrib_Report_Column, out resultSet))
+                {
+                    status = "E";
+                    Session["Message"] = "Record Not saved";
+                }
+                else
+                {
+                    status = "S";
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;
+                }
+            }
+            else
             {
                 status = "E";
-                message = resultSet;
+                Session["Message"] = objMessageKey.RecordAlreadyExists;
             }
-            return View("Index");
+            var obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
         }
 
         public ActionResult Edit(int id)
         {
-            //Attrib_Report_Column objatc = new Attrib_Report_Column();
             objAttrib_Report_Column = lstAttrib_Report_Column.Where(a => a.Attrib_Report_Column_Code == id).FirstOrDefault();
 
             List<Attrib_Group> lstAttribGrpName = objAttrib_Group_Service.SearchFor(s => true).ToList();
@@ -291,48 +369,84 @@ namespace RightsU_Plus.Controllers
             var lstDisplaypName = lstDspName.Select(a => new { a.Display_Name, a.Column_Code }).ToList();
             ViewBag.DisplayName = new SelectList(lstDisplaypName, "Column_Code", "Display_Name", objAttrib_Report_Column.Column_Code);
 
-            return View(objAttrib_Report_Column);
+            ViewBag.Title = "Edit";
+            return View("Create", objAttrib_Report_Column);
         }
         [HttpPost]
         public ActionResult Edit(Attrib_Report_Column attrib_Report_Column, int id)
         {
+            string status = "", message = "";
             objAttrib_Report_Column_Service = null;
             objAttrib_Report_Column = attrib_Report_Column;
             objAttrib_Report_Column.Attrib_Report_Column_Code = id;
-            objAttrib_Report_Column.EntityState = State.Modified;
-            dynamic resultSet;
-            if (objAttrib_Report_Column_Service.Save(objAttrib_Report_Column, out resultSet))
+            List<Attrib_Report_Column> tempList = objAttrib_Report_Column_Service.SearchFor(x => true).Where(a => (a.DP_Attrib_Group_Code == attrib_Report_Column.DP_Attrib_Group_Code) && (a.BV_Attrib_Group_Code == attrib_Report_Column.BV_Attrib_Group_Code) && (a.Column_Code == attrib_Report_Column.Column_Code) && (a.Control_Type == attrib_Report_Column.Control_Type) && (a.Attrib_Report_Column_Code != attrib_Report_Column.Attrib_Report_Column_Code)).ToList();
+
+            if (tempList.Count == 0)
             {
-                return RedirectToAction("Index");
+                
+                objAttrib_Report_Column.EntityState = State.Modified;
+                dynamic resultSet;
+                if (!objAttrib_Report_Column_Service.Save(objAttrib_Report_Column, out resultSet))
+                {
+                    status = "E";
+                    Session["Message"] = objMessageKey.CouldNotsavedRecord;
+                }
+                else
+                {
+                    status = "S";
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;
+                }
             }
-            return View();
+            else
+            {
+                status = "E";
+                message = objMessageKey.RecordAlreadyExists;
+            }
+            var obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
         }
 
         public ActionResult Details(int id)
         {
             Attrib_Report_Column objAtc = new Attrib_Report_Column();
             objAtc = lstAttrib_Report_Column.Where(a => a.Attrib_Report_Column_Code == id).FirstOrDefault();
-            ViewBag.details = "Details";
-            return View("Delete",objAtc);
+
+            List<Attrib_Group> lstAttribGrpName = objAttrib_Group_Service.SearchFor(s => true).ToList();
+            var lstAttribTypeDP = lstAttribGrpName.Where(a => a.Attrib_Type == "DP").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+            ViewBag.DP = lstAttribGrpName.Where(a => a.Attrib_Group_Code == objAtc.DP_Attrib_Group_Code).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+            var lstAttribTypeBV = lstAttribGrpName.Where(a => a.Attrib_Type == "BV").Select(b => new { b.Attrib_Group_Name, b.Attrib_Group_Code }).ToList();
+            ViewBag.BV = lstAttribGrpName.Where(a => a.Attrib_Group_Code == objAtc.BV_Attrib_Group_Code).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+
+            ViewBag.Title = "View";
+
+            return View("Create", objAtc);
         }
 
+        //public ActionResult Delete(int id)
+        //{
+        //    Attrib_Report_Column objAtc = new Attrib_Report_Column();
+        //    objAtc = lstAttrib_Report_Column.Where(a => a.Attrib_Report_Column_Code == id).FirstOrDefault();
+        //    return View(objAtc);
+        //}
+
+        //[HttpPost, ActionName("Delete")]
         public ActionResult Delete(int id)
-        {
-            Attrib_Report_Column objAtc = new Attrib_Report_Column();
-            objAtc = lstAttrib_Report_Column.Where(a => a.Attrib_Report_Column_Code == id).FirstOrDefault();
-            return View(objAtc);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public ActionResult DeleteConfirmed(int id)
         {
             Attrib_Report_Column objAtc = new Attrib_Report_Column();
             objAtc = objAttrib_Report_Column_Service.GetById(id);
             objAtc.EntityState = State.Deleted;
             dynamic resultSet;
-            objAttrib_Report_Column_Service.Delete(objAtc, out resultSet);
+            if(objAttrib_Report_Column_Service.Delete(objAtc, out resultSet))
+            {
+                Session["Message"] = objMessageKey.RecordDeletedsuccessfully;
+                return RedirectToAction("Index");
+            }
 
-            return RedirectToAction("Index");
+            return View();
         }
     }
 }

@@ -13,6 +13,7 @@
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
     var URL_BindAttribReport = '@Url.Action("BindAttribReport", "Attrib_Reports")';
     var URL_SearchAttribReport = '@Url.Action("SearchAttribReport", "Attrib_Reports")';
+    var URL_IndexReportColumnSetupIT = '@Url.Action("Index", "ReportColumnSetupIT")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -26,9 +27,14 @@
             $('#ddlSortType_chosen').css("text-align", "left");
         }
 
+        if ("@ViewBag.Message" != "") {
+            showAlert("S", "@ViewBag.Message");
+            @*@ViewBag.Message = "";*@
+        }
+
         addNumeric();
         SearchAttribReport("");
-        BindAttribReport();
+        //BindAttribReport();
         //initializeChosen();
 
         $('#searchCommon').keypress(function (e) {
@@ -63,6 +69,7 @@
                 $('#hdnPageNo').val(1);
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging() 
                 BindAttribReport();
 
             }
@@ -101,6 +108,14 @@
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         debugger;
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
 
         SearchAttribReport("");
     }
@@ -204,6 +219,10 @@
         SetPaging();
     }
 
+    function IndexReportColumnSetupIT() {
+        window.location.href = URL_IndexReportColumnSetupIT;
+    }
+
 </script>
 <style>
     td {
@@ -232,12 +251,12 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        Attrib Report List
+                        Attrib Report Column
                     </h2>
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                @Html.ActionLink("Create New", "Create", "", new { @class = "btn btn-primary" })
+                                @Html.ActionLink("Create New", "Create", "", new { @class = "btn btn-primary"})
                             </li>
                         </ul>
                     </div>
@@ -249,7 +268,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:30%;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" />
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Attrib Group Name, Display Name, Type" />
                             </td>
                             <td>
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">

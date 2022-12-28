@@ -151,10 +151,15 @@ namespace RightsU_Plus.Controllers
         {
             FetchData();
             List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = "LatestModified", Value = "T" });
-            lstSort.Add(new SelectListItem { Text = "SortNameAsc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "SortNameDesc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
+            if (Session["Message"] != null)
+            {
+                ViewBag.Message = Session["Message"];
+                Session["Message"] = null;
+            }
             return View();
         }
 
@@ -211,7 +216,7 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstReport_Column_Setup_IT_Searched = lstReport_Column_Setup_IT.Where(w => w.Display_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
+                lstReport_Column_Setup_IT_Searched = lstReport_Column_Setup_IT.Where(w => w.View_Name != null && w.View_Name.ToUpper().Contains(searchText.ToUpper()) || w.Display_Name != null && w.Display_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
             else
                 lstReport_Column_Setup_IT_Searched = lstReport_Column_Setup_IT;
@@ -227,53 +232,100 @@ namespace RightsU_Plus.Controllers
         //------------------------------------------------------------CRUD--------------------------------------------------------------------------------
         public ActionResult Create()
         {
+            ViewBag.Title = "Create";
             return View();
         }
 
         [HttpPost]
         public ActionResult Create(Report_Column_Setup_IT objRCSI)
         {
-            objReport_Column_Setup_IT_Service = null;
-            objReport_Column_Setup_IT = objRCSI;
-            objReport_Column_Setup_IT.EntityState = State.Added;
-            dynamic resultSet;
-            if (objReport_Column_Setup_IT_Service.Save(objReport_Column_Setup_IT, out resultSet))
+            string status = "", message = "";
+            List<Report_Column_Setup_IT> tempList = objReport_Column_Setup_IT_Service.SearchFor(x => true).Where(a => (a.Display_Name == objRCSI.Display_Name)).ToList();
+
+            if (tempList.Count == 0)
             {
-                return RedirectToAction("Index");
+                objReport_Column_Setup_IT_Service = null;
+                objReport_Column_Setup_IT = objRCSI;
+                objReport_Column_Setup_IT.EntityState = State.Added;
+                dynamic resultSet;
+                if (!objReport_Column_Setup_IT_Service.Save(objReport_Column_Setup_IT, out resultSet))
+                {
+                    status = "E";
+                    Session["Message"] = "Record Not saved";
+
+                }
+                else
+                {
+                    status = "S";
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;
+                    //return RedirectToAction("Index");
+                }
             }
-            return View();
+            else
+            {
+                status = "E";
+                Session["Message"] = objMessageKey.RecordAlreadyExists;
+            }
+            var obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            
+            return Json(obj);
         }
 
         public ActionResult Edit(int id)
         {
-            Report_Column_Setup_IT objRCSIT = new Report_Column_Setup_IT();
-            objRCSIT = lstReport_Column_Setup_IT.Where(a => a.Column_Code == id).FirstOrDefault();
+            objReport_Column_Setup_IT = lstReport_Column_Setup_IT.Where(a => a.Column_Code == id).FirstOrDefault();
 
-            return View("Create", objRCSIT);
+            ViewBag.Title = "Edit";
+            return View("Create", objReport_Column_Setup_IT);
         }
 
         [HttpPost]
-        public ActionResult Edit(int id, Report_Column_Setup_IT objRCSI)
+        public ActionResult Edit(int id, Report_Column_Setup_IT report_Column_Setup_IT)
         {
+            string status = "S", message = "";
             objReport_Column_Setup_IT_Service = null;
-            objReport_Column_Setup_IT = objRCSI;
+            objReport_Column_Setup_IT = report_Column_Setup_IT;
             objReport_Column_Setup_IT.Column_Code = id;
-            objReport_Column_Setup_IT.EntityState = State.Modified;
+            List<Report_Column_Setup_IT> tempList = objReport_Column_Setup_IT_Service.SearchFor(x => true).Where(a => (a.Display_Name == report_Column_Setup_IT.Display_Name) && (a.Column_Code != report_Column_Setup_IT.Column_Code)).ToList();
 
-            dynamic resultSet;
-            if (objReport_Column_Setup_IT_Service.Save(objReport_Column_Setup_IT, out resultSet))
+            if (tempList.Count == 0)
             {
-                return RedirectToAction("Index");
+                objReport_Column_Setup_IT.EntityState = State.Modified;
+                dynamic resultSet;
+                if (!objReport_Column_Setup_IT_Service.Save(objReport_Column_Setup_IT, out resultSet))
+                {
+                    status = "E";
+                    Session["Message"] = objMessageKey.CouldNotsavedRecord;
+                }
+                else
+                {
+                    status = "S";
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;
+                }
             }
-            return View();
+            else
+            {
+                status = "E";
+                message = objMessageKey.RecordAlreadyExists;
+            }
+            var obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
         }
 
         public ActionResult Details(int id)
         {
             Report_Column_Setup_IT objRCSIT = new Report_Column_Setup_IT();
             objRCSIT = lstReport_Column_Setup_IT.Where(a => a.Column_Code == id).FirstOrDefault();
-            ViewBag.Details = "Details";
-            return View("Delete", objRCSIT);
+            ViewBag.Title = "View";
+            return View("Create", objRCSIT);
         }
 
         public ActionResult Delete(int id)
@@ -291,11 +343,25 @@ namespace RightsU_Plus.Controllers
             objRCSIT.EntityState = State.Deleted;
 
             dynamic resultSet;
-            if(objReport_Column_Setup_IT_Service.Delete(objRCSIT, out resultSet))
+            if (objReport_Column_Setup_IT_Service.Delete(objRCSIT, out resultSet))
             {
                 return RedirectToAction("Index");
             }
             return View();
+        }
+
+        public JsonResult Configuration(int ColumnCode, string DisplayName, string config)
+        {
+            string status = "S";
+            TempData["ColumnCode"] = ColumnCode;
+            TempData["DisplayName"] = DisplayName;
+            TempData["config"] = config;
+
+            var obj = new
+            {
+                status
+            };
+            return Json(obj);
         }
     }
 }

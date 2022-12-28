@@ -13,6 +13,8 @@
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
     var URL_BindReportColumnSetupIT = '@Url.Action("BindReportColumnSetupIT", "ReportColumnSetupIT")';
     var URL_SearchReportColumnSetupIT = '@Url.Action("SearchReportColumnSetupIT", "ReportColumnSetupIT")';
+    var URL_ConfigureReportSetupColumn = '@Url.Action("Configuration", "ReportColumnSetupIT")';
+    var URL_BindIndex = '@Url.Action("Index", "Attrib_Reports")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -26,9 +28,15 @@
             $('#ddlSortType_chosen').css("text-align", "left");
         }
 
+        if ("@ViewBag.Message" != "") {
+            showAlert("S", "@ViewBag.Message");
+            @*@ViewBag.Message = "";*@
+        }
+        
+
         addNumeric();
         SearchReportColumn("");
-        BindReportColumnSetup();
+        //BindReportColumnSetup();
 
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
@@ -62,6 +70,7 @@
                 $('#hdnPageNo').val(1);
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging() 
                 BindReportColumnSetup();
 
             }
@@ -100,6 +109,12 @@
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         debugger;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
 
         SearchReportColumn("");
     }
@@ -202,6 +217,26 @@
         SetPaging();
     }
 
+    function ConfigureAttribReportColumn(ColumnCode, DisplayName, config) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ConfigureReportSetupColumn,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ColumnCode: ColumnCode,
+                DisplayName: DisplayName,
+                config: config
+            }),
+            success: function (result) {
+                //SAME CODE AS EDIT FUNCTION
+                window.location.href = URL_BindIndex;
+            }
+        })
+    }
+
 </script>
 <style>
     td {
@@ -230,7 +265,7 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                       Report List
+                       Report Column Setup (Entitive)
                     </h2>
                     <div class="right_nav pull-right">
                         <ul>
@@ -247,7 +282,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:30%;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" />
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="View Name, Display Name" />
                             </td>
                             <td>
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
