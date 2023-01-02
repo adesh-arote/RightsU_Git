@@ -13,7 +13,11 @@ using System.Data.Entity.Core.Objects;
 using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
-
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
+using System.Net;
+using System.IO;
+using System.Web.Script.Serialization;
 
 namespace RightsU_Plus.Controllers
 {
@@ -128,7 +132,7 @@ namespace RightsU_Plus.Controllers
                 },
             "ID", "Name", selected_Milestone_Unit);
         }
-        public string Archive(string user_Action, int Acq_Deal_Code, string remarks_Approval = "",int moduleCode = 30)//add user action
+        public string Archive(string user_Action, int Acq_Deal_Code, string remarks_Approval = "", int moduleCode = 30)//add user action
         {
             string strMsgType = "";
             try
@@ -141,11 +145,11 @@ namespace RightsU_Plus.Controllers
                 string uspResult = string.Empty;
                 if (moduleCode == 30)
                 {
-                   // uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
-                   //.USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForAcqDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
+                    // uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
+                    //.USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForAcqDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
                     uspResult = Convert.ToString(objUSP.USP_Process_Workflow(Acq_Deal_Code, 30, objLoginUser.Users_Code, val, remarks_Approval).ElementAt(0));
                 }
-                else if(moduleCode == 35)
+                else if (moduleCode == 35)
                 {
                     // uspResult = Convert.ToString(new USP_Service(objLoginEntity.ConnectionStringName)
                     //.USP_Assign_Workflow(Acq_Deal_Code, GlobalParams.ModuleCodeForSynDeal, objLoginUser.Users_Code, val + remarks_Approval).ElementAt(0));
@@ -186,11 +190,11 @@ namespace RightsU_Plus.Controllers
                 if (user_Action == "A")
                 {
                     string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
-                        .SearchFor(x => x.Module_Code == 30 
-                                        && x.Record_Code == objAcq_Deal.Acq_Deal_Code 
+                        .SearchFor(x => x.Module_Code == 30
+                                        && x.Record_Code == objAcq_Deal.Acq_Deal_Code
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
                         .OrderByDescending(x => x.Module_Workflow_Detail_Code)
-                        .Select(x=>x.Is_Done)
+                        .Select(x => x.Is_Done)
                         .FirstOrDefault();
 
                     if (isApproved == "Y")
@@ -201,7 +205,7 @@ namespace RightsU_Plus.Controllers
 
                 if (WorkFlowStatus.Contains("Waiting (Archive)"))
                 {
-                    uspResult = Archive(user_Action,objAcq_Deal.Acq_Deal_Code, approvalremarks);
+                    uspResult = Archive(user_Action, objAcq_Deal.Acq_Deal_Code, approvalremarks);
                 }
                 else
                 {
@@ -212,14 +216,212 @@ namespace RightsU_Plus.Controllers
                         CommonUtil objCUT = new CommonUtil();
                         objCUT.Send_WBS_Data(GlobalParams.ModuleCodeForAcqDeal, objAcq_Deal.Acq_Deal_Code, objLoginUser.Users_Code, objLoginEntity.ConnectionStringName, "N");
                     }
+
+
+                    #region ----Contido API Calling Logic
+
+                    string AllowContidoAPILinkCall = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.IsActive == "Y" && w.Parameter_Name == "AllowContidoAPILinkCall").Select(x => x.Parameter_Value).FirstOrDefault();
+                    if (AllowContidoAPILinkCall == "Y")
+                    {
+                        //int SecurityGroupCode = Convert.ToInt32(new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 30 && x.Record_Code == objAcq_Deal.Acq_Deal_Code && x.Next_Level_Group == null)
+                        //    .Select(x => x.Group_Code));
+
+                        string IsLastLevelApprovar = "N";
+
+                        //new User_Service(objLoginEntity.ConnectionStringName).SearchFor(x=>x.Users_Code == objAcq_Deal.Last_Action_By == )
+
+                        var acq_Deal_Movie = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true)
+                          .Where(x => x.Acq_Deal_Code == objAcq_Deal.Acq_Deal_Code).FirstOrDefault();
+                        var acq_Deal = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objAcq_Deal.Acq_Deal_Code);
+
+                        if (acq_Deal.Deal_Workflow_Status == "A" && acq_Deal.Version == "0001" && (acq_Deal.Deal_Type_Code == 11 || acq_Deal.Deal_Type_Code == 22 || acq_Deal.Deal_Type_Code == 32))
+                        {
+                            string ProgramName = new Title_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(acq_Deal_Movie.Title_Code)).Title_Name;
+
+                            // for saving Metadata rms id
+                            Map_Extended_Columns_Service objService = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName);
+                            Map_Extended_Columns objMap_Extended_Columns = new Map_Extended_Columns();
+
+                            objMap_Extended_Columns.Record_Code = acq_Deal_Movie.Title_Code;
+                            objMap_Extended_Columns.Table_Name = "TITLE";
+                            objMap_Extended_Columns.Columns_Code = Convert.ToInt32(ConfigurationManager.AppSettings["rms_id_ExtendedColumnsCode"]);// 2061;
+                            objMap_Extended_Columns.Column_Value = "RUCONBBTS" + acq_Deal_Movie.Title_Code;
+                            objMap_Extended_Columns.EntityState = State.Added;
+
+                            dynamic resultSet;
+                            bool isValid = objService.Save(objMap_Extended_Columns, out resultSet);
+
+                            List<ScheduleInfo> lstScheduleInfo = new List<ScheduleInfo>();
+                            ScheduleInfo objScheduleInfo = new ScheduleInfo()
+                            {
+                                id = "5f573eba26d8872940aa6d73",
+                                channel_db_id = "5f573eba26d8872940aa6d73",
+                                channel_id = "CH02",
+                                name = "e-Entertainment",
+                                language = "english",
+                                is_disaster = false,
+                                organisation = "10tv",
+                                organisation_code = "10tv",
+                                tx_time = 1672131642702
+                            };
+                            lstScheduleInfo.Add(objScheduleInfo);
+
+                            List<string> lstott_platforms_list = new List<string>();
+                            lstott_platforms_list.Add("5d11f18995eabf740e91d3a2");
+
+                            List<string> lstgeography = new List<string>();
+                            lstgeography.Add("UAE");
+                            lstgeography.Add("SA");
+                            lstgeography.Add("QA");
+
+                            List<string> lstDevice_type = new List<string>();
+                            lstDevice_type.Add("iOS");
+                            lstDevice_type.Add("Android");
+
+                            List<Ottprogramsinfo> lstOttprogramsinfo = new List<Ottprogramsinfo>();
+                            Ottprogramsinfo objOttprogramsinfo = new Ottprogramsinfo()
+                            {
+
+                                id = "5d11f18995eabf740e91d3a2",
+                                display_seq = 1,
+                                ott_id = "",
+                                platform_name = "e-OTT",
+                                language = null,
+                                image_path = "",
+                                first_publish_time = 1672131649192,
+                                second_publish_time = 1672131649192,
+                                geography = lstgeography,
+                                name = ProgramName,
+                                device_type = lstDevice_type
+                            };
+                            lstOttprogramsinfo.Add(objOttprogramsinfo);
+
+                            List<string> lsttasks_list = new List<string>();
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cb7");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cbc");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cb8");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cbd");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cbf");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cc0");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cc1");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cc2");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cc3");
+                            lsttasks_list.Add("5d11bf3295eabf6d8fd76cc5");
+                            lsttasks_list.Add("6378c78eaff8d400e57dee09");
+                            lsttasks_list.Add("5e5cb80d31ff12c245727649");
+                            lsttasks_list.Add("62546c17d4b333678d8a9713");
+                            lsttasks_list.Add("5ed50bbdcbc72aa66764ea54");
+
+
+                            List<object> lstprogram_type = new List<object>();
+                            List<object> lstprogram_settings = new List<object>();
+
+                            Data objData = new Data()
+                            {
+                                language = "english",
+                                season_type = "series",
+                                season_no = 1,
+                                name = ProgramName,
+                                season_name = ProgramName,
+                                no_of_episodes = 10,
+                                rms_id = "RUCONBBTS" + acq_Deal_Movie.Title_Code,
+                                channels_list = "5f573eba26d8872940aa6d73",
+                                schedule_info = lstScheduleInfo,
+                                ott_platforms_list = lstott_platforms_list,
+                                ottprogramsinfo = lstOttprogramsinfo,
+                                tasks_list = lsttasks_list,
+                                program_type = lstprogram_type,
+                                program_settings = lstprogram_settings
+
+                            };
+
+
+                            ContidoInput objContidoInput = new ContidoInput();
+
+                            objContidoInput.role_id = "5c57ee5b95eabf4c15894072";
+                            objContidoInput.organisation_db_id = "5bc6fd5695eabfb8f076d784";
+                            objContidoInput.username = "geetu@desynova.com";
+                            objContidoInput.data = objData;
+
+
+
+
+
+                            //API Calling
+                            string result = "";
+                            string Authorization = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJyYW5kb21OdW1iZXIiOiAiMzg3MzY2OTEwMSIsICJ0b2tlbkNyZWF0ZWRBdCI6ICIyMDIyLTEyLTI3IDE2OjAxOjAyLjI4NDc2MyIsICJleHAiOiAiMjExNC0wNC0wMyAwMDowMTowMi4yODQ3NjMiLCAidXNlcm5hbWUiOiAiZ2VldHVAZGVzeW5vdmEuY29tIiwgIm9ial9pZCI6ICI2MzZiNDk4MGNlN2U2MDAwMWIwZWJmZDQiLCAiZmlyc3RuYW1lIjogIkdlZXR1IiwgImxhc3RuYW1lIjogIk1ha2hhbmkiLCAiZ3JvdXBuYW1lIjogW10sICJsb2NhdGlvbiI6ICIiLCAibG9jYXRpb25fdGFnIjogImh5ZCJ9.iTnanvN1o6o_HK6oIYDYJAvS0sX_XqRDMrqumOQYyVTfP4AHrVzSj8dm9KcvVFB8EeBWN14NY8qebE_CPLIbynZ_BNdk2Hp85YFZmeAhiClp_6dojhE3_5zgm_0kMCwbF6Nbmw0WQzoM1xzGndv1ZVh6rfkNHO0ABuTFlUJxqehy-moYeyGNe94LbRKm8nH-wcZPltE19VHGEdmhv22jF6hgZ7sdmRsk6SV5Dgd5BKfslJCMTwM0sQDvJEBJBNGuMUd6xXl6rXy-xud1E1rwVLfOlYxgBAylH8F9gm8ty-zrMWyQRJXsO44rfqihi2UmadrILFJciAzpd042iNueSRT1TxKtIBJFZrEEKJwTGZtl3gEx3D7R4gYFodprmn5PQNtSAi9BdLtwCT0ix_vgsv88Y4OPe5O2n5rbWtRStU-XKtSmRGtt6-6SnDXjWfsyZg7zhEsZton7_4r5X5lOQ6-5lXXgtHvsXQ0IUtRYOcUopgQ96FL-6VpIyg7uPl1IsP9Ph4GTm6YnHGP4G4LD5X5xC6Upq7NPkCtEPeCHL9IcWpKkbEMZWKIneSqSRoqeDDNvE7AsCjZ2rcTwSnUxmwEWadrAK4bLHIi0JHKU4JilGxYLA784IJCfVvixaH7e_sF_eJwKPdOT68dhfhtl2Fxkodo8O_rbYRfkjh60kSA";
+
+                            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.desynova.contido.io/api/manage/show/");
+                            request.KeepAlive = false;
+                            request.ProtocolVersion = HttpVersion.Version10;
+                            request.ContentType = "application/Json";
+                            request.Method = "POST";
+                            request.Headers.Add("ContentType", "application/json");
+                            request.Headers.Add("Authorization", Authorization);
+                            request.Headers.Add("Service", "true");
+                            //API Calling
+
+                            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                            {
+                                string json = JsonConvert.SerializeObject(objContidoInput);
+                                streamWriter.Write(json);
+                            }
+
+                            try
+                            {
+                                var httpResponse = (HttpWebResponse)request.GetResponse();
+                                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                                {
+                                    result = streamReader.ReadToEnd();
+                                }
+
+                                var responseobject = JsonConvert.DeserializeObject(result);
+
+                                //var objresponseobject = JsonConvert.DeserializeObject<List<Root_Output>>(result);
+
+
+                            }
+                            catch (Exception ex)
+                            {
+                                request.Abort();
+                            }
+
+
+                            var objresponseobject1 = JsonConvert.DeserializeObject<Root_Output>(result);
+                            // for saving Metadata program id from contido
+                            Map_Extended_Columns_Service objService_1 = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName);
+                            Map_Extended_Columns objMap_Extended_Columns_1 = new Map_Extended_Columns();
+
+                            objMap_Extended_Columns_1.Record_Code = acq_Deal_Movie.Title_Code;
+                            objMap_Extended_Columns_1.Table_Name = "TITLE";
+                            objMap_Extended_Columns_1.Columns_Code = Convert.ToInt32(ConfigurationManager.AppSettings["program_db_id_ExtendedColumnsCode"]);
+                            if (objresponseobject1.response == true)
+                            {
+                                objMap_Extended_Columns_1.Column_Value = objresponseobject1.data.program_db_id;
+                            }
+                            else
+                            {
+                                objMap_Extended_Columns_1.Column_Value = objresponseobject1.errormessage.ToString();
+                            }
+                            objMap_Extended_Columns_1.EntityState = State.Added;
+
+                            dynamic resultSet_1;
+                            bool isValid_1 = objService.Save(objMap_Extended_Columns_1, out resultSet_1);
+                        }
+                    }
+
+                    #endregion
+
                 }
                 return Json(uspResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json("Error");
             }
         }
+
+
 
         public JsonResult SetApprovalRemarks(string approvalremarks)
         {
@@ -247,8 +449,8 @@ namespace RightsU_Plus.Controllers
                 if (user_Action == "A")
                 {
                     string isApproved = new Module_Workflow_Detail_Service(objLoginEntity.ConnectionStringName)
-                        .SearchFor(x => x.Module_Code == 35 
-                                        && x.Record_Code == objSyn_Deal.Syn_Deal_Code 
+                        .SearchFor(x => x.Module_Code == 35
+                                        && x.Record_Code == objSyn_Deal.Syn_Deal_Code
                                         && x.Group_Code == objLoginUser.Security_Group_Code)
                         .OrderByDescending(x => x.Module_Workflow_Detail_Code)
                         .Select(X => X.Is_Done)
@@ -263,7 +465,7 @@ namespace RightsU_Plus.Controllers
                 string uspResult = String.Empty;
                 if (WorkFlowStatus.Contains("Waiting (Archive)"))
                 {
-                    uspResult = Archive(user_Action, objSyn_Deal.Syn_Deal_Code, approvalremarks,35);
+                    uspResult = Archive(user_Action, objSyn_Deal.Syn_Deal_Code, approvalremarks, 35);
                 }
                 else
                 {
@@ -792,5 +994,83 @@ namespace RightsU_Plus.Controllers
             Response.End();
             return RedirectToAction("Index", new { Message = "Attachment File downloaded successfully" });
         }
+    }
+
+    public class ContidoInput
+    {
+        public string role_id { get; set; }
+        public string organisation_db_id { get; set; }
+        public string username { get; set; }
+        public Data data { get; set; }
+    }
+
+    public class Data
+    {
+        public string language { get; set; }
+        public string season_type { get; set; }
+        public int season_no { get; set; }
+        public string name { get; set; }
+        public string season_name { get; set; }
+        public int no_of_episodes { get; set; }
+        public string rms_id { get; set; }
+        public string channels_list { get; set; }
+        public List<ScheduleInfo> schedule_info { get; set; }
+        public List<string> ott_platforms_list { get; set; }
+        public List<Ottprogramsinfo> ottprogramsinfo { get; set; }
+        public List<string> tasks_list { get; set; }
+        public List<object> program_type { get; set; }
+        public List<object> program_settings { get; set; }
+    }
+
+    public class ScheduleInfo
+    {
+        public string id { get; set; }
+        public string channel_db_id { get; set; }
+        public string channel_id { get; set; }
+        public string name { get; set; }
+        public string language { get; set; }
+        public bool is_disaster { get; set; }
+        public string organisation { get; set; }
+        public string organisation_code { get; set; }
+        public long tx_time { get; set; }
+    }
+
+    public class Ottprogramsinfo
+    {
+        public string id { get; set; }
+        public int display_seq { get; set; }
+        public string ott_id { get; set; }
+        public string platform_name { get; set; }
+        public object language { get; set; }
+        public string image_path { get; set; }
+        public long first_publish_time { get; set; }
+        public long second_publish_time { get; set; }
+        public List<string> geography { get; set; }
+        public string name { get; set; }
+        public List<string> device_type { get; set; }
+    }
+
+
+    //output
+
+    public class Data_Output
+    {
+        public string upload_bucket_name_path { get; set; }
+        public string upload_bucket_name { get; set; }
+        public string upload_audio_bucket_name { get; set; }
+        public string upload_audio_bucket_name_path { get; set; }
+        public string program_db_id { get; set; }
+    }
+
+    public class Root_Output
+    {
+        public bool response { get; set; }
+        public Data_Output data { get; set; }
+        public object errorcode { get; set; }
+        public object errormessage { get; set; }
+        public bool popupmessage { get; set; }
+        public string type { get; set; }
+        public string header { get; set; }
+        public string body { get; set; }
     }
 }
