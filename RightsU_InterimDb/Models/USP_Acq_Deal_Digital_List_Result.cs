@@ -14,11 +14,10 @@ namespace RightsU_InterimDb.Models
     public partial class USP_Acq_Deal_Digital_List_Result
     {
         public string title_name { get; set; }
-        public string SocialMedia { get; set; }
-        public string Commitments { get; set; }
-        public string OpeningClosingCredits { get; set; }
-        public string EssentialClauses { get; set; }
-        public int title_code { get; set; }
-        public Nullable<int> Digital_code { get; set; }
+        public Nullable<int> Digital_Tab_Code { get; set; }
+        public string Digital_Tab_Description { get; set; }
+        public string Remarks { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public Nullable<int> Acq_Deal_Digital_Code { get; set; }
     }
 }

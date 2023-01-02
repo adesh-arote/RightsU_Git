@@ -2042,6 +2042,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Text_Field" Type="varchar" MaxLength="100" />
           <Property Name="Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Whr_Criteria" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Digital_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="LP_Digital_Value_Config_Code" Type="varchar" MaxLength="1000" />
         </EntityType>
         <EntityType Name="Digital_Data">
           <Key>
@@ -2063,6 +2065,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
           <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
           <Property Name="Module_Code" Type="int" />
+          <Property Name="Key_Config_Code" Type="int" />
+          <Property Name="Is_Show" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -4207,6 +4211,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
+          
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -4558,6 +4563,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Text_Field" Type="varchar" MaxLength="100" />
           <Property Name="Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Whr_Criteria" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Supplementary_Data_Code" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
@@ -23896,6 +23903,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
           <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+        
+       
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -36865,6 +36874,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
           <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
@@ -37037,13 +37048,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </ComplexType>
         <ComplexType Name="USP_Syn_Deal_Supplementary_List_Result">
           <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="BusinessStatement" Nullable="false" />
-          <Property Type="String" Name="ExcludedRights" Nullable="false" />
-          <Property Type="String" Name="Miscellaneous" Nullable="false" />
-          <Property Type="String" Name="IPDetails" Nullable="false" />
-          <Property Type="Int32" Name="title_code" Nullable="false" />
-          <Property Type="Int32" Name="Supplementary_code" Nullable="true" />
-        </ComplexType>
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Supplementary_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Syn_Deal_Supplementary_Code" Nullable="true" />
+          </ComplexType>
         <EntityType Name="Acq_Amendement_History">
           <Key>
             <PropertyRef Name="Acq_Amendement_History_Code" />
@@ -37057,14 +37067,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <ComplexType Name="USP_Acq_Deal_Supplementary_List_Result">
-          <Property Type="String" Name="title_name" Nullable="false" MaxLength="6" />
-          <Property Type="String" Name="SocialMedia" Nullable="false" MaxLength="12" />
-          <Property Type="String" Name="Commitments" Nullable="false" MaxLength="11" />
-          <Property Type="String" Name="OpeningClosingCredits" Nullable="false" MaxLength="21" />
-          <Property Type="String" Name="EssentialClauses" Nullable="false" MaxLength="16" />
-          <Property Type="Int32" Name="title_code" Nullable="false" />
-          <Property Type="Int32" Name="Supplementary_code" Nullable="false" />
-        </ComplexType>
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Supplementary_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Acq_Deal_Supplementary_Code" Nullable="true" />
+          </ComplexType>
         <ComplexType Name="USP_Get_Acq_Deal_Supplementary_Edit_Result">
           <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="User_Value" Nullable="true" />
@@ -37284,6 +37293,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Digital" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital" FromRole="Digital_Config" ToRole="Digital" />
           <NavigationProperty Name="Digital_Tab" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" FromRole="Digital_Config" ToRole="Digital_Tab" />
+          <Property Name="LP_Digital_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Digital_Value_Config_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Digital_Data">
           <Key>
@@ -37306,6 +37317,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Module_Code" Type="Int32" />
           <NavigationProperty Name="Digital_Config" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" FromRole="Digital_Tab" ToRole="Digital_Config" />
+          <Property Name="Key_Config_Code" Type="Int32" />
+          <Property Name="Is_Show" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="FK_Acq_Deal_Digital_detail_Acq_Deal_Digital">
           <End Type="RightsU_NeoModel.Acq_Deal_Digital" Role="Acq_Deal_Digital" Multiplicity="0..1" />
@@ -37356,14 +37369,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </ReferentialConstraint>
         </Association>
         <ComplexType Name="USP_Acq_Deal_Digital_List_Result">
-          <Property Type="String" Name="title_name" Nullable="true" />
-          <Property Type="String" Name="SocialMedia" Nullable="false" MaxLength="10" />
-          <Property Type="String" Name="Commitments" Nullable="false" MaxLength="10" />
-          <Property Type="String" Name="OpeningClosingCredits" Nullable="false" MaxLength="10" />
-          <Property Type="String" Name="EssentialClauses" Nullable="false" MaxLength="10" />
-          <Property Type="Int32" Name="title_code" Nullable="false" />
-          <Property Type="Int32" Name="Digital_code" Nullable="true" />
-        </ComplexType>
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Digital_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Digital_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Acq_Deal_Digital_Code" Nullable="true" />
+          </ComplexType>
         <ComplexType Name="USP_Acq_Digital_Tab_Result">
           <Property Type="String" Name="Digital_name" Nullable="true" MaxLength="200" />
           <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
@@ -39421,6 +39433,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Report_Column_Setup">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup">
               <MappingFragment StoreEntitySet="Report_Column_Setup">
+                
+               
                 <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
@@ -46641,6 +46655,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Supplementary_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
               <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="LP_Supplementary_Value_Config_Code" ColumnName="LP_Supplementary_Value_Config_Code" />
+                <ScalarProperty Name="LP_Supplementary_Data_Code" ColumnName="LP_Supplementary_Data_Code" />
                 <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
                 <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
                 <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
@@ -46849,13 +46865,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Supplementary_List_Result">
                 <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="BusinessStatement" ColumnName="BusinessStatement" />
-                <ScalarProperty Name="ExcludedRights" ColumnName="ExcludedRights" />
-                <ScalarProperty Name="Miscellaneous" ColumnName="Miscellaneous" />
-                <ScalarProperty Name="IPDetails" ColumnName="IPDetails" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
-              </ComplexTypeMapping>
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Syn_Deal_Supplementary_Code" ColumnName="Syn_Deal_Supplementary_Code" />
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <EntitySetMapping Name="Acq_Amendement_History">
@@ -46875,13 +46890,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result">
                 <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
-                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
-              </ComplexTypeMapping>
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Acq_Deal_Supplementary_Code" ColumnName="Acq_Deal_Supplementary_Code" />
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Get_Acq_Deal_Supplementary_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Acq_Deal_Supplementary_Edit">
@@ -47069,6 +47083,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Digital_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Digital_Config">
               <MappingFragment StoreEntitySet="Digital_Config">
+                <ScalarProperty Name="LP_Digital_Value_Config_Code" ColumnName="LP_Digital_Value_Config_Code" />
+                <ScalarProperty Name="LP_Digital_Data_Code" ColumnName="LP_Digital_Data_Code" />
                 <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
                 <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
                 <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
@@ -47101,6 +47117,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Digital_Tab">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Digital_Tab">
               <MappingFragment StoreEntitySet="Digital_Tab">
+                <ScalarProperty Name="Is_Show" ColumnName="Is_Show" />
+                <ScalarProperty Name="Key_Config_Code" ColumnName="Key_Config_Code" />
                 <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
                 <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
@@ -47115,13 +47133,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Deal_Digital_List_Result">
                 <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
-                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Digital_code" ColumnName="Digital_code" />
-              </ComplexTypeMapping>
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Digital_Tab_Description" ColumnName="Digital_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_Digital_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_Digital_Tab">
