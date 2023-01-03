@@ -11,6 +11,12 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
 }
 
 
@@ -154,11 +160,13 @@
 
                     else if (Obj_Deal_Schema_View.Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)
                     {
+                        var Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+        .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
                         <div class="bottom_action">
                             <ul class="form_link_nav clearfix">
                                 <li>
 
-                                    @if (Obj_Deal_Schema_View.Mode == GlobalParams.DEAL_MODE_VIEW && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                    @if (Obj_Deal_Schema_View.Mode == GlobalParams.DEAL_MODE_VIEW && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0 && Show_Acq_SubDeal_List == "Y")
                                     {
                                         <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
                                                onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })    '">
