@@ -11,6 +11,11 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
 }
 <script type="text/javascript">
     var IsAddEditMode="N";
@@ -791,6 +796,8 @@
 </script>
 @using (Ajax.BeginForm("ChangeTab", "Acq_Payment_Term", new AjaxOptions { OnSuccess = "Save_Success" }))
 {
+    var Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+    .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
     @Html.Hidden("HdnPaymentTermRemark")
     @Html.Hidden("hdn_Command_Name")
     <div class="grid_area">
@@ -860,7 +867,7 @@
                                 else
                                 {
                                     <li>
-                                        @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
+                                        @if (Show_Acq_SubDeal_List == "Y" && Convert.ToInt32(ViewBag.prevAcq_Deal) > 0)
                                         {
                                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
                                                    onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">

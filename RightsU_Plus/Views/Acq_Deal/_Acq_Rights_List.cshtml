@@ -12,6 +12,11 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
 }
 
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
@@ -49,6 +54,7 @@
     var URL_GetSynRightStatus = '@Url.Action("GetSynRightStatus", "Acq_Rights_List")';
     var URL_RightReprocess = '@Url.Action("RightReprocess", "Acq_Rights_List")';
     var URL_ValidateRightsTitleWithAcq = '@Url.Action("ValidateRightsTitleWithAcq", "Acq_Rights_List")';
+   
     /*----------------------------------------------------Rights Validation Messages in Multi-languages-----------------------------------------------------------*/
     var ShowMessage = {
         "MsgForSearch": '@objMessageKey.Pleaseselectatleastonecriteriatoview',
@@ -143,6 +149,8 @@
 
 @using (Ajax.BeginForm("ChangeTab", "Acq_Rights_List", new AjaxOptions { OnSuccess = "Save_Success" }, new { @id = "frmRightsList" }))
 {
+    var Show_Acq_SubDeal_List = new RightsU_BLL.System_Parameter_New_Service(objLoginEntity.ConnectionStringName)
+       .SearchFor(x => x.Parameter_Name == "Show_Acq_SubDeal_List").Select(x => x.Parameter_Value).FirstOrDefault();
     <div class="grid_area" onclick="FadeOutPopup1();">
         <div class="navigation_tabs">
             <div class="tabbable">
@@ -228,7 +236,7 @@
                                 else
                                 {
                                     <li>
-                                        @if (Convert.ToInt32(ViewBag.prevAcq_Deal) > 0 )
+                                        @if (Show_Acq_SubDeal_List == "Y" &&  Convert.ToInt32(ViewBag.prevAcq_Deal) > 0 )
                                         {
                                             <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel"
                                                    onclick="location.href='@Url.Action("ButtonEvents", "Acq_List", new { CommandName = "View", Acq_Deal_Code = ViewBag.prevAcq_Deal })'">
