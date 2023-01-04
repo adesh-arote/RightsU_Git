@@ -80,6 +80,8 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
+                Session["User_Service"] = null;
+                Session["objUPD_Service"] = null;
                 LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method start ", "Line no 82:", Server.MapPath("~"));
                 if (Request.QueryString["Linkid"] != null && Request.QueryString["Entype"] != null)
                 {
@@ -96,24 +98,23 @@ namespace RightsU_Plus.Controllers
                     int System_Language_Code = objUser != null ? Convert.ToInt32(objUser.System_Language_Code) : 1;
                     LoadSystemMessage(Convert.ToInt32(System_Language_Code), GlobalParams.ModuleCodeForUsers);
                     ViewBag.MesageKey = Session["objMessageKey"];
-
+                    string FPLINKEXPIRETIME = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "FPLINKEXPIRETIME").First().Parameter_Value;
                     if (objUser != null)
                     {
                         LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method user authenticated ", "Line no 98:", Server.MapPath("~"));
                         DateTime currentTime = DateTime.Now;
                         DateTime dt = Convert.ToDateTime(objUser.Last_Updated_Time);
-                        var dif = currentTime.Subtract(dt);
-                        if (dif.Hours > 0)
-                        {
-                            return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkExpire });
-                        }
-                        else if (dif.Minutes > 30)
+                        TimeSpan ts = currentTime - dt;
+                        int min = Convert.ToInt32(ts.TotalMinutes);
+                        if (min > Convert.ToInt32(FPLINKEXPIRETIME))
                         {
                             return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkExpire });
                         }
                     }
                     else
                     {
+
+
 
                         return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkexpireOrAlrChange });
                     }
@@ -215,6 +216,7 @@ namespace RightsU_Plus.Controllers
         {
 
             User objUser = objUser_Service.SearchFor(x => x.ChangePasswordLinkGUID.ToUpper() == guid.ToUpper()).FirstOrDefault();
+            var objUser1 = objUser_Service.SearchFor(x => true).ToList();
 
             if (objUser != null)
             {
