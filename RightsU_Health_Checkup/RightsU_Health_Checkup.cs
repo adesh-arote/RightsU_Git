@@ -157,7 +157,7 @@ namespace RightsU_Health_Checkup
 
             string result = emailHead + emailFooter;
 
-            Error.WriteLog_Conditional(result);
+            //Error.WriteLog_Conditional(result);
 
             System_Machine.SendEmail("CS1", result, Convert.ToString(ConfigurationSettings.AppSettings["Subject"]),
                Convert.ToString(ConfigurationSettings.AppSettings["toMailId"]),
