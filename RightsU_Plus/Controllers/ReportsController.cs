@@ -486,7 +486,7 @@ namespace RightsU_Plus.Controllers
             parm[2] = new ReportParameter("Renewed_Until", GlobalUtil.MakedateFormat(ExpiryDate));
             parm[3] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             parm[4] = new ReportParameter("Organization", Applicant ?? " ");
-            parm[5] = new ReportParameter("Class", ClassCode == ""? "00" : ClassCode);
+            parm[5] = new ReportParameter("Class", ClassCode == "" ? "00" : ClassCode);
             parm[6] = new ReportParameter("IntDom", IntDom ?? "D");
 
             ReportViewer rptViewer = BindReport(parm, "rptIPR_IntDom_Report");
@@ -932,10 +932,10 @@ namespace RightsU_Plus.Controllers
         public SelectList GetModeOfAcquisitionList()
         {
             List<SelectListItem> list = new SelectList(new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Role_Type == "A")
-            .Select(i => new { Display_Value = i.Role_Code, Display_Text = i.Role_Name }).ToList().Distinct(),"Display_Value", "Display_Text").ToList();
+            .Select(i => new { Display_Value = i.Role_Code, Display_Text = i.Role_Name }).ToList().Distinct(), "Display_Value", "Display_Text").ToList();
 
             //list.Insert(0, new SelectListItem() { Selected = true, Text = "All Mode Of Acquisition", Value = "0" });
-             
+
             return new SelectList(list, "Value", "Text");
         }
         #region -------------- Platform Wise Syndication--------
@@ -1278,6 +1278,13 @@ namespace RightsU_Plus.Controllers
             lstExpiry.Add(new SelectListItem { Text = "Syndication Expiring Deals", Value = "SE", Selected = callFor == "SE" ? true : false });
             lstExpiry.Add(new SelectListItem { Text = "Syndication Approved Deals", Value = "SA", Selected = callFor == "SA" ? true : false });
             lstExpiry.Add(new SelectListItem { Text = "Tentative Acquisition Deals", Value = "AT", Selected = callFor == "AT" ? true : false });
+
+            lstExpiry.Add(new SelectListItem { Text = "Acquisition Expiring Holdback On Seller Deals", Value = "ARHB", Selected = callFor == "ARHB" ? true : false });
+            lstExpiry.Add(new SelectListItem { Text = "Syndication Expiring Holdback On Seller Deals", Value = "SRHB", Selected = callFor == "SRHB" ? true : false });
+            lstExpiry.Add(new SelectListItem { Text = "Acquisition Holdback Deals", Value = "AHB", Selected = callFor == "AHB" ? true : false });
+            lstExpiry.Add(new SelectListItem { Text = "Syndication Holdback Deals", Value = "SHB", Selected = callFor == "SHB" ? true : false });
+            lstExpiry.Add(new SelectListItem { Text = "Acquisition Material Type Starting Deals", Value = "AMT", Selected = callFor == "AMT" ? true : false });
+            lstExpiry.Add(new SelectListItem { Text = "Acquisition Payment Term Starting Deals", Value = "APT", Selected = callFor == "APT" ? true : false });
 
             ViewBag.ExpiryFor = lstExpiry;
             ViewBag.callFrom = callFrom;
@@ -3015,7 +3022,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.status = new SelectList(new Deal_Tag_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Tag_Code > 0), "Deal_Tag_Code", "Deal_Tag_Description").ToList();
             ViewBag.AcquisitionDeal = new SelectList(new Acq_Deal_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Business_Unit.Users_Business_Unit.All(u => u.Users_Code == objLoginUser.Users_Code)).Distinct()).ToList();
 
-            ViewBag.DealWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x=> true).Select(x=> new { x.Deal_Workflow_Status_Name,x.Deal_WorkflowFlag}).Distinct(), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name").ToList();
+            ViewBag.DealWorkFlowStatus = new SelectList(new Deal_Workflow_Status_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => new { x.Deal_Workflow_Status_Name, x.Deal_WorkflowFlag }).Distinct(), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name").ToList();
 
             if (rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllBusinessUnit + "~") && rightsForAllBU.Contains("~" + GlobalParams.RightCodeForAllRegionalGEC + "~"))
             {
