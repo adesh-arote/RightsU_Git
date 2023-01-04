@@ -216,7 +216,7 @@ namespace RightsU_Plus.Controllers
         {
 
             User objUser = objUser_Service.SearchFor(x => x.ChangePasswordLinkGUID.ToUpper() == guid.ToUpper()).FirstOrDefault();
-            var objUser1 = objUser_Service.SearchFor(x=>true).ToList();
+            var objUser1 = objUser_Service.SearchFor(x => true).ToList();
 
             if (objUser != null)
             {

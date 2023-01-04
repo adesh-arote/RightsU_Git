@@ -271,6 +271,29 @@
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
         </EntityType>
+        <EntityType Name="Acq_Deal_Digital">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Digital_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Digital_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acq_Deal_Code" Type="int" />
+          <Property Name="Title_code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
+          <Property Name="Remarks" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Digital_detail">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Digital_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acq_Deal_Digital_Code" Type="int" />
+          <Property Name="Digital_Tab_Code" Type="int" />
+          <Property Name="Digital_Config_Code" Type="int" />
+          <Property Name="Digital_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="User_Value" Type="varchar(max)" />
+          <Property Name="Row_Num" Type="int" />
+        </EntityType>
         <EntityType Name="Acq_Deal_Licensor">
           <Key>
             <PropertyRef Name="Acq_Deal_Licensor_Code" />
@@ -1260,6 +1283,31 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Deal_Movie_Content_Channel_Rights_Code" Type="numeric" Precision="18" Scale="0" />
           <Property Name="IsRunCount" Type="varchar" MaxLength="10" />
         </EntityType>
+        <EntityType Name="AT_Acq_Deal_Digital">
+          <Key>
+            <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+          </Key>
+          <Property Name="AT_Acq_Deal_Digital_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AT_Acq_Deal_Code" Type="int" />
+          <Property Name="Title_code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
+          <Property Name="Remarks" Type="varchar(max)" />
+          <Property Name="Acq_Deal_Digital_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="AT_Acq_Deal_Digital_detail">
+          <Key>
+            <PropertyRef Name="AT_Acq_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="AT_Acq_Deal_Digital_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AT_Acq_Deal_Digital_Code" Type="int" />
+          <Property Name="Digital_Tab_Code" Type="int" />
+          <Property Name="Digital_Config_Code" Type="int" />
+          <Property Name="Digital_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="User_Value" Type="varchar(max)" />
+          <Property Name="Row_Num" Type="int" />
+          <Property Name="Acq_Deal_Digital_Detail_Code" Type="int" />
+        </EntityType>
         <EntityType Name="Attrib_Group">
           <Key>
             <PropertyRef Name="Attrib_Group_Code" />
@@ -1965,6 +2013,60 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Deal_Workflow_Status_Name" Type="nvarchar" MaxLength="50" />
           <Property Name="Deal_WorkflowFlag" Type="varchar" MaxLength="3" />
           <Property Name="Deal_Type" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Digital">
+          <Key>
+            <PropertyRef Name="Digital_Code" />
+          </Key>
+          <Property Name="Digital_Code" Type="int" Nullable="false" />
+          <Property Name="Digital_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Digital_Config">
+          <Key>
+            <PropertyRef Name="Digital_Config_Code" />
+          </Key>
+          <Property Name="Digital_Config_Code" Type="int" Nullable="false" />
+          <Property Name="Digital_Code" Type="int" />
+          <Property Name="Digital_Tab_Code" Type="int" />
+          <Property Name="Page_Group" Type="nvarchar" MaxLength="50" />
+          <Property Name="Label_Name" Type="nvarchar" MaxLength="200" />
+          <Property Name="Control_Type" Type="nvarchar" MaxLength="50" />
+          <Property Name="Is_Mandatory" Type="char" MaxLength="1" />
+          <Property Name="Is_Multiselect" Type="char" MaxLength="1" />
+          <Property Name="Max_Length" Type="int" />
+          <Property Name="Page_Control_Order" Type="int" />
+          <Property Name="Control_Field_Order" Type="int" />
+          <Property Name="Default_Values" Type="nvarchar" MaxLength="1000" />
+          <Property Name="View_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Text_Field" Type="varchar" MaxLength="100" />
+          <Property Name="Value_Field" Type="varchar" MaxLength="100" />
+          <Property Name="Whr_Criteria" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Digital_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="LP_Digital_Value_Config_Code" Type="varchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="Digital_Data">
+          <Key>
+            <PropertyRef Name="Digital_Data_Code" />
+          </Key>
+          <Property Name="Digital_Data_Code" Type="int" Nullable="false" />
+          <Property Name="Digital_Type" Type="varchar" MaxLength="10" />
+          <Property Name="Data_Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="Digital_Tab">
+          <Key>
+            <PropertyRef Name="Digital_Tab_Code" />
+          </Key>
+          <Property Name="Digital_Tab_Code" Type="int" Nullable="false" />
+          <Property Name="Short_Name" Type="nvarchar" MaxLength="20" />
+          <Property Name="Digital_Tab_Description" Type="nvarchar" MaxLength="100" />
+          <Property Name="Order_No" Type="int" />
+          <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
+          <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
+          <Property Name="Module_Code" Type="int" />
+          <Property Name="Key_Config_Code" Type="int" />
+          <Property Name="Is_Show" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -4109,6 +4211,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
+          
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -4460,6 +4563,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Text_Field" Type="varchar" MaxLength="100" />
           <Property Name="Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Whr_Criteria" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Supplementary_Data_Code" Type="varchar" MaxLength="100" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
@@ -4481,6 +4586,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Tab_Type" Type="varchar" MaxLength="2" />
           <Property Name="EditWindowType" Type="varchar" MaxLength="10" />
           <Property Name="Module_Code" Type="int" />
+          <Property Name="Key_Config_Code" Type="int" />
+          <Property Name="Is_Show" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Syn_Acq_Mapping">
           <Key>
@@ -6684,6 +6791,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Acq_Deal_Digital_detail_Acq_Deal_Digital">
+          <End Role="Acq_Deal_Digital" Type="Self.Acq_Deal_Digital" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Digital_detail" Type="Self.Acq_Deal_Digital_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Digital">
+              <PropertyRef Name="Acq_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Digital_detail">
+              <PropertyRef Name="Acq_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Acq_Deal_Entity">
           <End Role="Entity" Type="Self.Entity" Multiplicity="0..1" />
           <End Role="Acq_Deal" Type="Self.Acq_Deal" Multiplicity="*" />
@@ -8172,6 +8291,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
+          <End Role="AT_Acq_Deal_Digital" Type="Self.AT_Acq_Deal_Digital" Multiplicity="0..1" />
+          <End Role="AT_Acq_Deal_Digital_detail" Type="Self.AT_Acq_Deal_Digital_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AT_Acq_Deal_Digital">
+              <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="AT_Acq_Deal_Digital_detail">
+              <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Avail_Acq_Details">
           <End Role="Avail_Acq" Type="Self.Avail_Acq" Multiplicity="0..1" />
           <End Role="Avail_Acq_Details" Type="Self.Avail_Acq_Details" Multiplicity="*" />
@@ -8469,6 +8600,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Currency_Exchange_Rate">
               <PropertyRef Name="Currency_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Digital_Config_Digital">
+          <End Role="Digital" Type="Self.Digital" Multiplicity="0..1" />
+          <End Role="Digital_Config" Type="Self.Digital_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Digital">
+              <PropertyRef Name="Digital_Code" />
+            </Principal>
+            <Dependent Role="Digital_Config">
+              <PropertyRef Name="Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Digital_Config_Digital_Tab">
+          <End Role="Digital_Tab" Type="Self.Digital_Tab" Multiplicity="0..1" />
+          <End Role="Digital_Config" Type="Self.Digital_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Digital_Tab">
+              <PropertyRef Name="Digital_Tab_Code" />
+            </Principal>
+            <Dependent Role="Digital_Config">
+              <PropertyRef Name="Digital_Tab_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -12510,6 +12665,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Selected_Title_Codes" Type="varchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Acq_Deal_Digital_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="pageNo" Type="int" Mode="In" />
+          <Parameter Name="pagesize" Type="int" Mode="In" />
+          <Parameter Name="RecordCount" Type="int" Mode="InOut" />
+        </Function>
         <Function Name="USP_Acq_Deal_Right_Clone" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="New_Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Acq_Deal_Rights_Code" Type="int" Mode="In" />
@@ -12537,6 +12699,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="pageNo" Type="int" Mode="In" />
           <Parameter Name="pagesize" Type="int" Mode="In" />
           <Parameter Name="RecordCount" Type="int" Mode="InOut" />
+        </Function>
+        <Function Name="USP_Acq_Digital_Tab" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Digital_Tab_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Acq_List_Runs" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
@@ -12705,6 +12870,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Language_Group_Code" Type="int" Mode="In" />
           <Parameter Name="Language_Type" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Delete_Acq_Digital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="DigitalCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Delete_Acq_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SupplementaryCode" Type="int" Mode="In" />
         </Function>
@@ -12735,6 +12903,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="DealCode" Type="int" Mode="In" />
           <Parameter Name="DealType" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Digital_Create_Table" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="tabCode" Type="int" Mode="In" />
+          <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="View" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_DM_Mapping" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USP_Edit_Without_Approval" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
@@ -12757,6 +12931,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Title_Codes" Type="varchar(max)" Mode="In" />
           <Parameter Name="User_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Acq_Deal_Digital_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Acq_Deal_Digital_Code" Type="int" Mode="In" />
+          <Parameter Name="Row_Num" Type="int" Mode="In" />
+          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
         </Function>
         <Function Name="USP_Get_Acq_Deal_Supplementary_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Supplementary_Code" Type="int" Mode="In" />
@@ -13001,6 +13180,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="SearchTitle" Type="nvarchar(max)" Mode="In" />
           <Parameter Name="Deal_Type_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Title_For_Acq_Digital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
+          <Parameter Name="title_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Title_For_Acq_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
           <Parameter Name="title_Code" Type="int" Mode="In" />
@@ -13162,6 +13345,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
           <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -13366,6 +13550,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
+          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="USP_INSERT_UPLOAD_ERR_DETAIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="File_Code" Type="bigint" Mode="In" />
@@ -14537,6 +14722,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Acq_Deal_Cost_Costtype_Episode" EntityType="Self.Acq_Deal_Cost_Costtype_Episode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Cost_Title" EntityType="Self.Acq_Deal_Cost_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Cost_Variable_Cost" EntityType="Self.Acq_Deal_Cost_Variable_Cost" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Deal_Digital" EntityType="Self.Acq_Deal_Digital" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Deal_Digital_detail" EntityType="Self.Acq_Deal_Digital_detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Licensor" EntityType="Self.Acq_Deal_Licensor" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Mass_Territory_Update" EntityType="Self.Acq_Deal_Mass_Territory_Update" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Mass_Update_ErrorLog" EntityType="Self.Acq_Deal_Mass_Update_ErrorLog" Schema="dbo" store:Type="Tables" />
@@ -14610,6 +14797,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="AsRun_FileStatus" EntityType="Self.AsRun_FileStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction" EntityType="Self.ASRUN_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction_Shows" EntityType="Self.ASRUN_Transaction_Shows" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AT_Acq_Deal_Digital" EntityType="Self.AT_Acq_Deal_Digital" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AT_Acq_Deal_Digital_detail" EntityType="Self.AT_Acq_Deal_Digital_detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attrib_Group" EntityType="Self.Attrib_Group" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq" EntityType="Self.Avail_Acq" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Details" EntityType="Self.Avail_Acq_Details" Schema="dbo" store:Type="Tables" />
@@ -14654,6 +14843,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Deal_Tag" EntityType="Self.Deal_Tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Type" EntityType="Self.Deal_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Deal_Workflow_Status" EntityType="Self.Deal_Workflow_Status" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Digital" EntityType="Self.Digital" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Digital_Config" EntityType="Self.Digital_Config" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Digital_Data" EntityType="Self.Digital_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Digital_Tab" EntityType="Self.Digital_Tab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Content_Music" EntityType="Self.DM_Content_Music" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Master_Import" EntityType="Self.DM_Master_Import" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DM_Master_Log" EntityType="Self.DM_Master_Log" Schema="dbo" store:Type="Tables" />
@@ -15540,6 +15733,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Deal_Segment" EntitySet="Deal_Segment" />
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
           </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" Association="Self.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital">
+            <End Role="Acq_Deal_Digital" EntitySet="Acq_Deal_Digital" />
+            <End Role="Acq_Deal_Digital_detail" EntitySet="Acq_Deal_Digital_detail" />
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Entity" Association="Self.FK_Acq_Deal_Entity">
             <End Role="Entity" EntitySet="Entity" />
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
@@ -16036,6 +16233,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Ancillary_Platform" EntitySet="Ancillary_Platform" />
             <End Role="Ancillary_Platform_Medium" EntitySet="Ancillary_Platform_Medium" />
           </AssociationSet>
+          <AssociationSet Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" Association="Self.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
+            <End Role="AT_Acq_Deal_Digital" EntitySet="AT_Acq_Deal_Digital" />
+            <End Role="AT_Acq_Deal_Digital_detail" EntitySet="AT_Acq_Deal_Digital_detail" />
+          </AssociationSet>
           <AssociationSet Name="FK_Avail_Acq_Details" Association="Self.FK_Avail_Acq_Details">
             <End Role="Avail_Acq" EntitySet="Avail_Acq" />
             <End Role="Avail_Acq_Details" EntitySet="Avail_Acq_Details" />
@@ -16135,6 +16336,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Currency_Exchange_Rate_Currency" Association="Self.FK_Currency_Exchange_Rate_Currency">
             <End Role="Currency" EntitySet="Currency" />
             <End Role="Currency_Exchange_Rate" EntitySet="Currency_Exchange_Rate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Digital_Config_Digital" Association="Self.FK_Digital_Config_Digital">
+            <End Role="Digital" EntitySet="Digital" />
+            <End Role="Digital_Config" EntitySet="Digital_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Digital_Config_Digital_Tab" Association="Self.FK_Digital_Config_Digital_Tab">
+            <End Role="Digital_Tab" EntitySet="Digital_Tab" />
+            <End Role="Digital_Config" EntitySet="Digital_Config" />
           </AssociationSet>
           <AssociationSet Name="FK_Email_Config_Detail_Alert_Email_Config_Detail" Association="Self.FK_Email_Config_Detail_Alert_Email_Config_Detail">
             <End Role="Email_Config_Detail" EntitySet="Email_Config_Detail" />
@@ -21576,6 +21785,58 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="ImgPathDatas" EntityType="RightsU_NeoModel.ImgPathData" />
+          <EntitySet Name="Acq_Deal_Digital" EntityType="RightsU_NeoModel.Acq_Deal_Digital" />
+          <EntitySet Name="Acq_Deal_Digital_detail" EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" />
+          <EntitySet Name="AT_Acq_Deal_Digital" EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" />
+          <EntitySet Name="AT_Acq_Deal_Digital_detail" EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital_detail" />
+          <EntitySet Name="Digital" EntityType="RightsU_NeoModel.Digital" />
+          <EntitySet Name="Digital_Config" EntityType="RightsU_NeoModel.Digital_Config" />
+          <EntitySet Name="Digital_Data" EntityType="RightsU_NeoModel.Digital_Data" />
+          <EntitySet Name="Digital_Tab" EntityType="RightsU_NeoModel.Digital_Tab" />
+          <AssociationSet Name="FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" Association="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital">
+            <End Role="Acq_Deal_Digital" EntitySet="Acq_Deal_Digital" />
+            <End Role="Acq_Deal_Digital_detail" EntitySet="Acq_Deal_Digital_detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
+            <End Role="AT_Acq_Deal_Digital" EntitySet="AT_Acq_Deal_Digital" />
+            <End Role="AT_Acq_Deal_Digital_detail" EntitySet="AT_Acq_Deal_Digital_detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Digital_Config_Digital" Association="RightsU_NeoModel.FK_Digital_Config_Digital">
+            <End Role="Digital" EntitySet="Digital" />
+            <End Role="Digital_Config" EntitySet="Digital_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Digital_Config_Digital_Tab" Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab">
+            <End Role="Digital_Tab" EntitySet="Digital_Tab" />
+            <End Role="Digital_Config" EntitySet="Digital_Config" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Acq_Deal_Digital_List" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Deal_Digital_List_Result)">
+            <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="pageNo" Mode="In" Type="Int32" />
+            <Parameter Name="pagesize" Mode="In" Type="Int32" />
+            <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Acq_Digital_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Digital_Tab_Result)">
+          <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Title_For_Acq_Digital" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Acq_Digital_Result)">
+            <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="title_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Digital_Create_Table" ReturnType="Collection(RightsU_NeoModel.USP_Digital_Create_Table_Result)">
+            <Parameter Name="tabCode" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="View" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Delete_Acq_Digital">
+          <Parameter Name="DigitalCode" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Acq_Deal_Digital_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Digital_Edit_Result)">
+            <Parameter Name="Acq_Deal_Digital_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Row_Num" Mode="In" Type="Int32" />
+            <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23642,6 +23903,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
           <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+        
+       
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -36611,6 +36874,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
           <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
@@ -36633,6 +36898,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
           <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Module_Code" Type="Int32" />
+          <Property Name="Key_Config_Code" Type="Int32" />
+          <Property Name="Is_Show" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="FK_Supplementary_Config_Supplementary">
           <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
@@ -36781,13 +37048,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </ComplexType>
         <ComplexType Name="USP_Syn_Deal_Supplementary_List_Result">
           <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
-          <Property Type="String" Name="BusinessStatement" Nullable="false" />
-          <Property Type="String" Name="ExcludedRights" Nullable="false" />
-          <Property Type="String" Name="Miscellaneous" Nullable="false" />
-          <Property Type="String" Name="IPDetails" Nullable="false" />
-          <Property Type="Int32" Name="title_code" Nullable="false" />
-          <Property Type="Int32" Name="Supplementary_code" Nullable="true" />
-        </ComplexType>
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Supplementary_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Syn_Deal_Supplementary_Code" Nullable="true" />
+          </ComplexType>
         <EntityType Name="Acq_Amendement_History">
           <Key>
             <PropertyRef Name="Acq_Amendement_History_Code" />
@@ -36801,14 +37067,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <ComplexType Name="USP_Acq_Deal_Supplementary_List_Result">
-          <Property Type="String" Name="title_name" Nullable="false" MaxLength="6" />
-          <Property Type="String" Name="SocialMedia" Nullable="false" MaxLength="12" />
-          <Property Type="String" Name="Commitments" Nullable="false" MaxLength="11" />
-          <Property Type="String" Name="OpeningClosingCredits" Nullable="false" MaxLength="21" />
-          <Property Type="String" Name="EssentialClauses" Nullable="false" MaxLength="16" />
-          <Property Type="Int32" Name="title_code" Nullable="false" />
-          <Property Type="Int32" Name="Supplementary_code" Nullable="false" />
-        </ComplexType>
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Supplementary_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Supplementary_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Acq_Deal_Supplementary_Code" Nullable="true" />
+          </ComplexType>
         <ComplexType Name="USP_Get_Acq_Deal_Supplementary_Edit_Result">
           <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="User_Value" Nullable="true" />
@@ -36945,6 +37210,208 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ImgPath" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ImgData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Acq_Deal_Digital">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Digital_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Digital_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acq_Deal_Code" Type="Int32" />
+          <Property Name="Title_code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Acq_Deal_Digital_detail" Relationship="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" FromRole="Acq_Deal_Digital" ToRole="Acq_Deal_Digital_detail" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Digital_detail">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Digital_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acq_Deal_Digital_Code" Type="Int32" />
+          <Property Name="Digital_Tab_Code" Type="Int32" />
+          <Property Name="Digital_Config_Code" Type="Int32" />
+          <Property Name="Digital_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="User_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Row_Num" Type="Int32" />
+          <NavigationProperty Name="Acq_Deal_Digital" Relationship="RightsU_NeoModel.FK_Acq_Deal_Digital_detail_Acq_Deal_Digital" FromRole="Acq_Deal_Digital_detail" ToRole="Acq_Deal_Digital" />
+        </EntityType>
+        <EntityType Name="AT_Acq_Deal_Digital">
+          <Key>
+            <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+          </Key>
+          <Property Name="AT_Acq_Deal_Digital_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AT_Acq_Deal_Code" Type="Int32" />
+          <Property Name="Title_code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Acq_Deal_Digital_Code" Type="Int32" />
+          <NavigationProperty Name="AT_Acq_Deal_Digital_detail" Relationship="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" FromRole="AT_Acq_Deal_Digital" ToRole="AT_Acq_Deal_Digital_detail" />
+        </EntityType>
+        <EntityType Name="AT_Acq_Deal_Digital_detail">
+          <Key>
+            <PropertyRef Name="AT_Acq_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="AT_Acq_Deal_Digital_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AT_Acq_Deal_Digital_Code" Type="Int32" />
+          <Property Name="Digital_Tab_Code" Type="Int32" />
+          <Property Name="Digital_Config_Code" Type="Int32" />
+          <Property Name="Digital_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="User_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Row_Num" Type="Int32" />
+          <Property Name="Acq_Deal_Digital_Detail_Code" Type="Int32" />
+          <NavigationProperty Name="AT_Acq_Deal_Digital" Relationship="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" FromRole="AT_Acq_Deal_Digital_detail" ToRole="AT_Acq_Deal_Digital" />
+        </EntityType>
+        <EntityType Name="Digital">
+          <Key>
+            <PropertyRef Name="Digital_Code" />
+          </Key>
+          <Property Name="Digital_Code" Type="Int32" Nullable="false" />
+          <Property Name="Digital_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Digital_Config" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital" FromRole="Digital" ToRole="Digital_Config" />
+        </EntityType>
+        <EntityType Name="Digital_Config">
+          <Key>
+            <PropertyRef Name="Digital_Config_Code" />
+          </Key>
+          <Property Name="Digital_Config_Code" Type="Int32" Nullable="false" />
+          <Property Name="Digital_Code" Type="Int32" />
+          <Property Name="Digital_Tab_Code" Type="Int32" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Digital" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital" FromRole="Digital_Config" ToRole="Digital" />
+          <NavigationProperty Name="Digital_Tab" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" FromRole="Digital_Config" ToRole="Digital_Tab" />
+          <Property Name="LP_Digital_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Digital_Value_Config_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Digital_Data">
+          <Key>
+            <PropertyRef Name="Digital_Data_Code" />
+          </Key>
+          <Property Name="Digital_Data_Code" Type="Int32" Nullable="false" />
+          <Property Name="Digital_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Data_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Digital_Tab">
+          <Key>
+            <PropertyRef Name="Digital_Tab_Code" />
+          </Key>
+          <Property Name="Digital_Tab_Code" Type="Int32" Nullable="false" />
+          <Property Name="Short_Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Digital_Tab_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Order_No" Type="Int32" />
+          <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Module_Code" Type="Int32" />
+          <NavigationProperty Name="Digital_Config" Relationship="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" FromRole="Digital_Tab" ToRole="Digital_Config" />
+          <Property Name="Key_Config_Code" Type="Int32" />
+          <Property Name="Is_Show" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <Association Name="FK_Acq_Deal_Digital_detail_Acq_Deal_Digital">
+          <End Type="RightsU_NeoModel.Acq_Deal_Digital" Role="Acq_Deal_Digital" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Digital_detail" Role="Acq_Deal_Digital_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Digital">
+              <PropertyRef Name="Acq_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Digital_detail">
+              <PropertyRef Name="Acq_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
+          <End Type="RightsU_NeoModel.AT_Acq_Deal_Digital" Role="AT_Acq_Deal_Digital" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AT_Acq_Deal_Digital_detail" Role="AT_Acq_Deal_Digital_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AT_Acq_Deal_Digital">
+              <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="AT_Acq_Deal_Digital_detail">
+              <PropertyRef Name="AT_Acq_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Digital_Config_Digital">
+          <End Type="RightsU_NeoModel.Digital" Role="Digital" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Digital_Config" Role="Digital_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Digital">
+              <PropertyRef Name="Digital_Code" />
+            </Principal>
+            <Dependent Role="Digital_Config">
+              <PropertyRef Name="Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Digital_Config_Digital_Tab">
+          <End Type="RightsU_NeoModel.Digital_Tab" Role="Digital_Tab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Digital_Config" Role="Digital_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Digital_Tab">
+              <PropertyRef Name="Digital_Tab_Code" />
+            </Principal>
+            <Dependent Role="Digital_Config">
+              <PropertyRef Name="Digital_Tab_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_Acq_Deal_Digital_List_Result">
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Digital_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Digital_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Acq_Deal_Digital_Code" Nullable="true" />
+          </ComplexType>
+        <ComplexType Name="USP_Acq_Digital_Tab_Result">
+          <Property Type="String" Name="Digital_name" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Page_Control_Order" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Config_Code" Nullable="false" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Text_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Value_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Title_For_Acq_Digital_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Digital_Create_Table_Result">
+          <Property Type="String" Name="Tab" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Acq_Deal_Digital_Edit_Result">
+          <Property Type="String" Name="Digital_Data_Code" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="User_Value" Nullable="true" />
+          <Property Type="Int32" Name="Row_Num" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Config_Code" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Code" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -37013,6 +37480,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_ACQ_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" />
                   <ScalarProperty Name="Confirming_Party" ParameterName="Confirming_Party" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
@@ -38965,6 +39433,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Report_Column_Setup">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup">
               <MappingFragment StoreEntitySet="Report_Column_Setup">
+                
+               
                 <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
@@ -39213,6 +39683,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal">
               <ModificationFunctionMapping>
                 <InsertFunction FunctionName="RightsU_NeoModel.Store.USP_INSERT_SYN_DEAL">
+                  <ScalarProperty Name="Material_Remarks" ParameterName="Material_Remarks" />
                   <ScalarProperty Name="Revenue_Vertical_Code" ParameterName="Revenue_Vertical_Code" />
                   <ScalarProperty Name="Deal_Segment_Code" ParameterName="Deal_Segment_Code" />
                   <ScalarProperty Name="Last_Action_By" ParameterName="Last_Action_By" />
@@ -46184,6 +46655,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Supplementary_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
               <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="LP_Supplementary_Value_Config_Code" ColumnName="LP_Supplementary_Value_Config_Code" />
+                <ScalarProperty Name="LP_Supplementary_Data_Code" ColumnName="LP_Supplementary_Data_Code" />
                 <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
                 <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
                 <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
@@ -46214,6 +46687,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Supplementary_Tab">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Tab">
               <MappingFragment StoreEntitySet="Supplementary_Tab">
+                <ScalarProperty Name="Is_Show" ColumnName="Is_Show" />
+                <ScalarProperty Name="Key_Config_Code" ColumnName="Key_Config_Code" />
                 <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
                 <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
@@ -46390,13 +46865,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Supplementary_List_Result">
                 <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="BusinessStatement" ColumnName="BusinessStatement" />
-                <ScalarProperty Name="ExcludedRights" ColumnName="ExcludedRights" />
-                <ScalarProperty Name="Miscellaneous" ColumnName="Miscellaneous" />
-                <ScalarProperty Name="IPDetails" ColumnName="IPDetails" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
-              </ComplexTypeMapping>
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Syn_Deal_Supplementary_Code" ColumnName="Syn_Deal_Supplementary_Code" />
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <EntitySetMapping Name="Acq_Amendement_History">
@@ -46416,13 +46890,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Deal_Supplementary_List_Result">
                 <ScalarProperty Name="title_name" ColumnName="title_name" />
-                <ScalarProperty Name="SocialMedia" ColumnName="SocialMedia" />
-                <ScalarProperty Name="Commitments" ColumnName="Commitments" />
-                <ScalarProperty Name="OpeningClosingCredits" ColumnName="OpeningClosingCredits" />
-                <ScalarProperty Name="EssentialClauses" ColumnName="EssentialClauses" />
-                <ScalarProperty Name="title_code" ColumnName="title_code" />
-                <ScalarProperty Name="Supplementary_code" ColumnName="Supplementary_code" />
-              </ComplexTypeMapping>
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Acq_Deal_Supplementary_Code" ColumnName="Acq_Deal_Supplementary_Code" />
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Get_Acq_Deal_Supplementary_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Acq_Deal_Supplementary_Edit">
@@ -46546,6 +47019,181 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Acq_Deal_Digital">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Digital">
+              <MappingFragment StoreEntitySet="Acq_Deal_Digital">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_code" ColumnName="Title_code" />
+                <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+                <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Acq_Deal_Digital_detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Digital_detail">
+              <MappingFragment StoreEntitySet="Acq_Deal_Digital_detail">
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
+                <ScalarProperty Name="Acq_Deal_Digital_Detail_Code" ColumnName="Acq_Deal_Digital_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AT_Acq_Deal_Digital">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AT_Acq_Deal_Digital">
+              <MappingFragment StoreEntitySet="AT_Acq_Deal_Digital">
+                <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_code" ColumnName="Title_code" />
+                <ScalarProperty Name="AT_Acq_Deal_Code" ColumnName="AT_Acq_Deal_Code" />
+                <ScalarProperty Name="AT_Acq_Deal_Digital_Code" ColumnName="AT_Acq_Deal_Digital_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AT_Acq_Deal_Digital_detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AT_Acq_Deal_Digital_detail">
+              <MappingFragment StoreEntitySet="AT_Acq_Deal_Digital_detail">
+                <ScalarProperty Name="Acq_Deal_Digital_Detail_Code" ColumnName="Acq_Deal_Digital_Detail_Code" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="AT_Acq_Deal_Digital_Code" ColumnName="AT_Acq_Deal_Digital_Code" />
+                <ScalarProperty Name="AT_Acq_Deal_Digital_Detail_Code" ColumnName="AT_Acq_Deal_Digital_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Digital">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Digital">
+              <MappingFragment StoreEntitySet="Digital">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Digital_Name" ColumnName="Digital_Name" />
+                <ScalarProperty Name="Digital_Code" ColumnName="Digital_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Digital_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Digital_Config">
+              <MappingFragment StoreEntitySet="Digital_Config">
+                <ScalarProperty Name="LP_Digital_Value_Config_Code" ColumnName="LP_Digital_Value_Config_Code" />
+                <ScalarProperty Name="LP_Digital_Data_Code" ColumnName="LP_Digital_Data_Code" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
+                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Digital_Code" ColumnName="Digital_Code" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Digital_Data">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Digital_Data">
+              <MappingFragment StoreEntitySet="Digital_Data">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Data_Description" ColumnName="Data_Description" />
+                <ScalarProperty Name="Digital_Type" ColumnName="Digital_Type" />
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Digital_Tab">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Digital_Tab">
+              <MappingFragment StoreEntitySet="Digital_Tab">
+                <ScalarProperty Name="Is_Show" ColumnName="Is_Show" />
+                <ScalarProperty Name="Key_Config_Code" ColumnName="Key_Config_Code" />
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
+                <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Digital_Tab_Description" ColumnName="Digital_Tab_Description" />
+                <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_Deal_Digital_List" FunctionName="RightsU_NeoModel.Store.USP_Acq_Deal_Digital_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Deal_Digital_List_Result">
+                <ScalarProperty Name="title_name" ColumnName="title_name" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Digital_Tab_Description" ColumnName="Digital_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
+                </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Acq_Digital_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_Digital_Tab">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_Digital_Tab_Result">
+                <ScalarProperty Name="Digital_name" ColumnName="Digital_name" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Title_For_Acq_Digital" FunctionName="RightsU_NeoModel.Store.USP_Get_Title_For_Acq_Digital">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Title_For_Acq_Digital_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Digital_Create_Table" FunctionName="RightsU_NeoModel.Store.USP_Digital_Create_Table">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Digital_Create_Table_Result">
+                <ScalarProperty Name="Tab" ColumnName="Tab" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Delete_Acq_Digital" FunctionName="RightsU_NeoModel.Store.USP_Delete_Acq_Digital" />
+          <FunctionImportMapping FunctionImportName="USP_Get_Acq_Deal_Digital_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Acq_Deal_Digital_Edit">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Acq_Deal_Digital_Edit_Result">
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="Digital_Code" ColumnName="Digital_Code" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -46560,7 +47208,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+         <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

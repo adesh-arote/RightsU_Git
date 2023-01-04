@@ -1764,5 +1764,39 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Get_Dashboard_Detail_Payment_Term(dashboardType, searchFor, user_Code, dashboardDays);
         }
+        public virtual ObjectResult<USP_Digital_Create_Table_Result> USP_Digital_Create_Table_Result(Nullable<int> TabCode, Nullable<int> Acq_Deal_Code, string Title_Code, string View)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Digital_Create_Table(TabCode, Acq_Deal_Code, Title_Code, View);
+        }
+
+        public virtual ObjectResult<USP_Acq_Deal_Digital_List_Result> USP_Acq_Deal_Digital_List_Result(Nullable<int> Deal_Code, string Title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter RecordCount)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Acq_Deal_Digital_List(Deal_Code, Title_Code, pageNo, pagesize, RecordCount);
+        }
+
+        public virtual ObjectResult<USP_Acq_Digital_Tab_Result> USP_Acq_Digital_Tab_Result(Nullable<int> Tab_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Acq_Digital_Tab(Tab_Code);
+        }
+        public virtual ObjectResult<USP_Get_Acq_Deal_Digital_Edit_Result> USP_Get_Acq_Deal_Digital_Edit_Result(Nullable<int> Acq_Deal_Digital_Code, Nullable<int> Row_Num,string Tab_SM)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Acq_Deal_Digital_Edit(Acq_Deal_Digital_Code, Row_Num, Tab_SM);
+        }
+
+        public virtual ObjectResult<USP_Get_Title_For_Acq_Digital_Result> USP_Get_Title_For_Acq_Digital_Result(Nullable<int> ACQ_DEAL_CODE, Nullable<int> title_code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Get_Title_For_Acq_Digital(ACQ_DEAL_CODE, title_code);
+        }
+
+        public virtual int USP_Delete_Acq_Digital_Result(Nullable<int> DigitalCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Delete_Acq_Digital(DigitalCode);
+        }
     }
 }
