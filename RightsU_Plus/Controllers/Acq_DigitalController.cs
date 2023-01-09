@@ -114,6 +114,8 @@ namespace RightsU_Plus.Controllers
 
             List<USP_Acq_Deal_Digital_List_Result> objDigital_List = objUspService.USP_Acq_Deal_Digital_List_Result(objDeal_Schema.Deal_Code, "", page_index, page_size, objRecordCount).ToList();
             //Count = objUspService.USP_Acq_Deal_Digital_List_Result(objDeal_Schema.Deal_Code, "", page_index, page_size).Count();
+            List<string> Digital_Tab_Heders = objDigital_List.Select(x => x.Digital_Tab_Description).Distinct().ToList();
+            List<string> Digital_Tab_Title = objDigital_List.Select(x => x.title_name).Distinct().ToList();
 
             ViewBag.RecordCount = Convert.ToInt32(objRecordCount.Value);
             ViewBag.PageNo = PageNo;
@@ -121,22 +123,55 @@ namespace RightsU_Plus.Controllers
             Dictionary<string, object> obj = new Dictionary<string, object>();
             string strList = "";
             strList = "<Table class=\"table table-bordered table-hover\">";
-            strList = strList + "<TR><TH>Title Name</TH><TH>Social Media</TH><TH>Commitments</TH><TH>Opening & Closing Credits</TH><TH>Essential Clauses</TH><TH>Action</TH></TR>";
+            strList = strList + "<TR><TH>Title Name</TH>";
+            //strList = strList + "<TR><TH>Title Name</TH><TH>Social Media</TH><TH>Commitments</TH><TH>Opening & Closing Credits</TH><TH>Essential Clauses</TH><TH>Action</TH></TR>";
 
-
-            foreach (USP_Acq_Deal_Digital_List_Result sl in objDigital_List)
+            foreach (string sh in Digital_Tab_Heders)
             {
+
+                strList = strList + "<TH>" + sh + "</TH>";
+                //strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
+            }
+
+            strList = strList + "<TH>Action</TH></TR>";
+
+            foreach (string Dlttl in Digital_Tab_Title)
+            {
+
+                List<USP_Acq_Deal_Digital_List_Result> objDigital_ListtitleData = objDigital_List.Where(x => x.title_name == Dlttl).ToList();
+                strList = strList + "<TR><TD>" + Dlttl + "</TD>";
+                string Title_Code = ""; string Acq_Deal_Digital_Code = "";
+                foreach (USP_Acq_Deal_Digital_List_Result dg in objDigital_ListtitleData)
+                {
+                    Title_Code = dg.Title_Code.ToString();
+                    Acq_Deal_Digital_Code = dg.Acq_Deal_Digital_Code.ToString();
+                    strList = strList + "<TD>" + dg.Remarks + "</TD>";
+
+                }
+                //strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Supplementary_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Supplementary_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
                 if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Digital_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
-
+                    strList = strList + "<TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(Acq_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'');\" ></a><a title=\"VIEW\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(Acq_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(Acq_Deal_Digital_Code) + ',' + Convert.ToString(Title_Code) + ");\"></a></TD></Tr>";
                 }
                 else
                 {
-                    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
-
+                    strList = strList + "<TD><a title=\"VIEW\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(Acq_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'VIEW');\" ></a></TD></Tr>";
                 }
             }
+
+            //foreach (USP_Acq_Deal_Digital_List_Result sl in objDigital_List)
+            //{
+            //if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
+            //{
+            //    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'');\" ></a><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(sl.Digital_code) + ',' + Convert.ToString(sl.title_code) + ");\"></a></TD></Tr>";
+
+            //}
+            //else
+            //{
+            //    strList = strList + "<TR><TD>" + sl.title_name + "</TD><TD>" + sl.SocialMedia + "</TD><TD>" + sl.Commitments + "</TD><TD>" + sl.OpeningClosingCredits + "</TD><TD>" + sl.EssentialClauses + "</TD><TD><a title=\"Edit\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(sl.Digital_code) + "," + Convert.ToString(sl.title_code) + ",'VIEW');\" ></a></TD></Tr>";
+
+            //}
+            //}
             strList = strList + "</Table>";
             obj.Add("List", strList);
             obj.Add("TCount", objRecordCount.Value);
@@ -158,7 +193,7 @@ namespace RightsU_Plus.Controllers
             page_index = Convert.ToInt32(obj_Dictionary_RList["page_index"]);
 
             Digital_Tab_Service objService = new Digital_Tab_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Digital_Tab> objDigital_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForAcqDeal).OrderBy(a => a.Order_No).ToList();
+            List<RightsU_Entities.Digital_Tab> objDigital_Tab = objService.SearchFor(x => x.Module_Code.Value == GlobalParams.ModuleCodeForAcqDeal).Where(x => x.Is_Show == "Y" || x.Is_Show == "N").OrderBy(a => a.Order_No).ToList();
 
             Digital_Data_Service objDataService = new Digital_Data_Service(objLoginEntity.ConnectionStringName);
             List<RightsU_Entities.Digital_Data> objDigital_Data = objDataService.SearchFor(a => true).ToList();

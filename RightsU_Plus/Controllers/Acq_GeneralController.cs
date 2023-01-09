@@ -847,7 +847,7 @@ namespace RightsU_Plus.Controllers
             objAD_Session.Deal_Segment = objExisting_Acq_Deal.Deal_Segment;
             objAD_Session.Revenue_Vertical_Code = objExisting_Acq_Deal.Revenue_Vertical_Code;
             objAD_Session.Confirming_Party = objExisting_Acq_Deal.Confirming_Party;
-
+            objAD_Session.Material_Remarks = objExisting_Acq_Deal.Material_Remarks;
 
             objExisting_Acq_Deal.Acq_Deal_Movie.ToList().ForEach(a =>
             {

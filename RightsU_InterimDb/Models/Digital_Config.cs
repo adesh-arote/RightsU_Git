@@ -30,6 +30,8 @@ namespace RightsU_InterimDb.Models
     	    public string Text_Field { get; set; }
     	    public string Value_Field { get; set; }
     	    public string Whr_Criteria { get; set; }
+    	    public string LP_Digital_Data_Code { get; set; }
+    	    public string LP_Digital_Value_Config_Code { get; set; }
     
         public virtual Digital Digital { get; set; }
         public virtual Digital_Tab Digital_Tab { get; set; }

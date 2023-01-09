@@ -2,6 +2,7 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -76,68 +77,81 @@ namespace RightsU_Plus.Controllers
         }
 
         public ActionResult Index()
-        { 
-            if (Request.QueryString["Linkid"] != null && Request.QueryString["Entype"] != null)
+        {
+            try
             {
-                LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Request.QueryString["Entype"].ToString()).FirstOrDefault();
-                if (objLoginEntity == null)
-                    objLoginEntity = new LoginEntity();
-
-                User objUser = null;
-                objUser = GetUserByGuid(Request.QueryString["Linkid"].ToString());
-                Session["objMessageKey"] = null;
-
-                int System_Language_Code = objUser != null ? Convert.ToInt32(objUser.System_Language_Code) : 1;
-                LoadSystemMessage(Convert.ToInt32(System_Language_Code), GlobalParams.ModuleCodeForUsers);
-                ViewBag.MesageKey = Session["objMessageKey"];
-
-                if (objUser != null)
+                Session["User_Service"] = null;
+                Session["objUPD_Service"] = null;
+                LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method start ", "Line no 82:", Server.MapPath("~"));
+                if (Request.QueryString["Linkid"] != null && Request.QueryString["Entype"] != null)
                 {
+                    BindEntity(Request.QueryString["Entype"].ToString());
+                    LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Request.QueryString["Entype"].ToString()).FirstOrDefault();
+                    if (objLoginEntity == null)
+                        objLoginEntity = new LoginEntity();
+                    Session["objLoginEntity"] = objLoginEntity;
+                    LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method enity assign or set ", "Line no 87:", Server.MapPath("~"));
+                    User objUser = null;
+                    objUser = GetUserByGuid(Request.QueryString["Linkid"].ToString());
+                    Session["objMessageKey"] = null;
 
-                    DateTime currentTime = DateTime.Now;
-                    DateTime dt = Convert.ToDateTime(objUser.Last_Updated_Time);
-                    var dif = currentTime.Subtract(dt);
-                    if (dif.Hours > 0)
+                    int System_Language_Code = objUser != null ? Convert.ToInt32(objUser.System_Language_Code) : 1;
+                    LoadSystemMessage(Convert.ToInt32(System_Language_Code), GlobalParams.ModuleCodeForUsers);
+                    ViewBag.MesageKey = Session["objMessageKey"];
+                    string FPLINKEXPIRETIME = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "FPLINKEXPIRETIME").First().Parameter_Value;
+                    if (objUser != null)
                     {
-                        return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkExpire });
+                        LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method user authenticated ", "Line no 98:", Server.MapPath("~"));
+                        DateTime currentTime = DateTime.Now;
+                        DateTime dt = Convert.ToDateTime(objUser.Last_Updated_Time);
+                        TimeSpan ts = currentTime - dt;
+                        int min = Convert.ToInt32(ts.TotalMinutes);
+                        if (min > Convert.ToInt32(FPLINKEXPIRETIME))
+                        {
+                            return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkExpire });
+                        }
                     }
-                    else if(dif.Minutes > 30 )
+                    else
                     {
-                        return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkExpire });
+
+
+
+                        return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkexpireOrAlrChange });
                     }
                 }
                 else
                 {
-                 
-                    return RedirectToAction("Index", "Login", new { alertMsg = ViewBag.MesageKey.FPLinkexpireOrAlrChange });
+                    return RedirectToAction("Index", "Login", new { alertMsg = "Invalid Url or link expired" });
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                return RedirectToAction("Index", "Login", new { alertMsg = "Invalid Url or link expired" });
+                LogErr("Index ForgetPasswordLink", "ForgetPasswordLink Index method test ~" + ex.Message, "Line no 126:", Server.MapPath("~"));
+                throw;
             }
             return View();
         }
 
-        public JsonResult SaveCHangesPass(string NewPassword, string ConfirmPassword,string Entypes,string Linkids)
+        public JsonResult SaveCHangesPass(string NewPassword, string ConfirmPassword, string Entypes, string Linkids)
         {
-            Dictionary<string, object> dicobj = new Dictionary<string, object>();
-           
-            //string AlertMessage = "";
+            BindEntity(Entypes);
+            objUser_Service = null;
+            objUPD_Service = null;
 
+            Dictionary<string, object> dicobj = new Dictionary<string, object>();
             LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entypes).FirstOrDefault();
             if (objLoginEntity == null)
                 objLoginEntity = new LoginEntity();
             ViewBag.MesageKey = Session["objMessageKey"];
-           
-            Users_Password_Detail_Service objUPD_Service = new Users_Password_Detail_Service(objLoginEntity.ConnectionStringName);
+
             User objUser = null;
             objUser = GetUserByGuid(Linkids);
             if (objUser != null)
             {
                 if (objUser.Password == getEncriptedStr(NewPassword.Trim()))
                 {
-                   
+
                     TempData["Focus"] = "NewPassword";
                     dicobj.Add("Status", "E");
                     dicobj.Add("msg", ViewBag.MesageKey.FPSamePassword);
@@ -147,7 +161,7 @@ namespace RightsU_Plus.Controllers
                      || NewPassword.Trim().ToLower().Contains(objUser.First_Name.ToLower())
                      || (objUser.Last_Name != "" && NewPassword.ToLower().Trim().Contains(objUser.Last_Name.ToLower())))
                 {
-                   
+
                     TempData["Focus"] = "NewPassword";
                     dicobj.Add("Status", "E");
                     dicobj.Add("msg", ViewBag.MesageKey.FPContainFirstLastNm);
@@ -156,15 +170,11 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                
-
                     int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, NewPassword.Trim());
                     if (Lst5PwdsCnt > 0)
                     {
-                       
+
                         TempData["Focus"] = "NewPassword";
-                        //Session["FileName"] = "";
-                        //Session["FileName"] = "ChangePassword";
                         dicobj.Add("Status", "E");
                         dicobj.Add("msg", ViewBag.MesageKey.FPHistory);
                         return Json(dicobj);
@@ -186,9 +196,9 @@ namespace RightsU_Plus.Controllers
                         ObjUPD.EntityState = State.Added;
                         dynamic resultSet;
                         bool isValid = objUPD_Service.Save(ObjUPD, out resultSet);
-                        Session.Abandon();
                         dicobj.Add("msg", ViewBag.MesageKey.FPLinkexpireSuccess);
                         dicobj.Add("Status", "S");
+                        Session.Abandon();
                         return Json(dicobj);
 
                     }
@@ -198,13 +208,15 @@ namespace RightsU_Plus.Controllers
             {
                 dicobj.Add("Status", "E");
                 dicobj.Add("msg", ViewBag.MesageKey.FPLinkexpireOrAlrChange);
-                
+
                 return Json(dicobj);
             }
         }
         private User GetUserByGuid(string guid)
         {
+
             User objUser = objUser_Service.SearchFor(x => x.ChangePasswordLinkGUID.ToUpper() == guid.ToUpper()).FirstOrDefault();
+            var objUser1 = objUser_Service.SearchFor(x => true).ToList();
 
             if (objUser != null)
             {
@@ -217,7 +229,7 @@ namespace RightsU_Plus.Controllers
         }
         private int CheckLast5Pwds(int UserCode = 0, string NewPassWord = "")
         {
-            
+
             string EncryptedPassword = getEncriptedStr(NewPassWord);
             List<Users_Password_Detail> Last5PwdsList = new Users_Password_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Users_Code == UserCode).OrderByDescending(x => x.Password_Change_Date).Take(5).ToList();
             int Lst5PwdsCnt = 0;
@@ -263,21 +275,9 @@ namespace RightsU_Plus.Controllers
             obj.Add("PWDPolicyDetailList", new SelectList(PWDPolicyDetailList, "Parameter_Value", "Parameter_Name"));
             return Json(obj);
         }
-        //public JsonResult GetPWDHistoryCount(string data)
-        //{
-        //    User objUser = objUser = GetUserByGuid(Session["Entype"].ToString()); ;
-        //    int Lst5PwdsCnt = CheckLast5Pwds(objUser.Users_Code, data.Trim());
-        //    if (Lst5PwdsCnt > 0)
-        //    {
-        //        return Json(new { PWDHistoryCount = Lst5PwdsCnt, PWDHistoryMsg = "Please enter some other password, it matches your old password history" });
-        //    }
-        //    else
-        //    {
-        //        return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
-        //    }
-        //}
+
         public void LoadSystemMessage(int systemLanguageCode, int moduleCode)
-        { 
+        {
             if (systemLanguageCode > 0)
             {
                 List<System_Language_Message> lstSystemMessage = new System_Language_Message_Service(objLoginEntity.ConnectionStringName).SearchFor(x =>
@@ -297,6 +297,52 @@ namespace RightsU_Plus.Controllers
                     }
                 }
             }
+        }
+
+        DataSet ds = new DataSet();
+        public SelectList BindEntity(string code = "")
+        {
+            string filePath = Server.MapPath("~") + "\\EntitiesList.xml";
+            System.IO.FileStream fsReadXml = new System.IO.FileStream(filePath, System.IO.FileMode.Open);
+            ds.ReadXml(fsReadXml);
+            fsReadXml.Close();
+
+            lstLoginEntities.Clear();
+            foreach (DataRow dRow in ds.Tables[0].Rows)
+            {
+                LoginEntity objLE = new LoginEntity();
+                objLE.ShortName = dRow["ShortName"].ToString();
+                objLE.FullName = dRow["FullName"].ToString();
+                objLE.DatabaseName = dRow["DatabaseName"].ToString();
+                objLE.ConnectionStringName = dRow["ConnectionStringName"].ToString();
+                objLE.ReportingServerFolder = dRow["ReportingServerFolder"].ToString();
+                lstLoginEntities.Add(objLE);
+            }
+            string SelectedEntity = Convert.ToString(code);
+            return new SelectList(lstLoginEntities, "ShortName", "ShortName", SelectedEntity);
+        }
+        public static void LogErr(string moduleName, string methodName, string msg, string path)
+        {
+            StreamWriter sw;
+            //if (!File.Exists(System.Windows.Forms.Application.StartupPath + "\\LogErr.txt"))
+            if (!System.IO.File.Exists(path + "\\LogErr.txt"))
+            {
+                sw = System.IO.File.CreateText(path + "\\LogErr.txt");
+                //sw.WriteLine(DateTime.Now.ToString("dd-MMM-yyyy"));
+                sw.Close();
+            }
+
+            sw = System.IO.File.AppendText(path + "\\LogErr.txt");
+            sw.WriteLine("");
+            sw.WriteLine("-------------------------------------------------");
+            sw.WriteLine(DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + "    LDAP ");
+            sw.Close();
+
+            sw = System.IO.File.AppendText(path + "\\LogErr.txt");
+            sw.WriteLine(moduleName + "    " + methodName);
+            sw.WriteLine(msg);
+            sw.Close();
+            //System.Windows.Forms.MessageBox.Show("Error found:" + msg);
         }
     }
 }

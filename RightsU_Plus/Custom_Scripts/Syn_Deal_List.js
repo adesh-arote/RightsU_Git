@@ -370,21 +370,26 @@ function ClearAll() {
     $('#txtSrchDealNo').val('');
     $('#txtfrom').val('');
     $('#txtto').val('');
-    $('#txtTitleSearch').val('');
-    SetMinDt();
-    SetMaxDt();
+    $('#txtTitleSearch').val(''); //N
+    SetMinDt(); //N
+    SetMaxDt(); //N
     $('#ddlSrchDealType').val(0).trigger("chosen:updated");
     $('#ddlSrchDealTag').val(0).trigger("chosen:updated");
     $('#ddlWorkflowStatus').val(0).trigger("chosen:updated");
     $('#ddlSrchBU').val($("#ddlSrchBU option:first-child").val()).trigger("chosen:updated");
-    $("#chkArchiveDeal").prop("checked", false);
-    $("#chkSubDeal").prop("checked", false);
+    $("#chkArchiveDeal").prop("checked", false); //N
+    $("#chkSubDeal").prop("checked", false); //N
 
 
-    OnChangeBindTitle();
+    //OnChangeBindTitle(); //N
+    //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+    //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
 
-    $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
-    $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
+    OnChangeBindTitle('ShowAll');
+    $('#ddlGenBUMultiSelect').val('1');
+    $("#ddlGenBUMultiSelect")[0].sumo.reload();
+    $('#ddlSrchBUMultiSelect').val('1');
+    $("#ddlSrchBUMultiSelect")[0].sumo.reload();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
     $("#ddlSrchDirector").val('')[0].sumo.reload();

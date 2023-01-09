@@ -105,14 +105,14 @@ namespace RightsU_HealthCheckup
                     connection.Open();
                     cmd.Connection = connection;
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.CommandText = "msdb.dbo.[sp_send_dbmail]";
+                    cmd.CommandText = "USP_RightsU_Health_Checkup_Mail";
 
-                    cmd.Parameters.Add("@profile_name", SqlDbType.VarChar).Value = Convert.ToString(ConfigurationSettings.AppSettings["Sql_Profile_Name"]); //"RightsU";
+                    //cmd.Parameters.Add("@profile_name", SqlDbType.VarChar).Value = Convert.ToString(ConfigurationSettings.AppSettings["Sql_Profile_Name"]); //"RightsU";
                     cmd.Parameters.Add("@recipients", SqlDbType.VarChar).Value = toMailId;
                     cmd.Parameters.Add("@copy_recipients", SqlDbType.VarChar).Value = ccMailId;
                     cmd.Parameters.Add("@subject", SqlDbType.VarChar).Value = Subject;
                     cmd.Parameters.Add("@body", SqlDbType.NVarChar).Value = Body;
-                    cmd.Parameters.Add("@body_format", SqlDbType.VarChar).Value = "HTML";
+                    //cmd.Parameters.Add("@body_format", SqlDbType.VarChar).Value = "HTML";
 
                     cmd.ExecuteNonQuery();
                 }
