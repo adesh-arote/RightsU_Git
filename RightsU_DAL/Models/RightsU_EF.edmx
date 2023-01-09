@@ -1271,6 +1271,23 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Is_Multiple_Select" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="Attrib_Report_Column">
+          <Key>
+            <PropertyRef Name="Attrib_Report_Column_Code" />
+          </Key>
+          <Property Name="Attrib_Report_Column_Code" Type="int" Nullable="false" />
+          <Property Name="DP_Attrib_Group_Code" Type="int" />
+          <Property Name="BV_Attrib_Group_Code" Type="int" />
+          <Property Name="Column_Code" Type="int" />
+          <Property Name="Control_Type" Type="int" />
+          <Property Name="Display_Order" Type="int" />
+          <Property Name="Output_Group" Type="int" />
+          <Property Name="Is_Mandatory" Type="char" MaxLength="1" />
+          <Property Name="Icon" Type="varchar" MaxLength="100" />
+          <Property Name="Css_Class" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="IsSelectCriteria" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Avail_Acq">
           <Key>
             <PropertyRef Name="Avail_Acq_Code" />
@@ -4164,6 +4181,27 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
           <Property Name="Alternate_Config_Code" Type="int" />
+          <Property Name="Display_Type" Type="varchar" MaxLength="5" />
+        </EntityType>
+        <EntityType Name="Report_Column_Setup_IT">
+          <Key>
+            <PropertyRef Name="Column_Code" />
+          </Key>
+          <Property Name="Column_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="View_Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name_In_DB" Type="varchar" MaxLength="1000" />
+          <Property Name="Display_Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Valued_As" Type="smallint" />
+          <Property Name="Display_Order" Type="int" />
+          <Property Name="IsPartofSelectOnly" Type="varchar" MaxLength="1" />
+          <Property Name="List_Source" Type="varchar" MaxLength="80" />
+          <Property Name="Lookup_Column" Type="nvarchar" MaxLength="50" />
+          <Property Name="Display_Column" Type="nvarchar" MaxLength="50" />
+          <Property Name="Right_Code" Type="int" />
+          <Property Name="Max_Length" Type="nvarchar" MaxLength="50" />
+          <Property Name="WhCondition" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ValidOpList" Type="varchar" MaxLength="50" />
+          <Property Name="Alternate_Config_Code" Type="nvarchar" MaxLength="50" />
           <Property Name="Display_Type" Type="varchar" MaxLength="5" />
         </EntityType>
         <EntityType Name="Report_Condition">
@@ -8229,6 +8267,42 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Ancillary_Platform_Medium">
               <PropertyRef Name="Ancillary_Platform_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group">
+          <End Role="Attrib_Group" Type="Self.Attrib_Group" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="DP_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group1">
+          <End Role="Attrib_Group" Type="Self.Attrib_Group" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="BV_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Report_Column_Setup">
+          <End Role="Report_Column_Setup_IT" Type="Self.Report_Column_Setup_IT" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Report_Column_Setup_IT">
+              <PropertyRef Name="Column_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="Column_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -14697,6 +14771,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="ASRUN_Transaction" EntityType="Self.ASRUN_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction_Shows" EntityType="Self.ASRUN_Transaction_Shows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attrib_Group" EntityType="Self.Attrib_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Attrib_Report_Column" EntityType="Self.Attrib_Report_Column" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq" EntityType="Self.Avail_Acq" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Details" EntityType="Self.Avail_Acq_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Language" EntityType="Self.Avail_Acq_Language" Schema="dbo" store:Type="Tables" />
@@ -14871,6 +14946,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Provisional_Deal_Type" EntityType="Self.Provisional_Deal_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Column" EntityType="Self.Report_Column" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Column_Setup" EntityType="Self.Report_Column_Setup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Report_Column_Setup_IT" EntityType="Self.Report_Column_Setup_IT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Condition" EntityType="Self.Report_Condition" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Format" EntityType="Self.Report_Format" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Query" EntityType="Self.Report_Query" Schema="dbo" store:Type="Tables" />
@@ -16125,6 +16201,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Ancillary_Platform_Medium_Ancillary_Platform_Code" Association="Self.FK_Ancillary_Platform_Medium_Ancillary_Platform_Code">
             <End Role="Ancillary_Platform" EntitySet="Ancillary_Platform" />
             <End Role="Ancillary_Platform_Medium" EntitySet="Ancillary_Platform_Medium" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group" Association="Self.FK_Attrib_Report_Column_Attrib_Group">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group1" Association="Self.FK_Attrib_Report_Column_Attrib_Group1">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Report_Column_Setup" Association="Self.FK_Attrib_Report_Column_Report_Column_Setup">
+            <End Role="Report_Column_Setup_IT" EntitySet="Report_Column_Setup_IT" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
           </AssociationSet>
           <AssociationSet Name="FK_Avail_Acq_Details" Association="Self.FK_Avail_Acq_Details">
             <End Role="Avail_Acq" EntitySet="Avail_Acq" />
@@ -36076,6 +36164,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Multiple_Select" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" FromRole="Attrib_Group" ToRole="Users_Detail" />
+          <NavigationProperty Name="Attrib_Report_Column" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" FromRole="Attrib_Group" ToRole="Attrib_Report_Column" />
+          <NavigationProperty Name="Attrib_Report_Column1" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" FromRole="Attrib_Group" ToRole="Attrib_Report_Column" />
         </EntityType>
         <EntityType Name="Users_Detail">
           <Key>
@@ -36695,6 +36785,66 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Title_Code" Nullable="true" />
           <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
         </ComplexType>
+        <EntityType Name="Supplementary">
+          <Key>
+            <PropertyRef Name="Supplementary_Code" />
+          </Key>
+          <Property Name="Supplementary_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary" ToRole="Supplementary_Config" />
+        </EntityType>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
+          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+        </EntityType>
+        <EntityType Name="Supplementary_Data">
+          <Key>
+            <PropertyRef Name="Supplementary_Data_Code" />
+          </Key>
+          <Property Name="Supplementary_Data_Code" Type="Int32" Nullable="false" />
+          <Property Name="Supplementary_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Data_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Supplementary_Tab">
+          <Key>
+            <PropertyRef Name="Supplementary_Tab_Code" />
+          </Key>
+          <Property Name="Supplementary_Tab_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Short_Name" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Supplementary_Tab_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Order_No" Type="Int32" />
+          <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
+          <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Module_Code" Type="Int32" />
+        </EntityType>
+        <Association Name="FK_Supplementary_Config_Supplementary">
+          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
+          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+        </Association>
         <ComplexType Name="USP_Acq_SUPP_Tab_Result">
           <Property Type="String" Name="supplementary_name" Nullable="true" MaxLength="200" />
           <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
@@ -36998,6 +37148,85 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ImgPath" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ImgData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Attrib_Report_Column">
+          <Key>
+            <PropertyRef Name="Attrib_Report_Column_Code" />
+          </Key>
+          <Property Name="Attrib_Report_Column_Code" Type="Int32" Nullable="false" />
+          <Property Name="DP_Attrib_Group_Code" Type="Int32" />
+          <Property Name="BV_Attrib_Group_Code" Type="Int32" />
+          <Property Name="Column_Code" Type="Int32" />
+          <Property Name="Control_Type" Type="Int32" />
+          <Property Name="Display_Order" Type="Int32" />
+          <Property Name="Output_Group" Type="Int32" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Icon" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Css_Class" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsSelectCriteria" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Attrib_Group" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
+          <NavigationProperty Name="Attrib_Group1" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
+          <NavigationProperty Name="Report_Column_Setup_IT" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Attrib_Report_Column" ToRole="Report_Column_Setup_IT" />
+        </EntityType>
+        <EntityType Name="Report_Column_Setup_IT">
+          <Key>
+            <PropertyRef Name="Column_Code" />
+          </Key>
+          <Property Name="Column_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="View_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name_In_DB" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Display_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Valued_As" Type="Int16" />
+          <Property Name="Display_Order" Type="Int32" />
+          <Property Name="IsPartofSelectOnly" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="List_Source" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Lookup_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Display_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Right_Code" Type="Int32" />
+          <Property Name="Max_Length" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WhCondition" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ValidOpList" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Alternate_Config_Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Attrib_Report_Column" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Report_Column_Setup_IT" ToRole="Attrib_Report_Column" />
+        </EntityType>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group">
+          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="DP_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group1">
+          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="BV_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Report_Column_Setup">
+          <End Type="RightsU_NeoModel.Report_Column_Setup_IT" Role="Report_Column_Setup_IT" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Report_Column_Setup_IT">
+              <PropertyRef Name="Column_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="Column_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
         <EntityType Name="Digital">
           <Key>
             <PropertyRef Name="Digital_Code" />
@@ -46394,6 +46623,76 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Supplementary">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary">
+              <MappingFragment StoreEntitySet="Supplementary">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Supplementary_Name" ColumnName="Supplementary_Name" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
+              <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
+                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Data">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Data">
+              <MappingFragment StoreEntitySet="Supplementary_Data">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Data_Description" ColumnName="Data_Description" />
+                <ScalarProperty Name="Supplementary_Type" ColumnName="Supplementary_Type" />
+                <ScalarProperty Name="Supplementary_Data_Code" ColumnName="Supplementary_Data_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Tab">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Tab">
+              <MappingFragment StoreEntitySet="Supplementary_Tab">
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="EditWindowType" ColumnName="EditWindowType" />
+                <ScalarProperty Name="Tab_Type" ColumnName="Tab_Type" />
+                <ScalarProperty Name="Order_No" ColumnName="Order_No" />
+                <ScalarProperty Name="Supplementary_Tab_Description" ColumnName="Supplementary_Tab_Description" />
+                <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" StoreEntitySet="Supplementary_Config">
+            <EndProperty Name="Supplementary_Config">
+              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+            </EndProperty>
+            <EndProperty Name="Supplementary">
+              <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+            </EndProperty>
+            <Condition ColumnName="Supplementary_Code" IsNull="false" />
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary_Tab" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" StoreEntitySet="Supplementary_Config">
+            <EndProperty Name="Supplementary_Config">
+              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
+            </EndProperty>
+            <EndProperty Name="Supplementary_Tab">
+              <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+            </EndProperty>
+            <Condition ColumnName="Supplementary_Tab_Code" IsNull="false" />
+          </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_SUPP_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_SUPP_Tab">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_SUPP_Tab_Result">
@@ -46695,6 +46994,46 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="ImgData" ColumnName="ImgData" />
                 <ScalarProperty Name="ImgPath" ColumnName="ImgPath" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Attrib_Report_Column">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Attrib_Report_Column">
+              <MappingFragment StoreEntitySet="Attrib_Report_Column">
+                <ScalarProperty Name="IsSelectCriteria" ColumnName="IsSelectCriteria" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Css_Class" ColumnName="Css_Class" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Output_Group" ColumnName="Output_Group" />
+                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
+                <ScalarProperty Name="BV_Attrib_Group_Code" ColumnName="BV_Attrib_Group_Code" />
+                <ScalarProperty Name="DP_Attrib_Group_Code" ColumnName="DP_Attrib_Group_Code" />
+                <ScalarProperty Name="Attrib_Report_Column_Code" ColumnName="Attrib_Report_Column_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Report_Column_Setup_IT">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup_IT">
+              <MappingFragment StoreEntitySet="Report_Column_Setup_IT">
+                <ScalarProperty Name="Display_Type" ColumnName="Display_Type" />
+                <ScalarProperty Name="Alternate_Config_Code" ColumnName="Alternate_Config_Code" />
+                <ScalarProperty Name="ValidOpList" ColumnName="ValidOpList" />
+                <ScalarProperty Name="WhCondition" ColumnName="WhCondition" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Right_Code" ColumnName="Right_Code" />
+                <ScalarProperty Name="Display_Column" ColumnName="Display_Column" />
+                <ScalarProperty Name="Lookup_Column" ColumnName="Lookup_Column" />
+                <ScalarProperty Name="List_Source" ColumnName="List_Source" />
+                <ScalarProperty Name="IsPartofSelectOnly" ColumnName="IsPartofSelectOnly" />
+                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
+                <ScalarProperty Name="Valued_As" ColumnName="Valued_As" />
+                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
+                <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

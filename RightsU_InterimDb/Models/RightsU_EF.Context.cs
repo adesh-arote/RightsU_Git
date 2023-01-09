@@ -448,6 +448,8 @@ namespace RightsU_InterimDb.Models
         public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
         public DbSet<Supplementary> Supplementary { get; set; }
         public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
+        public DbSet<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public DbSet<Report_Column_Setup_IT> Report_Column_Setup_IT { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

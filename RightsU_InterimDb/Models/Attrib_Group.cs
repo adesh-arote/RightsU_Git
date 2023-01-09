@@ -17,6 +17,7 @@ namespace RightsU_InterimDb.Models
         public Attrib_Group()
         {
             this.Users_Detail = new HashSet<Users_Detail>();
+            this.Attrib_Report_Column = new HashSet<Attrib_Report_Column>();
         }
     
     	public State EntityState { get; set; }    public int Attrib_Group_Code { get; set; }
@@ -27,5 +28,6 @@ namespace RightsU_InterimDb.Models
     	    public string Is_Active { get; set; }
     
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
+        public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column { get; set; }
     }
 }

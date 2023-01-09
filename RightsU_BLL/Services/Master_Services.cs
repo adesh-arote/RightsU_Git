@@ -1,5 +1,6 @@
 ﻿using RightsU_DAL;
 using RightsU_Entities;
+//using RightsU_Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7197,6 +7198,88 @@ namespace RightsU_BLL
         }
 
         public override bool ValidateDelete(Attrib_Group objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Attrib_Report_Column_Service : BusinessLogic<Attrib_Report_Column>
+    {
+        private readonly Attrib_Report_Column_Repository objAttrib_Report_Column_Repository;
+
+        public Attrib_Report_Column_Service(string Connection_Str)
+        {
+            this.objAttrib_Report_Column_Repository = new Attrib_Report_Column_Repository(Connection_Str);
+        }
+        public IQueryable<Attrib_Report_Column> SearchFor(Expression<Func<Attrib_Report_Column, bool>> predicate)
+        {
+            return objAttrib_Report_Column_Repository.SearchFor(predicate);
+        }
+        public Attrib_Report_Column GetById(int id)
+        {
+            return objAttrib_Report_Column_Repository.GetById(id);
+        }
+        public bool Save(Attrib_Report_Column objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objAttrib_Report_Column_Repository, out resultSet);
+        }
+        public bool Delete(Attrib_Report_Column objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objAttrib_Report_Column_Repository, out resultSet);
+        }
+        public override bool Validate(Attrib_Report_Column objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Attrib_Report_Column objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Attrib_Report_Column objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Report_Column_Setup_IT_Service : BusinessLogic<Report_Column_Setup_IT>
+    {
+        private readonly Report_Column_Setup_IT_Repository objReport_Column_Setup_IT_Repository;
+
+        public Report_Column_Setup_IT_Service(string Connection_Str)
+        {
+            this.objReport_Column_Setup_IT_Repository = new Report_Column_Setup_IT_Repository(Connection_Str);
+        }
+        public IQueryable<Report_Column_Setup_IT> SearchFor(Expression<Func<Report_Column_Setup_IT, bool>> predicate)
+        {
+            return objReport_Column_Setup_IT_Repository.SearchFor(predicate);
+        }
+        public Report_Column_Setup_IT GetById(int id)
+        {
+            return objReport_Column_Setup_IT_Repository.GetById(id);
+        }
+        public bool Save(Report_Column_Setup_IT objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objReport_Column_Setup_IT_Repository, out resultSet);
+        }
+        public bool Delete(Report_Column_Setup_IT objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objReport_Column_Setup_IT_Repository, out resultSet);
+        }
+        public override bool Validate(Report_Column_Setup_IT objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Report_Column_Setup_IT objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Report_Column_Setup_IT objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;

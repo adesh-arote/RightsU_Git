@@ -410,6 +410,8 @@ namespace RightsU_DAL
         public DbSet<Deal_Segment> Deal_Segment { get; set; }
         public DbSet<Revenue_Vertical> Revenue_Vertical { get; set; }
         public DbSet<Attrib_Group> Attrib_Group { get; set; }
+        public DbSet<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public DbSet<Report_Column_Setup_IT> Report_Column_Setup_IT { get; set; }
         public DbSet<Users_Detail> Users_Detail { get; set; }
         public DbSet<DM_Title_Import_Utility> DM_Title_Import_Utility { get; set; }
         public DbSet<DM_Title_Import_Utility_Data> DM_Title_Import_Utility_Data { get; set; }

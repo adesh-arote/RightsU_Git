@@ -340,6 +340,9 @@
     <Compile Include="Models\Attrib_Group.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Attrib_Report_Column.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Avail_Acq.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -875,6 +878,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Report_Column_Setup.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Report_Column_Setup_IT.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Report_Condition.cs">

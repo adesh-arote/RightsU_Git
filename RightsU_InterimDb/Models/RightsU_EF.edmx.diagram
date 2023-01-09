@@ -1038,6 +1038,11 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary_Tab" Width="1.5" PointX="46.875" PointY="27.5" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Attrib_Report_Column" Width="1.5" PointX="24.25" PointY="105" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Report_Column_Setup_IT" Width="1.5" PointX="22" PointY="113.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

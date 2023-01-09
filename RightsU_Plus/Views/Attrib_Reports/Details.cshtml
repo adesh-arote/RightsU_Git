@@ -1,0 +1,99 @@
+﻿@model RightsU_Entities.Attrib_Report_Column
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <h4>Attrib_Report_Column</h4>
+                <hr />
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.DP_Attrib_Group_Code)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.BV_Attrib_Group_Code)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Column_Code)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Control_Type)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Display_Order)
+                            </th>
+                            @*<th>
+                                @Html.DisplayNameFor(model => model.Output_Group)
+                            </th>*@
+                            <th>
+                                @Html.DisplayNameFor(model => model.Is_Mandatory)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Icon)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Css_Class)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Type)
+                            </th>
+                            @*<th>
+                                @Html.DisplayNameFor(model => model.IsSelectCriteria)
+                            </th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(model => model.DP_Attrib_Group_Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.BV_Attrib_Group_Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Column_Code)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Control_Type)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Display_Order)
+                            </td>
+                            @*<td>
+                                @Html.DisplayFor(model => model.Output_Group)
+                            </td>*@
+                            <td>
+                                @Html.DisplayFor(model => model.Is_Mandatory)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Icon)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Css_Class)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(model => model.Type)
+                            </td>
+                            @*<td>
+                                @Html.DisplayFor(model => model.IsSelectCriteria)
+                            </td>*@
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>
+                @Html.ActionLink("Edit", "Edit", "", new { @id = Model.Attrib_Report_Column_Code, @class = "btn btn-primary" }) |
+                @Html.ActionLink("Back to List", "Index", "", new { @class = "btn btn-primary" })
+            </p>
+        </div>
+    </section>
+</div>
+
