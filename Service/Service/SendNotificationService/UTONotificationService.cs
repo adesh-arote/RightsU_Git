@@ -176,16 +176,6 @@ namespace SendNotificationService
 
                 return new USPGetConfig();
             }
-            //pass the stored procedure name
-            // cmd.CommandText = "data_ins";
-
-            //pass the parameter to stored procedure
-            //  cmd.Parameters.Add(new SqlParameter("@name", SqlDbType.VarChar)).Value = name;
-            // cmd.Parameters.Add(new SqlParameter("@age", SqlDbType.Int)).Value = age;
-
-            //Execute the query
-            // int res = cmd.ExecuteNonQuery();
-
         }
 
         public static List<USPGetPendingNotifications> RunUSPGetPendingNotificationsProcedure()
@@ -296,25 +286,31 @@ namespace SendNotificationService
                             ResponseText = "Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient;
                         }
                     }
+                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, false, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, Convert.ToString(ex.InnerException));
+                    ManageEmailFailure(ResponseText, notification);
                 }
                 catch (Exception ex)
                 {
                     string error = "API : RunNotifications => ";
                     if (ex.InnerException != null)
                     {
+                        int i = 0;
                         while (ex.InnerException != null)
                         {
                             error = error + Convert.ToString(ex.InnerException);
+                            i++;
+                            if (i > 5) break;
                         }
                     }
                     else
                     {
                         error = error + ex.Message;
                     }
-                    ResponseText = "API : RunNotifications => " + error;
-                    SendErrorEmail("API : RunNotifications => " + error, "Error on api : RunNotifications");
-                    if (Convert.ToBoolean(WriteLog)) { LogService("API : RunNotifications => " + error); }
-                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, Convert.ToString(ex.InnerException));
+                    ResponseText = error;
+                    SendErrorEmail(error, "Error on api : RunNotifications");
+                    if (Convert.ToBoolean(WriteLog)) { LogService(error); }
+                    RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, false, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, Convert.ToString(ex.InnerException));
+                    ManageEmailFailure(ResponseText, notification);
                 }
 
                 logObj.RequestId = Convert.ToString(notification.NotificationsCode);
@@ -402,16 +398,6 @@ namespace SendNotificationService
                 nonQryCommand.Parameters.Add(new SqlParameter("@ErrorDetails", SqlDbType.VarChar)).Value = ErrorDetails;
                 nonQryCommand.Connection = myConn;
                 nonQryCommand.ExecuteNonQuery();
-                //DataSet ds = new DataSet();
-                //SqlDataAdapter da = new SqlDataAdapter();
-                //da.SelectCommand = nonQryCommand;
-                //da.Fill(ds);
-
-                //List<USPUpdateNotificationStatus> lst = ds.Tables[0].AsEnumerable()
-                //.Select(dataRow => new USPUpdateNotificationStatus
-                //{
-                //    NotificationsCode = dataRow.Field<long>("NotificationsCode")
-                //}).ToList();
 
                 myConn.Close();
                 myConn.Dispose();
@@ -470,10 +456,6 @@ namespace SendNotificationService
 
         public static void LogService(string content)
         {
-            //ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration();
-            //string rootLogFolderPath = applicationConfiguration.GetConfigurationValue("RootLogFolderPath");
-            //string rootAppName = applicationConfiguration.GetConfigurationValue("RootAppName");
-            //string appName = applicationConfiguration.GetConfigurationValue("AppName");
             try
             {
                 string rootLogFolderPath = ConfigurationSettings.AppSettings["LogFolderPath"];
@@ -602,6 +584,69 @@ namespace SendNotificationService
             }
 
             return encryptedBytes;
+        }
+
+        private static void ManageEmailFailure(string errMessage, USPGetPendingNotifications notification)
+        {
+            if (Convert.ToBoolean(WriteLog)) { LogService("inside Manage Email Failure update"); }
+
+            string email = notification.Email.Replace(";", ",");
+            string cc = notification.cc.Replace(";", ",");
+            string bcc = notification.bcc.Replace(";", ",");
+
+            string failList = "";
+            string successList = "";
+
+            List<string> eList = email.Split(',').ToList();
+            eList.AddRange(cc.Split(',').ToList());
+            eList.AddRange(bcc.Split(',').ToList());
+            eList = eList.Distinct().ToList();
+
+            foreach (string s in eList)
+            {
+                if (errMessage.IndexOf(s) > 0)
+                {
+                    failList = failList + s + ",";
+                }
+                else
+                {
+                    successList = successList + s + ",";
+                }
+            }
+
+            //insert new email in notification table with failed email ids
+            //Update earlier email entry in notification table with success and success emailids
+
+            SqlConnection myConn = new SqlConnection();
+            myConn.ConnectionString = ConfigurationSettings.AppSettings["DefaultConnection"];
+            myConn.Open();
+
+            if (failList != "")
+            {
+                try
+                {
+                    SqlCommand nonQryCommand = new SqlCommand();
+                    nonQryCommand.CommandType = CommandType.StoredProcedure;
+                    nonQryCommand.CommandText = "USPManageEmailFailure";
+                    nonQryCommand.Parameters.Add(new SqlParameter("@NotificationsCode", SqlDbType.BigInt)).Value = notification.NotificationsCode;
+                    nonQryCommand.Parameters.Add(new SqlParameter("@ErrorMessage", SqlDbType.VarChar)).Value = errMessage;
+                    nonQryCommand.Parameters.Add(new SqlParameter("@FailureEmail", SqlDbType.VarChar)).Value = failList;
+                    nonQryCommand.Connection = myConn;
+                    nonQryCommand.ExecuteNonQuery();
+
+                    myConn.Close();
+                    myConn.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    myConn.Close();
+                    myConn.Dispose();
+
+                    SendErrorEmail("API : USPManageEmailFailure => " + Convert.ToString(ex.InnerException), "Error on api : USPManageEmailFailure");
+                    if (Convert.ToBoolean(WriteLog)) { LogService("API : USPManageEmailFailure => " + Convert.ToString(ex.InnerException)); }
+                    if (LogLevel > 3) LogError("API : USPManageEmailFailure => " + Convert.ToString(ex.InnerException));
+                }
+            }
         }
     }
 }
