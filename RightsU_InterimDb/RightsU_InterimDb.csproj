@@ -475,6 +475,18 @@
     <Compile Include="Models\Deal_Workflow_Status.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Digital.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Digital_Config.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Digital_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Digital_Tab.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DM_AQDeal.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1849,6 +1861,9 @@
     <Compile Include="Models\Workflow_Role.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
     <Compile Include="USPDataTests.cs" />
     <Compile Include="Enum.cs" />
     <Compile Include="Models\RightsU_EF.Context.cs">
@@ -1890,6 +1905,8 @@
       <DependentUpon>RightsU_EF.edmx</DependentUpon>
       <LastGenOutput>RightsU_EF.cs</LastGenOutput>
     </None>
+    <None Include="obj\Release\RightsU_InterimDb.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\RightsU_InterimDb.csprojAssemblyReference.cache" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,109 @@
+﻿@model IEnumerable<RightsU_Entities.Supplementary_Data>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var Url_SearchSupplementaryConfig = '@Url.Action("SearchConfig", "Acq_SupplementaryMaster")';
+
+   
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindSupplementaryList("Data");
+        SetPagingData();
+    }
+
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchData(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
+        SearchData("");
+    }
+</script>
+
+<input type="hidden" value="SuppData" id="SuppTab" />
+<div style="text-align:center">
+
+    @*<p>
+        <input type="button" class="btn btn-primary" value="Add" style="float:right;margin-bottom:5px" onclick="AddEditViewSupplementaryTab(0, 'ADDDATA')" />
+    </p>*@
+    <table class="table table-bordered table-hover" style="margin-top:10px">
+        <thead>
+            <tr>
+                <th>
+                    Supplementary Data Code
+                </th>
+                <th>
+                    Supplementary Type
+                </th>
+                <th>
+                    Data Description
+                </th>
+                <th style="display:none">
+                    Is Active
+                </th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supplementary_Data_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supplementary_Type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data_Description)
+                    </td>
+                    <td style="display:none">
+                        @if (item.Is_Active == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+
+                    </td>
+                    <td>
+                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditViewSupplementaryTab('@item.Supplementary_Data_Code', 'EDITDATA')"></a>
+                        <a title="Detail" class="glyphicon glyphicon-eye-open" onclick="AddEditViewSupplementaryTab('@item.Supplementary_Data_Code', 'VIEWDATA')"></a>
+                        @Html.ActionLink(" ", "DeleteSupplementaryData", new { id = item.Supplementary_Data_Code }, new { @class = "glyphicon glyphicon-trash", @style = "cursor: pointer;", @title = "Delete" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    
+</div>

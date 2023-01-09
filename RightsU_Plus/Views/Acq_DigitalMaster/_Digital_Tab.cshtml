@@ -1,0 +1,130 @@
+﻿@model IEnumerable<RightsU_Entities.Digital_Tab>
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+        BindDigitalList("Tab");
+        SetPagingTab();
+    }
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchTab(searchText);
+    }
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
+        SearchTab("");
+    }
+</script>
+<input type="hidden" value="DigiTab" id="DigiTab" />
+
+
+<div>
+    <table class="table table-bordered table-hover" style="text-align:center">
+        <thead>
+            <tr>
+                <th>
+                    Digital Tab Code
+                </th>
+                <th>
+                    Short Name
+                </th>
+                <th>
+                    Digital Tab Description
+                </th>
+                <th>
+                    Order No
+                </th>
+                <th>
+                    Tab Type
+                </th>
+                <th>
+                    EditWindow Type
+                </th>
+                <th>
+                    Module Code
+                </th>
+                <th>
+                    Key Config Code
+                </th>
+                <th>
+                    Is Show
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Digital_Tab_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Short_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Digital_Tab_Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Order_No)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tab_Type)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.EditWindowType)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Module_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Key_Config_Code)
+                    </td>
+                    <td>
+                        @if (item.Is_Show == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else if (item.Is_Show == "N")
+                        {
+                            <span>No</span>
+                        }                        
+                    </td>
+                    <td>
+                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditViewDigitalTab('@item.Digital_Tab_Code', 'EDITTAB')"></a>
+                        <a title="Detail" class="glyphicon glyphicon-eye-open" onclick="AddEditViewDigitalTab('@item.Digital_Tab_Code', 'VIEWTAB')"></a>
+                        @Html.ActionLink(" ", "DeleteTab", new { id = item.Digital_Tab_Code }, new { @class = "glyphicon glyphicon-trash", @style = "cursor: pointer;", @title = "Delete" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -421,15 +421,19 @@ namespace RightsU_DAL
         public DbSet<Title_Objection_Status> Title_Objection_Status { get; set; }
         public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
         public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
-        public DbSet<Supplementary> Supplementary { get; set; }
-        public DbSet<Supplementary_Config> Supplementary_Config { get; set; }
-        public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
-        public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
         public DbSet<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
         public DbSet<Acq_Deal_Supplementary_detail> Acq_Deal_Supplementary_detail { get; set; }
         public DbSet<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public DbSet<Syn_Deal_Supplementary_Detail> Syn_Deal_Supplementary_Detail { get; set; }
         public DbSet<ImgPathData> ImgPathDatas { get; set; }
+        public DbSet<Digital> Digital { get; set; }
+        public DbSet<Digital_Config> Digital_Config { get; set; }
+        public DbSet<Digital_Data> Digital_Data { get; set; }
+        public DbSet<Digital_Tab> Digital_Tab { get; set; }
+        public DbSet<Supplementary> Supplementary { get; set; }
+        public DbSet<Supplementary_Config> Supplementary_Config { get; set; }
+        public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
+        public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
 
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {

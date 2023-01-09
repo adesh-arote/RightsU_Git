@@ -12,11 +12,11 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Supplementary_Config
+    public partial class Digital_Config
     {
-    	public State EntityState { get; set; }    public int Supplementary_Config_Code { get; set; }
-    	    public Nullable<int> Supplementary_Code { get; set; }
-    	    public Nullable<int> Supplementary_Tab_Code { get; set; }
+    	public State EntityState { get; set; }    public int Digital_Config_Code { get; set; }
+    	    public Nullable<int> Digital_Code { get; set; }
+    	    public Nullable<int> Digital_Tab_Code { get; set; }
     	    public string Page_Group { get; set; }
     	    public string Label_Name { get; set; }
     	    public string Control_Type { get; set; }
@@ -30,10 +30,10 @@ namespace RightsU_InterimDb.Models
     	    public string Text_Field { get; set; }
     	    public string Value_Field { get; set; }
     	    public string Whr_Criteria { get; set; }
-    	    public string LP_Supplementary_Data_Code { get; set; }
-    	    public string LP_Supplementary_Value_Config_Code { get; set; }
+    	    public string LP_Digital_Data_Code { get; set; }
+    	    public string LP_Digital_Value_Config_Code { get; set; }
     
-        public virtual Supplementary Supplementary { get; set; }
-        public virtual Supplementary_Tab Supplementary_Tab { get; set; }
+        public virtual Digital Digital { get; set; }
+        public virtual Digital_Tab Digital_Tab { get; set; }
     }
 }

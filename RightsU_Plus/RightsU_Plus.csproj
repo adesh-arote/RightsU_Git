@@ -219,6 +219,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Acq_DigitalMasterController.cs" />
+    <Compile Include="Controllers\Acq_SupplementaryMasterController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
@@ -1322,6 +1324,25 @@
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Rights_BuyBack_List.cshtml" />
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\Acq_SupplementaryMasters.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\CreateSupplementary.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\CreateSupplementaryData.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\CreateSupplementaryTab.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\_Supplementary.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\_Supplementary_Config.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\_Supplementary_Data.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\_Supplementary_Tab.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Acq_SupplementaryMaster\CreateSupplementaryConfig.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\Acq_DigitalMaster.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_Digital.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_Digital_Tab.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_Digital_Data.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_Digital_Config.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_AddEditView_Digital.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_AddEditView_Digital_Tab.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_AddEditView_Digital_Data.cshtml" />
+    <Content Include="Views\Acq_DigitalMaster\_AddEditView_Digital_Config.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
