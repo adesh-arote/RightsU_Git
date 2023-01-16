@@ -1125,7 +1125,7 @@ namespace RightsU_Plus.Controllers
                     objUser.ChangePasswordLinkGUID = Convert.ToString(Guid.NewGuid());
                     objUser_Service.Save(objUser);
                     string baseString = ConfigurationManager.AppSettings["SiteAddress"].ToString().ToUpper();
-                    ChangePasswordLink = baseString + "ForgetPasswordLink/?Entype=" + hdnEntity.Trim() + "&Linkid=" + objUser.ChangePasswordLinkGUID.Trim();
+                    ChangePasswordLink = baseString + "ForgetPasswordLink/?Entype=" + hdnEntity.Trim().Replace(" ", "%20") + "&Linkid=" + objUser.ChangePasswordLinkGUID.Trim();
                 }
 
                 try
