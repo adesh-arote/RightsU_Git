@@ -185,13 +185,16 @@ namespace RightsU_Plus.Controllers
             lstLoginEntities.Clear();
             foreach (DataRow dRow in ds.Tables[0].Rows)
             {
-                LoginEntity objLE = new LoginEntity();
-                objLE.ShortName = dRow["ShortName"].ToString();
-                objLE.FullName = dRow["FullName"].ToString();
-                objLE.DatabaseName = dRow["DatabaseName"].ToString();
-                objLE.ConnectionStringName = dRow["ConnectionStringName"].ToString();
-                objLE.ReportingServerFolder = dRow["ReportingServerFolder"].ToString();
-                lstLoginEntities.Add(objLE);
+                if (dRow["ShortName"].ToString() != "ROP")
+                {
+                    LoginEntity objLE = new LoginEntity();
+                    objLE.ShortName = dRow["ShortName"].ToString();
+                    objLE.FullName = dRow["FullName"].ToString();
+                    objLE.DatabaseName = dRow["DatabaseName"].ToString();
+                    objLE.ConnectionStringName = dRow["ConnectionStringName"].ToString();
+                    objLE.ReportingServerFolder = dRow["ReportingServerFolder"].ToString();
+                    lstLoginEntities.Add(objLE);
+                }
             }
             if (Request.Cookies["Entity_Type"] != null)
                 code = Request.Cookies["Entity_Type"].Value.ToString();
@@ -1580,6 +1583,11 @@ namespace RightsU_Plus.Controllers
             {
                 return Json(new { PWDHistoryCount = 0, PWDHistoryMsg = "NotFound" });
             }
+        }
+        public RedirectResult RedirectToROPLogin()
+        {
+            string URLROPLoginPage = ConfigurationManager.AppSettings["RedirectToROPLogin"].ToString().Trim();
+            return Redirect(URLROPLoginPage);
         }
     }
 

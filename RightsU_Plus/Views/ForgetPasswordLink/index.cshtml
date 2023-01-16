@@ -31,6 +31,7 @@
         var URL_PWDPolicyDetailList = '@Url.Action("GetPWDPolicyDetailList", "ForgetPasswordLink")';
         var URL_PWDHistoryCount = '@Url.Action("GetPWDHistoryCount", "ForgetPasswordLink")';
         var Savedata = '@Url.Action("SaveCHangesPass", "ForgetPasswordLink")';
+        //var RedirectToROPLogin  = @System.Configuration.ConfigurationManager.AppSettings["RedirectToROPLogin"].ToString().Trim();
         $(document).ready(function () {
 
              if ('@TempData["Focus"]' != '') {
@@ -311,10 +312,15 @@
         }
 
         function handleOk() {
-        window.location.href = '@Url.Action("Index", "Login", new { isReset = "Y" })';
-    }
+            var Entype = getParameterValues('Entype');
+            if (Entype != "ROP")
+                window.location.href = '@Url.Action("Index", "Login", new { isReset = "Y" })';
+            else
+                window.location.href = '@Url.Action("RedirectToROPLogin", "Login", new { isReset = "Y" })';
+        }
     </script>
     <style>
+
 
         td {
             padding: 5px 0;
@@ -362,7 +368,6 @@
             list-style: none !important;
         }
     </style>
-
 </head>
 <body>
     <div class="main_section">
