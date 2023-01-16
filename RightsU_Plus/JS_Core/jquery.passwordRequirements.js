@@ -1,11 +1,3 @@
-/*
- * jQuery Minimun Password Requirements 1.1
- * http://elationbase.com
- * Copyright 2014, elationbase
- * Check Minimun Password Requirements
- * Free to use under the MIT license.
- * http://www.opensource.org/licenses/mit-license.php
-*/
   
 (function($){
     $.fn.extend({
@@ -110,15 +102,10 @@
                         }
                         
                     } else {
-                        if ($("#NewPassword").val() == $("#ConfirmPassword").val() && $('#NewPassword').val() != '' && $('#ConfirmPassword').val() != '') {
-                            deleteMessage();
-                            $('#btnSave').prop('disabled', false);
-                        }
-                        else {
-                            useNewConfirmPWDDone = false
-                            showMessage();
-                            $('#btnSave').prop('disabled', true);
-                        }
+
+                        useNewConfirmPWDDone = false
+                        showMessage();
+                        $('#btnSave').prop('disabled', true);
 					}
 				};
 				
@@ -127,22 +114,18 @@
 					deleteMessage();
                 });                
 
-                //var strSpecialChar = new Array(o.useSpecialChar.replace(/(.{1})/g, "$&,"));
 				// Show or Hide password hint based on user's event
                 // Set variables
-                var strSpecialChar = new Array("!%&@#$ ^*? _~<>");
-				var numbers     		= new RegExp('[0-9]'),
-                    //specialCharacter = new RegExp('[!,%,&,@,#,$,^,*,?,_,~]'),
-                    specialCharacter = new RegExp('['+o.useSpecialChar.replace(/(.{1})/g, "$&,")+']'),                    
+                var numbers = new RegExp('[0-9]'),
+                    specialCharacter = new RegExp('[' + o.useSpecialChar.replace(/(.{1})/g, "$&,") + ']'),
                     AlphabetCase = new RegExp('[A-Za-z]'),
                     CountAlphabetCase = new RegExp(/[a-zA-Z]/g),
-                    CountNumberCase = new RegExp(/[0-9]/g),
-                    CountSpecialCharCase = new RegExp(/[!,%,&,@,#,$,^,*,?,_,~]/g);
+                    CountNumberCase = new RegExp(/[0-9]/g);
 				
 				// Show or Hide password hint based on keyup
 				$(this).on("keyup focus", function (){
                     var thisVal = $(this).val();
-					checkCompleted();
+					//checkCompleted();
 					
 					// Check # of characters
 					if ( thisVal.length >= o.numCharacters ) {
@@ -221,6 +204,7 @@
                         }
                     }
                     // End useNewConfirmPWD
+                    checkCompleted();
 				});
             });
         }
