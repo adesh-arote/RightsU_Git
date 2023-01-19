@@ -1,13 +1,14 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <script>
     var URL_BindAmortMonthList = '@Url.Action("BindAmortMonthList", "Amort")';
     var URL_SearchAmortMonth = '@Url.Action("SearchAmortMonth", "Amort")';
 
 
     $(document).ready(function () {
-
+        $('.lblAmort').css("padding", "5px 10px 5px 20px");
         SearchAmortMonth("");
         addNumeric();
     });
@@ -176,6 +177,12 @@
             }
         });
     }
+    function AddEditViewAmort() {
+        $('#popup').modal();
+    }
+    function ClosePopup() {
+        $('#popup').modal('hide');
+    }
 </script>
 <style>
     .search_area {
@@ -265,7 +272,7 @@
                                         </td>
                                         <td align="center">
 
-                                            <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
+                                            <a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewAmort()"></a>
                                             <a title="Configuration" class="glyphicon glyphicon-cog" onclick="@(" window.location.href='" + @Url.Action("AddAmort", "Amort", new { isEdit = "Y" }) + "' ");" style="cursor: pointer;"></a>
 
                                         </td>
@@ -307,7 +314,7 @@
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    @*<tr>
                                         <td>
                                             <span>The Lost City</span>
                                         </td>
@@ -325,7 +332,7 @@
                                         </td>
                                     </tr>
 
-                                    @*<tr>
+                                    <tr>
                                         <td>
                                             <span>Ehsaan Noorani</span>
                                         </td>
@@ -350,4 +357,94 @@
             </div>
         </div>
     </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="modal_block modal_header">
+                <a class="close" onclick="ClosePopup()">
+                    <span>X</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>Amort Details</h2>
+            </div>
+            <div class="modal_block">
+                <table class="add_title_popup">
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Agreement No.</b></td>
+                        <td>A-2023-00002</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Title</b></td>
+                        <td>Lucifer Season 1 (Eps. 1 to 24)</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Cost</b></td>
+                        <td>4,80,00</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Episodic Cost</b></td>
+                        <td>20,000</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Cost Type</b></td>
+                        <td>License Fee</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Additional Expense</b></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Standard Return</b></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Overflow</b></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Amort Rule Type</b></td>
+                        <td>Period</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Rule#</b></td>
+                        <td>Equally across 60 months from 1st airing</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Rule Description</b></td>
+                        <td>Equally across 60 months from 1st airing of episodes</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Type</b></td>
+                        <td>Equal Distribution</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Period</b></td>
+                        <td>Jul-2018 to Dec-2023</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Opening Month</b></td>
+                        <td>Jul-18</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>Closing Month</b></td>
+                        <td>Dec-2023</td>
+                    </tr>
+                    <tr>
+                        <td class="lblAmort" style="width:20%"><b>No. Of Month</b></td>
+                        <td>66</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal_block_full" style="margin-top: 10px;">
+                <div class="form_links">
+                    <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                        <li>
+                            <input type="button" class="btn btn-primary" value="Close" onclick="ClosePopup()" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
