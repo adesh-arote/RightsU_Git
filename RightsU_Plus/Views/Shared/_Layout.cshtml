@@ -870,9 +870,9 @@
             <div class="navigation" onclick="RightmenuHide()">
                 <ul>
                     @*<li class="home_button" title="Home" data-placement="right">
-                            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
-                        </li>
-                        <li class="seperator"></li>*@
+            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+        </li>
+        <li class="seperator"></li>*@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
@@ -930,15 +930,15 @@
                             }
 
                             @*<li class="seperator"></li>
-                                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-calendar" href="#"></a>
-                                </li>
-                                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-phone" href="#"></a>
-                                </li>
-                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-tent" href="#"></a>
-                                </li>*@
+                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                </li>
+                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                </li>*@<li class="seperator"></li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-tent" href="#"></a>
+                            </li>
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
@@ -975,10 +975,10 @@
                             }
 
                             @*{
-                                    <li title="Digital" data-placement="right">
-                                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
-                                    </li>
-                                }*@
+                    <li title="Digital" data-placement="right">
+                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                    </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
@@ -993,11 +993,11 @@
                                 </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
-                                {
-                                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
-                                       <a class="glyphicon glyphicon-tasks" href="#"></a>
-                                   </li>
-                                }*@
+                {
+                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                   </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
@@ -1011,11 +1011,11 @@
                                 <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
-                                {
-                                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
-                                        <a class="glyphicon glyphicon-open" href="#"></a>
-                                    </li>
-                                }*@
+                {
+                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                        <a class="glyphicon glyphicon-open" href="#"></a>
+                    </li>
+                }*@
 
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
@@ -1033,8 +1033,8 @@
                         }
                     }
                     @*<li title="Log Out" data-placement="right">
-                            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-                        </li>*@
+            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+        </li>*@
                 </ul>
             </div>
             <div class="header-nav ">

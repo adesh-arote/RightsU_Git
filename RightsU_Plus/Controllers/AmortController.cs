@@ -178,7 +178,7 @@ namespace RightsU_Plus.Controllers
             lstAMD = new List<Amort_Month_Data>();
             Amort_Month_Data objAMD = new Amort_Month_Data();
             objAMD.Month = "NOV 2017";
-            objAMD.status = "I";
+            objAMD.status = "O";
             lstAMD.Add(objAMD);
             objAMD = new Amort_Month_Data();
             objAMD.Month = "OCT 2017";
@@ -192,6 +192,39 @@ namespace RightsU_Plus.Controllers
             objAMD.Month = "AUG 2017";
             objAMD.status = "C";
             lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+            objAMD = new Amort_Month_Data();
+            objAMD.Month = "AUG 2017";
+            objAMD.status = "C";
+            lstAMD.Add(objAMD);
+
 
             if (!string.IsNullOrEmpty(searchText))
             {

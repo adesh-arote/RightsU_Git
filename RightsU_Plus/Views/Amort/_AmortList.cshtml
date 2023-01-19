@@ -24,7 +24,7 @@
                         <span>@item.Agreement_No</span>
                     </td>
                     <td>
-                        <span>Prasoon Joshi, Unisys Infosolutions Pvt Ltd</span>
+                        <span>@item.Vendor.Vendor_Name</span>
                     </td>
                     <td>
                         <span>@item.Deal_Desc</span>
@@ -33,7 +33,7 @@
                         <span>Open</span>
                     </td>
                     <td>
-                        <span>01 Jan 2017  -  31 Jun 2019</span>
+                        <span>11-Jan-2023 To 10-Jan-2033</span>
                     </td>
                     <td>
                         @Html.RadioButton("Amort_On_" + Counter, "D", true, new { id = "Deal_Type"+Counter, style = "cursor: pointer;" }) Title Wise
