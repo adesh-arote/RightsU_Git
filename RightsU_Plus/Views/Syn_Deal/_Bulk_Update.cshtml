@@ -476,7 +476,7 @@
         });
     }
     function changediv() {
-        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,#divSublicensing,#divTitleLanguage').attr("style", "display:none");
+        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,.divSublicensing,#divTitleLanguage').attr("style", "display:none");
 
         var ddlchange = $('#ddlChange').val();
         $('#hdnChangeType').val(ddlchange)
@@ -505,8 +505,14 @@
             $('#divExclusive').attr("style", "display:block");
             $('#ActionDiv').attr("style", "display:none");
         }
+        //else if (ddlchange == 'S') {
+        //    $('#divSublicensing').attr("style", "display:block");
+        //    $('#ActionDiv').attr("style", "display:none");
+        //}
         else if (ddlchange == 'S') {
-            $('#divSublicensing').attr("style", "display:block");
+            $('.divSublicensing').attr("style", "display:block");
+            $("#SubLicensingY").prop("checked", true);
+            $('#Sub_License_Code').val('').trigger("chosen:updated");
             $('#ActionDiv').attr("style", "display:none");
         }
         else if (ddlchange == 'TL') {
@@ -817,6 +823,12 @@
         if ($('#ExclusiveN').prop('checked')) {
             $('#hdnIs_Exclusive').val('N');
         }
+        if ($('#SubLicensingY').prop('checked')) {
+            $('#hdnSubLicensing').val('Y');
+        }
+        if ($('#SubLicensingN').prop('checked')) {
+            $('#hdnSubLicensing').val('N');
+        }
         if (!IsValidSave && $.trim(ErrorMsg) != '') {
             showAlert('E', ErrorMsg);
         }
@@ -871,9 +883,13 @@
             IsValidSave = false;
             showAlert('E', '@objMessageKey.PleaseSelectAddOrDelete');
         }
-        if (changeType == 'S' && ($("#Sub_License_Code").val() == "" || $("#Sub_License_Code").val() == null)) {
+        @*if (changeType == 'S' && ($("#Sub_License_Code").val() == "" || $("#Sub_License_Code").val() == null)) {
             IsValidSave = false;
 
+            showAlert('E', '@objMessageKey.PleaseSelectSubLicensing');
+        }*@
+        if (changeType == 'S' && $('input[name=optSubLicensing]:checked').val() == "true" && ($("#Sub_License_Code").val() == "" || $("#Sub_License_Code").val() == null)) {
+            IsValidSave = false;
             showAlert('E', '@objMessageKey.PleaseSelectSubLicensing');
         }
         //var r = '';
@@ -935,7 +951,7 @@
                         else if (result.message != "") {
                             showAlert('S', result.message, 'OK');
                         }
-                        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,#divSublicensing,#divTitleLanguage,#ActionDiv').attr("style", "display:none");
+                        $('#divRightsPeriod,#divPlatform,#divCountry,#divTerritory,#divSubLan,#divSubLanGrp,#divDubLan,#divDubLanGrp,#divExclusive,.divSublicensing,#divTitleLanguage,#ActionDiv').attr("style", "display:none");
                     }
                 },
                 error: function (result) {
@@ -996,6 +1012,17 @@
             }
         });
         return msg;
+    }
+    function SublicensingChange(e) {
+        debugger;
+        $('#Sub_License_Code').val('').trigger("chosen:updated");
+        if (e.value == "true") {
+            $('#ddlSub_License_Code').css("display", "block");
+        }
+        else if (e.value == "false") {
+            $('#ddlSub_License_Code').css("display", "none");
+        }
+        return true;
     }
 
     function chkAllBxEnableOrDisable(idthis) {
@@ -1456,6 +1483,19 @@
                                                 @Html.Hidden("hdnIs_Exclusive")
                                             </div>
                                             @*End Exclusive *@
+                                            @*Start Sub-licensing*@
+                                            <div class="divSublicensing" style="display:none;">
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optSubLicensing" id="SubLicensingY" value="true" checked onchange="SublicensingChange(this)" />
+                                                    @objMessageKey.Yes
+                                                </label>
+                                                <label class="radio-inline" style="position:relative">
+                                                    <input type="radio" name="optSubLicensing" id="SubLicensingN" value="false" onchange="SublicensingChange(this)" />
+                                                    @objMessageKey.NO
+                                                </label>
+                                                @Html.Hidden("hdnSubLicensing")
+                                            </div>
+                                            @*End Sub-licensing*@
                                         </td>
                                         <td style="width: 45%;">
 
@@ -1486,7 +1526,7 @@
                                             @*End Dubbing language*@
 
                                             @*Start Sub-licensing*@
-                                            <div id="divSublicensing" style="display:none;width:50%">
+                                            <div class="divSublicensing" id="ddlSub_License_Code" style="display:none;">
                                                 <select id="Sub_License_Code" name="Sub_License_Code" class="form_input chosen-select"></select>
                                             </div>
                                             @*End Sub-licensing*@

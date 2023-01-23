@@ -856,7 +856,7 @@ namespace RightsU_Plus.Controllers
             AllPlatform_Codes = objList.Select(i => i.RequiredCodes).FirstOrDefault();
             return AllPlatform_Codes;
         }
-        public JsonResult BulkSave(string SelectedRightCodes, string ChangeFor, string SelectedCodes = ",0", string SelectedStartDate = "", string RightsType = "",
+        public JsonResult BulkSave(string SelectedRightCodes, string ChangeFor, string SelectedCodes = "0", string SelectedStartDate = "", string RightsType = "",
             string IsTentative = "", string ActionFor = "", string SelectedEndDate = "", string IsExclusive = "", string IsTitleLanguage = "", string Term_MM = "",
             string Term_YY = "", string Term_DD = ""
             , string SelectedTitleCodes = "", string SelectedTitleNames = "", string Eps_Frm_To = "", string pageView = "")
