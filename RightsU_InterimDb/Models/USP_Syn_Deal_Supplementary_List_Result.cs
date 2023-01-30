@@ -14,11 +14,10 @@ namespace RightsU_InterimDb.Models
     public partial class USP_Syn_Deal_Supplementary_List_Result
     {
         public string title_name { get; set; }
-        public string BusinessStatement { get; set; }
-        public string ExcludedRights { get; set; }
-        public string Miscellaneous { get; set; }
-        public string IPDetails { get; set; }
-        public int title_code { get; set; }
-        public Nullable<int> Supplementary_code { get; set; }
+        public Nullable<int> Supplementary_Tab_Code { get; set; }
+        public string Supplementary_Tab_Description { get; set; }
+        public string Remarks { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public Nullable<int> Syn_Deal_Supplementary_Code { get; set; }
     }
 }

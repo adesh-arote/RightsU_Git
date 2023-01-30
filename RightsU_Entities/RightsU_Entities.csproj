@@ -78,6 +78,8 @@
     <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Costtype_Episode.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Title.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Cost_Variable_Cost.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Digital.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Digital_detail.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Licensor.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Mass_Territory_Update.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Mass_Territory_Update_Details.cs" />
@@ -140,6 +142,8 @@
     <Compile Include="Acquisition_Entities\Acq_Deal_Tab_Version.cs" />
     <Compile Include="Acquisition_Entities\Acq_Rights_Template.cs" />
     <Compile Include="Acquisition_Entities\Acq_Sport_Ancillary_Wrapper.cs" />
+    <Compile Include="Acquisition_Entities\AT_Acq_Deal_Digital.cs" />
+    <Compile Include="Acquisition_Entities\AT_Acq_Deal_Digital_detail.cs" />
     <Compile Include="Acquisition_Entities\Avail_Acq.cs" />
     <Compile Include="Acquisition_Entities\Avail_Acq_Details.cs" />
     <Compile Include="Acquisition_Entities\Avail_Acq_Language.cs" />
@@ -179,6 +183,10 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\Digital.cs" />
+    <Compile Include="Master_Entities\Digital_Config.cs" />
+    <Compile Include="Master_Entities\Digital_Data.cs" />
+    <Compile Include="Master_Entities\Digital_Tab.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />
     <Compile Include="Master_Entities\Supplementary.cs" />
     <Compile Include="Master_Entities\Supplementary_Config.cs" />
@@ -455,9 +463,13 @@
     <Compile Include="StoreProcedure_Entities\USPTATSLAList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPValidateMHRequestConsumption_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPVWTitleList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Digital_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_Deal_Supplementary_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Acq_Digital_Tab_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Ancillary_Validate_Syn_Udt.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Acq_SUPP_Tab_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Digital_Create_Table_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Deal_Digital_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Acq_Deal_Supplementary_Edit_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_BuyBackRights_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Dashboard_Detail_Material_Type_Result.cs" />
@@ -467,6 +479,7 @@
     <Compile Include="StoreProcedure_Entities\USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Supplementary_Config_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Syn_Deal_Supplementary_Edit_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Acq_Digital_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Acq_Supplementary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Get_Title_For_Syn_Supplementary_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_List_Syn_Ancillary_Result.cs" />

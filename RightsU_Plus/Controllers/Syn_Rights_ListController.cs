@@ -764,7 +764,7 @@ namespace RightsU_Plus.Controllers
                     new { Value = "I", Text = objMessageKey.Country },
                     new { Value = "T", Text = objMessageKey.Territory },
                     new { Value = "SL", Text = objMessageKey.Subtitlinglanguage },
-                    new { Value = "SG", Text = objMessageKey.SubtitlingLanguagegroup },
+                    new { Value = "SG", Text = "Sub-titling Language group" },
                     new { Value = "DL", Text = objMessageKey.Dubbinglanguage },
                     new { Value = "DG", Text = objMessageKey.DubbingLanguagegroup },
                     new { Value = "E", Text = objMessageKey.Exclusive },
@@ -856,7 +856,7 @@ namespace RightsU_Plus.Controllers
             AllPlatform_Codes = objList.Select(i => i.RequiredCodes).FirstOrDefault();
             return AllPlatform_Codes;
         }
-        public JsonResult BulkSave(string SelectedRightCodes, string ChangeFor, string SelectedCodes = ",0", string SelectedStartDate = "", string RightsType = "",
+        public JsonResult BulkSave(string SelectedRightCodes, string ChangeFor, string SelectedCodes = "0", string SelectedStartDate = "", string RightsType = "",
             string IsTentative = "", string ActionFor = "", string SelectedEndDate = "", string IsExclusive = "", string IsTitleLanguage = "", string Term_MM = "",
             string Term_YY = "", string Term_DD = ""
             , string SelectedTitleCodes = "", string SelectedTitleNames = "", string Eps_Frm_To = "", string pageView = "")
@@ -1214,7 +1214,10 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult Bind_JSON_ListBox(string str_Type, string Action_For = "", string Right_Code = "")
         {
-            if (Right_Code != "" && str_Type != "" && Right_Code != "")
+           
+
+
+            if ((Right_Code != "" && str_Type != "" && Right_Code != "") || str_Type == "S")
             {
                 USP_Service objUsp = new USP_Service(objLoginEntity.ConnectionStringName);
                 List<USP_Syn_Bulk_Populate_Result> lstSBP = objUsp.USP_Syn_Bulk_Populate(Right_Code, str_Type, Action_For).ToList();
@@ -1224,5 +1227,30 @@ namespace RightsU_Plus.Controllers
             return Json("", JsonRequestBehavior.AllowGet);
         }
         #endregion
+
+        private MultiSelectList BindCountry(string Is_Theatrical_Right, string Selected_Country_Code = "")
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindCountry_List(Is_Theatrical_Right, Selected_Country_Code);
+        }
+        private MultiSelectList BindTerritory(string Is_Theatrical_Right, string Selected_Territory_Code = "")
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindTerritory_List(Is_Theatrical_Right, Selected_Territory_Code);
+        }
+        private MultiSelectList BindLanguage(string Selected_Language_Code = "")
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindLanguage_List(Selected_Language_Code);
+        }
+        private MultiSelectList BindLanguage_Group(string Selected_Language_Group_Code = "")
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindLanguage_Group_List(Selected_Language_Group_Code);
+        }
+        private MultiSelectList BindMilestone_List(string Selected_Language_Code = "")
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindMilestone_List();
+        }
+        private MultiSelectList BindMilestone_Unit_List(int Milestone_Unit = 1)
+        {
+            return DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().BindMilestone_Unit_List(Milestone_Unit);
+        }
     }
 }

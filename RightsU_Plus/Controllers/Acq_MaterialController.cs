@@ -224,7 +224,7 @@ namespace RightsU_Plus.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult BindGridAcqMaterial(int txtPageSize, int page_No)
+        public PartialViewResult BindGridAcqMaterial(int txtPageSize, int page_No=0)
         {
             int pageSize;
             if (txtPageSize != null)
@@ -237,7 +237,8 @@ namespace RightsU_Plus.Controllers
                 objDeal_Schema.Cost_PageSize = 50;
                 pageSize = 50;
             }
-            PageNo = page_No + 1;
+            //PageNo = page_No + 1;
+            PageNo = page_No <= 0 ? 1 : page_No + 1;
             ICollection<Acq_Deal_Material> lst_Acq_Deal_Material;
             Acq_Deal_Material_Service objAcq_Deal_Material_Service = new Acq_Deal_Material_Service(objLoginEntity.ConnectionStringName);
             if (PageNo == 1)
