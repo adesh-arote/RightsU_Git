@@ -57,6 +57,12 @@
         $('.tooltip-wrapper').tooltip();
 
         chkEnableOrDisable();
+
+        //$('.checkbox').on('change', function () {
+        $('.checkbox').click(function (event) {
+            debugger;
+            CommonCalling();
+        });
     })
 
     function chkEnableOrDisable() {
