@@ -16,7 +16,7 @@
     @Scripts.Render("~/bundles/Login/JS_Core?v=" + System.Configuration.ConfigurationManager.AppSettings["Version_No"])
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="~/JS_Core/jquery.passwordRequirements.js"></script>
+    <script src="~/JS_Core/jquery.passwordRequirements.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
     <script src="~/JS_Core/slider-menu.jquery.js"></script>
     <script type="text/javascript">
         var message = '';
@@ -31,12 +31,24 @@
         var URL_PWDPolicyDetailList = '@Url.Action("GetPWDPolicyDetailList", "ForgetPasswordLink")';
         var URL_PWDHistoryCount = '@Url.Action("GetPWDHistoryCount", "ForgetPasswordLink")';
         var Savedata = '@Url.Action("SaveCHangesPass", "ForgetPasswordLink")';
-        //var RedirectToROPLogin  = @System.Configuration.ConfigurationManager.AppSettings["RedirectToROPLogin"].ToString().Trim();
         $(document).ready(function () {
 
              if ('@TempData["Focus"]' != '') {
                 $('#' + '@TempData["Focus"]').focus();
-            }
+             }
+
+            $('#NewPassword, #ConfirmPassword').keyup(function () {
+                var specialCharacter = new RegExp('[^a-zA-Z0-9' + PWD_Policy_AllowedSpecialChar.replace(/(.{1})/gi, "$&,") + ']')
+                var c = this.selectionStart,
+                    r = specialCharacter,
+                    v = $(this).val();
+
+                if (r.test(v) == true) {
+                    $(this).val(v.replace(r, ''));
+                    c--;
+                }
+                this.setSelectionRange(c, c);
+            });
 
             GetPWDPolicyDetailList();
             $(".pr-password").passwordRequirements({
@@ -321,7 +333,6 @@
     </script>
     <style>
 
-
         td {
             padding: 5px 0;
             font-size: 13px;
@@ -368,6 +379,7 @@
             list-style: none !important;
         }
     </style>
+
 </head>
 <body>
     <div class="main_section">

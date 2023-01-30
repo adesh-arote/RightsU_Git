@@ -58,6 +58,29 @@
             min: 1
         });
     }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').addClass("required");
+        return false;
+    }
+    function PageSize_OnChange() {
+        if (CheckEditMode()) {
+            $('.required').removeClass('required');
+            $("[required='required']").removeAttr("required");
+            var IsValid = ValidatePageSize();
+            if (IsValid) {
+               
+            }
+            else
+                return false;
+        }
+    }
     function DownloadFileImage(SystemFilename, FileName,attachmentCode) {
         debugger;
         if (CheckEditMode()) {
