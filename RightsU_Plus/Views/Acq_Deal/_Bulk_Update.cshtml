@@ -40,7 +40,7 @@
         $('#Is_Tentative').change(function () {
             OnClickTentative();
         });
-        $('#Term_YY,#Term_MM').change(function () {
+        $('#Term_YY,#Term_MM,#Term_DD').change(function () {
             OnFocusLostTerm();
         });
         $('#Start_Date').change(function () {
@@ -55,14 +55,52 @@
             CalculatePerpetuityEndDate();
         });
 
+        //function CalculateTerm(startDate, endDate) {
+        //    var val = CalculateMonthBetweenTwoDate(startDate, endDate);
+        //    var year = val / 12;
+        //    var month = val % 12;
+        //    var term = parseInt(year) + '.' + month;
+        //    return term;
+        //}
+
+
+
         function CalculateTerm(startDate, endDate) {
+            debugger;
             var val = CalculateMonthBetweenTwoDate(startDate, endDate);
             var year = val / 12;
             var month = val % 12;
-            var term = parseInt(year) + '.' + month;
+
+            var day = 0;
+            var SDno = startDate.getDate();
+            var EDno = endDate.getDate();
+
+            if (EDno > SDno) {
+                day = EDno - SDno
+            }
+            else if (startDate.getMonth() == endDate.getMonth() && startDate.getFullYear() == endDate.getFullYear()) {
+                day = CalculateDaysBetweenTwoDates(startDate, endDate);
+            }
+            else if (SDno == EDno) {
+                day = 0;
+            }
+            else {
+                var m = endDate.getMonth(),
+                    y = endDate.getFullYear();
+                var FirstDay = new Date(y, m, 1);
+                day = CalculateDaysBetweenTwoDates(FirstDay, endDate);
+
+                //startDate.setMonth(startDate.getMonth() + month);
+                //startDate.setYear(startDate.getYear() + year);
+
+                m = startDate.getMonth(),
+                    y = startDate.getFullYear();
+                var LastDay = new Date(y, m + 1, 0);
+                day = day + CalculateDaysBetweenTwoDates(startDate, LastDay);
+            }
+            var term = parseInt(year) + '.' + month + "." + day;
             return term;
-        }
-        function CalculateMonthBetweenTwoDate(startDate, endDate) {
+        }function CalculateMonthBetweenTwoDate(startDate, endDate) {
             var months = (endDate.getFullYear() - startDate.getFullYear()) * 12;
             months += endDate.getMonth() - startDate.getMonth();
 
@@ -71,7 +109,14 @@
             return months;
         }
 
+        function CalculateDaysBetweenTwoDates(startDate, endDate) {
+            var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+            var diffDays = Math.round(Math.abs((startDate.getTime() - endDate.getTime()) / (oneDay)))
+            return diffDays;
+        }
+
         function AutoPopulateTerm() {
+            debugger;
             var txtStartDate = $('#Start_Date');
             var txtEndDate = $('#End_Date');
             var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
@@ -83,9 +128,10 @@
                 var arr = term.split('.');
                 $('#Term_YY').val(arr[0]);
                 $('#Term_MM').val(arr[1]);
+                $('#Term_DD').val(arr[2]);
             }
         }
-        $("#Term_YY,#Term_MM").numeric({
+        $("#Term_YY,#Term_MM,#Term_DD").numeric({
             allowMinus: false,
             allowThouSep: false,
             allowDecSep: false,
@@ -251,6 +297,7 @@
     }
 
     function OnFocusLostTerm() {
+        debugger;
         var canAssign = true;
         if ($('#Is_Tentative').prop('checked'))
             canAssign = false
@@ -259,11 +306,14 @@
         var txtEndDate = $('#End_Date');
         var txtTermYear = $('#Term_YY');
         var txtTermMonth = $('#Term_MM');
+        var txtTermDay = $('#Term_DD');
 
         if (txtTermYear.val() == '' || isNaN(txtTermYear.val()))
             txtTermYear.val('0');
         if (txtTermMonth.val() == '' || isNaN(txtTermMonth.val()))
             txtTermMonth.val('0');
+        if (txtTermDay.val() == '' || isNaN(txtTermDay.val()))
+            txtTermDay.val('0');
 
         if (txtStartDate.val() != "") {
             var rightSD = new Date(MakeDateFormate(txtStartDate.val()));
@@ -271,14 +321,17 @@
 
                 var year = 0;
                 var month = 0;
+                var day = 0;
 
                 if (txtTermYear.val() != '')
                     year = parseInt(txtTermYear.val());
                 if (txtTermMonth.val() != '')
                     month = parseInt(txtTermMonth.val());
+                if (txtTermDay.val() != '')
+                    day = parseInt(txtTermDay.val());
 
                 if (year > 0 || month > 0) {
-                    var newDate = CalculateEndDate(rightSD, year, month, 0);
+                    var newDate = CalculateEndDate(rightSD, year, month, day);
                     if (canAssign) {
                         txtEndDate.val(newDate);
                     }
@@ -297,14 +350,17 @@
 
                 var year = 0;
                 var month = 0;
+                var day = 0;
 
                 if (txtTermYear.val() != '')
                     year = parseInt(txtTermYear.val());
                 if (txtTermMonth.val() != '')
                     month = parseInt(txtTermMonth.val());
+                if (txtTermDay.val() != '')
+                    day = parseInt(txtTermDay.val());
 
-                if (year > 0 || month > 0) {
-                    var newDate = CalculateStartDate(rightED, year, month, 0);
+                if (year > 0 || month > 0 || day > 0) {
+                    var newDate = CalculateStartDate(rightED, year, month, day);
                     txtStartDate.val(newDate);
                 }
                 else {
@@ -315,6 +371,7 @@
         else {
             txtTermYear.val('0');
             txtTermMonth.val('0');
+            txtTermDay.val('0');
         }
         //CalculateROFRDate();
     }
@@ -357,6 +414,7 @@
         var yearToMonth = 12 * year;
         month = month + yearToMonth;
         startDate.setMonth(startDate.getMonth() - month);
+        startDate.setDate(startDate.getDate() - days);
         startDate.setDate(startDate.getDate() + 1);
         var newDateStr = ConvertDateToCurrentFormat(startDate);
         return newDateStr;
@@ -726,7 +784,8 @@
 
                 var txtYear = $('#Term_YY').val();
                 var txtMonth = $('#Term_MM').val();
-                if (isTentative == 'true' && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '')) {
+                var txtDay = $('#Term_DD').val();
+                if (isTentative == 'true' && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '') && (txtMonth == null || txtMonth == '0' || txtMonth == undefined || txtMonth == '') && (txtYear == null || txtYear == '0' || txtYear == undefined || txtYear == '')) {
                     IsValidSave = false;
                     showAlert("E", "@objMessageKey.PleaseentervalidTerm");
                 }
@@ -945,6 +1004,7 @@
                     IsTentative: isTentative,
                     Term_YY: $('#Term_YY').val(),
                     Term_MM: $('#Term_MM').val(),
+                    Term_DD: $('#Term_DD').val(),
                     Milestone_Type_Code: $("#ddlMilestone_Type_Code").val(),
                     Milestone_No_Of_Unit: $("#txtMilestone_No_Of_Unit").val(),
                     Milestone_Unit_Type: $("#ddlMilestone_Unit_Type").val(),
@@ -1608,6 +1668,7 @@
                                                         @Html.TextBox("Start_Date", "", new { autocomplete = "off", @id = "Start_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                         @Html.TextBox("Term_YY", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "YY", @maxlength = 2 })
                                                         @Html.TextBox("Term_MM", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "MM", @maxlength = 2 })
+                                                        @Html.TextBox("Term_DD", "", new { autocomplete = "off", @class = "smallTextBox", @placeholder = "DD", @maxlength = 2 })
                                                         <label style="margin-left: 15px">@objMessageKey.EndDate</label>
                                                         @Html.TextBox("End_Date", "", new { autocomplete = "off", @id = "End_Date", @class = "isDatepicker", @placeholder = "DD/MM/YYYY" })
                                                     </div>
