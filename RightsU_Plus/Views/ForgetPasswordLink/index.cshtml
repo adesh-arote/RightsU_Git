@@ -16,7 +16,7 @@
     @Scripts.Render("~/bundles/Login/JS_Core?v=" + System.Configuration.ConfigurationManager.AppSettings["Version_No"])
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="~/JS_Core/jquery.passwordRequirements.js"></script>
+    <script src="~/JS_Core/jquery.passwordRequirements.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
     <script src="~/JS_Core/slider-menu.jquery.js"></script>
     <script type="text/javascript">
         var message = '';
@@ -35,7 +35,20 @@
 
              if ('@TempData["Focus"]' != '') {
                 $('#' + '@TempData["Focus"]').focus();
-            }
+             }
+
+            $('#NewPassword, #ConfirmPassword').keyup(function () {
+                var specialCharacter = new RegExp('[^a-zA-Z0-9' + PWD_Policy_AllowedSpecialChar.replace(/(.{1})/gi, "$&,") + ']')
+                var c = this.selectionStart,
+                    r = specialCharacter,
+                    v = $(this).val();
+
+                if (r.test(v) == true) {
+                    $(this).val(v.replace(r, ''));
+                    c--;
+                }
+                this.setSelectionRange(c, c);
+            });
 
             GetPWDPolicyDetailList();
             $(".pr-password").passwordRequirements({
@@ -311,8 +324,12 @@
         }
 
         function handleOk() {
-        window.location.href = '@Url.Action("Index", "Login", new { isReset = "Y" })';
-    }
+            var Entype = getParameterValues('Entype');
+            if (Entype != "ROP")
+                window.location.href = '@Url.Action("Index", "Login", new { isReset = "Y" })';
+            else
+                window.location.href = '@Url.Action("RedirectToROPLogin", "Login", new { isReset = "Y" })';
+        }
     </script>
     <style>
 

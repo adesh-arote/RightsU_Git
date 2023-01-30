@@ -223,7 +223,11 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SetApprovalRemarks(string approvalremarks)
         {
-            objDeal_Schema.Approver_Remark = approvalremarks.Replace("\r\n", "\n");
+            if(approvalremarks!=null)
+            {
+                objDeal_Schema.Approver_Remark = approvalremarks.Replace("\r\n", "\n");
+            }
+            
             return Json("Success");
         }
 

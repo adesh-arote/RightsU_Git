@@ -320,8 +320,10 @@ namespace RightsU_Plus.Controllers
             List<USP_Acq_Digital_Tab_Result> columnList = objUspService.USP_Acq_Digital_Tab_Result(tabCode).ToList();
             int i = 1, j = 1, k = 1, l = 1, m = 1;
             double width = 0, viewWidth = 5;
-            if (ViewOperation != "VIEW")
+            if (ViewOperation != "VIEW" && columnList.Count() > 0)
+            {
                 width = 100 / columnList.Count() - 10;
+            }
             else
             {
                 viewWidth = columnList.Count > 5 ? 5 : 10;
@@ -939,7 +941,7 @@ namespace RightsU_Plus.Controllers
             string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
             //check for duplicate
             //if (DigitalDupliValidation(Value_list, Short_Name, Row_No, Operation))
-            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list, TabCode))
+            if (RowDuplicateValidation(lstDetailObj.Where(a => a.Digital_Tab_Code == TabCode).ToList(), Value_list, TabCode, Operation, Row_No))
             {
                 return "Duplicate";
             }
@@ -1145,7 +1147,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public bool RowDuplicateValidation(List<Acq_Deal_Digital_detail> lst, string Value_list, int TabCode)
+        public bool RowDuplicateValidation(List<Acq_Deal_Digital_detail> lst, string Value_list, int TabCode, string Operation, int Row_No)
         {
             Digital_Config_Service objConfigService = new Digital_Config_Service(objLoginEntity.ConnectionStringName);
 
@@ -1179,6 +1181,10 @@ namespace RightsU_Plus.Controllers
                 lst.Add(objToBeChecked);
             }
 
+            if (Operation == "E")
+            {
+                lst.RemoveAll(r => r.Row_Num == Row_No);
+            }
 
             List<string> tempList = new List<string>();
             List<string> newList = new List<string>();
