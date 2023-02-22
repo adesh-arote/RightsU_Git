@@ -7448,7 +7448,64 @@ namespace RightsU_BLL
             resultSet = "";
             return true;
         }
-
     }
+
+    public class Report_Column_Setup_Service : BusinessLogic<Report_Column_Setup>
+    {
+        private readonly Report_Column_Setup_Repository objReport_Column_Setup_Repository;
+
+        public Report_Column_Setup_Service(string Connection_Str)
+        {
+            this.objReport_Column_Setup_Repository = new Report_Column_Setup_Repository(Connection_Str);
+        }
+        public IQueryable<Report_Column_Setup> SearchFor(Expression<Func<Report_Column_Setup, bool>> predicate)
+        {
+            return objReport_Column_Setup_Repository.SearchFor(predicate);
+        }
+
+        public Report_Column_Setup GetById(int id)
+        {
+            return objReport_Column_Setup_Repository.GetById(id);
+        }
+
+        public bool Save(Report_Column_Setup objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objReport_Column_Setup_Repository, out resultSet);
+        }
+
+        public bool Update(Report_Column_Setup objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objReport_Column_Setup_Repository, out resultSet);
+        }
+
+        public bool Delete(Report_Column_Setup objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objReport_Column_Setup_Repository, out resultSet);
+        }
+
+        public override bool Validate(Report_Column_Setup objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Report_Column_Setup objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        public override bool ValidateDelete(Report_Column_Setup objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Report_Column_Setup objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
 
 }

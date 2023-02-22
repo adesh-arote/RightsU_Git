@@ -29,7 +29,7 @@ namespace RightsU_InterimDb.Models
         public string IsSelectCriteria { get; set; }
 
         public virtual Attrib_Group Attrib_Group { get; set; }
-        
+        public virtual Attrib_Group Attrib_Group1 { get; set; }
         public virtual Report_Column_Setup_IT Report_Column_Setup_IT { get; set; }
     }
 }

@@ -1,0 +1,476 @@
+﻿@model RightsU_Entities.Report_Column_Setup
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+
+@*<script>
+        $(document).ready(function () {
+            debugger;
+            if ('@objMessageKey.LayoutDirection' == "RTL") {
+                $('.tableshift').css("padding-right", "2%");
+            }
+            else {
+                $('.tableshift').css("padding-left", "2%");
+            }
+        });
+    </script>*@
+<script>
+    $(document).ready(function () {
+        NumberOnly();
+    });
+</script>
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>×</span>
+        <span class="sr-only">Close</span>
+    </a>
+
+    @if (Model.Column_Code > 0)
+    {
+        if (ViewBag.CommandName == "VIEW")
+        {
+            <h2>View Report Column SetUp</h2>
+        }
+        else
+        {
+            <h2>Edit Report Column SetUp</h2>
+        }
+    }
+    else
+    {
+        <h2>Add Report Column SetUp</h2>
+    }
+</div>
+
+<div class="modal_block scale_table_block">
+    @if (ViewBag.CommandName == "EDIT")
+    {
+        <table class="table four_column add_title_popup">
+            <tbody>
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Column Code</b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="Column_Code" name="Column_Code" value="@Model.Column_Code" autocomplete="off" style="width:90%" />*@
+                        @Model.Column_Code
+                    </td>
+                    <td style="width:25%">
+                        <b>View Name</b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="View_Name" name="View_Name" value="@Model.View_Name" autocomplete="off" />*@
+                        @Html.DropDownList("View_Name", (IEnumerable<SelectListItem>)ViewBag.lstViewName, htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "View_Name", @style = "width:90%" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Name in Database</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Name_In_DB" name="Name_In_DB" value="@Model.Name_In_DB" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Name</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Name" name="Display_Name" value="@Model.Display_Name" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Valued As</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Valued_As" name="Valued_As" value="@Model.Valued_As" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Order</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Display_Order" name="Display_Order" value="@Model.Display_Order" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Is part of select only</b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="IsPartofSelectOnly" name="IsPartofSelectOnly" value="@Model.IsPartofSelectOnly" autocomplete="off" />*@
+                        @*@Html.DropDownList("IsPartofSelectOnly", (IEnumerable<SelectListItem>)ViewBag.lstIsPart, htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "IsPartofSelectOnly", @style = "width:90%" })*@
+                        @Html.DropDownListFor(m => m.IsPartofSelectOnly, new List<SelectListItem> {
+                                   new SelectListItem{Text = "Yes", Value = "Y"},
+                                   new SelectListItem{Text = "No", Value = "N"},
+                                   new SelectListItem{Text = "Both", Value = "B"},
+                               }, htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "IsPartofSelectOnly", @style = "width:90%" })
+                    </td>
+                    <td style="width:25%">
+                        <b>List source</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="List_Source" name="List_Source" value="@Model.List_Source" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Look-Up Column</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Lookup_Column" name="Lookup_Column" value="@Model.Lookup_Column" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Column</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Column" name="Display_Column" value="@Model.Display_Column" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Right Code</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Right_Code" name="Right_Code" value="@Model.Right_Code" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Max Length</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Max_Length" name="Max_Length" value="@Model.Max_Length" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Wh Condition</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="WhCondition" name="WhCondition" value="@Model.WhCondition" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Valid Op List</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="@Model.ValidOpList" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Alternate Config Code</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Alternate_Config_Code" name="Alternate_Config_Code" value="@Model.Alternate_Config_Code" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Type</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Type" name="Display_Type" value="@Model.Display_Type" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else if (ViewBag.CommandName == "ADD")
+    {
+        <table class="table add_title_popup">
+            <tbody>
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        @*<b>Column Code</b>*@
+                        <b><i>New</i></b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="Column_Code" name="Column_Code" value="0" autocomplete="off" style="width:90%" />*@
+                    </td>
+                    <td style="width:25%">
+                        <b>View Name</b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="View_Name" name="View_Name" value="" autocomplete="off" />*@
+                        @Html.DropDownList("View_Name", (IEnumerable<SelectListItem>)ViewBag.lstViewName, "---Please Select---", htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "View_Name", @style = "width:90%" })
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Name in Database</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Name_In_DB" name="Name_In_DB" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Name</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Name" name="Display_Name" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Valued As</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Valued_As" name="Valued_As" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Order</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Display_Order" name="Display_Order" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Is part of select only</b>
+                    </td>
+                    <td style="width:25%">
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="IsPartofSelectOnly" name="IsPartofSelectOnly" value="" autocomplete="off" />*@
+                        @*@Html.DropDownList("IsPartofSelectOnly", (IEnumerable<SelectListItem>)ViewBag.lstIsPart, htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "IsPartofSelectOnly", @style = "width:90%" })*@
+                        @Html.DropDownListFor(m => m.IsPartofSelectOnly, new List<SelectListItem> {
+           new SelectListItem{Text = "Yes", Value = "Y"},
+           new SelectListItem{Text = "No", Value = "N"},
+           new SelectListItem{Text = "Both", Value = "B"},
+       }, "---Please Select---", htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "IsPartofSelectOnly", @style = "width:90%" })
+                    </td>
+                    <td style="width:25%">
+                        <b>List source</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="List_Source" name="List_Source" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Look-Up Column</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Lookup_Column" name="Lookup_Column" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Column</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Column" name="Display_Column" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Right Code</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Right_Code" name="Right_Code" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Max Length</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm NumberOnlyFn" id="Max_Length" name="Max_Length" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Wh Condition</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="WhCondition" name="WhCondition" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Valid Op List</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Alternate Config Code</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Alternate_Config_Code" name="Alternate_Config_Code" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Type</b>
+                    </td>
+                    <td style="width:25%">
+                        <input type="text" class="form-control text-box single-line input-sm" id="Display_Type" name="Display_Type" value="" autocomplete="off" style="width:90%" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <table class="table add_title_popup">
+            <tbody>
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Column Code</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Column_Code
+                    </td>
+                    <td style="width:25%">
+                        <b>View Name</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.View_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Name in Database</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Name_In_DB
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Name</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Display_Name
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Valued As</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Valued_As
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Order</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Display_Order
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Is part of select only</b>
+                    </td>
+                    <td style="width:25%">
+                        @*@Model.IsPartofSelectOnly*@
+                        @{ if (Model.IsPartofSelectOnly == "Y")
+                            {
+                                <span>Yes</span>
+                            }
+                            if (Model.IsPartofSelectOnly == "N")
+                            {
+                                <span>No</span>
+                            }
+                            if (Model.IsPartofSelectOnly == "B")
+                            {
+                                <span>Both</span>
+                            }
+                        }
+                    </td>
+                    <td style="width:25%">
+                        <b>List source</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.List_Source
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Look-Up Column</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Lookup_Column
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Column</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Display_Column
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Right Code</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Right_Code
+                    </td>
+                    <td style="width:25%">
+                        <b>Max Length</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Max_Length
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Wh Condition</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.WhCondition
+                    </td>
+                    <td style="width:25%">
+                        <b>Valid Op List</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.ValidOpList
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="padding-left:2%; width:25%">
+                        <b>Alternate Config Code</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Alternate_Config_Code
+                    </td>
+                    <td style="width:25%">
+                        <b>Display Type</b>
+                    </td>
+                    <td style="width:25%">
+                        @Model.Display_Type
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+    @*<input type="button" value="Create" class="btn btn-primary" onclick="SaveReportColumnSetup()">*@
+</div>
+
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <input type="button" class="btn btn-primary" value="Save" onclick="SaveReportColumnSetup()" />
+                }
+                <input type="button" class="btn btn-primary" value="Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

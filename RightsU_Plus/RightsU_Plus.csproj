@@ -219,8 +219,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="Controllers\Attrib_GroupController.cs" />
     <Compile Include="Controllers\Attrib_ReportsController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\ReportColumnSetupController.cs" />
     <Compile Include="Controllers\ReportColumnSetupITController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
@@ -1334,6 +1336,11 @@
     <Content Include="Views\ReportColumnSetupIT\Create.cshtml" />
     <Content Include="Views\ReportColumnSetupIT\Delete.cshtml" />
     <Content Include="Views\Attrib_Reports\Edit.cshtml" />
+    <Content Include="Views\Attrib_Group\Index.cshtml" />
+    <Content Include="Views\Attrib_Group\_BindAttribGroupList.cshtml" />
+    <Content Include="Views\ReportColumnSetup\Index.cshtml" />
+    <Content Include="Views\ReportColumnSetup\_AddEditReportColumnSetup.cshtml" />
+    <Content Include="Views\ReportColumnSetup\_BindReportColumnSetup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

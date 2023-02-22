@@ -1,0 +1,173 @@
+﻿@model IEnumerable<RightsU_Entities.Attrib_Group>
+
+<style>
+    td {
+        text-align: center;
+    }
+</style>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th width="10%">
+                Attrib Group Code
+            </th>
+            <th width="25%">
+                Attrib Group Name
+            </th>
+            <th width="15%">
+                Attrib Type
+                @if (ViewBag.SortAttrType == "AA")
+                {
+                    <a class="glyphicon glyphicon-triangle-bottom" id="AtrTypeDown" onclick="SortAttribType('AD')" />
+                }
+                else
+                {
+                    <a class="glyphicon glyphicon-triangle-top" id="AtrTypeUp" onclick="SortAttribType('AA')" />
+                }
+            </th>
+            <th width="20%">
+                Comment
+            </th>
+            <th width="10%">
+                Multiple Select
+            </th>
+            @*<th width="10%">
+                Active Status
+            </th>*@
+            <th width="10%">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    New
+                </td>
+                <td>
+                    <input type="text" id="AttrGrpName" />
+                </td>
+                <td>
+                    @Html.DropDownList("Attrib Type", (IEnumerable<SelectListItem>)ViewBag.AttribType, "Select a type", htmlAttributes: new { @class = "chosen-single", @id = "AttrType" })
+                </td>
+                <td>
+                    <input type="text" id="CommentName" />
+                </td>
+                <td>
+                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, "Please Select", htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
+                </td>
+                @*<td>
+                    
+                </td>*@
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveAttribGroup(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AttribGroupCancel()"></a>
+                </td>
+            </tr>
+        }
+    }
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            @if (ViewBag.CommandName == "EDIT" && ViewBag.AttribGroupCode == item.Attrib_Group_Code)
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Attrib_Group_Code)
+                </td>
+                <td>
+                    <input type="text" id="AttrGrpName" value="@item.Attrib_Group_Name" />
+                </td>
+                <td>
+                    @Html.DropDownList("Attrib Type", (IEnumerable<SelectListItem>)ViewBag.AttribType, "Select a type", htmlAttributes: new { @class = "chosen-single", @id = "AttrType" })
+                </td>
+                <td>
+                    <input type="text" id="CommentName" value="@item.Comment_Name" />
+                </td>
+                <td>
+                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, "Please Select", htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
+                </td>
+                @*<td>
+                    @{
+                        if (item.Is_Active == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    }
+                </td>*@
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveAttribGroup(@item.Attrib_Group_Code)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="AttribGroupCancel()"></a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Attrib_Group_Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Attrib_Group_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Attrib_Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Comment_Name)
+                </td>
+                <td>
+                    @{
+                        if (item.Is_Multiple_Select == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    }
+                </td>
+                @*<td>
+                    @{
+                        if (item.Is_Active == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    }
+                </td>*@
+                <td>
+                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="AddEditAttribGroup('EDIT', '@item.Attrib_Group_Code')"></a>
+
+                    @{
+                        if (item.Attrib_Type == "BV" || item.Attrib_Type == "DP")
+                        {
+                            <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureAttribGroup('@item.Attrib_Group_Code', '@item.Attrib_Type', 'config')"></a>
+                            @*@Html.ActionLink("Config", "ConfigurationCreate", "Attrib_Reports", new { AttribGrpCode = item.Attrib_Group_Code, AttribGrpName = item.Attrib_Group_Name, AttribType = item.Attrib_Type, config = "config" })*@
+                        }
+                        if (item.Is_Active == "Y")
+                        {
+                            <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer; color:dimgrey" onclick="ActivateDeactivateAttribGroup('N', '@item.Attrib_Group_Code')"></a>
+                        }
+                        if (item.Is_Active == "N")
+                        {
+                            <a title="Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer" onclick="ActivateDeactivateAttribGroup('Y', '@item.Attrib_Group_Code')"></a>
+                        }
+                    }
+                </td>
+
+            }
+        </tr>
+    }
+
+</table>

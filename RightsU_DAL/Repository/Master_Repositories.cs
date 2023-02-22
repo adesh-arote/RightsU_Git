@@ -3123,4 +3123,23 @@ namespace RightsU_DAL
     }
     #endregion
 
+    public class Report_Column_Setup_Repository : RightsU_Repository<Report_Column_Setup>
+    {
+        public Report_Column_Setup_Repository(string conStr) : base(conStr) { }
+        public override void Save(Report_Column_Setup objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+    }
 }

@@ -18,6 +18,7 @@ namespace RightsU_InterimDb.Models
         {
             this.Users_Detail = new HashSet<Users_Detail>();
             this.Attrib_Report_Column = new HashSet<Attrib_Report_Column>();
+            this.Attrib_Report_Column1 = new HashSet<Attrib_Report_Column>();
         }
     
     	public State EntityState { get; set; }    public int Attrib_Group_Code { get; set; }
@@ -29,5 +30,6 @@ namespace RightsU_InterimDb.Models
     
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
         public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column1 { get; set; }
     }
 }
