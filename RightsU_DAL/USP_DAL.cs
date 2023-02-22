@@ -558,6 +558,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Validate_Close_Movie__Scheduled_Run(acq_Deal_Movie_Code, title_Code, deal_Movie_Close_Date, episode_From, episode_To);
         }
+        public virtual ObjectResult<USP_Validate_Close_Movie_Scheduled_Run_Syn_Result> USP_Validate_Close_Movie_Scheduled_Run_Syn(Nullable<int> syn_Deal_Movie_Code, Nullable<int> title_Code, string deal_Movie_Close_Date, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Validate_Close_Movie_Scheduled_Run_Syn(syn_Deal_Movie_Code, title_Code, deal_Movie_Close_Date, episode_From, episode_To);
+        }
         public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages(string syn_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);

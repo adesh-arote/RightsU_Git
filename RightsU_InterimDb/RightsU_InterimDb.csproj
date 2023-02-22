@@ -1819,6 +1819,9 @@
     <Compile Include="Models\USP_ValidateIfHoldbackExist_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USP_Validate_Close_Movie_Scheduled_Run_Syn_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USP_Validate_Close_Movie__Scheduled_Run_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

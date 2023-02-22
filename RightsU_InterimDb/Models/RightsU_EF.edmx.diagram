@@ -131,7 +131,6 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform" Width="1.5" PointX="20.25" PointY="43" IsExpanded="true" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform_Medium" Width="1.5" PointX="22.5" PointY="41.625" IsExpanded="true" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Title" Width="1.5" PointX="11.25" PointY="61.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie" Width="1.5" PointX="17.25" PointY="66.25" IsExpanded="true" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost" Width="1.5" PointX="25.5" PointY="59.25" IsExpanded="true" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Additional_Exp" Width="1.5" PointX="27.75" PointY="56.875" IsExpanded="true" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie_Cost_Commission" Width="1.5" PointX="33.75" PointY="62.875" IsExpanded="true" />
@@ -358,7 +357,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Payment_Syn_Deal_Movie" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Cost_Payment_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Syn_Deal" ManuallyRouted="false" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Syn_Deal" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Rights_Syn_Deal" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Vendor" ManuallyRouted="false" />
@@ -373,7 +371,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Syn_Deal_Movie" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Syn_Deal_Movie" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Variable_Cost_Syn_Deal_Movie" ManuallyRouted="false" />
-        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Additional_Exp_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Commission_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Cost_Costtype_Syn_Deal_Movie_Cost" ManuallyRouted="false" />
@@ -1038,6 +1035,9 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Movie" Width="1.5" PointX="39.625" PointY="66.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

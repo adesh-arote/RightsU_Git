@@ -109,6 +109,13 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
     Row_Index = rowIndex;
     Command_Name = commandName;
 
+    txtMovie_Closed_Date = $('#txtMovie_Closed_Date_' + rowIndex);
+    txtClosing_Remarks = $('#txtClosing_Remarks_' + rowIndex);
+    txtMovie_Opening_Date = $('#txtMovie_Opening_Date_' + rowIndex);
+    txtOpening_Remarks = $('#txtOpening_Remarks_' + rowIndex);
+    var lblMovie_Closed_Date = $('#lblMovie_Closed_Date_' + rowIndex);
+    var lblClosing_Remarks = $('#lblClosing_Remarks_' + rowIndex);
+    var divClosing_Remarks = $('#divClosing_Remarks_' + rowIndex);
     var ddlTitle = $('#ddlTitle_' + rowIndex);
     var divTitle = $('#divTitle_' + rowIndex);
     var lblTitleName = $('#lblTitleName_' + rowIndex);
@@ -116,21 +123,37 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
     var lblStarCast = $('#lblStarCast_' + rowIndex);
     var lblDuration = $('#lblDuration_' + rowIndex);
     var lblTitleLangName = $('#lblTitleLangName_' + rowIndex);
-
+    var lblMovie_Opening_Date = $('#lblMovie_Opening_Date_' + rowIndex);
+    var lblMovie_Opening_Start_Date = $('#lblMovie_Opening_Start_Date_' + rowIndex);
+    var lblOpening_Remarks = $('#lblOpening_Remarks_' + rowIndex);
+    var divOpening_Remarks = $('#divOpening_Remarks_' + rowIndex);
 
     var btnSave = $('#btnSave_' + rowIndex);
     var btnCancel = $('#btnCancel_' + rowIndex);
     var btnDelete = $('#btnDelete_' + rowIndex);
     var btnCloseTitle = $('#btnCloseTitle_' + rowIndex);
     var btnReplace = $('#btnReplace_' + rowIndex);
-
+    var btnReOpenTitle = $('#btnReopenTitle_' + rowIndex);
 
     //Movie_Closed_Date = (txtMovie_Closed_Date != null && txtMovie_Closed_Date != 'undefined') ? txtMovie_Closed_Date.val() : '';
     //Closing_Remarks = (txtClosing_Remarks != null && txtClosing_Remarks != 'undefined') ? txtClosing_Remarks.val() : '';
 
     //var OldClosedDate = $.trim($("#" + rowIndex + "_hdnTitleClosedDate").val());
+    Movie_Closed_Date = (txtMovie_Closed_Date != null && txtMovie_Closed_Date != 'undefined') ? txtMovie_Closed_Date.val() : '';
+    Closing_Remarks = (txtClosing_Remarks != null && txtClosing_Remarks != 'undefined') ? txtClosing_Remarks.val() : '';
 
-    Syn_Deal_Movie_Code = $('#hdnSyn_Deal_Movie_Code_' + rowIndex).val();
+    Movie_Opening_Date = (txtMovie_Opening_Date != null && txtMovie_Opening_Date != '' && txtMovie_Opening_Date != 'undefined') ? txtMovie_Opening_Date.val() : '';
+    Opening_Remarks = (txtOpening_Remarks != null && txtOpening_Remarks != '' && txtOpening_Remarks != 'undefined') ? txtOpening_Remarks.val() : '';
+
+    var OldClosedDate = $.trim($("#" + rowIndex + "_hdnTitleClosedDate").val());
+    if (dummyGuid == "ALL") {
+        Syn_Deal_Movie_Code = "0";
+    }
+    else {
+        Syn_Deal_Movie_Code = $('#hdnSyn_Deal_Movie_Code_' + rowIndex).val();
+    }
+
+    //Syn_Deal_Movie_Code = $('#hdnSyn_Deal_Movie_Code_' + rowIndex).val();
     Title_Type = $("input[name='Syn_Deal_Movie[" + rowIndex + "].Syn_Title_Type']:radio:checked").val();
 
 
@@ -201,6 +224,91 @@ function tblMovie_RowCommand(dummyGuid, rowIndex, commandName) {
                 $("select#ddlTitle_Search_List").val(searchSelectedCodes)[0].sumo.reload();
             }
         }
+    }
+    else if (commandName == 'CLOSE_TITLE') {
+        lblMovie_Closed_Date.hide();
+        divClosing_Remarks.hide();
+        txtMovie_Closed_Date.show();
+        txtClosing_Remarks.show();
+
+        btnDelete.hide();
+        btnCloseTitle.hide();
+        btnSave.show();
+        btnCancel.show();
+    }
+    else if (commandName == 'SAVE_CLOSED_TITLE') {
+        var returnVal = ValidateEpisodeOverlapping();
+        if (!returnVal)
+            return false;
+
+        if (txtMovie_Closed_Date.val() == "") {
+            txtMovie_Closed_Date.attr('required', true)
+            return false;
+        }
+        else {
+            Command_Name = 'SAVE_CLOSED_TITLE';
+            if (!Close_Title("N"))
+                txtMovie_Closed_Date.val(OldClosedDate);
+        }
+    }
+    else if (commandName == 'CANCEL_CLOSE_TITLE') {
+        lblMovie_Closed_Date.show();
+        divClosing_Remarks.show();
+        txtMovie_Closed_Date.hide();
+        txtClosing_Remarks.hide();
+
+        btnDelete.show();
+        btnCloseTitle.show();
+        btnSave.hide();
+        btnCancel.hide();
+
+        SetNull();
+    }
+    else if (commandName == 'REOPEN_TITLE') {
+        lblMovie_Opening_Date.hide();
+        lblMovie_Opening_Start_Date.hide();
+        $("#SDATE").val('');
+        $("#EDATE").val('');
+        $('#txtReopen').val('');
+        $("#ExDate").val('');
+        //divOpening_Remarks.hide();
+        //txtMovie_Opening_Date.show();
+        //txtOpening_Remarks.show();
+        $('#ReopenPopup').modal();
+
+        //btnDelete.hide();
+        //btnReOpenTitle.hide();
+        //btnSave.show();
+        //btnCancel.show();
+    }
+    else if (commandName == 'SAVE_REOPEN_TITLE') {
+        var returnVal = ValidateEpisodeOverlapping();
+        if (!returnVal)
+            return false;
+
+        if (txtMovie_Closed_Date.val() == "") {
+            txtMovie_Closed_Date.attr('required', true)
+            return false;
+        }
+        else {
+            Command_Name = 'SAVE_REOPEN_TITLE';
+            if (!ReOpenTitle())
+                txtMovie_Closed_Date.val(OldClosedDate);
+        }
+    }
+    else if (commandName == 'CANCEL_REOPEN_TITLE') {
+        lblMovie_Opening_Date.show();
+        lblMovie_Opening_Start_Date.show();
+        divOpening_Remarks.show();
+        txtMovie_Opening_Date.hide();
+        txtOpening_Remarks.hide();
+
+        btnDelete.show();
+        btnReOpenTitle.show();
+        btnSave.hide();
+        btnCancel.hide();
+
+        SetNull();
     }
     else if (commandName == 'REPLACE_TITLE') {
         divTitle.show();
@@ -307,13 +415,20 @@ function Ask_Confirmation(confirmMsg, dummyGuid, rowIndex, commandName) {
     //if (commandName == "DELETE") {
     //    showAlert("I", confirmMsg, "OKCANCEL");
     //}
-    if (commandName == "DELETE" || commandName == 'REPLACE_TITLE') {
+    if (commandName == "DELETE" || commandName == "REPLACE_TITLE" || commandName == "CLOSE_TITLE" || commandName == "REOPEN_TITLE") {
         showAlert("I", confirmMsg, "OKCANCEL");
     }
 }
 function handleOk() {
     debugger
-    if (Command_Name == "DELETE" || Command_Name == "REPLACE_TITLE") {
+    //if (Command_Name == "DELETE" || Command_Name == "REPLACE_TITLE") {
+    //    showLoading();
+    //    tblMovie_RowCommand(Dummy_Guid, Row_Index, Command_Name);
+    //    hideLoading();
+    //}
+    if (Command_Name == "SAVE_CLOSED_TITLE")
+        Close_Title("Y");
+    else if (Command_Name == "DELETE" || Command_Name == "REPLACE_TITLE" || Command_Name == "CLOSE_TITLE" || Command_Name == "REOPEN_TITLE") {
         showLoading();
         tblMovie_RowCommand(Dummy_Guid, Row_Index, Command_Name);
         hideLoading();
@@ -665,6 +780,16 @@ function BindTitleLabel(bindSearch) {
                         $("#ddlTitle_Search_List")[0].sumo.reload();
                     }
                     SetPaging();
+                }
+                var Lcount = $('#lblTitleSearchCount').text();
+
+                Lcount = Lcount - 1;
+                var IsrowClose = '';
+                for (i = 0; i <= Lcount; i++) {
+                    IsrowClose = $('#lblClosing_Remarks_' + i).text();
+                    if (IsrowClose != '' && IsrowClose != null && IsrowClose != "") {
+                        $('#tblMovie_tr_' + i).css('color', 'blue');
+                    }
                 }
             },
             error: function (result) {
@@ -1036,6 +1161,15 @@ function BindTitleGridview() {
                 $('#subDealMovie').empty();
                 $('#subDealMovie').html(result);
             }
+            var Lcount = $('#lblTitleSearchCount').text();
+            Lcount = Lcount - 1;
+            var IsrowClose = '';
+            for (i = 0; i <= Lcount; i++) {
+                IsrowClose = $('#lblClosing_Remarks_' + i).text();
+                if (IsrowClose != '' && IsrowClose != null && IsrowClose != "") {
+                    $('#tblMovie_tr_' + i).css('color', 'blue');
+                }
+            }
         },
         error: function (result) {
             alert('Error: ' + result.responseText);
@@ -1131,6 +1265,128 @@ function addNumeric() {
         max: 100,
         min: 1
     });
+}
+function Close_Title(confirmationDone) {
+    debugger;
+    if (!ValidatePageSize())
+        return false;
+    var lstTitleData = new Array();
+
+    var Lcount = $('#lblTitleSearchCount').text();
+    Lcount = Lcount - 1;
+    var TitleCodes = '';
+    var DealMovieCodes = '';
+    var Eps_Frm = '';
+    var Eps_To = '';
+    var i = 0;
+    var saveType = '';
+    var chckTitleLen = $('.bulkdeletetd:checked').length;
+    var Notes = "";
+
+    if (confirmationDone == 'PS') {
+        $('#BulkClosePopup').modal('hide');
+        $("div").removeClass("modal-backdrop fade in");
+        saveType = 'PS';
+        Syn_Deal_Movie_Code = 0;
+        Notes = "";
+        Title_Type = "";
+        Movie_Closed_Date = $('#CloseDate').val();
+        Closing_Remarks = $('#remarks').val();
+        episode_From = 0;
+        episode_To = 0;
+        no_Of_Episodes = 0;
+    }
+    if (confirmationDone == 'NS') {
+        saveType = 'NS';
+        Syn_Deal_Movie_Code = 0;
+        Notes = "";
+        Title_Type = "";
+        Movie_Closed_Date = $('#CloseDate').val();
+        Closing_Remarks = $('#remarks').val();
+        episode_From = 0;
+        episode_To = 0;
+        no_Of_Episodes = 0;
+        if (chckTitleLen == 0) {
+            showAlert("E", "Please Select atleast one Title for closing");
+            return false;
+        }
+        if (Movie_Closed_Date == "") {
+            showAlert("E", "Please Enter Close Date");
+            return false;
+        }
+    }
+    for (i = 0; i <= Lcount; i++) {
+        debugger;
+        if ($('#bulkdeletetd_' + i).prop('checked')) {
+            DealMovieCodes = $('#hdnSyn_Deal_Movie_Code_' + i).val();
+            //TitleCodes =  $('#hdnTitleCode_' + i).val();
+            //Eps_Frm = $('#txtEpisode_Starts_From_' + i).val();
+            //Eps_To =  $('#txtEpisode_End_To_' + i).val();
+            // lstTitleData.push(DealMovieCodes, TitleCodes, Eps_Frm, Eps_To)
+
+            lstTitleData.push(DealMovieCodes)
+        }
+    }
+
+    var status = "E"
+    $.ajax({
+        type: "POST",
+        url: URL_Close_Title,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+
+            SynDealMovieCode: Syn_Deal_Movie_Code,
+            notes: Notes,
+            titleType: Title_Type,
+            closingDate: $.trim(Movie_Closed_Date),//$.trim(txtMovie_Closed_Date.val()),
+            closingRemark: $.trim(Closing_Remarks),//$.trim(txtClosing_Remarks.val()),
+            episodeFrom: episode_From,
+            episodeTo: episode_To,
+            noOfEpisodes: no_Of_Episodes,
+            confirmationDone: confirmationDone,
+            lstTitle: lstTitleData,
+            saveType: saveType
+        }),
+        async: false,
+        success: function (result) {
+            debugger;
+            if (result == "true") {
+                redirectToLogin();
+            }
+            else {
+                if (result.Status == "S") {
+                    debugger;
+                    status = "S";
+                    SetNull();
+
+                }
+                else if (result.Status == "E") {
+                    //if (result.Show_Confirmation == "Y")
+                    //    //showAlert("I", result.Error_Message, "OKCANCEL");
+                    //else {
+                    //    showAlert("E", result.Error_Message);
+                    //    status = "E";
+                    ConfirmDelete();
+                    // }
+                }
+            }
+        },
+        error: function (result) {
+            alert('Error: ' + result.responseText);
+        }
+    });
+
+    if (status == "S") {
+        if (!SaveTitleListData(false))
+            return false;
+        // $('#BulkClosePopup').modal('hide');
+
+        BindTitleGridview();
+    }
+    if (status == "E")
+        return false;
 }
 function SaveTitleListData(validateOverlapping) {
     var titleList = new Array();
@@ -1406,4 +1662,87 @@ function ddlTitle_Change(e, rowIndex) {
             }
         });
     }
+}
+function SaveSynReopen() {
+    debugger;
+    var returnVAL = true;
+    var ExDate = $('#ExDate').val();
+    var SDATE = $('#SDATE').val();
+    var EDATE = $('#EDATE').val();
+    var rmk = $('#txtReopen').val();
+    if (($('input[name="ReopenRD"]:checked').val()) == "ExDt") {
+        if (ExDate == "") {
+            $('#ExDate').addClass("required");
+            showAlert("E", "Please select extended date.");
+            returnVAL = false;
+            Command_Name = null;
+        }
+    }
+    else if (($('input[name="ReopenRD"]:checked').val()) == "SdEdDt") {
+        if (SDATE == "") {
+            $('#SDATE').addClass("required");
+            returnVAL = false;
+            showAlert("E", "Please select Start Date and End Date.");
+            Command_Name = null;
+        }
+        if (EDATE == "") {
+            $('#EDATE').addClass("required");
+            returnVAL = false;
+            showAlert("E", "Please select Start Date and End Date.");
+            Command_Name = null;
+        }
+    }
+    if (returnVAL) {
+        $.ajax({
+            type: "POST",
+            url: URL_ReOpen_Title,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                synDealMovieCode: Syn_Deal_Movie_Code,
+                //Movie_Opening_Date: Movie_Opening_Date,
+                ExDate: ExDate,
+                SDATE: SDATE,
+                EDATE: EDATE,
+                ReOpening_Remark: rmk
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        debugger;
+                        status = "S";
+                        $('#ReopenPopup').modal('hide');
+                        SetNull();
+                    }
+                    else if (result.Status == "E") {
+                        Command_Name = null;
+                        showAlert("E", result.Error_Message);
+                        status = "E";
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+        if (status == "S") {
+            if (!SaveTitleListData(false))
+                return false;
+            // $('#BulkClosePopup').modal('hide');
+
+            BindTitleGridview();
+
+        }
+        if (status == "E")
+            return false;
+    }
+}
+function cancelSynReopen() {
+    Command_Name = null;
 }

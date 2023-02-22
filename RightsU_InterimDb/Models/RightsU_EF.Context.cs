@@ -147,7 +147,6 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Ancillary_Platform> Syn_Deal_Ancillary_Platform { get; set; }
         public DbSet<Syn_Deal_Ancillary_Platform_Medium> Syn_Deal_Ancillary_Platform_Medium { get; set; }
         public DbSet<Syn_Deal_Ancillary_Title> Syn_Deal_Ancillary_Title { get; set; }
-        public DbSet<Syn_Deal_Movie> Syn_Deal_Movie { get; set; }
         public DbSet<Syn_Deal_Payment_Terms> Syn_Deal_Payment_Terms { get; set; }
         public DbSet<Syn_Deal_Rights> Syn_Deal_Rights { get; set; }
         public DbSet<Syn_Deal_Rights_Blackout> Syn_Deal_Rights_Blackout { get; set; }
@@ -452,6 +451,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Digital_Config> Digital_Config { get; set; }
         public DbSet<Digital_Data> Digital_Data { get; set; }
         public DbSet<Digital_Tab> Digital_Tab { get; set; }
+        public DbSet<Syn_Deal_Movie> Syn_Deal_Movie { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
@@ -5591,6 +5591,31 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Tab_SM", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Digital_Edit_Result>("USP_Get_Acq_Deal_Digital_Edit", acq_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual ObjectResult<USP_Validate_Close_Movie_Scheduled_Run_Syn_Result> USP_Validate_Close_Movie_Scheduled_Run_Syn(Nullable<int> syn_Deal_Movie_Code, Nullable<int> title_Code, string deal_Movie_Close_Date, Nullable<int> episode_From, Nullable<int> episode_To)
+        {
+            var syn_Deal_Movie_CodeParameter = syn_Deal_Movie_Code.HasValue ?
+                new ObjectParameter("Syn_Deal_Movie_Code", syn_Deal_Movie_Code) :
+                new ObjectParameter("Syn_Deal_Movie_Code", typeof(int));
+    
+            var title_CodeParameter = title_Code.HasValue ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(int));
+    
+            var deal_Movie_Close_DateParameter = deal_Movie_Close_Date != null ?
+                new ObjectParameter("Deal_Movie_Close_Date", deal_Movie_Close_Date) :
+                new ObjectParameter("Deal_Movie_Close_Date", typeof(string));
+    
+            var episode_FromParameter = episode_From.HasValue ?
+                new ObjectParameter("Episode_From", episode_From) :
+                new ObjectParameter("Episode_From", typeof(int));
+    
+            var episode_ToParameter = episode_To.HasValue ?
+                new ObjectParameter("Episode_To", episode_To) :
+                new ObjectParameter("Episode_To", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_Close_Movie_Scheduled_Run_Syn_Result>("USP_Validate_Close_Movie_Scheduled_Run_Syn", syn_Deal_Movie_CodeParameter, title_CodeParameter, deal_Movie_Close_DateParameter, episode_FromParameter, episode_ToParameter);
         }
     }
 }

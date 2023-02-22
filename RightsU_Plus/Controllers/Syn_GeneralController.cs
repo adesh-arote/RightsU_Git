@@ -97,6 +97,26 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCloneDealRightsTitle"] = value; }
         }
+        public int closeMovieCount
+        {
+            get
+            {
+                if (Session["closeMovieCount"] == null)
+                    Session["closeMovieCount"] = "0";
+                return Convert.ToInt32(Session["closeMovieCount"]);
+            }
+            set { Session["closeMovieCount"] = value; }
+        }
+        private List<ProceedSavePopupSyn> lstPS
+        {
+            get
+            {
+                if (Session["lstPS"] == null)
+                    Session["lstPS"] = new List<ProceedSavePopupSyn>();
+                return (List<ProceedSavePopupSyn>)Session["lstPS"];
+            }
+            set { Session["lstPS"] = value; }
+        }
         #endregion
 
         #region --- Action Methods ---
@@ -1371,7 +1391,151 @@ namespace RightsU_Plus.Controllers
             obj.Add("Title_Icon_Tooltip", toolTip);
             return Json(obj);
         }
+        public JsonResult Close_Title(int SynDealMovieCode, string notes, string titleType, string closingDate, string closingRemark, int episodeFrom, int episodeTo, int noOfEpisodes, string confirmationDone, string[] lstTitle, string saveType)
+        {
+            string status = "S", errorMessage = "", showConfirmation = "N", IsStatusError = "N";
+            int dealmoviecode = 0;
+            if (saveType != "PS")
+            {
+                lstPS.Clear();
+            }
+            #region --- Logic for Bulk Close title ---
+            if (saveType == "NS")
+            {
+                for (int i = 0; i < lstTitle.Count(); i++)
+                {
+                    status = "S";
+                    dealmoviecode = Convert.ToInt32(lstTitle[i]);
+                    Syn_Deal_Movie objADM = objSD_Session.Syn_Deal_Movie.Where(dm => dm.Syn_Deal_Movie_Code == dealmoviecode && dm.EntityState != State.Deleted).FirstOrDefault();
 
+                    DateTime objClosingDate = Convert.ToDateTime(GlobalUtil.MakedateFormat(closingDate));
+
+                    USP_Validate_Close_Movie_Scheduled_Run_Syn_Result objResult = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_Close_Movie_Scheduled_Run_Syn(dealmoviecode, objADM.Title_Code, objClosingDate.ToString("MM/dd/yyyy"), objADM.Episode_From, objADM.Episode_End_To).FirstOrDefault();
+
+                    if (objResult != null)
+                    {
+                        if (objResult.Msg != String.Empty)
+                        {
+                            if (objClosingDate != objResult.Max_Date)
+                            {
+                                status = "E";
+                                IsStatusError = "Y";
+                            }
+                        }
+                    }
+
+                    if (status.Equals("S"))
+                    {
+                        if (IsStatusError == "Y")
+                        {
+                            status = "E";
+                        }
+                        ProceedSavePopupSyn objPS = new ProceedSavePopupSyn();
+
+                        //objADM.Notes = notes;
+                        objADM.Title_Type = titleType;
+                        objADM.Movie_Closed_Date = objClosingDate;
+                        objPS.closingDate = objClosingDate;
+                        objPS.closingRemarks = closingRemark;
+                        objPS.Syn_Deal_Movie_Code = dealmoviecode;
+                        objADM.Closing_Remarks = closingRemark;
+                        objADM.Is_Closed = "X";
+                        objADM.Episode_From = episodeFrom;
+                        objADM.Episode_End_To = episodeTo;
+                        objADM.No_Of_Episode = noOfEpisodes;
+                        objADM.Deal_Closed_By = objLoginUser.Users_Code;
+                        objADM.Deal_Closed_On = DateTime.Now;
+                        closeMovieCount++;
+                        lstPS.Add(objPS);
+                    }
+                }
+            }
+            else if (saveType == "PS" && lstPS.Count > 0)
+            {
+                for (int i = 0; i < lstTitle.Count(); i++)
+                {
+                    dealmoviecode = Convert.ToInt32(lstTitle[i]);
+                    Syn_Deal_Movie objADM = objSD_Session.Syn_Deal_Movie.Where(dm => dm.Syn_Deal_Movie_Code == dealmoviecode && dm.EntityState != State.Deleted).FirstOrDefault();
+
+                    foreach (var item in lstPS)
+                    {
+                        objADM = lstSyn_Deal_movie.Where(x => x.Syn_Deal_Movie_Code == item.Syn_Deal_Movie_Code).FirstOrDefault();
+                        if (objADM != null)
+                        {
+                            objADM.Closing_Remarks = item.closingRemarks;
+                            objADM.Movie_Closed_Date = item.closingDate;
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            #region --- actual logic for close title ---
+            else
+            {
+                Syn_Deal_Movie objADM = objSD_Session.Syn_Deal_Movie.Where(dm => dm.Syn_Deal_Movie_Code == SynDealMovieCode && dm.EntityState != State.Deleted).FirstOrDefault();
+                if (objADM != null)
+                {
+                    DateTime objClosingDate = Convert.ToDateTime(GlobalUtil.MakedateFormat(closingDate));
+                    if (!confirmationDone.Equals("Y"))
+                    {
+                        // need to pass two parameter which is newly added in USP (int episodeFrom, int episodeTo)
+                        USP_Validate_Close_Movie_Scheduled_Run_Syn_Result objResult = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_Close_Movie_Scheduled_Run_Syn(SynDealMovieCode, objADM.Title_Code, objClosingDate.ToString("MM/dd/yyyy"), episodeFrom, episodeTo).FirstOrDefault();
+
+                        if (objResult != null)
+                        {
+                            if (objResult.Msg != String.Empty)
+                            {
+                                if (objClosingDate != objResult.Max_Date)
+                                {
+                                    status = "E";
+
+                                    if (objResult.Show_Confirmation.Equals("Y"))
+                                    {
+                                        showConfirmation = "Y";
+                                        errorMessage = objResult.Msg;
+                                    }
+                                    else if (objResult.Show_Confirmation.Equals("N"))
+                                    {
+                                        if (Convert.ToDateTime(objResult.Max_Date).ToString("dd/MM/yyyy") == "01/01/1900")
+                                            errorMessage = objResult.Msg;
+                                        else
+                                            errorMessage = objResult.Msg + " " + Convert.ToDateTime(objResult.Max_Date).ToString("dd/MM/yyyy");
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (status.Equals("S"))
+                    {
+                        //objADM.Notes = notes;
+                        objADM.Title_Type = titleType;
+                        objADM.Movie_Closed_Date = objClosingDate;
+                        objADM.Closing_Remarks = closingRemark;
+                        objADM.Is_Closed = "X";
+                        objADM.Episode_From = episodeFrom;
+                        objADM.Episode_End_To = episodeTo;
+                        objADM.No_Of_Episode = noOfEpisodes;
+                        objADM.Deal_Closed_By = objLoginUser.Users_Code;
+                        objADM.Deal_Closed_On = DateTime.Now;
+                        closeMovieCount++;
+                    }
+                }
+                else
+                {
+                    status = "E";
+                    errorMessage = "Object not found";
+                }
+            }
+            #endregion
+            ViewBag.PageNo = 1;
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            obj.Add("Status", status);
+            obj.Add("Error_Message", errorMessage);
+            obj.Add("Show_Confirmation", showConfirmation);
+            return Json(obj);
+        }
         public JsonResult Replace_Title(string dummyGuid, int titleCode, string titleType, int episodeFrom, int episodeTo, int noOfEpisodes)
         {
             string status = "S", errorMessage = "", titleName = "", titleLanguageName = "", starCast = "", duration = "";
@@ -1560,5 +1724,11 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
         #endregion
+        public class ProceedSavePopupSyn
+        {
+            public int Syn_Deal_Movie_Code { get; set; }
+            public DateTime closingDate { get; set; }
+            public string closingRemarks { get; set; }
+        }
     }
 }

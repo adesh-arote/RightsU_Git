@@ -475,6 +475,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const string DEAL_MODE_VIEW_FOR_LFA_FINALISED = "F";
         public const string DEAL_MOVIE_CLOSE = "DMC";
         public const string DEAL_MODE_EDIT_WO_APPROVAL = "EWOA";
+        public const string TITLE_REOPEN = "TR";
 
         //Glossary Type
         public const string Glossary_FAQ = "F";

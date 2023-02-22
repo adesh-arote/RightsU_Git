@@ -21,8 +21,18 @@ namespace RightsU_InterimDb.Models
     	    public string Is_Closed { get; set; }
     	    public string Syn_Title_Type { get; set; }
     	    public string Remark { get; set; }
-    	    public Nullable<int> Episode_From { get; set; }
     	    public Nullable<int> Episode_End_To { get; set; }
+    	    public Nullable<int> Episode_From { get; set; }
+    	    public string Closing_Remarks { get; set; }
+    	    public Nullable<System.DateTime> Movie_Closed_Date { get; set; }
+    	    public string Opening_Remarks { get; set; }
+    	    public Nullable<System.DateTime> Movie_Opening_Date { get; set; }
+    	    public Nullable<int> Deal_Closed_By { get; set; }
+    	    public Nullable<System.DateTime> Deal_Closed_On { get; set; }
+    	    public Nullable<int> Deal_Opened_By { get; set; }
+    	    public Nullable<System.DateTime> Deal_Opened_On { get; set; }
+    	    public string Is_Reopen { get; set; }
+    	    public Nullable<System.DateTime> Movie_Opening_Start_Date { get; set; }
     
         public virtual Syn_Deal Syn_Deal { get; set; }
         public virtual Title Title { get; set; }

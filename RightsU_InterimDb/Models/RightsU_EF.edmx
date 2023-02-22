@@ -4211,7 +4211,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
-          
+          <Property Name="Alternate_Config_Code" Type="int" />
+          <Property Name="Display_Type" Type="varchar" MaxLength="5" />
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -4735,6 +4736,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Remark" Type="nvarchar" MaxLength="4000" />
           <Property Name="Episode_End_To" Type="int" />
           <Property Name="Episode_From" Type="int" />
+          <Property Name="Closing_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Closed_Date" Type="datetime" />
+          <Property Name="Opening_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Opening_Date" Type="datetime" />
+          <Property Name="Deal_Closed_By" Type="int" />
+          <Property Name="Deal_Closed_On" Type="datetime" />
+          <Property Name="Deal_Opened_By" Type="int" />
+          <Property Name="Deal_Opened_On" Type="datetime" />
+          <Property Name="Is_Reopen" Type="varchar" MaxLength="5" />
+          <Property Name="Movie_Opening_Start_Date" Type="datetime" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -14471,6 +14482,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Episode_From" Type="int" Mode="In" />
           <Parameter Name="Episode_To" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Validate_Close_Movie_Scheduled_Run_Syn" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Movie_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="int" Mode="In" />
+          <Parameter Name="Deal_Movie_Close_Date" Type="varchar" Mode="In" />
+          <Parameter Name="Episode_From" Type="int" Mode="In" />
+          <Parameter Name="Episode_To" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Validate_Content_Music_Import" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
         </Function>
@@ -17814,7 +17832,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Syn_Deal_Ancillary_Platform" EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform" />
           <EntitySet Name="Syn_Deal_Ancillary_Platform_Medium" EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Platform_Medium" />
           <EntitySet Name="Syn_Deal_Ancillary_Title" EntityType="RightsU_NeoModel.Syn_Deal_Ancillary_Title" />
-          <EntitySet Name="Syn_Deal_Movie" EntityType="RightsU_NeoModel.Syn_Deal_Movie" />
           <EntitySet Name="Syn_Deal_Payment_Terms" EntityType="RightsU_NeoModel.Syn_Deal_Payment_Terms" />
           <EntitySet Name="Syn_Deal_Rights" EntityType="RightsU_NeoModel.Syn_Deal_Rights" />
           <EntitySet Name="Syn_Deal_Rights_Blackout" EntityType="RightsU_NeoModel.Syn_Deal_Rights_Blackout" />
@@ -18404,10 +18421,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
             <End Role="Syn_Deal_Ancillary" EntitySet="Syn_Deal_Ancillary" />
           </AssociationSet>
-          <AssociationSet Name="FK_Syn_Deal_Movie_Syn_Deal" Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal">
-            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
-            <End Role="Syn_Deal_Movie" EntitySet="Syn_Deal_Movie" />
-          </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Payment_Terms_Syn_Deal" Association="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Syn_Deal">
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
             <End Role="Syn_Deal_Payment_Terms" EntitySet="Syn_Deal_Payment_Terms" />
@@ -18443,10 +18456,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Ancillary_Title_Title" Association="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Title">
             <End Role="Title" EntitySet="Titles" />
             <End Role="Syn_Deal_Ancillary_Title" EntitySet="Syn_Deal_Ancillary_Title" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Syn_Deal_Movie_Title" Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title">
-            <End Role="Title" EntitySet="Titles" />
-            <End Role="Syn_Deal_Movie" EntitySet="Syn_Deal_Movie" />
           </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Right_Blackout_Syn_Deal_Rights" Association="RightsU_NeoModel.FK_Syn_Deal_Right_Blackout_Syn_Deal_Rights">
             <End Role="Syn_Deal_Rights" EntitySet="Syn_Deal_Rights" />
@@ -21837,6 +21846,22 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Syn_Deal_Movie" EntityType="RightsU_NeoModel.Syn_Deal_Movie" />
+          <AssociationSet Name="FK_Syn_Deal_Movie_Syn_Deal" Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal">
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+            <End Role="Syn_Deal_Movie" EntitySet="Syn_Deal_Movie" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Movie_Title" Association="RightsU_NeoModel.FK_Syn_Deal_Movie_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Syn_Deal_Movie" EntitySet="Syn_Deal_Movie" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Validate_Close_Movie_Scheduled_Run_Syn" ReturnType="Collection(RightsU_NeoModel.USP_Validate_Close_Movie_Scheduled_Run_Syn_Result)">
+            <Parameter Name="Syn_Deal_Movie_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Deal_Movie_Close_Date" Mode="In" Type="String" />
+            <Parameter Name="Episode_From" Mode="In" Type="Int32" />
+            <Parameter Name="Episode_To" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23903,6 +23928,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
           <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+          <Property Name="Alternate_Config_Code" Type="Int32" />
+          <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
         
        
         </EntityType>
@@ -24148,7 +24175,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Deal_Type" Relationship="RightsU_NeoModel.FK_Syn_Deal_Deal_Type" FromRole="Syn_Deal" ToRole="Deal_Type" />
           <NavigationProperty Name="Entity" Relationship="RightsU_NeoModel.FK_Syn_Deal_Entity" FromRole="Syn_Deal" ToRole="Entity" />
           <NavigationProperty Name="Syn_Deal_Ancillary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Ancillary" />
-          <NavigationProperty Name="Syn_Deal_Movie" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Movie" />
           <NavigationProperty Name="Syn_Deal_Payment_Terms" Relationship="RightsU_NeoModel.FK_Syn_Deal_Payment_Terms_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Payment_Terms" />
           <NavigationProperty Name="Syn_Deal_Rights" Relationship="RightsU_NeoModel.FK_Syn_Deal_Rights_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Rights" />
           <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_Syn_Deal_Vendor" FromRole="Syn_Deal" ToRole="Vendor" />
@@ -24172,6 +24198,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" FromRole="Syn_Deal" ToRole="Revenue_Vertical" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Supplementary" />
           <Property Name="Material_Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Syn_Deal_Movie" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Movie" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -24222,22 +24249,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Title" FromRole="Syn_Deal_Ancillary_Title" ToRole="Title" />
           <Property Type="Int32" Name="Episode_From" />
           <Property Type="Int32" Name="Episode_To" />
-        </EntityType>
-        <EntityType Name="Syn_Deal_Movie">
-          <Key>
-            <PropertyRef Name="Syn_Deal_Movie_Code" />
-          </Key>
-          <Property Name="Syn_Deal_Movie_Code" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
-          <Property Name="Syn_Deal_Code" Type="Int32" />
-          <Property Name="Title_Code" Type="Int32" />
-          <Property Name="No_Of_Episode" Type="Int32" />
-          <Property Name="Is_Closed" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
-          <Property Name="Syn_Title_Type" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
-          <Property Name="Remark" Type="String" MaxLength="4000" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" FromRole="Syn_Deal_Movie" ToRole="Syn_Deal" />
-          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Syn_Deal_Movie" ToRole="Title" />
-          <Property Type="Int32" Name="Episode_From" />
-          <Property Type="Int32" Name="Episode_End_To" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -24655,7 +24666,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Deal_Type" Relationship="RightsU_NeoModel.FK_Title_Deal_Type" FromRole="Title" ToRole="Deal_Type" />
           <NavigationProperty Name="Grade_Master" Relationship="RightsU_NeoModel.FK_Title_Grade_Master" FromRole="Title" ToRole="Grade_Master" />
           <NavigationProperty Name="Syn_Deal_Ancillary_Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Ancillary_Title_Title" FromRole="Title" ToRole="Syn_Deal_Ancillary_Title" />
-          <NavigationProperty Name="Syn_Deal_Movie" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Title" ToRole="Syn_Deal_Movie" />
           <NavigationProperty Name="Syn_Deal_Rights_Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Rights_Title_Title" FromRole="Title" ToRole="Syn_Deal_Rights_Title" />
           <NavigationProperty Name="Title_Audio_Details_Singers" Relationship="RightsU_NeoModel.FK_Title_Audio_Details_Singers_Title" FromRole="Title" ToRole="Title_Audio_Details_Singers" />
           <NavigationProperty Name="Title_Audio_Details" Relationship="RightsU_NeoModel.FK_Title_Audio_Details_Title1" FromRole="Title" ToRole="Title_Audio_Details" />
@@ -24697,6 +24707,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title" ToRole="Title_Objection" />
           <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Title" ToRole="Acq_Deal_Supplementary" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" FromRole="Title" ToRole="Syn_Deal_Supplementary" />
+          <NavigationProperty Name="Syn_Deal_Movie" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Title" ToRole="Syn_Deal_Movie" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -26680,18 +26691,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Syn_Deal_Movie_Syn_Deal">
-          <End Role="Syn_Deal" Type="RightsU_NeoModel.Syn_Deal" Multiplicity="0..1" />
-          <End Role="Syn_Deal_Movie" Type="RightsU_NeoModel.Syn_Deal_Movie" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Syn_Deal">
-              <PropertyRef Name="Syn_Deal_Code" />
-            </Principal>
-            <Dependent Role="Syn_Deal_Movie">
-              <PropertyRef Name="Syn_Deal_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Syn_Deal_Payment_Terms_Syn_Deal">
           <End Role="Syn_Deal" Type="RightsU_NeoModel.Syn_Deal" Multiplicity="1" />
           <End Role="Syn_Deal_Payment_Terms" Type="RightsU_NeoModel.Syn_Deal_Payment_Terms" Multiplicity="*" />
@@ -26796,18 +26795,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <PropertyRef Name="Title_Code" />
             </Principal>
             <Dependent Role="Syn_Deal_Ancillary_Title">
-              <PropertyRef Name="Title_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Syn_Deal_Movie_Title">
-          <End Role="Title" Type="RightsU_NeoModel.Title" Multiplicity="0..1" />
-          <End Role="Syn_Deal_Movie" Type="RightsU_NeoModel.Syn_Deal_Movie" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Title">
-              <PropertyRef Name="Title_Code" />
-            </Principal>
-            <Dependent Role="Syn_Deal_Movie">
               <PropertyRef Name="Title_Code" />
             </Dependent>
           </ReferentialConstraint>
@@ -37412,6 +37399,61 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <EntityType Name="Syn_Deal_Movie">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Movie_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Movie_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Syn_Deal_Code" Type="Int32" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="No_Of_Episode" Type="Int32" />
+          <Property Name="Is_Closed" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Syn_Title_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Remark" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <Property Name="Episode_End_To" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Closing_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Closed_Date" Type="DateTime" Precision="3" />
+          <Property Name="Opening_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Opening_Date" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Closed_By" Type="Int32" />
+          <Property Name="Deal_Closed_On" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Opened_By" Type="Int32" />
+          <Property Name="Deal_Opened_On" Type="DateTime" Precision="3" />
+          <Property Name="Is_Reopen" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Movie_Opening_Start_Date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Syn_Deal" FromRole="Syn_Deal_Movie" ToRole="Syn_Deal" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Syn_Deal_Movie" ToRole="Title" />
+        </EntityType>
+        <Association Name="FK_Syn_Deal_Movie_Syn_Deal">
+          <End Type="RightsU_NeoModel.Syn_Deal" Role="Syn_Deal" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Movie" Role="Syn_Deal_Movie" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Movie">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Movie_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Movie" Role="Syn_Deal_Movie" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Movie">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_Validate_Close_Movie_Scheduled_Run_Syn_Result">
+          <Property Type="String" Name="Msg" Nullable="false" MaxLength="1" />
+          <Property Type="DateTime" Name="Max_Date" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Show_Confirmation" Nullable="false" MaxLength="1" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -39435,6 +39477,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               <MappingFragment StoreEntitySet="Report_Column_Setup">
                 
                
+                <ScalarProperty Name="Display_Type" ColumnName="Display_Type" />
+                <ScalarProperty Name="Alternate_Config_Code" ColumnName="Alternate_Config_Code" />
                 <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
@@ -39814,21 +39858,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Syn_Deal_Ancillary_Title_Code" ColumnName="Syn_Deal_Ancillary_Title_Code" />
                 <ScalarProperty Name="Syn_Deal_Ancillary_Code" ColumnName="Syn_Deal_Ancillary_Code" />
                 <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Syn_Deal_Movie">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Movie">
-              <MappingFragment StoreEntitySet="Syn_Deal_Movie">
-                <ScalarProperty Name="Episode_End_To" ColumnName="Episode_End_To" />
-                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
-                <ScalarProperty Name="Syn_Deal_Movie_Code" ColumnName="Syn_Deal_Movie_Code" />
-                <ScalarProperty Name="Syn_Deal_Code" ColumnName="Syn_Deal_Code" />
-                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
-                <ScalarProperty Name="No_Of_Episode" ColumnName="No_Of_Episode" />
-                <ScalarProperty Name="Is_Closed" ColumnName="Is_Closed" />
-                <ScalarProperty Name="Syn_Title_Type" ColumnName="Syn_Title_Type" />
-                <ScalarProperty Name="Remark" ColumnName="Remark" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -47191,6 +47220,40 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Syn_Deal_Movie">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Movie">
+              <MappingFragment StoreEntitySet="Syn_Deal_Movie">
+                <ScalarProperty Name="Movie_Opening_Start_Date" ColumnName="Movie_Opening_Start_Date" />
+                <ScalarProperty Name="Is_Reopen" ColumnName="Is_Reopen" />
+                <ScalarProperty Name="Deal_Opened_On" ColumnName="Deal_Opened_On" />
+                <ScalarProperty Name="Deal_Opened_By" ColumnName="Deal_Opened_By" />
+                <ScalarProperty Name="Deal_Closed_On" ColumnName="Deal_Closed_On" />
+                <ScalarProperty Name="Deal_Closed_By" ColumnName="Deal_Closed_By" />
+                <ScalarProperty Name="Movie_Opening_Date" ColumnName="Movie_Opening_Date" />
+                <ScalarProperty Name="Opening_Remarks" ColumnName="Opening_Remarks" />
+                <ScalarProperty Name="Movie_Closed_Date" ColumnName="Movie_Closed_Date" />
+                <ScalarProperty Name="Closing_Remarks" ColumnName="Closing_Remarks" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Episode_End_To" ColumnName="Episode_End_To" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Syn_Title_Type" ColumnName="Syn_Title_Type" />
+                <ScalarProperty Name="Is_Closed" ColumnName="Is_Closed" />
+                <ScalarProperty Name="No_Of_Episode" ColumnName="No_Of_Episode" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Syn_Deal_Code" ColumnName="Syn_Deal_Code" />
+                <ScalarProperty Name="Syn_Deal_Movie_Code" ColumnName="Syn_Deal_Movie_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Validate_Close_Movie_Scheduled_Run_Syn" FunctionName="RightsU_NeoModel.Store.USP_Validate_Close_Movie_Scheduled_Run_Syn">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Validate_Close_Movie_Scheduled_Run_Syn_Result">
+                <ScalarProperty Name="Msg" ColumnName="Msg" />
+                <ScalarProperty Name="Max_Date" ColumnName="Max_Date" />
+                <ScalarProperty Name="Show_Confirmation" ColumnName="Show_Confirmation" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

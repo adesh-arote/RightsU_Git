@@ -28,5 +28,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Max_Length { get; set; }
     	    public string WhCondition { get; set; }
     	    public string ValidOpList { get; set; }
+    	    public Nullable<int> Alternate_Config_Code { get; set; }
+    	    public string Display_Type { get; set; }
     }
 }
