@@ -1,0 +1,81 @@
+﻿@model IEnumerable<RightsU_Entities.Extended_Columns_Value>
+
+
+<h4 class="bold">Extended Value Metadata</h4>
+<p style="font-size:14px">Total Records : @Model.Count()</p>
+@{
+    int i = 0;
+}
+
+<table class="table table-bordered table-hover" style="text-align:center; margin-top:13px">
+    <thead>
+        <tr>
+            <th>Sr.No.</th>
+            <th>Column Value</th>
+            @if (ViewBag.HideButton != "HideButton")
+            {
+                <th>Actions</th>
+            }
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (TempData["Action"] == "AddEVDetails")
+        {
+            i++;
+            <tr>
+                <td>
+                    @i
+                </td>
+                <td>
+                    <input type="text" id="ColumnValue" placeholder="Enter Column Value" autocomplete="off" />
+                </td>
+                <td align="center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEVDetails()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
+                </td>
+            </tr>
+        }
+
+        @foreach (var item in Model)
+        {
+            if (TempData["Action"] == "EditEVDetails" && Convert.ToInt32(TempData["Id"]) == item.Columns_Value_Code)
+            {
+                i++;
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        <input type="text" id="ColumnValue" value="@item.Columns_Value" />
+                    </td>
+                    <td>
+                        <a title="Update" class="glyphicon glyphicon-ok-circle" onclick="UpdateEVDetails(@item.Columns_Value_Code)"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                i++;
+                <tr id="trExtendValueRate_">
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        @item.Columns_Value
+                    </td>
+                    @if (ViewBag.HideButton != "HideButton")
+                    {
+                        <td>
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick='AddExtendedValueDetails("@item.Columns_Value_Code","EDIT")'></a>
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteEVDetails(@item.Columns_Value_Code)"></a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

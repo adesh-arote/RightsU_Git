@@ -221,6 +221,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Attrib_GroupController.cs" />
     <Compile Include="Controllers\Attrib_ReportsController.cs" />
+    <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
     <Compile Include="Controllers\ReportColumnSetupController.cs" />
     <Compile Include="Controllers\ReportColumnSetupITController.cs" />
@@ -1341,6 +1342,10 @@
     <Content Include="Views\ReportColumnSetup\Index.cshtml" />
     <Content Include="Views\ReportColumnSetup\_AddEditReportColumnSetup.cshtml" />
     <Content Include="Views\ReportColumnSetup\_BindReportColumnSetup.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Create.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
