@@ -3135,6 +3135,90 @@ namespace RightsU_DAL
         public Supplementary_Config_Repository(string constr) : base(constr) { }
     }
 
+
+
+    public class Digital_Repository : RightsU_Repository<Digital>
+    {
+        public Digital_Repository(string constr) : base(constr) { }
+
+        public override void Save(Digital objDigital)
+        {
+            if (objDigital.EntityState == State.Added)
+            {
+                base.Save(objDigital);
+            }
+            else if (objDigital.EntityState == State.Modified)
+            {
+                base.Update(objDigital);
+            }
+            else if (objDigital.EntityState == State.Deleted)
+            {
+                base.Delete(objDigital);
+            }
+        }
+
+    }
+
+    public class Digital_Data_Repository : RightsU_Repository<Digital_Data>
+    {
+        public Digital_Data_Repository(string constr) : base(constr) { }
+        public override void Save(Digital_Data objDigital_Data)
+        {
+            if (objDigital_Data.EntityState == State.Added)
+            {
+                base.Save(objDigital_Data);
+            }
+            else if (objDigital_Data.EntityState == State.Modified)
+            {
+                base.Update(objDigital_Data);
+            }
+            else if (objDigital_Data.EntityState == State.Deleted)
+            {
+                base.Delete(objDigital_Data);
+            }
+        }
+    }
+
+    public class Digital_Tab_Repository : RightsU_Repository<Digital_Tab>
+    {
+        public Digital_Tab_Repository(string constr) : base(constr) { }
+        public override void Save(Digital_Tab objDigital_Tab)
+        {
+            if (objDigital_Tab.EntityState == State.Added)
+            {
+                base.Save(objDigital_Tab);
+            }
+            else if (objDigital_Tab.EntityState == State.Modified)
+            {
+                base.Update(objDigital_Tab);
+            }
+            else if (objDigital_Tab.EntityState == State.Deleted)
+            {
+                base.Delete(objDigital_Tab);
+            }
+        }
+    }
+
+    public class Digital_Config_Repository : RightsU_Repository<Digital_Config>
+    {
+        public Digital_Config_Repository(string constr) : base(constr) { }
+        public override void Save(Digital_Config objDigital_Config)
+        {
+            if (objDigital_Config.EntityState == State.Added)
+            {
+                base.Save(objDigital_Config);
+            }
+            else if (objDigital_Config.EntityState == State.Modified)
+            {
+                base.Update(objDigital_Config);
+            }
+            else if (objDigital_Config.EntityState == State.Deleted)
+            {
+                base.Delete(objDigital_Config);
+            }
+        }
+    }
+
     #region Added for File uplaod in demo setup 
     public class ImgPathData_Repository : RightsU_Repository<ImgPathData>
     {

@@ -21608,17 +21608,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Supplementary" EntityType="RightsU_NeoModel.Supplementary" />
-          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
           <EntitySet Name="Supplementary_Data" EntityType="RightsU_NeoModel.Supplementary_Data" />
           <EntitySet Name="Supplementary_Tab" EntityType="RightsU_NeoModel.Supplementary_Tab" />
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
-            <End Role="Supplementary" EntitySet="Supplementary" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
-            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
           <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -21797,6 +21788,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Digital_Config_Digital_Tab" Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab">
             <End Role="Digital_Tab" EntitySet="Digital_Tab" />
             <End Role="Digital_Config" EntitySet="Digital_Config" />
+          </AssociationSet>
+          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
+            <End Role="Supplementary" EntitySet="Supplementary" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
+            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -36827,29 +36827,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary" ToRole="Supplementary_Config" />
         </EntityType>
-        <EntityType Name="Supplementary_Config">
-          <Key>
-            <PropertyRef Name="Supplementary_Config_Code" />
-          </Key>
-          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Max_Length" Type="Int32" />
-          <Property Name="Page_Control_Order" Type="Int32" />
-          <Property Name="Control_Field_Order" Type="Int32" />
-          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
-          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
-          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
             <PropertyRef Name="Supplementary_Data_Code" />
@@ -36868,20 +36845,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Supplementary_Tab_Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Order_No" Type="Int32" />
           <Property Name="Tab_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
           <Property Name="EditWindowType" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Module_Code" Type="Int32" />
           <Property Name="Key_Config_Code" Type="Int32" />
           <Property Name="Is_Show" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Tab" ToRole="Supplementary_Config" />
         </EntityType>
-        <Association Name="FK_Supplementary_Config_Supplementary">
-          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
-        </Association>
-        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
-          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
-        </Association>
         <ComplexType Name="USP_Acq_SUPP_Tab_Result">
           <Property Type="String" Name="supplementary_name" Nullable="true" MaxLength="200" />
           <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
@@ -37342,6 +37311,55 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Digital_Config">
               <PropertyRef Name="Digital_Tab_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Code" Type="Int32" />
+          <Property Name="Supplementary_Tab_Code" Type="Int32" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
+          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+        </EntityType>
+        <Association Name="FK_Supplementary_Config_Supplementary">
+          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary">
+              <PropertyRef Name="Supplementary_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
+          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary_Tab">
+              <PropertyRef Name="Supplementary_Tab_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Tab_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -46593,28 +46611,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Supplementary_Config">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
-              <MappingFragment StoreEntitySet="Supplementary_Config">
-                <ScalarProperty Name="LP_Supplementary_Value_Config_Code" ColumnName="LP_Supplementary_Value_Config_Code" />
-                <ScalarProperty Name="LP_Supplementary_Data_Code" ColumnName="LP_Supplementary_Data_Code" />
-                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
-                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
-                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
-                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
-                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
-                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
-                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
-                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
-                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
-                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
-                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
-                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
-                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
-                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Supplementary_Data">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Data">
               <MappingFragment StoreEntitySet="Supplementary_Data">
@@ -46640,24 +46636,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" StoreEntitySet="Supplementary_Config">
-            <EndProperty Name="Supplementary_Config">
-              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
-            </EndProperty>
-            <EndProperty Name="Supplementary">
-              <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
-            </EndProperty>
-            <Condition ColumnName="Supplementary_Code" IsNull="false" />
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="FK_Supplementary_Config_Supplementary_Tab" TypeName="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" StoreEntitySet="Supplementary_Config">
-            <EndProperty Name="Supplementary_Config">
-              <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
-            </EndProperty>
-            <EndProperty Name="Supplementary_Tab">
-              <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
-            </EndProperty>
-            <Condition ColumnName="Supplementary_Tab_Code" IsNull="false" />
-          </AssociationSetMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_SUPP_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_SUPP_Tab">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Acq_SUPP_Tab_Result">
@@ -47057,6 +47035,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Digital_Tab_Description" ColumnName="Digital_Tab_Description" />
                 <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
                 <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
+              <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="LP_Supplementary_Value_Config_Code" ColumnName="LP_Supplementary_Value_Config_Code" />
+                <ScalarProperty Name="LP_Supplementary_Data_Code" ColumnName="LP_Supplementary_Data_Code" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
+                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
+                <ScalarProperty Name="Supplementary_Tab_Code" ColumnName="Supplementary_Tab_Code" />
+                <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

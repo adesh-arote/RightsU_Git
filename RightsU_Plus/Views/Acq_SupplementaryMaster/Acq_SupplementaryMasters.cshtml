@@ -1,0 +1,702 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    /**/
+    RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var Url_BindSupplementaryConfigList = '@Url.Action("BindSupplementaryConfigList", "Acq_SupplementaryMaster")';
+    var Url_BindSupplementaryTabList = '@Url.Action("BindSupplementaryTabList", "Acq_SupplementaryMaster")';
+    var Url_BindSupplementaryDataList = '@Url.Action("BindSupplementaryDataList", "Acq_SupplementaryMaster")';
+    var Url_BindSupplementaryList = '@Url.Action("BindSupplementaryList", "Acq_SupplementaryMaster")';
+
+    var Url_SearchSupplementaryConfig = '@Url.Action("SearchConfig", "Acq_SupplementaryMaster")';
+
+    $(document).ready(function () {
+        if ("@ViewBag.Message" != "") {
+            showAlert("S","@ViewBag.Message");
+        }
+        addNumeric();
+
+        if ("@ViewBag.AddTab" == "Tab") {
+            pageBinding("Tab");
+        }
+        else if ("@ViewBag.AddTab" == "Supp") {
+            pageBinding("Supp");
+        }
+        else if ("@ViewBag.AddTab" == "Data") {
+            pageBinding("Data");
+        }
+        else if ("@ViewBag.AddTab" == "Config") {
+            pageBinding("Config");
+        }
+        else if ("@ViewBag.AddTab" == ""){
+            pageBinding("Tab");
+        }
+    })
+    function AddButtonFunction() {
+        var TabValue = $("#SuppTab").val()
+        if (TabValue == "SuppTab") {
+            AddEditViewSupplementaryTab(0, 'ADDTAB');
+        }
+        else if (TabValue == "SuppData") {
+            AddEditViewSupplementaryTab(0, 'ADDDATA');
+        }
+        else if (TabValue =="SuppConfig") {
+            AddEditViewSupplementaryTab(0, 'ADDCONFIG');
+        }
+        else if (TabValue =="Supp") {
+            AddEditViewSupplementaryTab(0, 'ADDSUPP');
+        }
+    }
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function SetPagingData() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallbackData };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallbackData(page_index, jq) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindSupplementaryList("Data");
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function SetPagingTab() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallbackTab };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallbackTab(page_index, jq) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindSupplementaryList("Tab");
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function SetPagingConfig() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallbackConfig };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallbackConfig(page_index, jq) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindSupplementaryList("Config");
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function SetPagingSupp() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallbackSupp };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallbackSupp(page_index, jq) {
+        debugger;
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindSupplementaryList("Supp");
+            else
+                IsCall = 'Y';
+        }
+    }
+
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function checkCurrentAction() {
+        debugger;
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD_RC") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT_RC") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        else if (action == "DELETE_EDIT_CHN") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+
+
+    function pageBinding(string) {
+        debugger;
+        if (string == "Tab") {
+            SearchTab("");
+            SetPagingTab();
+            $('#liSupplementaryTab').addClass("active");
+            $('#liSupplementary').removeClass("active");
+            $('#liSupplementaryData').removeClass("active");
+            $('#liSupplementaryConfig').removeClass("active");
+        }
+        else if (string == "Supp") {
+            SearchSupp("");
+            SetPagingSupp();
+            $('#liSupplementaryTab').removeClass("active");
+            $('#liSupplementary').addClass("active");
+            $('#liSupplementaryData').removeClass("active");
+            $('#liSupplementaryConfig').removeClass("active");
+        }
+        else if (string == "Data") {
+            SearchData("");
+            SetPagingData();
+            $('#liSupplementaryTab').removeClass("active");
+            $('#liSupplementary').removeClass("active");
+            $('#liSupplementaryData').addClass("active");
+            $('#liSupplementaryConfig').removeClass("active");
+        }
+        else if (string == "Config") {
+            SearchConfig("");
+            SetPagingConfig();
+            $('#liSupplementaryTab').removeClass("active");
+            $('#liSupplementary').removeClass("active");
+            $('#liSupplementaryData').removeClass("active");
+            $('#liSupplementaryConfig').addClass("active");
+        }
+    }
+
+    function SearchConfig(searchText) {
+        debugger;
+        var TabValue = "ConfigTab";
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: Url_SearchSupplementaryConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabValue: TabValue
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                $('#divSupplementaryList').empty();
+                $('#divSupplementaryList').html(result);
+                initializeTooltip();
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPagingConfig();
+                BindSupplementaryList("Config");
+                hideLoading();
+            },
+            error: function (result) {
+                debugger;
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SearchData(searchText) {
+        debugger;
+        var TabValue = "DataTab";
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: Url_SearchSupplementaryConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabValue: TabValue
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                $('#divSupplementaryList').empty();
+                $('#divSupplementaryList').html(result);
+                initializeTooltip();
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPagingData();
+                BindSupplementaryList("Data");
+                hideLoading();
+            },
+            error: function (result) {
+                debugger;
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SearchSupp(searchText) {
+        debugger;
+        var TabValue = "SuppTab";
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: Url_SearchSupplementaryConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabValue: TabValue
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                $('#divSupplementaryList').empty();
+                $('#divSupplementaryList').html(result);
+                initializeTooltip();
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPagingSupp();
+                BindSupplementaryList("Supp");
+                hideLoading();
+            },
+            error: function (result) {
+                debugger;
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SearchTab(searchText) {
+        debugger;
+        var TabValue = "Tab";
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: Url_SearchSupplementaryConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabValue: TabValue
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                $('#divSupplementaryList').empty();
+                $('#divSupplementaryList').html(result);
+                initializeTooltip();
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPagingTab();
+                BindSupplementaryList("Tab");
+                hideLoading();
+            },
+            error: function (result) {
+                debugger;
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindSupplementaryList(charecter) {
+        showLoading();
+        if (charecter == "Supp") {
+            Url_BindSupplementary = Url_BindSupplementaryList;
+        }
+        else if (charecter == "Tab") {
+            Url_BindSupplementary = Url_BindSupplementaryTabList;
+        }
+        else if (charecter == "Config") {
+            Url_BindSupplementary = Url_BindSupplementaryConfigList;
+        }
+        else if (charecter == "Data") {
+            Url_BindSupplementary = Url_BindSupplementaryDataList;
+        };
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: Url_BindSupplementary,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage
+            }),
+            success: function (result) {
+                hideLoading();
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSupplementaryList').empty();
+                    $('#divSupplementaryList').html(result);
+                    initializeTooltip();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditViewSupplementaryTab(id, commandName) {
+        debugger;
+        if (commandName == "ADDTAB") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryTab", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "EDITTAB") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryTab", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "VIEWTAB") {
+            var URL_CallAction = '@Url.Action("DetailsSupplementaryTab", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "ADDSUPP")
+        {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementary", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "EDITSUPP") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementary", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "VIEWSUPP") {
+            var URL_CallAction = '@Url.Action("DetailsSupplementary", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "ADDDATA") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryData", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "EDITDATA") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryData", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "VIEWDATA") {
+            var URL_CallAction = '@Url.Action("DetailsSupplementaryData", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "ADDCONFIG") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryConfig", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "EDITCONFIG") {
+            var URL_CallAction = '@Url.Action("AddOrEditSupplementaryConfig", "Acq_SupplementaryMaster")/'+ id;
+        }
+        if (commandName == "VIEWCONFIG") {
+            var URL_CallAction = '@Url.Action("DetailsSupplementaryConfig", "Acq_SupplementaryMaster")/'+ id;
+        }
+        $.ajax({
+            type: "GET",
+            url: URL_CallAction,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                id:id
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                if (commandName != "VIEW")
+                    commandName = "";
+            }
+        });
+    }
+</script>
+
+<div class="main_section" id="Mainsection">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Supplementary Masters
+                    </h2>
+                    <input type="button" class="btn btn-primary" value="Add" style="float:right;margin-bottom:5px" id="AddButtonId" onclick="AddButtonFunction()" />                    
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;text-align:center;padding-top:8px;">
+                                @objMessageKey.SearchText :
+                            </td>
+                            <td style="width:30%;">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Type here to search" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td id="txtSort">
+                                @objMessageKey.SortBy:
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input", @style = "width: 75%" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="grid_area">
+
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+
+                    <div class="navigation_tabs">
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs nav-tab pull-left">
+                                @*@{
+                                        string cssclass = objSchema.Page_From == GlobalParams.Page_From_Supplementary ? "active" : "";
+                                    }*@
+
+                                <li @*class="active"*@ @*class="@cssclass"*@ id="liSupplementaryTab">
+                                    <input type="button" role="tab" @*onclick="return LoadTab('@GlobalParams.Page_From_General    ','@cssclass    ');"*@ onclick='pageBinding("Tab")' value="Supplementary Tab" style="cursor: pointer;" />
+                                    <span></span>
+                                </li>
+
+                                <li @*class="@cssclass"*@ id="liSupplementary">
+                                    <input type="button" role="tab" @*onclick="return LoadTab('@GlobalParams.Page_From_General    ','@cssclass    ');"*@ onclick='pageBinding("Supp")' value="Supplementary" style="cursor: pointer;" />
+                                    <span></span>
+                                </li>
+
+                                <li @*class="@cssclass"*@ id="liSupplementaryData">
+                                    <input type="button" role="tab" @*onclick="return LoadTab('@GlobalParams.Page_From_General    ','@cssclass    ');"*@ onclick='pageBinding("Data")' value="Supplementary Data" style="cursor: pointer;" />
+                                    <span></span>
+                                </li>
+
+                                <li @*class="@cssclass"*@ id="liSupplementaryConfig">
+                                    <input type="button" role="tab" @*onclick="return LoadTab('@GlobalParams.Page_From_General    ','@cssclass    ');"*@ onclick='pageBinding("Config")' value="Supplementary Config" style="cursor: pointer;" />
+                                    <span></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divSupplementaryList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

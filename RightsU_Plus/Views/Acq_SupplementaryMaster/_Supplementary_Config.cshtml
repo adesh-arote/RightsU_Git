@@ -1,0 +1,202 @@
+﻿@model IEnumerable<RightsU_Entities.Supplementary_Config>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+       
+  var Url_SearchSupplementaryConfig = '@Url.Action("SearchConfig", "Acq_SupplementaryMaster")';
+
+   
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindSupplementaryList("Config");
+        SetPagingConfig();
+    }
+
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchConfig(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
+        SearchConfig("");
+    }
+    
+</script>
+<input type="hidden" value="SuppConfig" id="SuppTab" />
+<div style="text-align:center;">
+    
+    @*<p>        
+        <input type="button" class="btn btn-primary" value="Add" style="float:right;margin-bottom: 6px" onclick="AddEditViewSupplementaryTab(0, 'ADDCONFIG')" />
+    </p>*@
+    <table class="table table-bordered table-hover" style="margin-top:10px">
+        <thead>
+            <tr>
+                <th>                    
+                    Config Code
+                </th>
+
+                <th>                    
+                    Supplementary Name
+                </th>
+
+                <th>                   
+                    Tab Name
+                </th>
+
+                <th>
+                    
+                    Page Group
+                </th>
+                <th >
+                    
+                    Label Name
+                </th>
+                <th>
+                    
+                    Control Type
+                </th>
+                <th>
+                    Is Mandatory
+                </th>
+                <th>
+                    Is MultiSelect
+                </th>
+                <th>
+                    Max Length
+                </th>
+                <th style="display:none">
+                    Page Control Order
+                </th>
+                <th style="display:none">
+                    Control Field Order
+                </th>
+                <th style="display:none">
+                    Default Values
+                </th>
+                <th style="display:none">
+                    View Name
+                </th>
+                <th style="display:none">
+                    Text Field
+                </th>
+                <th style="display:none">
+                    Value Field
+                </th>
+                <th style="display:none">
+                    Whr Criteria
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supplementary_Config_Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supplementary.Supplementary_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Supplementary_Tab.Supplementary_Tab_Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Page_Group)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Label_Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Control_Type)
+                    </td>
+                    <td>
+                        @if (item.Is_Mandatory == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+
+                    </td>
+                    <td>
+                        @if (item.Is_Multiselect == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Max_Length)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Page_Control_Order)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Control_Field_Order)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Default_Values)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.View_Name)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Text_Field)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Value_Field)
+                    </td>
+                    <td style="display:none">
+                        @Html.DisplayFor(modelItem => item.Whr_Criteria)
+                    </td>
+                    <td>
+                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditViewSupplementaryTab('@item.Supplementary_Config_Code','EDITCONFIG')"></a>
+                        <a title="Edit" class="glyphicon glyphicon-eye-open" onclick="AddEditViewSupplementaryTab('@item.Supplementary_Config_Code','VIEWCONFIG')"></a>
+                        @Html.ActionLink(" ", "DeleteSupplementaryConfig", new { id = item.Supplementary_Config_Code }, new { @class = "glyphicon glyphicon-trash", @style = "cursor: pointer;", @title = "Delete" })
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+
+

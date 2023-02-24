@@ -1,0 +1,141 @@
+﻿@model RightsU_Entities.Digital
+@{
+    if (ViewBag.Title != "View")
+    {
+        ViewBag.Title = Model != null ? "Edit" : "Create";
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.lblExchangeRate').css("padding-right", "2%");
+        }
+        else {
+            $('.lblExchangeRate').css("padding-left", "2%");
+        }
+    });
+
+    function ClosePopup() {
+        debugger;
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();        
+    }
+    var Url_Index = '@Url.Action("Index", "Acq_DigitalMaster")';    
+    var Url_BindDigitalAddOrEdit = '@Url.Action("AddOrEditDigital", "Acq_DigitalMaster")';
+
+    function BindDigitalAddOrEditList() {
+        debugger;
+        var IsActive = $('#Is_Active').val();
+        var DigitalName = $('#Digital_Name').val();
+        var DigitalCode = $('#Digital_Code').val();
+        if (IsActive == "Yes") {
+            IsActive = "Y";
+        }
+        else if (IsActive == "No"){
+            IsActive = "N";
+        }
+        $.ajax({
+            type: "POST",
+            url: Url_BindDigitalAddOrEdit,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                IsActive: IsActive,
+                DigitalName: DigitalName,
+                DigitalCode: DigitalCode
+            }),
+            async: false,
+            success: function (result) {
+                if (result.Status == "S") {
+                    window.location.href = Url_Index;
+                   
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+
+<div class="modal_block modal_header">
+    <span style="font-weight:bold;font-size: 18px">Digital</span>
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+</div>
+
+<div class="modal_block">
+    <table class="add_title_popup" style="text-align: left">
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Digital Name
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Digital_Name)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Digital_Name, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Digital_Name", @Style = "width:75%;margin-bottom: 5px;margin-top:5px" } })
+                }
+
+            </td>
+        </tr>
+        <tr style="display:none">
+            <th class="lblExchangeRate" style="width:20%">
+                Is Active
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Is_Active)
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.Is_Active, new List<SelectListItem> {
+          new SelectListItem{Text="Yes", Value="Y" },
+          new SelectListItem{Text="No", Value="N"} },"--Please Select--", new { @id = "Is_Active", @class = "chosen-select", @Style = "width:75%;margin-bottom: 5px" })
+                    @Html.ValidationMessageFor(model => model.Is_Active, "", new { @class = "text-danger" })
+                }
+            </td>
+        </tr>
+        <tr style="display: none">
+            <th>
+                Supplementary Code
+            </th>
+            <td>
+                @Html.HiddenFor(model => model.Digital_Code, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Digital_Code" } })
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal_block modal_header">
+    @if (ViewBag.Title == "Edit")
+    {
+        <div>
+            <input type="button" value="Save" class="btn btn-primary" onclick="BindDigitalAddOrEditList()" />
+            <input type="button" value="Close" Class="btn btn-primary" onclick="ClosePopup()" />
+        </div>
+    }
+    else if (ViewBag.Title == "View")
+    {
+        <div>
+            <input type="button" value="Close" Class="btn btn-primary" onclick="ClosePopup()" />
+        </div>
+    }
+</div>

@@ -1,0 +1,406 @@
+﻿@model RightsU_Entities.Digital_Config
+
+@{
+
+    if (ViewBag.Title != "View")
+    {
+        ViewBag.Title = Model != null ? "Edit" : "Create";
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script>
+    var Url_Index = '@Url.Action("Index", "Acq_DigitalMaster")';
+
+    var Url_BindDigitalConfigAddOrEdit = '@Url.Action("AddOrEditDigitalConfig", "Acq_DigitalMaster")';
+
+     $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.lblExchangeRate').css("padding-right", "2%");
+        }
+        else {
+            $('.lblExchangeRate').css("padding-left", "2%");
+        }
+    });
+
+    function ClosePopup() {
+        debugger;
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+
+    }
+
+    function BindDigitalConfigAddOrEditList() {
+        debugger;
+        var DigitalConfigCode = $('#Digital_Config_Code').val();
+        var DigitalCode = $('#Digital_Code').val();
+        var DigitalTabCode = $('#Digital_Tab_Code').val();
+        var PageGroup = $('#Page_Group').val();
+        var LabelName = $('#Label_Name').val();
+        var ControlType = $('#Control_Type').val();
+        var IsMandatory = $('#Is_Mandatory').val();
+        var IsMultiselect = $('#Is_Multiselect').val();
+        var MaxLength = $('#Max_Length').val();
+        var PageControlOrder = $('#Page_Control_Order').val();
+        var ControlFieldOrder = $('#Control_Field_Order').val();
+        var DefaultValues = $('#Default_Values').val();
+        var ViewName = $('#View_Name').val();
+        var TextField = $('#Text_Field').val();
+        var ValueField = $('#Value_Field').val();
+        var WhrCriteria = $('#Whr_Criteria').val();
+
+        if (MaxLength == "") {
+            MaxLength = "0";
+
+        }
+
+        $.ajax({
+            type: "POST",
+            url: Url_BindDigitalConfigAddOrEdit,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            data: JSON.stringify({
+                DigitalConfigCode: DigitalConfigCode,
+                DigitalCode: DigitalCode,
+                DigitalTabCode: DigitalTabCode,
+                PageGroup: PageGroup,
+                LabelName: LabelName,
+                ControlType: ControlType,
+                IsMandatory: IsMandatory,
+                IsMultiselect: IsMultiselect,
+                MaxLength: MaxLength,
+                PageControlOrder: PageControlOrder,
+                ControlFieldOrder: ControlFieldOrder,
+                DefaultValues: DefaultValues,
+                ViewName: ViewName,
+                TextField: TextField,
+                ValueField: ValueField,
+                WhrCriteria: WhrCriteria
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    window.location.href = Url_Index;
+                    //pageBindingConfig();
+                }
+            },
+            error: function (result) {
+                debugger;
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+
+<div class="modal_block modal_header">
+    <span style="font-weight:bold;font-size:18px">Digital Config</span>
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+</div>
+<div class="modal_block">
+    <table class="add_title_popup" style="text-align: left">
+        <tr style="display:none">
+            <th class="lblExchangeRate" style="width:20%">
+                Digital Config Code
+            </th>
+            <td>
+
+                @Html.HiddenFor(model => model.Digital_Config_Code, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Digital_Config_Code" } })
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Digital Name
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Digital.Digital_Name)
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.Digital_Code, (IEnumerable<SelectListItem>)ViewBag.Digi, htmlAttributes: new { @class = "form-control input-sm chosen-select", @id = "Digital_Code", @Style = "width:87%;margin-top: 5px; margin-bottom:5px" })
+                }
+
+            </td>
+            @*</tr>
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                Tab Name
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Digital_Tab.Digital_Tab_Description)
+                }
+                else
+                {
+                    @Html.DropDownList("Digital_Tab_Code", (IEnumerable<SelectListItem>)ViewBag.Tab, htmlAttributes: new { @class = "form-control input-sm chosen-select", @id = "Digital_Tab_Code", @Style = "width:87%;margin-top: 5px;margin-bottom:5px" })
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Page Group
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Page_Group)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Page_Group, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Page_Group", @Style = "width:87%;margin-bottom:5px" } })
+                }
+            </td>
+            @*</tr>
+
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                Label Name
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Label_Name)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Label_Name, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Label_Name", @Style = "width:87%;margin-bottom:5px" } })
+                }
+
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Control Type
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Control_Type)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Control_Type, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Control_Type", @Style = "width:87%;margin-bottom:5px" } })
+                }
+
+            </td>
+            @*</tr>
+
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                Is Mandatory
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Is_Mandatory)
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.Is_Mandatory, new List<SelectListItem> {
+          new SelectListItem{Text="Yes", Value="Y" },
+          new SelectListItem{Text="No", Value="N"} },"--Please Select--", new { @id = "Is_Mandatory", @class = "chosen-select", @Style = "width:87%;margin-bottom:5px" })
+                }
+
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Is Multiselect
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Is_Multiselect)
+                }
+                else
+                {
+                    @Html.DropDownListFor(model => model.Is_Multiselect, new List<SelectListItem> {
+                new SelectListItem{Text="Yes", Value="Y" },
+                new SelectListItem{Text="No", Value="N"} }, "--Please Select--", new { @id = "Is_Multiselect", @class = "chosen-select", @Style = "width:87%;margin-bottom:5px" })
+                }
+
+            </td>
+            @*</tr>
+
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                Max Length
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Max_Length)
+                }
+                else if (ViewBag.Title == "Edit")
+                {
+                    <input data-val="true" id="Max_Length" name="Max_Length" type="text" value="@Model.Max_Length" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+                else
+                {
+                    <input data-val="true" id="Max_Length" name="Max_Length" type="text" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Page Control Order
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Page_Control_Order)
+                }
+                else if (ViewBag.Title == "Edit")
+                {
+                    <input data-val="true" id="Page_Control_Order" name="Page_Control_Order" type="text" value="@Model.Page_Control_Order" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+                else
+                {
+                    <input data-val="true" id="Page_Control_Order" name="Page_Control_Order" type="text" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+
+                }
+            </td>
+
+            <th class="lblExchangeRate" style="width:20%">
+                Control Field Order
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Control_Field_Order)
+                }
+                else if (ViewBag.Title == "Edit")
+                {
+                    <input data-val="true" id="Control_Field_Order" name="Control_Field_Order" type="text" value="@Model.Control_Field_Order" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+                else
+                {
+                    <input data-val="true" id="Control_Field_Order" name="Control_Field_Order" type="text" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Default Values
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Default_Values)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Default_Values, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Default_Values", @Style = "width:87%;margin-bottom:5px" } })
+                }
+
+            </td>
+            @*</tr>
+
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                View Name
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.View_Name)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.View_Name, new { htmlAttributes = new { @class = "form-control input-sm", @id = "View_Name", @Style = "width:87%;margin-bottom:5px" } })
+                }
+
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Text Field
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Text_Field)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Text_Field, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Text_Field", @Style = "width:87%;margin-bottom:5px" } })
+                }
+
+            </td>
+            @*</tr>
+
+                <tr>*@
+            <th class="lblExchangeRate" style="width:20%">
+                Value Field
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Value_Field)
+                }
+                else if (ViewBag.Title == "Edit")
+                {
+                    <input data-val="true" id="Value_Field" name="Value_Field" type="text" value="@Model.Value_Field" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+                else
+                {
+                    <input data-val="true" id="Value_Field" name="Value_Field" type="text" class="form-control input-sm pagingSize" Style="width:87%;margin-bottom: 5px">
+                }
+
+            </td>
+        </tr>
+
+        <tr>
+            <th class="lblExchangeRate" style="width:20%">
+                Whr Criteria
+            </th>
+            <td>
+                @if (ViewBag.Title == "View")
+                {
+                    @Html.DisplayFor(model => model.Whr_Criteria)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Whr_Criteria, new { htmlAttributes = new { @class = "form-control input-sm", @id = "Whr_Criteria", @Style = "width:87%;margin-bottom:5px" } })
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="modal_block modal_header">
+    @if (ViewBag.Title == "Edit")
+    {
+        <input type="button" value="Save" class="btn btn-primary" onclick="BindDigitalConfigAddOrEditList()" />
+        <input type="button" value="Close" class="btn btn-primary" onclick="ClosePopup()" />
+    }
+    else if (ViewBag.Title == "View")
+    {
+        <input type="button" value="Close" class="btn btn-primary" onclick="ClosePopup()" />
+    }
+
+</div>
+
