@@ -446,6 +446,10 @@ namespace RightsU_InterimDb.Models
         public DbSet<ImgPathData> ImgPathDatas { get; set; }
         public DbSet<Attrib_Report_Column> Attrib_Report_Column { get; set; }
         public DbSet<Report_Column_Setup_IT> Report_Column_Setup_IT { get; set; }
+        public DbSet<Digital> Digital { get; set; }
+        public DbSet<Digital_Config> Digital_Config { get; set; }
+        public DbSet<Digital_Data> Digital_Data { get; set; }
+        public DbSet<Digital_Tab> Digital_Tab { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
