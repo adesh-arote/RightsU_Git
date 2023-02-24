@@ -13330,7 +13330,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
           <Parameter Name="Confirming_Party" Type="nvarchar(max)" Mode="In" />
-          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
+         
         </Function>
         <Function Name="USP_Insert_Acq_Deal_Pushback_Dubbing" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Pushback_Code" Type="int" Mode="In" />
@@ -13535,7 +13535,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Last_Action_By" Type="int" Mode="In" />
           <Parameter Name="Deal_Segment_Code" Type="int" Mode="In" />
           <Parameter Name="Revenue_Vertical_Code" Type="int" Mode="In" />
-          <Parameter Name="Material_Remarks" Type="nvarchar" Mode="In" />
+          
         </Function>
         <Function Name="USP_INSERT_UPLOAD_ERR_DETAIL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="File_Code" Type="bigint" Mode="In" />
