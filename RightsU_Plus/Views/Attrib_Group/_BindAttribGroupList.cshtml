@@ -48,7 +48,7 @@
                     New
                 </td>
                 <td>
-                    <input type="text" id="AttrGrpName" />
+                    <input type="text" id="AttrGrpName" style="width:80%" />
                 </td>
                 <td>
                     @Html.DropDownList("Attrib Type", (IEnumerable<SelectListItem>)ViewBag.AttribType, "Select a type", htmlAttributes: new { @class = "chosen-single", @id = "AttrType" })
@@ -57,7 +57,7 @@
                     <input type="text" id="CommentName" />
                 </td>
                 <td>
-                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, "Please Select", htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
+                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
                 </td>
                 @*<td>
                     
@@ -80,7 +80,7 @@
                     @Html.DisplayFor(modelItem => item.Attrib_Group_Code)
                 </td>
                 <td>
-                    <input type="text" id="AttrGrpName" value="@item.Attrib_Group_Name" />
+                    <input type="text" id="AttrGrpName" style="width:80%" value="@item.Attrib_Group_Name" />
                 </td>
                 <td>
                     @Html.DropDownList("Attrib Type", (IEnumerable<SelectListItem>)ViewBag.AttribType, "Select a type", htmlAttributes: new { @class = "chosen-single", @id = "AttrType" })
@@ -89,7 +89,7 @@
                     <input type="text" id="CommentName" value="@item.Comment_Name" />
                 </td>
                 <td>
-                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, "Please Select", htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
+                    @Html.DropDownList("Multiple Select", (IEnumerable<SelectListItem>)ViewBag.MultiSelect, htmlAttributes: new { @class = "chosen-single", @id = "IsMultiSelect" })
                 </td>
                 @*<td>
                     @{

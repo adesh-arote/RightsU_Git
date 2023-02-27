@@ -4179,7 +4179,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Right_Code" Type="int" />
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
-          <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
+          <Property Name="ValidOpList" Type="varchar" MaxLength="50" />
           <Property Name="Alternate_Config_Code" Type="int" />
           <Property Name="Display_Type" Type="varchar" MaxLength="5" />
         </EntityType>
@@ -23851,7 +23851,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Right_Code" Type="Int32" />
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
-          <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+          <Property Name="ValidOpList" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
           <Property Name="Alternate_Config_Code" Type="Int32" />
           <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
         </EntityType>

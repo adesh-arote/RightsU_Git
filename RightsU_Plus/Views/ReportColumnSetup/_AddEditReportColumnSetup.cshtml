@@ -24,6 +24,17 @@
     $(document).ready(function () {
         NumberOnly();
     });
+
+    $('#View_Name').change(function () {
+        $('#View_Name').removeAttr("style", "border-color: red; width:90%; background-color: rgba(155,0,0,0.1);");
+        $('#View_Name').addClass("chosen-single form-control input-sm");
+        $('#View_Name').css("width", "90%");
+    })
+    $('#IsPartofSelectOnly').change(function () {
+        $('#IsPartofSelectOnly').removeAttr("style", "border-color: red; width:90%; background-color: rgba(155,0,0,0.1);");
+        $('#IsPartofSelectOnly').addClass("chosen-single form-control input-sm");
+        $('#IsPartofSelectOnly').css("width", "90%");
+    })
 </script>
 
 <div class="modal_block modal_header">
@@ -60,7 +71,7 @@
                     </td>
                     <td style="width:25%">
                         @*<input type="text" class="form-control text-box single-line input-sm" id="Column_Code" name="Column_Code" value="@Model.Column_Code" autocomplete="off" style="width:90%" />*@
-                        @Model.Column_Code
+                        <input type="text" id="Column_Code" style="border:0" value="@Model.Column_Code" readonly />
                     </td>
                     <td style="width:25%">
                         <b>View Name</b>
@@ -163,7 +174,13 @@
                         <b>Valid Op List</b>
                     </td>
                     <td style="width:25%">
-                        <input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="@Model.ValidOpList" autocomplete="off" style="width:90%" />
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="@Model.ValidOpList" autocomplete="off" style="width:90%" />*@
+                        @Html.DropDownListFor(m => m.ValidOpList, new List<SelectListItem>
+                   {
+                       new SelectListItem{Text = "General Info", Value = "General Info"},
+                       new SelectListItem{Text = "Meta Data", Value = "Meta Data"},
+                       new SelectListItem{Text = "Rights Info", Value = "Rights Info"}
+                   }, "---Please Select---", htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "ValidOpList", @style = "width:90%" })
                     </td>
                 </tr>
 
@@ -297,7 +314,13 @@
                         <b>Valid Op List</b>
                     </td>
                     <td style="width:25%">
-                        <input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="" autocomplete="off" style="width:90%" />
+                        @*<input type="text" class="form-control text-box single-line input-sm" id="ValidOpList" name="ValidOpList" value="" autocomplete="off" style="width:90%" />*@
+                        @Html.DropDownListFor(m => m.ValidOpList, new List<SelectListItem>
+                   {
+                       new SelectListItem{Text = "General Info", Value = "General Info"},
+                       new SelectListItem{Text = "Meta Data", Value = "Meta Data"},
+                       new SelectListItem{Text = "Rights Info", Value = "Rights Info"}
+                   }, "---Please Select---", htmlAttributes: new { @class = "chosen-single form-control input-sm", @id = "ValidOpList", @style = "width:90%" })
                     </td>
                 </tr>
 

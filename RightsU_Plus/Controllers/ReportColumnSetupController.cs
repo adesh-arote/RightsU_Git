@@ -208,7 +208,7 @@ namespace RightsU_Plus.Controllers
             string message = "";
             Report_Column_Setup_Service report_Column_Setup_Service = new Report_Column_Setup_Service(objLoginEntity.ConnectionStringName);
 
-            List<Report_Column_Setup> templstRCS = report_Column_Setup_Service.SearchFor(s => true).Where(w => (w.Display_Name.ToUpper() == objRepColSetup.Display_Name.ToUpper()) && (w.View_Name == objRepColSetup.View_Name) && (w.Display_Order == objRepColSetup.Display_Order)).ToList();
+            List<Report_Column_Setup> templstRCS = report_Column_Setup_Service.SearchFor(s => true).Where(w => (w.Display_Name.ToUpper() == objRepColSetup.Display_Name.ToUpper()) && (w.View_Name == objRepColSetup.View_Name) && (w.Display_Order == objRepColSetup.Display_Order) && w.Column_Code != objRepColSetup.Column_Code).ToList();
 
             if (templstRCS.Count == 0)
             {
@@ -253,7 +253,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     status = "E";
-                    message = "Please fill all mandatory (*) fields";
+                    message = "Please fill all mandatory fields";
                 }
             }
             else

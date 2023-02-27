@@ -477,16 +477,16 @@
                         </tbody>
                     </table>
                     <div>
-                        <div style="margin:20px; text-align:center">
+                        <div style="margin-top:20px; margin-bottom:20px;">
                             @if (ViewBag.Title == "Create")
                             {
-                                <input type="button" value="Create" class="btn btn-primary" style="width:100px;" onclick="SaveReportColumn()" />
+                                <input type="button" value="Save" class="btn btn-primary" style="width:100px;" onclick="SaveReportColumn()" />
                             }
                             @if (ViewBag.Title == "Edit")
                             {
                                 <input type="button" value="Update" class="btn btn-primary" style="width:100px;" onclick="SaveReportColumn()" />
                             }
-                            @Html.ActionLink("Back to List", "Index", "", new { @class = "btn btn-primary" })
+                            @Html.ActionLink("Cancel", "Index", "", new { @class = "btn btn-primary", style = "width:100px;" })
                         </div>
                     </div>
                 </div>
