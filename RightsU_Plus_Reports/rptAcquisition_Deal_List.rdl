@@ -954,6 +954,34 @@ WHERE  (Parameter_Name = 'Is_Title_CoProd_AdvSearch')</CommandText>
         </Field>
       </Fields>
     </DataSet>
+    <DataSet Name="AllowDuration">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT        TOP (1) Parameter_Value
+FROM            System_Parameter_New
+WHERE        (Parameter_Name = 'Is_Display_Duration_In_Report')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AllowCBFCRating">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <CommandText>SELECT        TOP (1) Parameter_Value
+FROM            System_Parameter_New
+WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Parameter_Value">
+          <DataField>Parameter_Value</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
   </DataSets>
   <ReportSections>
     <ReportSection>
@@ -1075,6 +1103,7 @@ WHERE  (Parameter_Name = 'Is_Title_CoProd_AdvSearch')</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -7074,8 +7103,16 @@ IIf(Fields!Right_Status.Value = "C", "Complete",""))))</Value>
                     <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowRevenueVertical") = "Y", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
-                <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowDuration") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=IIF(First(Fields!Parameter_Value.Value, "AllowCBFCRating") = "Y", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember>
                   <Visibility>
