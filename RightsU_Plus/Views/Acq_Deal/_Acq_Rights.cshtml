@@ -620,13 +620,12 @@
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                    Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                      Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
 
-                                                                @if (ViewBag.Deal_Workflow_Flag == "AM")
-                                                                {
+                                                               
                                                                     <a id="btnRefPerDate" title="Refresh Perpetuity Date" class="glyphicon glyphicon-refresh" onclick="return CalculatePerpetuityEndDate()" style="padding-left: 10px;"></a>
-                                                                }
+                                                                
                                                             </li>
                                                         }
                                                     </ul>
