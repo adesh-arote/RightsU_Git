@@ -31,6 +31,12 @@
         if ("@ViewBag.Title" == "View") {
             AddExtendedValueDetails(0, "ShowView");
         }
+        $('#ControlType').change(function () {
+            $('#ControlType').removeAttr("style", "border-color: red; width:65%;");
+             $('#ControlType').addClass("chosen-single form-control input-sm");
+            $('#ControlType').css("width", "65%");
+        })
+
     });
 
     var Url_DeleteExtendedMetaData = '@Url.Action("DeleteConfirmed", "ExtendedColumn_Metadata")';
@@ -41,13 +47,7 @@
     var Url_DeleteEVDetail = '@Url.Action("DeleteEVDetails", "ExtendedColumn_Metadata")';
     var Url_CancelEvDetails = '@Url.Action("CancelEVDetails", "ExtendedColumn_Metadata")';
 
-    //debugger;
-    //var RefTable = $("#RefTable").val();
-    //var DisplayField = $("#DisplayField").val();
-    //var RefValueField = $("#RefValueField").val();
-    //var AdditionalCondition = $("#AdditionalCondition").val();
-    //var IsAddOnScreen = $("#IsAddOnScreen").val();
-
+   
 
     function CreateEditExtendedMetaData(){
         debugger;
@@ -75,7 +75,7 @@
         }
         if (controlType == "") {
             $("#ControlType").val('').attr("required", true);
-            $('#ControlType').val('').attr("style", "border-color: red;width:65%;")
+            $('#ControlType').val('').attr("style", "border-color: red;width:65%; background-color: rgba(155,0,0,0.1);")
             Return_value = false;
         }
 
@@ -451,7 +451,7 @@
                                 {
                                     @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
                                    { new SelectListItem{Text="DDL", Value="DDL"},
-                                     new SelectListItem{Text="TXT", Value="TXT"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single", @style = "width:65%", @onchange= "DisableEnableControl()" })
+                                     new SelectListItem{Text="TXT", Value="TXT"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:65%", @onchange= "DisableEnableControl()" })
                                 }
                             </td>
                         </tr>
