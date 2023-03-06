@@ -256,6 +256,9 @@ namespace RightsU_Plus.Controllers
             string Is_AllowMultiBUacqdeal = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AllowMultiBUacqdeal").First().Parameter_Value;
             ViewBag.Is_AllowMultiBUacqdeal = Is_AllowMultiBUacqdeal;
             ViewBag.BusineesUnitList = BindBUList();
+
+            ViewBag.FirstBU = BindBUList();
+
             CommonUtil.WriteErrorLog("BindBUList() method has been executed", Err_filename);
             if (obj_Acq_Syn_List_Search.BUCode == null)
             {

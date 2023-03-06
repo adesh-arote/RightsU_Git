@@ -644,7 +644,10 @@ function ChangeLabelName() {
         $('#btnAddTitleMaster').attr("disabled", true);
         $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', true);
     }
-    else {
+    else if (acqDealMovie_Count > 0) {
+        $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', true);
+    }
+    else{
         $('#tdSynLicensor').hide();
         $('#tdAcqLicensor').show();
         $('#btnAddTitleMaster').attr("disabled", false);
