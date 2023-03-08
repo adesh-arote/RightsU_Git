@@ -10,6 +10,24 @@
 }
 
 <script>
+    $(document).ready(function () {
+
+        $('#IsPartofSelectOnly').change(function () {
+            $('#IsPartofSelectOnly').removeAttr("style", "border-color: red; width:50%;");
+            $('#IsPartofSelectOnly').addClass("chosen-single");
+            $('#IsPartofSelectOnly').css("width", "50%");
+        })
+
+        $('#DisplayType').change(function () {
+            $('#DisplayType').removeAttr("style", "border-color: red; width:50%;");
+            $('#DisplayType').addClass("chosen-single");
+            $('#DisplayType').css("width", "50%");
+        })
+        
+    });
+</script>
+
+<script>
     @*var URL_SaveReportColumn = '@Url.Action("Create", "ReportColumnSetupIT")';*@
     var URL_Index = '@Url.Action("Index", "ReportColumnSetupIT")';
 
@@ -194,7 +212,6 @@
                                         <input type="text" id="ViewName" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Name In DB</b>
                                 </td>
@@ -233,7 +250,6 @@
                                         <input type="text" id="DisplayName" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Valued As</b>
                                 </td>
@@ -272,7 +288,6 @@
                                         <input class="form-control input-sm numberOnly" id="DisplayOrder" onclick="addNumeric()" style="width:50%;" type="text">
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Is Part of Select Only?</b>
                                 </td>
@@ -317,7 +332,6 @@
                                         <input type="text" id="ListSource" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Lookup Column</b>
                                 </td>
@@ -356,7 +370,6 @@
                                         <input type="text" id="DisplayColumn" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Right Code</b>
                                 </td>
@@ -395,7 +408,6 @@
                                         <input type="text" id="MaxLength" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Wh Condition</b>
                                 </td>
@@ -434,7 +446,6 @@
                                         <input type="text" id="ValidOpList" class="form-control input-sm" style="width:50%;" />
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Alternate Config Code</b>
                                 </td>

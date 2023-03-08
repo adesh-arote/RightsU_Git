@@ -11,11 +11,51 @@
 }
 
 <script>
+    $(document).ready(function () {
+
+        $('#AttribTypeDP').change(function () {
+            $('#AttribTypeDP').removeAttr("style", "border-color: red; width:70%;");
+            $('#AttribTypeDP').addClass("chosen-single");
+            $('#AttribTypeDP').css("width", "70%");
+        })
+
+        $('#AttribTypeBV').change(function () {
+            $('#AttribTypeBV').removeAttr("style", "border-color: red; width:70%;");
+            $('#AttribTypeBV').addClass("chosen-single");
+            $('#AttribTypeBV').css("width", "70%");
+        })
+
+        $('#DisplayName').change(function () {
+            $('#DisplayName').removeAttr("style", "border-color: red; width:70%;");
+            $('#DisplayName').addClass("chosen-single");
+            $('#DisplayName').css("width", "70%");
+        })
+
+        $('#ControlType').change(function () {
+            $('#ControlType').removeAttr("style", "border-color: red; width:70%;");
+            $('#ControlType').addClass("chosen-single");
+            $('#ControlType').css("width", "70%");
+        })
+
+        $('#Type').change(function () {
+            $('#Type').removeAttr("style", "border-color: red; width:70%;");
+            $('#Type').addClass("chosen-single");
+            $('#Type').css("width", "70%");
+        })
+
+        $('#IsSelectCriteria').change(function () {
+            $('#IsSelectCriteria').removeAttr("style", "border-color: red; width:70%;");
+            $('#IsSelectCriteria').addClass("chosen-single");
+            $('#IsSelectCriteria').css("width", "70%");
+        })
+
+    });
+</script>
+
+<script>
     @*var URL_SaveReport = '@Url.Action("Create", "Attrib_Reports")';*@
     var URL_Index = '@Url.Action("Index", "Attrib_Reports")';
     var URL_IndexAttribGroup = '@Url.Action("Index", "Attrib_Group")';
-
-
 
     function IndexAttribGroup() {
         window.location.href = URL_IndexAttribGroup;
@@ -180,7 +220,6 @@
                                         }
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Business Vertical Attrib</b>
                                 </td>
@@ -217,7 +256,6 @@
                                         @Html.DropDownList("lstDisplaypName", (IEnumerable<SelectListItem>)ViewBag.DisplayName, "---Please Select---", htmlAttributes: new { @id = "DisplayName", @class = "chosen-single", @style = "width:70%; text-align:left;" })
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Control Type</b>
                                 </td>
@@ -252,7 +290,6 @@
                                         @*@Html.EditorFor(model => model.Display_Order, new { htmlAttributes = new { @id = "DisplayOrder", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Output Group</b>
                                 </td>
@@ -286,7 +323,6 @@
                                         }, htmlAttributes: new { @id = "IsMandatory", @class = "chosen-single", @style = "width:70%; text-align:left;" })
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Icon</b>
                                 </td>
@@ -317,7 +353,6 @@
                                         @*@Html.TextBoxFor(model => model.Css_Class, new { htmlAttributes = new { @id = "CssClass", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
                                     }
                                 </td>
-
                                 <td style="width:20%">
                                     <b>Type</b>
                                 </td>
