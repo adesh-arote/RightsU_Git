@@ -1038,6 +1038,26 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AP_OEM" Width="1.5" PointX="47.375" PointY="24.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AP_Vendor_Details" Width="1.5" PointX="15" PointY="135" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AP_Vendor_Rule" Width="1.5" PointX="4.75" PointY="64.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AP_Vendor_Rule_Criteria" Width="1.5" PointX="7" PointY="0.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AP_Vendor_TnC" Width="1.5" PointX="15" PointY="107.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Banner" Width="1.5" PointX="36.375" PointY="50.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group" Width="1.5" PointX="1.75" PointY="54.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group_Config" Width="1.5" PointX="4" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details" Width="1.5" PointX="11.25" PointY="131" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details_TC" Width="1.5" PointX="16.5" PointY="123.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AP_Vendor_Details_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AP_Vendor_TnC_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

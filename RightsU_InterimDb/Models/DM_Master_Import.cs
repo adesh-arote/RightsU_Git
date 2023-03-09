@@ -24,5 +24,6 @@ namespace RightsU_InterimDb.Models
     	    public string Status { get; set; }
     	    public string File_Type { get; set; }
     	    public string Mapped_By { get; set; }
+    	    public string Import_Type { get; set; }
     }
 }

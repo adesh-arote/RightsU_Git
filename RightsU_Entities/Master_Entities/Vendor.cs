@@ -33,6 +33,9 @@ namespace RightsU_Entities
             this.MHPlayLists = new HashSet<MHPlayList>();
             this.MHRequests = new HashSet<MHRequest>();
             this.MHCueSheets = new HashSet<MHCueSheet>();
+            this.AP_Vendor_Details = new HashSet<AP_Vendor_Details>();
+            this.AP_Vendor_Rule = new HashSet<AP_Vendor_Rule>();
+            this.AP_Vendor_TnC = new HashSet<AP_Vendor_TnC>();
 
         }
 
@@ -87,5 +90,8 @@ namespace RightsU_Entities
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
         public virtual Party_Category Party_Category { get; set; }
         public virtual Party_Group Party_Group { get; set; }
+        public virtual ICollection<AP_Vendor_Details> AP_Vendor_Details { get; set; }
+        public virtual ICollection<AP_Vendor_Rule> AP_Vendor_Rule { get; set; }
+        public virtual ICollection<AP_Vendor_TnC> AP_Vendor_TnC { get; set; }
     }
 }

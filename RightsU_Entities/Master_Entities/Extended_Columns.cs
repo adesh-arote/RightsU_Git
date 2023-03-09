@@ -18,6 +18,8 @@ namespace RightsU_Entities
         {
             this.Extended_Columns_Value = new HashSet<Extended_Columns_Value>();
             this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();
+            this.AP_Vendor_Rule_Criteria = new HashSet<AP_Vendor_Rule_Criteria>();
+            this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
         }
 
         public State EntityState { get; set; }
@@ -35,5 +37,7 @@ namespace RightsU_Entities
 
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
+        public virtual ICollection<AP_Vendor_Rule_Criteria> AP_Vendor_Rule_Criteria { get; set; }
+        public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
     }
 }

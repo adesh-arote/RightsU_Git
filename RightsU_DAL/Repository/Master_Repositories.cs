@@ -3101,4 +3101,257 @@ namespace RightsU_DAL
     {
         public Digital_Config_Repository(string constr) : base(constr) { }
     }
+
+
+    #region------------Aeroplay---------------
+    public class AP_Vendor_Details_Repository : RightsU_Repository<AP_Vendor_Details>
+    {
+        public AP_Vendor_Details_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AP_Vendor_Details objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AP_Vendor_Details objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AP_Vendor_TnC_Repository : RightsU_Repository<AP_Vendor_TnC>
+    {
+        public AP_Vendor_TnC_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AP_Vendor_TnC objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AP_Vendor_TnC objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AP_Vendor_Rule_Criteria_Repository : RightsU_Repository<AP_Vendor_Rule_Criteria>
+    {
+        public AP_Vendor_Rule_Criteria_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AP_Vendor_Rule_Criteria objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AP_Vendor_Rule_Criteria objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AP_Vendor_Rule_Repository : RightsU_Repository<AP_Vendor_Rule>
+    {
+        public AP_Vendor_Rule_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AP_Vendor_Rule objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AP_Vendor_Rule objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AP_OEM_Repository : RightsU_Repository<AP_OEM>
+    {
+        public AP_OEM_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AP_OEM objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AP_OEM objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class Banner_Repository : RightsU_Repository<Banner>
+    {
+        public Banner_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Banner objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Banner objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class Title_Episode_Details_TC_Repository : RightsU_Repository<Title_Episode_Details_TC>
+    {
+        public Title_Episode_Details_TC_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Title_Episode_Details_TC objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Title_Episode_Details_TC objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class Title_Episode_Details_Repository : RightsU_Repository<Title_Episode_Details>
+    {
+        public Title_Episode_Details_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Title_Episode_Details objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Title_Episode_Details objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class Extended_Group_Config_Repository : RightsU_Repository<Extended_Group_Config>
+    {
+        public Extended_Group_Config_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Extended_Group_Config objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Extended_Group_Config objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class Extended_Group_Repository : RightsU_Repository<Extended_Group>
+    {
+        public Extended_Group_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Extended_Group objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Extended_Group objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+    #endregion
 }

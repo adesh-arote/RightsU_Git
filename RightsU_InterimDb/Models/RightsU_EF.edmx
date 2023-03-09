@@ -1210,6 +1210,58 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Ancillary_Type_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Ancillary_Type_Name" Type="varchar" MaxLength="50" />
         </EntityType>
+        <EntityType Name="AP_OEM">
+          <Key>
+            <PropertyRef Name="AP_OEM_Code" />
+          </Key>
+          <Property Name="AP_OEM_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Device_Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="Company" Type="nvarchar" MaxLength="500" />
+          <Property Name="Aspect_Ratio" Type="nvarchar" MaxLength="500" />
+          <Property Name="MPEG" Type="nvarchar" MaxLength="500" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Details">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Detail_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="OEM_Codes" Type="varchar" MaxLength="2000" />
+          <Property Name="Banner_Codes" Type="varchar" MaxLength="2000" />
+          <Property Name="Pref_Exclusion_Codes" Type="varchar" MaxLength="2000" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Rule">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Rule_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Rule_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="Rule_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Rule_Short_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Criteria" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Rule_Criteria">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Rule_Criteria_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Rule_Criteria_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AP_Vendor_Rule_Code" Type="int" />
+          <Property Name="Columns_Code" Type="int" />
+          <Property Name="Columns_Value" Type="varchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_TnC">
+          <Key>
+            <PropertyRef Name="AP_Vendor_TnC_Code" />
+          </Key>
+          <Property Name="AP_Vendor_TnC_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="TnC_Description" Type="nvarchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="AsRun_FileStatus">
           <Key>
             <PropertyRef Name="AsRun_FileStatus_Code" />
@@ -1353,6 +1405,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Rights_Start_Date" Type="date" />
           <Property Name="Rights_End_Date" Type="date" />
           <Property Name="Acq_Deal_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Banner">
+          <Key>
+            <PropertyRef Name="Banner_Code" />
+          </Key>
+          <Property Name="Banner_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Banner_Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="Banner_Short_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
         </EntityType>
         <EntityType Name="BMS_All_Masters">
           <Key>
@@ -2352,6 +2417,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a pri
           <Property Name="Status" Type="varchar" MaxLength="2" />
           <Property Name="File_Type" Type="varchar" MaxLength="2" />
           <Property Name="Mapped_By" Type="char" MaxLength="1" />
+          <Property Name="Import_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="DM_Master_Log">
           <Key>
@@ -2454,6 +2520,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="validation" Type="nvarchar(max)" />
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="char" MaxLength="1" />
           <Property Name="ShortName" Type="nvarchar(max)" />
+          <Property Name="Import_Type" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="DM_Title_Import_Utility_Data">
           <Key>
@@ -2887,6 +2954,32 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Columns_Value_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Columns_Code" Type="int" />
           <Property Name="Columns_Value" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="Extended_Group">
+          <Key>
+            <PropertyRef Name="Extended_Group_Code" />
+          </Key>
+          <Property Name="Extended_Group_Code" Type="int" Nullable="false" />
+          <Property Name="Group_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Short_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Group_Type" Type="int" />
+          <Property Name="Add_Edit_Type" Type="varchar" MaxLength="10" />
+          <Property Name="Module_Code" Type="int" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Extended_Group_Config">
+          <Key>
+            <PropertyRef Name="Extended_Group_Config_Code" />
+          </Key>
+          <Property Name="Extended_Group_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Extended_Group_Code" Type="int" />
+          <Property Name="Columns_Code" Type="int" />
+          <Property Name="Group_Control_Order" Type="int" />
+          <Property Name="Validations" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Format_Show_Data">
           <Key>
@@ -4211,7 +4304,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
-          
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -4735,7 +4827,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Remark" Type="nvarchar" MaxLength="4000" />
           <Property Name="Episode_End_To" Type="int" />
           <Property Name="Episode_From" Type="int" />
-        </EntityType>
+         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
             <PropertyRef Name="Syn_Deal_Payment_Terms_Code" />
@@ -5594,6 +5686,26 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Title_Country_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Title_Code" Type="int" />
           <Property Name="Country_Code" Type="int" />
+        </EntityType>
+        <EntityType Name="Title_Episode_Details">
+          <Key>
+            <PropertyRef Name="Title_Episode_Detail_Code" />
+          </Key>
+          <Property Name="Title_Episode_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Episode_Nos" Type="int" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+        </EntityType>
+        <EntityType Name="Title_Episode_Details_TC">
+          <Key>
+            <PropertyRef Name="Title_Episode_Detail_TC_Code" />
+          </Key>
+          <Property Name="Title_Episode_Detail_TC_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Title_Episode_Detail_Code" Type="int" />
+          <Property Name="Title_Content_Code" Type="int" />
         </EntityType>
         <EntityType Name="Title_Geners">
           <Key>
@@ -8291,6 +8403,66 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AP_Vendor_Details_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AP_Vendor_Details" Type="Self.AP_Vendor_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Details">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule">
+          <End Role="AP_Vendor_Rule" Type="Self.AP_Vendor_Rule" Multiplicity="0..1" />
+          <End Role="AP_Vendor_Rule_Criteria" Type="Self.AP_Vendor_Rule_Criteria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AP_Vendor_Rule">
+              <PropertyRef Name="AP_Vendor_Rule_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule_Criteria">
+              <PropertyRef Name="AP_Vendor_Rule_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Criteria_Extended_Columns">
+          <End Role="Extended_Columns" Type="Self.Extended_Columns" Multiplicity="0..1" />
+          <End Role="AP_Vendor_Rule_Criteria" Type="Self.AP_Vendor_Rule_Criteria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule_Criteria">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AP_Vendor_Rule" Type="Self.AP_Vendor_Rule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_TnC_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AP_Vendor_TnC" Type="Self.AP_Vendor_TnC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_TnC">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
           <End Role="AT_Acq_Deal_Digital" Type="Self.AT_Acq_Deal_Digital" Multiplicity="0..1" />
           <End Role="AT_Acq_Deal_Digital_detail" Type="Self.AT_Acq_Deal_Digital_detail" Multiplicity="*" />
@@ -8684,6 +8856,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Extended_Columns_Value">
               <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Extended_Group_Config_Extended_Columns">
+          <End Role="Extended_Columns" Type="Self.Extended_Columns" Multiplicity="0..1" />
+          <End Role="Extended_Group_Config" Type="Self.Extended_Group_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="Extended_Group_Config">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Extended_Group_Config_Extended_Group">
+          <End Role="Extended_Group" Type="Self.Extended_Group" Multiplicity="0..1" />
+          <End Role="Extended_Group_Config" Type="Self.Extended_Group_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Group">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Principal>
+            <Dependent Role="Extended_Group_Config">
+              <PropertyRef Name="Extended_Group_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -11999,6 +12195,42 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Title_Episode_Details_TC_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="Title_Episode_Details_TC" Type="Self.Title_Episode_Details_TC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details_TC">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Episode_Details_TC_Title_Episode_Details">
+          <End Role="Title_Episode_Details" Type="Self.Title_Episode_Details" Multiplicity="0..1" />
+          <End Role="Title_Episode_Details_TC" Type="Self.Title_Episode_Details_TC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Episode_Details">
+              <PropertyRef Name="Title_Episode_Detail_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details_TC">
+              <PropertyRef Name="Title_Episode_Detail_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Episode_Details_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Title_Episode_Details" Type="Self.Title_Episode_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Title_Geners_Genres">
           <End Role="Genres" Type="Self.Genres" Multiplicity="0..1" />
           <End Role="Title_Geners" Type="Self.Title_Geners" Multiplicity="*" />
@@ -14794,6 +15026,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Ancillary_Platform" EntityType="Self.Ancillary_Platform" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ancillary_Platform_Medium" EntityType="Self.Ancillary_Platform_Medium" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Ancillary_Type" EntityType="Self.Ancillary_Type" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AP_OEM" EntityType="Self.AP_OEM" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AP_Vendor_Details" EntityType="Self.AP_Vendor_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AP_Vendor_Rule" EntityType="Self.AP_Vendor_Rule" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AP_Vendor_Rule_Criteria" EntityType="Self.AP_Vendor_Rule_Criteria" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AP_Vendor_TnC" EntityType="Self.AP_Vendor_TnC" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AsRun_FileStatus" EntityType="Self.AsRun_FileStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction" EntityType="Self.ASRUN_Transaction" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ASRUN_Transaction_Shows" EntityType="Self.ASRUN_Transaction_Shows" Schema="dbo" store:Type="Tables" />
@@ -14803,6 +15040,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Avail_Acq" EntityType="Self.Avail_Acq" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Details" EntityType="Self.Avail_Acq_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Language" EntityType="Self.Avail_Acq_Language" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Banner" EntityType="Self.Banner" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BMS_All_Masters" EntityType="Self.BMS_All_Masters" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BMS_Asset" EntityType="Self.BMS_Asset" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BMS_Deal" EntityType="Self.BMS_Deal" Schema="dbo" store:Type="Tables" />
@@ -14872,6 +15110,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="ErrorOn_SendMail_For_Workflow" EntityType="Self.ErrorOn_SendMail_For_Workflow" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Extended_Columns" EntityType="Self.Extended_Columns" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Extended_Columns_Value" EntityType="Self.Extended_Columns_Value" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Extended_Group" EntityType="Self.Extended_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Extended_Group_Config" EntityType="Self.Extended_Group_Config" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Format_Show_Data" EntityType="Self.Format_Show_Data" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Genres" EntityType="Self.Genres" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Glossary" EntityType="Self.Glossary" Schema="dbo" store:Type="Tables" />
@@ -15084,6 +15324,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Title_Content_Version" EntityType="Self.Title_Content_Version" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Content_Version_Details" EntityType="Self.Title_Content_Version_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Country" EntityType="Self.Title_Country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Episode_Details" EntityType="Self.Title_Episode_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Title_Episode_Details_TC" EntityType="Self.Title_Episode_Details_TC" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Geners" EntityType="Self.Title_Geners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Milestone" EntityType="Self.Title_Milestone" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Title_Objection" EntityType="Self.Title_Objection" Schema="dbo" store:Type="Tables" />
@@ -16233,6 +16475,26 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Ancillary_Platform" EntitySet="Ancillary_Platform" />
             <End Role="Ancillary_Platform_Medium" EntitySet="Ancillary_Platform_Medium" />
           </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Details_Vendor" Association="Self.FK_AP_Vendor_Details_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AP_Vendor_Details" EntitySet="AP_Vendor_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule" Association="Self.FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule">
+            <End Role="AP_Vendor_Rule" EntitySet="AP_Vendor_Rule" />
+            <End Role="AP_Vendor_Rule_Criteria" EntitySet="AP_Vendor_Rule_Criteria" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Criteria_Extended_Columns" Association="Self.FK_AP_Vendor_Rule_Criteria_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="AP_Vendor_Rule_Criteria" EntitySet="AP_Vendor_Rule_Criteria" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Vendor" Association="Self.FK_AP_Vendor_Rule_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AP_Vendor_Rule" EntitySet="AP_Vendor_Rule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_TnC_Vendor" Association="Self.FK_AP_Vendor_TnC_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AP_Vendor_TnC" EntitySet="AP_Vendor_TnC" />
+          </AssociationSet>
           <AssociationSet Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" Association="Self.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
             <End Role="AT_Acq_Deal_Digital" EntitySet="AT_Acq_Deal_Digital" />
             <End Role="AT_Acq_Deal_Digital_detail" EntitySet="AT_Acq_Deal_Digital_detail" />
@@ -16364,6 +16626,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Extended_Columns_Value_Extended_Columns" Association="Self.FK_Extended_Columns_Value_Extended_Columns">
             <End Role="Extended_Columns" EntitySet="Extended_Columns" />
             <End Role="Extended_Columns_Value" EntitySet="Extended_Columns_Value" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Extended_Group_Config_Extended_Columns" Association="Self.FK_Extended_Group_Config_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="Extended_Group_Config" EntitySet="Extended_Group_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Extended_Group_Config_Extended_Group" Association="Self.FK_Extended_Group_Config_Extended_Group">
+            <End Role="Extended_Group" EntitySet="Extended_Group" />
+            <End Role="Extended_Group_Config" EntitySet="Extended_Group_Config" />
           </AssociationSet>
           <AssociationSet Name="FK_Glossary_AskExpert_Users" Association="Self.FK_Glossary_AskExpert_Users">
             <End Role="Users" EntitySet="Users" />
@@ -17468,6 +17738,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Title_Deal_Type" Association="Self.FK_Title_Deal_Type">
             <End Role="Deal_Type" EntitySet="Deal_Type" />
             <End Role="Title" EntitySet="Title" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_TC_Title_Content" Association="Self.FK_Title_Episode_Details_TC_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="Title_Episode_Details_TC" EntitySet="Title_Episode_Details_TC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_TC_Title_Episode_Details" Association="Self.FK_Title_Episode_Details_TC_Title_Episode_Details">
+            <End Role="Title_Episode_Details" EntitySet="Title_Episode_Details" />
+            <End Role="Title_Episode_Details_TC" EntitySet="Title_Episode_Details_TC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_Title" Association="Self.FK_Title_Episode_Details_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Title_Episode_Details" EntitySet="Title_Episode_Details" />
           </AssociationSet>
           <AssociationSet Name="FK_Title_Geners_Genres" Association="Self.FK_Title_Geners_Genres">
             <End Role="Genres" EntitySet="Genres" />
@@ -21837,6 +22119,56 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="AP_OEM" EntityType="RightsU_NeoModel.AP_OEM" />
+          <EntitySet Name="AP_Vendor_Details" EntityType="RightsU_NeoModel.AP_Vendor_Details" />
+          <EntitySet Name="AP_Vendor_Rule" EntityType="RightsU_NeoModel.AP_Vendor_Rule" />
+          <EntitySet Name="AP_Vendor_Rule_Criteria" EntityType="RightsU_NeoModel.AP_Vendor_Rule_Criteria" />
+          <EntitySet Name="AP_Vendor_TnC" EntityType="RightsU_NeoModel.AP_Vendor_TnC" />
+          <EntitySet Name="Banners" EntityType="RightsU_NeoModel.Banner" />
+          <EntitySet Name="Extended_Group" EntityType="RightsU_NeoModel.Extended_Group" />
+          <EntitySet Name="Extended_Group_Config" EntityType="RightsU_NeoModel.Extended_Group_Config" />
+          <EntitySet Name="Title_Episode_Details" EntityType="RightsU_NeoModel.Title_Episode_Details" />
+          <EntitySet Name="Title_Episode_Details_TC" EntityType="RightsU_NeoModel.Title_Episode_Details_TC" />
+          <AssociationSet Name="FK_AP_Vendor_Details_Vendor" Association="RightsU_NeoModel.FK_AP_Vendor_Details_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AP_Vendor_Details" EntitySet="AP_Vendor_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule" Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule">
+            <End Role="AP_Vendor_Rule" EntitySet="AP_Vendor_Rule" />
+            <End Role="AP_Vendor_Rule_Criteria" EntitySet="AP_Vendor_Rule_Criteria" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Vendor" Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AP_Vendor_Rule" EntitySet="AP_Vendor_Rule" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_Rule_Criteria_Extended_Columns" Association="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="AP_Vendor_Rule_Criteria" EntitySet="AP_Vendor_Rule_Criteria" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AP_Vendor_TnC_Vendor" Association="RightsU_NeoModel.FK_AP_Vendor_TnC_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AP_Vendor_TnC" EntitySet="AP_Vendor_TnC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Extended_Group_Config_Extended_Columns" Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="Extended_Group_Config" EntitySet="Extended_Group_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Extended_Group_Config_Extended_Group" Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group">
+            <End Role="Extended_Group" EntitySet="Extended_Group" />
+            <End Role="Extended_Group_Config" EntitySet="Extended_Group_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_Title" Association="RightsU_NeoModel.FK_Title_Episode_Details_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Title_Episode_Details" EntitySet="Title_Episode_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_TC_Title_Content" Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="Title_Episode_Details_TC" EntitySet="Title_Episode_Details_TC" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Title_Episode_Details_TC_Title_Episode_Details" Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details">
+            <End Role="Title_Episode_Details" EntitySet="Title_Episode_Details" />
+            <End Role="Title_Episode_Details_TC" EntitySet="Title_Episode_Details_TC" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23426,6 +23758,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Extended_Columns_Value" Relationship="RightsU_NeoModel.FK_Extended_Columns_Value_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Columns_Value" />
           <NavigationProperty Name="Map_Extended_Columns" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns" FromRole="Extended_Columns" ToRole="Map_Extended_Columns" />
           <Property Name="Is_Add_OnScreen" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="AP_Vendor_Rule_Criteria" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_Extended_Columns" FromRole="Extended_Columns" ToRole="AP_Vendor_Rule_Criteria" />
+          <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Group_Config" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -23903,8 +24237,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
           <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
-        
-       
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -24697,6 +25029,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title" ToRole="Title_Objection" />
           <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Title" ToRole="Acq_Deal_Supplementary" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" FromRole="Title" ToRole="Syn_Deal_Supplementary" />
+          <NavigationProperty Name="Title_Episode_Details" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_Title" FromRole="Title" ToRole="Title_Episode_Details" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -24957,6 +25290,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Party_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Party_Group_Code" Type="Int32" />
           <NavigationProperty Name="Party_Group" Relationship="RightsU_NeoModel.FK__Vendor__Party_Gr__1EDB2F60" FromRole="Vendor" ToRole="Party_Group" />
+          <NavigationProperty Name="AP_Vendor_Details" Relationship="RightsU_NeoModel.FK_AP_Vendor_Details_Vendor" FromRole="Vendor" ToRole="AP_Vendor_Details" />
+          <NavigationProperty Name="AP_Vendor_Rule" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Vendor" FromRole="Vendor" ToRole="AP_Vendor_Rule" />
+          <NavigationProperty Name="AP_Vendor_TnC" Relationship="RightsU_NeoModel.FK_AP_Vendor_TnC_Vendor" FromRole="Vendor" ToRole="AP_Vendor_TnC" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -32519,6 +32855,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Status" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="File_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Import_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="DM_Music_Title">
           <Key>
@@ -32702,6 +33039,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Synopsis" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Title_Content_Mapping" Relationship="RightsU_NeoModel.FK_Title_Content_Mapping_Title_Content" FromRole="Title_Content" ToRole="Title_Content_Mapping" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" FromRole="Title_Content" ToRole="MHCueSheetSong" />
+          <NavigationProperty Name="Title_Episode_Details_TC" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" FromRole="Title_Content" ToRole="Title_Episode_Details_TC" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -36281,6 +36619,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="validation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Import_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="DM_Title_Import_Utility_Data">
           <Key>
@@ -37412,6 +37751,250 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <EntityType Name="AP_OEM">
+          <Key>
+            <PropertyRef Name="AP_OEM_Code" />
+          </Key>
+          <Property Name="AP_OEM_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Device_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Company" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Aspect_Ratio" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="MPEG" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Details">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Detail_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="OEM_Codes" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="Banner_Codes" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="Pref_Exclusion_Codes" Type="String" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AP_Vendor_Details_Vendor" FromRole="AP_Vendor_Details" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Rule">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Rule_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Rule_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="Rule_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Rule_Short_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Criteria" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AP_Vendor_Rule_Criteria" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule" FromRole="AP_Vendor_Rule" ToRole="AP_Vendor_Rule_Criteria" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Vendor" FromRole="AP_Vendor_Rule" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_Rule_Criteria">
+          <Key>
+            <PropertyRef Name="AP_Vendor_Rule_Criteria_Code" />
+          </Key>
+          <Property Name="AP_Vendor_Rule_Criteria_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AP_Vendor_Rule_Code" Type="Int32" />
+          <Property Name="Columns_Code" Type="Int32" />
+          <Property Name="Columns_Value" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AP_Vendor_Rule" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule" FromRole="AP_Vendor_Rule_Criteria" ToRole="AP_Vendor_Rule" />
+          <NavigationProperty Name="Extended_Columns" Relationship="RightsU_NeoModel.FK_AP_Vendor_Rule_Criteria_Extended_Columns" FromRole="AP_Vendor_Rule_Criteria" ToRole="Extended_Columns" />
+        </EntityType>
+        <EntityType Name="AP_Vendor_TnC">
+          <Key>
+            <PropertyRef Name="AP_Vendor_TnC_Code" />
+          </Key>
+          <Property Name="AP_Vendor_TnC_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="TnC_Description" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AP_Vendor_TnC_Vendor" FromRole="AP_Vendor_TnC" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="Banner">
+          <Key>
+            <PropertyRef Name="Banner_Code" />
+          </Key>
+          <Property Name="Banner_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Banner_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Banner_Short_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Extended_Group">
+          <Key>
+            <PropertyRef Name="Extended_Group_Code" />
+          </Key>
+          <Property Name="Extended_Group_Code" Type="Int32" Nullable="false" />
+          <Property Name="Group_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Short_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Group_Type" Type="Int32" />
+          <Property Name="Add_Edit_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="Module_Code" Type="Int32" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" FromRole="Extended_Group" ToRole="Extended_Group_Config" />
+        </EntityType>
+        <EntityType Name="Extended_Group_Config">
+          <Key>
+            <PropertyRef Name="Extended_Group_Config_Code" />
+          </Key>
+          <Property Name="Extended_Group_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Extended_Group_Code" Type="Int32" />
+          <Property Name="Columns_Code" Type="Int32" />
+          <Property Name="Group_Control_Order" Type="Int32" />
+          <Property Name="Validations" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Extended_Columns" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" FromRole="Extended_Group_Config" ToRole="Extended_Columns" />
+          <NavigationProperty Name="Extended_Group" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" FromRole="Extended_Group_Config" ToRole="Extended_Group" />
+        </EntityType>
+        <EntityType Name="Title_Episode_Details">
+          <Key>
+            <PropertyRef Name="Title_Episode_Detail_Code" />
+          </Key>
+          <Property Name="Title_Episode_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Episode_Nos" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_Title" FromRole="Title_Episode_Details" ToRole="Title" />
+          <NavigationProperty Name="Title_Episode_Details_TC" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details" FromRole="Title_Episode_Details" ToRole="Title_Episode_Details_TC" />
+        </EntityType>
+        <EntityType Name="Title_Episode_Details_TC">
+          <Key>
+            <PropertyRef Name="Title_Episode_Detail_TC_Code" />
+          </Key>
+          <Property Name="Title_Episode_Detail_TC_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Title_Episode_Detail_Code" Type="Int32" />
+          <Property Name="Title_Content_Code" Type="Int32" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" FromRole="Title_Episode_Details_TC" ToRole="Title_Content" />
+          <NavigationProperty Name="Title_Episode_Details" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details" FromRole="Title_Episode_Details_TC" ToRole="Title_Episode_Details" />
+        </EntityType>
+        <Association Name="FK_AP_Vendor_Details_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AP_Vendor_Details" Role="AP_Vendor_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Details">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Criteria_AP_Vendor_Rule">
+          <End Type="RightsU_NeoModel.AP_Vendor_Rule" Role="AP_Vendor_Rule" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AP_Vendor_Rule_Criteria" Role="AP_Vendor_Rule_Criteria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AP_Vendor_Rule">
+              <PropertyRef Name="AP_Vendor_Rule_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule_Criteria">
+              <PropertyRef Name="AP_Vendor_Rule_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AP_Vendor_Rule" Role="AP_Vendor_Rule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_Rule_Criteria_Extended_Columns">
+          <End Type="RightsU_NeoModel.Extended_Columns" Role="Extended_Columns" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AP_Vendor_Rule_Criteria" Role="AP_Vendor_Rule_Criteria" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_Rule_Criteria">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AP_Vendor_TnC_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AP_Vendor_TnC" Role="AP_Vendor_TnC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AP_Vendor_TnC">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Extended_Group_Config_Extended_Columns">
+          <End Type="RightsU_NeoModel.Extended_Columns" Role="Extended_Columns" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Extended_Group_Config" Role="Extended_Group_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="Extended_Group_Config">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Extended_Group_Config_Extended_Group">
+          <End Type="RightsU_NeoModel.Extended_Group" Role="Extended_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Extended_Group_Config" Role="Extended_Group_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Group">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Principal>
+            <Dependent Role="Extended_Group_Config">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Episode_Details_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Episode_Details" Role="Title_Episode_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Episode_Details_TC_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Episode_Details_TC" Role="Title_Episode_Details_TC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details_TC">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Title_Episode_Details_TC_Title_Episode_Details">
+          <End Type="RightsU_NeoModel.Title_Episode_Details" Role="Title_Episode_Details" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Title_Episode_Details_TC" Role="Title_Episode_Details_TC" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Episode_Details">
+              <PropertyRef Name="Title_Episode_Detail_Code" />
+            </Principal>
+            <Dependent Role="Title_Episode_Details_TC">
+              <PropertyRef Name="Title_Episode_Detail_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -43742,6 +44325,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Master_Import">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Master_Import">
               <MappingFragment StoreEntitySet="DM_Master_Import">
+                <ScalarProperty Name="Import_Type" ColumnName="Import_Type" />
                 <ScalarProperty Name="Mapped_By" ColumnName="Mapped_By" />
                 <ScalarProperty Name="File_Type" ColumnName="File_Type" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
@@ -46274,6 +46858,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Title_Import_Utility">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility">
               <MappingFragment StoreEntitySet="DM_Title_Import_Utility">
+                <ScalarProperty Name="Import_Type" ColumnName="Import_Type" />
                 <ScalarProperty Name="ShortName" ColumnName="ShortName" />
                 <ScalarProperty Name="Is_Allowed_For_Resolve_Conflict" ColumnName="Is_Allowed_For_Resolve_Conflict" />
                 <ScalarProperty Name="validation" ColumnName="validation" />
@@ -47194,6 +47779,127 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="AP_OEM">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AP_OEM">
+              <MappingFragment StoreEntitySet="AP_OEM">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="MPEG" ColumnName="MPEG" />
+                <ScalarProperty Name="Aspect_Ratio" ColumnName="Aspect_Ratio" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="Device_Name" ColumnName="Device_Name" />
+                <ScalarProperty Name="AP_OEM_Code" ColumnName="AP_OEM_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AP_Vendor_Details">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AP_Vendor_Details">
+              <MappingFragment StoreEntitySet="AP_Vendor_Details">
+                <ScalarProperty Name="Pref_Exclusion_Codes" ColumnName="Pref_Exclusion_Codes" />
+                <ScalarProperty Name="Banner_Codes" ColumnName="Banner_Codes" />
+                <ScalarProperty Name="OEM_Codes" ColumnName="OEM_Codes" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="AP_Vendor_Detail_Code" ColumnName="AP_Vendor_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AP_Vendor_Rule">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AP_Vendor_Rule">
+              <MappingFragment StoreEntitySet="AP_Vendor_Rule">
+                <ScalarProperty Name="Criteria" ColumnName="Criteria" />
+                <ScalarProperty Name="Rule_Short_Name" ColumnName="Rule_Short_Name" />
+                <ScalarProperty Name="Rule_Name" ColumnName="Rule_Name" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="AP_Vendor_Rule_Code" ColumnName="AP_Vendor_Rule_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AP_Vendor_Rule_Criteria">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AP_Vendor_Rule_Criteria">
+              <MappingFragment StoreEntitySet="AP_Vendor_Rule_Criteria">
+                <ScalarProperty Name="Columns_Value" ColumnName="Columns_Value" />
+                <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
+                <ScalarProperty Name="AP_Vendor_Rule_Code" ColumnName="AP_Vendor_Rule_Code" />
+                <ScalarProperty Name="AP_Vendor_Rule_Criteria_Code" ColumnName="AP_Vendor_Rule_Criteria_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AP_Vendor_TnC">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AP_Vendor_TnC">
+              <MappingFragment StoreEntitySet="AP_Vendor_TnC">
+                <ScalarProperty Name="TnC_Description" ColumnName="TnC_Description" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="AP_Vendor_TnC_Code" ColumnName="AP_Vendor_TnC_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Banners">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Banner">
+              <MappingFragment StoreEntitySet="Banner">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Banner_Short_Name" ColumnName="Banner_Short_Name" />
+                <ScalarProperty Name="Banner_Name" ColumnName="Banner_Name" />
+                <ScalarProperty Name="Banner_Code" ColumnName="Banner_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Extended_Group">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group">
+              <MappingFragment StoreEntitySet="Extended_Group">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="Add_Edit_Type" ColumnName="Add_Edit_Type" />
+                <ScalarProperty Name="Group_Type" ColumnName="Group_Type" />
+                <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
+                <ScalarProperty Name="Group_Name" ColumnName="Group_Name" />
+                <ScalarProperty Name="Extended_Group_Code" ColumnName="Extended_Group_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Extended_Group_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group_Config">
+              <MappingFragment StoreEntitySet="Extended_Group_Config">
+                <ScalarProperty Name="Validations" ColumnName="Validations" />
+                <ScalarProperty Name="Group_Control_Order" ColumnName="Group_Control_Order" />
+                <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
+                <ScalarProperty Name="Extended_Group_Code" ColumnName="Extended_Group_Code" />
+                <ScalarProperty Name="Extended_Group_Config_Code" ColumnName="Extended_Group_Config_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Episode_Details">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Episode_Details">
+              <MappingFragment StoreEntitySet="Title_Episode_Details">
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_Nos" ColumnName="Episode_Nos" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Episode_Detail_Code" ColumnName="Title_Episode_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Title_Episode_Details_TC">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Title_Episode_Details_TC">
+              <MappingFragment StoreEntitySet="Title_Episode_Details_TC">
+                <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
+                <ScalarProperty Name="Title_Episode_Detail_Code" ColumnName="Title_Episode_Detail_Code" />
+                <ScalarProperty Name="Title_Episode_Detail_TC_Code" ColumnName="Title_Episode_Detail_TC_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -11,24 +11,26 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class DM_Master_Import
     {
         public DM_Master_Import()
         {
             this.DM_Master_Log = new HashSet<DM_Master_Log>();
         }
-    
-    	public State EntityState { get; set; }    public int DM_Master_Import_Code { get; set; }
-    	    public string File_Name { get; set; }
-    	    public string System_File_Name { get; set; }
-    	    public Nullable<int> Upoaded_By { get; set; }
-    	    public Nullable<System.DateTime> Uploaded_Date { get; set; }
-    	    public Nullable<int> Action_By { get; set; }
-    	    public Nullable<System.DateTime> Action_On { get; set; }
-    	    public string Status { get; set; }
-    	    public string File_Type { get; set; }
-            public string Mapped_By { get; set; }
+
+        public State EntityState { get; set; }
+        public int DM_Master_Import_Code { get; set; }
+        public string File_Name { get; set; }
+        public string System_File_Name { get; set; }
+        public Nullable<int> Upoaded_By { get; set; }
+        public Nullable<System.DateTime> Uploaded_Date { get; set; }
+        public Nullable<int> Action_By { get; set; }
+        public Nullable<System.DateTime> Action_On { get; set; }
+        public string Status { get; set; }
+        public string File_Type { get; set; }
+        public string Mapped_By { get; set; }
+        public string Import_Type { get; set; }
         public virtual ICollection<DM_Master_Log> DM_Master_Log { get; set; }
     }
 }
