@@ -22,7 +22,7 @@ namespace RightsU_InterimDb.Models
     	public State EntityState { get; set; }    public int Extended_Group_Code { get; set; }
     	    public string Group_Name { get; set; }
     	    public string Short_Name { get; set; }
-    	    public Nullable<int> Group_Type { get; set; }
+    	    public Nullable<int> Group_Order { get; set; }
     	    public string Add_Edit_Type { get; set; }
     	    public Nullable<int> Module_Code { get; set; }
     	    public Nullable<int> Inserted_By { get; set; }

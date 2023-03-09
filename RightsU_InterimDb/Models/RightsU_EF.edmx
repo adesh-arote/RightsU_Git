@@ -2962,7 +2962,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Extended_Group_Code" Type="int" Nullable="false" />
           <Property Name="Group_Name" Type="varchar" MaxLength="100" />
           <Property Name="Short_Name" Type="varchar" MaxLength="100" />
-          <Property Name="Group_Type" Type="int" />
+          <Property Name="Group_Order" Type="int" />
           <Property Name="Add_Edit_Type" Type="varchar" MaxLength="10" />
           <Property Name="Module_Code" Type="int" />
           <Property Name="Inserted_By" Type="int" />
@@ -37829,7 +37829,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Extended_Group_Code" Type="Int32" Nullable="false" />
           <Property Name="Group_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Short_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Group_Type" Type="Int32" />
+          <Property Name="Group_Order" Type="Int32" />
           <Property Name="Add_Edit_Type" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="Module_Code" Type="Int32" />
           <Property Name="Inserted_By" Type="Int32" />
@@ -47860,7 +47860,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
                 <ScalarProperty Name="Add_Edit_Type" ColumnName="Add_Edit_Type" />
-                <ScalarProperty Name="Group_Type" ColumnName="Group_Type" />
+                <ScalarProperty Name="Group_Order" ColumnName="Group_Order" />
                 <ScalarProperty Name="Short_Name" ColumnName="Short_Name" />
                 <ScalarProperty Name="Group_Name" ColumnName="Group_Name" />
                 <ScalarProperty Name="Extended_Group_Code" ColumnName="Extended_Group_Code" />
