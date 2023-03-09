@@ -518,7 +518,7 @@
                             {
                                 if (@ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && @ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE)
                                 {
-                                    if (item.Right_Status == "P")
+                                    if (item.Right_Status == "P" || item.Right_Status == "W")
                                     {
                                         <img id="imgLoading" title="@objMessageKey.PleaseWait" src="~/Images/square_dots_loading.gif" style="height: 26px" />
                                         <a id="btnEdit" title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="display:none;" onclick="showLoading();return ValidateRightsTitleWithAcq(@(item.Rights_Code ?? 0), @(item.Title_Code ?? 0), @(item.Episode_From ?? 0), @(item.Episode_To ?? 0), @(item.Platform_Code ?? 0),'@(item.Is_Holdback == null ? "N" : item.Is_Holdback)','@(string.IsNullOrEmpty(item.Is_Syn_Acq_Mapp) ? "N" : item.Is_Syn_Acq_Mapp)','@GlobalParams.DEAL_MODE_EDIT');"></a>
