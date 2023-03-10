@@ -3118,24 +3118,84 @@ namespace RightsU_DAL
     public class Supplementary_Repository : RightsU_Repository<Supplementary>
     {
         public Supplementary_Repository(string constr) : base(constr) { }
+
+        public override void Save(Supplementary objSupplementary)
+        {
+            if (objSupplementary.EntityState == State.Added)
+            {
+                base.Save(objSupplementary);
+            }
+            else if (objSupplementary.EntityState == State.Modified)
+            {
+                base.Update(objSupplementary);
+            }
+            else if (objSupplementary.EntityState == State.Deleted)
+            {
+                base.Delete(objSupplementary);
+            }
+        }
+
     }
 
     public class Supplementary_Data_Repository : RightsU_Repository<Supplementary_Data>
     {
         public Supplementary_Data_Repository(string constr) : base(constr) { }
+        public override void Save(Supplementary_Data objSupplementary_Data)
+        {
+            if (objSupplementary_Data.EntityState == State.Added)
+            {
+                base.Save(objSupplementary_Data);
+            }
+            else if (objSupplementary_Data.EntityState == State.Modified)
+            {
+                base.Update(objSupplementary_Data);
+            }
+            else if (objSupplementary_Data.EntityState == State.Deleted)
+            {
+                base.Delete(objSupplementary_Data);
+            }
+        }
     }
 
     public class Supplementary_Tab_Repository : RightsU_Repository<Supplementary_Tab>
     {
         public Supplementary_Tab_Repository(string constr) : base(constr) { }
+        public override void Save(Supplementary_Tab objSupplementary_Tab)
+        {
+            if (objSupplementary_Tab.EntityState == State.Added)
+            {
+                base.Save(objSupplementary_Tab);
+            }
+            else if (objSupplementary_Tab.EntityState == State.Modified)
+            {
+                base.Update(objSupplementary_Tab);
+            }
+            else if (objSupplementary_Tab.EntityState == State.Deleted)
+            {
+                base.Delete(objSupplementary_Tab);
+            }
+        }
     }
 
     public class Supplementary_Config_Repository : RightsU_Repository<Supplementary_Config>
     {
         public Supplementary_Config_Repository(string constr) : base(constr) { }
+        public override void Save(Supplementary_Config objSupplementary_Config)
+        {
+            if (objSupplementary_Config.EntityState == State.Added)
+            {
+                base.Save(objSupplementary_Config);
+            }
+            else if (objSupplementary_Config.EntityState == State.Modified)
+            {
+                base.Update(objSupplementary_Config);
+            }
+            else if (objSupplementary_Config.EntityState == State.Deleted)
+            {
+                base.Delete(objSupplementary_Config);
+            }
+        }
     }
-
-
 
     public class Digital_Repository : RightsU_Repository<Digital>
     {
