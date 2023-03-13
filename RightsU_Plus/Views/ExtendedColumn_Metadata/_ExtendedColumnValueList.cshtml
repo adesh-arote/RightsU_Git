@@ -10,11 +10,11 @@
 <table class="table table-bordered table-hover" style="text-align:center; margin-top:13px">
     <thead>
         <tr>
-            <th>Sr.No.</th>
+            <th style="width:10%;">Sr.No.</th>
             <th>Column Value</th>
             @if (ViewBag.HideButton != "HideButton")
             {
-                <th>Actions</th>
+                <th style="width:10%;">Actions</th>
             }
 
 
@@ -25,13 +25,13 @@
         {
             i++;
             <tr>
-                <td>
+                <td style="width:10%;">
                     @i
                 </td>
                 <td>
                     <input type="text" id="ColumnValue" placeholder="Enter Column Value" autocomplete="off" />
                 </td>
-                <td align="center">
+                <td align="center" style="width:10%;">
                     <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveEVDetails()"></a>
                     <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
                 </td>
@@ -44,13 +44,13 @@
             {
                 i++;
                 <tr>
-                    <td>
+                    <td style="width:10%;">
                         @i
                     </td>
                     <td>
                         <input type="text" id="ColumnValue" value="@item.Columns_Value" />
                     </td>
-                    <td>
+                    <td style="width:10%;">
                         <a title="Update" class="glyphicon glyphicon-ok-circle" onclick="UpdateEVDetails(@item.Columns_Value_Code)"></a>
                         <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
                     </td>
@@ -60,7 +60,7 @@
             {
                 i++;
                 <tr id="trExtendValueRate_">
-                    <td>
+                    <td style="width:10%;">
                         @i
                     </td>
                     <td>
@@ -68,7 +68,7 @@
                     </td>
                     @if (ViewBag.HideButton != "HideButton")
                     {
-                        <td>
+                        <td style="width:10%;">
                             <a title="Edit" class="glyphicon glyphicon-pencil" onclick='AddExtendedValueDetails("@item.Columns_Value_Code","EDIT")'></a>
                             <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteEVDetails(@item.Columns_Value_Code)"></a>
                         </td>

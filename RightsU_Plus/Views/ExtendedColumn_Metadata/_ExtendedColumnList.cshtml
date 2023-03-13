@@ -52,7 +52,31 @@
                         @Html.DisplayFor(modelItem => item.Columns_Name)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Control_Type)
+                        @*@Html.DisplayFor(modelItem => item.Control_Type)*@
+                        @if (item.Control_Type == "DDL")
+                        {
+                            <span>DropDown</span>
+                        }
+                        @if (item.Control_Type == "TXT")
+                        {
+                            <span>Text</span>
+                        }
+                        @if (item.Control_Type == "DATE")
+                        {
+                            <span>Date</span>
+                        }
+                        @if (item.Control_Type == "FrTEd")
+                        {
+                            <span>From Date To End Date</span>
+                        }
+                        @if (item.Control_Type == "RB")
+                        {
+                            <span>Radio Button</span>
+                        }
+                        @if (item.Control_Type == "CB")
+                        {
+                            <span>Check Box</span>
+                        }
                     </td>
                     <td>
                         @if (item.Is_Ref == "Y")

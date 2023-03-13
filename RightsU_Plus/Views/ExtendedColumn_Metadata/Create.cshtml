@@ -21,7 +21,6 @@
             AddExtendedValueDetails(0, "View");
             DisableEnableControl();
             HideAndShowGridView();
-
         }
         var isDefinedValues = $("#IsDefinedValues").val();
         var length = $("table tr[id*='trExtendValueRate_']").length;
@@ -30,6 +29,11 @@
         }
         if ("@ViewBag.Title" == "View") {
             AddExtendedValueDetails(0, "ShowView");
+        }
+
+        var length = $("table tr[id*='trExtendValueRate_']").length;
+        if (length > 0) {
+            $("#ControlType").prop("disabled", true);
         }
         $('#ControlType').change(function () {
             $('#ControlType').removeAttr("style", "border-color: red; width:65%;");
@@ -47,7 +51,7 @@
     var Url_DeleteEVDetail = '@Url.Action("DeleteEVDetails", "ExtendedColumn_Metadata")';
     var Url_CancelEvDetails = '@Url.Action("CancelEVDetails", "ExtendedColumn_Metadata")';
 
-   
+
 
     function CreateEditExtendedMetaData(){
         debugger;
@@ -193,6 +197,7 @@
             $("#DisplayField").prop("disabled", true);
             $("#RefValueField").prop("disabled", true);
             $("#AdditionalCondition").prop("disabled", true);
+            $("#IsAddOnScreen").prop("disabled", true);
             $("#AddBtn").attr("style", "display:block");
             AddExtendedValueDetails(0, "View");
         }
@@ -202,6 +207,7 @@
             $("#DisplayField").prop("disabled", false);
             $("#RefValueField").prop("disabled", false);
             $("#AdditionalCondition").prop("disabled", false);
+            $("#IsAddOnScreen").prop("disabled", false);
             $("#AddBtn").attr("style", "display:none");
             $('#divEVDetails').empty();
 
@@ -232,15 +238,15 @@
             }
 
         }
-        if (controlType == "TXT") {
-            if ($("#IsDefinedValues").val() == "Y") {
-                var length = $("table tr[id*='trExtendValueRate_']").length
-                if (length > 0) {
-                    showAlert("E", "Please Delete Column Value", "OK");
-                    $("#ControlType").val("DDL");
-                    return false;
-                }
-            }
+        if (controlType == "TXT" || controlType == "DATE" || controlType == "FrTEd" || controlType == "RB" || controlType == "CB") {
+            //if ($("#IsDefinedValues").val() == "Y") {
+                //var length = $("table tr[id*='trExtendValueRate_']").length
+                //if (length > 0) {
+                //    showAlert("E", "Please Delete Column Value", "OK");
+                //    $("#ControlType").val("DDL");
+                //    return false;
+                //}
+           // }
             $("#IsRef").val("N");
             $("#IsDefinedValues").val("N");
             $("#IsRef").prop("disabled", true);
@@ -311,6 +317,7 @@
                 debugger;
                 if (data.Status == "S") {
                     $("#IsDefinedValues").prop("disabled", true);
+                    $("#ControlType").prop("disabled", true);
                     AddExtendedValueDetails('0', 'View');
                 }
                 if(data.Error == "1") {
@@ -374,6 +381,7 @@
                     }
                     if (data.Enable == "IsDefinedValue") {
                         $("#IsDefinedValues").prop("disabled", false);
+                        $("#ControlType").prop("disabled", false);
                     }
 
                 },
@@ -450,8 +458,12 @@
                                 else
                                 {
                                     @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
-                                   { new SelectListItem{Text="DDL", Value="DDL"},
-                                     new SelectListItem{Text="TXT", Value="TXT"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:65%", @onchange= "DisableEnableControl()" })
+                                   { new SelectListItem{Text="Dropdown", Value="DDL"},
+                                     new SelectListItem{Text="Text", Value="TXT"},
+                                      new SelectListItem{Text="Checkbox", Value="CB"},
+                                       new SelectListItem{Text="Radio Button", Value="RB"},
+                                        new SelectListItem{Text="FromDate-EndDate", Value="FrTEd"},
+                                         new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:65%", @onchange= "DisableEnableControl()" })
                                 }
                             </td>
                         </tr>
