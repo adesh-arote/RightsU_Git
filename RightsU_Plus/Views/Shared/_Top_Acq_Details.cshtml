@@ -439,6 +439,14 @@
                     <span></span>
                 </li>
             }
+            @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForDigitalTab))
+            {
+                cssclass = objSchema.Page_From == GlobalParams.Page_From_Digital ? "active" : "";
+                <li class="@cssclass" id="liDigital">
+                    <input type="button" role="tab" onclick="return LoadTab('@GlobalParams.Page_From_Digital ','@cssclass    ');" value="@objMessageKey.Digital" />
+                    <span></span>
+                </li>
+            }
             @if (objSchema.Module_Rights_List.Contains(GlobalParams.RightCodeForAcqCostTab))
             {
                 cssclass = objSchema.Page_From == GlobalParams.Page_From_Cost ? "active" : "";

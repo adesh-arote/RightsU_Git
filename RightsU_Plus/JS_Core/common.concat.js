@@ -2128,15 +2128,21 @@ function showAlert(type, msg, ctrlID) {
 function countChar(val) {
     var max = 4000;
     var len = val.value.length;
-
-    if (len >= max)
-        val.value = val.value.substring(0, max);
-
-    $('.charNum').text(val.value.length.toString() + '/' + max.toString());
+    var lenrn = val.value.split(/\r\n|\r|\n/).length;
+    
+    if ((len+lenrn) >= max)
+        val.value = val.value.substring(0, (max - (lenrn+1)));
+    if ((len + lenrn) == 1) {
+        $('.charNum').text(len  + '/' + max.toString());
+    }
+    else {
+        $('.charNum').text((len + lenrn) + '/' + max.toString());
+    }
 }
 
 /* Textarea Character Limitation with define label*/
 function countCharWithLable(val, lblCounter) {
+
     var max = 4000;
     var len = val.value.length;
 

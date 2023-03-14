@@ -1047,7 +1047,7 @@
                                 @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.AcqRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.AcqRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "ARHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                 @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
@@ -1112,7 +1112,7 @@
                                 @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.SynRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.SynRevHB_Title, "DealExpiryReport", "Reports", new { callFor = "SRHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                 @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
@@ -1177,7 +1177,7 @@
                                 @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.AcqHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.AcqHB_Title, "DealExpiryReport", "Reports", new { callFor = "AHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                 @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
@@ -1242,7 +1242,7 @@
                                 @*<input type="button" class="pull-left" id="btnPrevious_ExpireSynDealDataList" value="<<" />*@
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_ExpireSynDealDataList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.SynHB_Title, "DealExpiryReport", "Reports", new { callFor = "SE", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.SynHB_Title, "DealExpiryReport", "Reports", new { callFor = "SHB", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                 @*<input type="button" class="pull-right" id="btnNext_ExpireSynDealDataList" value=">>" />*@
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_ExpireSynDealDataList" style="float:right;padding-top:1px;"></a>
@@ -1299,14 +1299,14 @@
                             {<h1>NO DATA</h1>}
                         </div>
                     }
-                    @*@if (ViewBag.MTAcqDealList != null)
+                    @if (ViewBag.MTAcqDealList != null)
                     {
                         <div class="dashboard acq">
                             <span>
 
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_MTAcqDealList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.MTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.MTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AMT", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
 
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_MTAcqDealList" style="float:right;padding-top:1px;"></a>
@@ -1355,7 +1355,7 @@
 
                                 <a title="Previous" class="glyphicon glyphicon-chevron-left" id="btnPrevious_PTAcqDealList" style="float:left;padding-top:1px;"></a>
 
-                                @Html.ActionLink((string)ViewBag.PTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "AS", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
+                                @Html.ActionLink((string)ViewBag.PTAcqDealListTitle, "DealExpiryReport", "Reports", new { callFor = "APT", expDays = (int)ViewBag.DealStartAndExp_Days, callFrom = "D" }, null)
 
                                 <a title="Next" class="glyphicon glyphicon-chevron-right" id="btnNext_PTAcqDealList" style="float:right;padding-top:1px;"></a>
                                 <input type="hidden" id="currentPageIndex_PTAcqDealList" value="@ViewBag.PTAcqDealList_PageNo" />
@@ -1399,7 +1399,7 @@
                             else
                             {<h1>NO DATA</h1>}
                         </div>
-                    }*@
+                    }
                 </section>
             </div>
         </section>

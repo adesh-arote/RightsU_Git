@@ -14,11 +14,10 @@ namespace RightsU_Entities
     public partial class USP_Acq_Deal_Supplementary_List_Result
     {
         public string title_name { get; set; }
-        public string SocialMedia { get; set; }
-        public string Commitments { get; set; }
-        public string OpeningClosingCredits { get; set; }
-        public string EssentialClauses { get; set; }
-        public int title_code { get; set; }
-        public int Supplementary_code { get; set; }
+        public Nullable<int> Supplementary_Tab_Code { get; set; }
+        public string Supplementary_Tab_Description { get; set; }
+        public string Remarks { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public Nullable<int> Acq_Deal_Supplementary_Code { get; set; }
     }
 }
