@@ -1,5 +1,12 @@
 ﻿@model IEnumerable<RightsU_Entities.Extended_Columns_Value>
-
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
 
 <h4 class="bold">Extended Value Metadata</h4>
 <p style="font-size:14px">Total Records : @Model.Count()</p>
@@ -37,45 +44,80 @@
                 </td>
             </tr>
         }
-
-        @foreach (var item in Model)
+        @if (Model.Count() > 0)
         {
-            if (TempData["Action"] == "EditEVDetails" && Convert.ToInt32(TempData["Id"]) == item.Columns_Value_Code)
+            foreach (var item in Model)
             {
-                i++;
-                <tr>
-                    <td style="width:10%;">
-                        @i
-                    </td>
-                    <td>
-                        <input type="text" id="ColumnValue" value="@item.Columns_Value" />
-                    </td>
-                    <td style="width:10%;">
-                        <a title="Update" class="glyphicon glyphicon-ok-circle" onclick="UpdateEVDetails(@item.Columns_Value_Code)"></a>
-                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
-                    </td>
-                </tr>
-            }
-            else
-            {
-                i++;
-                <tr id="trExtendValueRate_">
-                    <td style="width:10%;">
-                        @i
-                    </td>
-                    <td>
-                        @item.Columns_Value
-                    </td>
-                    @if (ViewBag.HideButton != "HideButton")
-                    {
+                if (TempData["Action"] == "EditEVDetails" && Convert.ToInt32(TempData["Id"]) == item.Columns_Value_Code)
+                {
+                    i++;
+                    <tr>
+                        <td style="width:10%;">
+                            @i
+                        </td>
+                        <td>
+                            <input type="text" id="ColumnValue" value="@item.Columns_Value" />
+                        </td>
+                        <td style="width:10%;">
+                            <a title="Update" class="glyphicon glyphicon-ok-circle" onclick="UpdateEVDetails(@item.Columns_Value_Code)"></a>
+                            <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelEVDetails()"></a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    i++;
+                    <tr id="trExtendValueRate_">
+                        <td style="width:10%;">
+                            @i
+                        </td>
+                        <td>
+                            @item.Columns_Value
+                        </td>
+                        @if (ViewBag.HideButton != "HideButton")
+                        {
                         <td style="width:10%;">
                             <a title="Edit" class="glyphicon glyphicon-pencil" onclick='AddExtendedValueDetails("@item.Columns_Value_Code","EDIT")'></a>
-                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteEVDetails(@item.Columns_Value_Code)"></a>
+                            @{ bool canDeactivate = true;
+                                string strToolTip = "";
+                                if (item.Map_Extended_Columns.Count > 0)
+                                {
+                                    strToolTip = "Can not Delete this data as it is used in Map Extended Columns";
+                                    canDeactivate = false;
+                                }
+                                else if (item.Map_Extended_Columns_Details.Count > 0)
+                                {
+                                    strToolTip = "Can not Delete this data as it is used in Map Extended Column Details";
+                                    canDeactivate = false;
+                                }
+                                if (canDeactivate)
+                                {
+                                    <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteEVDetails(@item.Columns_Value_Code)"></a>
+                                }
+                                else
+                                {
+                                    <a title="@strToolTip" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
+                                }
+                            }
+
                         </td>
-                    }
-                </tr>
+                        }
+                    </tr>
+                }
             }
         }
-    </tbody>
-</table>
+        else
+        {
+            if(ViewBag.HideButton == "HideButton")
+            {
+             <tr>
+            <td style="text-align:left" colspan="2">
+                No Records Found
+            </td>
+            </tr>               
+            }
+
+    }
+        </tbody>
+    </table>
 

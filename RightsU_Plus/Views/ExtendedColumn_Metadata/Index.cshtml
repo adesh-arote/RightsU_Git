@@ -217,7 +217,7 @@
         }
         return true;
     }
-
+    
 </script>
 
 
@@ -232,10 +232,16 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li>
-                                @Html.ActionLink("ADD", "Create", "", new { @class = "btn btn-primary" })
-                            </li>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
+                                {
+                                    @Html.ActionLink("ADD", "Create", "", new { @class = "btn btn-primary" })
+                                }
+                                </li>
                             <li>
-                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">                              </a>
+                                @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForExportToExcel.ToString() + "~"))
+                                {
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()">                              </a>
+                                }
                             </li>
 
                         </ul>

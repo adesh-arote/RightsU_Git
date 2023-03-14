@@ -379,6 +379,9 @@
                     if (data.Status == "S") {
                         AddExtendedValueDetails('0', 'View');
                     }
+                    if (data.Status == "E") {
+                        alert(data.Message);
+                    }
                     if (data.Enable == "IsDefinedValue") {
                         $("#IsDefinedValues").prop("disabled", false);
                         $("#ControlType").prop("disabled", false);
@@ -637,10 +640,10 @@
                         {
                             <input type="button" value="Update" class="btn btn-primary" onclick="CreateEditExtendedMetaData()" />
                         }
-                        @*@if (ViewBag.Title != "View")
+                        @if (ViewBag.Delete == "Delete")
                             {
                                 <input type="button" value="Delete" class="btn btn-primary" onclick="DeleteExtendedMetaData(@Model.Columns_Code)"/>
-                            }*@
+                            }
                         @Html.ActionLink("Cancel", "Index", "", new { @class = "btn btn-primary" })
                     </div>
                 </div>

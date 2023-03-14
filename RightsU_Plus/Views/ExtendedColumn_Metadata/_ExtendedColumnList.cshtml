@@ -1,7 +1,13 @@
 ﻿@model IEnumerable<RightsU_Entities.Extended_Columns>
+@using UTOFrameWork.FrameworkClasses;
 
 @{
     ViewBag.Title = "Index";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
 }
 
 
@@ -75,7 +81,7 @@
                         }
                         @if (item.Control_Type == "CB")
                         {
-                            <span>Check Box</span>
+                            <span>Checkbox</span>
                         }
                     </td>
                     <td>
@@ -125,9 +131,32 @@
                           </td>*@
 
                     <td>
-                        @Html.ActionLink(" ", "Edit", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" })
-                        @Html.ActionLink(" ", "Details", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "View" })
-                        @*@Html.ActionLink(" ", "Delete", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })*@
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                        {
+                            @Html.ActionLink(" ", "Edit", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" })
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                        {
+                            @Html.ActionLink(" ", "Details", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "View" })
+                        }
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                        {
+                            bool canDeactivate = true;
+                            string strToolTip = "";
+                            if (item.Map_Extended_Columns.Count > 0)
+                            {
+                                strToolTip = "Can not Delete this data as it is used in Map Extended Columns";
+                                canDeactivate = false;
+                            }
+                            if (canDeactivate)
+                            {
+                                @Html.ActionLink(" ", "Details", new { id = item.Columns_Code, ActionName = "Delete" }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })
+                            }
+                            else
+                            {
+                                <a title="@strToolTip" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
+                            }
+                        }
                     </td>
                 </tr>
 

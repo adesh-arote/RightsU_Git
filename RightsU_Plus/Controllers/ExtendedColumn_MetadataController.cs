@@ -62,6 +62,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Message = Session["Message"];
                 Session["Message"] = null;
             }
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return View();
         }
 
@@ -88,6 +89,7 @@ namespace RightsU_Plus.Controllers
                     lst = lstExtended_Columns_Searched.OrderByDescending(o => o.Columns_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
             }
+            ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/ExtendedColumn_Metadata/_ExtendedColumnList.cshtml", lst);
         }
 
@@ -95,6 +97,42 @@ namespace RightsU_Plus.Controllers
         {
             objExtended_Columns_Service = null;
             lstExtended_Columns_Searched = objExtended_Columns_Service.SearchFor(x => true).OrderBy(o => o.Columns_Code).ToList();
+
+            #region
+            //foreach(Extended_Columns obj in lstExtended_Columns_Searched)
+            //{
+            //    if(obj.Control_Type == "DDL")
+            //    {
+            //        obj.Control_Type = "Dropdown";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //    if (obj.Control_Type == "TXT")
+            //    {
+            //        obj.Control_Type = "Textbox";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //    if (obj.Control_Type == "RB")
+            //    {
+            //        obj.Control_Type = "Radio Button";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //    if (obj.Control_Type == "CB")
+            //    {
+            //        obj.Control_Type = "Checkbox";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //    if(obj.Control_Type == "FrTEd")
+            //    {
+            //        obj.Control_Type = "From Date To End Date";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //    if (obj.Control_Type == "DATE")
+            //    {
+            //        obj.Control_Type = "Date";
+            //        lstExtended_Columns_Searched.Add(obj);
+            //    }
+            //}
+            #endregion
         }
 
         public JsonResult SearchExtended_Columns(string searchText)
@@ -138,6 +176,15 @@ namespace RightsU_Plus.Controllers
                     noOfRecordTake = recordPerPage;
             }
             return pageNo;
+        }
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCurrency), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
+
+            return rights;
         }
         #endregion
 
@@ -273,66 +320,58 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        public ActionResult Details(int id)
+        public ActionResult Details(int id, string ActionName)
         {
             objExtended_Columns = null;
             objExtended_Columns_Service = null;
 
             objExtended_Columns = objExtended_Columns_Service.GetById(id);
+            if(ActionName == "Delete")
+            {
+                ViewBag.Delete = "Delete";
+            }
             ViewBag.Title = "View";
             return View("Create", objExtended_Columns);
         }
         #endregion
 
         #region Delete Method
-        //public ActionResult Delete(int id)
-        //{
-        //    objExtended_Columns = null;
-        //    objExtended_Columns_Service = null;
+        
+        [HttpPost]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            string Message = "";
+            string Status = "";
 
-        //    objExtended_Columns = objExtended_Columns_Service.GetById(id);
-        //    ViewBag.Title = "View";
-        //    return View("Create", objExtended_Columns);
-        //}
+            dynamic resultSet;
+            objExtended_Columns = objExtended_Columns_Service.GetById(id);
+            if (objExtended_Columns.Extended_Columns_Value.Count > 0)
+            {
+                foreach (Extended_Columns_Value ObjExV in objExtended_Columns.Extended_Columns_Value)
+                {
+                    ObjExV.EntityState = State.Deleted;
+                }
+            }
+            objExtended_Columns.EntityState = State.Deleted;
+            if (!objExtended_Columns_Service.Delete(objExtended_Columns, out resultSet))
+            {
+                Status = "E";
+                Message = "Oops! Unexpected Error Occured please try Again";
+            }
+            else
+            {
+                DeleteSessionUpdatedData();
+                Status = "S";
+                Session["Message"] = objMessageKey.RecordDeletedsuccessfully;
+            }
+            var Obj = new
+            {
+                Status = Status,
+                Message = Message
+            };
 
-        //[HttpPost]
-        //public ActionResult DeleteConfirmed(int id)
-        //{
-        //    string Message = "";
-        //    string Status = "";
-
-        //    //Extended_Columns objEC = new Extended_Columns();
-        //    dynamic resultSet;
-        //    objExtended_Columns = objExtended_Columns_Service.GetById(id);
-        //    if(objExtended_Columns.Extended_Columns_Value.Count > 0)
-        //    {
-        //        foreach(Extended_Columns_Value ObjExV in objExtended_Columns.Extended_Columns_Value)
-        //        {
-        //            Extended_Columns_Value ObjEV = objExtended_Columns_Value_Service.GetById(ObjExV.Columns_Value_Code);
-        //            ObjEV.EntityState = State.Deleted;
-        //            objExtended_Columns_Value_Service.Delete(ObjEV, out resultSet);
-        //        }
-        //    }
-
-        //    objExtended_Columns.EntityState = State.Deleted;
-        //    if (!objExtended_Columns_Service.Delete(objExtended_Columns, out resultSet))
-        //    {
-        //        Status = "E";
-        //        Message = "Oops! Unexpected Error Occured please try Again";
-        //    }
-        //    else
-        //    {
-        //        Status = "S";
-        //        Session["Message"] = objMessageKey.RecordDeletedsuccessfully;
-        //    }
-        //    var Obj = new
-        //    {
-        //        Status = Status,
-        //        Message = Message
-        //    };
-
-        //    return Json(Obj);
-        //}
+            return Json(Obj);
+        }
         #endregion
 
         #region ExtendedColumn_ValueDeatils
