@@ -452,16 +452,17 @@ namespace RightsU_InterimDb.Models
         public DbSet<Digital_Config> Digital_Config { get; set; }
         public DbSet<Digital_Data> Digital_Data { get; set; }
         public DbSet<Digital_Tab> Digital_Tab { get; set; }
-        public DbSet<AP_OEM> AP_OEM { get; set; }
-        public DbSet<AP_Vendor_Details> AP_Vendor_Details { get; set; }
-        public DbSet<AP_Vendor_Rule> AP_Vendor_Rule { get; set; }
-        public DbSet<AP_Vendor_Rule_Criteria> AP_Vendor_Rule_Criteria { get; set; }
-        public DbSet<AP_Vendor_TnC> AP_Vendor_TnC { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Extended_Group> Extended_Group { get; set; }
         public DbSet<Extended_Group_Config> Extended_Group_Config { get; set; }
         public DbSet<Title_Episode_Details> Title_Episode_Details { get; set; }
         public DbSet<Title_Episode_Details_TC> Title_Episode_Details_TC { get; set; }
+        public DbSet<AL_OEM> AL_OEM { get; set; }
+        public DbSet<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public DbSet<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        public DbSet<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
+        public DbSet<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
+        public DbSet<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

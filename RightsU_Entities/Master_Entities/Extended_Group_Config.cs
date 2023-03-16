@@ -17,6 +17,7 @@ namespace RightsU_Entities
         public Nullable<int> Columns_Code { get; set; }
         public Nullable<int> Group_Control_Order { get; set; }
         public string Validations { get; set; }
+        public string Additional_Condition { get; set; }
 
         public virtual Extended_Columns Extended_Columns { get; set; }
         public virtual Extended_Group Extended_Group { get; set; }

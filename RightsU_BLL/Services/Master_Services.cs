@@ -7442,60 +7442,185 @@ namespace RightsU_BLL
         }
     }
 
+    public class Extended_Group_Config_Service : BusinessLogic<Extended_Group_Config>
+    {
+        private readonly Extended_Group_Config_Repository objRepository;
+
+        public Extended_Group_Config_Service(string Connection_Str)
+        {
+            this.objRepository = new Extended_Group_Config_Repository(Connection_Str);
+        }
+        public IQueryable<Extended_Group_Config> SearchFor(Expression<Func<Extended_Group_Config, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Extended_Group_Config GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Extended_Group_Config objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Extended_Group_Config objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Extended_Group_Config objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
+            {
+                resultSet = "Extended_Group_Config already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class Extended_Group_Service : BusinessLogic<Extended_Group>
+    {
+        private readonly Extended_Group_Repository objRepository;
+
+        public Extended_Group_Service(string Connection_Str)
+        {
+            this.objRepository = new Extended_Group_Repository(Connection_Str);
+        }
+        public IQueryable<Extended_Group> SearchFor(Expression<Func<Extended_Group, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Extended_Group GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Extended_Group objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Extended_Group objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Extended_Group objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
+            {
+                resultSet = "Extended_Group already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
     #region---Aeroplay----------
-    public class AP_Vendor_Details_Service : BusinessLogic<AP_Vendor_Details>
-    {
-        private readonly AP_Vendor_Details_Repository objRepository;
 
-        public AP_Vendor_Details_Service(string Connection_Str)
+    public class AL_Vendor_Details_Service : BusinessLogic<AL_Vendor_Details>
+    {
+        private readonly AL_Vendor_Details_Repository objRepository;
+
+        public AL_Vendor_Details_Service(string Connection_Str)
         {
-            this.objRepository = new AP_Vendor_Details_Repository(Connection_Str);
+            this.objRepository = new AL_Vendor_Details_Repository(Connection_Str);
         }
-        public IQueryable<AP_Vendor_Details> SearchFor(Expression<Func<AP_Vendor_Details, bool>> predicate)
+        public IQueryable<AL_Vendor_Details> SearchFor(Expression<Func<AL_Vendor_Details, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public AP_Vendor_Details GetById(int id)
+        public AL_Vendor_Details GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(AP_Vendor_Details objToSave, out dynamic resultSet)
+        public bool Save(AL_Vendor_Details objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(AP_Vendor_Details objToUpdate, out dynamic resultSet)
+        public bool Update(AL_Vendor_Details objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(AP_Vendor_Details objToDelete, out dynamic resultSet)
+        public bool Delete(AL_Vendor_Details objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(AP_Vendor_Details objToValidate, out dynamic resultSet)
+        public override bool Validate(AL_Vendor_Details objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(AP_Vendor_Details objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(AL_Vendor_Details objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateDelete(AP_Vendor_Details objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(AL_Vendor_Details objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        private bool ValidateDuplicate(AP_Vendor_Details objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(AL_Vendor_Details objToValidate, out dynamic resultSet)
         {
             if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
             {
-                resultSet = "AP_Vendor_Details already exists";
+                resultSet = "AL_Vendor_Details already exists";
                 return false;
             }
 
@@ -7505,59 +7630,59 @@ namespace RightsU_BLL
 
     }
 
-    public class AP_Vendor_TnC_Service : BusinessLogic<AP_Vendor_TnC>
+    public class AL_Vendor_TnC_Service : BusinessLogic<AL_Vendor_TnC>
     {
-        private readonly AP_Vendor_TnC_Repository objRepository;
+        private readonly AL_Vendor_TnC_Repository objRepository;
 
-        public AP_Vendor_TnC_Service(string Connection_Str)
+        public AL_Vendor_TnC_Service(string Connection_Str)
         {
-            this.objRepository = new AP_Vendor_TnC_Repository(Connection_Str);
+            this.objRepository = new AL_Vendor_TnC_Repository(Connection_Str);
         }
-        public IQueryable<AP_Vendor_TnC> SearchFor(Expression<Func<AP_Vendor_TnC, bool>> predicate)
+        public IQueryable<AL_Vendor_TnC> SearchFor(Expression<Func<AL_Vendor_TnC, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public AP_Vendor_TnC GetById(int id)
+        public AL_Vendor_TnC GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(AP_Vendor_TnC objToSave, out dynamic resultSet)
+        public bool Save(AL_Vendor_TnC objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(AP_Vendor_TnC objToUpdate, out dynamic resultSet)
+        public bool Update(AL_Vendor_TnC objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(AP_Vendor_TnC objToDelete, out dynamic resultSet)
+        public bool Delete(AL_Vendor_TnC objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(AP_Vendor_TnC objToValidate, out dynamic resultSet)
+        public override bool Validate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(AP_Vendor_TnC objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateDelete(AP_Vendor_TnC objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(AL_Vendor_TnC objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        private bool ValidateDuplicate(AP_Vendor_TnC objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
         {
             if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
             {
-                resultSet = "AP_Vendor_TnC already exists";
+                resultSet = "AL_Vendor_TnC already exists";
                 return false;
             }
 
@@ -7567,59 +7692,59 @@ namespace RightsU_BLL
 
     }
 
-    public class AP_Vendor_Rule_Criteria_Service : BusinessLogic<AP_Vendor_Rule_Criteria>
+    public class AL_Vendor_OEM_Service : BusinessLogic<AL_Vendor_OEM>
     {
-        private readonly AP_Vendor_Rule_Criteria_Repository objRepository;
+        private readonly AL_Vendor_OEM_Repository objRepository;
 
-        public AP_Vendor_Rule_Criteria_Service(string Connection_Str)
+        public AL_Vendor_OEM_Service(string Connection_Str)
         {
-            this.objRepository = new AP_Vendor_Rule_Criteria_Repository(Connection_Str);
+            this.objRepository = new AL_Vendor_OEM_Repository(Connection_Str);
         }
-        public IQueryable<AP_Vendor_Rule_Criteria> SearchFor(Expression<Func<AP_Vendor_Rule_Criteria, bool>> predicate)
+        public IQueryable<AL_Vendor_OEM> SearchFor(Expression<Func<AL_Vendor_OEM, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public AP_Vendor_Rule_Criteria GetById(int id)
+        public AL_Vendor_OEM GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(AP_Vendor_Rule_Criteria objToSave, out dynamic resultSet)
+        public bool Save(AL_Vendor_OEM objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(AP_Vendor_Rule_Criteria objToUpdate, out dynamic resultSet)
+        public bool Update(AL_Vendor_OEM objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(AP_Vendor_Rule_Criteria objToDelete, out dynamic resultSet)
+        public bool Delete(AL_Vendor_OEM objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(AP_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        public override bool Validate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(AP_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateDelete(AP_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(AL_Vendor_OEM objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        private bool ValidateDuplicate(AP_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AP_Vendor_Rule_Code == objToValidate.AP_Vendor_Rule_Code).Count() > 0)
+            if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
             {
-                resultSet = "AP_Vendor_Rule_Criteria already exists";
+                resultSet = "AL_Vendor_OEM already exists";
                 return false;
             }
 
@@ -7629,59 +7754,59 @@ namespace RightsU_BLL
 
     }
 
-    public class AP_Vendor_Rule_Service : BusinessLogic<AP_Vendor_Rule>
+    public class AL_Vendor_Rule_Criteria_Service : BusinessLogic<AL_Vendor_Rule_Criteria>
     {
-        private readonly AP_Vendor_Rule_Repository objRepository;
+        private readonly AL_Vendor_Rule_Criteria_Repository objRepository;
 
-        public AP_Vendor_Rule_Service(string Connection_Str)
+        public AL_Vendor_Rule_Criteria_Service(string Connection_Str)
         {
-            this.objRepository = new AP_Vendor_Rule_Repository(Connection_Str);
+            this.objRepository = new AL_Vendor_Rule_Criteria_Repository(Connection_Str);
         }
-        public IQueryable<AP_Vendor_Rule> SearchFor(Expression<Func<AP_Vendor_Rule, bool>> predicate)
+        public IQueryable<AL_Vendor_Rule_Criteria> SearchFor(Expression<Func<AL_Vendor_Rule_Criteria, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public AP_Vendor_Rule GetById(int id)
+        public AL_Vendor_Rule_Criteria GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(AP_Vendor_Rule objToSave, out dynamic resultSet)
+        public bool Save(AL_Vendor_Rule_Criteria objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(AP_Vendor_Rule objToUpdate, out dynamic resultSet)
+        public bool Update(AL_Vendor_Rule_Criteria objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(AP_Vendor_Rule objToDelete, out dynamic resultSet)
+        public bool Delete(AL_Vendor_Rule_Criteria objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(AP_Vendor_Rule objToValidate, out dynamic resultSet)
+        public override bool Validate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(AP_Vendor_Rule objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateDelete(AP_Vendor_Rule objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        private bool ValidateDuplicate(AP_Vendor_Rule objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AP_Vendor_Rule_Code == objToValidate.AP_Vendor_Rule_Code).Count() > 0)
+            if (SearchFor(s => s.AL_Vendor_Rule_Code == objToValidate.AL_Vendor_Rule_Code).Count() > 0)
             {
-                resultSet = "AP_Vendor_Rule already exists";
+                resultSet = "AL_Vendor_Rule_Criteria already exists";
                 return false;
             }
 
@@ -7691,59 +7816,121 @@ namespace RightsU_BLL
 
     }
 
-    public class AP_OEM_Service : BusinessLogic<AP_OEM>
+    public class AL_Vendor_Rule_Service : BusinessLogic<AL_Vendor_Rule>
     {
-        private readonly AP_OEM_Repository objRepository;
+        private readonly AL_Vendor_Rule_Repository objRepository;
 
-        public AP_OEM_Service(string Connection_Str)
+        public AL_Vendor_Rule_Service(string Connection_Str)
         {
-            this.objRepository = new AP_OEM_Repository(Connection_Str);
+            this.objRepository = new AL_Vendor_Rule_Repository(Connection_Str);
         }
-        public IQueryable<AP_OEM> SearchFor(Expression<Func<AP_OEM, bool>> predicate)
+        public IQueryable<AL_Vendor_Rule> SearchFor(Expression<Func<AL_Vendor_Rule, bool>> predicate)
         {
             return objRepository.SearchFor(predicate);
         }
 
-        public AP_OEM GetById(int id)
+        public AL_Vendor_Rule GetById(int id)
         {
             return objRepository.GetById(id);
         }
 
-        public bool Save(AP_OEM objToSave, out dynamic resultSet)
+        public bool Save(AL_Vendor_Rule objToSave, out dynamic resultSet)
         {
             return base.Save(objToSave, objRepository, out resultSet);
         }
 
-        public bool Update(AP_OEM objToUpdate, out dynamic resultSet)
+        public bool Update(AL_Vendor_Rule objToUpdate, out dynamic resultSet)
         {
             return base.Update(objToUpdate, objRepository, out resultSet);
         }
 
-        public bool Delete(AP_OEM objToDelete, out dynamic resultSet)
+        public bool Delete(AL_Vendor_Rule objToDelete, out dynamic resultSet)
         {
             return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
-        public override bool Validate(AP_OEM objToValidate, out dynamic resultSet)
+        public override bool Validate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateUpdate(AP_OEM objToValidate, out dynamic resultSet)
+        public override bool ValidateUpdate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        public override bool ValidateDelete(AP_OEM objToValidate, out dynamic resultSet)
+        public override bool ValidateDelete(AL_Vendor_Rule objToValidate, out dynamic resultSet)
         {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
-        private bool ValidateDuplicate(AP_OEM objToValidate, out dynamic resultSet)
+        private bool ValidateDuplicate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AP_OEM_Code == objToValidate.AP_OEM_Code).Count() > 0)
+            if (SearchFor(s => s.AL_Vendor_Rule_Code == objToValidate.AL_Vendor_Rule_Code).Count() > 0)
             {
-                resultSet = "AP_OEM already exists";
+                resultSet = "AL_Vendor_Rule already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_OEM_Service : BusinessLogic<AL_OEM>
+    {
+        private readonly AL_OEM_Repository objRepository;
+
+        public AL_OEM_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_OEM_Repository(Connection_Str);
+        }
+        public IQueryable<AL_OEM> SearchFor(Expression<Func<AL_OEM, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_OEM GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_OEM objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_OEM objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_OEM objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_OEM_Code == objToValidate.AL_OEM_Code).Count() > 0)
+            {
+                resultSet = "AL_OEM already exists";
                 return false;
             }
 
@@ -7930,130 +8117,6 @@ namespace RightsU_BLL
             if (SearchFor(s => s.Title_Episode_Detail_Code == objToValidate.Title_Episode_Detail_Code).Count() > 0)
             {
                 resultSet = "Title_Episode_Details already exists";
-                return false;
-            }
-
-            resultSet = "";
-            return true;
-        }
-
-    }
-
-    public class Extended_Group_Config_Service : BusinessLogic<Extended_Group_Config>
-    {
-        private readonly Extended_Group_Config_Repository objRepository;
-
-        public Extended_Group_Config_Service(string Connection_Str)
-        {
-            this.objRepository = new Extended_Group_Config_Repository(Connection_Str);
-        }
-        public IQueryable<Extended_Group_Config> SearchFor(Expression<Func<Extended_Group_Config, bool>> predicate)
-        {
-            return objRepository.SearchFor(predicate);
-        }
-
-        public Extended_Group_Config GetById(int id)
-        {
-            return objRepository.GetById(id);
-        }
-
-        public bool Save(Extended_Group_Config objToSave, out dynamic resultSet)
-        {
-            return base.Save(objToSave, objRepository, out resultSet);
-        }
-
-        public bool Update(Extended_Group_Config objToUpdate, out dynamic resultSet)
-        {
-            return base.Update(objToUpdate, objRepository, out resultSet);
-        }
-
-        public bool Delete(Extended_Group_Config objToDelete, out dynamic resultSet)
-        {
-            return base.Delete(objToDelete, objRepository, out resultSet);
-        }
-
-        public override bool Validate(Extended_Group_Config objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        public override bool ValidateUpdate(Extended_Group_Config objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        public override bool ValidateDelete(Extended_Group_Config objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        private bool ValidateDuplicate(Extended_Group_Config objToValidate, out dynamic resultSet)
-        {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
-            {
-                resultSet = "Extended_Group_Config already exists";
-                return false;
-            }
-
-            resultSet = "";
-            return true;
-        }
-
-    }
-
-    public class Extended_Group_Service : BusinessLogic<Extended_Group>
-    {
-        private readonly Extended_Group_Repository objRepository;
-
-        public Extended_Group_Service(string Connection_Str)
-        {
-            this.objRepository = new Extended_Group_Repository(Connection_Str);
-        }
-        public IQueryable<Extended_Group> SearchFor(Expression<Func<Extended_Group, bool>> predicate)
-        {
-            return objRepository.SearchFor(predicate);
-        }
-
-        public Extended_Group GetById(int id)
-        {
-            return objRepository.GetById(id);
-        }
-
-        public bool Save(Extended_Group objToSave, out dynamic resultSet)
-        {
-            return base.Save(objToSave, objRepository, out resultSet);
-        }
-
-        public bool Update(Extended_Group objToUpdate, out dynamic resultSet)
-        {
-            return base.Update(objToUpdate, objRepository, out resultSet);
-        }
-
-        public bool Delete(Extended_Group objToDelete, out dynamic resultSet)
-        {
-            return base.Delete(objToDelete, objRepository, out resultSet);
-        }
-
-        public override bool Validate(Extended_Group objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        public override bool ValidateUpdate(Extended_Group objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        public override bool ValidateDelete(Extended_Group objToValidate, out dynamic resultSet)
-        {
-            return ValidateDuplicate(objToValidate, out resultSet);
-        }
-
-        private bool ValidateDuplicate(Extended_Group objToValidate, out dynamic resultSet)
-        {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
-            {
-                resultSet = "Extended_Group already exists";
                 return false;
             }
 

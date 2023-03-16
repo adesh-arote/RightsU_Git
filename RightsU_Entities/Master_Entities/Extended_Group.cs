@@ -14,6 +14,7 @@ namespace RightsU_Entities
         public Extended_Group()
         {
             this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
+            this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
         }
 
         public State EntityState { get; set; }
@@ -30,5 +31,6 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
 
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
+        public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
     }
 }

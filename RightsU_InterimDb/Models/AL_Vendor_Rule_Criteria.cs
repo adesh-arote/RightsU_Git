@@ -12,16 +12,14 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Extended_Group_Config
+    public partial class AL_Vendor_Rule_Criteria
     {
-    	public State EntityState { get; set; }    public int Extended_Group_Config_Code { get; set; }
-    	    public Nullable<int> Extended_Group_Code { get; set; }
+    	public State EntityState { get; set; }    public int AL_Vendor_Rule_Criteria_Code { get; set; }
+    	    public Nullable<int> AL_Vendor_Rule_Code { get; set; }
     	    public Nullable<int> Columns_Code { get; set; }
-    	    public Nullable<int> Group_Control_Order { get; set; }
-    	    public string Validations { get; set; }
-    	    public string Additional_Condition { get; set; }
+    	    public string Columns_Value { get; set; }
     
+        public virtual AL_Vendor_Rule AL_Vendor_Rule { get; set; }
         public virtual Extended_Columns Extended_Columns { get; set; }
-        public virtual Extended_Group Extended_Group { get; set; }
     }
 }

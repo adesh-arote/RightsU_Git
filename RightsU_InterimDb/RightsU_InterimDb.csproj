@@ -316,6 +316,24 @@
     <Compile Include="Models\Alternate_Config.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AL_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Rule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Rule_Criteria.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_TnC.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Amort_Rule.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -332,21 +350,6 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Ancillary_Type.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AP_OEM.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AP_Vendor_Details.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AP_Vendor_Rule.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AP_Vendor_Rule_Criteria.cs">
-      <DependentUpon>RightsU_EF.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\AP_Vendor_TnC.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AsRun_FileStatus.cs">

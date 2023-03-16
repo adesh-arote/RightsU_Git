@@ -12,27 +12,24 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Extended_Group
+    public partial class AL_OEM
     {
-        public Extended_Group()
+        public AL_OEM()
         {
-            this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
-            this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
+            this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
         }
     
-    	public State EntityState { get; set; }    public int Extended_Group_Code { get; set; }
-    	    public string Group_Name { get; set; }
-    	    public string Short_Name { get; set; }
-    	    public Nullable<int> Group_Order { get; set; }
-    	    public string Add_Edit_Type { get; set; }
-    	    public Nullable<int> Module_Code { get; set; }
+    	public State EntityState { get; set; }    public int AL_OEM_Code { get; set; }
+    	    public string Device_Name { get; set; }
+    	    public string Company { get; set; }
+    	    public string Aspect_Ratio { get; set; }
+    	    public string MPEG { get; set; }
     	    public Nullable<int> Inserted_By { get; set; }
     	    public Nullable<System.DateTime> Inserted_On { get; set; }
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
     
-        public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
-        public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
     }
 }

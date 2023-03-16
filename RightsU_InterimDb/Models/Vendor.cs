@@ -33,9 +33,10 @@ namespace RightsU_InterimDb.Models
             this.MHPlayLists = new HashSet<MHPlayList>();
             this.MHRequests = new HashSet<MHRequest>();
             this.MHCueSheets = new HashSet<MHCueSheet>();
-            this.AP_Vendor_Details = new HashSet<AP_Vendor_Details>();
-            this.AP_Vendor_Rule = new HashSet<AP_Vendor_Rule>();
-            this.AP_Vendor_TnC = new HashSet<AP_Vendor_TnC>();
+            this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
+            this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
+            this.AL_Vendor_Rule = new HashSet<AL_Vendor_Rule>();
+            this.AL_Vendor_TnC = new HashSet<AL_Vendor_TnC>();
         }
     
     	public State EntityState { get; set; }    public int Vendor_Code { get; set; }
@@ -89,8 +90,9 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
         public virtual Party_Category Party_Category { get; set; }
         public virtual Party_Group Party_Group { get; set; }
-        public virtual ICollection<AP_Vendor_Details> AP_Vendor_Details { get; set; }
-        public virtual ICollection<AP_Vendor_Rule> AP_Vendor_Rule { get; set; }
-        public virtual ICollection<AP_Vendor_TnC> AP_Vendor_TnC { get; set; }
+        public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        public virtual ICollection<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
+        public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
     }
 }
