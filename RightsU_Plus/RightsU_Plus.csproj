@@ -220,6 +220,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
@@ -1325,6 +1326,10 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Create.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

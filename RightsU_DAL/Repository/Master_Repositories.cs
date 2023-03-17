@@ -1033,10 +1033,48 @@ namespace RightsU_DAL
     public class Extended_Columns_Repository : RightsU_Repository<Extended_Columns>
     {
         public Extended_Columns_Repository(string conStr) : base(conStr) { }
+        public override void Save(Extended_Columns objEC)
+        {
+            if (objEC.EntityState == State.Added)
+            {
+                base.Save(objEC);
+            }
+            else if (objEC.EntityState == State.Modified)
+            {
+                base.Update(objEC);
+            }
+            else if (objEC.EntityState == State.Deleted)
+            {
+                base.Delete(objEC);
+            }
+        }
+        public override void Delete(Extended_Columns objEC)
+        {
+            base.Delete(objEC);
+        }
     }
     public class Extended_Columns_Value_Repository : RightsU_Repository<Extended_Columns_Value>
     {
         public Extended_Columns_Value_Repository(string conStr) : base(conStr) { }
+        public override void Save(Extended_Columns_Value objEV)
+        {
+            if (objEV.EntityState == State.Added)
+            {
+                base.Save(objEV);
+            }
+            else if (objEV.EntityState == State.Modified)
+            {
+                base.Update(objEV);
+            }
+            else if (objEV.EntityState == State.Deleted)
+            {
+                base.Delete(objEV);
+            }
+        }
+        public override void Delete(Extended_Columns_Value objEV)
+        {
+            base.Delete(objEV);
+        }
     }
 
     public class Map_Extended_Columns_Repository : RightsU_Repository<Map_Extended_Columns>
