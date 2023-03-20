@@ -8003,8 +8003,7 @@ namespace RightsU_BLL
 
         public bool Delete(Banner objToDelete, out dynamic resultSet)
         {
-            resultSet = "";
-            return true;
+            return base.Delete(objToDelete, objRepository, out resultSet);
         }
 
         public override bool Validate(Banner objToValidate, out dynamic resultSet)
@@ -8019,7 +8018,8 @@ namespace RightsU_BLL
 
         public override bool ValidateDelete(Banner objToValidate, out dynamic resultSet)
         {
-            return ValidateDuplicate(objToValidate, out resultSet);
+             resultSet = "";
+            return true;
         }
 
         private bool ValidateDuplicate(Banner objToValidate, out dynamic resultSet)
