@@ -2547,22 +2547,60 @@ namespace RightsU_BLL
             return true;
         }
     }
-    public class Extended_Columns_Service
+    public class Extended_Columns_Service : BusinessLogic<Extended_Columns>
     {
-        private readonly Extended_Columns_Repository objExtCol;
+        private readonly Extended_Columns_Repository objRepository;
+        private readonly Extended_Columns_Value_Repository extended_Columns_Value_Repository;
 
         public Extended_Columns_Service(string Connection_Str)
         {
-            this.objExtCol = new Extended_Columns_Repository(Connection_Str);
+            this.objRepository = new Extended_Columns_Repository(Connection_Str);
+            this.extended_Columns_Value_Repository = new Extended_Columns_Value_Repository(Connection_Str);
         }
         public IQueryable<Extended_Columns> SearchFor(Expression<Func<Extended_Columns, bool>> predicate)
         {
-            return objExtCol.SearchFor(predicate);
+            return objRepository.SearchFor(predicate);
         }
-
         public Extended_Columns GetById(int id)
         {
-            return objExtCol.GetById(id);
+            return objRepository.GetById(id);
+        }
+        public bool Save(Extended_Columns objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Extended_Columns objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Extended_Columns objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Columns_Name == objToValidate.Columns_Name && s.Columns_Code != objToValidate.Columns_Code).Count() > 0)
+            {
+                resultSet = "Extended Column already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Extended_Columns_Value_Service : BusinessLogic<Extended_Columns_Value>
@@ -2577,7 +2615,6 @@ namespace RightsU_BLL
         {
             return objExtCol.SearchFor(predicate);
         }
-
         public Extended_Columns_Value GetById(int id)
         {
             return objExtCol.GetById(id);
@@ -2585,6 +2622,10 @@ namespace RightsU_BLL
         public bool Save(Extended_Columns_Value objUPD, out dynamic resultSet)
         {
             return base.Save(objUPD, objExtCol, out resultSet);
+        }
+        public bool Update(Extended_Columns_Value objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objExtCol, out resultSet);
         }
         public bool Delete(Extended_Columns_Value objUPD, out dynamic resultSet)
         {
@@ -2596,13 +2637,11 @@ namespace RightsU_BLL
             resultSet = "";
             return true;
         }
-
         public override bool ValidateUpdate(Extended_Columns_Value objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;
         }
-
         public override bool ValidateDelete(Extended_Columns_Value objToValidate, out dynamic resultSet)
         {
             resultSet = "";
@@ -7492,12 +7531,6 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Extended_Group_Config objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
-            {
-                resultSet = "Extended_Group_Config already exists";
-                return false;
-            }
-
             resultSet = "";
             return true;
         }
@@ -7554,7 +7587,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Extended_Group objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
+            if (SearchFor(s => (s.Module_Code == objToValidate.Module_Code && s.Group_Order == objToValidate.Group_Order) && (s.Extended_Group_Code != objToValidate.Extended_Group_Code)).Count() > 0)
             {
                 resultSet = "Extended_Group already exists";
                 return false;
