@@ -8003,7 +8003,8 @@ namespace RightsU_BLL
 
         public bool Delete(Banner objToDelete, out dynamic resultSet)
         {
-            return base.Delete(objToDelete, objRepository, out resultSet);
+            resultSet = "";
+            return true;
         }
 
         public override bool Validate(Banner objToValidate, out dynamic resultSet)
@@ -8023,7 +8024,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Banner objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Banner_Code == objToValidate.Banner_Code).Count() > 0)
+            if (SearchFor(s => s.Banner_Name == objToValidate.Banner_Name).Count() > 0)
             {
                 resultSet = "Banner already exists";
                 return false;
