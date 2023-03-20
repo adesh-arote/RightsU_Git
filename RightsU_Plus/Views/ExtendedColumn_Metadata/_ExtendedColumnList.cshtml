@@ -1,0 +1,163 @@
+﻿@model IEnumerable<RightsU_Entities.Extended_Columns>
+@using UTOFrameWork.FrameworkClasses;
+
+@{
+   // ViewBag.Title = "Index";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Column Name
+            </th>
+            <th>
+                Control Type
+            </th>
+            <th>
+                Is Ref
+            </th>
+            <th>
+                Is Defined Values
+            </th>
+            <th>
+                Is Multiple Select
+            </th>
+            <th>
+                Ref Table
+            </th>
+            <th>
+                Ref DisplayField
+            </th>
+            <th>
+                Ref Value Field
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr style="text-align:center">
+                    <td style="text-align:left !important">
+                        @Html.DisplayFor(modelItem => item.Columns_Name)
+                    </td>
+                    <td>
+                        @if (item.Control_Type == "DDL")
+                        {
+                            <span>DropDown</span>
+                        }
+                        @if (item.Control_Type == "TXT")
+                        {
+                            <span>Text</span>
+                        }
+                        @if (item.Control_Type == "DATE")
+                        {
+                            <span>Date</span>
+                        }
+                        @if (item.Control_Type == "SDTED")
+                        {
+                            <span>StartDate To EndDate</span>
+                        }
+                        @if (item.Control_Type == "RB")
+                        {
+                            <span>Radio Button</span>
+                        }
+                        @if (item.Control_Type == "CB")
+                        {
+                            <span>Checkbox</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Is_Ref == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Is_Defined_Values == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Is_Multiple_Select == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ref_Table)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ref_Display_Field)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Ref_Value_Field)
+                    </td>
+                    <td>
+                        @Html.ActionLink(" ", "Edit", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-pencil", title = objMessageKey.Edit })
+                        @Html.ActionLink(" ", "Details", new { id = item.Columns_Code }, new { @class = "glyphicon glyphicon-eye-open", @style = "cursor: pointer;", title = objMessageKey.View })
+                        @{
+                            bool canDeactivate = true;
+                            string strToolTip = "";
+                            if (item.Map_Extended_Columns.Count > 0)
+                            {
+                                strToolTip = "Can not Delete this data as it is used in Map Extended Columns";
+                                canDeactivate = false;
+                            }
+                            else if (item.AL_Vendor_Rule_Criteria.Count > 0)
+                            {
+                                strToolTip = "Can not Delete this data as it is used in Ap Vendor Rule Criteria";
+                                canDeactivate = false;
+                            }
+                            else if (item.Extended_Group_Config.Count > 0)
+                            {
+                                strToolTip = "Can not Delete this data as it is used in Extended Group Config";
+                                canDeactivate = false;
+                            }
+                            if (canDeactivate)
+                            {
+                                @Html.ActionLink(" ", "Details", new { id = item.Columns_Code, ActionName = "Delete" }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })
+                            }
+                            else
+                            {
+                                <a title="@strToolTip" class="glyphicon glyphicon-trash disabled" onclick="return false;"></a>
+                            }
+                        }
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="8">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+

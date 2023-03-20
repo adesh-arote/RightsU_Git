@@ -1,0 +1,727 @@
+﻿@model RightsU_Entities.Extended_Columns
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    if (ViewBag.Title != "View")
+    {
+        ViewBag.Title = Model != null ? "Edit" : "Create";
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        if ("@ViewBag.Title" == "Edit") {
+            AddExtendedValueDetails(0, "View");
+            DisableEnableControl();
+            HideAndShowGridView();
+        }
+        var isDefinedValues = $("#IsDefinedValues").val();
+        var length = $("table tr[id*='trExtendValueRate_']").length;
+        if ("@ViewBag.Title" == "Edit" && isDefinedValues == "Y" && length != 0) {
+            $("#IsDefinedValues").prop("disabled", true);
+        }
+        if ("@ViewBag.Title" == "View") {
+            AddExtendedValueDetails(0, "ShowView");
+        }
+
+        var length = $("table tr[id*='trExtendValueRate_']").length;
+        if (length > 0) {
+            $("#ControlType").prop("disabled", true);
+        }
+        $('#ControlType').change(function () {
+            $('#ControlType').removeAttr("style", "border-color: red; width:95%;");
+             $('#ControlType').addClass("chosen-single form-control input-sm");
+            $('#ControlType').css("width", "95%");
+        })
+
+    });
+
+    var Url_DeleteExtendedMetaData = '@Url.Action("DeleteConfirmed", "ExtendedColumn_Metadata")';
+    var Url_Index = '@Url.Action("Index", "ExtendedColumn_Metadata")';
+    var Url_AddEditEVDetail = '@Url.Action("AddEditEVDetails", "ExtendedColumn_Metadata")';
+    var Url_SaveEVDetail = '@Url.Action("SaveEVDetails", "ExtendedColumn_Metadata")';
+    var Url_EditEVDetail = '@Url.Action("EditEVDetails", "ExtendedColumn_Metadata")';
+    var Url_DeleteEVDetail = '@Url.Action("DeleteEVDetails", "ExtendedColumn_Metadata")';
+    var Url_CancelEvDetails = '@Url.Action("CancelEVDetails", "ExtendedColumn_Metadata")';
+
+
+
+    function CreateEditExtendedMetaData(){
+        debugger;
+        var Return_value = true;
+        if ("@ViewBag.Title" == "Edit") {
+            var Url_CreateEditExtendedMetaData = '@Url.Action("Edit", "ExtendedColumn_Metadata")';
+        }
+        else {
+            var Url_CreateEditExtendedMetaData = '@Url.Action("Create", "ExtendedColumn_Metadata")';
+        }
+        var columnName = $("#ColumnName").val();
+        var controlType = $("#ControlType").val();
+        var isRef = $("#IsRef").val();
+        var isDefinedValues = $("#IsDefinedValues").val();
+        var isMultipleSelect = $("#IsMultipleSelect").val();
+        var refTable = $("#RefTable").val();
+        var displayField = $("#DisplayField").val();
+        var refValueField = $("#RefValueField").val();
+        var additionalCondition = $("#AdditionalCondition").val();
+        var isAddOnScreen = $("#IsAddOnScreen").val();
+
+        if (columnName == "") {
+            $("#ColumnName").val('').attr("required", true);
+            Return_value = false;
+        }
+        if (controlType == "") {
+            $("#ControlType").val('').attr("required", true);
+            $('#ControlType').val('').attr("style", "border-color: red;width:95%; background-color: rgba(155,0,0,0.1);")
+            Return_value = false;
+        }
+
+        if (isDefinedValues == "Y") {
+
+            var length = $("table tr[id*='trExtendValueRate_']").length;
+            if (length == 0) {
+                showAlert("E","Please Add Column Value");
+                Return_value = false;
+            }
+        }
+        if (isDefinedValues == "N" && controlType == "DDL") {
+            if (refTable == "") {
+                $("#RefTable").val('').attr("required", true);               
+                Return_value = false;
+            }
+            if (displayField == "") {
+                $("#DisplayField").val('').attr("required", true);
+                Return_value = false;
+            }
+            if (refValueField == "") {
+                $("#RefValueField").val('').attr("required", true);
+                Return_value = false;
+            }
+
+        }
+        if (Return_value) {
+            $.ajax({
+                type: "POST",
+                url: Url_CreateEditExtendedMetaData,
+                traditional: true,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Columns_Name: columnName,
+                    Control_Type: controlType,
+                    Is_Ref: isRef,
+                    Is_Defined_Values: isDefinedValues,
+                    Is_Multiple_Select: isMultipleSelect,
+                    Ref_Table: refTable,
+                    Ref_Display_Field: displayField,
+                    Ref_Value_Field: refValueField,
+                    Additional_Condition: additionalCondition,
+                    Is_Add_OnScreen: isAddOnScreen
+                }),
+                async: false,
+                success: function (data) {
+                    debugger;
+                    if (data.Status == "S") {
+                        showLoading();
+                        window.location.href = Url_Index;
+                    }
+                    else {
+                        showAlert("E", data.Message);
+                        return false;
+                    }
+                },
+                error: function () {
+
+                }
+            });
+        }
+    }
+
+
+    function DeleteExtendedMetaData(Id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: Url_DeleteExtendedMetaData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Id: Id
+            }),
+            async: false,
+            success: function (data) {
+                debugger;
+                if (data.Status == "S") {
+                    showLoading();
+                    window.location.href = Url_Index;
+                }
+                else {
+                    showAlert("E", data.Message);
+                    return false;
+                }
+            },
+            error: function (data) {
+                alert('Error: ' + data.responseText);
+            }
+        });
+    }
+
+
+
+    function HideAndShowGridView() {
+        debugger;
+        var isDefinedValues = $("#IsDefinedValues").val();
+        var controlType = $("#ControlType").val();
+        //-------ToGetBackRemoveValues after Select No in IsdefinedValues..
+        var RefTable = $("#RefTable2").val();
+        var DisplayField = $("#DisplayField2").val();
+        var RefValueField = $("#RefValueField2").val();
+        var AdditionalCondition = $("#AdditionalCondition2").val();
+
+        if (controlType == "") {
+            showAlert("E", "Please Select Control Type");
+            $("#IsDefinedValues").val("N");
+            return false;
+        }
+
+
+        if (isDefinedValues == "Y" && controlType == "DDL")
+        {
+            $("#RefTable").val("");
+            $("#DisplayField").val("");
+            $("#RefValueField").val("");
+            $("#AdditionalCondition").val("");
+            $("#RefTable").prop("disabled", true);
+            $("#DisplayField").prop("disabled", true);
+            $("#RefValueField").prop("disabled", true);
+            $("#AdditionalCondition").prop("disabled", true);
+            $("#IsAddOnScreen").prop("disabled", true);
+            $("#AddBtn").attr("style", "display:block");
+            AddExtendedValueDetails(0, "View");
+        }
+        if (isDefinedValues == "N" && controlType == "DDL")
+        {
+            $("#RefTable").prop("disabled", false);
+            $("#DisplayField").prop("disabled", false);
+            $("#RefValueField").prop("disabled", false);
+            $("#AdditionalCondition").prop("disabled", false);
+            $("#IsAddOnScreen").prop("disabled", false);
+            $("#AddBtn").attr("style", "display:none");
+            $('#divEVDetails').empty();
+
+             if ("@ViewBag.Title" === "Edit") {
+                $("#RefTable").val(RefTable);
+                $("#DisplayField").val(DisplayField);
+                $("#RefValueField").val(RefValueField);
+                $("#AdditionalCondition").val(AdditionalCondition);
+            }
+        }
+    }
+
+    function DisableEnableControl() {
+        debugger;
+        var controlType = $("#ControlType").val();
+
+        if (controlType == "DDL") {
+            $("#IsRef").val("Y");
+            $("#IsRef").prop("disabled", true);
+            $("#IsDefinedValues").prop("disabled", false);
+            if ("@ViewBag.MultipleSelect" != "MultipleSelectDisable") {
+                $("#IsMultipleSelect").prop("disabled", false);
+            }
+            $("#IsAddOnScreen").prop("disabled", false);
+            if ($("#IsDefinedValues").val() == "N") {
+                $("#RefTable").prop("disabled", false);
+                $("#DisplayField").prop("disabled", false);
+                $("#RefValueField").prop("disabled", false);
+                $("#AdditionalCondition").prop("disabled", false);
+            }
+
+        }
+        if (controlType == "TXT" || controlType == "DATE" || controlType == "SDTED" || controlType == "RB" || controlType == "CB") {
+            $("#IsRef").val("N");
+            $("#IsDefinedValues").val("N");
+            $("#IsRef").prop("disabled", true);
+            $("#IsDefinedValues").prop("disabled", true);
+            $("#IsMultipleSelect").prop("disabled", true);
+            $("#RefTable").prop("disabled", true);
+            $("#DisplayField").prop("disabled", true);
+            $("#RefValueField").prop("disabled", true);
+            $("#AdditionalCondition").prop("disabled", true);
+            $("#IsAddOnScreen").prop("disabled", true);
+            $("#RefTable").val("");
+            $("#DisplayField").val("");
+            $("#RefValueField").val("");
+            $("#AdditionalCondition").val("");
+            $("#IsMultipleSelect").val("N");
+            $("#IsAddOnScreen").val("N");
+
+            $("#AddBtn").attr("style", "display:none");
+            $('#divEVDetails').empty();
+        }
+
+    }
+
+    function AddExtendedValueDetails(Id, commandName) {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+            $.ajax({
+                type: "POST",
+                url: Url_AddEditEVDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Id: Id,
+                    commandName: commandName
+                }),
+                async: false,
+                success: function (data) {
+                    debugger;
+                    $('#divEVDetails').empty();
+                    $('#divEVDetails').html(data);
+                    $("#hdnAction").val(commandName);
+                },
+                error: function (data) {
+                    alert('Error: ' + data.responseText);
+                }
+        });
+        }
+
+    function SaveEVDetails(Id) {
+        debugger;
+
+        var columnValue = $("#ColumnValue").val();
+        $("#hdnAction").val("");
+        $.ajax({
+            type: "POST",
+            url: Url_SaveEVDetail,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Id:Id,
+                ColumnValue: columnValue
+            }),
+            async: false,
+            success: function (data) {
+                debugger;
+                if (data.Status == "S") {
+                    $("#IsDefinedValues").prop("disabled", true);
+                    $("#ControlType").prop("disabled", true);
+                    AddExtendedValueDetails('0', 'View');
+                }
+                if(data.Error == "1") {
+                    showAlert("E", "You have Entered Duplication Column Value", "OK");
+                }
+            },
+            error: function (data) {
+                alert('Error: ' + data.responseText);
+            }
+        });
+    }
+
+    function DeleteEVDetails(Id) {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+            $.ajax({
+                type: "POST",
+                url: Url_DeleteEVDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Id: Id
+                }),
+                async: false,
+                success: function (data) {
+                    debugger;
+                    if (data.Status == "S") {
+                        AddExtendedValueDetails('0', 'View');
+                    }
+                    if (data.Status == "E") {
+                        alert(data.Message);
+                    }
+                    if (data.Enable == "IsDefinedValue") {
+                        $("#IsDefinedValues").prop("disabled", false);
+                        $("#ControlType").prop("disabled", false);
+                    }
+
+                },
+                error: function (data) {
+                    alert('Error: ' + data.responseText);
+                }
+            });
+    }
+
+    function CancelEVDetails() {
+        debugger;
+        $("#hdnAction").val("");
+        AddExtendedValueDetails(0, "View");
+        }
+
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First");
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First");
+            return false;
+        }
+        return true;
+    }
+
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="title_block dotted_border clearfix">
+                <div class="title_block dotted_border clearfix">
+                    <h2 style="font-family:Oswald; font-size:30px;font-weight:300">Extended Metadata</h2>
+                </div>
+                <table style="margin-top:10px;" class="table table-responsive  table-hover">
+                    <tbody>
+                        <tr>
+                            <td style="font-size:14px">
+                                <b>Column Name</b>
+                                @if (Model != null)
+                                {
+                                    <input type="hidden" id="RefTable2" value="@Model.Ref_Table" />
+                                    <input type="hidden" id="DisplayField2" value="@Model.Ref_Display_Field" />
+                                    <input type="hidden" id="RefValueField2" value="@Model.Ref_Value_Field" />
+                                    <input type="hidden" id="AdditionalCondition2" value="@Model.Additional_Condition" />
+                                    <input type="hidden" id="IsAddOnScreen2" value="@Model.Is_Add_OnScreen" />
+                                }
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @Html.DisplayFor(model => model.Columns_Name)
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Columns_Name, new { htmlAttributes = new { @class = "form-control", @id = "ColumnName", @style = "width:95%;", @placeholder = "Enter Column Name", @autocomplete = "Off" } })
+                                }
+                            </td>
+
+                            <td style="font-size:14px">
+                                <b>Control Type</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @*@Html.DisplayFor(model => model.Control_Type)*@
+                                    if (Model.Control_Type == "DDL")
+                                    {
+                                        <span>DropDown</span>
+                                    }
+                                    if (Model.Control_Type == "TXT")
+                                    {
+                                        <span>Text</span>
+                                    }
+                                    if (Model.Control_Type == "DATE")
+                                    {
+                                        <span>Date</span>
+                                    }
+                                    if (Model.Control_Type == "SDTED")
+                                    {
+                                        <span>StartDate To EndDate</span>
+                                    }
+                                    if (Model.Control_Type == "RB")
+                                    {
+                                        <span>Radio Button</span>
+                                    }
+                                    if (Model.Control_Type == "CB")
+                                    {
+                                        <span>Checkbox</span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (ViewBag.Title == "Edit")
+                                    {
+                                        bool canDeactivate = true;
+                                        if (Model.Map_Extended_Columns.Count > 0)
+                                        {
+                                            canDeactivate = false;
+                                        }
+                                        else if (Model.AL_Vendor_Rule_Criteria.Count > 0)
+                                        {
+                                            canDeactivate = false;
+                                        }
+                                        else if (Model.Extended_Group_Config.Count > 0)
+                                        {
+                                            canDeactivate = false;
+                                        }
+                                        if (canDeactivate)
+                                        {
+                                            @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
+                                            { new SelectListItem{Text="Dropdown", Value="DDL"},
+                                              new SelectListItem{Text="Text", Value="TXT"},
+                                              new SelectListItem{Text="Checkbox", Value="CB"},
+                                              new SelectListItem{Text="Radio Button", Value="RB"},
+                                              new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                             new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", @onchange = "DisableEnableControl()" })
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
+                                           { new SelectListItem{Text="Dropdown", Value="DDL"},
+                                             new SelectListItem{Text="Text", Value="TXT"},
+                                             new SelectListItem{Text="Checkbox", Value="CB"},
+                                             new SelectListItem{Text="Radio Button", Value="RB"},
+                                             new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                            new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", disabled = true })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
+                                       { new SelectListItem{Text="Dropdown", Value="DDL"},
+                                         new SelectListItem{Text="Text", Value="TXT"},
+                                         new SelectListItem{Text="Checkbox", Value="CB"},
+                                         new SelectListItem{Text="Radio Button", Value="RB"},
+                                         new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                        new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", @onchange = "DisableEnableControl()" })
+
+                                    }
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px">
+                                <b>Is Ref</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    if (Model.Is_Ref == "Y")
+                                    {
+                                        <span>Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span>No</span>
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.Is_Ref, new List<SelectListItem>
+                                   { new SelectListItem{Text="Yes", Value="Y"},
+                                     new SelectListItem{Text="No", Value="N"}}, "--Please select--", new { @id = "IsRef", @style = "width:95%" })
+                                }
+                            </td>
+                            <td style="font-size:14px">
+                                <b>Is Defined Values</b>
+                            </td>
+
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    if (Model.Is_Defined_Values == "Y")
+                                    {
+                                        <span>Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span>No</span>
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.Is_Defined_Values, new List<SelectListItem>
+                                  { new SelectListItem{Text="No", Value="N"},
+                                    new SelectListItem{Text="Yes", Value="Y"}}, new { @id = "IsDefinedValues", @style = "width:95%", @onchange = "HideAndShowGridView()" })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px">
+                                <b>Is Multiple Select</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    if (Model.Is_Multiple_Select == "Y")
+                                    {
+                                        <span>Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span>No</span>
+                                    }
+                                }
+                                else
+                                {
+                                    if (ViewBag.Title == "Edit")
+                                    {
+                                        if (Model.Control_Type == "DDL")
+                                        {
+                                            bool canDeactivate = true;
+                                            if (Model.Map_Extended_Columns.Count > 0)
+                                            {
+                                                canDeactivate = false;
+                                            }
+                                            else if (Model.AL_Vendor_Rule_Criteria.Count > 0)
+                                            {
+                                                canDeactivate = false;
+                                            }
+                                            else if (Model.Extended_Group_Config.Count > 0)
+                                            {
+                                                canDeactivate = false;
+                                            }
+                                            if (canDeactivate)
+                                            {
+                                                @Html.DropDownListFor(m => m.Is_Multiple_Select, new List<SelectListItem>
+                                                 { new SelectListItem{Text="No", Value="N"},
+                                                   new SelectListItem{Text="Yes", Value="Y"}}, new { @id = "IsMultipleSelect", @style = "width:95%" })
+                                            }
+                                            else
+                                            {
+                                                @Html.DropDownListFor(m => m.Is_Multiple_Select, new List<SelectListItem>
+                                                { new SelectListItem{Text="No", Value="N"},
+                                                  new SelectListItem{Text="Yes", Value="Y"}}, new { @id = "IsMultipleSelect", @style = "width:95%", disabled = true })
+                                            }
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownListFor(m => m.Is_Multiple_Select, new List<SelectListItem>
+                                            { new SelectListItem{Text="No", Value="N"},
+                                             new SelectListItem{Text="Yes", Value="Y"}}, new { @id = "IsMultipleSelect", @style = "width:95%" })
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Is_Multiple_Select, new List<SelectListItem>
+                                       { new SelectListItem{Text="No", Value="N"},
+                                        new SelectListItem{Text="Yes", Value="Y"}}, new { @id = "IsMultipleSelect", @style = "width:95%" })
+                                    }
+                                }
+
+                            </td>
+                            <td style="font-size:14px">
+                                <b>Ref Table</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @Html.DisplayFor(model => model.Ref_Table)
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Ref_Table, new { htmlAttributes = new { @class = "form-control", @id = "RefTable", @style = "width:95%", @placeholder = "Enter Ref Table", @autocomplete = "Off" } })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px">
+                                <b>Ref Display Field</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @Html.DisplayFor(model => model.Ref_Display_Field)
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Ref_Display_Field, new { htmlAttributes = new { @class = "form-control", @id = "DisplayField", @style = "width:95%", @placeholder = "Enter Ref Display Field", @autocomplete = "Off" } })
+                                }
+                            </td>
+                            <td style="font-size:14px">
+                                <b>Ref Value Field</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @Html.DisplayFor(model => model.Ref_Value_Field)
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Ref_Value_Field, new { htmlAttributes = new { @class = "form-control", @id = "RefValueField", @style = "width:95%", @placeholder = "Enter Ref Value Field", @autocomplete = "Off" } })
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size:14px">
+                                <b>Additional Condition</b>
+                            </td>
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    @Html.DisplayFor(model => model.Additional_Condition)
+                                }
+                                else
+                                {
+                                    @Html.EditorFor(model => model.Additional_Condition, new { htmlAttributes = new { @class = "form-control", @id = "AdditionalCondition", @style = "width:95%", @placeholder = "Enter Additional Condition", @autocomplete = "Off" } })
+                                }
+                            </td>
+                            <td style="font-size:14px">
+                                <b> Is Add On Screen</b>
+                            </td>
+
+                            <td>
+                                @if (ViewBag.Title == "View")
+                                {
+                                    if (Model.Is_Add_OnScreen == "Y")
+                                    {
+                                        <span>Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span>No</span>
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.DropDownListFor(m => m.Is_Add_OnScreen, new List<SelectListItem>
+                                  { new SelectListItem{Text="No", Value="N"},
+                                    new SelectListItem{Text="Yes", Value="Y"}},  new { @id = "IsAddOnScreen", @style = "width:95%" })
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top:20px">
+                    <input type="button" value="Add" id="AddBtn" onclick='AddExtendedValueDetails("0","ADD")' class="btn btn-primary pull-right" style="display:none" />
+                </div>
+                <div>
+                    <input type="hidden" id="hdnAction" value="" />
+                    <div id="divEVDetails" style="min-height:100px;"></div>
+                </div>
+                <div class="modal_block modal_header" style="margin-top:7px">
+                    <div style="margin:10px">
+                        @if (ViewBag.Title == "Create")
+                        {
+                            <input type="button" value="Save" class="btn btn-primary" onclick="CreateEditExtendedMetaData()" />
+                        }
+                        @if (ViewBag.Title == "Edit")
+                        {
+                            <input type="button" value="Update" class="btn btn-primary" onclick="CreateEditExtendedMetaData()" />
+                        }
+                        @if (ViewBag.Delete == "Delete")
+                        {
+                            <input type="button" value="Delete" class="btn btn-primary" onclick="DeleteExtendedMetaData(@Model.Columns_Code)" />
+                        }
+                        @Html.ActionLink("Cancel", "Index", "", new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
