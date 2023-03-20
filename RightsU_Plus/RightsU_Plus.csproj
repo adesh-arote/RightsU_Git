@@ -1339,7 +1339,6 @@
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
     <Content Include="Views\Title\_Title_Metadata_Header.cshtml" />
     <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Banner\Index.cshtml" />
     <Content Include="Views\Banner\_BindBannerGroup.cshtml" />
   </ItemGroup>
