@@ -23,7 +23,8 @@
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
     var chosenTerritory = [];
     var chosenCountry = [];
-    $(document).ready(function () {
+    $(document).ready(function () {   
+        BindTitleMetadataHeader();
         $('#rdWorld').parents('li').next().hide();
         $("#_hdnRecordLockingCode").val(recordLockingCode);
         initializeChosen();
@@ -97,6 +98,9 @@
                 $('#btnAddRelease').prop('disabled', false);
             }
         });
+
+        //BindTitleMetadataHeader();
+
     });
 
     $('#ddlTerritory_TitleRel').chosen().change(function () {
@@ -434,6 +438,62 @@
         URL = URL.replace(/amp;/g, "");
         window.location.href = URL;
     }
+
+    function BindTitleMetadataHeader() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitleMetadataHeader", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMetadataHeader').empty();
+                    $('#divTitleMetadataHeader').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindTabwisePopup() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTabwisePopup", "Title")',
+            traditional: true,
+            data: JSON.stringify({
+                Ext_Grp_Code: $("#hdnTabCode").val()
+            }),
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#TabwisePopup').empty();
+                    //$('#TabwisePopup').html(result);
+                    $("#TabwisePopup").empty();
+                    $("#TabwisePopup").append(result);
+                    $("#AddTabwisePopup").modal();
+                    $("#TabwiseName").text($("#hdnTabwiseName").val());
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
     function populateTitle(evt) {
         debugger;
         var DealTypeCode = $('#Deal_Type_Code').val();
@@ -812,8 +872,14 @@
 
         <div class="padding">
             <a class="glyphicon glyphicon-plus pull-right" title="@objMessageKey.Add" id="btnAddAdditional" onclick="btnAddExtendedData();"></a>
-            <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
+            @*<div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>*@
         </div>
+
+        <div>
+            <div id="divTitleMetadataHeader">
+            </div>
+        </div>
+
         <div class="bottom_action">
             <ul class="form_link_nav clearfix">
                 <li class="poptalent">
@@ -826,3 +892,23 @@
         </div>
     </div>
 }
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="AddTabwisePopup" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="form_fields">
+                <div class="modal-content clearfix">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2><label id="TabwiseName"></label></h2>
+                    </div>
+                    <div class="modal_block" style="padding: 17px;">
+                        <div id="TabwisePopup">                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -28,5 +28,6 @@ namespace RightsU_Entities
         public int Map_Extended_Columns_Code { get; set; }
         public string Column_Value { get; set; }
         public string IsDelete { get; set; }
+        public int? Extended_Group_Code { get; set; }
     }
 }

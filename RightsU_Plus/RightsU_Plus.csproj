@@ -220,6 +220,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
@@ -1327,10 +1328,17 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Extended_Group\Index.cshtml" />
+    <Content Include="Views\Extended_Group\_ExtendedGroupList.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewExtdGrp.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewDetail.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\Create.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
+    <Content Include="Views\Title\_Title_Metadata_Header.cshtml" />
+    <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Banner\Index.cshtml" />
     <Content Include="Views\Banner\_BindBannerGroup.cshtml" />

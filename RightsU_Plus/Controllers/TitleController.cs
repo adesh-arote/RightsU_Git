@@ -22,6 +22,7 @@ namespace RightsU_Plus.Controllers
 {
     public class TitleController : BaseController
     {
+        string _fieldList = "";
         #region --- Properties ---
         // GET: /Title/
         public List<Map_Extended_Columns> lstMapExtendedColumns
@@ -1157,6 +1158,8 @@ namespace RightsU_Plus.Controllers
                         obj.IsDelete = "N";
                     }
                 }
+                int? TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code).Select(x=>x.Extended_Group_Code).FirstOrDefault();
+                obj.Extended_Group_Code = TabCode;
             }
             ViewBag.mode = mode;
             return PartialView("_Extended_Columns", gvExtended);
@@ -1210,7 +1213,7 @@ namespace RightsU_Plus.Controllers
             return true;
         }
 
-        public string BindNewRowDdl(int ColumnCode, int RowNum, string IsExists)
+        public string BindNewRowDdl(int ColumnCode, int RowNum, string IsExists, int Ext_Grp_Code)
         {
             int Column_Code = Convert.ToInt32(ColumnCode);
             //var lstextCol = new Extended_Columns_Service().SearchFor(x => 1 == 1).Select(y => new { Columns_Name = y.Columns_Name, Control_Type = y.Control_Type }).ToList();
@@ -1223,7 +1226,11 @@ namespace RightsU_Plus.Controllers
                 ColumnNotInCode = gvExtended.Select(x => x.Columns_Code).Distinct().ToList();
             //List<int> ColumnNotInCode = gvExtended.Select(x => x.Columns_Code).Distinct().ToList();
 
+            // Commented for mapping etended_group and Extended_Group_Config table
+            //var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
 
             if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
                 lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name == "Program Category").ToList();
@@ -2923,10 +2930,192 @@ namespace RightsU_Plus.Controllers
             return PartialView("_Title_Deal_Info", list);
         }
         #endregion
+
+        #region Aeroplay Catelog
+        public ActionResult BindTitleMetadataHeader()
+        {
+            List<Extended_Group> objExt_Grp = new List<Extended_Group>();
+            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27).OrderBy(x => x.Group_Order).ToList();
+            ViewBag.ExtendedGroup = objExt_Grp;
+            return PartialView("~/Views/Title/_Title_Metadata_Header.cshtml", objExt_Grp);
+        }
+
+        public string BindTabwisePopup(int Ext_Grp_Code, int rowno = 0, int num = 0)
+        {
+            string Operation = "A";
+            if (rowno > 0) Operation = "E";
+
+            var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();
+            ViewBag.ExtendedColums = lstextCol;
+
+            string strAddRow = "";
+
+            strAddRow = "<Table class=\"table table-bordered table-hover\" style=\"padding:10px;\">";
+
+            string prevRowTitle = "";
+            int i = 1, j = 1, k = 1, l = 1, m = 1;
+
+            foreach (var TabControls in lstextCol)
+            {
+                
+                strAddRow = strAddRow.Replace("utospltag", "");
+                strAddRow = strAddRow + "<tr>";
+                strAddRow = strAddRow + "<td style=\"width: 40%;\">";
+                strAddRow = strAddRow + TabControls.Columns_Name;
+                strAddRow = strAddRow + "</td>";
+                strAddRow = strAddRow + "<td>";
+                prevRowTitle = TabControls.Columns_Name;
+
+                if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
+                {
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code);
+                    i++;
+                }
+                else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
+                {
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code);
+                    i++;
+                }
+                else if (TabControls.Control_Type == "TXT")
+                {
+                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code);
+                    l++;
+                }
+
+                strAddRow = strAddRow + " utospltag </td></tr>";
+            }
+            strAddRow = strAddRow.Replace("utospltag", "");
+            strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
+
+            strAddRow = strAddRow + "</Table>";
+
+            return strAddRow;
+        }
+
+        //public ActionResult BindTabwisePopup(int Ext_Grp_Code, int rowno = 0, int num = 0)
+        //{
+        //    string Operation = "A";
+        //    if (rowno > 0) Operation = "E";
+
+        //    var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
+        //    var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+        //    lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+        //    ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault(); 
+        //    ViewBag.ExtendedColums = lstextCol;
+
+        //    string strAddRow = "";
+
+        //    strAddRow = "<Table class=\"table table-bordered table-hover\" style=\"padding:10px;\">";
+
+        //    string prevRowTitle = "";
+        //    int i = 1, j = 1, k = 1, l = 1, m = 1;
+
+        //    foreach (var TabControls in lstextCol)
+        //    {
+        //        string utospltag = "";
+        //        string user_Value = "";
+        //        string Extended_Columns_Code = "";
+
+        //        USP_Get_Extended_Columns_Result obj = new USP_Get_Extended_Columns_Result();
+
+        //        strAddRow = strAddRow.Replace("utospltag", "");
+        //        strAddRow = strAddRow + "<tr>";
+        //        strAddRow = strAddRow + "<td style=\"width: 40%;\">";
+        //        strAddRow = strAddRow + TabControls.Columns_Name;
+        //        strAddRow = strAddRow + "</td>";
+        //        strAddRow = strAddRow + "<td>";
+        //        prevRowTitle = TabControls.Columns_Name;
+
+        //        if (TabControls.Control_Type == "TXTDDL" && TabControls.Is_Multiple_Select == "Y")
+        //        {
+        //            strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Name, i, TabControls.Additional_Condition, Extended_Columns_Code, Operation, "multiple", Ext_Grp_Code);
+        //            i++;
+        //        }
+
+
+        //        strAddRow = strAddRow + " utospltag </td></tr>";
+        //    }
+        //    strAddRow = strAddRow.Replace("utospltag", "");
+        //    strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
+
+        //    strAddRow = strAddRow + "</Table>";
+
+        //    return PartialView("~/Views/Title/_Title_Tabwise_Popup.cshtml", lstextCol);
+        //}
+
+        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code)
+        {            
+            string strDDL;
+            int RoleCode = 0;
+
+            if (multiple == "")
+            {
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\">";
+                strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
+            }
+            else
+            {
+                strDDL = "<select style=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" " + multiple + ">";
+            }
+
+            var ExtendedColumn = ExtendedColumns.Where(x => x.Columns_Code == Columns_Code).FirstOrDefault();
+            if (ExtendedColumn.Is_Ref == "Y" && ExtendedColumn.Is_Defined_Values == "N" && ExtendedColumn.Ref_Table == "TALENT")
+            {
+                if (ExtendedColumn.Additional_Condition != "" && ExtendedColumn.Additional_Condition != null)
+                    RoleCode = Convert.ToInt32(ExtendedColumn.Additional_Condition);
+                var lstTalentCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y").ToList();
+
+                foreach (var T in lstTalentCol)
+                {
+                    strDDL = strDDL + "<option value=" + T.Talent_Code + ">" + T.Talent_Name + "</option>";
+                }
+            }
+            else
+            {
+                var lstextColVal = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Columns_Code).ToList();
+                foreach (Extended_Columns_Value ECV in lstextColVal)
+                {
+                    strDDL = strDDL + "<option value=" + ECV.Columns_Value_Code + ">" + ECV.Columns_Value + "</option>";
+                }
+            }
+            
+            strDDL = strDDL + "</select>";
+
+            _fieldList = _fieldList + Columns_Code + "ddSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+
+            return strDDL;
+        }
+        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code)
+        {
+            string getText = "<input type=\"text\"  id=\"" + Operation + Columns_Code + "txtSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "txtSupp" + i.ToString() + "\">";
+            _fieldList = _fieldList + Columns_Code + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getText;
+        }
+        #endregion
     }
 }
 class ExtendedMethod
 {
     public int Id { get; set; }
     public string Is_Add_OnScreen { get; set; }
+}
+
+public partial class USP_Get_Extended_Columns_Result
+{
+    public string Supplementary_Data_Code { get; set; }
+    public string User_Value { get; set; }
+    public Nullable<int> Row_Num { get; set; }
+    public Nullable<int> Supplementary_Config_Code { get; set; }
+    public Nullable<int> Supplementary_Code { get; set; }
+    public Nullable<int> Supplementary_Tab_Code { get; set; }
+    public string Control_Type { get; set; }
+    public string Is_Mandatory { get; set; }
+    public string Is_Multiselect { get; set; }
+    public Nullable<int> Max_Length { get; set; }
+    public Nullable<int> Control_Field_Order { get; set; }
+    public string View_Name { get; set; }
+    public string Whr_Criteria { get; set; }
 }

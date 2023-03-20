@@ -1247,8 +1247,9 @@
         //initializeChosen();
     }
 
-    $(document).ready(function () {
+    $(document).ready(function () {        
         initializeExpander();
+        ShowHideTabwiseData();
         @*Comment By Sayali (Function Calling Multiple Times)*@
 
         @*$("#btnAddAdditional").click(function () {
@@ -1322,19 +1323,27 @@
     });
     function btnAddExtendedData() {
         debugger;
-        
+        //alert("Tab value "+$("#hdnTabCode").val());
         if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
             return false;
         }
-        else {
+        else if ($("#hdnTabAddEditType").val() == "grid") {
+            BindTabwisePopup();
+            $('#tblTabwisePopup tr').each(function () {
+                $(this).find('td').each(function () {
+                    var Control = $(this).data('content');
+                })
+            });            
+        }
+        else if ($("#hdnTabAddEditType").val() == "row") {
             var ddl_first_col = "";
             var count = ($('#tbl_Additional_Fileds tr').length - 1) + 1;
             if (($('#tbl_Additional_Fileds tr').length - 1) > 0)
                 count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7)) + 1;
             $("#hdnIsRowEdit").val('');
             $("#hdnRowNum").val(count);
-            var html = "<tr id=trGrid_" + count + ">";
+            var html = "<tr id=trGrid_" + count + " data-configitem = " + $("#hdnTabCode").val() + ">";
 
             var IsExists = '';
             if ($('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").length > 0)
@@ -1347,7 +1356,8 @@
                 data: JSON.stringify({
                     ColumnCode: 0,
                     RowNum: count,
-                    IsExists: IsExists
+                    IsExists: IsExists,
+                    Ext_Grp_Code: $("#hdnTabCode").val()
                 }),
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
@@ -1387,9 +1397,35 @@
 
             initializeChosen();
             initializeTooltip();
+            ShowHideTabwiseData();
         }
+        else {
+            return false;
+        }
+        //function ShowHideTabwiseData() {
+        //    $('#tbl_Additional_Fileds tr').each(function () {
+        //        var hdnActiveTabValue = $(this).data('configitem');
+        //        alert(hdnActiveTabValue);
+        //        alert($("#hdnTabCode").val() + "_Test");
+        //        if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+        //            $(this).hide();
+        //        } else {
+        //            $(this).show();
+        //        }
+        //    });
+        //}
     }
 
+    function ShowHideTabwiseData() {
+        $('#tbl_Additional_Fileds tr').each(function () {
+            var hdnActiveTabValue = $(this).data('configitem');
+            if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+    }
     $('.expandable').expander({
         slicePoint: 100,
         expandPrefix: '...',
@@ -1475,7 +1511,7 @@
                     foreach (var item in Model)
                     {
                         counter += 1;
-            <tr id="@("trGrid_"+counter)">
+            <tr id="@("trGrid_"+counter)" data-configitem = "@item.Extended_Group_Code">
                 @*<td id="@counter"+"_tdFirst">*@
                 <td id="@("tdFirst_"+counter)">
 

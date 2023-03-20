@@ -7531,12 +7531,6 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Extended_Group_Config objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
-            {
-                resultSet = "Extended_Group_Config already exists";
-                return false;
-            }
-
             resultSet = "";
             return true;
         }
@@ -7593,7 +7587,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Extended_Group objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Extended_Group_Code == objToValidate.Extended_Group_Code).Count() > 0)
+            if (SearchFor(s => (s.Module_Code == objToValidate.Module_Code && s.Group_Order == objToValidate.Group_Order) && (s.Extended_Group_Code != objToValidate.Extended_Group_Code)).Count() > 0)
             {
                 resultSet = "Extended_Group already exists";
                 return false;

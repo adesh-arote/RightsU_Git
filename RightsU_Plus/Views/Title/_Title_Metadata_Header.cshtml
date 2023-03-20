@@ -1,0 +1,62 @@
+﻿@using RightsU_BLL;
+@using System.Configuration;
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    string textalignlast = "";
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        textalignlast = "right";
+    }
+}
+
+<script>
+    $('#tabs ul li').click(function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+        $("#hdnTabCode").val(hdnActiveTabValue);
+        var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+        $("#hdnTabAddEditType").val(hdnTabAddEditType);
+        var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+        $("#hdnTabwiseName").val(hdnTabwiseName);  
+        ShowHideTabwiseData();
+    });
+
+</script>
+
+<div id="tabs" class="tabbable">
+    <ul class="ulTabs nav nav-tabs nav-tab pull-left">
+        @if (ViewBag.ExtendedGroup != null)
+        {
+            int i = 0;
+            string ClsActive = "";
+
+            foreach (var item in ViewBag.ExtendedGroup)
+            {
+                if (i == 0)
+                {
+                    ClsActive = "active";
+                }
+                else
+                {
+                    ClsActive = "";
+                }
+                <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
+                i++;
+            }
+        }
+    </ul>
+    <input type="hidden" name="name" id="hdnTabCode" value="0" />
+    <input type="hidden" name="name" id="hdnTabAddEditType" value="0" />
+    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
+    <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
+</div>
