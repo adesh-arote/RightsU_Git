@@ -220,6 +220,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
@@ -1330,6 +1331,9 @@
     <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Banner\Index.cshtml" />
+    <Content Include="Views\Banner\_BindBannerGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
