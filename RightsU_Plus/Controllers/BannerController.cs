@@ -145,11 +145,7 @@ namespace RightsU_Plus.Controllers
             {
                 lstBanner_Searched = lstBanner_Searched.Where(a => a.Banner_Name.ToUpper().Contains(searchText.ToUpper()) || (a.Banner_Short_Name != null && a.Banner_Short_Name.ToUpper().Contains(searchText.ToUpper()))).ToList();
             }
-            else
-            {
-                lstBanner_Searched = lstBanner_Searched;
-            }
-
+           
             var obj = new
             {
                 Record_Count = lstBanner_Searched.Count

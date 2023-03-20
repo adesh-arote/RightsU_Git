@@ -8024,7 +8024,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Banner objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Banner_Name == objToValidate.Banner_Name).Count() > 0)
+            if (SearchFor(s => s.Banner_Name == objToValidate.Banner_Name && s.Banner_Code != objToValidate.Banner_Code).Count() > 0)
             {
                 resultSet = "Banner already exists";
                 return false;
