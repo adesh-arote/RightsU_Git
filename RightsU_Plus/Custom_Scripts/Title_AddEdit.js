@@ -108,6 +108,14 @@ function fileCheck(obj) {
 //    //window.location.href = URL;
 //}
 function BindExtended(vmode) {
+    if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
+        var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+        $("#hdnTabCode").val(hdnActiveTabValue);
+        var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+        $("#hdnTabAddEditType").val(hdnTabAddEditType);
+        var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+        $("#hdnTabwiseName").val(hdnTabwiseName); 
+    }    
     showLoading();
     var TitleCode = title_Code;
     $.ajax({
