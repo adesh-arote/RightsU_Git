@@ -145,7 +145,6 @@ namespace RightsU_Plus.Controllers
             {
                 lstBanner_Searched = lstBanner_Searched.Where(a => a.Banner_Name.ToUpper().Contains(searchText.ToUpper()) || (a.Banner_Short_Name != null && a.Banner_Short_Name.ToUpper().Contains(searchText.ToUpper()))).ToList();
             }
-           
             var obj = new
             {
                 Record_Count = lstBanner_Searched.Count
@@ -214,7 +213,14 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    message = objMessageKey.Recordsavedsuccessfully;
+                    if(Banner_Code > 0)
+                    {
+                        message = objMessageKey.Recordupdatedsuccessfully;
+                    }
+                    else
+                    {
+                        message = objMessageKey.Recordsavedsuccessfully;
+                    }
                     lstBanner_Searched = objBanner_Service.SearchFor(s => true).ToList();
                 }
             }
@@ -244,7 +250,19 @@ namespace RightsU_Plus.Controllers
             {
                 message = resultSet;
             }
-            return RedirectToAction("Index");
+            else
+            {
+                message = objMessageKey.RecordDeletedsuccessfully;
+            }
+
+            var obj = new
+            {
+                RecordCount = lstBanner_Searched.Count,
+                Status = "S",
+                Message = message
+            };
+
+            return Json(obj);
         }
     }
 }

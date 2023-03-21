@@ -140,7 +140,8 @@
             </td>
             <td>
                 <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Banner_Code')"></a>
-                @Html.ActionLink(" ", "DeleteBanner", new { id = item.Banner_Code }, new { @class = "glyphicon glyphicon-trash", @style = "cursor: pointer;", @title = "Delete" })
+                <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteBanner('@item.Banner_Code')"></a>
+                @*@Html.ActionLink(" ", "DeleteBanner", new { id = item.Banner_Code }, new { @class = "glyphicon glyphicon-trash", @style = "cursor: pointer;", @title = "Delete" })*@
             </td>
 
         }

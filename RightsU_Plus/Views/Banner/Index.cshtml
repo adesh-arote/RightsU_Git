@@ -17,7 +17,7 @@
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Banner")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
-
+    var Url_DeleteBanner = '@Url.Action("DeleteBanner", "Banner")';
     $(document).ready(function () {
         debugger;
         if (LayoutDirection_G == "RTL") {
@@ -334,13 +334,51 @@
                         $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
-                    else
+                    else {
                         showAlert("E", result.Message);
+                    }
+                     
                 }
+                
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
                 hideLoading();
+            }
+        });
+    }
+
+    //Delete Function
+
+    function DeleteBanner(id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: Url_DeleteBanner,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                id: id
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                       // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("S", result.Message);
+                        SearchBanner("");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
             }
         });
     }
