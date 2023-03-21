@@ -7589,7 +7589,7 @@ namespace RightsU_BLL
         {
             if (SearchFor(s => (s.Module_Code == objToValidate.Module_Code && s.Group_Order == objToValidate.Group_Order) && (s.Extended_Group_Code != objToValidate.Extended_Group_Code)).Count() > 0)
             {
-                resultSet = "Extended_Group already exists";
+                resultSet = "Extended Group already exists";
                 return false;
             }
 

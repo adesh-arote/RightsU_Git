@@ -31,19 +31,27 @@
             min: 1
         });
     }
+
+    $('.expand_AdditionalCondition').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
 </script>
 
 <table class="table table-bordered table-hover" id="tblMusicLink">
     <thead>
         <tr>
-            <th style="width:7%;">Sr. No.</th>
-            <th style="width:25%;">Metadata</th>
-            <th style="width:14%;">Order In Group</th>
-            <th style="width:15%;">Validations</th>
-            <th style="width:31%;">Additional Condition</th>
+            <th style="width:6%;">Sr. No.</th>
+            <th style="width:20%;">Metadata</th>
+            <th style="width:10%;">Order In Group</th>
+            <th style="width:18%;">Validations</th>
+            <th style="width:35%;">Additional Condition</th>
             @if (ViewBag.CommandName != "VIEW")
             {
-                <th style="width:20%;">Action</th>
+                <th style="width:6%;">Actions</th>
             }
         </tr>
     </thead>
@@ -58,17 +66,17 @@
                 <td style="text-align:center;">
                     <p>New</p>
                 </td>
-                <td style="text-align:center;">
+                <td>
                     @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowZero, @class = "form_input chosen-select" })
                 </td>
-                <td style="text-align:center;">
+                <td>
                     <input type="text" id="txtOdrInGrp_@rowZero" value="" class="form-control input-sm onlyNumber" maxlength="100" autocomplete="off" />
                 </td>
-                <td style="text-align:center;">
+                <td>
                     @Html.DropDownList("ddlValidation", ViewBag.ddlValidation as MultiSelectList, new { @id = "ddlValidations_" + rowZero, @multiple = "multiple", @class = "ddlSumo" })
                 </td>
                 <td>
-                    <textarea id="txtAddCon_@rowZero" style="resize:horizontal"></textarea>
+                    <textarea id="txtAddCon_@rowZero" class="textarea" @*style="resize:horizontal; min-width:100%"*@ maxlength="4500"></textarea>
                 </td>
                 <td style="text-align:center">
                     <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDetail(0,0)"></a>
@@ -88,21 +96,21 @@
 
                     @if (ViewBag.CommandName == "EDIT" && ViewBag.DetailId == item.Extended_Group_Config_Code)
                     {
-                        <td style="text-align:center;">
+                        <td>
                             <p>@rowNumber</p>
                         </td>
-                        <td style="text-align:center;">
+                        <td>
                             @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowNumber, @class = "chosen-single chosen-default" })
                         </td>
-                        <td style="text-align:center;">
+                        <td>
                             <input type="text" id="txtOdrInGrp_@rowNumber" value="@item.Group_Control_Order" class="form_input input-sm" maxlength="100" autocomplete="off" />
                         </td>
-                        <td style="text-align:center;">
+                        <td>
                             @Html.DropDownList("lstValidation", (IEnumerable<SelectListItem>)ViewBag.SelectedValidation as MultiSelectList, new { @id = "ddlValidations_" + rowNumber, @multiple = "multiple", @class = "ddlSumo" })
                         </td>
                         <td>
                             @*<textarea id="txtAddCon_@rowNumber" value="@item.Additional_Condition"></textarea>*@
-                            @Html.TextAreaFor(model => item.Additional_Condition, new { @id = "txtAddCon_" + rowNumber, @style ="resize:horizontal; min-width:100%;" })
+                            @Html.TextAreaFor(model => item.Additional_Condition, new { @id = "txtAddCon_" + rowNumber, @*@style ="resize:horizontal; min-width:100%;",*@ @maxlength = "4500" })
                         </td>
                         <td style="text-align:center">
                             <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDetail(@item.Extended_Group_Config_Code, @rowNumber)"></a>
@@ -143,7 +151,7 @@
                                 <span>Duplicate</span>
                             }
                         </td>
-                        <td style="text-align:center;">
+                        <td style="text-align:center;" class="expand_AdditionalCondition">
                             <span>@item.Additional_Condition</span>
                         </td>
                         if (ViewBag.CommandName != "VIEW")

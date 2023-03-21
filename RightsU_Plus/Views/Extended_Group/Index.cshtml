@@ -1,4 +1,4 @@
-﻿
+﻿@using UTOFrameWork.FrameworkClasses
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     MessageKey objMessageKey = new MessageKey();
@@ -9,6 +9,46 @@
 }
 
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Extended_Group")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+
+    function CheckRecordLock(Id, CommandName) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Extended_Group_Code: Id,
+                CommandName: CommandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        AddEditViewExtdGrp(Id, CommandName)
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+</script>
 
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
@@ -31,7 +71,7 @@
         }
         else {
             $('#btnUser').css("float", "left");
-            $('#txtSort').css("text-align", "right");
+            $('#txtSort').css("text-align", "center");
             $('#ddlSortType_chosen').css("text-align", "left");
         }
 
@@ -40,19 +80,19 @@
         }
 
         addNumeric();
-        SearchExtendedGroup("");
+        SearchExtendedGroup("","");
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
                 return false;
             }
         });
-        //$("#ddlSortType").change(function () {
-        //    sort_Type = $('#ddlSortType').val();
-        //    $('#hdnPageNo').val(1);
-        //    var searchtext = $("#searchCommon").val();
-        //    SearchExtendedGroup(searchtext);
-        //});
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchExtendedGroup(searchtext);
+        });
     });
 
     function addNumeric() {
@@ -71,37 +111,38 @@
         $("[required='required']").removeAttr("required");
         debugger;
         var searchText = $('#searchCommon').val();
+        var ModuleCode = $('#ddlSearchModule').val();
 
         //if (searchText == '') {
         //    $('#searchCommon').val('');
         //    $('#searchCommon').attr('required', true)
         //    return false;
         //}
-        SearchExtendedGroup(searchText);
+        SearchExtendedGroup(searchText, ModuleCode);
     }
 
     function btnShowAll_OnClick() {
         debugger;
         //$("#searchCommon").empty();
-        //$('#ddlSearchModule').val('');
+        $('#ddlSearchModule').val('');
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-        
+
         if (!ValidatePageSize())
             return false;
 
         sort_Type = "T";
-        //$("#ddlSortType").find("option").attr("selected", false);
-        //$("#ddlSortType").val('T').trigger("chosen:updated");
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
         $('#hdnPageNo').val(1);
 
-        SearchExtendedGroup("");
+        SearchExtendedGroup("","");
     }
 
-    function SearchExtendedGroup(searchText) {
-        $('#searchCommon').val(searchText);
-        var ModuleCode = $('#ddlSearchModule').val();
+    function SearchExtendedGroup(searchText, ModuleCode) {
         debugger;
+        $('#searchCommon').val(searchText);
+        $('#ddlSearchModule').val(ModuleCode);
         $.ajax({
             type: "POST",
             url: URL_SearchExtndedGroup,
@@ -248,9 +289,9 @@
                 $('#pupupHtml').html(result);
                 initializeChosen();
                 if (CommandName != "VIEW")
-                    CommandName: CommandName;
+                    CommandName = "";
 
-                BindExtdGrpDetail(0, "");
+                BindExtdGrpDetail(0, CommandName);
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -259,6 +300,14 @@
     }
 
     function ClosePopup() {
+        debugger;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        if (!checkCurrentAction())
+            return false;
+
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
@@ -317,7 +366,7 @@
         var returnVal = true;
         var Metadata = $('#ddlMetadata_' + rowNumber).val();
         var OrdrerInGroup = $('#txtOdrInGrp_' + rowNumber).val();
-        var Validations = $('#ddlValidations_' + rowNumber).val().join(',');
+        var Validations = $('#ddlValidations_' + rowNumber).val();
         var AdtnlCntn = $('#txtAddCon_' + rowNumber).val();
 
         if (Metadata == "") {
@@ -330,6 +379,7 @@
         }
         if (Validations == "") {
             $('#ddlValidations_' + rowNumber).val('').attr('required', true)
+            $('#ddlValidations_' + rowNumber).val('').attr("style", "border-color: red;");
             returnVal = false;
         }
         if (AdtnlCntn == "") {
@@ -338,6 +388,7 @@
         }
 
         if (returnVal) {
+            var Validations = $('#ddlValidations_' + rowNumber).val().join(',');
             $.ajax({
                 type: "POST",
                 url: URL_SaveGrpDetail,
@@ -359,7 +410,7 @@
                         BindExtdGrpDetail(DetailId, "");
                     }
                     if (result.Error == "1") {
-                        showAlert("E", "You are Entered Duplicate data");
+                        showAlert("E", "You have entered duplicate data");
                     }
                 },
                 error: function (result) {
@@ -400,7 +451,7 @@
             return false;
         var ExtdGrpId = $("#hdnEGCode").val();
         var Module = $("#ddlModule").val();
-        var GrpName = $("#txtGroupName").val();
+        var GrpName = $.trim($("#txtGroupName").val());
         var ShortName = $("#txtShortName").val();
         var GrpOrder = $("#txtGroupOrder").val();
         var GrpType = $("#ddlType").val();
@@ -518,16 +569,16 @@
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            <td style="width:10%;text-align:center;padding-top:8px;">
+                            <td style="width:10%;vertical-align: middle;text-align:center;">
                                 @objMessageKey.SearchText :
                             </td>
-                            <td style="width:30%;">
+                            <td style="width:20%;vertical-align: middle;" align="left">
                                 <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Group Name" autocomplete="off" />
                             </td>
-                            <td style="width:10%;text-align:center;padding-top:8px;">
+                            <td style="width:10%;vertical-align: middle; text-align:center;">
                                 Module :
                             </td>
-                            <td style="width:30%;">
+                            <td style="width:15%;">
                                 @{
                                     var listitems = new List<SelectListItem>();
                                     listitems.Add(new SelectListItem() { Text = "Title", Value = "27" });
@@ -536,21 +587,21 @@
 
                                 @Html.DropDownList("DropDownListValue", listitems, "--Please select--", new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
-                            <td class="pull-right">
+                            <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
-                            @*<td id="txtSort">
-                                    @objMessageKey.SortBy:
-                                    @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
-                                </td>*@
+                            <td id="txtSort" style="width:32%;">
+                                @objMessageKey.SortBy:                           
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select", @Style = "width:100%;" })
+                            </td>
                         </tr>
                     </table>
                 </div>
                 <div class="grid_area">
                     <div style="border-bottom: 1px dotted #777; display:none;"></div>
                     <div class="paging_area clearfix">
-                        <span class="pull-left">TotalRecords: </span>
+                        <span class="pull-left">Total Records: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
                         <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
                         <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
@@ -559,7 +610,7 @@
                         <div id="Pagination" class="pagination">
                         </div>
                         <span class="pull-right">
-                            PageSize:
+                            Page Size:
                             <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
@@ -578,7 +629,7 @@
     </section>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="pupupHtml">

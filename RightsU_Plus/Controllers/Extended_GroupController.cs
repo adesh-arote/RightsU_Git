@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
@@ -60,6 +61,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index()
         {
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForLanguage);
             FetchData();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
@@ -72,6 +74,8 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Message = Session["Message"];
                 Session["Message"] = null;
             }
+
+            ViewBag.UserModuleRights = GetUserModuleRights();
 
             return View();
         }
@@ -100,7 +104,20 @@ namespace RightsU_Plus.Controllers
                 else
                     lst = lstlstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+
+            ViewBag.UserModuleRights = GetUserModuleRights();
+
             return PartialView("_ExtendedGroupList", lst);
+        }
+
+        private string GetUserModuleRights()
+        {
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            string rights = "";
+            if (lstRights.FirstOrDefault() != null)
+                rights = lstRights.FirstOrDefault();
+
+            return rights;
         }
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -148,6 +165,26 @@ namespace RightsU_Plus.Controllers
                 Record_Count = lstlstExtended_Group_Searched.Count
             };
 
+            return Json(obj);
+        }
+
+        public JsonResult CheckRecordLock(int Extended_Group_Code)
+        {
+            string strMessage = "";
+            int RLCode = 0;
+            bool isLocked = true;
+            if (Extended_Group_Code > 0)
+            {
+                CommonUtil objCommonUtil = new CommonUtil();
+                isLocked = objCommonUtil.Lock_Record(Extended_Group_Code, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+            }
+
+            var obj = new
+            {
+                Is_Locked = (isLocked) ? "Y" : "N",
+                Message = strMessage,
+                Record_Locking_Code = RLCode
+            };
             return Json(obj);
         }
 
@@ -240,6 +277,7 @@ namespace RightsU_Plus.Controllers
                 objExtended_Group.Group_Order = objEg.Group_Order;
                 objExtended_Group.Add_Edit_Type = objEg.Add_Edit_Type;
                 objExtended_Group.Last_Updated_Time = DateTime.Now;
+                objExtended_Group.Last_Action_By = objLoginUser.Users_Code;
 
                 objExtended_Group.EntityState = State.Modified;
             }
@@ -251,6 +289,7 @@ namespace RightsU_Plus.Controllers
                 objExtended_Group.Group_Order = objEg.Group_Order;
                 objExtended_Group.Add_Edit_Type = objEg.Add_Edit_Type;
                 objExtended_Group.Inserted_On = DateTime.Now;
+                objExtended_Group.Inserted_By = objLoginUser.Users_Code;
                 objExtended_Group.Extended_Group_Code = LastId.Extended_Group_Code + 1;
 
                 objExtended_Group.EntityState = State.Added;

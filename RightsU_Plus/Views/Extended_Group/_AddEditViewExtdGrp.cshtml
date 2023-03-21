@@ -8,6 +8,12 @@
     }
 }
 
+<style>
+    .chosen-container .chosen-container-single{
+        z-index:1000;
+    }
+</style>
+
 <script>
     $(document).ready(function () {
         debugger;
@@ -57,8 +63,8 @@
 <div class="modal_block">
     <table class="add_title_popup">
         <tr>
-            <td class="lblExtdGrp"><b>Module</b></td>
-            <td>
+            <td class="lblExtdGrp" style="width:30%"><b>Module</b></td>
+            <td   style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     if (Model.Module_Code == 27)
@@ -74,14 +80,15 @@
                 {
                     @Html.DropDownListFor(m => m.Module_Code, new List<SelectListItem>
                     {new SelectListItem {Text = "Title", Value = "27"},
-                    new SelectListItem {Text = "Party", Value = "10" }},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", @style ="max-width:70% !important"})
+                    new SelectListItem {Text = "Party", Value = "10" }},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
                     <input type="hidden" id="hdnEGCode" value="@Model.Extended_Group_Code" />
                 }
             </td>
+            <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"><b>Group Name</b></td>
-            <td>
+            <td class="lblExtdGrp"  style="width:30%"><b>Group Name</b></td>
+            <td  style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Name</span>
@@ -91,10 +98,11 @@
                     <input type="text" id="txtGroupName" value="@Model.Group_Name" placeholder="Enter Group Name" maxlength="100" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
             </td>
+            <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"><b>Group Short Name</b></td>
-            <td>
+            <td class="lblExtdGrp"  style="width:30%"><b>Group Short Name</b></td>
+            <td   style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Short_Name</span>
@@ -104,10 +112,11 @@
                     <input type="text" id="txtShortName" value="@Model.Short_Name" placeholder="Enter Short Name" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
             </td>
+            <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"><b>Group Order</b></td>
-            <td>
+            <td class="lblExtdGrp"  style="width:30%"><b>Group Order</b></td>
+            <td   style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Order</span>
@@ -117,21 +126,30 @@
                     <input type="text" id="txtGroupOrder" value="@Model.Group_Order" placeholder="Enter Group Order" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
             </td>
+            <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"><b>Group Type</b></td>
-            <td>
+            <td class="lblExtdGrp"  style="width:30%"><b>Group Type</b></td>
+            <td   style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
-                    <span>@Model.Add_Edit_Type</span>
+                    if (@Model.Add_Edit_Type == "grid")
+                    {
+                        <span>Grid</span>
+                    }
+                    else
+                    {
+                        <span>Row</span>
+                    }
                 }
                 else
                 {
                     @Html.DropDownListFor(m => m.Add_Edit_Type, new List<SelectListItem>
-                    {new SelectListItem {Text = "row", Value = "row"},
-                    new SelectListItem { Text = "grid", Value = "grid" }}, "Please Select", new { @id ="ddlType", @class = "form_input chosen-select", @style ="width:70%"})
+                    {new SelectListItem {Text = "Row", Value = "row"},
+                    new SelectListItem { Text = "Grid", Value = "grid" }}, "Please Select", new { @id ="ddlType", @class = "form_input chosen-select", @style ="width:70%"})
                 }
             </td>
+            <td></td>
         </tr>
     </table>
 </div>
@@ -141,7 +159,7 @@
     </div>
 
     <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
-        <span class="pull-left">TotalRecords: </span>
+        <span class="pull-left">Total Records: </span>
         <span class="pull-left" id="lblRecordCountPopup"></span>
         <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
             @if (ViewBag.CommandName != "VIEW")
@@ -151,7 +169,7 @@
         </span>
     </div>
     <div class="tab-content clearfix table-wrapper scale_table_container">
-        <div class="scale_table_block" id="divExtdGrpDtl" style="overflow:auto; max-height:500px">
+        <div class="scale_table_block" id="divExtdGrpDtl" style="max-height:500px">
 
         </div>
     </div>
