@@ -7961,9 +7961,9 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_OEM objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AL_OEM_Code == objToValidate.AL_OEM_Code).Count() > 0)
+            if (SearchFor(s => s.Device_Name == objToValidate.Device_Name && s.AL_OEM_Code != objToValidate.AL_OEM_Code).Count() > 0)
             {
-                resultSet = "AL_OEM already exists";
+                resultSet = "OEM already exist with this Device Name";
                 return false;
             }
 

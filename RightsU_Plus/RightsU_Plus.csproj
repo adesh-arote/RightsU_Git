@@ -220,6 +220,7 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\AL_OemController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
@@ -1341,6 +1342,8 @@
     <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
     <Content Include="Views\Banner\Index.cshtml" />
     <Content Include="Views\Banner\_BindBannerGroup.cshtml" />
+    <Content Include="Views\AL_Oem\Index.cshtml" />
+    <Content Include="Views\AL_Oem\_BindALOemList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
