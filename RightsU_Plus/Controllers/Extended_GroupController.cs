@@ -61,7 +61,6 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index()
         {
-            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForLanguage);
             FetchData();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });

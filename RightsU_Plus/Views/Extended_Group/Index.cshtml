@@ -35,7 +35,7 @@
                 else {
                     if (result.Is_Locked == "Y") {
                         AddEditViewExtdGrp(Id, CommandName)
-                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditViewExtdGrp()
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
                     else
@@ -123,8 +123,7 @@
 
     function btnShowAll_OnClick() {
         debugger;
-        //$("#searchCommon").empty();
-        $('#ddlSearchModule').val('');
+        $('#ddlSearchModule').val('0').trigger('chosen:updated');
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -420,28 +419,55 @@
         }
     }
 
-    function DeleteGroupDetail(DetailId) {
+    function handleOk() {
+        debugger;
+        if (Command_Name == "DELETE_GROUP_DETAIL") {
+            $('#popup').css('z-index', '1050');
+            DeleteGroupDetail(dummyGuid_G, true);
+        }
+    }
+
+    function handleCancel() {
+        debugger;
+        $('#popup').css('z-index', '1050');
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+
+    function DeleteGroupDetail(DetailId, confirmed) {
         debugger;
         if (!checkCurrentAction())
             return false;
-        $.ajax({
-            type: "POST",
-            url: URL_DeleteDetail,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                DetailId: DetailId
-            }),
-            success: function (result) {
-                if (result.Status == "S") {
-                    BindExtdGrpDetail(0, "");
+
+        if (confirmed) {
+            Command_Name = "";
+            dummyGuid_G = "";
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    DetailId: DetailId
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        BindExtdGrpDetail(0, "");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
                 }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
+            });
+        }
+        else {
+            Command_Name = "DELETE_GROUP_DETAIL";
+            dummyGuid_G = DetailId;
+            
+            $('#popup').css('z-index','1040');
+            showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+        }
     }
 
     function SaveMaster() {
@@ -581,11 +607,12 @@
                             <td style="width:15%;">
                                 @{
                                     var listitems = new List<SelectListItem>();
+                                    listitems.Add(new SelectListItem() { Text = "--Please Select--", Value = "0" });
                                     listitems.Add(new SelectListItem() { Text = "Title", Value = "27" });
                                     listitems.Add(new SelectListItem() { Text = "Party", Value = "10" });
                                 }
 
-                                @Html.DropDownList("DropDownListValue", listitems, "--Please select--", new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
+                                @Html.DropDownList("DropDownListValue", listitems,  new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
