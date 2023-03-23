@@ -220,7 +220,7 @@ namespace RightsU_Plus.Controllers
             objExtended_Columns = objExtended_Columns_Service.GetById(id);
             if (objExtended_Columns.Extended_Group_Config.Count > 0 || objExtended_Columns.AL_Vendor_Rule_Criteria.Count > 0 || objExtended_Columns.Map_Extended_Columns.Count > 0)
             {
-                ViewBag.MultipleSelect = "MultipleSelectDisable";
+                ViewBag.RefTableDisable = "RefTableDisable";
             }
 
             return View("Create", objExtended_Columns);

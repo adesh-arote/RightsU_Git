@@ -1,5 +1,5 @@
 ﻿@model List<RightsU_Entities.Extended_Group>
-
+@using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -25,10 +25,10 @@
                 Group Name
             </th>
             <th>
-                Short_Name
+                Short Name
             </th>
             <th>
-                Group_Order
+                Group Order
             </th>
             <th>
                 Type
@@ -68,12 +68,23 @@
                         @Html.DisplayFor(modelItem => item.Group_Order)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Add_Edit_Type)
+                        @*@Html.DisplayFor(modelItem => item.Add_Edit_Type)*@
+                        @if(item.Add_Edit_Type == "grid")
+                        {
+                            <span>Grid</span>
+                        }
+                        else
+                        {
+                            <span>Row</span>
+                        }
                     </td>
                     <td style="text-align:center">
-                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'EDIT')"></a>
+                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                        {
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT')"></a>
+                        }
                         <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW')"></a>
-                        <a title="@objMessageKey.Delete" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="DeleteExtdGrp(@item.Extended_Group_Code, 'DELETE')"></a>
+                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="DeleteExtdGrp(@item.Extended_Group_Code, 'DELETE')"></a>
                     </td>
                 </tr>
             }
