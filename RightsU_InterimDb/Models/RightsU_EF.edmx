@@ -1136,15 +1136,26 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Duration" Type="int" />
           <Property Name="Amorted_On" Type="datetime" />
         </EntityType>
+        <EntityType Name="AL_Lab">
+          <Key>
+            <PropertyRef Name="AL_Lab_Code" />
+          </Key>
+          <Property Name="AL_Lab_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Lab_Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="AL_Lab_Short_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
         <EntityType Name="AL_OEM">
           <Key>
             <PropertyRef Name="AL_OEM_Code" />
           </Key>
           <Property Name="AL_OEM_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Device_Name" Type="nvarchar" MaxLength="500" />
-          <Property Name="Company" Type="nvarchar" MaxLength="500" />
-          <Property Name="Aspect_Ratio" Type="nvarchar" MaxLength="500" />
-          <Property Name="MPEG" Type="nvarchar" MaxLength="500" />
+          <Property Name="Company_Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="Company_Short_Name" Type="nvarchar" MaxLength="500" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
@@ -2995,6 +3006,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Group_Control_Order" Type="int" />
           <Property Name="Validations" Type="varchar" MaxLength="50" />
           <Property Name="Additional_Condition" Type="varchar(max)" />
+          <Property Name="Inter_Group_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Display_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Allow_Import" Type="char" MaxLength="1" />
+          <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Format_Show_Data">
           <Key>
@@ -4834,7 +4849,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Syn_Deal_Movie_Code" />
           </Key>
-		  <Property Name="Syn_Deal_Movie_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Syn_Deal_Movie_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Syn_Deal_Code" Type="int" />
           <Property Name="Title_Code" Type="int" />
           <Property Name="No_Of_Episode" Type="int" />
@@ -15071,6 +15086,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Additional_Expense" EntityType="Self.Additional_Expense" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aired" EntityType="Self.Aired" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aired_Details" EntityType="Self.Aired_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Lab" EntityType="Self.AL_Lab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_OEM" EntityType="Self.AL_OEM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Vendor_Details" EntityType="Self.AL_Vendor_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Vendor_OEM" EntityType="Self.AL_Vendor_OEM" Schema="dbo" store:Type="Tables" />
@@ -22247,6 +22263,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Extended_Group" EntitySet="Extended_Group" />
             <End Role="AL_Vendor_Details" EntitySet="AL_Vendor_Details" />
           </AssociationSet>
+          <EntitySet Name="AL_Lab" EntityType="RightsU_NeoModel.AL_Lab" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -37874,6 +37891,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Extended_Columns" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" FromRole="Extended_Group_Config" ToRole="Extended_Columns" />
           <NavigationProperty Name="Extended_Group" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" FromRole="Extended_Group_Config" ToRole="Extended_Group" />
           <Property Name="Additional_Condition" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Inter_Group_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Display_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Allow_Import" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Title_Episode_Details">
           <Key>
@@ -37964,10 +37985,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <PropertyRef Name="AL_OEM_Code" />
           </Key>
           <Property Name="AL_OEM_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Device_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Company" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Aspect_Ratio" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="MPEG" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Company_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Company_Short_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Inserted_By" Type="Int32" />
           <Property Name="Inserted_On" Type="DateTime" Precision="3" />
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
@@ -38131,6 +38150,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AL_Lab">
+          <Key>
+            <PropertyRef Name="AL_Lab_Code" />
+          </Key>
+          <Property Name="AL_Lab_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Lab_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="AL_Lab_Short_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -47948,6 +47980,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Group_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group_Config">
               <MappingFragment StoreEntitySet="Extended_Group_Config">
+                <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
+                <ScalarProperty Name="Allow_Import" ColumnName="Allow_Import" />
+                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
+                <ScalarProperty Name="Inter_Group_Name" ColumnName="Inter_Group_Name" />
                 <ScalarProperty Name="Additional_Condition" ColumnName="Additional_Condition" />
                 <ScalarProperty Name="Validations" ColumnName="Validations" />
                 <ScalarProperty Name="Group_Control_Order" ColumnName="Group_Control_Order" />
@@ -47982,15 +48018,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_OEM">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_OEM">
               <MappingFragment StoreEntitySet="AL_OEM">
+                <ScalarProperty Name="Company_Short_Name" ColumnName="Company_Short_Name" />
+                <ScalarProperty Name="Company_Name" ColumnName="Company_Name" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
-                <ScalarProperty Name="MPEG" ColumnName="MPEG" />
-                <ScalarProperty Name="Aspect_Ratio" ColumnName="Aspect_Ratio" />
-                <ScalarProperty Name="Company" ColumnName="Company" />
-                <ScalarProperty Name="Device_Name" ColumnName="Device_Name" />
                 <ScalarProperty Name="AL_OEM_Code" ColumnName="AL_OEM_Code" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -48048,6 +48082,20 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="TnC_Description" ColumnName="TnC_Description" />
                 <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
                 <ScalarProperty Name="AL_Vendor_TnC_Code" ColumnName="AL_Vendor_TnC_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Lab">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Lab">
+              <MappingFragment StoreEntitySet="AL_Lab">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="AL_Lab_Short_Name" ColumnName="AL_Lab_Short_Name" />
+                <ScalarProperty Name="AL_Lab_Name" ColumnName="AL_Lab_Name" />
+                <ScalarProperty Name="AL_Lab_Code" ColumnName="AL_Lab_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -3417,5 +3417,30 @@ namespace RightsU_DAL
         }
     }
 
+    public class AL_Lab_Repository : RightsU_Repository<AL_Lab>
+    {
+        public AL_Lab_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Lab objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Lab objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
     #endregion
 }

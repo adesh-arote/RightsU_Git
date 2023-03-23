@@ -12,22 +12,15 @@ namespace RightsU_InterimDb.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AL_OEM
+    public partial class AL_Lab
     {
-        public AL_OEM()
-        {
-            this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
-        }
-    
-    	public State EntityState { get; set; }    public int AL_OEM_Code { get; set; }
-    	    public string Company_Name { get; set; }
-    	    public string Company_Short_Name { get; set; }
+    	public State EntityState { get; set; }    public int AL_Lab_Code { get; set; }
+    	    public string AL_Lab_Name { get; set; }
+    	    public string AL_Lab_Short_Name { get; set; }
     	    public Nullable<int> Inserted_By { get; set; }
     	    public Nullable<System.DateTime> Inserted_On { get; set; }
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
-    
-        public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
     }
 }

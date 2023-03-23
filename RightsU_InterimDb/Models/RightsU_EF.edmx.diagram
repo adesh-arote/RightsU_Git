@@ -1062,6 +1062,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_Extended_Columns" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Lab" Width="1.5" PointX="47.375" PointY="21.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

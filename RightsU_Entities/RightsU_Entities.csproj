@@ -183,6 +183,7 @@
     <Compile Include="IPR\IPR_REP_EMAIL_FREQ.cs" />
     <Compile Include="IPR\IPR_REP_STATUS_HISTORY.cs" />
     <Compile Include="IPR\IPR_TYPE.cs" />
+    <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AL_OEM.cs" />
     <Compile Include="Master_Entities\AL_Vendor_Details.cs" />
     <Compile Include="Master_Entities\AL_Vendor_OEM.cs" />

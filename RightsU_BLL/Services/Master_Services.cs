@@ -7961,7 +7961,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_OEM objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Device_Name == objToValidate.Device_Name && s.AL_OEM_Code != objToValidate.AL_OEM_Code).Count() > 0)
+            if (SearchFor(s => s.Company_Name == objToValidate.Company_Name && s.AL_OEM_Code != objToValidate.AL_OEM_Code).Count() > 0)
             {
                 resultSet = "OEM already exist with this Device Name";
                 return false;
@@ -8151,6 +8151,69 @@ namespace RightsU_BLL
             if (SearchFor(s => s.Title_Episode_Detail_Code == objToValidate.Title_Episode_Detail_Code).Count() > 0)
             {
                 resultSet = "Title_Episode_Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Lab_Service : BusinessLogic<AL_Lab>
+    {
+        private readonly AL_Lab_Repository objRepository;
+
+        public AL_Lab_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Lab_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Lab> SearchFor(Expression<Func<AL_Lab, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Lab GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Lab objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Lab objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Lab objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Lab_Name == objToValidate.AL_Lab_Name && s.AL_Lab_Code != objToValidate.AL_Lab_Code).Count() > 0)
+            {
+                resultSet = "Lab already exists";
                 return false;
             }
 

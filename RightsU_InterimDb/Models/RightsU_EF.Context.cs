@@ -463,6 +463,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
         public DbSet<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
         public DbSet<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
+        public DbSet<AL_Lab> AL_Lab { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
