@@ -2944,13 +2944,17 @@ namespace RightsU_Plus.Controllers
         {
             string Operation = "A";
             if (rowno > 0) Operation = "E";
+            string TabShortName = "";
 
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
             var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
-            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();
+            TabShortName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).Select(x => x.Short_Name).FirstOrDefault();
+            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();            
             ViewBag.ExtendedColums = lstextCol;
-
+           
             string strAddRow = "";
 
             strAddRow = "<Table class=\"table table-bordered table-hover\" style=\"padding:10px;\">";
@@ -2968,27 +2972,47 @@ namespace RightsU_Plus.Controllers
                 strAddRow = strAddRow + "</td>";
                 strAddRow = strAddRow + "<td>";
                 prevRowTitle = TabControls.Columns_Name;
-
+                ConfigCode = TabControls.Columns_Code;
                 if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
                 {
-                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code);
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code, TabShortName);
                     i++;
                 }
                 else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
                 {
-                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code);
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code, TabShortName);
                     i++;
                 }
                 else if (TabControls.Control_Type == "TXT")
                 {
-                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code);
+                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, j, Operation, "", Ext_Grp_Code, TabShortName);
+                    j++;
+                }
+                else if (TabControls.Control_Type == "DATE")
+                {
+                    strAddRow = strAddRow + getDATE(TabControls.Columns_Code, k, Operation, "", Ext_Grp_Code, TabShortName);
+                    k++;
+                }
+                else if (TabControls.Control_Type == "INT")
+                {
+                    strAddRow = strAddRow + getNumber(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName);
                     l++;
+                }
+                else if (TabControls.Control_Type == "DBL")
+                {
+                    strAddRow = strAddRow + getDBL(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName);
+                    l++;
+                }
+                else if (TabControls.Control_Type == "CHK")
+                {
+                    strAddRow = strAddRow + getCheckbox(TabControls.Columns_Code, m, Operation, "", Ext_Grp_Code, TabShortName);
+                    m++;
                 }
 
                 strAddRow = strAddRow + " utospltag </td></tr>";
             }
             strAddRow = strAddRow.Replace("utospltag", "");
-            strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SaveSupp(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
+            strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SavePopup(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
 
             strAddRow = strAddRow + "</Table>";
 
@@ -3046,19 +3070,176 @@ namespace RightsU_Plus.Controllers
         //    return PartialView("~/Views/Title/_Title_Tabwise_Popup.cshtml", lstextCol);
         //}
 
-        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code)
+        public PartialViewResult BindFieldGrid(int TitleCode, string mode = "")
+        {
+            return PartialView("_Title_Popup_Grid_Result");
+        }
+
+        public JsonResult URL_BindDynamicGrid(int supplementary_Code = 0, int title_code = 0, int Ext_Grp_Code = 0)
+        {
+            string strtableHeader = "";
+            string tabNames = ""; 
+            string tabTable = "";
+            string[] arrStr;
+            int i = 1;
+            int j = 1;
+
+            var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            foreach (Extended_Group EG in objExt_Grp)
+            {
+                tabNames = tabNames + EG.Short_Name + ",";
+                if (i != 1)
+                {
+                    tabTable = tabTable + "<div class=\"tab - pane active\" style=\"display:none;\" id=\"tblMain" + EG.Short_Name + "\">";
+                }
+                else
+                {
+                    tabTable = tabTable + "<div class=\"tab - pane active\" id=\"tblMain" + EG.Short_Name + "\">";
+                    obj.Add("TabName", EG.Short_Name);
+                }
+
+                var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == EG.Extended_Group_Code).Select(x => x.Columns_Code).ToList();
+                var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
+
+                strtableHeader = GetTableHeader(EG.Extended_Group_Code, EG.Short_Name, extColLst, "grid", "A");
+                //List<USP_SUPP_Create_Table_Result> rowList = objUspService.USP_SUPP_Create_Table_Result(ST.Supplementary_Tab_Code, objDeal_Schema.Deal_Code, supplementary_Code.ToString(), ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
+
+                arrStr = strtableHeader.Split('~');
+
+                tabTable = tabTable + "<div class=\"scale_table_block\">";
+                tabTable = tabTable + "<table class=\"table table-bordered table-hover tblGridBind\"  id=\"tbl" + EG.Short_Name + "\">" + arrStr[0] + "</table>";
+
+                tabTable = tabTable + "<input type=\"hidden\" name=\"hdn" + EG.Short_Name + "\" id=\"hdn" + EG.Short_Name + "\" Value='" + arrStr[1] + "'/>";
+                tabTable = tabTable + "<input type=\"hidden\" name=\"hdnwt" + EG.Short_Name + "\" id=\"hdnwt" + EG.Short_Name + "\" Value='" + EG.Add_Edit_Type + "'/>";
+
+                tabTable = tabTable + "</div></div>";
+                i++;
+            }
+
+            tabNames = tabNames.Substring(0, tabNames.Length - 1);
+
+            obj.Add("FieldList", _fieldList.TrimEnd(','));
+            obj.Add("tabNames", tabNames);
+            obj.Add("Divs", tabTable);
+
+            return Json(obj);
+        }
+
+        public string GetTableHeader(int tabCode, string Short_Name, List<Extended_Columns> ListExtended_Columns_Data, string WindowType, string ViewOperation)
+        {
+            string strPrevHeader = "";
+            string strtableHeader = "<tr>";
+            string strAddRow = "<tr id = \"add" + Short_Name + "\" style=\"display:none;\">";
+
+            //List<USP_Acq_SUPP_Tab_Result> columnList = objUspService.USP_Acq_SUPP_Tab_Result(tabCode).ToList();
+            List<Extended_Columns> columnList = ListExtended_Columns_Data.ToList();
+            int i = 1, j = 1, k = 1, l = 1, m = 1;
+            double width = 0, viewWidth = 5;
+            if (ViewOperation != "VIEW")
+                width = 100 / columnList.Count() - 10;
+            else
+            {
+                viewWidth = columnList.Count > 5 ? 5 : 10;
+                width = (100 - viewWidth) / columnList.Count();
+            }
+
+            width = Math.Round(width);
+
+            //var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == tabCode).Select(x => x.Columns_Code).ToList();
+            //var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
+
+            foreach (Extended_Columns EC in columnList)
+            {
+                var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
+                var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+                lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
+                int? TabCodeGrid = 0;
+                TabCodeGrid = lstextGrpConfig.Where(w => w.Columns_Code == EC.Columns_Code).Select(w => w.Extended_Group_Code).FirstOrDefault();
+                if (strPrevHeader != "" && strPrevHeader == EC.Columns_Name)
+                {
+                    strtableHeader = strtableHeader.Replace("UTOsplTag", " colspan=2 ");
+                }
+                else
+                {
+                    strtableHeader = strtableHeader.Replace("UTOsplTag", "");
+                    strtableHeader = strtableHeader + "<th style=\"width:" + width + "%\" data-configitem =\"" + TabCodeGrid + "\" UTOsplTag> " + EC.Columns_Name + "</th>";
+                    strPrevHeader = EC.Columns_Name;
+                }
+
+                if (WindowType == "grid")
+                {
+                    if (EC.Control_Type == "DDL")
+                    {
+                        _fieldList = _fieldList + Short_Name + "ddPopup" + i.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        i++;
+                    }
+                    else if (EC.Control_Type == "TXT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "txtPopup" + j.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        j++;
+                    }
+                    else if (EC.Control_Type == "DATE")
+                    {
+                        _fieldList = _fieldList + Short_Name + "dtPopup" + k.ToString() + "~" + EC.Columns_Code.ToString().ToString() + ",";
+                        k++;
+                    }
+                    else if (EC.Control_Type == "INT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numPopup" + l.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (EC.Control_Type == "DBL")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numPopup" + l.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (EC.Control_Type == "CHK")
+                    {
+                        _fieldList = _fieldList + Short_Name + "chkPopup" + m.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        m++;
+                    }
+                }
+                    
+            }
+            strtableHeader = strtableHeader.Replace("UTOsplTag", "");
+            if (ViewOperation != "VIEW")
+            {
+                strtableHeader = strtableHeader + "<th style=\"width:" + viewWidth + "%\"> Action </th>";
+            }
+            strtableHeader = strtableHeader + "</tr>";
+
+            if (WindowType == "inLine")
+            {
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" onclick = \"SavePopup(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"hideaddPopup();\"></a></td>";
+                strAddRow = strAddRow + "</tr>";
+                strtableHeader = strtableHeader + strAddRow;
+            }
+            else
+            {
+                i = columnList.Count(a => a.Control_Type == "TXTDDL") + 1;
+            }
+
+            return strtableHeader + "~" + (i - 1).ToString();
+        }
+        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
         {            
             string strDDL;
             int RoleCode = 0;
 
             if (multiple == "")
             {
-                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\">";
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
             {
-                strDDL = "<select style=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "ddSupp" + i.ToString() + "\" " + multiple + ">";
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" " + multiple + ">";
             }
 
             var ExtendedColumn = ExtendedColumns.Where(x => x.Columns_Code == Columns_Code).FirstOrDefault();
@@ -3084,15 +3265,173 @@ namespace RightsU_Plus.Controllers
             
             strDDL = strDDL + "</select>";
 
-            _fieldList = _fieldList + Columns_Code + "ddSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            _fieldList = _fieldList + Columns_Code + "ddPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
 
             return strDDL;
         }
-        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code)
+        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
         {
-            string getText = "<input type=\"text\"  id=\"" + Operation + Columns_Code + "txtSupp" + i.ToString() + "\" name=\"" + Operation + Columns_Code + "txtSupp" + i.ToString() + "\">";
-            _fieldList = _fieldList + Columns_Code + "numSupp" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            string getText = "<input type=\"text\"  id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\">";
+            _fieldList = _fieldList + Columns_Code + "txtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getText;
+        }
+        public string getDATE(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
+        {           
+            string getDATE = "<input type=\"text\" class=\"datepicker\" id =\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" placeholder=\"DD / MM / YYYY\" style=\"height: 30px width:125px; \" value=\"" + "" + "\">";
+            _fieldList = _fieldList + TabShortName + "dtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getDATE;
+        }
+        public string getNumber(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
+        {
+            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\">";
+            _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getDBL(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
+        {
+            string getNumber = "<input type=\"number\" value=\"" + "" + "\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\">";
+            _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getCheckbox(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName)
+        {
+            string strChecked = "";
+            string User_Value = "";
+            if (User_Value == "" || User_Value.ToUpper() == "NO")
+            {
+                strChecked = "";
+            }
+            else
+                strChecked = " checked ";
+
+            if (User_Value == "") User_Value = "YES";
+
+            string getCheckbox = "<input type=\"checkbox\" value=\"" + User_Value + "\" id=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" style=\"margin-left: 4px;\"" + strChecked + ">";
+            _fieldList = _fieldList + TabShortName + "chkPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getCheckbox;
+        }
+
+        public string PopupSaveInSession(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex)
+        {
+            ////check for duplicate
+            //if (supplementaryDupliValidation(Value_list, Short_Name, Row_No, Operation))
+            //{
+            //    return "Duplicate";
+            //}
+
+            //Acq_Deal_Supplementary objSupplementary = objAcq_Deal_Supplementary;
+            //List<Acq_Deal_Supplementary_detail> lstDetailObj = objSupplementary.Acq_Deal_Supplementary_detail.ToList();
+
+            ////"1~1,sai~2,"
+            //Supplementary_Tab_Service objTabService = new Supplementary_Tab_Service(objLoginEntity.ConnectionStringName);
+            //int TabCode = (int)objTabService.SearchFor(a => a.Short_Name == Short_Name).Select(b => b.Supplementary_Tab_Code).FirstOrDefault();
+            int TabCode = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).Select(b => b.Extended_Group_Code).FirstOrDefault();
+
+            //Supplementary_Data_Service objDataService = new Supplementary_Data_Service(objLoginEntity.ConnectionStringName);
+            //Supplementary_Config_Service objConfigService = new Supplementary_Config_Service(objLoginEntity.ConnectionStringName);
+
+            int rowNum = 1;
+            //int rowNum = 0;
+            //if (lstDetailObj.Count(b => b.Supplementary_Tab_Code == TabCode) != 0 && Operation == "A")
+            //{
+            //    rowNum = (int)lstDetailObj.Where(b => b.Supplementary_Tab_Code == TabCode).Max(a => a.Row_Num).Value;
+            //}
+            //else
+            //{
+            //    rowNum = Row_No;
+            //    //    lstDetailObj.RemoveAll(a => a.Row_Num == rowNum && a.Supplementary_Tab_Code == TabCode);
+            //}
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            //string[] columnValueList = Value_list.TrimEnd(',').Split(',');
+            string Output = "";
+            if (rowNum == 0)
+            {
+                Output = "<tr id=\"" + Short_Name + (1).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+            }
+            else
+            {
+                Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+            }
+            foreach (string str in columnValueList)
+            {
+                //Acq_Deal_Supplementary_detail obj = new Acq_Deal_Supplementary_detail();
+                ////string[] vals = str.Split('~');
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                int config_Code = Convert.ToInt32(vals[1]);
+                //string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                string ControlType = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                var ExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == config_Code).FirstOrDefault();
+                //if (Operation == "E")
+                //    obj = lstDetailObj.Where(a => a.Supplementary_Config_Code == config_Code && a.Supplementary_Tab_Code == TabCode && a.Row_Num == rowNum).FirstOrDefault();
+                int RoleCode = 0;
+                if (ControlType == "DDL")
+                {
+                    if (vals[0] != "")
+                    {
+                        string t = "";
+                        int[] dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+                        var ExtendedColumn = ExtendedColumns;
+                        if (ExtendedColumn.Is_Ref == "Y" && ExtendedColumn.Is_Defined_Values == "N" && ExtendedColumn.Ref_Table == "TALENT")
+                        {
+                            if (ExtendedColumn.Additional_Condition != "" && ExtendedColumn.Additional_Condition != null)
+                                RoleCode = Convert.ToInt32(ExtendedColumn.Additional_Condition);
+                            //var lstTalentCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode) && dtextval.Contains(x.Talent_Code)).Where(y => y.Is_Active == "Y").Select(b => b.Talent_Name).ToList();
+                            t = string.Join(",", new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode) && dtextval.Contains(x.Talent_Code)).Where(y => y.Is_Active == "Y").Select(b => b.Talent_Name).ToList());                            
+                        }
+                        else
+                        {
+                            //var lstextColVal = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Columns_Code).ToList();
+                            t = string.Join(",", new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => dtextval.Contains(x.Columns_Value_Code)).Select(b => b.Columns_Value).ToList());
+                            //foreach (Extended_Columns_Value ECV in lstextColVal)
+                            //{
+                            //    strDDL = strDDL + "<option value=" + ECV.Columns_Value_Code + ">" + ECV.Columns_Value + "</option>";
+                            //}
+                        }
+                        //string t = string.Join(",", new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(a => dtextval.Contains(a.Columns_Code)).Select(b => b.Columns_Name).ToList());
+                        Output = Output + "<td data-configitem =\"" + TabCode + "\">" + t + "</td>";
+                    }
+                    else
+                    {
+                        Output = Output + "<td>&nbsp;</td>";
+                    }
+                    //obj.Supplementary_Data_Code = vals[0].Replace('-', ',');
+                }
+                if (ControlType == "TXT" || ControlType == "INT" || ControlType == "DBL" || ControlType == "DATE" || ControlType == "CHK")
+                {
+                    Output = Output + "<td>" + vals[0] + "</td>";
+                   // obj.User_Value = vals[0];
+                }
+
+                if (Operation == "A")
+                {
+                    //obj.Row_Num = rowNum + 1;
+                    //obj.Supplementary_Config_Code = Convert.ToInt32(vals[1]);
+                    //obj.Supplementary_Tab_Code = TabCode;
+                    //obj.EntityState = State.Added;
+                    //lstDetailObj.Add(obj);
+                }
+                //else if (Operation == "E" && obj.Acq_Deal_Supplementary_Detail_Code > 0)
+                //{
+                //    objSupplementary.EntityState = State.Modified;
+                //    obj.EntityState = State.Modified;
+                //}
+            }
+            if (Operation == "A")
+            {
+                Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "','" + Short_Name + "' );\"></a></td>";
+            }
+            else if (Operation == "E")
+            {
+                Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"SuppEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"SuppDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></td>";
+
+            }
+            Output = Output + "</tr>";
+
+            //objSupplementary.Acq_Deal_Supplementary_detail = lstDetailObj;
+            //objAcq_Deal_Supplementary = objSupplementary;
+            return Output;
         }
         #endregion
     }

@@ -21,6 +21,9 @@
     var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
     var URL_Bind_Title_List = '@Url.Action("Bind_Title_List", "Title_List")';
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
+    var URL_BindFieldGrid = '@Url.Action("BindFieldGrid", "Title")';
+    var URL_SaveInSession = '@Url.Action("PopupSaveInSession", "Title")';
+
     var chosenTerritory = [];
     var chosenCountry = [];
     $(document).ready(function () {   
@@ -492,6 +495,136 @@
                 alert('Error: ' + result.responseText);
             }
         });
+    }
+
+    function closeEdit(rowNumber) {
+        debugger;
+        $("#AddTabwisePopup").modal('toggle');
+        $('#inputValidation').val("false");
+    }
+
+    function SavePopup(x, rownum) {
+        debugger;
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        showLoading();
+        var rownum = rownum;
+        var shortName = $('#hdnTabShortName').val();
+        var operation = "A";//$('#Operation').val();
+        var wtName = $('#hdnwt' + shortName).val();
+        if (operation == "E" && wtName.toUpperCase() == "GRID") {
+            rwIndex = parseInt($('#popupindex').val());
+        }
+
+        var fld = "";
+        var vallist = "";
+        FieldList = $('#FieldList').val();
+        let FldArray = FieldList.split(',');       
+
+        for (let i = 0; i < FldArray.length; i++) {
+            if (FldArray[i].substring(0, 2) == shortName) {
+                fld = FldArray[i].split("~");
+                var a = "";
+                if (wtName.toUpperCase() == "GRID") {
+                    a = '#TabwisePopup #' + operation + fld[0];
+                } else {
+                    a = '#' + operation + fld[0];
+                }
+
+                debugger;
+                if ($(a).val() == null) {
+                    //showAlert('I', 'Please enter details');
+                    //hideLoading();
+                    //return;
+                }
+                else {
+                    let v = $(a).val().toString();
+                    if ($(a).is("select")) {
+                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                        //if ($(a).prop('multiple')) {
+                        //    $(a)[0].sumo.unSelectAll();
+                        //}
+                    }
+                    else
+                        if ($(a).is(":checkbox")) {
+                            if ($(a).is(':checked')) {
+                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                            else {
+                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                        }
+                        else {
+                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                }
+            }
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveInSession,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Value_list: vallist,
+                Short_Name: shortName,
+                Operation: operation,
+                Row_No: rownum,
+                rwIndex: rwIndex,
+            }),
+            success: function (result) {
+                debugger;
+                $('#inputValidation').val("false");
+                var shortName = $('#hdnTabShortName').val();
+                tblName = "#tbl" + shortName;
+
+                if (result != "Duplicate") {
+                    var row = $(result);
+                    if (operation == "A") {
+                        $(tblName).append(row);
+                        hideaddPopup();
+                    }
+                    if (operation == "E") {
+                        row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        $(tblName + ' tr').eq(rwIndex + 1).remove();
+                        // $('#' + shortName + rownum).remove();
+
+                        //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        //$(tblName + ' tr').eq(rwIndex + 1).remove();
+                    }
+                }
+                else {
+                    showAlert('I', 'Duplicate Value Not allowed');
+                }
+            }
+        });
+
+
+        if (wtName.toUpperCase() == "GRID") $("#AddTabwisePopup").modal('toggle');
+        hideLoading();
+    }    
+
+    function hideaddPopup() {
+        debugger;
+        //$('#inputValidation').val("false");
+        var shortName = $('#hdnTabShortName').val();
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Input_Name = "#tblMain" + tabArray[i];            
+            if (tabArray[i] == shortName) {
+                $(IS_Input_Name).addClass("active");
+                $(IS_Input_Name).show();
+            }
+            else {                
+                $(IS_Input_Name).removeClass("active");
+                $(IS_Input_Name).hide();
+            }
+        }
     }
 
     function populateTitle(evt) {

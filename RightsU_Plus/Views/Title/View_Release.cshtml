@@ -45,6 +45,7 @@
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
     $(document).ready(function () {
         debugger;
+        BindTitleMetadataHeader();
         if ('RTL' == '@objMessageKey.LayoutDirection'){
             $('.divRelease').css("float", "left");
             $('.poptalent').css("float", "Right");
@@ -237,6 +238,14 @@
 
     }
     function BindExtended() {
+        if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
+            var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+            $("#hdnTabCode").val(hdnActiveTabValue);
+            var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+            $("#hdnTabAddEditType").val(hdnTabAddEditType);
+            var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+            $("#hdnTabwiseName").val(hdnTabwiseName);
+        }   
         showLoading();
         var TitleCode = '@Model.Title_Code.ToString()';
         $.ajax({
@@ -476,6 +485,29 @@
         });
     }
 
+    function BindTitleMetadataHeader() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitleMetadataHeader", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMetadataHeader').empty();
+                    $('#divTitleMetadataHeader').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
 </script>
 <style>
     #divRelease {
@@ -769,10 +801,14 @@
                                         </div>
                                     </div>
                                     <div class="padding">
-                                        <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
-                                        </div>
+                                        @*<div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
+                                        </div>*@
                                     </div>
 
+                                    <div>
+                                        <div id="divTitleMetadataHeader">
+                                        </div>
+                                    </div>
                                     @*<div class="divAdditionalField">
                                         </div>*@
                                     <br />

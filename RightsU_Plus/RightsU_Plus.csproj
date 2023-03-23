@@ -1338,6 +1338,7 @@
     <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
     <Content Include="Views\Title\_Title_Metadata_Header.cshtml" />
     <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
+    <Content Include="Views\Title\_Title_Popup_Grid_Result.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -114,7 +114,15 @@ function BindExtended(vmode) {
         var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
         $("#hdnTabAddEditType").val(hdnTabAddEditType);
         var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
-        $("#hdnTabwiseName").val(hdnTabwiseName); 
+        $("#hdnTabwiseName").val(hdnTabwiseName);        
+        if ($("#hdnTabAddEditType").val() == 'row') {
+            $('.divgvAdditionalFieldGrid').hide();
+            $('.divgvAdditionalField').show();
+        }
+        else if ($("#hdnTabAddEditType").val() == 'grid') {
+            $('.divgvAdditionalField').hide();
+            $('.divgvAdditionalFieldGrid').show();
+        }
     }    
     showLoading();
     var TitleCode = title_Code;
@@ -131,6 +139,28 @@ function BindExtended(vmode) {
         success: function (result) {
             //ddl_first_col = result;
             $('.divgvAdditionalField').html(result);
+            initializeChosen();
+            initializeTooltip();
+            hideLoading();
+        },
+        error: function (result) {
+            //alert('Error: '+ result.responseText);
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: URL_BindFieldGrid,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            TitleCode: TitleCode,
+            mode: vmode
+        }),
+        success: function (result) {
+            //ddl_first_col = result;
+            $('.divgvAdditionalFieldGrid').html(result);
             initializeChosen();
             initializeTooltip();
             hideLoading();

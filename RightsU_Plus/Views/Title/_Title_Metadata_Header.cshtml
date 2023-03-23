@@ -27,10 +27,48 @@
         var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
         $("#hdnTabAddEditType").val(hdnTabAddEditType);
         var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
-        $("#hdnTabwiseName").val(hdnTabwiseName);  
+        $("#hdnTabwiseName").val(hdnTabwiseName);
+        var hdnTabShortName = $('ul.ulTabs').find('li.active').data('bind');
+        $('#hdnTabShortName').val(hdnTabShortName);
         ShowHideTabwiseData();
+        if ($("#hdnTabAddEditType").val() == 'row') {
+            $('.divgvAdditionalFieldGrid').hide();
+            $('.divgvAdditionalField').show();
+        }
+        else if ($("#hdnTabAddEditType").val() == 'grid') {
+            $('.divgvAdditionalField').hide();
+            $('.divgvAdditionalFieldGrid').show();
+        }
+        ShowHideTabwiseGrid();
+        hideaddPopup();
     });
 
+    function ShowHideTabwiseGrid() {
+        $('.tblGridBind th').each(function () {
+            var hdnActiveTabValue = $(this).data('configitem');
+            if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+        $('.tblGridBind tr').each(function () {
+            var hdnActiveTabValue = $(this).data('configitem');
+            if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+        $('.tblGridBind td').each(function () {
+            var hdnActiveTabValue = $(this).data('configitem');
+            if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+                $(this).hide();
+            } else {
+                $(this).show();
+            }
+        });
+    }    
 </script>
 
 <div id="tabs" class="tabbable">
@@ -50,13 +88,14 @@
                 {
                     ClsActive = "";
                 }
-                <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
+                <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name" data-bind="@item.Short_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
                 i++;
             }
         }
     </ul>
     <input type="hidden" name="name" id="hdnTabCode" value="0" />
     <input type="hidden" name="name" id="hdnTabAddEditType" value="0" />
-    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
+    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />    
     <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
+    <div class="divgvAdditionalFieldGrid" style="text-align-last:@(textalignlast);"></div>
 </div>

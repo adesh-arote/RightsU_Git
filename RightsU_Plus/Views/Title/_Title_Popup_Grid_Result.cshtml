@@ -1,0 +1,38 @@
+﻿<script>
+    var URL_BindDynamicGrid = '@Url.Action("URL_BindDynamicGrid", "Title")';
+    $(document).ready(function () {
+        debugger;
+        BindDynamicGrid();
+    });
+
+    function BindDynamicGrid() {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindDynamicGrid,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                supplementary_Code: 0,
+                title_code: 0,
+                Ext_Grp_Code: $("#hdnTabCode").val()
+            }),
+            success: function (result) {
+                debugger;
+                $('#tabTable').append(result.Divs);
+                $('#FieldList').val(result.FieldList);
+                $('#hdnTabShortName').val(result.TabName);
+                $('#TabValues').val(result.tabNames);
+            }
+        });
+    }
+    
+</script>
+
+<div class="tab-content clearfix table-wrapper scale_table_container" id="tabTable">
+</div>
+<input type="hidden" name="name" id="hdnTabShortName" value="0" />
+<input type="hidden" id="FieldList"/>
+<input type="hidden" id="popupindex" />
+<input type="hidden" id="TabValues" />

@@ -7,7 +7,7 @@
                    objMessageKey = (MessageKey)Session["objMessageKey"];
                }     
            }
-<script type="text/javascript">
+               <script type="text/javascript">
     var ExtendedColumnCode = "";
     //function Cancel(Type,RowNum)
     //{
@@ -18,7 +18,7 @@
     //var dummyobj;
     function ValidateDelete(obj) {
         debugger;
-        
+
         if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
             return false;
@@ -940,7 +940,7 @@
                                         newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
                                     LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick(" + id + "); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(" + id + ");' class='glyphicon glyphicon-trash'></a> " + newhidden;
                                 }
-                                
+
                                 $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
                                 $("#" + $("#hdnRowNum").val() + "_lblName").remove();
 
@@ -1047,7 +1047,7 @@
             else {
                 select = $("#" + count + "_ddlControlType");
             }
-            
+
             var lstFieldProp = document.getElementById(ddlFieldNameList).value.split('~');
 
             var CallFor = "T";
@@ -1126,7 +1126,7 @@
                     async: false,
                     success: function (result) {
                         debugger;
-                        
+
                         if ($("#hdnIsRowEdit").val() != "") {
                             select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
                         }
@@ -1180,7 +1180,7 @@
                                 if (employeeArray[x] != "" && employeeArray[x] != " ")
                                     //$('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').val(employeeArray[x]).trigger('chosen:updated');
                                     $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select option[value=' + employeeArray[x] + ']').attr('selected', 'selected');
-                                        
+
 
                             }
                             $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').trigger("chosen:updated");
@@ -1247,7 +1247,7 @@
         //initializeChosen();
     }
 
-    $(document).ready(function () {        
+    $(document).ready(function () {
         initializeExpander();
         ShowHideTabwiseData();
         @*Comment By Sayali (Function Calling Multiple Times)*@
@@ -1334,7 +1334,8 @@
                 $(this).find('td').each(function () {
                     var Control = $(this).data('content');
                 })
-            });            
+            });
+            initializeChosen();
         }
         else if ($("#hdnTabAddEditType").val() == "row") {
             var ddl_first_col = "";
@@ -1402,18 +1403,6 @@
         else {
             return false;
         }
-        //function ShowHideTabwiseData() {
-        //    $('#tbl_Additional_Fileds tr').each(function () {
-        //        var hdnActiveTabValue = $(this).data('configitem');
-        //        alert(hdnActiveTabValue);
-        //        alert($("#hdnTabCode").val() + "_Test");
-        //        if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
-        //            $(this).hide();
-        //        } else {
-        //            $(this).show();
-        //        }
-        //    });
-        //}
     }
 
     function ShowHideTabwiseData() {
@@ -1434,7 +1423,7 @@
         //collapseTimer: 0,  // re-collapses after 5 seconds; default is 0, so no re-collapsing
     });
 
-</script>
+               </script>
 <style>
     .title_custom_fields {
         border-bottom: 1px dotted;
