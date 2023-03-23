@@ -12,7 +12,7 @@
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
     var URL_BindBannerList = '@Url.Action("BindBanner_List", "Banner")';
-    var URL_SearchBanner = '@Url.Action("SearchBanner", "Banner")'
+    var URL_SearchBanner = '@Url.Action("SearchBanner", "Banner")';
     var URL_SaveBanner = '@Url.Action("SaveBanner", "Banner")';
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Banner")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
@@ -183,7 +183,7 @@
 
     function ValidatePageSize() {
         debugger;
-        var recordPerPage = $('#txtPageSize').val()
+        var recordPerPage = $('#txtPageSize').val();
         if ($.trim(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
             if (pageSize > 0)
@@ -205,11 +205,11 @@
         debugger;
         var action = $("#hdnAction").val();
         if (action == "ADD") {
-            showAlert("E", "Complete Add Operation First")
+            showAlert("E", "Complete Add Operation First");
             return false;
         }
         else if (action == "EDIT") {
-            showAlert("E", "Complete Edit Operation First")
+            showAlert("E", "Complete Edit Operation First");
             return false;
         }
         return true;
@@ -258,9 +258,18 @@
         debugger;
         var returnVal = true;
         var Banner_Code = BannerCode;
-        var Banner_Name = $("#Banner_Name").val();
-        var Banner_short_name = $("#Banner_Short_Name").val();
-        var Lock_Time = $("#Lock_Time").val();
+        var Banner_Name = $.trim($("#Banner_Name").val());
+        var Banner_short_name = $.trim($("#Banner_Short_Name").val());
+
+        if (Banner_Name == "") {
+            $('#Banner_Name').val('').attr('required', true);
+            returnVal = false;
+        }
+        if (Banner_short_name == "") {
+            $('#Banner_Short_Name').val('').attr('required', true);
+            returnVal = false;
+        }
+
         if (returnVal) {
             $.ajax({
                 type: "POST",
@@ -271,8 +280,7 @@
                 data: JSON.stringify({
                     Banner_Code: Banner_Code,
                     Banner_Name: Banner_Name,
-                    Banner_short_name: Banner_short_name,
-                    Lock_Time: Lock_Time
+                    Banner_short_name: Banner_short_name
                 }),
                 success: function (result) {
                     debugger;
@@ -288,8 +296,6 @@
                         else {
                             BannerList("", 0);
                         }
-                        //SetPaging();
-                        
                     }
                     else {
                         showAlert("E", result.Message);
@@ -369,7 +375,6 @@
                 }
                 else {
                     if (result.Is_Locked == "Y") {
-                       // This syntax must be after AddEditCountry() this
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
                     else
@@ -411,7 +416,10 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditBanner('ADD', 0)" />
+                                <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditBanner('ADD', 0)" />
+                            </li>
+                            <li>
+                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
                             </li>
                         </ul>
                     </div>
@@ -424,11 +432,11 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Banner Name, Banner Short Name" maxlength="100" />
+                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Banner Name, Banner Short Name" maxlength="100" />
                             </td>
                             <td>
-                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
-                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                                <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input autocomplete="off" type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
                             <td id="txtSort">
                                 @objMessageKey.SortBy :
@@ -443,23 +451,23 @@
                     <div class="paging_area clearfix">
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
-                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
-                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
-                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <input autocomplete="off" type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input autocomplete="off" type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input autocomplete="off" type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
 
                         <div id="Pagination" class="pagination">
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentActionAttribGroup()" onblur="setDefaultPaging('txtPageSize')">
+                            <input autocomplete="off" type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentActionAttribGroup()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
 
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">
-                            <input type="hidden" id="hdnCategoryCode" value="0" />
-                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
-                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <input autocomplete="off" type="hidden" id="hdnCategoryCode" value="0" />
+                            <input autocomplete="off" type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <input autocomplete="off" type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                             <div id="divBannerList" class="deal clearfix">
 
                             </div>

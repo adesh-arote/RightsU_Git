@@ -36,10 +36,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.LangCode = SysLanguageCode;
             List<Banner_Service> banner_Services = new List<Banner_Service>();
             List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = "Ascending", Value = "T" });
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "L" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Banner Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Banner Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
             return View();
         }
@@ -66,13 +65,9 @@ namespace RightsU_Plus.Controllers
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
+                if (sortType == "L")
                 {
-                    lst = lstBanner_Searched.OrderBy(o => o.Banner_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                }
-                else if (sortType == "L")
-                {
-                    lst = lstBanner_Searched.OrderByDescending(o => o.Banner_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBanner_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
                 else if (sortType == "NA")
                 {
@@ -172,7 +167,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public JsonResult SaveBanner(int Banner_Code, string Banner_Name, string Banner_short_name, string Lock_Time)
+        public JsonResult SaveBanner(int Banner_Code, string Banner_Name, string Banner_short_name)
         {
             string status = "S";
             string message = "";
@@ -203,7 +198,6 @@ namespace RightsU_Plus.Controllers
                 lstBanner.Inserted_On = DateTime.Now;
                 lstBanner.Last_Action_By = UserId;
                 lstBanner.Last_Updated_Time = DateTime.Now;
-                //lstBanner.Lock_Time = Lock_Time;
 
                 dynamic resultSet;
                 if (!objBanner_Service.Save(lstBanner, out resultSet))

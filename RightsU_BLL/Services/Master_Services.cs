@@ -8018,7 +8018,7 @@ namespace RightsU_BLL
 
         public override bool ValidateDelete(Banner objToValidate, out dynamic resultSet)
         {
-             resultSet = "";
+            resultSet = "";
             return true;
         }
 
@@ -8026,10 +8026,14 @@ namespace RightsU_BLL
         {
             if (SearchFor(s => s.Banner_Name == objToValidate.Banner_Name && s.Banner_Code != objToValidate.Banner_Code).Count() > 0)
             {
-                resultSet = "Banner already exists";
+                resultSet = "Banner Name already exists";
                 return false;
             }
-
+            else if (SearchFor(s => s.Banner_Short_Name == objToValidate.Banner_Short_Name && s.Banner_Code != objToValidate.Banner_Code).Count() > 0)
+            {
+                resultSet = "Banner Short Name already exists";
+                return false;
+            }
             resultSet = "";
             return true;
         }
