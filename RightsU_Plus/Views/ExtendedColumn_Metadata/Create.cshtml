@@ -66,10 +66,10 @@
         var isRef = $("#IsRef").val();
         var isDefinedValues = $("#IsDefinedValues").val();
         var isMultipleSelect = $("#IsMultipleSelect").val();
-        var refTable = $("#RefTable").val();
-        var displayField = $("#DisplayField").val();
-        var refValueField = $("#RefValueField").val();
-        var additionalCondition = $("#AdditionalCondition").val();
+        var refTable = $.trim($("#RefTable").val());
+        var displayField = $.trim($("#DisplayField").val());
+        var refValueField = $.trim($("#RefValueField").val());
+        var additionalCondition = $.trim($("#AdditionalCondition").val());
         var isAddOnScreen = $("#IsAddOnScreen").val();
 
         if (columnName == "") {
@@ -83,7 +83,6 @@
         }
 
         if (isDefinedValues == "Y") {
-
             var length = $("table tr[id*='trExtendValueRate_']").length;
             if (length == 0) {
                 showAlert("E","Please Add Column Value");
@@ -208,13 +207,13 @@
         }
         if (isDefinedValues == "N" && controlType == "DDL")
         {
-            if ("@ViewBag.MultipleSelect" != "MultipleSelectDisable") {
+            if ("@ViewBag.RefTableDisable" != "RefTableDisable") {
                 $("#RefTable").prop("disabled", false);
                 $("#DisplayField").prop("disabled", false);
                 $("#RefValueField").prop("disabled", false);
                 $("#AdditionalCondition").prop("disabled", false);
                 $("#IsAddOnScreen").prop("disabled", false);
-            }               
+            }
             $("#AddBtn").attr("style", "display:none");
             $('#divEVDetails').empty();
 
@@ -233,8 +232,8 @@
 
         if (controlType == "DDL") {
             $("#IsRef").val("Y");
-            $("#IsRef").prop("disabled", true);        
-            if ("@ViewBag.MultipleSelect" != "MultipleSelectDisable") {
+            $("#IsRef").prop("disabled", true);
+            if ("@ViewBag.RefTableDisable" != "RefTableDisable") {
                 $("#IsMultipleSelect").prop("disabled", false);
                 $("#IsDefinedValues").prop("disabled", false);
                 if ($("#IsDefinedValues").val() == "N") {
@@ -299,6 +298,11 @@
     function SaveEVDetails(Id) {
         debugger;
         var columnValue = $.trim($("#ColumnValue").val());
+
+        if (columnValue == "") {
+            $("#ColumnValue").val('').attr("required", true);
+            return false;
+        }
         $("#hdnAction").val("");
         $.ajax({
             type: "POST",
@@ -451,12 +455,7 @@
                                 {
                                     if (ViewBag.Title == "Edit")
                                     {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
                                             { new SelectListItem{Text="Dropdown", Value="DDL"},
@@ -533,12 +532,7 @@
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
                                     {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.DropDownListFor(m => m.Is_Defined_Values, new List<SelectListItem>
                                            { new SelectListItem{Text="No", Value="N"},
@@ -580,12 +574,7 @@
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
                                     {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.DropDownListFor(m => m.Is_Multiple_Select, new List<SelectListItem>
                                              { new SelectListItem{Text="No", Value="N"},
@@ -618,13 +607,8 @@
                                 else
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
-                                    {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                    {                                       
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.EditorFor(model => model.Ref_Table, new { htmlAttributes = new { @class = "form-control", @id = "RefTable", @style = "width:95%", @placeholder = "Enter Ref Table", @autocomplete = "Off" } })
                                         }
@@ -652,13 +636,8 @@
                                 else
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
-                                    {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                    {                                     
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.EditorFor(model => model.Ref_Display_Field, new { htmlAttributes = new { @class = "form-control", @id = "DisplayField", @style = "width:95%", @placeholder = "Enter Ref Display Field", @autocomplete = "Off" } })
                                         }
@@ -684,13 +663,8 @@
                                 else
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
-                                    {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                    {                                      
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.EditorFor(model => model.Ref_Value_Field, new { htmlAttributes = new { @class = "form-control", @id = "RefValueField", @style = "width:95%", @placeholder = "Enter Ref Value Field", @autocomplete = "Off" } })
                                         }
@@ -718,13 +692,8 @@
                                 else
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
-                                    {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                    {                                       
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.EditorFor(model => model.Additional_Condition, new { htmlAttributes = new { @class = "form-control", @id = "AdditionalCondition", @style = "width:95%", @placeholder = "Enter Additional Condition", @autocomplete = "Off" } })
                                         }
@@ -758,13 +727,8 @@
                                 else
                                 {
                                     if (ViewBag.Title == "Edit" && Model.Control_Type == "DDL")
-                                    {
-                                        bool canDeactivate = true;
-                                        if (Model.Map_Extended_Columns.Count > 0 || Model.AL_Vendor_Rule_Criteria.Count > 0 || Model.Extended_Group_Config.Count > 0)
-                                        {
-                                            canDeactivate = false;
-                                        }
-                                        if (canDeactivate)
+                                    {                                        
+                                        if (ViewBag.RefTableDisable != "RefTableDisable")
                                         {
                                             @Html.DropDownListFor(m => m.Is_Add_OnScreen, new List<SelectListItem>
                                              { new SelectListItem{Text="No", Value="N"},
