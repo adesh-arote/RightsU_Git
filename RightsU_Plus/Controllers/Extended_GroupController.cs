@@ -320,8 +320,15 @@ namespace RightsU_Plus.Controllers
             else
             {
                 Status = "S";
-                Session["Message"] = objMessageKey.Recordsavedsuccessfully;
                 DeleteSessionData();
+                if (ExtdGrpId == 0)
+                {                  
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;                   
+                }
+                else
+                {
+                    Session["Message"] = objMessageKey.Recordupdatedsuccessfully;
+                }
             }
 
             var Obj = new
@@ -464,128 +471,3 @@ namespace RightsU_Plus.Controllers
 
     }
 }
-
-
-#region  ----KACHARA----
-//public ActionResult SaveGrpDetail(int Id, int Metadata, int OrdrerInGroup, string Validations)
-//{
-//    Dictionary<string, object> obj = new Dictionary<string, object>();
-//    Extended_Columns_Service objExtended_Columns_Service = new Extended_Columns_Service(objLoginEntity.ConnectionStringName);
-//    Extended_Group_Config_Service objExtended_Columns_Config_Service = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName);
-
-//    Extended_Group_Config objEGC = objExtended_Group.Extended_Group_Config.Where(w => w.Extended_Group_Config_Code == Id).FirstOrDefault();
-
-//    if (objEGC == null)
-//    {
-//        if (objExtended_Group.Extended_Group_Config.Count == 0)
-//        {
-//            objEGC = new Extended_Group_Config();
-//            objEGC.Extended_Group_Config_Code = -1;
-
-//            objEGC.EntityState = State.Added;
-//            objExtended_Group.Extended_Group_Config.Add(objEGC);
-//        }
-//        else
-//        {
-//            objEGC = new Extended_Group_Config();
-//            objEGC.Extended_Group_Config_Code = Convert.ToInt32(Session["TempId"]) - 1;
-//            objEGC.EntityState = State.Added;
-//            objExtended_Group.Extended_Group_Config.Add(objEGC);
-//        }
-//    }
-//    else
-//    {
-//        if (objEGC.Extended_Group_Config_Code > 0)
-//            objEGC.EntityState = State.Modified;
-//    }
-
-//    Session["TempId"] = objEGC.Extended_Group_Config_Code;
-
-//    if (objEGC.EntityState == State.Added || (objEGC.EntityState == State.Modified && objEGC.Extended_Group_Config_Code < 0))
-//    {
-//        objEGC.Extended_Columns = objExtended_Columns_Service.GetById(Metadata);
-//    }
-
-//    Extended_Group_Config objExtended_Group_Config = objExtended_Columns_Config_Service.GetById(Id);
-
-//    if (objEGC.EntityState == State.Modified && objEGC.Extended_Group_Config_Code > 0)
-//    {
-//        objEGC.Extended_Columns = objExtended_Columns_Service.GetById(Metadata);            
-//    }
-
-//    objEGC.Columns_Code = Metadata;
-//    objEGC.Group_Control_Order = OrdrerInGroup;
-//    objEGC.Validations = Validations;
-
-//    TempData["getMetada"] = Metadata;
-
-//    obj.Add("Status", "S");
-//    return Json(obj);
-//}
-
-//public ActionResult SaveMaster(int ExtdGrpId, int Module, string GrpName, string ShortName, int GrpOrder, string GrpType)
-//{
-//    Dictionary<string, object> obj = new Dictionary<string, object>();
-//    Extended_Group_Service objExtended_Group_Service = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
-//    Extended_Group_Config_Service objExtended_Columns_Config_Service = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName);
-//    List<Extended_Group> lstExtendedGroup = objExtended_Group_Service.SearchFor(s => true).ToList();
-//    var LastId = lstExtendedGroup.OrderBy(a => a.Extended_Group_Code).LastOrDefault();
-
-//    string status = "S", message = "";
-
-//    if (ExtdGrpId > 0)
-//        objExtended_Group.EntityState = State.Modified;
-//    else
-//    {
-//        objExtended_Group_Service = null;
-//        objExtended_Group.EntityState = State.Added;
-//    }
-//    objExtended_Group.Module_Code = Module;
-//    objExtended_Group.Group_Name = GrpName;
-//    objExtended_Group.Short_Name = ShortName;
-//    objExtended_Group.Group_Order = GrpOrder;
-//    objExtended_Group.Add_Edit_Type = GrpType;
-
-//    foreach (Extended_Group_Config EGCDetail in objExtended_Group.Extended_Group_Config)
-//    {
-//        if (EGCDetail.EntityState == State.Added)
-//        {
-//            EGCDetail.Columns_Code = null;
-//        }
-//        if (EGCDetail.EntityState == State.Modified && EGCDetail.Extended_Group_Config_Code < 0)
-//        {
-//            EGCDetail.EntityState = State.Added;
-//            EGCDetail.Columns_Code = null;
-//        }
-//        if (EGCDetail.EntityState == State.Modified && EGCDetail.Extended_Group_Config_Code > 0)
-//        {
-//            EGCDetail.EntityState = State.Modified;
-//            Extended_Group_Config objDetail = objExtended_Columns_Config_Service.GetById(EGCDetail.Extended_Group_Config_Code);
-//            if (objDetail.Columns_Code != objDetail.Columns_Code)
-//            {
-//                objDetail.Columns_Code = null;
-//            }
-//        }
-//    }
-
-//    dynamic resultSet;
-//    if (!objExtended_Group_Service.Save(objExtended_Group, out resultSet))
-//    {
-//        status = "E";
-//        message = resultSet;
-//    }
-//    else
-//    {
-//        if (ExtdGrpId > 0)
-//            message = objMessageKey.Recordupdatedsuccessfully;
-//        else
-//            message = objMessageKey.Recordsavedsuccessfully;
-
-//        objExtended_Group = null;
-//        objExtended_Group_Service = null;
-//        FetchData();
-//    }
-//    obj.Add("Status", "S");
-//    return Json(obj);
-//}
-#endregion
