@@ -55,7 +55,7 @@
         {
             if (TempData["Action"] == "EditALOem" && Convert.ToInt32(TempData["Id"]) == item.AL_OEM_Code)
             {
-                <tr>
+                @*<tr>
                     <td>
                         <input type="text" class="form-control input-sm" value="@item.Device_Name" autocomplete="off" id="txtDeviceName" />
                     </td>
@@ -72,11 +72,11 @@
                         <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveALOem(@item.AL_OEM_Code)"></a>
                         <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="ALOemCancel()"></a>
                     </td>
-                </tr>
+                </tr>*@
             }
             else
             {
-                <tr style="text-align:center">
+                @*<tr style="text-align:center">
                     <td style="text-align:left !important">
                         @Html.DisplayFor(modelItem => item.Device_Name)
                     </td>
@@ -110,7 +110,7 @@
                         }
 
                     </td>
-                </tr>
+                </tr>*@
             }
         }
     }

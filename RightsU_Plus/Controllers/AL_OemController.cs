@@ -50,14 +50,14 @@ namespace RightsU_Plus.Controllers
                 {
                     lst = lstOem_Searched.OrderByDescending(o => o.AL_OEM_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
-                else if (sortType == "NA")
-                {
-                    lst = lstOem_Searched.OrderBy(o => o.Device_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                }
-                else
-                {
-                    lst = lstOem_Searched.OrderByDescending(o => o.Device_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                }
+                //else if (sortType == "NA")
+                //{
+                //    lst = lstOem_Searched.OrderBy(o => o.Device_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //}
+                //else
+                //{
+                //    lst = lstOem_Searched.OrderByDescending(o => o.Device_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //}
             }
             if (CommandName == "ADD")
             {
@@ -80,10 +80,10 @@ namespace RightsU_Plus.Controllers
             FetchData();
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstOem_Searched = lstOem_Searched.Where(w => w.Device_Name.ToUpper().Contains(searchText.ToUpper())
-                || w.MPEG != null && w.MPEG.ToUpper().Contains(searchText.ToUpper())
-                || w.Company != null && w.Company.ToUpper().Contains(searchText.ToUpper())
-                || w.Aspect_Ratio != null && w.Aspect_Ratio.ToUpper().Contains(searchText.ToUpper())).ToList();
+                //lstOem_Searched = lstOem_Searched.Where(w => w.Device_Name.ToUpper().Contains(searchText.ToUpper())
+                //|| w.MPEG != null && w.MPEG.ToUpper().Contains(searchText.ToUpper())
+                //|| w.Company != null && w.Company.ToUpper().Contains(searchText.ToUpper())
+                //|| w.Aspect_Ratio != null && w.Aspect_Ratio.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
             else
             {
@@ -128,10 +128,10 @@ namespace RightsU_Plus.Controllers
                 AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
                 if (Id == 0)
                 {
-                    aL_OEM.Device_Name = obj.Device_Name;
-                    aL_OEM.Company = obj.Company;
-                    aL_OEM.Aspect_Ratio = obj.Aspect_Ratio;
-                    aL_OEM.MPEG = obj.MPEG;
+                    //aL_OEM.Device_Name = obj.Device_Name;
+                    //aL_OEM.Company = obj.Company;
+                    //aL_OEM.Aspect_Ratio = obj.Aspect_Ratio;
+                    //aL_OEM.MPEG = obj.MPEG;
                     aL_OEM.Inserted_On = DateTime.Now;
                     aL_OEM.Inserted_By = objLoginUser.Users_Code;
 
@@ -141,10 +141,10 @@ namespace RightsU_Plus.Controllers
                 {
                     aL_OEM = aL_OEM_Service.GetById(Id);
 
-                    aL_OEM.Device_Name = obj.Device_Name;
-                    aL_OEM.Company = obj.Company;
-                    aL_OEM.Aspect_Ratio = obj.Aspect_Ratio;
-                    aL_OEM.MPEG = obj.MPEG;
+                    //aL_OEM.Device_Name = obj.Device_Name;
+                    //aL_OEM.Company = obj.Company;
+                    //aL_OEM.Aspect_Ratio = obj.Aspect_Ratio;
+                    //aL_OEM.MPEG = obj.MPEG;
                     aL_OEM.Inserted_On = aL_OEM.Inserted_On;
                     aL_OEM.Inserted_By = aL_OEM.Inserted_By;
                     aL_OEM.Last_Updated_Time = DateTime.Now;
