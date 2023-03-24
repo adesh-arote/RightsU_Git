@@ -856,6 +856,15 @@
                 </td>
 
                 <td class="right_nav pull-right" style="margin-right:10px">
+                    @if (ViewBag.Mode == "V")
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('VIEW', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('ADD', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                    }
+
                     @if (ViewBag.Mode != "V")
                     {
                         <input type="button" value="@objMessageKey.Add" onclick="AddEditVendorContact('0','ADD')" id="btnAdd" class="btn btn-primary">

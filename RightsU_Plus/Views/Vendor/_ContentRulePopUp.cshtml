@@ -1,0 +1,113 @@
+﻿@model RightsU_Entities.AL_Vendor_Rule
+
+<script>
+    function SaveContentRule() {
+        debugger;
+        var returnVal = true;
+        var RuleName = $("#CRName").val();
+        var ShortRuleName = $("#CRShortName").val();
+        var VendorRuleCode = $("#hdnRuleCode").val();
+        var Criteria = $("#hdnCriteria").val();
+        var VendorCode = $("#hdnVendorCodeCR").val();
+
+        if (RuleName == "") {
+            $("#CRName").val('').attr('required', true);
+            returnVal = false;
+        }
+        if (ShortRuleName == "") {
+            $("#CRShortName").val('').attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveContentRule,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    Rule_Name: RuleName,
+                    Rule_Short_Name: ShortRuleName,
+                    AL_Vendor_Rule_Code: VendorRuleCode,
+                    Vendor_Code: VendorCode,
+                    Criteria: Criteria
+                }),
+                success: function (result) {
+                    debugger;
+                    $("#ContentPopup").empty();
+                    $('#ContentRuleModalPopup').modal('hide');
+                    AdditionalInfoTab("CR", "", 0);
+                }
+            });
+        }
+    }
+
+    function CloseContentRulePopup() {
+        $('#hdnActionCRGrid').val("");
+        $('#ContentPopup').empty();
+        $('#ContentRuleModalPopup').modal('hide');
+    }
+</script>
+
+@*<div style="padding:1%">
+        <span style="font-size:18px"> Content Rule </span>
+    </div>*@
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="CloseContentRulePopup()">
+        <span>×</span>
+        <span class="sr-only">Close</span>
+    </a>
+
+    <h2> Content Rule </h2>
+</div>
+
+<table class="table">
+    <tr>
+        <td style="width:25%; padding-left:2%">
+            <b>Name</b>
+        </td>
+        <td>
+            <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+            <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+            <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+            <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+        </td>
+    </tr>
+    <tr>
+        <td style="width:25%; padding-left:2%">
+            <b>Short Name</b>
+        </td>
+        <td>
+            <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" />
+        </td>
+    </tr>
+</table>
+
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="ContentRuleGrid" style="max-height:500px">
+
+        </div>
+    </div>
+</div>
+
+@*<div>
+        <button onclick="SaveContentRule()"> Save Content </button>
+        <button onclick="CloseContentRulePopup()"> Close </button>
+    </div>*@
+
+
+
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                <button class="btn btn-primary" onclick="SaveContentRule()"> Save Content </button>
+                <button class="btn btn-primary" onclick="CloseContentRulePopup()"> Close </button>
+            </li>
+        </ul>
+    </div>
+</div>
