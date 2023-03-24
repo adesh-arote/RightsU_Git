@@ -19,28 +19,30 @@
             returnVal = false;
         }
 
-        if (returnVal) {
-            $.ajax({
-                type: "POST",
-                url: URL_SaveContentRule,
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                dataType: "html",
-                data: JSON.stringify({
-                    Rule_Name: RuleName,
-                    Rule_Short_Name: ShortRuleName,
-                    AL_Vendor_Rule_Code: VendorRuleCode,
-                    Vendor_Code: VendorCode,
-                    Criteria: Criteria
-                }),
-                success: function (result) {
-                    debugger;
-                    $("#ContentPopup").empty();
-                    $('#ContentRuleModalPopup').modal('hide');
-                    AdditionalInfoTab("CR", "", 0);
-                }
-            });
+        if (checkCurrentActionCRGrid()) {
+            if (returnVal) {
+                $.ajax({
+                    type: "POST",
+                    url: URL_SaveContentRule,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    data: JSON.stringify({
+                        Rule_Name: RuleName,
+                        Rule_Short_Name: ShortRuleName,
+                        AL_Vendor_Rule_Code: VendorRuleCode,
+                        Vendor_Code: VendorCode,
+                        Criteria: Criteria
+                    }),
+                    success: function (result) {
+                        debugger;
+                        $("#ContentPopup").empty();
+                        $('#ContentRuleModalPopup').modal('hide');
+                        AdditionalInfoTab("CR", "", 0);
+                    }
+                });
+            }
         }
     }
 

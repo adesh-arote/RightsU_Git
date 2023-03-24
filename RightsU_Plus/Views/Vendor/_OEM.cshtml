@@ -142,7 +142,14 @@
                         @item.SelectedOEMName
                     </td>
                     <td>
-                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditOEM('OEM', 'EDIT', '@item.AL_Vendor_OEM_Code')"></a>
+                        @if (item.Is_Active == "Y")
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditOEM('OEM', 'EDIT', '@item.AL_Vendor_OEM_Code')"></a>
+                        }
+                        else
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
                         @if (item.Is_Active == "Y" && item.AL_Vendor_OEM_Code > 0)
                         {
                             <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteOEM('@item.AL_Vendor_OEM_Code', 'DEACTIVATE')"></a>

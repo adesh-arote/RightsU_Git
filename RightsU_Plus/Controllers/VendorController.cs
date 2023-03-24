@@ -1057,7 +1057,10 @@ namespace RightsU_Plus.Controllers
             #region --- Additional Info Methods ---
 
             string debugger = "";
-            objVendor.Party_Type = objSessVendor.Party_Type;
+            if (objSessVendor.Party_Type != null)
+            {
+                objVendor.Party_Type = objSessVendor.Party_Type;
+            }
             //if (objVendor.Party_Type == "C")
             //{
             //    //objVendor.AL_Vendor_Details = objSessVendor.AL_Vendor_Details;
@@ -1320,10 +1323,10 @@ namespace RightsU_Plus.Controllers
 
         public RightsU_Entities.Vendor SaveRuleOemDetailsForVendor(RightsU_Entities.Vendor objDBVendor, string PartyType)
         {
-            List<AL_Vendor_Rule> AddedVendorRule = new List<AL_Vendor_Rule>();
-            List<AL_Vendor_Rule_Criteria> AddedVendorRuleCriteria = new List<AL_Vendor_Rule_Criteria>();
-            List<AL_Vendor_OEM> AddedVendorOEM = new List<AL_Vendor_OEM>();
-            List<AL_Vendor_TnC> AddedVendorTnC = new List<AL_Vendor_TnC>();
+            //List<AL_Vendor_Rule> AddedVendorRule = new List<AL_Vendor_Rule>();
+            //List<AL_Vendor_Rule_Criteria> AddedVendorRuleCriteria = new List<AL_Vendor_Rule_Criteria>();
+            //List<AL_Vendor_OEM> AddedVendorOEM = new List<AL_Vendor_OEM>();
+            //List<AL_Vendor_TnC> AddedVendorTnC = new List<AL_Vendor_TnC>();
 
             foreach (AL_Vendor_Details objSessionVendorDetails in objSessVendor.AL_Vendor_Details)
             {
@@ -1649,8 +1652,14 @@ namespace RightsU_Plus.Controllers
                 UsedDDlExtendedColumnsLst.Add(Convert.ToInt32(alVRC.Columns_Code));
                 UsedDDlExtendedColumnsLst = UsedDDlExtendedColumnsLst.Distinct().ToList();
                 //}
-                List<string> SelectedListNames = alVRC.Columns_Value.Split(',').ToList();
-                alVRC.DataFieldNames = alVRC.Columns_Value;
+                //List<string> SelectedListNames = alVRC.Columns_Value.Split(',').ToList();
+                //alVRC.DataFieldNames = alVRC.Columns_Value;
+                if (alVRC.DataFieldNames == null)
+                {
+                    CreateExtendedDataObject(Convert.ToInt32(alVRC.Columns_Code));
+                    List<string> SelectedValues = alVRC.Columns_Value.Split(',').ToList();
+                    alVRC.DataFieldNames = string.Join(",", lstSelectObject.Where(w => SelectedValues.Any(a => w.Columns_Value_Code.ToString() == a)).Select(s => s.ColumnsValue));
+                }
             }
 
             if (CrCCode != 0)
@@ -2046,7 +2055,7 @@ namespace RightsU_Plus.Controllers
 
         public void CreateExtendedDataObject(int SelectedFieldType)
         {
-            Extended_Columns SelectedExCol = DDlExtendedColumnsLst.Where(w => w.Columns_Code == SelectedFieldType).FirstOrDefault();
+            Extended_Columns SelectedExCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Columns_Code == SelectedFieldType).FirstOrDefault();
             //Dictionary<string, object> obj = new Dictionary<string, object>();
             objSessDictionary = new Dictionary<string, object>();
             List<SelectObject> lstCol = new List<SelectObject>();
@@ -2077,6 +2086,11 @@ namespace RightsU_Plus.Controllers
                         int AdditionalConditionCode = Convert.ToInt32(SelectedExCol.Additional_Condition);
                         lstCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(y => new SelectObject { ColumnsValue = y.Banner_Name, Columns_Value_Code = y.Banner_Code }).ToList();
                     }
+                }
+                else
+                {
+                    int Column_Code = Convert.ToInt32(SelectedFieldType);
+                    lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new SelectObject { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
                 }
                 lstSelectObject = lstCol;
 

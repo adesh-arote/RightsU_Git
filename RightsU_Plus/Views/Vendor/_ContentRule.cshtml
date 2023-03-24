@@ -5,11 +5,11 @@
         debugger;
         var action = $("#hdnAction").val();
         if (action == "ADD") {
-            showAlert("E", "Complete Add Operation First")
+            showAlert("E", "Complete Add Operation First");
             return false;
         }
         else if (action == "EDIT") {
-            showAlert("E", "Complete Edit Operation First")
+            showAlert("E", "Complete Edit Operation First");
             return false;
         }
         return true;
@@ -19,11 +19,11 @@
         debugger;
         var action = $("#hdnActionCRGrid").val();
         if (action == "ADD") {
-            showAlert("E", "Complete Add Operation First")
+            showAlert("E", "Complete Add Operation First");
             return false;
         }
         else if (action == "EDIT") {
-            showAlert("E", "Complete Edit Operation First")
+            showAlert("E", "Complete Edit Operation First");
             return false;
         }
         return true;
@@ -148,7 +148,15 @@
                     @item.Criteria
                 </td>
                 <td>
-                    <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditContentRule('CR', 'EDIT', '@item.AL_Vendor_Rule_Code')"></a>
+                    @if (item.Is_Active == "Y")
+                    {
+                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditContentRule('CR', 'EDIT', '@item.AL_Vendor_Rule_Code')"></a>
+                    }
+                    else
+                    {
+                        <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                    }
+
                     @if (item.Is_Active == "Y" && item.AL_Vendor_Rule_Code > 0)
                     {
                         <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DEACTIVATE')"></a>
@@ -171,3 +179,5 @@
 @*<div id="ContentPopup">
 
     </div>*@
+
+@*To use Modal Popup, Uncomment Popup with ID ContentRuleModalPopup from Vendor Folder Index Page, comment above div with Id Content Popup and Uncomment the Modal initializer from script*@
