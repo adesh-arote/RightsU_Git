@@ -8217,10 +8217,14 @@ namespace RightsU_BLL
         {
             if (SearchFor(s => s.AL_Lab_Name == objToValidate.AL_Lab_Name && s.AL_Lab_Code != objToValidate.AL_Lab_Code).Count() > 0)
             {
-                resultSet = "Lab already exists";
+                resultSet = "AL Lab Name already exists";
                 return false;
             }
-
+            else if (SearchFor(s => s.AL_Lab_Short_Name == objToValidate.AL_Lab_Short_Name && s.AL_Lab_Code != objToValidate.AL_Lab_Code).Count() > 0)
+            {
+                resultSet = "AL Lab Short Name already exists";
+                return false;
+            }
             resultSet = "";
             return true;
         }

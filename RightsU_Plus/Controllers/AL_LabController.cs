@@ -9,81 +9,81 @@ using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
-    public class BannerController : BaseController
+    public class AL_LabController : BaseController
     {
-        private List<Banner> lstBanner_Group
+        private List<AL_Lab> lstAL_Lab_Group
         {
             get
             {
-                if (Session["lstBanner_Group"] == null)
-                    Session["lstBanner_Group"] = new List<Banner>();
-                return (List<Banner>)Session["lstBanner_Group"];
+                if (Session["lstAL_Lab_Group"] == null)
+                    Session["lstAL_Lab_Group"] = new List<AL_Lab>();
+                return (List<AL_Lab>)Session["lstAL_Lab_Group"];
             }
             set
             {
-                Session["lstBanner_Group"] = value;
+                Session["lstAL_Lab_Group"] = value;
             }
         }
 
 
-        private List<Banner> lstBanner_Searched = new List<Banner>();
+        private List<AL_Lab> lstAL_Lab_Searched = new List<AL_Lab>();
 
-        private Banner lstBanner = new Banner();
+        private AL_Lab lstAL_Lab = new AL_Lab();
 
         public ActionResult Index()
         {
             string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
             ViewBag.LangCode = SysLanguageCode;
-            List<Banner_Service> banner_Services = new List<Banner_Service>();
+            List<AL_Lab_Service> AL_Lab_Services = new List<AL_Lab_Service>();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "L" });
-            lstSort.Add(new SelectListItem { Text = "Banner Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "Banner Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "AL Lab Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "AL Lab Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
             return View();
         }
 
 
-        public PartialViewResult BindBanner_List(int pageNo, int recordPerPage, int Banner_Code, string commandName, string sortType)
+        public PartialViewResult BindAL_Lab_List(int pageNo, int recordPerPage, int AL_Lab_Code, string commandName, string sortType)
         {
-            lstBanner_Searched = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
-            ViewBag.BannerCode = Banner_Code;
+            lstAL_Lab_Searched = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+            ViewBag.AL_LabCode = AL_Lab_Code;
             ViewBag.CommandName = commandName;
             if (sortType == "AA" || sortType == "AD")
             {
                 ViewBag.SortAttrType = sortType;
             }
-            List<Banner> lst = new List<Banner>();
-            if(lstBanner_Group != null)
+            List<AL_Lab> lst = new List<AL_Lab>();
+            if (lstAL_Lab_Group != null)
             {
-                lstBanner_Searched = lstBanner_Group;
+                lstAL_Lab_Searched = lstAL_Lab_Group;
             }
-            lst = lstBanner_Group.OrderBy(a => a.Banner_Code).ToList();
+            lst = lstAL_Lab_Group.OrderBy(a => a.AL_Lab_Code).ToList();
             int RecordCount = 0;
-            RecordCount = lstBanner_Searched.Count;
+            RecordCount = lstAL_Lab_Searched.Count;
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "L")
                 {
-                    lst = lstBanner_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Lab_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
                 else if (sortType == "NA")
                 {
-                    lst = lstBanner_Searched.OrderBy(o => o.Banner_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Lab_Searched.OrderBy(o => o.AL_Lab_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
                 else if (sortType == "ND")
                 {
-                    lst = lstBanner_Searched.OrderByDescending(o => o.Banner_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Lab_Searched.OrderByDescending(o => o.AL_Lab_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
 
             }
 
             if (commandName == "ADD")
             {
-                var lstBannerType = lstBanner_Group.Select(s => s.Banner_Name).Distinct().ToList();
-                ViewBag.AttribType = new SelectList(lstBannerType);
+                var lstAL_LabType = lstAL_Lab_Group.Select(s => s.AL_Lab_Name).Distinct().ToList();
+                ViewBag.AttribType = new SelectList(lstAL_LabType);
 
                 List<SelectListItem> lstMultiSelect = new List<SelectListItem>();
                 lstMultiSelect.Add(new SelectListItem { Text = "Yes", Value = "Y" });
@@ -92,14 +92,14 @@ namespace RightsU_Plus.Controllers
             }
             else if (commandName == "EDIT")
             {
-                Banner_Service objBanner_Service = new Banner_Service(objLoginEntity.ConnectionStringName);
+                AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
 
-                lstBanner = objBanner_Service.GetById(Banner_Code);
-                var lstBannerType = lstBanner_Searched.Select(s => s.Banner_Name).Distinct().ToList();
-                ViewBag.AttribType = new SelectList(lstBannerType, lstBanner.Banner_Name);
+                lstAL_Lab = objAL_Lab_Service.GetById(AL_Lab_Code);
+                var lstAL_LabType = lstAL_Lab_Searched.Select(s => s.AL_Lab_Name).Distinct().ToList();
+                ViewBag.AttribType = new SelectList(lstAL_LabType, lstAL_Lab.AL_Lab_Name);
             }
 
-            return PartialView("_BindBannerGroup", lst);
+            return PartialView("_BindAL_LabGroup", lst);
         }
 
         public int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -133,30 +133,30 @@ namespace RightsU_Plus.Controllers
             return pageNo;
         }
 
-        public JsonResult SearchBanner(string searchText)
+        public JsonResult SearchAL_Lab(string searchText)
         {
-            lstBanner_Searched = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
+            lstAL_Lab_Searched = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstBanner_Searched = lstBanner_Searched.Where(a => a.Banner_Name.ToUpper().Contains(searchText.ToUpper()) || (a.Banner_Short_Name != null && a.Banner_Short_Name.ToUpper().Contains(searchText.ToUpper()))).ToList();
+                lstAL_Lab_Searched = lstAL_Lab_Searched.Where(a => a.AL_Lab_Name.ToUpper().Contains(searchText.ToUpper()) || (a.AL_Lab_Short_Name != null && a.AL_Lab_Short_Name.ToUpper().Contains(searchText.ToUpper()))).ToList();
             }
             var obj = new
             {
-                Record_Count = lstBanner_Searched.Count
+                Record_Count = lstAL_Lab_Searched.Count
             };
-            lstBanner_Group = lstBanner_Searched;
+            lstAL_Lab_Group = lstAL_Lab_Searched;
             return Json(obj);
         }
 
-        public JsonResult CheckRecordLock(int BannerCode)
+        public JsonResult CheckRecordLock(int AL_LabCode)
         {
             string strMessage = "";
             int RLCode = 0;
             bool isLocked = true;
-            if (BannerCode > 0)
+            if (AL_LabCode > 0)
             {
                 CommonUtil objCommonUtil = new CommonUtil();
-                isLocked = objCommonUtil.Lock_Record(BannerCode, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(AL_LabCode, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             }
 
             var obj = new
@@ -167,47 +167,47 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public JsonResult SaveBanner(int Banner_Code, string Banner_Name, string Banner_short_name)
+        public JsonResult SaveAL_Lab(int AL_Lab_Code, string AL_Lab_Name, string AL_Lab_short_name)
         {
             string status = "S";
             string message = "";
             int UserId = objLoginUser.Users_Code;
-            List<Banner> tempLstAttribGrp = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.Banner_Name == Banner_Name) && (a.Banner_Short_Name == Banner_short_name) && (a.Banner_Code != Banner_Code)).ToList();
+            List<AL_Lab> tempLstAttribGrp = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.AL_Lab_Name == AL_Lab_Name) && (a.AL_Lab_Short_Name == AL_Lab_short_name) && (a.AL_Lab_Code != AL_Lab_Code)).ToList();
 
             if (tempLstAttribGrp.Count == 0)
             {
-                Banner_Service objBanner_Service = new Banner_Service(objLoginEntity.ConnectionStringName);
+                AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
 
-                lstBanner = null;
+                lstAL_Lab = null;
 
-                if (Banner_Code > 0)
+                if (AL_Lab_Code > 0)
                 {
-                    Banner banner = new Banner_Service(objLoginEntity.ConnectionStringName).GetById(Banner_Code);
-                    lstBanner = objBanner_Service.GetById(Banner_Code);
-                    lstBanner.EntityState = State.Modified;
-                    lstBanner.Inserted_By = banner.Inserted_By;
+                    AL_Lab AL_Lab = new AL_Lab_Service(objLoginEntity.ConnectionStringName).GetById(AL_Lab_Code);
+                    lstAL_Lab = objAL_Lab_Service.GetById(AL_Lab_Code);
+                    lstAL_Lab.EntityState = State.Modified;
+                    lstAL_Lab.Inserted_By = AL_Lab.Inserted_By;
                 }
                 else
                 {
-                    lstBanner = new Banner();
-                    lstBanner.EntityState = State.Added;
-                    lstBanner.Inserted_By = UserId;
+                    lstAL_Lab = new AL_Lab();
+                    lstAL_Lab.EntityState = State.Added;
+                    lstAL_Lab.Inserted_By = UserId;
                 }
-                lstBanner.Banner_Short_Name = Banner_short_name;
-                lstBanner.Banner_Name = Banner_Name;
-                lstBanner.Inserted_On = DateTime.Now;
-                lstBanner.Last_Action_By = UserId;
-                lstBanner.Last_Updated_Time = DateTime.Now;
+                lstAL_Lab.AL_Lab_Short_Name = AL_Lab_short_name;
+                lstAL_Lab.AL_Lab_Name = AL_Lab_Name;
+                lstAL_Lab.Inserted_On = DateTime.Now;
+                lstAL_Lab.Last_Action_By = UserId;
+                lstAL_Lab.Last_Updated_Time = DateTime.Now;
 
                 dynamic resultSet;
-                if (!objBanner_Service.Save(lstBanner, out resultSet))
+                if (!objAL_Lab_Service.Save(lstAL_Lab, out resultSet))
                 {
                     status = "E";
                     message = resultSet;
                 }
                 else
                 {
-                    if(Banner_Code > 0)
+                    if (AL_Lab_Code > 0)
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
                     }
@@ -215,7 +215,7 @@ namespace RightsU_Plus.Controllers
                     {
                         message = objMessageKey.Recordsavedsuccessfully;
                     }
-                    lstBanner_Searched = objBanner_Service.SearchFor(s => true).ToList();
+                    lstAL_Lab_Searched = objAL_Lab_Service.SearchFor(s => true).ToList();
                 }
             }
             else
@@ -226,21 +226,21 @@ namespace RightsU_Plus.Controllers
 
             var obj = new
             {
-                RecordCount = lstBanner_Searched.Count,
+                RecordCount = lstAL_Lab_Searched.Count,
                 Status = status,
                 Message = message
             };
             return Json(obj);
         }
 
-        public ActionResult DeleteBanner(int id)
+        public ActionResult DeleteAL_Lab(int id)
         {
             string message = "";
-            Banner_Service objBanner_Service = new Banner_Service(objLoginEntity.ConnectionStringName);
-            Banner bannerObj = objBanner_Service.GetById(id);
-            bannerObj.EntityState = State.Deleted;
+            AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
+            AL_Lab AL_LabObj = objAL_Lab_Service.GetById(id);
+            AL_LabObj.EntityState = State.Deleted;
             dynamic resultSet;
-            if (!objBanner_Service.Delete(bannerObj, out resultSet))
+            if (!objAL_Lab_Service.Delete(AL_LabObj, out resultSet))
             {
                 message = resultSet;
             }
@@ -251,7 +251,7 @@ namespace RightsU_Plus.Controllers
 
             var obj = new
             {
-                RecordCount = lstBanner_Searched.Count,
+                RecordCount = lstAL_Lab_Searched.Count,
                 Status = "S",
                 Message = message
             };
