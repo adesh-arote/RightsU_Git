@@ -60,6 +60,7 @@
     var URL_DeleteGrpDetail = '@Url.Action("DeleteGrpDetail", "Extended_Group")';
     var URL_SaveGrpDetail = '@Url.Action("SaveGrpDetail", "Extended_Group")';
     var URL_DeleteDetail = '@Url.Action("DeleteGrpDetail", "Extended_Group")';
+    var URL_ActivateDeactivateGrpDtl = '@Url.Action("ActivateDeactivateGrpDtl", "Extended_Group")';
     var URL_SaveMaster = '@Url.Action("SaveMaster", "Extended_Group")';
     var URL_Index = '@Url.Action("Index", "Extended_Group")';
 
@@ -367,6 +368,9 @@
         var OrdrerInGroup = $('#txtOdrInGrp_' + rowNumber).val();
         var Validations = $('#ddlValidations_' + rowNumber).val();
         var AdtnlCntn = $('#txtAddCon_' + rowNumber).val();
+        var IntGrpNme = $('#txtIntGrpName_' + rowNumber).val();
+        var DispName = $('#txtDisplayName_' + rowNumber).val();
+        var ImpType = $('#ddlImportType_' + rowNumber).val();
 
         if (Metadata == "") {
             $('#ddlMetadata_' + rowNumber).val('').attr('required', true)
@@ -381,8 +385,20 @@
             $('#ddlValidations_' + rowNumber).val('').attr("style", "border-color: red;");
             returnVal = false;
         }
-        if (AdtnlCntn == "") {
-            $('#txtAddCon_' + rowNumber).val('').attr('required', true)
+        //if (AdtnlCntn == "") {
+        //    $('#txtAddCon_' + rowNumber).val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (IntGrpNme == "") {
+        //    $('#txtIntGrpName_' + rowNumber).val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (DispName == "") {
+        //    $('#txtDisplayName_' + rowNumber).val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        if (ImpType == "") {
+            $('#ddlImportType_' + rowNumber).val('').attr('required', true)         
             returnVal = false;
         }
 
@@ -399,7 +415,10 @@
                     Columns_Code: Metadata,
                     Group_Control_Order: OrdrerInGroup,
                     Validations: Validations,
-                    Additional_Condition: AdtnlCntn
+                    Additional_Condition: AdtnlCntn,
+                    Inter_Group_Name: IntGrpNme,
+                    Display_Name: DispName,
+                    Allow_Import: ImpType
                 }),
                 async: false,
                 success: function (result) {
@@ -467,6 +486,32 @@
             
             $('#popup').css('z-index','1040');
             showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+        }
+    }
+
+    function ActivateDeactivateGrpDtl(ActiveAction, GrpDtlCode) {
+        debugger;
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActivateDeactivateGrpDtl,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    GrpDtlCode: GrpDtlCode,
+                    ActiveAction: ActiveAction
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        BindExtdGrpDetail(0, "");                    
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            })
         }
     }
 

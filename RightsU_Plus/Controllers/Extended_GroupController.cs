@@ -88,7 +88,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult BindExtendedGroupList(int pageNo, int recordPerPage, string sortType)
         {
             List<Extended_Group> lst = new List<Extended_Group>();
-        
+
             int RecordCount = 0;
             RecordCount = lstlstExtended_Group_Searched.Count;
 
@@ -220,7 +220,15 @@ namespace RightsU_Plus.Controllers
             List<SelectListItem> lstValidation = new List<SelectListItem>();
             lstValidation.Add(new SelectListItem { Text = "Mandatory", Value = "man" });
             lstValidation.Add(new SelectListItem { Text = "Duplicate", Value = "dup" });
+            lstValidation.Add(new SelectListItem { Text = "Reference", Value = "ref" });
+            lstValidation.Add(new SelectListItem { Text = "0 or 1", Value = "0 & 1" });
             ViewBag.ddlValidation = lstValidation;
+
+            List<SelectListItem> lstImportType = new List<SelectListItem>();
+            lstImportType.Add(new SelectListItem { Text = "Only Export", Value = "E" });
+            lstImportType.Add(new SelectListItem { Text = "Only Import", Value = "I" });
+            lstImportType.Add(new SelectListItem { Text = "Both", Value = "B" });
+            ViewBag.ddlImportType = lstImportType;
 
             foreach (Extended_Group_Config EGCDetail in objExtended_Group.Extended_Group_Config)
             {
@@ -234,16 +242,26 @@ namespace RightsU_Plus.Controllers
                 Extended_Group_Config Detail = lst.FirstOrDefault();
                 List<Extended_Columns> lstExtndClmns = objExtended_Columns_Service.SearchFor(s => true).ToList();
                 ViewBag.ddlMetadata = new SelectList(lstExtndClmns, "Columns_Code", "Columns_Name", Detail.Columns_Code);
-             
-                if (Detail.Validations == "man,dup" || Detail.Validations == "dup,man")
+
+                if (Detail.Validations == null)
                 {
-                    ViewBag.SelectedValidation = new MultiSelectList(lstValidation, "Value", "Text", lstValidation.Select(s => s.Value));
+                    ViewBag.SelectedValidation = new MultiSelectList(lstValidation, "Value", "Text");
                 }
                 else
                 {
-                    ViewBag.SelectedValidation = new SelectList(lstValidation, "Value", "Text", Detail.Validations);
-                }               
+                    List<string> SelectedValue = lstValidation.Where(w => Detail.Validations.Split(',').ToList().Any(a => w.Value == a)).Select(s => s.Value).ToList();
+                    ViewBag.SelectedValidation = new MultiSelectList(lstValidation, "Value", "Text", SelectedValue);
+                }
 
+                if (Detail.Allow_Import == null)
+                {
+                    ViewBag.SelectedImportType = new SelectList(lstImportType, "Value", "Text");
+                }
+                else
+                {
+                    List<string> SelectedImportType = lstImportType.Where(w => Detail.Allow_Import.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Value).ToList();
+                    ViewBag.SelectedImportType = new SelectList(lstImportType, "Value", "Text", SelectedImportType);
+                }
 
                 ViewBag.DetailId = Detail.Extended_Group_Config_Code;
                 lst = objExtended_Group.Extended_Group_Config.ToList();
@@ -322,8 +340,8 @@ namespace RightsU_Plus.Controllers
                 Status = "S";
                 DeleteSessionData();
                 if (ExtdGrpId == 0)
-                {                  
-                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;                   
+                {
+                    Session["Message"] = objMessageKey.Recordsavedsuccessfully;
                 }
                 else
                 {
@@ -355,6 +373,10 @@ namespace RightsU_Plus.Controllers
                 objEDGC.Group_Control_Order = objEGC.Group_Control_Order;
                 objEDGC.Validations = objEGC.Validations;
                 objEDGC.Additional_Condition = objEGC.Additional_Condition;
+                objEDGC.Inter_Group_Name = objEGC.Inter_Group_Name;
+                objEDGC.Display_Name = objEGC.Display_Name;
+                objEDGC.Allow_Import = objEGC.Allow_Import;
+                objEDGC.Is_Active = "Y";
 
                 result = ValidEGCDetail(objEDGC);
                 if (result == 1)
@@ -387,6 +409,10 @@ namespace RightsU_Plus.Controllers
                     objEDGC.Group_Control_Order = objEGC.Group_Control_Order;
                     objEDGC.Validations = objEGC.Validations;
                     objEDGC.Additional_Condition = objEGC.Additional_Condition;
+                    objEDGC.Inter_Group_Name = objEGC.Inter_Group_Name;
+                    objEDGC.Display_Name = objEGC.Display_Name;
+                    objEDGC.Allow_Import = objEGC.Allow_Import;
+                    objEDGC.Is_Active = "Y";
 
                     result = ValidEGCDetail(objEDGC);
                     if (result == 1)
@@ -446,6 +472,53 @@ namespace RightsU_Plus.Controllers
             }
         }
 
+        public JsonResult ActivateDeactivateGrpDtl(string ActiveAction, int GrpDtlCode)
+        {
+            string Status = "";
+            string Message = "";
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            Extended_Group_Config objEDGC = new Extended_Group_Config();
+
+            if (GrpDtlCode != 0)
+            {
+                objEDGC = objExtended_Group.Extended_Group_Config.Where(w => w.Extended_Group_Config_Code == GrpDtlCode).FirstOrDefault();
+                objEDGC.Is_Active = ActiveAction;
+
+                objExtended_Group.Extended_Group_Config.Append(objEDGC);
+
+                if (objEDGC != null)
+                {
+                    Status = "S";
+                    if (ActiveAction == "Y")
+                    {
+                        Message = objMessageKey.Recordactivatedsuccessfully;
+                    }
+                    else
+                    {
+                        Message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+                }
+                else
+                {
+                    Status = "E";
+                    if (ActiveAction == "Y")
+                    {
+                        Message = objMessageKey.CouldNotActivatedRecord;
+                    }
+                    else
+                    {
+                        Message = objMessageKey.CouldNotDeactivatedRecord;
+                    }
+                }
+            }
+            var Obj = new
+            {
+                Status = Status,
+                Message = Message
+            };
+            return Json(Obj);
+        }
+
         public int ValidEGCDetail(Extended_Group_Config obj)
         {
             int result = 0;
@@ -468,6 +541,64 @@ namespace RightsU_Plus.Controllers
             }
             return result;
         }
+
+        #region ---Activate-Deactivate---
+        //public JsonResult ActivateDeactivateExtdGrp(string ActiveAction, int ExtdGrpCode)
+        //{
+        //    string status = "S";
+        //    string message = "";
+
+        //    objExtended_Group = null;
+
+        //    if (ExtdGrpCode > 0)
+        //    {
+        //        objExtended_Group = objExtended_Group_Service.GetById(ExtdGrpCode);
+        //        objExtended_Group.EntityState = State.Modified;
+        //    }
+        //    //objExtended_Group.Is_Active = ActiveAction;
+        //    if (objExtended_Group != null)
+        //    {
+        //        if (ActiveAction == "Y")
+        //        {
+        //            message = objMessageKey.Recordactivatedsuccessfully;
+        //        }
+        //        else
+        //        {
+        //            message = objMessageKey.Recorddeactivatedsuccessfully;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (ActiveAction == "Y")
+        //        {
+        //            message = objMessageKey.CouldNotActivatedRecord;
+        //        }
+        //        else
+        //        {
+        //            message = objMessageKey.CouldNotDeactivatedRecord;
+        //        }
+        //    }
+
+        //    dynamic resultSet;
+        //    if (!objExtended_Group_Service.Save(objExtended_Group, out resultSet))
+        //    {
+        //        status = "E";
+        //        message = resultSet;
+        //    }
+        //    else
+        //    {
+        //        status = "S";
+        //        message = resultSet;
+        //    }
+
+        //    var obj = new
+        //    {               
+        //        Status = status,
+        //        Message = message
+        //    };
+        //    return Json(obj);
+        //}
+        #endregion
 
     }
 }

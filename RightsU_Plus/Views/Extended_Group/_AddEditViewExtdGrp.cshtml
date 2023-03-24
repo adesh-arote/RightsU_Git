@@ -58,31 +58,38 @@
     <table class="add_title_popup">
         <tr>
             <td class="lblExtdGrp" style="width:30%"><b>Module</b></td>
-            <td   style="width:40%">
+            <td style="width:40%">
+                @{
+                    string Module = "";
+                }
                 @if (ViewBag.CommandName == "VIEW")
                 {
-                    if (Model.Module_Code == 27)
                     {
-                        <span>Title</span>
+                        List<SelectListItem> lstModule = new List<SelectListItem>();
+                        lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
+                        lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
+                        lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "1" });
+                        lstModule.Add(new SelectListItem { Text = "OEM", Value = "2" });
+
+                        Module = lstModule.Where(w => w.Value == Model.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
                     }
-                    else if (Model.Module_Code == 10)
-                    {
-                        <span>Party</span>
-                    }
+                    @Module
                 }
                 else
                 {
                     @Html.DropDownListFor(m => m.Module_Code, new List<SelectListItem>
                     {new SelectListItem {Text = "Title", Value = "27"},
-                    new SelectListItem {Text = "Party", Value = "10" }},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
+                    new SelectListItem {Text = "Party", Value = "10" },
+                    new SelectListItem {Text = "Booking Sheet", Value = "1"},
+                    new SelectListItem {Text = "OEM", Value = "2"}},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
                     <input type="hidden" id="hdnEGCode" value="@Model.Extended_Group_Code" />
                 }
             </td>
             <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"  style="width:30%"><b>Group Name</b></td>
-            <td  style="width:40%">
+            <td class="lblExtdGrp" style="width:30%"><b>Group Name</b></td>
+            <td style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Name</span>
@@ -95,8 +102,8 @@
             <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"  style="width:30%"><b>Group Short Name</b></td>
-            <td   style="width:40%">
+            <td class="lblExtdGrp" style="width:30%"><b>Group Short Name</b></td>
+            <td style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Short_Name</span>
@@ -109,8 +116,8 @@
             <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"  style="width:30%"><b>Group Order</b></td>
-            <td   style="width:40%">
+            <td class="lblExtdGrp" style="width:30%"><b>Group Order</b></td>
+            <td style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Order</span>
@@ -123,8 +130,8 @@
             <td></td>
         </tr>
         <tr>
-            <td class="lblExtdGrp"  style="width:30%"><b>Group Type</b></td>
-            <td   style="width:40%">
+            <td class="lblExtdGrp" style="width:30%"><b>Group Type</b></td>
+            <td style="width:40%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     if (@Model.Add_Edit_Type == "grid")

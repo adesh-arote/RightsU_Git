@@ -57,6 +57,14 @@
                         {
                             <span>Party</span>
                         }
+                        else if (item.Module_Code == 1)
+                        {
+                            <span>Booking Sheet</span>
+                        }
+                        else if (item.Module_Code == 2)
+                        {
+                            <span>OEM</span>
+                        }
                     </td>
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Group_Name)
@@ -84,7 +92,7 @@
                             <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT')"></a>
                         }
                         <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW')"></a>
-                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="DeleteExtdGrp(@item.Extended_Group_Code, 'DELETE')"></a>
+                        <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'DELETE')"></a>
                     </td>
                 </tr>
             }
