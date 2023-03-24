@@ -4,27 +4,46 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-    }  
+    }
 }
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script>
-  
+
     var URL_BindPartialPages = '@Url.Action("BindPartialPages", "Vendor")';
 
     var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Vendor")';
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     var URL_Reload_Current_Page = '@Url.Action("Index", "Vendor")';
- 
+    var URL_AdditionalInfo = '@Url.Action("AdditionalInfo", "Vendor")';
+    var URL_TnC = '@Url.Action("TnC", "Vendor")';
+    var URL_SaveTnC = '@Url.Action("SaveTnC", "Vendor")';
+    var URL_DeleteTnc = '@Url.Action("DeleteTnc", "Vendor")';
+    var URL_ContentRule = '@Url.Action("ContentRule", "Vendor")';
+    var URL_ContentRulePopup = '@Url.Action("ContentRulePopUp", "Vendor")';
+    var URL_ContentRulePopUpGrid = '@Url.Action("ContentRulePopUpGrid", "Vendor")';
+    var URL_SaveContentRuleCriteria = '@Url.Action("SaveContentPopupGrid", "Vendor")';
+    var URL_DeleteContentRuleCriteria = '@Url.Action("DeleteContentPopupGrid", "Vendor")';
+    var URL_SaveContentRule = '@Url.Action("SaveContentRule", "Vendor")';
+    var URL_DeleteContentRule = '@Url.Action("DeleteContentRule", "Vendor")';
+    var URL_OEM = '@Url.Action("OEM", "Vendor")';
+    var URL_SaveOEM = '@Url.Action("SaveVendorOEM", "Vendor")';
+    var URL_DeleteOEM = '@Url.Action("DeleteVendorOEM", "Vendor")';
+    var URL_ChangeDataInputType = '@Url.Action("ChangeDataInputType", "Vendor")';
+    var URL_BinddlColumnsValue = '@Url.Action("BinddlColumnsValue", "Vendor")';
+    var URL_BindddlExtendedTalent = '@Url.Action("BindddlExtendedTalent", "Vendor")'
+    var URL_SaveAdditionalInfo = '@Url.Action("SaveAdditionalInfo", "Vendor")';
+
+
     $(document).ready(function () {
         debugger;
        // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Party');
         BindPartialView("LIST",0);
     });
-  
+
 
     //------------------------Record Locking-----------------
 
@@ -116,16 +135,345 @@
         });
     }
 
+    //------------------------Additional Info-----------------
+
+    function ShowAdditionalInfo(commandName, APVenderDetailCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_AdditionalInfo,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                CommandName: commandName,
+                VendorDetailCode: APVenderDetailCode
+            }),
+            success: function (result) {
+                debugger;
+                $('#AdditionalInfoPopUp').modal();
+                $('#popupHtml').empty();
+                $('#popupHtml').html(result);
+                if (commandName != "VIEW") {
+                    commandName = commandName;
+                }
+                if ($('input[name="Vendor"]:checked').val() == "C") {
+                    AdditionalInfoTab('CR', '', 0);
+                    SwitchVendorClient();
+                }                
+            }
+        });
+    }
+
+    function SaveAdditionalInfo() {
+        debugger;
+        var returnVal = true;
+        var VendorClient = $("input[name='Vendor']:checked").val();
+        var VendorDetailCode = $("#hdnVendorDetailCode").val();
+        var VendorCode = $("#hdnVendorCode").val();
+        var BannerCode = $("#Banner").val();
+        var PrefExclusionCode = $("#PrefExclusion").val();
+        var ExtendedGroup = $("#ExtendedGroup").val();
+
+        if (VendorClient) {
+
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveAdditionalInfo,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html", data: JSON.stringify({
+                    AL_Vendor_Detail_Code: VendorDetailCode,
+                    PartyType: VendorClient,
+                    Vendor_Code: VendorCode,
+                    Banner_Codes: BannerCode,
+                    Pref_Exclusion_Codes: PrefExclusionCode,
+                    Extended_Group_Code_Booking: ExtendedGroup
+                }),
+                success: function (result) {
+                    debugger;
+                    //$('#AddInfoGrid').html(result);
+                    ClosePopup();
+                }
+            });
+        }
+    }
+
+    function ClosePopup() {
+        debugger;
+        //Hide Add in Pop Up
+        $('#hdnAction').val("");
+        $('#popupHtml').empty();
+        $('#AdditionalInfoPopUp').modal('hide');
+    }
+
+    function SwitchVendorClient() {
+        debugger;
+        if ($('input[name="Vendor"]:checked').val() == "V") {
+            $('#Switch').html('Vendor selected');
+            $("#PrefExclusion").attr('disabled', true);
+            $("#PrefExclusion").val("");
+            $("#Banner").removeAttr('disabled');
+            $('#AddInfoGrid').empty();
+        } else if ($('input[name="Vendor"]:checked').val() == "C") {
+            $('#Switch').html('Client selected');
+            $("#Banner").attr('disabled', true);
+            $("#Banner").val("");
+            $("#PrefExclusion").removeAttr('disabled');
+            AdditionalInfoTab('CR', '', 0);
+        }
+    }
+
+    function AdditionalInfoTab(NewTab, commandName, id) {
+        debugger;
+
+        if ($('input[name="Vendor"]:checked').val() == "C") {
+
+            if (NewTab == "CR") {
+                var URL_LoadTab = URL_ContentRule;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabCR").addClass('active');
+            }
+            if (NewTab == "OEM") {
+                var URL_LoadTab = URL_OEM;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabOEM").addClass('active');
+            }
+            if (NewTab == "TNC") {
+                var URL_LoadTab = URL_TnC;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabTNC").addClass('active');
+            }
+            $.ajax({
+                type: "POST",
+                url: URL_LoadTab,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html", data: JSON.stringify({
+                    TabName: NewTab,
+                    commandName: commandName,
+                    Id: id
+                }),
+                success: function (result) {
+                    debugger;
+                    $('#AddInfoGrid').html(result);
+                }
+            });
+        }
+    }
+
+    function ControlType(columnValueCode, ddlFieldNameValue) {
+        debugger;
+        var count = ($('#tbl_Additional_Fileds tr').length - 1);
+        if (($('#tbl_Additional_Fileds tr').length - 1) > 1)
+            count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7));
+        var ddlFieldNameList = count + "_ddlFieldNameList";
+        var select;
+        var labelName = "";
+
+        if (ddlFieldNameValue != "0") {
+            if (document.getElementById($("#hdnRowNum").val() + "_lblName") != null) {
+                labelName = $("#" + $("#hdnRowNum").val() + "_lblName").text();
+                document.getElementById($("#hdnRowNum").val() + "_lblName").style.display = "none";
+            }
+
+
+            if ($("#hdnIsRowEdit").val() != "") {
+                ddlFieldNameList = $("#hdnRowNum").val() + "_ddlFieldNameList";
+                count = $("#hdnRowNum").val();
+                select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
+            }
+            else {
+                select = $("#" + count + "_ddlControlType");
+            }
+
+            var lstFieldProp = document.getElementById(ddlFieldNameList).value.split('~');
+
+            var CallFor = "T";
+            var Control_Type = lstFieldProp[0];
+            var Columns_Code = lstFieldProp[1];
+            var Is_Ref = lstFieldProp[2];
+            var Is_Defined_Values = lstFieldProp[3];
+            var Is_Multiple_Select = lstFieldProp[4];
+            var Ref_Table = lstFieldProp[5];
+            ExtendedColumnCode = Ref_Table;
+            var Ref_Display_Field = lstFieldProp[6];
+            var Ref_Value_Field = lstFieldProp[7];
+            var Additional_Condition = lstFieldProp[8];
+            Additional_Conditions = Additional_Condition;
+            var Is_Add_OnScreen = lstFieldProp[9];
+            var ColumnName = lstFieldProp[10];
+            SelectedColumnName = Additional_Condition;
+            var MethodName = "";
+            var isCBFC = "";
+
+            if (Control_Type == "TXT") {
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "";
+                $("#" + count + '_txtControlType').val(labelName);
+
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+            }
+            else {
+
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+
+
+                if (Is_Ref == "Y" && Is_Defined_Values == "Y") {
+                    CallFor = "N";
+                    isCBFC = "N"
+                    MethodName = URL_BinddlColumnsValue;
+                }
+                else if (Is_Ref == "Y" && Is_Defined_Values == "N" && Ref_Table == "TALENT") {
+                    CallFor = "T";
+                    MethodName = URL_BindddlExtendedTalent;
+                    isCBFC = "N";
+                }
+            }
+            if (MethodName != "") {
+                $.ajax({
+
+                    type: "POST",
+                    url: MethodName,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        ColumnsCode: Columns_Code,
+                        AdditionalCondition: Additional_Condition
+                    }),
+                    async: false,
+                    success: function (result) {
+                        debugger;
+
+                        if ($("#hdnIsRowEdit").val() != "") {
+                            select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
+                        }
+                        else {
+                            select = $("#" + count + "_ddlControlType");
+                        }
+                        select.children().remove();
+                        if (result) {
+                            debugger;
+                            if (Is_Multiple_Select == "N") {
+                                $(result).each(function (index, item) {
+                                    select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
+                                });
+                                select.removeAttr("multiple", "");
+                            }
+                            else if (Is_Multiple_Select == "Y") {
+                                $("#" + select.attr("id")).attr("multiple", "multiple");
+                                $(result).each(function (index, item) {
+                                    select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
+                                });
+                            }
+                            var clone = select.prop('outerHTML');
+                            select.remove();
+                            $('#' + select.attr('id') + '_chosen').remove();
+                            var trGrid = "trGrid_" + $("#hdnRowNum").val();
+                            $("#" + trGrid + " td:nth-child(2)").first().append(clone);
+
+                            initializeChosen();
+                            var employeeArray = columnValueCode.toString().split(',');
+                            for (var x = 0; x < employeeArray.length; x++) {
+                                if (employeeArray[x] != "" && employeeArray[x] != " ")
+                                    $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select option[value=' + employeeArray[x] + ']').attr('selected', 'selected');
+
+
+                            }
+                            $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').trigger("chosen:updated");
+                            if (Is_Add_OnScreen == "Y") {
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", "")
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).show();
+                            }
+                            else if (Is_Add_OnScreen == "N" || Is_Add_OnScreen == "") {
+                                $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+                            }
+                            var table = document.getElementById('tbl_Additional_Fileds');
+
+                            var rowLength = table.rows.length;
+
+                            for (var i = 0; i < rowLength; i += 1) {
+                                if (i != $("#hdnRowNum").val()) {
+                                    if ($("#" + i + "_ddlControlType").length > 0)
+                                        $("#" + i + "_ddlControlType").remove();
+                                    if ($("#" + i + "_ddlControlType_chosen").length > 0)
+                                        $("#" + i + "_ddlControlType_chosen").remove();
+                                    if ($("#" + i + "_ddlFieldNameList_chosen").length > 0)
+                                        $("#" + i + "_ddlFieldNameList_chosen").remove();
+                                    if ($("#" + i + "_ddlFieldNameList").length > 0)
+                                        $("#" + i + "_ddlFieldNameList").remove();
+                                }
+                            }
+                            initializeChosen();
+                        }
+                    },
+                    error: function (result) {
+                    }
+                });
+            }
+            else {
+                debugger;
+                $("#btnExtendedColumn_" + $("#hdnRowNum").val()).hide();
+                $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
+                $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+
+                $('#' + $("#hdnRowNum").val() + '_ddlFieldNameList').trigger("chosen:updated");
+                initializeChosen();
+                $('#' + $("#hdnRowNum").val() + '_ddlControlType_chosen').hide();
+            }
+        }
+        else {
+            $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
+            $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+        }
+    }
+
+
 </script>
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div id="divVendor">
-               
-           </div>
+
+            </div>
         </div>
     </section>
     <input type="hidden" id="hdnSearch" name="hdnSearch" />
     <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode_temp" value="0" />
     <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="AdditionalInfoPopUp" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="popupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="ContentRuleModalPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="ContentPopup">
+
+            </div>
+        </div>
+    </div>
 </div>

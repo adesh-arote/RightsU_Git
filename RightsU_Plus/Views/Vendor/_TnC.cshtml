@@ -1,0 +1,159 @@
+﻿@model List<RightsU_Entities.AL_Vendor_TnC>
+
+<script>
+    function checkCurrentActionTnC() {
+        debugger;
+        var action = $("#hdnActionTnC").val();
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+
+    function AddEditTnC(TabName, commandName, TnCCode) {
+        debugger;
+        if (checkCurrentActionTnC()) {
+            AdditionalInfoTab(TabName, commandName, TnCCode);
+            $('#hdnActionTnC').val(commandName);
+        }
+    }
+
+    function SaveTnC() {
+        debugger;
+        var returnVal = true;
+        var Remark = $("#tncRemark").val();
+        var TnCCode = $("#hdnTnCCode").val();
+        if (Remark == "") {
+            $("#tncRemark").val('').attr('required', true);
+            returnVal = false;
+        }
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveTnC,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AL_Vendor_TnC_Code: TnCCode,
+                    TnC_Description: Remark
+                }),
+                success: function (result) {
+                    debugger;
+                    //showAlert(result.status, result.message);
+                    AdditionalInfoTab('TNC', '', 0);
+                    $('#hdnActionTnC').val("");
+                }
+            });
+        }
+    }
+
+    function CancelTnC() {
+        $('#hdnActionTnC').val("");
+        AdditionalInfoTab('TNC', '', 0);
+    }
+
+    function DeleteTnc(TnCCode) {
+        if (checkCurrentActionTnC()) {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteTnc,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    VendorTncCode: TnCCode
+                }),
+                success: function (result) {
+                    debugger;
+                    AdditionalInfoTab('TNC', '', 0);
+                }
+            });
+        }
+    }
+</script>
+
+@{
+    int iTnC = 0;
+}
+
+<div style="padding:1%">
+    <span style="font-size:18px"> Terms and Conditions </span>
+    <button class="btn btn-primary pull-right" onclick="AddEditTnC('TNC', 'ADD', 0)"> Add </button>
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%">
+                Sr. No.
+            </th>
+            <th style="width:60%">
+                Remark
+            </th>
+            <th style="width:20%">
+                Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            iTnC++;
+            <tr>
+                @if (ViewBag.CommandNameTnC == "EDIT" && ViewBag.TnCCode == item.AL_Vendor_TnC_Code)
+                {
+                    <td>
+                        @iTnC
+                    </td>
+                    <td>
+                        <input type="text" style="width:100%" id="tncRemark" value="@item.TnC_Description" />
+                        <input type="hidden" id="hdnTnCCode" value="@item.AL_Vendor_TnC_Code" />
+                    </td>
+                    <td>
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTnC()"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelTnC()"></a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @iTnC
+                    </td>
+                    <td>
+                        @item.TnC_Description
+                    </td>
+                    <td>
+                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditTnC('TNC', 'EDIT', '@item.AL_Vendor_TnC_Code')"></a>
+                        @if (item.AL_Vendor_TnC_Code < 0)
+                        {
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteTnc('@item.AL_Vendor_TnC_Code')"></a>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+        @if (ViewBag.CommandNameTnC == "ADD")
+        {
+            <tr>
+                <td>
+                    New
+                </td>
+                <td>
+                    <input type="text" style="width:100%" id="tncRemark" />
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTnC()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelTnC()"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

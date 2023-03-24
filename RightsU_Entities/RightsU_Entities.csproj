@@ -164,6 +164,7 @@
     <Compile Include="Deal_Schema.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="Get_AL_Vendor_Rule_Criteria_Result.cs" />
     <Compile Include="IPR\IPR_APP_STATUS.cs" />
     <Compile Include="IPR\IPR_CLASS.cs" />
     <Compile Include="IPR\IPR_Country.cs" />

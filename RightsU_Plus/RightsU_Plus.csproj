@@ -1345,6 +1345,12 @@
     <Content Include="Views\AL_Oem\Index.cshtml" />
     <Content Include="Views\AL_Oem\_BindALOemList.cshtml" />
     <Content Include="Views\Title\_Title_Popup_Grid_Result.cshtml" />
+    <Content Include="Views\Vendor\_AdditionalInfo.cshtml" />
+    <Content Include="Views\Vendor\_ContentRule.cshtml" />
+    <Content Include="Views\Vendor\_ContentRuleGrid.cshtml" />
+    <Content Include="Views\Vendor\_ContentRulePopUp.cshtml" />
+    <Content Include="Views\Vendor\_OEM.cshtml" />
+    <Content Include="Views\Vendor\_TnC.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
