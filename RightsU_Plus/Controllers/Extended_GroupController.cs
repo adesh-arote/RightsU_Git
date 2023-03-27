@@ -23,7 +23,7 @@ namespace RightsU_Plus.Controllers
             set { Session["lstExtended_Group"] = value; }
         }
 
-        private List<RightsU_Entities.Extended_Group> lstlstExtended_Group_Searched
+        private List<RightsU_Entities.Extended_Group> lstExtended_Group_Searched
         {
             get
             {
@@ -82,7 +82,7 @@ namespace RightsU_Plus.Controllers
         private void FetchData()
         {
             Extended_Group_Service objExtended_Group_Service = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
-            lstlstExtended_Group_Searched = lstExtended_Group = objExtended_Group_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstExtended_Group_Searched = lstExtended_Group = objExtended_Group_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
         public ActionResult BindExtendedGroupList(int pageNo, int recordPerPage, string sortType)
@@ -90,18 +90,18 @@ namespace RightsU_Plus.Controllers
             List<Extended_Group> lst = new List<Extended_Group>();
 
             int RecordCount = 0;
-            RecordCount = lstlstExtended_Group_Searched.Count;
+            RecordCount = lstExtended_Group_Searched.Count;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstlstExtended_Group_Searched.OrderByDescending(o => o.Extended_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Extended_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else if (sortType == "NA")
-                    lst = lstlstExtended_Group_Searched.OrderBy(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstExtended_Group_Searched.OrderBy(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
-                    lst = lstlstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             ViewBag.UserModuleRights = GetUserModuleRights();
@@ -146,22 +146,22 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText) && ModuleCode == null)
             {
-                lstlstExtended_Group_Searched = lstExtended_Group.Where(w => w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
+                lstExtended_Group_Searched = lstExtended_Group.Where(w => w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
             else if (searchText == "" && ModuleCode != null)
             {
-                lstlstExtended_Group_Searched = lstExtended_Group.Where(w => w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString())).ToList();
+                lstExtended_Group_Searched = lstExtended_Group.Where(w => w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString())).ToList();
             }
             else if (!string.IsNullOrEmpty(searchText) && ModuleCode != null)
             {
-                lstlstExtended_Group_Searched = lstExtended_Group.Where(w => (w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())) && (w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString()))).ToList();
+                lstExtended_Group_Searched = lstExtended_Group.Where(w => (w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())) && (w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString()))).ToList();
             }
             else
-                lstlstExtended_Group_Searched = lstExtended_Group;
+                lstExtended_Group_Searched = lstExtended_Group;
 
             var obj = new
             {
-                Record_Count = lstlstExtended_Group_Searched.Count
+                Record_Count = lstExtended_Group_Searched.Count
             };
 
             return Json(obj);

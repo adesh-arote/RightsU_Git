@@ -222,6 +222,7 @@
     <Compile Include="Controllers\Acq_DigitalController.cs" />
     <Compile Include="Controllers\AL_LabController.cs" />
     <Compile Include="Controllers\AL_OemController.cs" />
+    <Compile Include="Controllers\BookingSheetController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
@@ -1354,6 +1355,7 @@
     <Content Include="Views\Vendor\_TnC.cshtml" />
     <Content Include="Views\AL_Lab\Index.cshtml" />
     <Content Include="Views\AL_Lab\_BindAL_LabGroup.cshtml" />
+    <Content Include="Views\BookingSheet\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
