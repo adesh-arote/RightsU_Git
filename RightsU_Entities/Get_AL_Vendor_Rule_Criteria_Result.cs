@@ -24,6 +24,10 @@ namespace RightsU_Entities
     {
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public string SelectedPartyType { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string SelectedBannerValues { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string SelectedPrefExclusionValues { get; set; }
     }
 }
 

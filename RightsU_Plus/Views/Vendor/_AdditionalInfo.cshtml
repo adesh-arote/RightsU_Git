@@ -1,5 +1,19 @@
 ﻿@model RightsU_Entities.AL_Vendor_Details
 
+
+<script>
+    //$('#Banner').change(function () {
+    //    $('#Banner').removeAttr("style", "border-color: red; width:50%; background-color: rgba(155,0,0,0.1);");
+    //    $('#Banner').css("width", "50%");
+    //});
+
+    //$('#PrefExclusion').change(function () {
+    //    $('#PrefExclusion').removeAttr("style", "border-color: red; width:50%; background-color: rgba(155,0,0,0.1);");
+    //    $('#PrefExclusion').css("width", "50%");
+    //});
+
+</script>
+
 <div class="modal_block modal_header">
     <a class="close" onclick="ClosePopup()">
         <span>×</span>
@@ -54,11 +68,11 @@
                 <td>
                     @if (ViewBag.DisplayMode == "VIEW")
                     {
-                        <span>@Model.Banner_Codes</span>
+                        <span>@Model.SelectedBannerValues</span>
                     }
                     else
                     {
-                        @Html.DropDownList("Banner", (IEnumerable<SelectListItem>)ViewBag.Banner, "Please Select", new { @id = "Banner", @style = "width:50%" })
+                        @Html.DropDownList("Banner", (IEnumerable<SelectListItem>)ViewBag.Banner as MultiSelectList, new { @id = "Banner", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })
                     }
                 </td>
             </tr>
@@ -69,11 +83,11 @@
                 <td>
                     @if (ViewBag.DisplayMode == "VIEW")
                     {
-                        <span>@Model.Pref_Exclusion_Codes</span>
+                        <span>@Model.SelectedPrefExclusionValues</span>
                     }
                     else
                     {
-                        @Html.DropDownList("Pref_Exclusion", (IEnumerable<SelectListItem>)ViewBag.PrefExclusion, "Please Select", new { @id = "PrefExclusion", @style = "width:50%" })
+                        @Html.DropDownList("Pref_Exclusion", (IEnumerable<SelectListItem>)ViewBag.PrefExclusion as MultiSelectList, new { @id = "PrefExclusion", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })
                     }
                 </td>
             </tr>

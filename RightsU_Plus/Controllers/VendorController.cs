@@ -573,6 +573,11 @@ namespace RightsU_Plus.Controllers
 
                 // Send this list to the view                     
                 objSessVendor = objVendor;
+                objSessALVendorDetails = new AL_Vendor_Details();
+                if (objVendor != null && objVendor.AL_Vendor_Details != null)
+                {
+                    objSessALVendorDetails = objVendor.AL_Vendor_Details.FirstOrDefault();
+                }
                 return PartialView("~/Views/Vendor/_AddEditPartyVendor.cshtml");
             }
         }
@@ -1426,29 +1431,44 @@ namespace RightsU_Plus.Controllers
         public ActionResult AdditionalInfo(string CommandName, int VendorDetailCode)
         {
             AL_Vendor_Details objVendorDetail = new AL_Vendor_Details();
+            objVendorDetail = objSessALVendorDetails;
+            List<string> SelectedBannerValues = new List<string>();
+            List<string> SelectedPrefExclusionValues = new List<string>();
             ViewBag.DisplayMode = CommandName;
 
             List<Banner> lstBanner = new List<Banner>();
             Banner_Service objBannerService = new Banner_Service(objLoginEntity.ConnectionStringName);
             lstBanner = objBannerService.SearchFor(s => true).ToList();
-            ViewBag.Banner = new SelectList(lstBanner, "Banner_Code", "Banner_Name");
-            ViewBag.PrefExclusion = new SelectList(lstBanner, "Banner_Code", "Banner_Name");
+            ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name");
+
+            //List of Pref Exclusion
+
+            ViewBag.PrefExclusion = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name");
 
             List<Extended_Group> lstExtGrp = new List<Extended_Group>();
             Extended_Group_Service objExtGrpService = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
             lstExtGrp = objExtGrpService.SearchFor(s => true).ToList();
             ViewBag.ExtGrpCfg = new SelectList(lstExtGrp, "Extended_Group_Code", "Group_Name");
+
             RightsU_Entities.System_Parameter_New system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Enable_Booking_Sheet_For_Party").FirstOrDefault();
-            //ViewBag.DisplayBookingSheet = system_Parameter.Parameter_Value;
+            ViewBag.DisplayBookingSheet = system_Parameter.Parameter_Value;
 
-            //List<prefExc>
-
-            if (VendorDetailCode > 0)
+            if (objVendorDetail != null)
             {
-                AL_Vendor_Details_Service objVendorDetailService = new AL_Vendor_Details_Service(objLoginEntity.ConnectionStringName);
-                objVendorDetail = objVendorDetailService.GetById(VendorDetailCode);
-                ViewBag.Banner = new SelectList(lstBanner, "Banner_Code", "Banner_Name", objVendorDetail.Banner_Codes);
+                if (objVendorDetail.Banner_Codes != null)
+                {
+                    SelectedBannerValues = objVendorDetail.Banner_Codes.Split(',').ToList();
+                    objVendorDetail.SelectedBannerValues = string.Join(",", lstBanner.Where(w => SelectedBannerValues.Any(a => a == w.Banner_Code.ToString())).Select(s => s.Banner_Name));
+                }
 
+                if (objVendorDetail.Pref_Exclusion_Codes != null)
+                {
+                    SelectedPrefExclusionValues = objVendorDetail.Pref_Exclusion_Codes.Split(',').ToList();
+                    objVendorDetail.SelectedPrefExclusionValues = string.Join(",", lstBanner.Where(w => SelectedPrefExclusionValues.Any(b => b == w.Banner_Code.ToString())).Select(s => s.Banner_Name));
+                }
+
+                ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedBannerValues);
+                ViewBag.PrefExclusion = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedPrefExclusionValues);
                 ViewBag.ExtGrpCfg = new SelectList(lstExtGrp, "Extended_Group_Code", "Group_Name", objVendorDetail.Extended_Group_Code_Booking);
             }
             objVendorDetail.SelectedPartyType = objSessVendor.Party_Type;
@@ -1457,34 +1477,49 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult SaveAdditionalInfo(AL_Vendor_Details alVendorDetails, string PartyType)
         {
-            //alVendorDetails.AL_Vendor_Detail_Code = ;
-            //alVendorDetails.Banner_Codes = ;
-            //alVendorDetails.EntityState = ;
-            //alVendorDetails.Extended_Group = ;
-            //alVendorDetails.Extended_Group_Code_Booking = ;
-            //alVendorDetails.Pref_Exclusion_Codes = ;
-            //alVendorDetails.Vendor = ;
-            //alVendorDetails.Vendor_Code = ;
-
-            if (alVendorDetails.AL_Vendor_Detail_Code == 0)
+            if (alVendorDetails.AL_Vendor_Detail_Code == 0 && objSessVendor.AL_Vendor_Details.Count == 0)
             {
                 alVendorDetails.EntityState = State.Added;
                 objSessVendor.AL_Vendor_Details.Add(alVendorDetails);
             }
             else
             {
-                AL_Vendor_Details objDBAlVendorDetails = objSessVendor.AL_Vendor_Details.Where(w => w.AL_Vendor_Detail_Code == alVendorDetails.AL_Vendor_Detail_Code).FirstOrDefault();
-                alVendorDetails.EntityState = State.Modified;
-                objDBAlVendorDetails.AL_Vendor_Detail_Code = alVendorDetails.AL_Vendor_Detail_Code;
-                objDBAlVendorDetails.Banner_Codes = alVendorDetails.Banner_Codes;
-                objDBAlVendorDetails.EntityState = alVendorDetails.EntityState;
-                objDBAlVendorDetails.Extended_Group_Code_Booking = alVendorDetails.Extended_Group_Code_Booking;
-                objDBAlVendorDetails.Pref_Exclusion_Codes = alVendorDetails.Pref_Exclusion_Codes;
+                if (alVendorDetails.AL_Vendor_Detail_Code > 0)
+                {
+                    AL_Vendor_Details objDBAlVendorDetails = objSessVendor.AL_Vendor_Details.Where(w => w.AL_Vendor_Detail_Code == alVendorDetails.AL_Vendor_Detail_Code).FirstOrDefault();
+                    alVendorDetails.EntityState = State.Modified;
+                    objDBAlVendorDetails.AL_Vendor_Detail_Code = alVendorDetails.AL_Vendor_Detail_Code;
+                    objDBAlVendorDetails.Banner_Codes = alVendorDetails.Banner_Codes;
+                    objDBAlVendorDetails.EntityState = alVendorDetails.EntityState;
+                    objDBAlVendorDetails.Extended_Group_Code_Booking = alVendorDetails.Extended_Group_Code_Booking;
+                    objDBAlVendorDetails.Pref_Exclusion_Codes = alVendorDetails.Pref_Exclusion_Codes;
+                    objDBAlVendorDetails.SelectedBannerValues = alVendorDetails.SelectedBannerValues;
+                    objDBAlVendorDetails.SelectedPrefExclusionValues = alVendorDetails.SelectedPrefExclusionValues;
+                }
+                if (alVendorDetails.AL_Vendor_Detail_Code == 0)
+                {
+                    AL_Vendor_Details objSessVendorDetails = objSessVendor.AL_Vendor_Details.Where(w => w.AL_Vendor_Detail_Code == alVendorDetails.AL_Vendor_Detail_Code).FirstOrDefault();
+                    alVendorDetails.EntityState = State.Added;
+                    objSessVendorDetails.AL_Vendor_Detail_Code = alVendorDetails.AL_Vendor_Detail_Code;
+                    objSessVendorDetails.Banner_Codes = alVendorDetails.Banner_Codes;
+                    objSessVendorDetails.EntityState = alVendorDetails.EntityState;
+                    objSessVendorDetails.Extended_Group_Code_Booking = alVendorDetails.Extended_Group_Code_Booking;
+                    objSessVendorDetails.Pref_Exclusion_Codes = alVendorDetails.Pref_Exclusion_Codes;
+                    objSessVendorDetails.SelectedBannerValues = alVendorDetails.SelectedBannerValues;
+                    objSessVendorDetails.SelectedPrefExclusionValues = alVendorDetails.SelectedPrefExclusionValues;
+                }
             }
+
             objSessVendor.Party_Type = PartyType;
             objSessALVendorDetails = alVendorDetails;
 
-            return Json("");
+            var obj = new
+            {
+                Status = "S",
+                Message = "Additional Data Saved successfully"
+            };
+
+            return Json(obj);
         }
 
         public ActionResult DeleteAdditionalResult()
@@ -1532,16 +1567,11 @@ namespace RightsU_Plus.Controllers
             string status = "S";
             string message = "";
 
-            //ALVendorRule.AL_Vendor_Rule_Code = -1;
             ALVendorRule.AL_Vendor_Rule_Criteria = objVr.AL_Vendor_Rule_Criteria;
             string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Select(s => s.ExtendedColumnNames).ToList());
             ALVendorRule.Criteria = CommaSeparatedCriteria;
             ALVendorRule.Is_Active = "Y";
-            //ALVendorRule.Rule_Name = ;
-            //ALVendorRule.Rule_Short_Name = ;
-            //ALVendorRule.Vendor = ;
-            //ALVendorRule.Vendor_Code = ;
-
+            
             if (ALVendorRule.AL_Vendor_Rule_Code == 0)
             {
                 if (objSessVendor.AL_Vendor_Rule.Count == 0)
@@ -1599,7 +1629,6 @@ namespace RightsU_Plus.Controllers
 
             if (objVR != null)
             {
-                //objSessVendor.AL_Vendor_Rule.Remove(objVR);
                 if (objVR.Is_Active == "Y")
                 {
                     objVR.Is_Active = "N";
@@ -1647,13 +1676,10 @@ namespace RightsU_Plus.Controllers
                 {
                     alVRC.ExtendedColumnNames = alVRC.Extended_Columns.Columns_Name;
                 }
-                //if (!UsedDDlExtendedColumnsLst.Contains(Convert.ToInt32(alVRC.Columns_Code)))
-                //{
+
                 UsedDDlExtendedColumnsLst.Add(Convert.ToInt32(alVRC.Columns_Code));
                 UsedDDlExtendedColumnsLst = UsedDDlExtendedColumnsLst.Distinct().ToList();
-                //}
-                //List<string> SelectedListNames = alVRC.Columns_Value.Split(',').ToList();
-                //alVRC.DataFieldNames = alVRC.Columns_Value;
+
                 if (alVRC.DataFieldNames == null)
                 {
                     CreateExtendedDataObject(Convert.ToInt32(alVRC.Columns_Code));
@@ -1665,14 +1691,9 @@ namespace RightsU_Plus.Controllers
             if (CrCCode != 0)
             {
                 AL_Vendor_Rule_Criteria objVRC;
-                //if (CrCCode < 0)
-                //{
+                
                 objVRC = objVr.AL_Vendor_Rule_Criteria.Where(w => w.AL_Vendor_Rule_Criteria_Code == CrCCode).FirstOrDefault();
-                //}
-                //else
-                //{
-                //    objVRC = new AL_Vendor_Rule_Criteria_Service(objLoginEntity.ConnectionStringName).GetById(CrCCode);
-                //}
+                
                 CreateExtendedDataObject(Convert.ToInt32(objVRC.Columns_Code));
                 DisableDDlList = UsedDDlExtendedColumnsLst.Where(w => w != objVRC.Columns_Code).ToList();
                 ViewBag.ExtendedColumnDDl = new SelectList(DDlExtendedColumnsLst, "Columns_Code", "Columns_Name", objVRC.Columns_Code, DisableDDlList);
@@ -1691,10 +1712,6 @@ namespace RightsU_Plus.Controllers
                     SelectedColumnValues = objVRC.Columns_Value.Split(',').ToList();
                     ViewBag.DDlSelectList = new MultiSelectList(lstSelectObject, "Columns_Value_Code", "ColumnsValue", SelectedColumnValues);
                 }
-                //obj = SelectListItem, IsMultiSelect, TextBox, ControlType
-
-                //var JsonResult = ChangeDataInputType(Convert.ToInt32(objVRC.Columns_Code));
-                //ViewBag.DDlSelectList = new MultiSelectList(lstSelectObject, "Columns_Value_Code", "ColumnsValue", SelectedColumnValues);
             }
 
             return PartialView("_ContentRuleGrid", lstVendorRuleCriteria);
@@ -1804,24 +1821,14 @@ namespace RightsU_Plus.Controllers
                     alOEM.SelectedOEMName = alOEM.AL_OEM.Company_Name;
                 }
 
-                //if (!UsedDDlOEMlst.Contains(Convert.ToInt32(alOEM.AL_OEM_Code)))
-                //{
                 UsedDDlOEMlst.Add(Convert.ToInt32(alOEM.AL_OEM_Code));
                 UsedDDlOEMlst = UsedDDlOEMlst.Distinct().ToList();
-                //}
             }
 
             if (Id != 0)
             {
                 AL_Vendor_OEM objVendorOEM;
-                //if (Id < 0)
-                //{
                 objVendorOEM = objSessVendor.AL_Vendor_OEM.Where(w => w.AL_Vendor_OEM_Code == Id).FirstOrDefault();
-                //}
-                //else
-                //{
-                //    objVendorOEM = new AL_Vendor_OEM_Service(objLoginEntity.ConnectionStringName).GetById(Id);
-                //}
                 DisableDDlOEM = UsedDDlOEMlst.Where(w => w != objVendorOEM.AL_OEM_Code).ToList();
                 ViewBag.OEMDDl = new SelectList(DDlOEMLst, "AL_OEM_Code", "Company_Name", objVendorOEM.AL_OEM_Code, DisableDDlOEM);
             }
@@ -1958,7 +1965,6 @@ namespace RightsU_Plus.Controllers
             {
                 if (apVendorTnC.AL_Vendor_TnC_Code > 0)
                 {
-                    //AL_Vendor_TnC objTnC_DB = new AL_Vendor_TnC_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.AL_Vendor_TnC_Code == apVendorTnC.AL_Vendor_TnC_Code).FirstOrDefault();
                     AL_Vendor_TnC objTnC_DB = objSessVendor.AL_Vendor_TnC.Where(w => w.AL_Vendor_TnC_Code == apVendorTnC.AL_Vendor_TnC_Code).FirstOrDefault();
                     objTnC_DB.TnC_Description = apVendorTnC.TnC_Description;
                     objTnC_DB.EntityState = State.Modified;

@@ -161,7 +161,8 @@
                 if ($('input[name="Vendor"]:checked').val() == "C") {
                     AdditionalInfoTab('CR', '', 0);
                     SwitchVendorClient();
-                }                
+                }
+                initializeChosen();
             }
         });
     }
@@ -172,12 +173,40 @@
         var VendorClient = $("input[name='Vendor']:checked").val();
         var VendorDetailCode = $("#hdnVendorDetailCode").val();
         var VendorCode = $("#hdnVendorCode").val();
-        var BannerCode = $("#Banner").val();
-        var PrefExclusionCode = $("#PrefExclusion").val();
         var ExtendedGroup = $("#ExtendedGroup").val();
+        var BannerCode = "";
+        var BannerValues = "";
+        var PrefExclusionCode = "";
+        var PrefExclusionValues = "";
+        
+        if (VendorClient == "" || VendorClient == undefined) {
+            $("#Vendor").attr('required', true);
+            returnVal = false;
+            showAlert("E", "Please select if Party is a Vendor or a Client");
+        }
+        if (VendorClient == "V") {
 
-        if (VendorClient) {
+            BannerCode = $("#Banner").val().join(',');
+            BannerValues = $("#Banner option:selected").map(function () {
+                return $(this).text();
+            }).get().join();
 
+            if (BannerCode == "") {
+                showAlert("E", "Please select Banners");
+                returnVal = false;
+            }
+        }
+        else if (VendorClient == "C") {
+
+            PrefExclusionCode = $("#PrefExclusion").val().join(',');
+            PrefExclusionValues = $("#PrefExclusion option:selected").map(function () {
+                return $(this).text();
+            }).get().join();
+
+            if (PrefExclusionCode == "") {
+                showAlert("E", "Please select Preference exclusions");
+                returnVal = false;
+            }
         }
 
         if (returnVal) {
@@ -193,12 +222,15 @@
                     Vendor_Code: VendorCode,
                     Banner_Codes: BannerCode,
                     Pref_Exclusion_Codes: PrefExclusionCode,
-                    Extended_Group_Code_Booking: ExtendedGroup
+                    Extended_Group_Code_Booking: ExtendedGroup,
+                    SelectedBannerValues: BannerValues,
+                    SelectedPrefExclusionValues: PrefExclusionValues
                 }),
                 success: function (result) {
                     debugger;
                     //$('#AddInfoGrid').html(result);
                     ClosePopup();
+                    showAlert("S", result.Message);
                 }
             });
         }
@@ -216,17 +248,18 @@
         debugger;
         if ($('input[name="Vendor"]:checked').val() == "V") {
             $('#Switch').html('Vendor selected');
-            $("#PrefExclusion").attr('disabled', true);
-            $("#PrefExclusion").val("");
-            $("#Banner").removeAttr('disabled');
+            $("#PrefExclusion").attr('disabled', true).trigger("chosen:updated");
+            $("#PrefExclusion").val("").trigger("chosen:updated");
+            $("#Banner").removeAttr('disabled').trigger("chosen:updated");
             $('#AddInfoGrid').empty();
         } else if ($('input[name="Vendor"]:checked').val() == "C") {
             $('#Switch').html('Client selected');
-            $("#Banner").attr('disabled', true);
-            $("#Banner").val("");
-            $("#PrefExclusion").removeAttr('disabled');
+            $("#Banner").attr('disabled', true).trigger("chosen:updated");
+            $("#Banner").val("").trigger("chosen:updated");
+            $("#PrefExclusion").removeAttr('disabled').trigger("chosen:updated");
             AdditionalInfoTab('CR', '', 0);
         }
+        initializeChosen();
     }
 
     function AdditionalInfoTab(NewTab, commandName, id) {
