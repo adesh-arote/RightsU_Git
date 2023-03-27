@@ -20,12 +20,12 @@
         if (LayoutDirection_G == "RTL") {
             $('#btnUser').css("float", "right");
             $('#txtSort').css("text-align", "left");
-            $('#ddlSortType_chosen').css("text-align", "right");
+            //$('#ddlSortType_chosen').css("text-align", "right");
         }
         else {
             $('#btnUser').css("float", "left");
             $('#txtSort').css("text-align", "right");
-            $('#ddlSortType_chosen').css("text-align", "left");
+            //$('#ddlSortType_chosen').css("text-align", "left");
         }
 
         addNumeric();
@@ -37,12 +37,12 @@
                 return false;
             }
         });
-        $("#ddlSortType").change(function () {
-            sort_Type = $('#ddlSortType').val();
-            $('#hdnPageNo').val(1);
-            var searchtext = $("#searchCommon").val();
-            SearchBookingSheet(searchtext);
-        });
+        //$("#ddlSortType").change(function () {
+            //sort_Type = $('#ddlSortType').val();
+            //$('#hdnPageNo').val(1);
+            //var searchtext = $("#searchCommon").val();
+            //SearchBookingSheet(searchtext);
+        //});
     });
 
     function addNumeric() {
@@ -79,9 +79,9 @@
         if (!ValidatePageSize())
             return false;
 
-        sort_Type = "T";
-        $("#ddlSortType").find("option").attr("selected", false);
-        $("#ddlSortType").val('T').trigger("chosen:updated");
+        //sort_Type = "T";
+        //$("#ddlSortType").find("option").attr("selected", false);
+        //$("#ddlSortType").val('T').trigger("chosen:updated");
         $('#hdnPageNo').val(1);
 
         SearchBookingSheet("", "");
@@ -236,22 +236,22 @@
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:1%;vertical-align: middle;text-align:center;">
                                 Clients :
                             </td>
-                            <td style="width:5%; vertical-align: middle;">
-                                @*@Html.DropDownList("DdlClients", (List<SelectListItem>)ViewBag.DdlClients, new { @id = "searchCommon", @class = "form_input chosen-select" })*@
+                            <td style="width:3%; vertical-align: middle;">
+                                @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList,"--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
                             </td>
-                            <td style="width:3%;vertical-align: middle; text-align:center;">
+                            <td style="width:10%;vertical-align: middle;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
-                            <td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
+                            @*<td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
                                 @objMessageKey.SortBy:
                             </td>
                             <td style="width:5%; vertical-align: middle;">
                                 @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
-                            </td>
+                            </td>*@
                         </tr>
                     </table>
                 </div>

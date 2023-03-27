@@ -50,11 +50,17 @@ namespace RightsU_Plus.Controllers
         public ActionResult Index()
         {
             FetchData();
-            List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
-            ViewBag.SortType = lstSort;
+            //List<SelectListItem> lstSort = new List<SelectListItem>();
+            //lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
+            //lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
+            //lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
+            //ViewBag.SortType = lstSort;
+
+            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            ViewBag.ddlClient = new SelectList(lstVendors, "Vendor_Code", "Vendor_Name");
+            //ViewBag.ddlClients = lstVendors;
 
             return View();
         }
@@ -133,6 +139,17 @@ namespace RightsU_Plus.Controllers
             };
 
             return Json(obj);
+        }
+
+
+        public ActionResult Create()
+        {
+            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            ViewBag.ddlClient = new SelectList(lstVendors, "Vendor_Code", "Vendor_Name");
+
+            return View();
         }
     }
 }

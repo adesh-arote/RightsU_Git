@@ -1356,6 +1356,8 @@
     <Content Include="Views\AL_Lab\Index.cshtml" />
     <Content Include="Views\AL_Lab\_BindAL_LabGroup.cshtml" />
     <Content Include="Views\BookingSheet\Index.cshtml" />
+    <Content Include="Views\BookingSheet\Create.cshtml" />
+    <Content Include="Views\BookingSheet\_BookingSheetList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
