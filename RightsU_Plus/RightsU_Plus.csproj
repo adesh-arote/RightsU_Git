@@ -1358,6 +1358,7 @@
     <Content Include="Views\BookingSheet\Index.cshtml" />
     <Content Include="Views\BookingSheet\Create.cshtml" />
     <Content Include="Views\BookingSheet\_BookingSheetList.cshtml" />
+    <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

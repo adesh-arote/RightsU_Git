@@ -11,10 +11,12 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "";
 
     var URL_BindBookingSheetList = '@Url.Action("BindBookingSheetList", "BookingSheet")';
+    var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
     var URL_SearchBookingSheet = '@Url.Action("SearchBookingSheet", "BookingSheet")';
+
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -61,7 +63,7 @@
         $("[required='required']").removeAttr("required");
         debugger;
         var searchText = $('#searchCommon').val();
-        
+
         if (searchText == '') {
             $('#searchCommon').val('');
             $('#searchCommon').attr('required', true)
@@ -90,7 +92,7 @@
     function SearchBookingSheet(searchText) {
         debugger;
         $('#searchCommon').val(searchText);
-        
+
         $.ajax({
             type: "POST",
             url: URL_SearchBookingSheet,
@@ -98,7 +100,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                searchText: searchText,            
+                searchText: searchText,
             }),
             async: false,
             success: function (result) {
@@ -146,7 +148,7 @@
     }
 
     function pageselectCallback(page_index, jq) {
-        if (checkCurrentAction()) {
+        //if (checkCurrentAction()) {
             $('.required').removeClass('required');
 
             if (!ValidatePageSize())
@@ -158,7 +160,7 @@
                 BindbookingSheetList();
             else
                 IsCall = 'Y';
-        }
+        //}
     }
 
     function txtPageSize_OnChange() {
@@ -194,7 +196,7 @@
         debugger;
         $.ajax({
             type: "POST",
-            url: URL_BindExtndGrpLst,
+            url: URL_BindBookingSheetList,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -214,6 +216,56 @@
                 alert('Error: ' + result.responseText);
             }
         });
+    }
+
+    function PendingRecommendationsList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_PendingRecommendationsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+                addNumeric();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OpenTab(NewTab) {
+        debugger;
+
+            if (NewTab == "BS") {
+                //URL_LoadTab = URL_BindBookingSheetList;
+                $("[id*='tab']").removeClass('active');
+                $("#tabBkgsht").addClass('active');
+            }
+            if (NewTab == "PR") {
+                //URL_LoadTab = URL_PendingRecommendations;
+                $("[id*='tab']").removeClass('active');
+                $("#tabPdngrmdn").addClass('active');
+        }
+        if (NewTab == "BS") {
+            BindbookingSheetList();
+        }
+        else {
+            PendingRecommendationsList();
+        }
     }
 </script>
 
@@ -240,18 +292,18 @@
                                 Clients :
                             </td>
                             <td style="width:3%; vertical-align: middle;">
-                                @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList,"--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
+                                @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
                             </td>
                             <td style="width:10%;vertical-align: middle;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
                             @*<td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
-                                @objMessageKey.SortBy:
-                            </td>
-                            <td style="width:5%; vertical-align: middle;">
-                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
-                            </td>*@
+                                    @objMessageKey.SortBy:
+                                </td>
+                                <td style="width:5%; vertical-align: middle;">
+                                    @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                                </td>*@
                         </tr>
                     </table>
                 </div>
@@ -270,6 +322,21 @@
                             Page Size:
                             <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
+                    </div>
+                    <div class="grid_area">
+                        <div class="navigation_tabs">
+                            <div class="tabbable" id="divAlternateConfig">
+                                <input type="hidden" id="hdnTabName" value="TA" />
+                                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                    <li class="active" id="tabBkgsht">
+                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('BS')">Booking Sheet</a>
+                                    </li>
+                                    <li id="tabPdngrmdn">
+                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('PR')">Pending Recommendations</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">

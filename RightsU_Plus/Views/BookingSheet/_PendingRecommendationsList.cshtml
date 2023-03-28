@@ -1,0 +1,38 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+@{
+    int i = 0;
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>Sr.No.</th>
+            <th>Client Name</th>
+            <th>Proposal - CY</th>
+            <th>Cycle</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:center">1</td>
+            <td style="text-align:center">Malaysia Airline</td>
+            <td style="text-align:center">P-MH-1023-00053 - CY02</td>
+            <td style="text-align:center">0123 - 0123</td>
+            <td style="text-align:center">
+                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
+
+                <a title="Export" class="glyphicon glyphicon-export" style="cursor: pointer;"></a>
+            </td>
+        </tr>
+    </tbody>
+</table>

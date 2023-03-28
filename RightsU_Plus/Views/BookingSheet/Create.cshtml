@@ -1,7 +1,38 @@
 ﻿
+@using UTOFrameWork.FrameworkClasses
 @{
-    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
 }
 
-<h2>Create</h2>
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Create Booking Sheet
+                    </h2>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:1%;vertical-align: middle;text-align:center;">
+                                Clients :
+                            </td>
+                            <td style="width:3%; vertical-align: middle;">
+                                @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            </div>
+    </section>
+</div>

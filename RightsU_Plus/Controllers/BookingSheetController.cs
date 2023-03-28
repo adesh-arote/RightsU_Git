@@ -58,8 +58,8 @@ namespace RightsU_Plus.Controllers
 
             Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
 
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ddlClient = new SelectList(lstVendors, "Vendor_Code", "Vendor_Name");
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).Where(w => w.Party_Type == "C" && w.Is_Active == "Y").ToList();
+            ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
             //ViewBag.ddlClients = lstVendors;
 
             return View();
@@ -91,6 +91,28 @@ namespace RightsU_Plus.Controllers
             }
 
             return PartialView("_BookingSheetList", lst);
+        }
+
+        public ActionResult PendingRecommendationsList(int pageNo, int recordPerPage, string sortType)
+        {
+            List<Extended_Group> lst = new List<Extended_Group>();
+
+            int RecordCount = 10;
+            //RecordCount = lstExtended_Group_Searched.Count;
+            RecordCount = 10;
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Extended_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else if (sortType == "NA")
+                    lst = lstExtended_Group_Searched.OrderBy(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else
+                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            return PartialView("_PendingRecommendationsList", lst);
         }
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -147,7 +169,7 @@ namespace RightsU_Plus.Controllers
             Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
 
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ddlClient = new SelectList(lstVendors, "Vendor_Code", "Vendor_Name");
+            ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
 
             return View();
         }
