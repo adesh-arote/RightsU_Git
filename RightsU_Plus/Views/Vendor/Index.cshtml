@@ -160,8 +160,8 @@
                 }
                 if ($('input[name="Vendor"]:checked').val() == "C") {
                     AdditionalInfoTab('CR', '', 0);
-                    SwitchVendorClient();
                 }
+                SwitchVendorClient();
                 initializeChosen();
             }
         });
@@ -216,7 +216,7 @@
                 traditional: true,
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
-                dataType: "html", data: JSON.stringify({
+                data: JSON.stringify({
                     AL_Vendor_Detail_Code: VendorDetailCode,
                     PartyType: VendorClient,
                     Vendor_Code: VendorCode,

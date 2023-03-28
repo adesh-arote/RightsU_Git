@@ -4,8 +4,8 @@
     function SaveContentRule() {
         debugger;
         var returnVal = true;
-        var RuleName = $("#CRName").val();
-        var ShortRuleName = $("#CRShortName").val();
+        var RuleName = $.trim($("#CRName").val());
+        var ShortRuleName = $.trim($("#CRShortName").val());
         var VendorRuleCode = $("#hdnRuleCode").val();
         var Criteria = $("#hdnCriteria").val();
         var VendorCode = $("#hdnVendorCodeCR").val();
