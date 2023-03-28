@@ -15,6 +15,7 @@ namespace RightsU_Entities
         {
             this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
             this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
+            this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
         }
 
         public State EntityState { get; set; }
@@ -32,5 +33,6 @@ namespace RightsU_Entities
 
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
     }
 }

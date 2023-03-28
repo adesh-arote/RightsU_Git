@@ -1136,6 +1136,43 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Duration" Type="int" />
           <Property Name="Amorted_On" Type="datetime" />
         </EntityType>
+        <EntityType Name="AL_Booking_Sheet">
+          <Key>
+            <PropertyRef Name="AL_Booking_Sheet_Code" />
+          </Key>
+          <Property Name="AL_Booking_Sheet_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Recommendation_Code" Type="int" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="Booking_Sheet_No" Type="varchar" MaxLength="50" />
+          <Property Name="Version_No" Type="int" />
+          <Property Name="Movie_Content_Count" Type="int" />
+          <Property Name="Show_Content_Count" Type="int" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
+          <Property Name="Record_Status" Type="varchar" MaxLength="5" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Last_Action_By" Type="int" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AL_Booking_Sheet_Details">
+          <Key>
+            <PropertyRef Name="AL_Booking_Sheet_Details_Code" />
+          </Key>
+          <Property Name="AL_Booking_Sheet_Details_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Booking_Sheet_Code" Type="int" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Title_Content_Code" Type="int" />
+          <Property Name="Extended_Group_Code" Type="int" />
+          <Property Name="Columns_Code" Type="int" />
+          <Property Name="Group_Control_Order" Type="int" />
+          <Property Name="Validations" Type="varchar" MaxLength="50" />
+          <Property Name="Additional_Condition" Type="varchar(max)" />
+          <Property Name="Display_Name" Type="varchar" MaxLength="100" />
+          <Property Name="Allow_Import" Type="char" MaxLength="1" />
+          <Property Name="Columns_Value" Type="nvarchar(max)" />
+          <Property Name="Cell_Status" Type="char" MaxLength="1" />
+        </EntityType>
         <EntityType Name="AL_Lab">
           <Key>
             <PropertyRef Name="AL_Lab_Code" />
@@ -2443,6 +2480,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a pri
           <Property Name="File_Type" Type="varchar" MaxLength="2" />
           <Property Name="Mapped_By" Type="char" MaxLength="1" />
           <Property Name="Import_Type" Type="char" MaxLength="1" />
+          <Property Name="Record_Code" Type="int" />
         </EntityType>
         <EntityType Name="DM_Master_Log">
           <Key>
@@ -8383,6 +8421,78 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Aired_Details">
               <PropertyRef Name="Aired_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_AL_Booking_Sheet">
+          <End Role="AL_Booking_Sheet" Type="Self.AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet_Details" Type="Self.AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Extended_Columns">
+          <End Role="Extended_Columns" Type="Self.Extended_Columns" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet_Details" Type="Self.AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Extended_Group">
+          <End Role="Extended_Group" Type="Self.Extended_Group" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet_Details" Type="Self.AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Group">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet_Details" Type="Self.AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet_Details" Type="Self.AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AL_Booking_Sheet" Type="Self.AL_Booking_Sheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet">
+              <PropertyRef Name="Vendor_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15086,6 +15196,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Additional_Expense" EntityType="Self.Additional_Expense" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aired" EntityType="Self.Aired" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Aired_Details" EntityType="Self.Aired_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Booking_Sheet" EntityType="Self.AL_Booking_Sheet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Booking_Sheet_Details" EntityType="Self.AL_Booking_Sheet_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Lab" EntityType="Self.AL_Lab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_OEM" EntityType="Self.AL_OEM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Vendor_Details" EntityType="Self.AL_Vendor_Details" Schema="dbo" store:Type="Tables" />
@@ -16527,6 +16639,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Aired_Details_Aired" Association="Self.FK_Aired_Details_Aired">
             <End Role="Aired" EntitySet="Aired" />
             <End Role="Aired_Details" EntitySet="Aired_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" Association="Self.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Extended_Columns" Association="Self.FK_AL_Booking_Sheet_Details_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Extended_Group" Association="Self.FK_AL_Booking_Sheet_Details_Extended_Group">
+            <End Role="Extended_Group" EntitySet="Extended_Group" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Title" Association="Self.FK_AL_Booking_Sheet_Details_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Title_Content" Association="Self.FK_AL_Booking_Sheet_Details_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Vendor" Association="Self.FK_AL_Booking_Sheet_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
           </AssociationSet>
           <AssociationSet Name="FK_AL_Vendor_Details_Extended_Group" Association="Self.FK_AL_Vendor_Details_Extended_Group">
             <End Role="Extended_Group" EntitySet="Extended_Group" />
@@ -22264,6 +22400,32 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Vendor_Details" EntitySet="AL_Vendor_Details" />
           </AssociationSet>
           <EntitySet Name="AL_Lab" EntityType="RightsU_NeoModel.AL_Lab" />
+          <EntitySet Name="AL_Booking_Sheet" EntityType="RightsU_NeoModel.AL_Booking_Sheet" />
+          <EntitySet Name="AL_Booking_Sheet_Details" EntityType="RightsU_NeoModel.AL_Booking_Sheet_Details" />
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Vendor" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Extended_Columns" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns">
+            <End Role="Extended_Columns" EntitySet="Extended_Columns" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Extended_Group" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group">
+            <End Role="Extended_Group" EntitySet="Extended_Group" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Title" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Booking_Sheet_Details_Title_Content" Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Booking_Sheet_Details" EntitySet="AL_Booking_Sheet_Details" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23855,6 +24017,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Add_OnScreen" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Group_Config" />
           <NavigationProperty Name="AL_Vendor_Rule_Criteria" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_Extended_Columns" FromRole="Extended_Columns" ToRole="AL_Vendor_Rule_Criteria" />
+          <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" FromRole="Extended_Columns" ToRole="AL_Booking_Sheet_Details" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -25126,6 +25289,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Title" ToRole="Acq_Deal_Supplementary" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" FromRole="Title" ToRole="Syn_Deal_Supplementary" />
           <NavigationProperty Name="Title_Episode_Details" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_Title" FromRole="Title" ToRole="Title_Episode_Details" />
+          <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="Title" ToRole="AL_Booking_Sheet_Details" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -25390,6 +25554,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Vendor_OEM" Relationship="RightsU_NeoModel.FK_AL_Vendor_OEM_Vendor" FromRole="Vendor" ToRole="AL_Vendor_OEM" />
           <NavigationProperty Name="AL_Vendor_Rule" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Vendor" FromRole="Vendor" ToRole="AL_Vendor_Rule" />
           <NavigationProperty Name="AL_Vendor_TnC" Relationship="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" FromRole="Vendor" ToRole="AL_Vendor_TnC" />
+          <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="Vendor" ToRole="AL_Booking_Sheet" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -32953,6 +33118,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="File_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Import_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Record_Code" Type="Int32" />
         </EntityType>
         <EntityType Name="DM_Music_Title">
           <Key>
@@ -33137,6 +33303,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Content_Mapping" Relationship="RightsU_NeoModel.FK_Title_Content_Mapping_Title_Content" FromRole="Title_Content" ToRole="Title_Content_Mapping" />
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" FromRole="Title_Content" ToRole="MHCueSheetSong" />
           <NavigationProperty Name="Title_Episode_Details_TC" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" FromRole="Title_Content" ToRole="Title_Episode_Details_TC" />
+          <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Booking_Sheet_Details" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -37878,6 +38045,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" FromRole="Extended_Group" ToRole="Extended_Group_Config" />
           <NavigationProperty Name="AL_Vendor_Details" Relationship="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" FromRole="Extended_Group" ToRole="AL_Vendor_Details" />
+          <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" FromRole="Extended_Group" ToRole="AL_Booking_Sheet_Details" />
         </EntityType>
         <EntityType Name="Extended_Group_Config">
           <Key>
@@ -38163,6 +38331,122 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="AL_Booking_Sheet">
+          <Key>
+            <PropertyRef Name="AL_Booking_Sheet_Code" />
+          </Key>
+          <Property Name="AL_Booking_Sheet_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Recommendation_Code" Type="Int32" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="Booking_Sheet_No" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Version_No" Type="Int32" />
+          <Property Name="Movie_Content_Count" Type="Int32" />
+          <Property Name="Show_Content_Count" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Record_Status" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Last_Action_By" Type="Int32" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Booking_Sheet_Details" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="AL_Booking_Sheet" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="AL_Booking_Sheet_Details">
+          <Key>
+            <PropertyRef Name="AL_Booking_Sheet_Details_Code" />
+          </Key>
+          <Property Name="AL_Booking_Sheet_Details_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Booking_Sheet_Code" Type="Int32" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Title_Content_Code" Type="Int32" />
+          <Property Name="Extended_Group_Code" Type="Int32" />
+          <Property Name="Columns_Code" Type="Int32" />
+          <Property Name="Group_Control_Order" Type="Int32" />
+          <Property Name="Validations" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Additional_Condition" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Display_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Allow_Import" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Columns_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Cell_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Booking_Sheet_Details" ToRole="AL_Booking_Sheet" />
+          <NavigationProperty Name="Extended_Columns" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" FromRole="AL_Booking_Sheet_Details" ToRole="Extended_Columns" />
+          <NavigationProperty Name="Extended_Group" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" FromRole="AL_Booking_Sheet_Details" ToRole="Extended_Group" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="AL_Booking_Sheet_Details" ToRole="Title" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="AL_Booking_Sheet_Details" ToRole="Title_Content" />
+        </EntityType>
+        <Association Name="FK_AL_Booking_Sheet_Details_AL_Booking_Sheet">
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet_Details" Role="AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Extended_Columns">
+          <End Type="RightsU_NeoModel.Extended_Columns" Role="Extended_Columns" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet_Details" Role="AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Columns">
+              <PropertyRef Name="Columns_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Columns_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Extended_Group">
+          <End Type="RightsU_NeoModel.Extended_Group" Role="Extended_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet_Details" Role="AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Extended_Group">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Extended_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet_Details" Role="AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Booking_Sheet_Details_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet_Details" Role="AL_Booking_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Booking_Sheet_Details">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -44492,6 +44776,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Master_Import">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Master_Import">
               <MappingFragment StoreEntitySet="DM_Master_Import">
+                <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
                 <ScalarProperty Name="Import_Type" ColumnName="Import_Type" />
                 <ScalarProperty Name="Mapped_By" ColumnName="Mapped_By" />
                 <ScalarProperty Name="File_Type" ColumnName="File_Type" />
@@ -48096,6 +48381,45 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="AL_Lab_Short_Name" ColumnName="AL_Lab_Short_Name" />
                 <ScalarProperty Name="AL_Lab_Name" ColumnName="AL_Lab_Name" />
                 <ScalarProperty Name="AL_Lab_Code" ColumnName="AL_Lab_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Booking_Sheet">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Booking_Sheet">
+              <MappingFragment StoreEntitySet="AL_Booking_Sheet">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Show_Content_Count" ColumnName="Show_Content_Count" />
+                <ScalarProperty Name="Movie_Content_Count" ColumnName="Movie_Content_Count" />
+                <ScalarProperty Name="Version_No" ColumnName="Version_No" />
+                <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="AL_Recommendation_Code" ColumnName="AL_Recommendation_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Booking_Sheet_Details">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Booking_Sheet_Details">
+              <MappingFragment StoreEntitySet="AL_Booking_Sheet_Details">
+                <ScalarProperty Name="Cell_Status" ColumnName="Cell_Status" />
+                <ScalarProperty Name="Columns_Value" ColumnName="Columns_Value" />
+                <ScalarProperty Name="Allow_Import" ColumnName="Allow_Import" />
+                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
+                <ScalarProperty Name="Additional_Condition" ColumnName="Additional_Condition" />
+                <ScalarProperty Name="Validations" ColumnName="Validations" />
+                <ScalarProperty Name="Group_Control_Order" ColumnName="Group_Control_Order" />
+                <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
+                <ScalarProperty Name="Extended_Group_Code" ColumnName="Extended_Group_Code" />
+                <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Details_Code" ColumnName="AL_Booking_Sheet_Details_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

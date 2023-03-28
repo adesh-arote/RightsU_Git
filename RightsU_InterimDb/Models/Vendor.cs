@@ -37,6 +37,7 @@ namespace RightsU_InterimDb.Models
             this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
             this.AL_Vendor_Rule = new HashSet<AL_Vendor_Rule>();
             this.AL_Vendor_TnC = new HashSet<AL_Vendor_TnC>();
+            this.AL_Booking_Sheet = new HashSet<AL_Booking_Sheet>();
         }
     
     	public State EntityState { get; set; }    public int Vendor_Code { get; set; }
@@ -94,5 +95,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
         public virtual ICollection<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
         public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
+        public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
     }
 }

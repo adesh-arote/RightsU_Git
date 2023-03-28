@@ -1063,6 +1063,14 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" />
         <EntityTypeShape EntityType="RightsU_NeoModel.AL_Lab" Width="1.5" PointX="47.375" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet" Width="1.5" PointX="35.5" PointY="89.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet_Details" Width="1.5" PointX="37.75" PointY="84.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
