@@ -108,6 +108,7 @@ function fileCheck(obj) {
 //    //window.location.href = URL;
 //}
 function BindExtended(vmode) {
+
     if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
         var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
         $("#hdnTabCode").val(hdnActiveTabValue);

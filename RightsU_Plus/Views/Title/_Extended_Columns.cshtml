@@ -161,7 +161,8 @@
                 data: JSON.stringify({
                     ColumnCode: ColumnCode,
                     RowNum: obj,
-                    IsExists: IsExists
+                    IsExists: IsExists,
+                    Ext_Grp_Code: $('#hdnTabCode').val()
                 }),
                 async: false,
                 success: function (result) {

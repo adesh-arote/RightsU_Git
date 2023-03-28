@@ -29,5 +29,6 @@ namespace RightsU_Entities
         public string Column_Value { get; set; }
         public string IsDelete { get; set; }
         public int? Extended_Group_Code { get; set; }
+        public int? Row_No { get; set; }
     }
 }
