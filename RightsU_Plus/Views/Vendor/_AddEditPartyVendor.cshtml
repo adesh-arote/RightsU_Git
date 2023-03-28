@@ -25,6 +25,7 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
+        //objMessageKey.ShortCode = "Short Name";
     }
     LoginEntity objLoginEntity = new LoginEntity();
     if (Session["objLoginEntity"] != null)
@@ -622,7 +623,7 @@
                                 }
                             </td>
                             <td>
-                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.FaxNo.
+                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.ShortCode.
 
                             </td>
                             <td>
@@ -638,11 +639,11 @@
                                 <hr style="visibility:hidden" />
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    <span>@objVendor.Fax_No</span>
+                                    <span>@objVendor.Short_Code</span>
                                 }
                                 else
                                 {
-                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" class="numeric" maxlength="20" value="@objVendor.Fax_No" style="width: 100%;" />
+                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo"  value="@objVendor.Short_Code" style="width: 100%;" />
                                 }
                             </td>
                         </tr>

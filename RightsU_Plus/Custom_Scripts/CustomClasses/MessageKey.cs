@@ -868,6 +868,7 @@ public class MessageKey
     public string EditPartyDetails { get; set; }
     public string ViewPartyDetails { get; set; }
     public string FaxNo { get; set; }
+    public string ShortCode { get; set; }
     public string GSTNo { get; set; }
     public string STNo { get; set; }
     public string VATNo { get; set; }

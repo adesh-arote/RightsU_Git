@@ -872,7 +872,7 @@ namespace RightsU_Plus.Controllers
                 objVendor.Vendor_Name = Vendor_Name;
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
-                objVendor.Fax_No = Vendor_FaxNo;
+                objVendor.Short_Code = Vendor_FaxNo;
                 objVendor.ST_No = Vendor_STNo;
                 objVendor.VAT_No = Vendor_VATNo;
                 objVendor.TIN_No = Vendor_TINNo;
@@ -980,7 +980,7 @@ namespace RightsU_Plus.Controllers
                 objVendor.Vendor_Name = Vendor_Name;
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
-                objVendor.Fax_No = Vendor_FaxNo;
+                objVendor.Short_Code = Vendor_FaxNo;
                 objVendor.ST_No = Vendor_STNo;
                 objVendor.VAT_No = Vendor_VATNo;
                 objVendor.TIN_No = Vendor_TINNo;
@@ -1056,7 +1056,7 @@ namespace RightsU_Plus.Controllers
             Addedd_Role_Code.ToList<Vendor_Role>().ForEach(t => objVendor.Vendor_Role.Add(t));
             Deleted_Role_Code.ToList<Vendor_Role>().ForEach(t => t.EntityState = State.Deleted);
             #endregion
-            objVendor.Short_Code = objUser_MVC.Short_Code;
+            //objVendor.Short_Code = objUser_MVC.Short_Code;
             objVendor.Last_Updated_Time = System.DateTime.Now;
 
             #region --- Additional Info Methods ---
