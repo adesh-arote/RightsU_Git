@@ -152,6 +152,8 @@
     <Compile Include="Acq_Syn_List_Search.cs" />
     <Compile Include="Airlines\AL_Booking_Sheet.cs" />
     <Compile Include="Airlines\AL_Booking_Sheet_Details.cs" />
+    <Compile Include="Airlines\AL_Recommendation.cs" />
+    <Compile Include="Airlines\AL_Recommendation_Content.cs" />
     <Compile Include="Assign_Music_List.cs" />
     <Compile Include="Content_Entities\Content_Music_Link.cs" />
     <Compile Include="Content_Entities\Content_Status_History.cs" />

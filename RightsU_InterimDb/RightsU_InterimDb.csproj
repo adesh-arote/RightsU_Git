@@ -328,6 +328,12 @@
     <Compile Include="Models\AL_OEM.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AL_Recommendation.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Recommendation_Content.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AL_Vendor_Details.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

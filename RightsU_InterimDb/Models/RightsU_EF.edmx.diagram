@@ -1071,6 +1071,13 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation" Width="1.5" PointX="30.875" PointY="95" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation_Content" Width="1.5" PointX="33.125" PointY="104.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
