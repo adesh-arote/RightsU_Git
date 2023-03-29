@@ -17,6 +17,8 @@
     var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
     var URL_Bind_Title_List = '@Url.Action("Bind_Title_List", "Title_List")';
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
+    var VarTitleCodeModel = '@Model.Title_Code';
+
     $(document).ready(function () {
         $("#_hdnRecordLockingCode").val(recordLockingCode);
         initializeChosen();
@@ -75,6 +77,14 @@
         $('#txtTitleSearch').val('');
 
         var DealTypeCode = $('#Deal_Type_Code').val();
+
+        if (DealTypeCode == "11") {
+            $("#liExtGrp_100").show();
+        } else {
+            $("#liExtGrp_100").hide();
+            $("#EpisodeTabAdditionalField").hide();
+        }
+
         $.ajax({
             type: "POST",
             url: URL_OnChangeBindTitle,

@@ -1556,7 +1556,7 @@ namespace RightsU_Plus.Controllers
             if (hdnColumnValueCode == null || hdnColumnValueCode == "")
                 hdnColumnValueCode = "0";
             string[] arrColumnsValueCode = hdnColumnValueCode.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            
+
             int ColumnCode = Convert.ToInt32(hdnExtendedColumnsCode);
             if (hdnType == "A" || hdnType == "")
             {
@@ -1591,6 +1591,12 @@ namespace RightsU_Plus.Controllers
                     }
                 }
                 else if (hdnIsDefined_Values.Trim().ToUpper() == "N" && hdnControlType.Trim().ToUpper() == "TXT")
+                {
+                    objMapExtendedColumns.Column_Value = hdnName;
+
+                    objMapExtendedColumns.Columns_Value_Code = null;
+                }
+                else if (hdnIsDefined_Values.Trim().ToUpper() == "N" && (hdnControlType.Trim().ToUpper() == "DATE" || hdnControlType.Trim().ToUpper() == "INT"))
                 {
                     objMapExtendedColumns.Column_Value = hdnName;
 
@@ -1641,8 +1647,8 @@ namespace RightsU_Plus.Controllers
                 //{
                 //    gvExtended.Remove(obj);
                 //}
-                
-                
+
+
                 int MapExtendedColumnCode = 0;
 
                 if (hdnMEColumnCode != "")
@@ -2954,7 +2960,7 @@ namespace RightsU_Plus.Controllers
             lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
             TabShortName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).Select(x => x.Short_Name).FirstOrDefault();
-            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();            
+            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();
             ViewBag.ExtendedColums = lstextCol;
             var lstEditRecord = lstAddedExtendedColumns;
             var lstEditRecordDB = gvExtended;
@@ -2962,11 +2968,11 @@ namespace RightsU_Plus.Controllers
             if (Operation == "E")
             {
                 if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x=>x.Record_Code == Title_Code && x.Row_No == rowno) != 0)
-                {                    
-                    lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList(); 
+                {
+                    lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList();
                 }
                 else if(gvExtended.Count!=0)
-                {                    
+                {
                     var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code== Title_Code && x.Row_No == rowno).Distinct().ToList();
                     lstEditRecordDB = gvExtended.Where(w => lstColumnRowNo.Any(a => w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).ToList();
                 }
@@ -3002,7 +3008,7 @@ namespace RightsU_Plus.Controllers
                         else
                         {
                             SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Columns_Value_Code).FirstOrDefault());
-                        }                        
+                        }
                     }
                     else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
                     {
@@ -3013,7 +3019,7 @@ namespace RightsU_Plus.Controllers
                         else
                         {
                             SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Columns_Value_Code1).FirstOrDefault());
-                        }                        
+                        }
                     }
                     else if (TabControls.Control_Type == "TXT" || TabControls.Control_Type == "INT" || TabControls.Control_Type == "DBL" || TabControls.Control_Type == "DATE" || TabControls.Control_Type == "CHK")
                     {
@@ -3024,44 +3030,52 @@ namespace RightsU_Plus.Controllers
                         else
                         {
                             SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Name).FirstOrDefault());
-                        }                        
+                        }
                     }
-                    
+
+                }
+
+                string required = "";
+                var objExtGrpConfig = lstextGrpConfig.Where(w => w.Columns_Code == TabControls.Columns_Code).FirstOrDefault();
+                if (objExtGrpConfig.Validations.Contains("man"))
+                {
+                    //<style>input:invalid {background-color: white;border-color: #bbb;}</style>
+                    //required = "required";
                 }
 
                 if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
                 {
-                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     i++;
                 }
                 else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
                 {
-                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     i++;
                 }
                 else if (TabControls.Control_Type == "TXT")
                 {
-                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, j, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, j, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     j++;
                 }
                 else if (TabControls.Control_Type == "DATE")
                 {
-                    strAddRow = strAddRow + getDATE(TabControls.Columns_Code, k, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getDATE(TabControls.Columns_Code, k, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     k++;
                 }
                 else if (TabControls.Control_Type == "INT")
                 {
-                    strAddRow = strAddRow + getNumber(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getNumber(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     l++;
                 }
                 else if (TabControls.Control_Type == "DBL")
                 {
-                    strAddRow = strAddRow + getDBL(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getDBL(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     l++;
                 }
                 else if (TabControls.Control_Type == "CHK")
                 {
-                    strAddRow = strAddRow + getCheckbox(TabControls.Columns_Code, m, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues);
+                    strAddRow = strAddRow + getCheckbox(TabControls.Columns_Code, m, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required);
                     m++;
                 }
 
@@ -3085,7 +3099,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult URL_BindDynamicGrid(int title_code = 0, int Ext_Grp_Code = 0, string operation = "")
         {
             string strtableHeader = "";
-            string tabNames = ""; 
+            string tabNames = "";
             string tabTable = "";
             string[] arrStr;
             int i = 1;
@@ -3213,7 +3227,7 @@ namespace RightsU_Plus.Controllers
                         m++;
                     }
                 }
-                    
+
             }
             strtableHeader = strtableHeader.Replace("UTOsplTag", "");
             if (ViewOperation != "VIEW")
@@ -3235,8 +3249,8 @@ namespace RightsU_Plus.Controllers
 
             return strtableHeader + "~" + (i - 1).ToString();
         }
-        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
-        {            
+        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
+        {
             string strDDL;
             int RoleCode = 0;
             if (SelectedValues == null)
@@ -3246,7 +3260,7 @@ namespace RightsU_Plus.Controllers
 
             if (multiple == "")
             {
-                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\">";
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\"" + required + ">";
                 strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
             }
             else
@@ -3270,7 +3284,7 @@ namespace RightsU_Plus.Controllers
                     else
                     {
                         strDDL = strDDL + "<option value=" + T.Talent_Code + ">" + T.Talent_Name + "</option>";
-                    }                    
+                    }
                 }
             }
             else
@@ -3285,41 +3299,41 @@ namespace RightsU_Plus.Controllers
                     else
                     {
                         strDDL = strDDL + "<option value=" + ECV.Columns_Value_Code + ">" + ECV.Columns_Value + "</option>";
-                    }                    
+                    }
                 }
             }
-            
+
             strDDL = strDDL + "</select>";
 
             _fieldList = _fieldList + Columns_Code + "ddPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
 
             return strDDL;
         }
-        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
+        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
         {
-            string getText = "<input type=\"text\"  id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" value=\"" + SelectedValues + "\">";
+            string getText = "<input type=\"text\"  id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" value=\"" + SelectedValues + "\"" + required + ">";
             _fieldList = _fieldList + Columns_Code + "txtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getText;
         }
-        public string getDATE(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
-        {           
-            string getDATE = "<input type=\"text\" class=\"datepicker\" id =\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" placeholder=\"DD / MM / YYYY\" style=\"height: 30px width:125px; \" value=\"" + SelectedValues + "\">";
+        public string getDATE(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
+        {
+            string getDATE = "<input type=\"text\" class=\"datepicker\" id =\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" placeholder=\"DD / MM / YYYY\" style=\"height: 30px width:125px; \" value=\"" + SelectedValues + "\"" + required + ">";
             _fieldList = _fieldList + TabShortName + "dtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getDATE;
         }
-        public string getNumber(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
+        public string getNumber(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
         {
-            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\"" + required + ">";
             _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
-        public string getDBL(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
+        public string getDBL(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
         {
-            string getNumber = "<input type=\"number\" value=\"" + "" + "\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\">";
+            string getNumber = "<input type=\"number\" value=\"" + "" + "\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\"" + required + ">";
             _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getNumber;
         }
-        public string getCheckbox(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues)
+        public string getCheckbox(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required)
         {
             string strChecked = "";
             string User_Value = "";
@@ -3332,14 +3346,14 @@ namespace RightsU_Plus.Controllers
 
             if (User_Value == "") User_Value = "YES";
 
-            string getCheckbox = "<input type=\"checkbox\" value=\"" + User_Value + "\" id=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" style=\"margin-left: 4px;\"" + strChecked + ">";
+            string getCheckbox = "<input type=\"checkbox\" value=\"" + User_Value + "\" id=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" style=\"margin-left: 4px;\"" + strChecked + " " + required + ">";
             _fieldList = _fieldList + TabShortName + "chkPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getCheckbox;
         }
 
         public string PopupSaveInSession(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex, int Title_Code = 0)
         {
-            
+
             int TabCode = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).Select(b => b.Extended_Group_Code).FirstOrDefault();
 
             int rowNum = 0;
@@ -3351,7 +3365,7 @@ namespace RightsU_Plus.Controllers
             }
             else if(MapExtDetail.Count > 0 && Operation == "A")
             {
-                rowNum = (int)MapExtDetail.Where(b => b.Record_Code == Title_Code).Max(a => a.Row_No).Value;                
+                rowNum = (int)MapExtDetail.Where(b => b.Record_Code == Title_Code).Max(a => a.Row_No).Value;
             }
             else
             {
@@ -3394,11 +3408,11 @@ namespace RightsU_Plus.Controllers
                         {
                             if (ExtendedColumn.Additional_Condition != "" && ExtendedColumn.Additional_Condition != null)
                                 RoleCode = Convert.ToInt32(ExtendedColumn.Additional_Condition);
-                            t = string.Join(",", new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode) && dtextval.Contains(x.Talent_Code)).Where(y => y.Is_Active == "Y").Select(b => b.Talent_Name).ToList());                            
+                            t = string.Join(",", new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode) && dtextval.Contains(x.Talent_Code)).Where(y => y.Is_Active == "Y").Select(b => b.Talent_Name).ToList());
                         }
                         else
                         {
-                            t = string.Join(",", new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => dtextval.Contains(x.Columns_Value_Code)).Select(b => b.Columns_Value).ToList());                            
+                            t = string.Join(",", new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => dtextval.Contains(x.Columns_Value_Code)).Select(b => b.Columns_Value).ToList());
                         }
 
                         Output = Output + "<td data-configitem =\"" + TabCode + "\">" + t + "</td>";
@@ -3410,7 +3424,7 @@ namespace RightsU_Plus.Controllers
                     }
                     //obj.Columns_Value_Code = vals[0].Replace('-', ',');
                     //obj.Columns_Value_Code = Convert.ToInt32(vals[0]);
-                    arrColumnsValueCode = vals[0].Replace('-', ',').Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);                    
+                    arrColumnsValueCode = vals[0].Replace('-', ',').Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     if (ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "Y")
                     {
                         foreach (string strColumnCode in arrColumnsValueCode)
@@ -3427,7 +3441,7 @@ namespace RightsU_Plus.Controllers
                         {
                             objMapExtCol.Columns_Value_Code = Convert.ToInt32(strColumnCode);
                             obj.Columns_Value_Code = Convert.ToInt32(strColumnCode);
-                        }                        
+                        }
                     }
 
                 }
@@ -3435,11 +3449,11 @@ namespace RightsU_Plus.Controllers
                 {
                     Output = Output + "<td>" + vals[0] + "</td>";
                     obj.Name = vals[0];
-                    objMapExtCol.Column_Value = vals[0];                    
+                    objMapExtCol.Column_Value = vals[0];
                 }
 
                 if (Operation == "A")
-                {                    
+                {
                     obj.Columns_Code = Convert.ToInt32(vals[1]);
                     //if (arrColumnsValueCode.Split(',').Count() <= 1)
                     //    obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
@@ -3526,9 +3540,9 @@ namespace RightsU_Plus.Controllers
                 {
                     Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"PopupEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"PopupDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></td>";
                 }
-                
+
                 Output = Output + "</tr>";
-            }            
+            }
 
             return Output;
         }
@@ -3584,13 +3598,13 @@ namespace RightsU_Plus.Controllers
             //}
 
 
-            
+
             //objMEc.Columns_Code = ColumnCode;
             //if (hdnColumnValueCode.Split(',').Count() <= 0)
             //    objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
 
 
-            
+
 
             //if (hdnType == "D")
             //{
@@ -3824,6 +3838,18 @@ namespace RightsU_Plus.Controllers
             obj.Add("ErrorMsg", "Deal Deleted successfully");
 
             return Json(obj);
+        }
+
+        public ActionResult AddEditEpisodeData(string EpisodeNumber, string Remark, int TitleCode)
+        {
+            string TDBind = "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" value = \"" + EpisodeNumber + "\" /> </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"" + Remark + "\"  /> </td> <td> <a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"PostEpisodeDetails()\"></a> </td> </tr>";
+            return Json(TDBind);
+        }
+
+        public ActionResult SaveEpisodeData(string EpisodeNumber, string Remark, int TitleCode)
+        {
+            string TDBind = "<tr><td><span id=\"spnEpisodeNumber\">" + EpisodeNumber + "</span></td><td><span id=\"spnEpisodeRemark\">" + Remark + "</span></td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails()\"></a></td></tr>";
+            return Json(TDBind);
         }
 
         #endregion

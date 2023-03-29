@@ -23,6 +23,7 @@
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
     var URL_BindFieldGrid = '@Url.Action("BindFieldGrid", "Title")';
     var URL_SaveInSession = '@Url.Action("PopupSaveInSession", "Title")';
+    var VarTitleCodeModel = '@Model.Title_Code';
 
     var chosenTerritory = [];
     var chosenCountry = [];
@@ -169,6 +170,14 @@
         $('#txtTitleSearch').val('');
 
         var DealTypeCode = $('#Deal_Type_Code').val();
+
+        if (DealTypeCode == "11") {
+            $("#liExtGrp_100").show();
+        } else {
+            $("#liExtGrp_100").hide();
+            $("#EpisodeTabAdditionalField").hide();
+        }
+
         $.ajax({
             type: "POST",
             url: URL_OnChangeBindTitle,
@@ -527,13 +536,31 @@
                 }
 
                 debugger;
+                //var ValID = fld[0];
                 if ($(a).val() == null) {
                     //showAlert('I', 'Please enter details');
                     //hideLoading();
                     //return;
+                    //let v = $(a).val();
+                    //if ($(a).prop('required')) {
+                    //    if (v == "") {
+                    //        $("#" + ValID).addClass("required");
+                    //        showAlert("E", "Please fill out the required fields");
+                    //        hideLoading();
+                    //        return false;
+                    //    }
+                    //}
                 }
                 else {
                     let v = $(a).val().toString();
+                    //if ($(a).prop('required')) {
+                    //    if (v == "") {
+                    //        $("#" + ValID).addClass("required");
+                    //        showAlert("E", "Please fill out the required fields");
+                    //        hideLoading();
+                    //        return false;
+                    //    }
+                    //}
                     if ($(a).is("select")) {
                         vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
                         //if ($(a).prop('multiple')) {
@@ -1109,7 +1136,7 @@
                         </a>
                         <h2><label id="TabwiseName"></label></h2>
                     </div>
-                    <div class="modal_block" style="padding: 17px;">
+                    <div class="modal_block" style="padding: 17px; overflow:unset">
                         <div id="TabwisePopup">                        
                         </div>
                     </div>

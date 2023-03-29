@@ -223,7 +223,7 @@
     }
 
     function ValidateGridRow(Control) {
-
+        debugger;
         if (Control != "imgDelete_") {
             var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
             var values = ddlFieldNameList.split("~");
@@ -234,6 +234,22 @@
                 if ($("#" + $("#hdnRowNum").val() + "_txtControlType").length > 0) {
                     if ($("#" + $("#hdnRowNum").val() + "_txtControlType").val() == "") {
                         //showAlert("E","Please Enter text");
+                        $("#" + $("#hdnRowNum").val() + "_txtControlType").addClass("required");
+                        return false;
+                    }
+                }
+            }
+            else if (Control_Type == "DATE") {
+                if ($("#" + $("#hdnRowNum").val() + "_txtControlType").length > 0) {
+                    if ($("#" + $("#hdnRowNum").val() + "_txtControlType").val() == "") {
+                        $("#" + $("#hdnRowNum").val() + "_txtControlType").addClass("required");
+                        return false;
+                    }
+                }
+            }
+            else if (Control_Type == "INT") {
+                if ($("#" + $("#hdnRowNum").val() + "_txtControlType").length > 0) {
+                    if ($("#" + $("#hdnRowNum").val() + "_txtControlType").val() == "") {
                         $("#" + $("#hdnRowNum").val() + "_txtControlType").addClass("required");
                         return false;
                     }
@@ -413,7 +429,14 @@
 
 
                 }
-
+                else if (Control_Type == "DATE") {
+                    $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                    $("#hdnName").val($("#" + value + "_txtControlType").val());
+                }
+                else if (Control_Type == "INT") {
+                    $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                    $("#hdnName").val($("#" + value + "_txtControlType").val());
+                }
 
                 if (ColumnValueCode != null) {
                     if (ColumnValueCode.length == 1)
@@ -439,7 +462,7 @@
 
                 var ddlControlTypeId = "#" + parseInt(value) + "_ddlControlType";
 
-                if (Control_Type != "TXT") {
+                if (Control_Type != "TXT" && Control_Type != "DATE" && Control_Type != "INT") {
                     //$("#hdnName").val($(ddlControlTypeId + " option:selected").text());
                     //var test = $(ddlControlTypeId + " option:selected").text().join(',');
                     //$("#hdnName").val(test);
@@ -789,6 +812,13 @@
                         $("#hdnName").val($("#" + value + "_txtControlType").val());
 
 
+                    } else if (Control_Type == "DATE") {
+                        $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                        $("#hdnName").val($("#" + value + "_txtControlType").val());
+                    }
+                    else if (Control_Type == "INT") {
+                        $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                        $("#hdnName").val($("#" + value + "_txtControlType").val());
                     }
 
 
@@ -816,7 +846,7 @@
 
                     var ddlControlTypeId = "#" + parseInt(value) + "_ddlControlType";
 
-                    if (Control_Type != "TXT") {
+                    if (Control_Type != "TXT" && Control_Type != "DATE" && Control_Type != "INT") {
                         //$("#hdnName").val($(ddlControlTypeId + " option:selected").text());
                         //var test = $(ddlControlTypeId + " option:selected").text().join(',');
                         //$("#hdnName").val(test);
@@ -1077,6 +1107,28 @@
                 //    $("#" + count + '_txtControlType').val(labelName);
                 //else
                 //    $("#" + count + '_txtControlType').val('');
+                $("#" + count + '_txtControlType').val(labelName);
+
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+            }
+            else if (Control_Type == "DATE") {
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "";
+                $("#" + count + '_txtControlType').prop("type", "date");
+                $("#" + count + '_txtControlType').val(labelName);
+
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+            }
+            else if (Control_Type == "INT") {
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "";
+                $("#" + count + '_txtControlType').prop("type", "number");
                 $("#" + count + '_txtControlType').val(labelName);
 
                 if (document.getElementById(count + '_ddlControlType') != null)

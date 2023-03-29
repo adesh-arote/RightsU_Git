@@ -20,7 +20,16 @@
 }
 
 <script>
+    var URL_SaveEpisodeData = '@Url.Action("SaveEpisodeData", "Title")';
+    var URL_EditEpisodeData = '@Url.Action("AddEditEpisodeData", "Title")';
+
     $('#tabs ul li').click(function () {
+        debugger;
+        if ($("#hdnRowNum").val() != "") {
+            showAlert("e", "Please complete add/edit operation.", "");
+            return false;
+        }
+        $("#btnAddAdditional").show();
         $(this).addClass('active').siblings().removeClass('active');
         var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
         $("#hdnTabCode").val(hdnActiveTabValue);
@@ -34,10 +43,18 @@
         if ($("#hdnTabAddEditType").val() == 'row') {
             $('.divgvAdditionalFieldGrid').hide();
             $('.divgvAdditionalField').show();
+            $("#EpisodeTabAdditionalField").hide();
         }
         else if ($("#hdnTabAddEditType").val() == 'grid') {
             $('.divgvAdditionalField').hide();
             $('.divgvAdditionalFieldGrid').show();
+            $("#EpisodeTabAdditionalField").hide();
+        }
+        if (hdnActiveTabValue == "100") {
+            $("#EpisodeTabAdditionalField").show();
+            $('.divgvAdditionalField').hide();
+            $('.divgvAdditionalFieldGrid').hide();
+            $("#btnAddAdditional").hide();
         }
         ShowHideTabwiseGrid();
         hideaddPopup();
@@ -68,7 +85,60 @@
                 $(this).show();
             }
         });
-    }    
+    }
+
+    function EditEpisodeDetails() {
+        var spnEpisodeNumber = $("#spnEpisodeNumber").html();
+        var spnEpisodeRemark = $("#spnEpisodeRemark").html();
+        var TitleCode = VarTitleCodeModel;
+
+        //$("#ViewAddEpisodeTable").empty();
+        //$("#ViewAddEpisodeTable").html('<tr id="trGrid_EpisodeNum" data-configitem="1"> <td> <input type="text" id="txtEpisodeNumber" /> </td> <td> <input type="text" id="txtRemark" style="width:100%" /> </td> <td> <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a> </td> </tr>');
+
+        $.ajax({
+            type: "POST",
+            url: URL_EditEpisodeData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                EpisodeNumber: spnEpisodeNumber,
+                Remark: spnEpisodeRemark,
+                TitleCode: TitleCode
+            }),
+            success: function (result) {
+                debugger;
+                $("#ViewAddEpisodeTable").empty();
+                $("#ViewAddEpisodeTable").html(result);
+            }
+        });
+    }
+
+    function PostEpisodeDetails() {
+        debugger;
+        var EpisodeNumber = $("#txtEpisodeNumber").val();
+        var EpisodeRemark = $("#txtRemark").val();
+        var TitleCode = VarTitleCodeModel;
+        $("#ViewAddEpisodeTable").empty();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveEpisodeData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                EpisodeNumber: EpisodeNumber,
+                Remark: EpisodeRemark,
+                TitleCode: TitleCode
+            }),
+            success: function (result) {
+                debugger;
+                $("#ViewAddEpisodeTable").empty();
+                $("#ViewAddEpisodeTable").html(result);
+            }
+        });
+    }
 </script>
 
 <div id="tabs" class="tabbable">
@@ -91,11 +161,64 @@
                 <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name" data-bind="@item.Short_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
                 i++;
             }
+            <li id="liExtGrp_100" class="@ClsActive" data-configitem="100" data-content="" data-tabname="Episode" data-bind="E"><a data="" id="tab_1" href="#E" toggle="tab" role="tab" data-tabname="E" data-configitem="100"> Episode </a></li>
         }
     </ul>
     <input type="hidden" name="name" id="hdnTabCode" value="0" />
     <input type="hidden" name="name" id="hdnTabAddEditType" value="0" />
-    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />    
+    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
     <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
     <div class="divgvAdditionalFieldGrid" style="text-align-last:@(textalignlast);"></div>
+    <div id="EpisodeTabAdditionalField" style="text-align-last:@(textalignlast);">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th class="custom_col_name">Number of Episodes</th>
+                    <th class="custom_col_key">Remark</th>
+                    <th class="custom_col_action">Action</th>
+                </tr>
+            </thead>
+            <tbody id="ViewAddEpisodeTable">
+                <tr id="trGrid_EpisodeNum" data-configitem="1">
+                    <td>
+                        <input type="text" id="txtEpisodeNumber" />
+                    </td>
+                    <td>
+                        <input type="text" id="txtRemark" style="width:100%" />
+                    </td>
+                    <td>
+                        <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a>
+                    </td>
+                </tr>
+                @*<tr>
+                        <td>
+                            <span id="spnEpisodeNumber"></span>
+                        </td>
+                        <td>
+                            <span id="spnEpisodeRemark"></span>
+                        </td>
+                        <td>
+                            <a class="glyphicon glyphicon-pencil" title="Edit" onclick="EditEpisodeDetails()"></a>
+                        </td>
+                    </tr>*@
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        var DealTypeCode = $('#Deal_Type_Code').val();
+        if (DealTypeCode != "11") {
+            $("#liExtGrp_100").hide();
+        }
+
+        $("#EpisodeTabAdditionalField").hide();
+        $("#txtEpisodeNumber").numeric({
+            allowMinus: false,
+            allowThouSep: true,
+            allowDecSep: true
+        });
+    })
+</script>
