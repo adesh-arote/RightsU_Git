@@ -8231,5 +8231,249 @@ namespace RightsU_BLL
 
     }
 
+    public class AL_Booking_Sheet_Service : BusinessLogic<AL_Booking_Sheet>
+    {
+        private readonly AL_Booking_Sheet_Repository objRepository;
+
+        public AL_Booking_Sheet_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Booking_Sheet_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Booking_Sheet> SearchFor(Expression<Func<AL_Booking_Sheet, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Booking_Sheet GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Booking_Sheet objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Booking_Sheet objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Booking_Sheet objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Booking_Sheet_Code == objToValidate.AL_Booking_Sheet_Code).Count() > 0)
+            {
+                resultSet = "Booking sheet already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Booking_Sheet_Details_Service : BusinessLogic<AL_Booking_Sheet_Details>
+    {
+        private readonly AL_Booking_Sheet_Details_Repository objRepository;
+
+        public AL_Booking_Sheet_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Booking_Sheet_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Booking_Sheet_Details> SearchFor(Expression<Func<AL_Booking_Sheet_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Booking_Sheet_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Booking_Sheet_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Booking_Sheet_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Booking_Sheet_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Booking_Sheet_Details_Code == objToValidate.AL_Booking_Sheet_Details_Code).Count() > 0)
+            {
+                resultSet = "Booking sheet details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Recommendation_Service : BusinessLogic<AL_Recommendation>
+    {
+        private readonly AL_Recommendation_Repository objRepository;
+
+        public AL_Recommendation_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Recommendation_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Recommendation> SearchFor(Expression<Func<AL_Recommendation, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Recommendation GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Recommendation objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Recommendation objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Recommendation objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Recommendation_Code == objToValidate.AL_Recommendation_Code).Count() > 0)
+            {
+                resultSet = "Recommendation already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Recommendation_Content_Service : BusinessLogic<AL_Recommendation_Content>
+    {
+        private readonly AL_Recommendation_Content_Repository objRepository;
+
+        public AL_Recommendation_Content_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Recommendation_Content_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Recommendation_Content> SearchFor(Expression<Func<AL_Recommendation_Content, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Recommendation_Content GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Recommendation_Content objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Recommendation_Content objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Recommendation_Content objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Recommendation_Content_Code == objToValidate.AL_Recommendation_Content_Code).Count() > 0)
+            {
+                resultSet = "Recommendation Content already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
     #endregion
 }

@@ -3442,5 +3442,105 @@ namespace RightsU_DAL
         }
     }
 
+    public class AL_Booking_Sheet_Repository : RightsU_Repository<AL_Booking_Sheet>
+    {
+        public AL_Booking_Sheet_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Booking_Sheet objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Booking_Sheet objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Booking_Sheet_Details_Repository : RightsU_Repository<AL_Booking_Sheet_Details>
+    {
+        public AL_Booking_Sheet_Details_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Booking_Sheet_Details objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Booking_Sheet_Details objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Recommendation_Repository : RightsU_Repository<AL_Recommendation>
+    {
+        public AL_Recommendation_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Recommendation objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Recommendation objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Recommendation_Content_Repository : RightsU_Repository<AL_Recommendation_Content>
+    {
+        public AL_Recommendation_Content_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Recommendation_Content objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Recommendation_Content objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
     #endregion
 }
