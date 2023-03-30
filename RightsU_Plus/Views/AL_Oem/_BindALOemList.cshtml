@@ -12,106 +12,51 @@
     <thead>
         <tr>
             <th>
-                Device Name
+                Company Name
             </th>
             <th>
-                Company
-            </th>
-            <th>
-                Aspect Ratio
-            </th>
-            <th>
-                MPEG
+                Company Short Name
             </th>
             <th>
                 Action
             </th>
         </tr>
     </thead>
-    @if (TempData["Action"] == "AddALOem")
-    {
-        <tr>
-            <td>
-                <input type="text" class="form-control input-sm" autocomplete="off" id="txtDeviceName" />
-            </td>
-            <td>
-                <input type="text" class="form-control input-sm" autocomplete="off" id="txtCompany" />
-            </td>
-            <td>
-                <input type="text" class="form-control input-sm" autocomplete="off" id="txtAspectRatio" />
-            </td>
-            <td>
-                <input type="text" class="form-control input-sm" autocomplete="off" id="txtMPEG" />
-            </td>
-            <td style="text-align:center">
-                <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick='SaveALOem("0")'></a>
-                <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="ALOemCancel()"></a>
-            </td>
-        </tr>
-    }
+   
     @if (Model.Count() > 0)
     {
         foreach (var item in Model)
         {
-            if (TempData["Action"] == "EditALOem" && Convert.ToInt32(TempData["Id"]) == item.AL_OEM_Code)
-            {
-                @*<tr>
-                    <td>
-                        <input type="text" class="form-control input-sm" value="@item.Device_Name" autocomplete="off" id="txtDeviceName" />
-                    </td>
-                    <td>
-                        <input type="text" class="form-control input-sm" value="@item.Company" autocomplete="off" id="txtCompany" />
-                    </td>
-                    <td>
-                        <input type="text" class="form-control input-sm" value="@item.Aspect_Ratio" autocomplete="off" id="txtAspectRatio" />
-                    </td>
-                    <td>
-                        <input type="text" class="form-control input-sm" value="@item.MPEG" autocomplete="off" id="txtMPEG" />
-                    </td>
-                    <td style="text-align:center">
-                        <a title="@objMessageKey.Save" class="glyphicon glyphicon-ok-circle" onclick="SaveALOem(@item.AL_OEM_Code)"></a>
-                        <a title="@objMessageKey.Cancel" class="glyphicon glyphicon-remove-circle" onclick="ALOemCancel()"></a>
-                    </td>
-                </tr>*@
-            }
-            else
-            {
-                @*<tr style="text-align:center">
-                    <td style="text-align:left !important">
-                        @Html.DisplayFor(modelItem => item.Device_Name)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Company)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Aspect_Ratio)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MPEG)
-                    </td>
-                    <td>
-                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.AL_OEM_Code')"></a>
-                        @{
-                            bool canDeactivate = true;
-                            string strMsg = "";
-                            if (item.AL_Vendor_OEM.Count > 0)
-                            {
-                                canDeactivate = false;
-                                strMsg = "Can not Delete this recorde as it is used in AL Vendor OEM";
-                            }
-                            if (canDeactivate)
-                            {
-                                <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteALOem(@item.AL_OEM_Code)"></a>
-                            }
-                            else
-                            {
-                                <a title="@strMsg" class="glyphicon glyphicon-trash disabled" style="cursor: pointer" onclick="return false"></a>
-                            }
+            <tr style="text-align:center">
+                <td style="text-align:left !important">
+                    @Html.DisplayFor(modelItem => item.Company_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company_Short_Name)
+                </td>
+                <td>
+                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.AL_OEM_Code')"></a>
+                    <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer" onclick="AddEditALOem('VIEW', @item.AL_OEM_Code)"></a>
+                    @{
+                        bool canDeactivate = true;
+                        string strMsg = "";
+                        if (item.AL_Vendor_OEM.Count > 0)
+                        {
+                            canDeactivate = false;
+                            strMsg = "Can not Delete this recorde as it is used in AL Vendor OEM";
                         }
+                        if (canDeactivate)
+                        {
+                            <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="AddEditALOem('DELETE', @item.AL_OEM_Code)"></a>
+                        }
+                        else
+                        {
+                            <a title="@strMsg" class="glyphicon glyphicon-trash disabled" style="cursor: pointer" onclick="return false"></a>
+                        }
+                    }
 
-                    </td>
-                </tr>*@
-            }
+                </td>
+            </tr>
         }
     }
     else

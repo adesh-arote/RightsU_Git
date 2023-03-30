@@ -10,6 +10,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
+    confirmed = false;
     var sort_Type = "T";
     var URL_BindOemList =  '@Url.Action("BindALOemList", "AL_Oem")';
     var URL_SearchOemList = '@Url.Action("SearchALOem", "AL_Oem")';
@@ -20,6 +21,9 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
 
+    var URL_BindAddEditView = '@Url.Action("BindAddEditView", "AL_Oem")';
+    var URl_AddEditFieldValuel = '@Url.Action("AddEditFieldValue", "AL_Oem")';
+  
      $(document).ready(function () {
         if(LayoutDirection_G == "RTL")
         {
@@ -68,7 +72,7 @@
         $('.required').removeClass('required');
         if (!ValidatePageSize())
             return false;
-        BindOemList("", 0)
+        BindOemList()
         SetPaging();
     }
 
@@ -145,12 +149,12 @@
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
             if (IsCall == 'Y')
-                BindOemList("",0);
+                BindOemList();
             else
                 IsCall = 'Y';
         }
     }
-    function BindOemList(CommandName, Id) {
+    function BindOemList() {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
@@ -165,8 +169,6 @@
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
                 sortType: sort_Type,
-                CommandName: CommandName,
-                AL_OemCode :Id
             }),
             success: function (result) {
                 debugger;
@@ -200,7 +202,7 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
-                BindOemList("",0);
+                BindOemList();
                 hideLoading();
             },
             error: function (result) {
@@ -222,13 +224,7 @@
         }
         return true;
     }
-    function AddEditALOem(CommandName, Id) {
-        debugger;
-        if (checkCurrentAction() && ValidatePageSize()) {
-            BindOemList(CommandName, Id);
-            $('#hdnAction').val(CommandName);
-        }
-    }
+
     function CheckRecordLock(CommandName, Id) {
         debugger;
         $.ajax({
@@ -249,7 +245,7 @@
                 else {
                     if (result.Is_Locked == "Y") {
                         AddEditALOem(CommandName, Id)
-                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditCountry() this
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); 
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
                     else
@@ -265,27 +261,27 @@
 
     function SaveALOem(Id) {
         debugger;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
         var Return_value = true;
-        var DeviceName = $.trim($("#txtDeviceName").val());
-        var Company = $.trim($("#txtCompany").val());
-        var AspectRaio = $.trim($("#txtAspectRatio").val());
-        var MPEG = $.trim($("#txtMPEG").val());
-        if (DeviceName == "") {
-            $("#txtDeviceName").val('').attr("required", true);
+        var Company_Name = $.trim($("#txtCompany_Name").val());
+        var Company_Short_Name = $.trim($("#txtCompany_Short_Name").val());
+
+        if (Company_Name == "") {
+            $("#txtCompany_Name").val('').attr("required", true);
             Return_value = false;
         }
-        if (Company == "") {
-            $("#txtCompany").val('').attr("required", true);
+        if (Company_Short_Name == "") {
+            $("#txtCompany_Short_Name").val('').attr("required", true);
             Return_value = false;
         }
-        if (AspectRaio == "") {
-            $("#txtAspectRatio").val('').attr("required", true);
-            Return_value = false;
-        }
-        if (MPEG == "") {
-            $("#txtMPEG").val('').attr("required", true);
-            Return_value = false;
-        }
+        //var length = $("table tr[id*='tbl_Additional_Fileds']").length;
+        //if (length == 0) {
+        //    showAlert("E", "Please Add Field Values");
+        //    Return_value = false;
+        //}
 
         if (Return_value) {
             $.ajax({
@@ -296,24 +292,19 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
                     Id: Id,
-                    Device_Name: DeviceName,
-                    Company: Company,
-                    Aspect_Ratio: AspectRaio,
-                    MPEG: MPEG
+                    Company_Name: Company_Name,
+                    Company_Short_Name: Company_Short_Name
                 }),
                 async: false,
                 success: function (result) {
                     debugger;
                     if (result.Status == "S") {
-                        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
-                        if (recordLockingCode > 0)
-                            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
                         window.location.href = Url_Index;
                     }
-                    if (result.Status == "E") {
+                    else {
                         showAlert("E", result.Message);
-
                     }
+
                 },
                 error: function (result) {
                     alert('Error: ' + result.responseText);
@@ -321,9 +312,9 @@
             });
         }
     }
+
     function DeleteALOem(Id) {
         debugger;
-        if (checkCurrentAction()) {
             $.ajax({
                 type: "POST",
                 url: URL_DeleteOem,
@@ -350,18 +341,79 @@
                     hideLoading();
                 }
             });
-        }
     }
+
     function ALOemCancel() {
         debugger;
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
 
-        $("#hdnAction").val("");
-        BindOemList("", 0);
+        $('#DivAddEditOem').empty();
+        $("#MainView").show();
+        //var searchText = $('#searchCommon').val();
+       // SearchOem("");
+        //window.location.href = Url_Index
+
     }
 
+     function AddEditALOem(CommandName, Id) {
+        debugger;
+         $.ajax({
+             type: "POST",
+             url: URL_BindAddEditView,
+             traditional: true,
+             enctype: 'multipart/form-data',
+             contentType: "application/json; charset=utf-8",
+             dataType: "html",
+             data: JSON.stringify({
+                 ALOemCode: Id,
+                 CommandName:CommandName
+             }),
+             async: false,
+             success: function (result) {
+                 debugger;
+                 $("#MainView").hide();
+                 $('#DivAddEditOem').empty();
+                 $('#DivAddEditOem').html(result);
+                 AddEditViewGrid(CommandName, Id);
+
+
+             },
+             error: function (result) {
+                 alert('Error: ' + result.responseText);
+                 hideLoading();
+             }
+         });
+    }
+
+
+
+
+ function AddEditViewGrid(CommandName, Id) {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("AddEditFieldValue", "AL_Oem")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    CommandName: CommandName,
+                    Id:Id
+                }),
+                async: false,
+                success: function (data) {
+                    debugger;
+                    $('#divEFDetails').empty();
+                    $('#divEFDetails').html(data);
+
+                },
+                error: function (data) {
+                    alert('Error: ' + data.responseText);
+                }
+            });
+        }
 
 
 </script>
@@ -369,7 +421,7 @@
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
-            <div class="">
+            <div class="" id="MainView">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
                         OEM
@@ -393,7 +445,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:30%;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" autocomplete="off" placeholder="Device Name, Company, Aspect Ratio, MPEG" />
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" autocomplete="off" placeholder="Company Name, Company Short Name" />
                             </td>
                             <td>
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
@@ -436,6 +488,10 @@
                     </div>
                 </div>
             </div>
+            <div id="DivAddEditOem" class="deal clearfix">
+
+            </div>
         </div>
     </section>
 </div>
+

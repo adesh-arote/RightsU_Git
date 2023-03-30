@@ -1,0 +1,77 @@
+﻿@model RightsU_Entities.AL_OEM
+
+<script>
+    $(document).ready(function () {
+        //  btnAddExtendedData();
+    });
+</script>
+
+<div class="title_block dotted_border clearfix">
+    <h2 style="font-family:Oswald; font-size:30px;font-weight:300">OEM</h2>
+</div>
+<table style="margin-top:20px" class="table table-responsive table-hover">
+    <tbody>
+        <tr>
+            <td style="font-size:15px;">
+                Company Name
+            </td>
+            <td>
+                @if (ViewBag.ViewType == "Delete" || ViewBag.ViewType == "View")
+                {
+                    @Html.DisplayFor(model => model.Company_Name)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Company_Name, new { htmlAttributes = new { @class = "form-control", @id = "txtCompany_Name", @style = "width:65%", @autocomplete = "Off" } })
+                }
+            </td>
+        </tr>
+        <tr>
+            <td style="font-size:15px;">
+                Company Short Name
+            </td>
+            <td>
+                @if (ViewBag.ViewType == "Delete" || ViewBag.ViewType == "View")
+                {
+                    @Html.DisplayFor(model => model.Company_Short_Name)
+                }
+                else
+                {
+                    @Html.EditorFor(model => model.Company_Short_Name, new { htmlAttributes = new { @class = "form-control", @id = "txtCompany_Short_Name", @style = "width:65%", @autocomplete = "Off" } })
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+@if (ViewBag.ViewType != "Delete" && ViewBag.ViewType != "View")
+{
+    <div style="margin-top:20px;">
+        <input type="button" value="Add" id="AddBtn" onclick="btnAddExtendedData()" class="btn btn-primary pull-right" />
+    </div>
+}
+<div>
+    <input type="hidden" id="hdnAction" value="" />
+    <div id="divEFDetails" style="min-height:100px;">
+
+    </div>
+</div>
+<div class="modal_block modal_header">
+    @{
+        if (ViewBag.ViewType != "View")
+        {
+            if (ViewBag.ViewType == "Add")
+            {
+                <input type="button" value="Save" class="btn btn-primary" onclick='SaveALOem("0")' />
+            }
+            if (ViewBag.ViewType == "Edit")
+            {
+                <input type="button" value="Update" class="btn btn-primary" onclick='SaveALOem(@Model.AL_OEM_Code)' />
+            }
+            if (ViewBag.ViewType == "Delete")
+            {
+                <input type="button" value="Delete" class="btn btn-primary" onclick='DeleteALOem(@Model.AL_OEM_Code)' />
+            }
+        }
+    }
+    <input type="button" value="Cancel" class="btn btn-primary" onclick="ALOemCancel()" />
+</div>
