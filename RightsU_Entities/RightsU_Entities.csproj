@@ -462,6 +462,8 @@
     <Compile Include="ProjectMilestone\ProjectMilestoneTitle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusMessage.cs" />
+    <Compile Include="StoreProcedure_Entities\USPAL_GetBookingSheetList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPAL_GetReCommendationList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPBindJobAndExecute_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPExportToExcelBulkImport_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetAiredNotAiredDates_Result.cs" />

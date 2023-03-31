@@ -1348,6 +1348,12 @@
     <Compile Include="Models\Users_Password_Detail.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USPAL_GetBookingSheetList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetReCommendationList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USPBindJobAndExecute_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

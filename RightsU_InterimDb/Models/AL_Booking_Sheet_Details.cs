@@ -27,6 +27,8 @@ namespace RightsU_InterimDb.Models
     	    public string Allow_Import { get; set; }
     	    public string Columns_Value { get; set; }
     	    public string Cell_Status { get; set; }
+    	    public Nullable<int> Action_By { get; set; }
+    	    public Nullable<System.DateTime> Action_Date { get; set; }
     
         public virtual AL_Booking_Sheet AL_Booking_Sheet { get; set; }
         public virtual Extended_Columns Extended_Columns { get; set; }

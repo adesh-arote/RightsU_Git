@@ -23,6 +23,7 @@ namespace RightsU_Entities
             this.MHCueSheetSongs = new HashSet<MHCueSheetSong>();
             this.Title_Episode_Details_TC = new HashSet<Title_Episode_Details_TC>();
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
+            this.AL_Recommendation_Content = new HashSet<AL_Recommendation_Content>();
         }
 
         public State EntityState { get; set; }
@@ -47,5 +48,6 @@ namespace RightsU_Entities
         public virtual ICollection<MHCueSheetSong> MHCueSheetSongs { get; set; }
         public virtual ICollection<Title_Episode_Details_TC> Title_Episode_Details_TC { get; set; }
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
+        public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
     }
 }

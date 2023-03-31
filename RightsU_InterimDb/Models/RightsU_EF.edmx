@@ -1149,6 +1149,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Show_Content_Count" Type="int" />
           <Property Name="Remarks" Type="nvarchar(max)" />
           <Property Name="Record_Status" Type="varchar" MaxLength="5" />
+          <Property Name="Excel_File" Type="varchar" MaxLength="100" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
@@ -1172,6 +1173,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Allow_Import" Type="char" MaxLength="1" />
           <Property Name="Columns_Value" Type="nvarchar(max)" />
           <Property Name="Cell_Status" Type="char" MaxLength="1" />
+          <Property Name="Action_By" Type="int" />
+          <Property Name="Action_Date" Type="datetime" />
         </EntityType>
         <EntityType Name="AL_Lab">
           <Key>
@@ -1180,6 +1183,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="AL_Lab_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AL_Lab_Name" Type="nvarchar" MaxLength="500" />
           <Property Name="AL_Lab_Short_Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Contact_Person" Type="varchar" MaxLength="200" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
@@ -1211,6 +1215,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Version_No" Type="varchar" MaxLength="5" />
           <Property Name="Finally_Closed" Type="char" MaxLength="1" />
           <Property Name="Remarks" Type="nvarchar(max)" />
+          <Property Name="Workflow_Status" Type="varchar" MaxLength="5" />
+          <Property Name="Workflow_Code" Type="int" />
+          <Property Name="Excel_File" Type="varchar" MaxLength="100" />
+          <Property Name="PDF_File" Type="varchar" MaxLength="100" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
@@ -1260,6 +1268,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Vendor_Code" Type="int" />
           <Property Name="Rule_Name" Type="nvarchar" MaxLength="100" />
           <Property Name="Rule_Short_Name" Type="varchar" MaxLength="50" />
+          <Property Name="Rule_Type" Type="char" MaxLength="1" />
           <Property Name="Criteria" Type="varchar(max)" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -8550,6 +8559,42 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AL_Recommendation_Content_AL_Vendor_Rule">
+          <End Role="AL_Vendor_Rule" Type="Self.AL_Vendor_Rule" Multiplicity="0..1" />
+          <End Role="AL_Recommendation_Content" Type="Self.AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Vendor_Rule">
+              <PropertyRef Name="AL_Vendor_Rule_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="AL_Vendor_Rule_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Recommendation_Content_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="AL_Recommendation_Content" Type="Self.AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Recommendation_Content_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="AL_Recommendation_Content" Type="Self.AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AL_Vendor_Details_Extended_Group">
           <End Role="Extended_Group" Type="Self.Extended_Group" Multiplicity="0..1" />
           <End Role="AL_Vendor_Details" Type="Self.AL_Vendor_Details" Multiplicity="*" />
@@ -15053,6 +15098,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Territory_Code" Type="varchar" Mode="In" />
           <Parameter Name="Country_Code" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPBindJobAndExecute" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Type" Type="varchar" Mode="In" />
           <Parameter Name="JobName" Type="varchar" Mode="In" />
@@ -16726,6 +16773,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <AssociationSet Name="FK_AL_Recommendation_Content_AL_Recommendation" Association="Self.FK_AL_Recommendation_Content_AL_Recommendation">
             <End Role="AL_Recommendation" EntitySet="AL_Recommendation" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_AL_Vendor_Rule" Association="Self.FK_AL_Recommendation_Content_AL_Vendor_Rule">
+            <End Role="AL_Vendor_Rule" EntitySet="AL_Vendor_Rule" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_Title" Association="Self.FK_AL_Recommendation_Content_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_Title_Content" Association="Self.FK_AL_Recommendation_Content_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
             <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
           </AssociationSet>
           <AssociationSet Name="FK_AL_Vendor_Details_Extended_Group" Association="Self.FK_AL_Vendor_Details_Extended_Group">
@@ -22500,6 +22559,20 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Recommendation" EntitySet="AL_Recommendation" />
             <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
           </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_AL_Vendor_Rule" Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule">
+            <End Role="AL_Vendor_Rule" EntitySet="AL_Vendor_Rule" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_Title" Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Recommendation_Content_Title_Content" Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Recommendation_Content" EntitySet="AL_Recommendation_Content" />
+          </AssociationSet>
+          <FunctionImport Name="USPAL_GetBookingSheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingSheetList_Result)" />
+          <FunctionImport Name="USPAL_GetReCommendationList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetReCommendationList_Result)" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -25364,6 +25437,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" FromRole="Title" ToRole="Syn_Deal_Supplementary" />
           <NavigationProperty Name="Title_Episode_Details" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_Title" FromRole="Title" ToRole="Title_Episode_Details" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="Title" ToRole="AL_Booking_Sheet_Details" />
+          <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" FromRole="Title" ToRole="AL_Recommendation_Content" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -33378,6 +33452,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="MHCueSheetSongs" Relationship="RightsU_NeoModel.FK_MHCueSheetSong_Title_Content" FromRole="Title_Content" ToRole="MHCueSheetSong" />
           <NavigationProperty Name="Title_Episode_Details_TC" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" FromRole="Title_Content" ToRole="Title_Episode_Details_TC" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Booking_Sheet_Details" />
+          <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" FromRole="Title_Content" ToRole="AL_Recommendation_Content" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -38275,6 +38350,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="AL_Vendor_Rule_Criteria" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_AL_Vendor_Rule" FromRole="AL_Vendor_Rule" ToRole="AL_Vendor_Rule_Criteria" />
           <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Vendor" FromRole="AL_Vendor_Rule" ToRole="Vendor" />
+          <Property Name="Rule_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" FromRole="AL_Vendor_Rule" ToRole="AL_Recommendation_Content" />
         </EntityType>
         <EntityType Name="AL_Vendor_Rule_Criteria">
           <Key>
@@ -38404,6 +38481,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <Property Name="Contact_Person" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="AL_Booking_Sheet">
           <Key>
@@ -38426,6 +38504,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Booking_Sheet_Details" />
           <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="AL_Booking_Sheet" ToRole="Vendor" />
           <NavigationProperty Name="AL_Recommendation" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" FromRole="AL_Booking_Sheet" ToRole="AL_Recommendation" />
+          <Property Name="Excel_File" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="AL_Booking_Sheet_Details">
           <Key>
@@ -38449,6 +38528,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Extended_Group" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" FromRole="AL_Booking_Sheet_Details" ToRole="Extended_Group" />
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="AL_Booking_Sheet_Details" ToRole="Title" />
           <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="AL_Booking_Sheet_Details" ToRole="Title_Content" />
+          <Property Name="Action_By" Type="Int32" />
+          <Property Name="Action_Date" Type="DateTime" Precision="3" />
         </EntityType>
         <Association Name="FK_AL_Booking_Sheet_Details_AL_Booking_Sheet">
           <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
@@ -38541,6 +38622,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" FromRole="AL_Recommendation" ToRole="AL_Booking_Sheet" />
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Recommendation" FromRole="AL_Recommendation" ToRole="AL_Recommendation_Content" />
+          <Property Name="Workflow_Status" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Workflow_Code" Type="Int32" />
+          <Property Name="Excel_File" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="PDF_File" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="AL_Recommendation_Content">
           <Key>
@@ -38554,6 +38639,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Content_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Content_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="AL_Recommendation" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Recommendation" FromRole="AL_Recommendation_Content" ToRole="AL_Recommendation" />
+          <NavigationProperty Name="AL_Vendor_Rule" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" FromRole="AL_Recommendation_Content" ToRole="AL_Vendor_Rule" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" FromRole="AL_Recommendation_Content" ToRole="Title" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" FromRole="AL_Recommendation_Content" ToRole="Title_Content" />
         </EntityType>
         <Association Name="FK_AL_Booking_Sheet_AL_Recommendation">
           <End Type="RightsU_NeoModel.AL_Recommendation" Role="AL_Recommendation" Multiplicity="0..1" />
@@ -38579,6 +38667,64 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AL_Recommendation_Content_AL_Vendor_Rule">
+          <End Type="RightsU_NeoModel.AL_Vendor_Rule" Role="AL_Vendor_Rule" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Recommendation_Content" Role="AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Vendor_Rule">
+              <PropertyRef Name="AL_Vendor_Rule_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="AL_Vendor_Rule_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Recommendation_Content_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Recommendation_Content" Role="AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Recommendation_Content_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Recommendation_Content" Role="AL_Recommendation_Content" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Recommendation_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USPAL_GetBookingSheetList_Result">
+          <Property Type="Int32" Name="AL_Booking_Sheet_Code" Nullable="false" />
+          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="false" />
+          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
+          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
+          <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="Movie_Content_Count" Nullable="true" />
+          <Property Type="Int32" Name="Show_Content_Count" Nullable="true" />
+          <Property Type="Int32" Name="Last_Action_By" Nullable="true" />
+          <Property Type="DateTime" Name="Last_Updated_Time" Nullable="true" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="USPAL_GetReCommendationList_Result">
+          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
+          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="false" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="Refresh_Cycle_No" Nullable="true" />
+          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -48474,6 +48620,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Vendor_Rule">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Vendor_Rule">
               <MappingFragment StoreEntitySet="AL_Vendor_Rule">
+                <ScalarProperty Name="Rule_Type" ColumnName="Rule_Type" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Criteria" ColumnName="Criteria" />
                 <ScalarProperty Name="Rule_Short_Name" ColumnName="Rule_Short_Name" />
@@ -48505,6 +48652,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Lab">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Lab">
               <MappingFragment StoreEntitySet="AL_Lab">
+                <ScalarProperty Name="Contact_Person" ColumnName="Contact_Person" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
@@ -48519,6 +48667,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Booking_Sheet">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Booking_Sheet">
               <MappingFragment StoreEntitySet="AL_Booking_Sheet">
+                <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
@@ -48539,6 +48688,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Booking_Sheet_Details">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Booking_Sheet_Details">
               <MappingFragment StoreEntitySet="AL_Booking_Sheet_Details">
+                <ScalarProperty Name="Action_Date" ColumnName="Action_Date" />
+                <ScalarProperty Name="Action_By" ColumnName="Action_By" />
                 <ScalarProperty Name="Cell_Status" ColumnName="Cell_Status" />
                 <ScalarProperty Name="Columns_Value" ColumnName="Columns_Value" />
                 <ScalarProperty Name="Allow_Import" ColumnName="Allow_Import" />
@@ -48558,6 +48709,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Recommendation">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Recommendation">
               <MappingFragment StoreEntitySet="AL_Recommendation">
+                <ScalarProperty Name="PDF_File" ColumnName="PDF_File" />
+                <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
+                <ScalarProperty Name="Workflow_Code" ColumnName="Workflow_Code" />
+                <ScalarProperty Name="Workflow_Status" ColumnName="Workflow_Status" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
@@ -48587,6 +48742,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetBookingSheetList" FunctionName="RightsU_NeoModel.Store.USPAL_GetBookingSheetList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetBookingSheetList_Result">
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Recommendation_Code" ColumnName="AL_Recommendation_Code" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="AL_Proposal_Code" ColumnName="AL_Proposal_Code" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Proposal_No" ColumnName="Proposal_No" />
+                <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
+                <ScalarProperty Name="Movie_Content_Count" ColumnName="Movie_Content_Count" />
+                <ScalarProperty Name="Show_Content_Count" ColumnName="Show_Content_Count" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetReCommendationList" FunctionName="RightsU_NeoModel.Store.USPAL_GetReCommendationList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetReCommendationList_Result">
+                <ScalarProperty Name="AL_Proposal_Code" ColumnName="AL_Proposal_Code" />
+                <ScalarProperty Name="AL_Recommendation_Code" ColumnName="AL_Recommendation_Code" />
+                <ScalarProperty Name="Proposal_No" ColumnName="Proposal_No" />
+                <ScalarProperty Name="Refresh_Cycle_No" ColumnName="Refresh_Cycle_No" />
+                <ScalarProperty Name="Cycle" ColumnName="Cycle" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

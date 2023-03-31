@@ -5904,5 +5904,14 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Digital_Edit_Result>("USP_Get_Acq_Deal_Digital_Edit", acq_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
         }
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingSheetList_Result>("USPAL_GetBookingSheetList");
+        }
+
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetReCommendationList_Result>("USPAL_GetReCommendationList");
+        }
     }
 }

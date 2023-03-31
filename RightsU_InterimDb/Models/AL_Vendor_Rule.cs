@@ -17,6 +17,7 @@ namespace RightsU_InterimDb.Models
         public AL_Vendor_Rule()
         {
             this.AL_Vendor_Rule_Criteria = new HashSet<AL_Vendor_Rule_Criteria>();
+            this.AL_Recommendation_Content = new HashSet<AL_Recommendation_Content>();
         }
     
     	public State EntityState { get; set; }    public int AL_Vendor_Rule_Code { get; set; }
@@ -25,8 +26,10 @@ namespace RightsU_InterimDb.Models
     	    public string Rule_Short_Name { get; set; }
     	    public string Criteria { get; set; }
     	    public string Is_Active { get; set; }
+    	    public string Rule_Type { get; set; }
     
         public virtual ICollection<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
         public virtual Vendor Vendor { get; set; }
+        public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
     }
 }

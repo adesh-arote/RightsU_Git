@@ -33,6 +33,10 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
+    	    public string Workflow_Status { get; set; }
+    	    public Nullable<int> Workflow_Code { get; set; }
+    	    public string Excel_File { get; set; }
+    	    public string PDF_File { get; set; }
     
         public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }

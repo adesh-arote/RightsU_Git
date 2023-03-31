@@ -22,5 +22,6 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
+    	    public string Contact_Person { get; set; }
     }
 }

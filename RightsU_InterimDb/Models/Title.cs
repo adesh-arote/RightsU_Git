@@ -58,6 +58,7 @@ namespace RightsU_InterimDb.Models
             this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
             this.Title_Episode_Details = new HashSet<Title_Episode_Details>();
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
+            this.AL_Recommendation_Content = new HashSet<AL_Recommendation_Content>();
         }
     
     	public State EntityState { get; set; }    public int Title_Code { get; set; }
@@ -131,5 +132,6 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
         public virtual ICollection<Title_Episode_Details> Title_Episode_Details { get; set; }
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
+        public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
     }
 }
