@@ -1,4 +1,4 @@
-﻿
+﻿@model List<RightsU_Entities.AL_Recommendation>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -8,14 +8,9 @@
     }
 }
 
-@{
-    int i = 0;
-}
-
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th>Sr.No.</th>
             <th>Client Name</th>
             <th>Proposal - CY</th>
             <th>Cycle</th>
@@ -23,16 +18,42 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td style="text-align:center">1</td>
-            <td style="text-align:center">Malaysia Airline</td>
-            <td style="text-align:center">P-MH-1023-00053 - CY02</td>
-            <td style="text-align:center">0123 - 0123</td>
-            <td style="text-align:center">
-                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        Malaysia Airline
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.AL_Proposal_Code)
+                    </td>
+                    <td style="text-align:center">
+                        <span>
+                            @{
+                                string date = "";
+                                if (item.Start_Date != null && item.End_Date != null)
+                                {
+                                    date = item.Start_Date.Value.ToString("MMy") + "-" + item.End_Date.Value.ToString("MMy");   
+                                }
+                                @date
+                            }
+                        </span>
+                    </td>
+                    <td style="text-align:center">
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
 
-                <a title="Export" class="glyphicon glyphicon-export" style="cursor: pointer;"></a>
-            </td>
-        </tr>
+                        <a title="Export" class="glyphicon glyphicon-export" style="cursor: pointer;"></a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
     </tbody>
 </table>

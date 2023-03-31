@@ -11,105 +11,159 @@ namespace RightsU_Plus.Controllers
     public class BookingSheetController : BaseController
     {
         #region --- Properties ---
-        private List<RightsU_Entities.Extended_Group> lstExtended_Group
+        private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet
         {
             get
             {
-                if (Session["lstExtended_Group"] == null)
-                    Session["lstExtended_Group"] = new List<RightsU_Entities.Extended_Group>();
-                return (List<RightsU_Entities.Extended_Group>)Session["lstExtended_Group"];
+                if (Session["lstBooking_Sheet"] == null)
+                    Session["lstBooking_Sheet"] = new List<RightsU_Entities.AL_Booking_Sheet>();
+                return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet"];
             }
-            set { Session["lstExtended_Group"] = value; }
+            set { Session["lstBooking_Sheet"] = value; }
         }
 
-        private List<RightsU_Entities.Extended_Group> lstExtended_Group_Searched
+        private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet_Searched
         {
             get
             {
-                if (Session["lstlstExtended_Group_Searched"] == null)
-                    Session["lstlstExtended_Group_Searched"] = new List<RightsU_Entities.Extended_Group>();
-                return (List<RightsU_Entities.Extended_Group>)Session["lstlstExtended_Group_Searched"];
+                if (Session["lstBooking_Sheet_Searched"] == null)
+                    Session["lstBooking_Sheet_Searched"] = new List<RightsU_Entities.AL_Booking_Sheet>();
+                return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet_Searched"];
             }
-            set { Session["lstlstExtended_Group_Searched"] = value; }
+            set { Session["lstBooking_Sheet_Searched"] = value; }
         }
 
-        private RightsU_Entities.Extended_Group objExtended_Group
+        private RightsU_Entities.AL_Booking_Sheet objBooking_Sheet
         {
             get
             {
-                if (Session["objExtended_Group"] == null)
-                    Session["objExtended_Group"] = new RightsU_Entities.Extended_Group();
-                return (RightsU_Entities.Extended_Group)Session["objExtended_Group"];
+                if (Session["objBooking_Sheet"] == null)
+                    Session["objBooking_Sheet"] = new RightsU_Entities.AL_Booking_Sheet();
+                return (RightsU_Entities.AL_Booking_Sheet)Session["objBooking_Sheet"];
             }
-            set { Session["objExtended_Group"] = value; }
+            set { Session["objBooking_Sheet"] = value; }
         }
+
+        private AL_Booking_Sheet_Service objBooking_Sheet_Service
+        {
+            get
+            {
+                if (Session["objBooking_Sheet_Service"] == null)
+                    Session["objBooking_Sheet_Service"] = new AL_Booking_Sheet_Service(objLoginEntity.ConnectionStringName);
+                return (AL_Booking_Sheet_Service)Session["objBooking_Sheet_Service"];
+            }
+            set { Session["objBooking_Sheet_Service"] = value; }
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private List<RightsU_Entities.AL_Recommendation> lstRecommendation
+        {
+            get
+            {
+                if (Session["lstRecommendation"] == null)
+                    Session["lstRecommendation"] = new List<RightsU_Entities.AL_Recommendation>();
+                return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation"];
+            }
+            set { Session["lstRecommendation"] = value; }
+        }
+
+        private List<RightsU_Entities.AL_Recommendation> lstRecommendation_Searched
+        {
+            get
+            {
+                if (Session["lstRecommendation_Searched"] == null)
+                    Session["lstRecommendation_Searched"] = new List<RightsU_Entities.AL_Recommendation>();
+                return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation_Searched"];
+            }
+            set { Session["lstRecommendation_Searched"] = value; }
+        }
+
+        private RightsU_Entities.AL_Recommendation objRecommendation
+        {
+            get
+            {
+                if (Session["objRecommendation"] == null)
+                    Session["objRecommendation"] = new RightsU_Entities.AL_Recommendation();
+                return (RightsU_Entities.AL_Recommendation)Session["objRecommendation"];
+            }
+            set { Session["objRecommendation"] = value; }
+        }
+
+        private AL_Recommendation_Service objRecommendation_Service
+        {
+            get
+            {
+                if (Session["objRecommendation_Service"] == null)
+                    Session["objRecommendation_Service"] = new AL_Recommendation_Service(objLoginEntity.ConnectionStringName);
+                return (AL_Recommendation_Service)Session["objRecommendation_Service"];
+            }
+            set { Session["objRecommendation_Service"] = value; }
+        }
+       
         #endregion
 
         //-----------------------------------------------------Paging--------------------------------------------------------------------------------------
 
         public ActionResult Index()
         {
-            FetchData();
-            //List<SelectListItem> lstSort = new List<SelectListItem>();
-            //lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
-            //lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
-            //lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
-            //ViewBag.SortType = lstSort;
+            FetchData1();
+            FetchData2();
 
             Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).Where(w => w.Party_Type == "C" && w.Is_Active == "Y").ToList();
             ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
-            //ViewBag.ddlClients = lstVendors;
 
             return View();
         }
 
-        private void FetchData()
+        private void FetchData1()
         {
-            Extended_Group_Service objExtended_Group_Service = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
-            lstExtended_Group_Searched = lstExtended_Group = objExtended_Group_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstBooking_Sheet_Searched = lstBooking_Sheet = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
 
-        public ActionResult BindBookingSheetList(int pageNo, int recordPerPage, string sortType)
+        private void FetchData2()
         {
-            List<Extended_Group> lst = new List<Extended_Group>();
+            lstRecommendation_Searched = lstRecommendation = objRecommendation_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+        }
+
+        public ActionResult BindBookingSheetList(int pageNo, int recordPerPage)
+        {
+            List<AL_Booking_Sheet> lst = new List<AL_Booking_Sheet>();
+            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
             int RecordCount = 0;
-            RecordCount = lstExtended_Group_Searched.Count;
+            RecordCount = lstBooking_Sheet_Searched.Count;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Extended_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                else if (sortType == "NA")
-                    lst = lstExtended_Group_Searched.OrderBy(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                else
-                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.AL_Booking_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            ViewBag.ClientName = lstVendors;
+
+            List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
+            ViewBag.UserCode = lstUsers;
 
             return PartialView("_BookingSheetList", lst);
         }
 
-        public ActionResult PendingRecommendationsList(int pageNo, int recordPerPage, string sortType)
+        public ActionResult PendingRecommendationsList(int pageNo, int recordPerPage)
         {
-            List<Extended_Group> lst = new List<Extended_Group>();
+            List<AL_Recommendation> lst = new List<AL_Recommendation>();
 
-            int RecordCount = 10;
-            //RecordCount = lstExtended_Group_Searched.Count;
-            RecordCount = 10;
+            int RecordCount = 0;
+            RecordCount = lstRecommendation_Searched.Count;
+
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Extended_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                else if (sortType == "NA")
-                    lst = lstExtended_Group_Searched.OrderBy(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                else
-                    lst = lstExtended_Group_Searched.OrderByDescending(o => o.Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                lst = lstRecommendation_Searched.OrderByDescending(o => o.AL_Recommendation_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             return PartialView("_PendingRecommendationsList", lst);
@@ -138,26 +192,18 @@ namespace RightsU_Plus.Controllers
             return pageNo;
         }
 
-        public JsonResult SearchBookingSheet(string searchText, int? ModuleCode)
+        public JsonResult SearchOnList(string searchText)
         {
-            if (!string.IsNullOrEmpty(searchText) && ModuleCode == null)
-            {
-                lstExtended_Group_Searched = lstExtended_Group.Where(w => w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
-            }
-            else if (searchText == "" && ModuleCode != null)
-            {
-                lstExtended_Group_Searched = lstExtended_Group.Where(w => w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString())).ToList();
-            }
-            else if (!string.IsNullOrEmpty(searchText) && ModuleCode != null)
-            {
-                lstExtended_Group_Searched = lstExtended_Group.Where(w => (w.Group_Name != null && w.Group_Name.ToUpper().Contains(searchText.ToUpper())) && (w.Module_Code != null && w.Module_Code.ToString().Contains(ModuleCode.ToString()))).ToList();
-            }
-            else
-                lstExtended_Group_Searched = lstExtended_Group;
+            //if (!string.IsNullOrEmpty(searchText))
+            //{
+            //    lstBooking_Sheet_Searched = lstBooking_Sheet.Where(w => w.Vendor_Code != null && w.Vendor_Code.ToString().Contains(searchText.ToString())).ToList();
+            //}        
+            //else
+            //    lstBooking_Sheet_Searched = lstBooking_Sheet;
 
             var obj = new
             {
-                Record_Count = lstExtended_Group_Searched.Count
+                Record_Count = lstBooking_Sheet_Searched.Count
             };
 
             return Json(obj);
