@@ -112,7 +112,7 @@
                             <p>@rowNumber</p>
                         </td>
                         <td>
-                            @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowNumber, @class = "chosen-single chosen-default" })
+                            @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowNumber, @class = "form_input chosen-select" })
                         </td>
                         <td>
                             <input type="text" id="txtOdrInGrp_@rowNumber" value="@item.Group_Control_Order" class="form_input input-sm" maxlength="100" autocomplete="off" />
