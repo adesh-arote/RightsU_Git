@@ -506,10 +506,12 @@
         debugger;
         $("#AddTabwisePopup").modal('toggle');
         $('#inputValidation').val("false");
+        $("#Operation").val('A');
     }
 
     function SavePopup(x, rownum) {
         debugger;
+        var MandatoryVal = true;
         var rwIndex = x.parentNode.parentNode.rowIndex;
         showLoading();
         var rownum = rownum;
@@ -536,31 +538,28 @@
                 }
 
                 debugger;
-                //var ValID = fld[0];
+                var ValID = fld[0];
                 if ($(a).val() == null) {
                     //showAlert('I', 'Please enter details');
                     //hideLoading();
                     //return;
-                    //let v = $(a).val();
-                    //if ($(a).prop('required')) {
-                    //    if (v == "") {
-                    //        $("#" + ValID).addClass("required");
-                    //        showAlert("E", "Please fill out the required fields");
-                    //        hideLoading();
-                    //        return false;
-                    //    }
-                    //}
+                    let v = $(a).val();
+                    if ($(a).prop('required')) {
+                        if (v == "" || v == undefined || v == null) {
+                            $(a).addClass("required");
+                            MandatoryVal = false;
+                        }
+                    }
                 }
                 else {
                     let v = $(a).val().toString();
-                    //if ($(a).prop('required')) {
-                    //    if (v == "") {
-                    //        $("#" + ValID).addClass("required");
-                    //        showAlert("E", "Please fill out the required fields");
-                    //        hideLoading();
-                    //        return false;
-                    //    }
-                    //}
+                    if ($(a).prop('required')) {
+                        if (v == "") {
+                            $(a).addClass("RequiredClass");
+                            $(a).addClass("required");
+                            MandatoryVal = false;
+                        }
+                    }
                     if ($(a).is("select")) {
                         vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
                         //if ($(a).prop('multiple')) {
@@ -584,6 +583,12 @@
                         }
                 }
             }
+        }
+
+        if (MandatoryVal == false) {
+            showAlert("E", "Please fill out the required fields");
+            hideLoading();
+            return false;
         }
 
         $.ajax({
@@ -684,20 +689,27 @@
     function PopupDelete(x, supplementary_Code, rowno, i, TabCode, shortName) {
         debugger;
         var rwIndex = x.parentNode.parentNode.rowIndex;
+        var operation = "D";
         tblName = "#tbl" + shortName;
 
         $(tblName + ' tr').eq(rwIndex).remove();
 
         $.ajax({
             type: "POST",
-            url: '@Url.Action("GridRowDelete", "Title")',
+            url: URL_SaveInSession,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                TitleCode: '@Model.Title_Code',
+                @*TitleCode: '@Model.Title_Code',
                 rowno: rowno,
-                TabCode: TabCode
+                TabCode: TabCode*@
+                Value_list: "",
+                Short_Name: shortName,
+                Operation: operation,
+                Row_No: rowno,
+                rwIndex: rwIndex,
+                Title_Code: '@Model.Title_Code'
             }),
             async: false,
             success: function (result) {
