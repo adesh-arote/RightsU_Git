@@ -1347,9 +1347,12 @@ namespace RightsU_Plus.Controllers
                         objDBVendorDetails.Extended_Group_Code_Booking = objSessionVendorDetails.Extended_Group_Code_Booking;
                     }
                 }
-                if (objSessionVendorDetails.AL_Vendor_Detail_Code < 0)
+                if (objSessionVendorDetails.AL_Vendor_Detail_Code == 0 || objSessionVendorDetails.AL_Vendor_Detail_Code < 0)
                 {
-                    objDBVendor.AL_Vendor_Details.Add(objSessionVendorDetails);
+                    if (objSessionVendorDetails.EntityState == State.Added)
+                    {
+                        objDBVendor.AL_Vendor_Details.Add(objSessionVendorDetails);
+                    }                    
                 }
             }
 
@@ -1363,6 +1366,12 @@ namespace RightsU_Plus.Controllers
 
                         AL_Vendor_Rule objDBVendorRule = new AL_Vendor_Rule();
                         objDBVendorRule = objDBVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == objSessionVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
+                        if (objSessionVendorRule.EntityState == State.Modified)
+                        {
+                            objDBVendorRule.Rule_Name = objSessionVendorRule.Rule_Name;
+                            objDBVendorRule.Rule_Short_Name = objSessionVendorRule.Rule_Short_Name;
+                            objDBVendorRule.Rule_Type = objSessionVendorRule.Rule_Type;
+                        }
 
                         foreach (AL_Vendor_Rule_Criteria objSessionVendorRuleCriteria in objSessionVendorRule.AL_Vendor_Rule_Criteria)
                         {
@@ -1370,6 +1379,7 @@ namespace RightsU_Plus.Controllers
                             {
                                 AL_Vendor_Rule_Criteria objDBVendorRuleCriteria = new AL_Vendor_Rule_Criteria();
                                 objDBVendorRuleCriteria = objDBVendorRule.AL_Vendor_Rule_Criteria.Where(w => w.AL_Vendor_Rule_Criteria_Code == objSessionVendorRuleCriteria.AL_Vendor_Rule_Criteria_Code).FirstOrDefault();
+
                                 if (objSessionVendorRuleCriteria.EntityState == State.Modified)
                                 {
                                     objDBVendorRuleCriteria.Columns_Code = objSessionVendorRuleCriteria.Columns_Code;
@@ -1597,13 +1607,20 @@ namespace RightsU_Plus.Controllers
                     objAVR_DB.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
                     objAVR_DB.Criteria = ALVendorRule.Criteria;
                     objAVR_DB.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
+                    objAVR_DB.Rule_Type = ALVendorRule.Rule_Type;
                     ALVendorRule.EntityState = State.Modified;
+                    objAVR_DB.EntityState = ALVendorRule.EntityState;
                 }
                 if (ALVendorRule.AL_Vendor_Rule_Code < 0)
                 {
                     AL_Vendor_Rule objAVR_Sess = objSessVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == ALVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
-                    objAVR_Sess = ALVendorRule;
+                    objAVR_Sess.Rule_Name = ALVendorRule.Rule_Name;
+                    objAVR_Sess.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
+                    objAVR_Sess.Criteria = ALVendorRule.Criteria;
+                    objAVR_Sess.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
+                    objAVR_Sess.Rule_Type = ALVendorRule.Rule_Type;
                     ALVendorRule.EntityState = State.Added;
+                    objAVR_Sess.EntityState = ALVendorRule.EntityState;
                 }
             }
 

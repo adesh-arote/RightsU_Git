@@ -98,9 +98,15 @@
                         <b>Booking sheet on Party</b>
                     </td>
                     <td>
-
-                        @Html.DropDownList("Extended_Group", (IEnumerable<SelectListItem>)ViewBag.ExtGrpCfg, "Please Select", new { @id = "ExtendedGroup", @style = "width:50%" })
-
+                        @if (ViewBag.DisplayMode == "VIEW")
+                        {
+                            <span>@Model.SelectedPrefExclusionValues</span>
+                        }
+                        else
+                        {
+                            @*@Html.DropDownList("Extended_Group", (IEnumerable<SelectListItem>)ViewBag.ExtGrpCfg, "Please Select", new { @id = "ExtendedGroup", @style = "width:50%" })*@
+                            @Html.DropDownListFor(m => m.Extended_Group_Code_Booking, (IEnumerable<SelectListItem>)ViewBag.ExtGrpCfg, "Please Select", new { @id = "ExtendedGroup", @style = "width:50%" })
+                        }
                     </td>
                 </tr>
             }

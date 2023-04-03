@@ -9,6 +9,7 @@
         var VendorRuleCode = $("#hdnRuleCode").val();
         var Criteria = $("#hdnCriteria").val();
         var VendorCode = $("#hdnVendorCodeCR").val();
+        var RuleType = $("#Rule_Type:checked").val();
 
         if (RuleName == "") {
             $("#CRName").val('').attr('required', true);
@@ -31,6 +32,7 @@
                     data: JSON.stringify({
                         Rule_Name: RuleName,
                         Rule_Short_Name: ShortRuleName,
+                        Rule_Type: RuleType,
                         AL_Vendor_Rule_Code: VendorRuleCode,
                         Vendor_Code: VendorCode,
                         Criteria: Criteria
@@ -84,6 +86,15 @@
         </td>
         <td>
             <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" />
+        </td>
+    </tr>
+    <tr>
+        <td style="width:25%; padding-left:2%">
+            <b>Content Type</b>
+        </td>
+        <td>
+            @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movies</span>
+            @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
         </td>
     </tr>
 </table>

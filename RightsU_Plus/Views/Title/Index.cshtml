@@ -28,7 +28,8 @@
     <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
     <script type="text/javascript">
-    debugger;
+        debugger;
+        var IsView = '';
     var CommandName_G = "";
     var recordLockingCode = @ViewBag.RecordLockingCode;
     var confirmed = false;

@@ -22,6 +22,8 @@
 <script>
     var URL_SaveEpisodeData = '@Url.Action("SaveEpisodeData", "Title")';
     var URL_EditEpisodeData = '@Url.Action("AddEditEpisodeData", "Title")';
+    var URL_ViewEpisodeData = '@Url.Action("ViewEpisodeData", "Title")';
+    var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
 
     $('#tabs ul li').click(function () {
         debugger;
@@ -30,6 +32,7 @@
             return false;
         }
         $("#btnAddAdditional").show();
+        $("#btnAddEpisode").hide();
         $(this).addClass('active').siblings().removeClass('active');
         var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
         $("#hdnTabCode").val(hdnActiveTabValue);
@@ -55,6 +58,15 @@
             $('.divgvAdditionalField').hide();
             $('.divgvAdditionalFieldGrid').hide();
             $("#btnAddAdditional").hide();
+            if (EpisodeDetailCount == 0) {
+                $("#btnAddEpisode").show();
+            }
+            if (IsView == "Y") {
+                ViewEpisodeDetails();
+                $("#ActionTH").hide();
+            } else {
+                EditEpisodeDetails('', '');
+            }
         }
         ShowHideTabwiseGrid();
         hideaddPopup();
@@ -87,7 +99,7 @@
         });
     }
 
-    function EditEpisodeDetails() {
+    function EditEpisodeDetails(TitleEpsDtlCode, commandName) {
         var spnEpisodeNumber = $("#spnEpisodeNumber").html();
         var spnEpisodeRemark = $("#spnEpisodeRemark").html();
         var TitleCode = VarTitleCodeModel;
@@ -102,23 +114,33 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                EpisodeNumber: spnEpisodeNumber,
-                Remark: spnEpisodeRemark,
-                TitleCode: TitleCode
+                Title_Episode_Detail_Code: TitleEpsDtlCode,
+                Title_Code: TitleCode,
+                Episode_Nos: spnEpisodeNumber,
+                Remarks: spnEpisodeRemark,
+                CommandName: commandName
             }),
             success: function (result) {
                 debugger;
                 $("#ViewAddEpisodeTable").empty();
                 $("#ViewAddEpisodeTable").html(result);
+                var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
+                if (EpisodeDetailCount > 0) {
+                    $('#btnAddEpisode').hide();
+                } else {
+                    $("#btnAddEpisode").show();
+                }
             }
         });
     }
 
     function PostEpisodeDetails() {
         debugger;
+        var TitleEpsDtlCode = $("#hdnTitleEpsDetailCode").val();
         var EpisodeNumber = $("#txtEpisodeNumber").val();
         var EpisodeRemark = $("#txtRemark").val();
         var TitleCode = VarTitleCodeModel;
+        var EpsStatus = $("#EpsStatus").val();
         $("#ViewAddEpisodeTable").empty();
 
         $.ajax({
@@ -128,8 +150,31 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                EpisodeNumber: EpisodeNumber,
-                Remark: EpisodeRemark,
+                Title_Episode_Detail_Code: TitleEpsDtlCode,
+                Title_Code: TitleCode,
+                Episode_Nos: EpisodeNumber,
+                Remarks: EpisodeRemark,
+                Status: EpsStatus
+            }),
+            success: function (result) {
+                debugger;
+                //$("#ViewAddEpisodeTable").empty();
+                //$("#ViewAddEpisodeTable").html(result);
+                showAlert('S', result.message);
+                EditEpisodeDetails('', '');
+            }
+        });
+    }
+
+    function ViewEpisodeDetails() {
+        var TitleCode = VarTitleCodeModel;
+        $.ajax({
+            type: "POST",
+            url: URL_ViewEpisodeData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
                 TitleCode: TitleCode
             }),
             success: function (result) {
@@ -169,38 +214,43 @@
     <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
     <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
     <div class="divgvAdditionalFieldGrid" style="text-align-last:@(textalignlast);"></div>
+
     <div id="EpisodeTabAdditionalField" style="text-align-last:@(textalignlast);">
         <table class="table table-hover table-bordered">
             <thead>
                 <tr>
                     <th class="custom_col_name">Number of Episodes</th>
-                    <th class="custom_col_key">Remark</th>
-                    <th class="custom_col_action">Action</th>
+                    <th class="custom_col_name">Remark</th>
+                    <th class="custom_col_action">Status</th>
+                    <th class="custom_col_action" id="ActionTH">Action</th>
                 </tr>
             </thead>
             <tbody id="ViewAddEpisodeTable">
-                <tr id="trGrid_EpisodeNum" data-configitem="1">
-                    <td>
-                        <input type="text" id="txtEpisodeNumber" />
-                    </td>
-                    <td>
-                        <input type="text" id="txtRemark" style="width:100%" />
-                    </td>
-                    <td>
-                        <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a>
-                    </td>
-                </tr>
-                @*<tr>
+                @*<tr id="trGrid_EpisodeNum" data-configitem="1">
                         <td>
-                            <span id="spnEpisodeNumber"></span>
+                            <input type="text" id="txtEpisodeNumber" />
                         </td>
                         <td>
-                            <span id="spnEpisodeRemark"></span>
+                            <input type="text" id="txtRemark" style="width:100%" />
                         </td>
                         <td>
-                            <a class="glyphicon glyphicon-pencil" title="Edit" onclick="EditEpisodeDetails()"></a>
+
                         </td>
-                    </tr>*@
+                        <td>
+                            <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a>
+                        </td>
+                    </tr>
+                    <tr>
+                            <td>
+                                <span id="spnEpisodeNumber"></span>
+                            </td>
+                            <td>
+                                <span id="spnEpisodeRemark"></span>
+                            </td>
+                            <td>
+                                <a class="glyphicon glyphicon-pencil" title="Edit" onclick="EditEpisodeDetails()"></a>
+                            </td>
+                        </tr>*@
             </tbody>
         </table>
     </div>
@@ -213,8 +263,11 @@
         if (DealTypeCode != "11") {
             $("#liExtGrp_100").hide();
         }
-
         $("#EpisodeTabAdditionalField").hide();
+
+        if (TitleTypeCode == '11') {
+            $("#liExtGrp_100").show();
+        }
         $("#txtEpisodeNumber").numeric({
             allowMinus: false,
             allowThouSep: true,
@@ -222,3 +275,7 @@
         });
     })
 </script>
+
+@*<button type="button" class="pull-right" onclick="alert($('#EpisodeTabAdditionalField tbody tr').length); $('#btnAddEpisode').hide();">
+    SHOW TR COUNT
+</button>*@

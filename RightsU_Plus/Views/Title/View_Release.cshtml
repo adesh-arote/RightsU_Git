@@ -43,6 +43,9 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
+    var TitleTypeCode = '@ViewBag.TitleTypeEpisodeTab';
+    var IsView = '@ViewBag.IsView';
+    var VarTitleCodeModel = '@Model.Title_Code';
     $(document).ready(function () {
         debugger;
         BindTitleMetadataHeader();

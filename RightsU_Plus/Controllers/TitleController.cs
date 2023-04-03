@@ -265,6 +265,17 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstTitle_Milestone"] = value; }
         }
+
+        private List<RightsU_Entities.Title_Episode_Details> lstEpisodeDetails
+        {
+            get
+            {
+                if (Session["lstEpisodeDetails"] == null)
+                    Session["lstEpisodeDetails"] = new List<RightsU_Entities.Title_Episode_Details>();
+                return (List<RightsU_Entities.Title_Episode_Details>)Session["lstEpisodeDetails"];
+            }
+            set { Session["lstEpisodeDetails"] = value; }
+        }
         #endregion
 
         public ActionResult Index(int id = 0, string Type = "", int Page_No = 0, string DealTypeCode = "0", string SearchedTitle = "", int PageSize = 10)
@@ -317,6 +328,7 @@ namespace RightsU_Plus.Controllers
 
             SearchedTitle_EDIT = SearchedTitle;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            lstEpisodeDetails = objTitle.Title_Episode_Details.ToList();
             Binddl();
             ViewBag.CommandName = Type;
             if (Type == "E")
@@ -376,6 +388,7 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.RecordLockingCode_View = 0;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            lstEpisodeDetails = objTitle.Title_Episode_Details.ToList();
             mode = "V";
             PageNo = Page_No;
             ViewBag.PageNo = PageNo;
@@ -409,6 +422,8 @@ namespace RightsU_Plus.Controllers
 
             string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
 
+            ViewBag.TitleTypeEpisodeTab = objTitle.Deal_Type_Code;
+            ViewBag.IsView = "Y";
             if (Per_Logic == "Y")
             {
                 return View("~/Views/Title/View_Release.cshtml", objTitle);
@@ -856,6 +871,8 @@ namespace RightsU_Plus.Controllers
                 objTitle.Is_Active = "Y";
             }
 
+            objTitle = DBSaveEpisodeDetails(objTitle);
+
             dynamic resultset;
             bool isValid = objTitleS.Save(objTitle, out resultset);
 
@@ -959,6 +976,7 @@ namespace RightsU_Plus.Controllers
             Session["lstMapExtendedColumns"] = null;
             Session["lstAddedExtendedColumns"] = null;
             Session["lstDBExtendedColumns"] = null;
+            Session["lstEpisodeDetails"] = null;
             TempData["id"] = objTitle.Title_Code;
             TempData["Type"] = "E";
             TempData["PageNo"] = PageNo;
@@ -1759,7 +1777,7 @@ namespace RightsU_Plus.Controllers
                                     }
                                 }
                             }
-                            if (hdnControlType.Trim().ToUpper() == "TXT")
+                            if (hdnControlType.Trim().ToUpper() == "TXT" || hdnControlType.Trim().ToUpper() == "DATE" || hdnControlType.Trim().ToUpper() == "INT" || hdnControlType.Trim().ToUpper() == "DT")
                             {
                                 objMEc.Columns_Value_Code = null;
                                 objMEc.Column_Value = hdnExtendedColumnValue;
@@ -3014,7 +3032,9 @@ namespace RightsU_Plus.Controllers
                     {
                         if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) > 0)
                         {
-                            SelectedValues = Convert.ToString(lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).Select(x => x.Column_Value).FirstOrDefault());
+                            var EditRecordObj = lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).FirstOrDefault();
+                            string a = string.Join(",", EditRecordObj.Map_Extended_Columns_Details.Select(s => s.Columns_Value_Code).ToList());
+                            SelectedValues = Convert.ToString(a);
                         }
                         else
                         {
@@ -3658,7 +3678,7 @@ namespace RightsU_Plus.Controllers
                                         }
                                     }
                                 }
-                                if (ExtendedColumns.Control_Type.Trim().ToUpper() == "TXT")
+                                if (ExtendedColumns.Control_Type.Trim().ToUpper() == "TXT" || ExtendedColumns.Control_Type.Trim().ToUpper() == "DATE" || ExtendedColumns.Control_Type.Trim().ToUpper() == "INT" || ExtendedColumns.Control_Type.Trim().ToUpper() == "DT")
                                 {
                                     objMEc.Columns_Value_Code = null;
                                     objMEc.Column_Value = hdnExtendedColumnValue;
@@ -4110,16 +4130,137 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public ActionResult AddEditEpisodeData(string EpisodeNumber, string Remark, int TitleCode)
+        public ActionResult AddEditEpisodeData(Title_Episode_Details objTED, string CommandName)
         {
-            string TDBind = "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" value = \"" + EpisodeNumber + "\" /> </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"" + Remark + "\"  /> </td> <td> <a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"PostEpisodeDetails()\"></a> </td> </tr>";
+            //Title_Episode_Details objTED_Edit = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+
+            List<Title_Episode_Details> listTitleEpisodeDetail = new List<Title_Episode_Details>();
+            listTitleEpisodeDetail = lstEpisodeDetails.Where(w => w.Title_Code == objTED.Title_Code).ToList();
+            string TDBind = "";
+            foreach (Title_Episode_Details objTEDlst in listTitleEpisodeDetail)
+            {
+                string status = "";
+                if (objTEDlst.Status == "P")
+                {
+                    status = "Pending";
+                }
+                if (objTEDlst.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code && CommandName == "EDIT")
+                {
+                    TDBind = TDBind + "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" value = \"" + objTEDlst.Episode_Nos + "\" />  <input type=\"hidden\" id=\"hdnTitleEpsDetailCode\" value=\"" + objTEDlst.Title_Episode_Detail_Code + "\" />  <input type=\"hidden\" id=\"hdnTitleCode\" value=\"" + objTEDlst.Title_Code + "\" />  </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"" + objTEDlst.Remarks + "\"  /> </td> <td> <input type=\"hidden\" id=\"EpsStatus\" value=\"" + objTEDlst.Status + "\" /> " + status + "</td> <td> <a class=\"glyphicon glyphicon-ok-circle\" title=\"Save\" onclick=\"PostEpisodeDetails()\"></a> <a class=\"glyphicon glyphicon-remove-circle\" title=\"Close\" onclick=\"EditEpisodeDetails('', '')\" > </a> </td> </tr>";
+                }
+                else
+                {
+                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a></td></tr>";
+                }
+            }
+            if (CommandName == "ADD")
+            {
+                TDBind = TDBind + "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" />  <input type=\"hidden\" id=\"hdnTitleEpsDetailCode\" value=\"0\" />  <input type=\"hidden\" id=\"hdnTitleCode\" value=\"" + objTitle.Title_Code + "\" />  </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"\"  /> </td> <td> <input type=\"hidden\" id=\"EpsStatus\" value=\"\" /> </td> <td> <a class=\"glyphicon glyphicon-ok-circle\" title=\"Save\" onclick=\"PostEpisodeDetails()\"></a> <a class=\"glyphicon glyphicon-remove-circle\" title=\"Close\" onclick=\"EditEpisodeDetails('', '')\" > </a> </td> </tr>";
+            }
+
             return Json(TDBind);
         }
 
-        public ActionResult SaveEpisodeData(string EpisodeNumber, string Remark, int TitleCode)
+        public ActionResult ViewEpisodeData(int TitleCode)
         {
-            string TDBind = "<tr><td><span id=\"spnEpisodeNumber\">" + EpisodeNumber + "</span></td><td><span id=\"spnEpisodeRemark\">" + Remark + "</span></td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails()\"></a></td></tr>";
+            List<Title_Episode_Details> listTitleEpisodeDetail = new List<Title_Episode_Details>();
+            listTitleEpisodeDetail = lstEpisodeDetails.Where(w => w.Title_Code == TitleCode).ToList();
+            string TDBind = "";
+            foreach (Title_Episode_Details objTED in listTitleEpisodeDetail)
+            {
+                TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + objTED.Status + "</td></tr>";
+            }
             return Json(TDBind);
+        }
+
+        public ActionResult SaveEpisodeData(Title_Episode_Details objTED)
+        {
+            if (objTED.Title_Episode_Detail_Code == 0)
+            {
+                if (lstEpisodeDetails.Count == 0)
+                {
+                    objTED.Title_Episode_Detail_Code = -1;
+                    objTED.Status = "P";
+                    objTED.EntityState = State.Added;
+                    lstEpisodeDetails.Add(objTED);
+                }
+                else
+                {
+                    objTED.Title_Episode_Detail_Code = Convert.ToInt32(Session["tempTED_Code"]) - 1;
+                    objTED.Status = "P";
+                    objTED.EntityState = State.Added;
+                    lstEpisodeDetails.Add(objTED);
+                }
+                Session["tempTED_Code"] = objTED.Title_Episode_Detail_Code;
+                objTED.Inserted_By = objLoginUser.Users_Code;
+                objTED.Inserted_On = DateTime.Now;
+            }
+            else
+            {
+                if (objTED.Title_Episode_Detail_Code > 0)
+                {
+                    Title_Episode_Details objTED_DB = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+                    objTED_DB.Episode_Nos = objTED.Episode_Nos;
+                    objTED_DB.Remarks = objTED.Remarks;
+                    objTED_DB.Status = objTED.Status;
+                    objTED_DB.EntityState = State.Modified;
+                }
+                if (objTED.Title_Episode_Detail_Code < 0)
+                {
+                    Title_Episode_Details objTED_Sess = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+                    objTED_Sess.Episode_Nos = objTED.Episode_Nos;
+                    objTED_Sess.Remarks = objTED.Remarks;
+                    objTED_Sess.Status = objTED.Status;
+                    objTED_Sess.EntityState = State.Added;
+                    objTED.Inserted_By = objLoginUser.Users_Code;
+                    objTED.Inserted_On = DateTime.Now;
+                }
+            }
+
+            //string TDBind = "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + objTED.Status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTED.Title_Episode_Detail_Code + "', 'EDIT')\"></a></td></tr>";
+
+            var EpsSaveObj = new
+            {
+                status = "S",
+                message = "Episode data saved successfully"
+            };
+
+            return Json(EpsSaveObj);
+        }
+
+        public RightsU_Entities.Title DBSaveEpisodeDetails(RightsU_Entities.Title objTitle)
+        {
+            if (objTitle.Deal_Type_Code == 11)
+            {
+                foreach (Title_Episode_Details objTEDSess in lstEpisodeDetails)
+                {
+                    if (objTEDSess.Title_Episode_Detail_Code > 0)
+                    {
+                        Title_Episode_Details objTEDdbSave = new Title_Episode_Details();
+                        if (objTEDSess.EntityState == State.Modified)
+                        {
+                            objTEDdbSave = objTitle.Title_Episode_Details.Where(w => w.Title_Episode_Detail_Code == objTEDSess.Title_Episode_Detail_Code).FirstOrDefault();
+                            objTEDdbSave.Episode_Nos = objTEDSess.Episode_Nos;
+                            objTEDdbSave.Remarks = objTEDSess.Remarks;
+                            objTEDdbSave.Status = objTEDSess.Status;
+                        }
+                        if (objTEDSess.EntityState == State.Deleted)
+                        {
+                            objTEDdbSave = objTitle.Title_Episode_Details.Where(w => w.Title_Episode_Detail_Code == objTEDSess.Title_Episode_Detail_Code).FirstOrDefault();
+                            objTEDdbSave.EntityState = objTEDSess.EntityState;
+                        }
+                    }
+
+                    if (objTEDSess.Title_Episode_Detail_Code < 0 || objTEDSess.Title_Episode_Detail_Code == 0)
+                    {
+                        if (objTEDSess.EntityState == State.Added)
+                        {
+                            objTitle.Title_Episode_Details.Add(objTEDSess);
+                        }
+                    }
+                }
+            }
+            return objTitle;
         }
 
         public string ValidateDuplicate(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex, int Title_Code = 0)
