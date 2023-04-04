@@ -11,7 +11,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "BS";
 
     var URL_BindBookingSheetList = '@Url.Action("BindBookingSheetList", "BookingSheet")';
     var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
@@ -34,7 +34,7 @@
         if ("@ViewBag.Message" != "") {
            showAlert("S","@ViewBag.Message");
         }
-        SearchOnList("");
+        SearchOnList("", TabName);
 
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
@@ -42,12 +42,12 @@
                 return false;
             }
         });
-        //$("#ddlSortType").change(function () {
-            //sort_Type = $('#ddlSortType').val();
-            //$('#hdnPageNo').val(1);
-            //var searchtext = $("#searchCommon").val();
-            //SearchOnList(searchtext);
-        //});
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchOnList(searchtext, TabName);
+        });
     });
 
     function addNumeric() {
@@ -72,7 +72,7 @@
             $('#searchCommon').attr('required', true)
             return false;
         }
-        SearchOnList(searchText);
+        SearchOnList(searchText, TabName);
     }
 
     function btnShowAll_OnClick() {
@@ -84,15 +84,15 @@
         if (!ValidatePageSize())
             return false;
 
-        //sort_Type = "T";
-        //$("#ddlSortType").find("option").attr("selected", false);
-        //$("#ddlSortType").val('T').trigger("chosen:updated");
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
         $('#hdnPageNo').val(1);
 
-        SearchOnList("");
+        SearchOnList("", TabName);
     }
 
-    function SearchOnList(searchText) {
+    function SearchOnList(searchText, TabName) {
         debugger;
         $('#searchCommon').val(searchText);
 
@@ -104,6 +104,7 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 searchText: searchText,
+                TabName: TabName
             }),
             async: false,
             success: function (result) {
@@ -111,8 +112,13 @@
                 $('#hdnPageNo').val(1);
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
-                SetPaging()
-                BindbookingSheetList();
+                SetPaging();
+                if (TabName == "BS") {
+                    BindbookingSheetList();
+                }
+                if (TabName == "PR") {
+                    PendingRecommendationsList();
+                }
             }
         });
     }
@@ -206,13 +212,12 @@
             dataType: "html",
             data: JSON.stringify({
                 pageNo: pageNo,
-                recordPerPage: recordPerPage
-                //sortType: sort_Type
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
             }),
             success: function (result) {
                 $('#divBindList').empty();
-                $('#divBindList').html(result);        
-
+                $('#divBindList').html(result);
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -221,10 +226,10 @@
     }
 
     function PendingRecommendationsList() {
+        debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
-        debugger;
         $.ajax({
             type: "POST",
             url: URL_PendingRecommendationsList,
@@ -240,7 +245,6 @@
             success: function (result) {
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
-                
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -254,18 +258,15 @@
                 //URL_LoadTab = URL_BindBookingSheetList;
                 $("[id*='tab']").removeClass('active');
                 $("#tabBkgsht").addClass('active');
+                TabName = NewTab;
             }
             if (NewTab == "PR") {
                 //URL_LoadTab = URL_PendingRecommendations;
                 $("[id*='tab']").removeClass('active');
                 $("#tabPdngrmdn").addClass('active');
+                TabName = NewTab;
         }
-        if (NewTab == "BS") {
-            BindbookingSheetList();
-        }
-        else {
-            PendingRecommendationsList();
-        }
+        SearchOnList("", TabName);
     }
 
     function GenerateBookingSheet(RcCode) {
@@ -277,7 +278,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                RecommendationCode: RcCode         
+                RecommendationCode: RcCode
             }),
             success: function (result) {
                 if (result.Status == "S") {
@@ -301,33 +302,26 @@
                     <h2 class="pull-left">
                         Booking Sheet
                     </h2>
-                    <div class="right_nav pull-right">
-                        <ul>
-                            <li id="btnUser">
-                                @Html.ActionLink("Create", "Create", "", new { @class = "btn btn-primary" })
-                            </li>
-                        </ul>
-                    </div>
                 </div>
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            @*<td style="width:1%;vertical-align: middle;text-align:center;">
-                                Clients :
-                            </td>*@
-                            @*<td style="width:3%; vertical-align: middle;">
-                                @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
+                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                                Search :
+                            </td>
+                            <td style="width:10%;vertical-align: middle;" align="left">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Client Name, Booking sheet No." autocomplete="off" />
                             </td>
                             <td style="width:10%;vertical-align: middle;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
-                            </td>*@
-                            @*<td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
-                                    @objMessageKey.SortBy:
-                                </td>
-                                <td style="width:5%; vertical-align: middle;">
-                                    @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
-                                </td>*@
+                            </td>
+                            <td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
+                                @objMessageKey.SortBy:
+                            </td>
+                            <td style="width:10%">
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -376,3 +370,17 @@
         </div>
     </section>
 </div>
+
+
+
+@*<td style="width:3%; vertical-align: middle;">
+    @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
+</td>
+
+<div class="right_nav pull-right">
+    <ul>
+        <li id="btnUser">
+            @Html.ActionLink("Create", "Create", "", new { @class = "btn btn-primary" })
+        </li>
+    </ul>
+</div>*@
