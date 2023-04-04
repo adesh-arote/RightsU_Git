@@ -156,8 +156,8 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index()
         {
-            FetchData1();
-            FetchData2();
+            BookingSheetData();
+            PendingReccomendationData();
 
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
@@ -170,7 +170,7 @@ namespace RightsU_Plus.Controllers
             //ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
 
             if (Session["Message"] != null)
-            {                                            //-----To add edit success messages
+            {                                            //-----To show success messages
                 ViewBag.Message = Session["Message"];
                 Session["Message"] = null;
             }
@@ -178,13 +178,13 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        private void FetchData1()
+        private void BookingSheetData()
         {
             //lstBooking_Sheet_Searched = lstBooking_Sheet = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
             lstBooking_Sheet_Searched = lstBooking_Sheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().ToList();
         }
 
-        private void FetchData2()
+        private void PendingReccomendationData()
         {
             //lstRecommendation_Searched = lstRecommendation = objRecommendation_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
             lstRecommendation_Searched = lstRecommendation = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetReCommendationList().ToList();
@@ -267,8 +267,11 @@ namespace RightsU_Plus.Controllers
                     lstBooking_Sheet_Searched = lstBooking_Sheet.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
                 }
                 else
+                {
+                    BookingSheetData();
                     lstBooking_Sheet_Searched = lstBooking_Sheet;
-
+                }
+                    
                 recorcount = lstBooking_Sheet_Searched.Count;
             }
             else if(TabName == "PR")
@@ -278,8 +281,11 @@ namespace RightsU_Plus.Controllers
                     lstRecommendation_Searched = lstRecommendation.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Proposal_No != null && w.Proposal_No.ToString().Contains(searchText.ToString()))).ToList();
                 }
                 else
+                {
+                    PendingReccomendationData();
                     lstRecommendation_Searched = lstRecommendation;
-
+                }
+                    
                 recorcount = lstRecommendation_Searched.Count;
             }
 
@@ -327,7 +333,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 Status = "S";
-                Session["Message"] = "Sheet Generated Succesfully";      
+                Message = "Sheet Generated Succesfully";      
             }
 
             var Obj = new
