@@ -1336,6 +1336,16 @@ namespace RightsU_Plus.Controllers
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult BindddlBanner(string ColumnsCode, string AdditionalCondition)
+        {
+            int RoleCode = 0;
+
+            if (AdditionalCondition != "")
+                RoleCode = Convert.ToInt32(AdditionalCondition);
+            var lstextCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => new { ColumnsValue = i.Banner_Name, Columns_Value_Code = i.Banner_Code }).ToList();
+            return Json(lstextCol, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult SaveTalent(string Roles, string TalentName, string Gender)
         {
             int ccount = 0;

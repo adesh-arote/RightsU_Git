@@ -1151,9 +1151,14 @@
                     isCBFC = "N"
                     MethodName = '@Url.Action("BinddlColumnsValue", "Title")';
                 }
-                else if (Is_Ref == "Y" && Is_Defined_Values == "N" && Ref_Table == "TALENT") {
+                else if (Is_Ref == "Y" && Is_Defined_Values == "N" && Ref_Table.toUpperCase() == "TALENT") {
                     CallFor = "T";
                     MethodName = '@Url.Action("BindddlExtendedTalent", "Title")';
+                    isCBFC = "N";
+                }
+                else if (Is_Ref == "Y" && Is_Defined_Values == "N" && Ref_Table.toUpperCase() == "BANNER") {
+                    CallFor = "T";
+                    MethodName = '@Url.Action("BindddlBanner", "Title")';
                     isCBFC = "N";
                 }
 
