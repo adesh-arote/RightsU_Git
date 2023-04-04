@@ -4144,13 +4144,24 @@ namespace RightsU_Plus.Controllers
                 {
                     status = "Pending";
                 }
+                if (objTEDlst.Status == "S")
+                {
+                    status = "Proceed";
+                }
                 if (objTEDlst.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code && CommandName == "EDIT")
                 {
                     TDBind = TDBind + "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" value = \"" + objTEDlst.Episode_Nos + "\" />  <input type=\"hidden\" id=\"hdnTitleEpsDetailCode\" value=\"" + objTEDlst.Title_Episode_Detail_Code + "\" />  <input type=\"hidden\" id=\"hdnTitleCode\" value=\"" + objTEDlst.Title_Code + "\" />  </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"" + objTEDlst.Remarks + "\"  /> </td> <td> <input type=\"hidden\" id=\"EpsStatus\" value=\"" + objTEDlst.Status + "\" /> " + status + "</td> <td> <a class=\"glyphicon glyphicon-ok-circle\" title=\"Save\" onclick=\"PostEpisodeDetails()\"></a> <a class=\"glyphicon glyphicon-remove-circle\" title=\"Close\" onclick=\"EditEpisodeDetails('', '')\" > </a> </td> </tr>";
                 }
                 else
                 {
-                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a></td></tr>";
+                    if (objTEDlst.Status == "S")
+                    {
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td></td></tr>";
+                    }
+                    else
+                    {
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a> <a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"ProceedEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', '" + objTEDlst.Episode_Nos + "', '" + objTEDlst.Remarks + "', '" + objTEDlst.Title_Code + "')\"></a> </td></tr>";
+                    }
                 }
             }
             if (CommandName == "ADD")
@@ -4226,6 +4237,13 @@ namespace RightsU_Plus.Controllers
             };
 
             return Json(EpsSaveObj);
+        }
+
+        public ActionResult ProceedEpisodeDetail(Title_Episode_Details objTED)
+        {
+            //Call procedure
+            //return Json("Episode details sent for auto data generation");
+            return Json("");
         }
 
         public RightsU_Entities.Title DBSaveEpisodeDetails(RightsU_Entities.Title objTitle)

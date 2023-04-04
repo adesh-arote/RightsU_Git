@@ -178,7 +178,7 @@
         var BannerValues = "";
         var PrefExclusionCode = "";
         var PrefExclusionValues = "";
-        
+
         if (VendorClient == "" || VendorClient == undefined) {
             $("#Vendor").attr('required', true);
             returnVal = false;
@@ -186,26 +186,30 @@
         }
         if (VendorClient == "V") {
 
-            BannerCode = $("#Banner").val().join(',');
-            BannerValues = $("#Banner option:selected").map(function () {
-                return $(this).text();
-            }).get().join();
-
-            if (BannerCode == "") {
+            BannerCode = $("#Banner").val();
+            if (BannerCode == "" || BannerCode == null) {
                 showAlert("E", "Please select Banners");
                 returnVal = false;
+            }
+            if (BannerCode != "" && BannerCode != null && BannerCode != undefined) {
+                BannerCode = BannerCode.join(',');
+                BannerValues = $("#Banner option:selected").map(function () {
+                    return $(this).text();
+                }).get().join();
             }
         }
         else if (VendorClient == "C") {
 
-            PrefExclusionCode = $("#PrefExclusion").val().join(',');
-            PrefExclusionValues = $("#PrefExclusion option:selected").map(function () {
-                return $(this).text();
-            }).get().join();
-
-            if (PrefExclusionCode == "") {
+            PrefExclusionCode = $("#PrefExclusion").val();
+            if (PrefExclusionCode == "" || PrefExclusionCode == null) {
                 showAlert("E", "Please select Preference exclusions");
                 returnVal = false;
+            }
+            if (PrefExclusionCode != "" && PrefExclusionCode != null && PrefExclusionCode != undefined) {
+                PrefExclusionCode = PrefExclusionCode.join(',');
+                PrefExclusionValues = $("#PrefExclusion option:selected").map(function () {
+                    return $(this).text();
+                }).get().join();
             }
         }
 

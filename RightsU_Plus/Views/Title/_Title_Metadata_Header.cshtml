@@ -23,6 +23,7 @@
     var URL_SaveEpisodeData = '@Url.Action("SaveEpisodeData", "Title")';
     var URL_EditEpisodeData = '@Url.Action("AddEditEpisodeData", "Title")';
     var URL_ViewEpisodeData = '@Url.Action("ViewEpisodeData", "Title")';
+    var URL_ProceedEpDetail = '@Url.Action("ProceedEpisodeDetail", "Title")';
     var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
 
     $('#tabs ul li').click(function () {
@@ -181,6 +182,27 @@
                 debugger;
                 $("#ViewAddEpisodeTable").empty();
                 $("#ViewAddEpisodeTable").html(result);
+            }
+        });
+    }
+
+    function ProceedEpisodeDetails(TitleDetailCode, EpisodeNumber, Remark, TitleCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ProceedEpDetail,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Title_Episode_Detail_Code: TitleDetailCode,
+                Title_Code: TitleCode,
+                Episode_Nos: EpisodeNumber,
+                Remarks: Remark
+            }),
+            success: function (result) {
+                debugger;
+                //showAlert("S", result);
             }
         });
     }

@@ -21,11 +21,18 @@
         var Data = $("#CrCData").val();
         var DataText = $("#CrCData option:selected").text();
         if ($("#CrCDataMSddl").prop('type') == 'select-multiple') {
-            var Data = $("#CrCDataMSddl").val().join(',');
-            //var DataText = $("#CrCDataMSddl option:selected").text();
-            var DataText = $("#CrCDataMSddl option:selected").map(function () {
-                return $(this).text();
-            }).get().join();
+            var Data = $("#CrCDataMSddl").val();
+            if (Data == "" || Data == null) {
+                showAlert("E", "Please select Data fields");
+                returnVal = false;
+            }
+            if (Data != "" && Data != null && Data != undefined) {
+                Data = Data.join(',');
+                //var DataText = $("#CrCDataMSddl option:selected").text();
+                var DataText = $("#CrCDataMSddl option:selected").map(function () {
+                    return $(this).text();
+                }).get().join();
+            }
         }
         var hdnCRCode = $("#hdnContentRuleCode").val();
         var CRCCode = $("#hdnCRCriteria").val();

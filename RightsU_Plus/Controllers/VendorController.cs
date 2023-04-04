@@ -1563,6 +1563,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 objVendorRule = new AL_Vendor_Rule();
+                objVendorRule.Rule_Type = "M";
             }
 
             objVr = objVendorRule;
