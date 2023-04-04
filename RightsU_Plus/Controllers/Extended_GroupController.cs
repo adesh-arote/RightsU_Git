@@ -224,6 +224,12 @@ namespace RightsU_Plus.Controllers
             lstValidation.Add(new SelectListItem { Text = "0 or 1", Value = "0 & 1" });
             ViewBag.ddlValidation = lstValidation;
 
+            List<SelectListItem> lstDisplayFor = new List<SelectListItem>();
+            lstDisplayFor.Add(new SelectListItem { Text = "Movie", Value = "Mv" });
+            lstDisplayFor.Add(new SelectListItem { Text = "Show", Value = "Sh" });
+            lstDisplayFor.Add(new SelectListItem { Text = "Both", Value = "Bt" });
+            ViewBag.ddlDisplayFor = lstDisplayFor;
+
             List<SelectListItem> lstImportType = new List<SelectListItem>();
             lstImportType.Add(new SelectListItem { Text = "Only Export", Value = "E" });
             lstImportType.Add(new SelectListItem { Text = "Only Import", Value = "I" });
@@ -239,10 +245,12 @@ namespace RightsU_Plus.Controllers
             {
                 lst = lst.Where(a => a.Extended_Group_Config_Code == Id).ToList();
 
+                //--------------------------------------------DDLMetadata--------------------------------------------------------
                 Extended_Group_Config Detail = lst.FirstOrDefault();
                 List<Extended_Columns> lstExtndClmns = objExtended_Columns_Service.SearchFor(s => true).ToList();
                 ViewBag.ddlMetadata = new SelectList(lstExtndClmns, "Columns_Code", "Columns_Name", Detail.Columns_Code);
 
+                //--------------------------------------------DDLValidation------------------------------------------------------
                 if (Detail.Validations == null)
                 {
                     ViewBag.SelectedValidation = new MultiSelectList(lstValidation, "Value", "Text");
@@ -253,6 +261,18 @@ namespace RightsU_Plus.Controllers
                     ViewBag.SelectedValidation = new MultiSelectList(lstValidation, "Value", "Text", SelectedValue);
                 }
 
+                //--------------------------------------------DDLDisplayFor------------------------------------------------------
+                if (Detail.Display_Name == null)
+                {
+                    ViewBag.SelectedDisplay = new SelectList(lstDisplayFor, "Value", "Text");
+                }
+                else
+                {
+                    List<string> SelectedDisplayFor = lstDisplayFor.Where(w => Detail.Display_Name.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Value).ToList();
+                    ViewBag.SelectedDisplay = new SelectList(lstDisplayFor, "Value", "Text", SelectedDisplayFor);
+                }
+
+                //--------------------------------------------DDLImportType------------------------------------------------------
                 if (Detail.Allow_Import == null)
                 {
                     ViewBag.SelectedImportType = new SelectList(lstImportType, "Value", "Text");

@@ -2,7 +2,7 @@
 @using UTOFrameWork.FrameworkClasses;
 
 @{
-   // ViewBag.Title = "Index";
+    // ViewBag.Title = "Index";
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -51,29 +51,27 @@
                         @Html.DisplayFor(modelItem => item.Columns_Name)
                     </td>
                     <td>
-                        @if (item.Control_Type == "DDL")
-                        {
-                            <span>DropDown</span>
+                        @{
+                            string ControlType = "";
                         }
-                        @if (item.Control_Type == "TXT")
+                        @if (item.Control_Type == null)
                         {
-                            <span>Text</span>
+                            <span></span>
                         }
-                        @if (item.Control_Type == "DATE")
+                        else
                         {
-                            <span>Date</span>
-                        }
-                        @if (item.Control_Type == "SDTED")
-                        {
-                            <span>StartDate To EndDate</span>
-                        }
-                        @if (item.Control_Type == "RB")
-                        {
-                            <span>Radio Button</span>
-                        }
-                        @if (item.Control_Type == "CB")
-                        {
-                            <span>Checkbox</span>
+                            {
+                                List<SelectListItem> lstControlType = new List<SelectListItem>();
+                                lstControlType.Add(new SelectListItem { Text = "Dropdown", Value = "DDL" });
+                                lstControlType.Add(new SelectListItem { Text = "Text", Value = "TXT" });
+                                lstControlType.Add(new SelectListItem { Text = "Checkbox", Value = "CB" });
+                                lstControlType.Add(new SelectListItem { Text = "Radio Button", Value = "RB" });
+                                lstControlType.Add(new SelectListItem { Text = "StartDate-EndDate", Value = "SDTED" });
+                                lstControlType.Add(new SelectListItem { Text = "Export", Value = "EXP" });
+                                lstControlType.Add(new SelectListItem { Text = "Date", Value = "DATE" });
+                                ControlType = lstControlType.Where(w => w.Value == item.Control_Type.ToString()).Select(s => s.Text).FirstOrDefault();
+                            }
+                            @ControlType
                         }
                     </td>
                     <td>

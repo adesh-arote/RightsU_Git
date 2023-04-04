@@ -25,7 +25,6 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-
         private List<AL_Lab> lstAL_Lab_Searched = new List<AL_Lab>();
 
         private AL_Lab lstAL_Lab = new AL_Lab();
@@ -36,23 +35,22 @@ namespace RightsU_Plus.Controllers
             ViewBag.LangCode = SysLanguageCode;
             List<AL_Lab_Service> AL_Lab_Services = new List<AL_Lab_Service>();
             List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "L" });
-            lstSort.Add(new SelectListItem { Text = "AL Lab Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "AL Lab Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
             return View();
         }
-
 
         public PartialViewResult BindAL_Lab_List(int pageNo, int recordPerPage, int AL_Lab_Code, string commandName, string sortType)
         {
             lstAL_Lab_Searched = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             ViewBag.AL_LabCode = AL_Lab_Code;
             ViewBag.CommandName = commandName;
-            if (sortType == "AA" || sortType == "AD")
-            {
-                ViewBag.SortAttrType = sortType;
-            }
+            //if (sortType == "AA" || sortType == "AD")
+            //{
+            //    ViewBag.SortAttrType = sortType;
+            //}
             List<AL_Lab> lst = new List<AL_Lab>();
             if (lstAL_Lab_Group != null)
             {
@@ -65,7 +63,7 @@ namespace RightsU_Plus.Controllers
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "L")
+                if (sortType == "T")
                 {
                     lst = lstAL_Lab_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
@@ -167,7 +165,8 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-        public JsonResult SaveAL_Lab(int AL_Lab_Code, string AL_Lab_Name, string AL_Lab_short_name)
+
+        public JsonResult SaveAL_Lab(int AL_Lab_Code, string AL_Lab_Name, string AL_Lab_short_name, string AL_Lab_Contact_person)
         {
             string status = "S";
             string message = "";
@@ -193,8 +192,9 @@ namespace RightsU_Plus.Controllers
                     lstAL_Lab.EntityState = State.Added;
                     lstAL_Lab.Inserted_By = UserId;
                 }
-                lstAL_Lab.AL_Lab_Short_Name = AL_Lab_short_name;
                 lstAL_Lab.AL_Lab_Name = AL_Lab_Name;
+                lstAL_Lab.AL_Lab_Short_Name = AL_Lab_short_name;
+                lstAL_Lab.Contact_Person = AL_Lab_Contact_person;
                 lstAL_Lab.Inserted_On = DateTime.Now;
                 lstAL_Lab.Last_Action_By = UserId;
                 lstAL_Lab.Last_Updated_Time = DateTime.Now;

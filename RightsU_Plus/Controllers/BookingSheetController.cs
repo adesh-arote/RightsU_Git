@@ -22,15 +22,29 @@ namespace RightsU_Plus.Controllers
             set { Session["lstBooking_Sheet"] = value; }
         }
 
-        private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet_Searched
+        //private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet_Searched
+        //{
+        //    get
+        //    {
+        //        if (Session["lstBooking_Sheet_Searched"] == null)
+        //            Session["lstBooking_Sheet_Searched"] = new List<RightsU_Entities.AL_Booking_Sheet>();
+        //        return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet_Searched"];
+        //    }
+        //    set { Session["lstBooking_Sheet_Searched"] = value; }
+        //}
+
+        List<USPAL_GetBookingSheetList_Result> lstBooking_Sheet_Searched
         {
             get
             {
                 if (Session["lstBooking_Sheet_Searched"] == null)
-                    Session["lstBooking_Sheet_Searched"] = new List<RightsU_Entities.AL_Booking_Sheet>();
-                return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet_Searched"];
+                    Session["lstBooking_Sheet_Searched"] = new List<USPAL_GetBookingSheetList_Result>();
+                return (List<USPAL_GetBookingSheetList_Result>)Session["lstBooking_Sheet_Searched"];
             }
-            set { Session["lstBooking_Sheet_Searched"] = value; }
+            set
+            {
+                Session["lstBooking_Sheet_Searched"] = value;
+            }
         }
 
         private RightsU_Entities.AL_Booking_Sheet objBooking_Sheet
@@ -68,15 +82,29 @@ namespace RightsU_Plus.Controllers
             set { Session["lstRecommendation"] = value; }
         }
 
-        private List<RightsU_Entities.AL_Recommendation> lstRecommendation_Searched
+        //private List<RightsU_Entities.AL_Recommendation> lstRecommendation_Searched
+        //{
+        //    get
+        //    {
+        //        if (Session["lstRecommendation_Searched"] == null)
+        //            Session["lstRecommendation_Searched"] = new List<RightsU_Entities.AL_Recommendation>();
+        //        return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation_Searched"];
+        //    }
+        //    set { Session["lstRecommendation_Searched"] = value; }
+        //}
+
+        List<USPAL_GetReCommendationList_Result> lstRecommendation_Searched
         {
             get
             {
                 if (Session["lstRecommendation_Searched"] == null)
-                    Session["lstRecommendation_Searched"] = new List<RightsU_Entities.AL_Recommendation>();
-                return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation_Searched"];
+                    Session["lstRecommendation_Searched"] = new List<USPAL_GetReCommendationList_Result>();
+                return (List<USPAL_GetReCommendationList_Result>)Session["lstRecommendation_Searched"];
             }
-            set { Session["lstRecommendation_Searched"] = value; }
+            set
+            {
+                Session["lstRecommendation_Searched"] = value;
+            }
         }
 
         private RightsU_Entities.AL_Recommendation objRecommendation
@@ -110,26 +138,34 @@ namespace RightsU_Plus.Controllers
             FetchData1();
             FetchData2();
 
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).Where(w => w.Party_Type == "C" && w.Is_Active == "Y").ToList();
-            ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
+            //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            //List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).Where(w => w.Party_Type == "C" && w.Is_Active == "Y").ToList();
+            //ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
+
+            if (Session["Message"] != null)
+            {                                            //-----To add edit success messages
+                ViewBag.Message = Session["Message"];
+                Session["Message"] = null;
+            }
 
             return View();
         }
 
         private void FetchData1()
         {
-            lstBooking_Sheet_Searched = lstBooking_Sheet = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            //lstBooking_Sheet_Searched = lstBooking_Sheet = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstBooking_Sheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().ToList();
         }
 
         private void FetchData2()
         {
-            lstRecommendation_Searched = lstRecommendation = objRecommendation_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            //lstRecommendation_Searched = lstRecommendation = objRecommendation_Service.SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+            lstRecommendation_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetReCommendationList().ToList();
         }
 
         public ActionResult BindBookingSheetList(int pageNo, int recordPerPage)
         {
-            List<AL_Booking_Sheet> lst = new List<AL_Booking_Sheet>();
+            List<USPAL_GetBookingSheetList_Result> lst = new List<USPAL_GetBookingSheetList_Result>();
             Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
@@ -154,7 +190,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult PendingRecommendationsList(int pageNo, int recordPerPage)
         {
-            List<AL_Recommendation> lst = new List<AL_Recommendation>();
+            List<USPAL_GetReCommendationList_Result> lst = new List<USPAL_GetReCommendationList_Result>();
 
             int RecordCount = 0;
             RecordCount = lstRecommendation_Searched.Count;
@@ -209,15 +245,51 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        //-----------------------------------------------------GenerateBookingSheet-----------------------------------------------------------------------------
 
-        public ActionResult Create()
+        public JsonResult GenerateBookingSheet(int RecommendationCode)
         {
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            string Status = "";
+            string Message = "";
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            USPAL_GetReCommendationList_Result objRc = new USPAL_GetReCommendationList_Result();
 
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ddlClient = new SelectList(lstVendors.OrderBy(o => o.Vendor_Name), "Vendor_Code", "Vendor_Name");
+            if (RecommendationCode != 0)
+            {
+                objRc = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetReCommendationList().Where(w => w.AL_Recommendation_Code == RecommendationCode).FirstOrDefault();
+               
+                objBooking_Sheet.AL_Recommendation_Code = objRc.AL_Recommendation_Code;               
+                objBooking_Sheet.Last_Action_By = objLoginUser.Users_Code;
+                objBooking_Sheet.Last_Updated_Time = DateTime.Now;
+                objBooking_Sheet.Record_Status = "P";
 
-            return View();
+                objBooking_Sheet.Vendor_Code = 2470;
+                
+                Random ran = new Random();
+                int SheetNo = ran.Next(1, 100);
+                objBooking_Sheet.Booking_Sheet_No = "BS000" + SheetNo;
+
+                objBooking_Sheet.EntityState = State.Added;
+            }
+
+            dynamic resultSet;
+            if (!objBooking_Sheet_Service.Save(objBooking_Sheet, out resultSet))
+            {
+                Status = "E";
+                Message = resultSet;        
+            }
+            else
+            {
+                Status = "S";
+                Session["Message"] = "Sheet Generated Succesfully";      
+            }
+
+            var Obj = new
+            {
+                Status = Status,
+                Message = Message
+            };
+            return Json(Obj);
         }
     }
 }

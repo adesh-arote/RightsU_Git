@@ -9,6 +9,8 @@
 }
 
 <script>
+    var ExtGrpModCode = '@Model.Module_Code';
+
     $(document).ready(function () {
         debugger;
         if ('@objMessageKey.LayoutDirection' == "RTL") {
@@ -57,39 +59,8 @@
 <div class="modal_block">
     <table class="add_title_popup">
         <tr>
-            <td class="lblExtdGrp" style="width:30%"><b>Module</b></td>
-            <td style="width:40%">
-                @{
-                    string Module = "";
-                }
-                @if (ViewBag.CommandName == "VIEW")
-                {
-                    {
-                        List<SelectListItem> lstModule = new List<SelectListItem>();
-                        lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
-                        lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
-                        lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "1" });
-                        lstModule.Add(new SelectListItem { Text = "OEM", Value = "2" });
-
-                        Module = lstModule.Where(w => w.Value == Model.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
-                    }
-                    @Module
-                }
-                else
-                {
-                    @Html.DropDownListFor(m => m.Module_Code, new List<SelectListItem>
-                    {new SelectListItem {Text = "Title", Value = "27"},
-                    new SelectListItem {Text = "Party", Value = "10" },
-                    new SelectListItem {Text = "Booking Sheet", Value = "1"},
-                    new SelectListItem {Text = "OEM", Value = "2"}},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
-                    <input type="hidden" id="hdnEGCode" value="@Model.Extended_Group_Code" />
-                }
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td class="lblExtdGrp" style="width:30%"><b>Group Name</b></td>
-            <td style="width:40%">
+            <td class="lblExtdGrp" style="width:15%"><b>Group Name</b></td>
+            <td style="width:20%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Name</span>
@@ -99,11 +70,38 @@
                     <input type="text" id="txtGroupName" value="@Model.Group_Name" placeholder="Enter Group Name" maxlength="100" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
             </td>
-            <td></td>
+
+            <td class="lblExtdGrp" style="width:15%"><b>Module</b></td>
+            <td style="width:20%">
+                @{
+                    string Module = "";
+                }
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    {
+                        List<SelectListItem> lstModule = new List<SelectListItem>();
+                        lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
+                        lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
+                        lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "263" });
+                        lstModule.Add(new SelectListItem { Text = "OEM", Value = "260" });
+                        Module = lstModule.Where(w => w.Value == Model.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
+                    }
+                    @Module
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.Module_Code, new List<SelectListItem>
+                    {new SelectListItem {Text = "Title", Value = "27"},
+                    new SelectListItem {Text = "Party", Value = "10" },
+                    new SelectListItem {Text = "Booking Sheet", Value = "263"},
+                    new SelectListItem {Text = "OEM", Value = "260"}},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
+                    <input type="hidden" id="hdnEGCode" value="@Model.Extended_Group_Code" />
+                }
+            </td>
         </tr>
         <tr>
-            <td class="lblExtdGrp" style="width:30%"><b>Group Short Name</b></td>
-            <td style="width:40%">
+            <td class="lblExtdGrp" style="width:15%"><b>Group Short Name</b></td>
+            <td style="width:20%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Short_Name</span>
@@ -113,11 +111,9 @@
                     <input type="text" id="txtShortName" value="@Model.Short_Name" placeholder="Enter Short Name" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
             </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td class="lblExtdGrp" style="width:30%"><b>Group Order</b></td>
-            <td style="width:40%">
+            
+            <td class="lblExtdGrp" style="width:15%"><b>Group Order</b></td>
+            <td style="width:20%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     <span>@Model.Group_Order</span>
@@ -126,12 +122,11 @@
                 {
                     <input type="text" id="txtGroupOrder" value="@Model.Group_Order" placeholder="Enter Group Order" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
                 }
-            </td>
-            <td></td>
+            </td>         
         </tr>
         <tr>
-            <td class="lblExtdGrp" style="width:30%"><b>Group Type</b></td>
-            <td style="width:40%">
+            <td class="lblExtdGrp" style="width:15%"><b>Group Type</b></td>
+            <td style="width:20%">
                 @if (ViewBag.CommandName == "VIEW")
                 {
                     if (@Model.Add_Edit_Type == "grid")
@@ -150,7 +145,8 @@
                     new SelectListItem { Text = "Grid", Value = "grid" }}, "Please Select", new { @id ="ddlType", @class = "form_input chosen-select", @style ="width:70%"})
                 }
             </td>
-            <td></td>
+            <td style="width:15%"></td>
+            <td style="width:20%"></td>
         </tr>
     </table>
 </div>
@@ -170,7 +166,7 @@
         </span>
     </div>
     <div class="tab-content clearfix table-wrapper scale_table_container">
-        <div class="scale_table_block" id="divExtdGrpDtl" style="max-height:100%">
+        <div class="scale_table_block" id="divExtdGrpDtl" style="height:300px; overflow-y:auto;">
 
         </div>
     </div>

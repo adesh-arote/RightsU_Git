@@ -49,21 +49,24 @@
                         @i
                     </td>
                     <td style="text-align:center">
-                        @if (item.Module_Code == 27)
-                        {
-                            <span>Title</span>
+                        @{
+                            string SelectedModule = "";
                         }
-                        else if (item.Module_Code == 10)
+                        @if (item.Module_Code == null)
                         {
-                            <span>Party</span>
+                            <span></span>
                         }
-                        else if (item.Module_Code == 1)
+                        else
                         {
-                            <span>Booking Sheet</span>
-                        }
-                        else if (item.Module_Code == 2)
-                        {
-                            <span>OEM</span>
+                            {
+                                List<SelectListItem> lstModule = new List<SelectListItem>();
+                                lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
+                                lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
+                                lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "263" });
+                                lstModule.Add(new SelectListItem { Text = "OEM", Value = "260" });
+                                SelectedModule = lstModule.Where(w => w.Value == item.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
+                            }
+                            @SelectedModule
                         }
                     </td>
                     <td style="text-align:center">
@@ -89,9 +92,9 @@
                     <td style="text-align:center">
                         @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
                         {
-                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT')"></a>
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT', '@item.Module_Code')"></a>
                         }
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW')"></a>
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
                         <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'DELETE')"></a>
                     </td>
                 </tr>

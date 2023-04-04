@@ -192,7 +192,7 @@ namespace RightsU_Plus.Controllers
         public string BindNewRowDdl(int ColumnCode, int RowNum, string IsExists, int Ext_Grp_Code)
         {
             int Column_Code = Convert.ToInt32(ColumnCode);
-            string str_Program_Category_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "Program_Category_Value" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+            //string str_Program_Category_Value = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "Program_Category_Value" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
 
             List<int> ColumnNotInCode;
             if (IsExists != "A")
@@ -236,11 +236,11 @@ namespace RightsU_Plus.Controllers
 
             FieldNameDDL += " <option value='0' selected>Please Select</option> ";
 
-            if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
-            {
-                FieldNameDDL = "<select id='" + RowNum + "_ddlFieldNameList' class='form_input chosen-select' onchange='ControlType(" + str_Program_Category_Value + ",$(this).val())' disabled> ";
-                FieldNameDDL += "<option value='17' selected>Program Category";
-            }
+            //if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
+            //{
+            //    FieldNameDDL = "<select id='" + RowNum + "_ddlFieldNameList' class='form_input chosen-select' onchange='ControlType(" + str_Program_Category_Value + ",$(this).val())' disabled> ";
+            //    FieldNameDDL += "<option value='17' selected>Program Category";
+            //}
 
             for (int i = 0; i < lstExtendedColumns.Count; i++)
             {

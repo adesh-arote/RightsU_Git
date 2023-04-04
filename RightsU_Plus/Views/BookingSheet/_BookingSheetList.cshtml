@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.AL_Booking_Sheet>
+﻿@model List<RightsU_Entities.USPAL_GetBookingSheetList_Result>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -31,19 +31,11 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        <span>
-                            @{
-                                string VendorName = "";
-                                if (item.Vendor_Code > 0 && item.Vendor_Code != null)
-                                {
-                                    VendorName = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientName).Where(a => a.Vendor_Code == item.Vendor_Code).Select(b => b.Vendor_Name).FirstOrDefault();
-                                }
-                                @VendorName
-                            }
-                        </span>
+                        @*@Html.DisplayFor(modelItem => item.Vendor_Name)*@
+                        @item.Vendor_Name
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.AL_Recommendation.AL_Recommendation_Code)
+                        @Html.DisplayFor(modelItem => item.Proposal_No)
                     </td>
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
@@ -55,6 +47,7 @@
                         @Html.DisplayFor(modelItem => item.Show_Content_Count)
                     </td>
                     <td style="text-align:center">
+                        @*@Html.DisplayFor(modelItem => item.Last_Action_By)*@
                         <span>
                             @{
                                 string UpdateBy = "";

@@ -11,6 +11,7 @@
 
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+
     var URL_BindAL_LabList = '@Url.Action("BindAL_Lab_List", "AL_Lab")';
     var URL_SearchAL_Lab = '@Url.Action("SearchAL_Lab", "AL_Lab")';
     var URL_SaveAL_Lab = '@Url.Action("SaveAL_Lab", "AL_Lab")';
@@ -18,6 +19,8 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     var Url_DeleteAL_Lab = '@Url.Action("DeleteAL_Lab", "AL_Lab")';
+
+
     $(document).ready(function () {
         debugger;
         if (LayoutDirection_G == "RTL") {
@@ -48,7 +51,7 @@
         })
     });
 
-    //-----------------SEARCH-----------------
+    //-----------------SEARCH-----------------------------
 
     function btnSearch_OnClick() {
         debugger;
@@ -106,7 +109,7 @@
         });
     }
 
-    //-----------------PAGING-----------------
+    //-----------------PAGING------------------------------
 
     function addNumeric() {
         debugger;
@@ -199,7 +202,7 @@
         SetPaging();
     }
 
-    //-----------------VALIDATION-----------------
+    //-----------------VALIDATION--------------------------
 
     function checkCurrentActionAttribGroup() {
         debugger;
@@ -215,7 +218,7 @@
         return true;
     }
 
-    //-----------------MASTER-----------------
+    //-----------------MASTER-------------------------------
 
     function AL_LabList(commandName, AL_LabCode) {
         debugger;
@@ -260,6 +263,7 @@
         var AL_Lab_Code = AL_LabCode;
         var AL_Lab_Name = $.trim($("#AL_Lab_Name").val());
         var AL_Lab_short_name = $.trim($("#AL_Lab_Short_Name").val());
+        var AL_Lab_Contact_person = $.trim($("#AL_Lab_Contact_Person").val());
 
         if (AL_Lab_Name == "") {
             $('#AL_Lab_Name').val('').attr('required', true);
@@ -267,6 +271,10 @@
         }
         if (AL_Lab_short_name == "") {
             $('#AL_Lab_Short_Name').val('').attr('required', true);
+            returnVal = false;
+        }
+        if (AL_Lab_Contact_person == "") {
+            $('#AL_Lab_Contact_Person').val('').attr('required', true);
             returnVal = false;
         }
 
@@ -280,7 +288,8 @@
                 data: JSON.stringify({
                     AL_Lab_Code: AL_Lab_Code,
                     AL_Lab_Name: AL_Lab_Name,
-                    AL_Lab_short_name: AL_Lab_short_name
+                    AL_Lab_short_name: AL_Lab_short_name,
+                    AL_Lab_Contact_person: AL_Lab_Contact_person
                 }),
                 success: function (result) {
                     debugger;
@@ -305,7 +314,6 @@
         }
     }
 
-
     function AL_LabCancel() {
         debugger;
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
@@ -315,7 +323,7 @@
         AL_LabList("", 0);
     }
 
-   //Record Locking
+   //----------------Record Locking----------------------------
     function CheckRecordLock(commandName, AL_LabCode) {
         debugger;
         $.ajax({
@@ -354,8 +362,7 @@
         });
     }
 
-    //Delete Function
-
+    //---------------Delete Function---------------------------
     function DeleteAL_Lab(id) {
         debugger;
         $.ajax({
@@ -406,26 +413,22 @@
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="">
-
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
                         AL_Lab
-                        <span></span>
                     </h2>
-
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
                                 <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditAL_Lab('ADD', 0)" />
                             </li>
-                            <li>
+                            @*<li>
                                 <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
-                            </li>
+                            </li>*@
                         </ul>
                     </div>
                 </div>
-
-                <div class="search_area">
+                <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
                             <td style="width:10%; vertical-align: middle;text-align:center;">
@@ -434,7 +437,7 @@
                             <td style="width:25%; vertical-align:middle;">
                                 <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="AL_Lab Name, AL_Lab Short Name" maxlength="100" />
                             </td>
-                            <td>
+                            <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input autocomplete="off" type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
@@ -462,7 +465,6 @@
                             <input autocomplete="off" type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentActionAttribGroup()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
-
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">
                             <input autocomplete="off" type="hidden" id="hdnCategoryCode" value="0" />

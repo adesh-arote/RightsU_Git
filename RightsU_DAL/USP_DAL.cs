@@ -1798,5 +1798,17 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Delete_Acq_Digital(DigitalCode);
         }
+
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_GetBookingSheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_GetReCommendationList();
+        }
     }
 }

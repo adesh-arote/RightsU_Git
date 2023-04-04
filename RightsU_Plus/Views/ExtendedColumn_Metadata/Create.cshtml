@@ -245,16 +245,24 @@
                 $("#IsAddOnScreen").prop("disabled", false);
             }
         }
-        if (controlType == "TXT" || controlType == "DATE" || controlType == "SDTED" || controlType == "RB" || controlType == "CB") {
+        if (controlType == "TXT" || controlType == "DATE" || controlType == "SDTED" || controlType == "RB" || controlType == "CB" || controlType == "EXP") {
             $("#IsRef").val("N");
             $("#IsDefinedValues").val("N");
             $("#IsRef").prop("disabled", true);
             $("#IsDefinedValues").prop("disabled", true);
             $("#IsMultipleSelect").prop("disabled", true);
-            $("#RefTable").prop("disabled", true);
-            $("#DisplayField").prop("disabled", true);
-            $("#RefValueField").prop("disabled", true);
-            $("#AdditionalCondition").prop("disabled", true);
+            if (controlType != "EXP") {
+                $("#RefTable").prop("disabled", true);
+                $("#DisplayField").prop("disabled", true);
+                $("#RefValueField").prop("disabled", true);
+                $("#AdditionalCondition").prop("disabled", true);
+            }
+            else {
+                $("#RefTable").prop("disabled", false);
+                $("#DisplayField").prop("disabled", false);
+                $("#RefValueField").prop("disabled", false);
+                $("#AdditionalCondition").prop("disabled", false);
+            }         
             $("#IsAddOnScreen").prop("disabled", true);
             $("#RefTable").val("");
             $("#DisplayField").val("");
@@ -450,6 +458,10 @@
                                     {
                                         <span>Checkbox</span>
                                     }
+                                    if (Model.Control_Type == "EXP")
+                                    {
+                                        <span>Export</span>
+                                    }
                                 }
                                 else
                                 {
@@ -463,6 +475,7 @@
                                               new SelectListItem{Text="Checkbox", Value="CB"},
                                               new SelectListItem{Text="Radio Button", Value="RB"},
                                               new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                              new SelectListItem{Text="Export", Value="EXP"},
                                              new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", @onchange = "DisableEnableControl()" })
                                         }
                                         else
@@ -473,6 +486,7 @@
                                              new SelectListItem{Text="Checkbox", Value="CB"},
                                              new SelectListItem{Text="Radio Button", Value="RB"},
                                              new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                             new SelectListItem{Text="Export", Value="EXP"},
                                             new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", disabled = true })
                                         }
                                     }
@@ -484,6 +498,7 @@
                                          new SelectListItem{Text="Checkbox", Value="CB"},
                                          new SelectListItem{Text="Radio Button", Value="RB"},
                                          new SelectListItem{Text="StartDate-EndDate", Value="SDTED"},
+                                         new SelectListItem{Text="Export", Value="EXP"},
                                         new SelectListItem{Text="Date", Value="DATE"}}, "--Please select--", new { @id = "ControlType", @class = "chosen-single form-control input-sm", @style = "width:95%", @onchange = "DisableEnableControl()" })
 
                                     }

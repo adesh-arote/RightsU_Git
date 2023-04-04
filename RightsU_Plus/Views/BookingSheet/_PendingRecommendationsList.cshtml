@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.AL_Recommendation>
+﻿@model List<RightsU_Entities.USPAL_GetReCommendationList_Result>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -14,7 +14,7 @@
             <th>Client Name</th>
             <th>Proposal - CY</th>
             <th>Cycle</th>
-            <th>Action</th>
+            <th style="width: 15%;">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -24,27 +24,16 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        Malaysia Airline
+                        @Html.DisplayFor(modelItem => item.Vendor_Name)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.AL_Proposal_Code)
+                        @Html.DisplayFor(modelItem => item.Proposal___CY)
                     </td>
                     <td style="text-align:center">
-                        <span>
-                            @{
-                                string date = "";
-                                if (item.Start_Date != null && item.End_Date != null)
-                                {
-                                    date = item.Start_Date.Value.ToString("MMy") + "-" + item.End_Date.Value.ToString("MMy");   
-                                }
-                                @date
-                            }
-                        </span>
+                        @Html.DisplayFor(modelItem => item.Cycle)
                     </td>
                     <td style="text-align:center">
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;"></a>
-
-                        <a title="Export" class="glyphicon glyphicon-export" style="cursor: pointer;"></a>
+                        <input type="button" title="Export"class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
                     </td>
                 </tr>
             }

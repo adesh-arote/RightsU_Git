@@ -1779,5 +1779,17 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Delete_Acq_Digital_Result(DigitalCode);
         }
+
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingSheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetReCommendationList();
+        }
     }
 }

@@ -15,7 +15,7 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
 
-    function CheckRecordLock(Id, CommandName) {
+    function CheckRecordLock(Id, CommandName, ModuleCode) {
         debugger;
         $.ajax({
             type: "POST",
@@ -34,7 +34,7 @@
                 }
                 else {
                     if (result.Is_Locked == "Y") {
-                        AddEditViewExtdGrp(Id, CommandName)
+                        AddEditViewExtdGrp(Id, CommandName, ModuleCode)
                         $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditViewExtdGrp()
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
@@ -269,7 +269,7 @@
         });
     }
 
-    function AddEditViewExtdGrp(Id, CommandName) {
+    function AddEditViewExtdGrp(Id, CommandName, ModuleCode) {
         debugger;
         $.ajax({
             type: "POST",
@@ -280,7 +280,7 @@
             dataType: "html",
             data: JSON.stringify({
                 ExtendedGroupCode: Id,
-                CommandName: CommandName,
+                CommandName: CommandName
             }),
             success: function (result) {
                 debugger;
@@ -290,8 +290,10 @@
                 initializeChosen();
                 if (CommandName != "VIEW")
                     CommandName = "";
-
-                BindExtdGrpDetail(0, CommandName);
+                if (ModuleCode != 0) {
+                    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                }           
+                BindExtdGrpDetail(0, CommandName, ModuleCode);
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -317,14 +319,19 @@
 
     function AddEditGroupDetail(Id, CommandName) {
         debugger;
+        var ModuleCode = $("#ddlModule").val();
+        if (ModuleCode == "") {
+            showAlert("E", "Please Select Module");
+            return false;
+        }
         if (!checkCurrentAction()) {
             return false;
         }
         $('#hdnAction').val(CommandName);
-        BindExtdGrpDetail(Id, CommandName);
+        BindExtdGrpDetail(Id, CommandName, ModuleCode);
     }
 
-    function BindExtdGrpDetail(Id, CommandName) {
+    function BindExtdGrpDetail(Id, CommandName, ModuleCode) {
        // alert("Testing1");
         debugger;
         $.ajax({
@@ -343,6 +350,7 @@
                 debugger;
                 $('#divExtdGrpDtl').empty();
                 $('#divExtdGrpDtl').html(result);
+                HideShowTD(ModuleCode);
                 var length = $("table tr[id*='trBookDetail_']").length
                 $('#lblRecordCountPopup').text(length);
                 initializeTooltip();
@@ -356,13 +364,15 @@
 
     function Cancel() {
         debugger;
+        var ModuleCode = $("#ddlModule").val();
         $('#hdnAction').val("");
         checkCurrentAction();
-        BindExtdGrpDetail(0, "");
+        BindExtdGrpDetail(0, "", ModuleCode);
     }
 
     function SaveDetail(DetailId, rowNumber) {
         debugger;
+        var ModuleCode = $("#ddlModule").val();
         var returnVal = true;
         var Metadata = $('#ddlMetadata_' + rowNumber).val();
         var OrdrerInGroup = $('#txtOdrInGrp_' + rowNumber).val();
@@ -380,30 +390,20 @@
             $('#txtOdrInGrp_' + rowNumber).val('').attr('required', true)
             returnVal = false;
         }
-        if (Validations == "") {
-            $('#ddlValidations_' + rowNumber).val('').attr('required', true)
-            $('#ddlValidations_' + rowNumber).val('').attr("style", "border-color: red;");
-            returnVal = false;
-        }
-        //if (AdtnlCntn == "") {
-        //    $('#txtAddCon_' + rowNumber).val('').attr('required', true)
+        //if (Validations == "") {
+        //    $('#ddlValidations_' + rowNumber).val('').attr('required', true)
+        //    $('#ddlValidations_' + rowNumber).val('').attr("style", "border-color: red;");
         //    returnVal = false;
         //}
-        //if (IntGrpNme == "") {
-        //    $('#txtIntGrpName_' + rowNumber).val('').attr('required', true)
+        //if (ImpType == "") {
+        //    $('#ddlImportType_' + rowNumber).val('').attr('required', true)         
         //    returnVal = false;
         //}
-        //if (DispName == "") {
-        //    $('#txtDisplayName_' + rowNumber).val('').attr('required', true)
-        //    returnVal = false;
-        //}
-        if (ImpType == "") {
-            $('#ddlImportType_' + rowNumber).val('').attr('required', true)         
-            returnVal = false;
-        }
 
         if (returnVal) {
-            var Validations = $('#ddlValidations_' + rowNumber).val().join(',');
+            if (Validations != null) {
+                var Validations = $('#ddlValidations_' + rowNumber).val().join(',');
+            }
             $.ajax({
                 type: "POST",
                 url: URL_SaveGrpDetail,
@@ -425,7 +425,8 @@
                     debugger;
                     if (result.Status == "S") {
                         $('#hdnAction').val("");
-                        BindExtdGrpDetail(DetailId, "");
+                        $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                        BindExtdGrpDetail(DetailId, "", ModuleCode);
                     }
                     if (result.Error == "1") {
                         showAlert("E", "You have entered duplicate data");
@@ -472,6 +473,7 @@
                 }),
                 success: function (result) {
                     if (result.Status == "S") {
+                        $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
                         BindExtdGrpDetail(0, "");
                     }
                 },
@@ -491,6 +493,7 @@
 
     function ActivateDeactivateGrpDtl(ActiveAction, GrpDtlCode) {
         debugger;
+        var ModuleCode = $("#ddlModule").val();
         if (checkCurrentAction()) {
             $.ajax({
                 type: "POST",
@@ -505,7 +508,7 @@
                 success: function (result) {
                     if (result.Status == "S") {
                         showAlert("S", result.Message);
-                        BindExtdGrpDetail(0, "");                    
+                        BindExtdGrpDetail(0, "", ModuleCode);                    
                     }
                     else {
                         showAlert("E", result.Message);
@@ -598,6 +601,40 @@
         return true;
     }
 
+    function HideShowTD(ModuleCode) {
+        debugger;
+        if (ModuleCode == "27" || ModuleCode == "260") {
+            $(".AddConth").attr("style", "display:none");
+            $(".AddContd").attr("style", "display:none");
+               
+            $(".IntrGrpth").attr("style", "display:none");
+            $(".IntGrptd").attr("style", "display:none");
+               
+            $(".DispForth").attr("style", "display:none");
+            $(".DispFortd").attr("style", "display:none");
+               
+            $(".AllImpth").attr("style", "display:none");
+            $(".AllImpTptd").attr("style", "display:none");
+        }
+        else if (ModuleCode == "10") {
+            $(".Validationth").attr("style", "display:none");
+            $(".Validationtd").attr("style", "display:none");
+
+            $(".IntrGrpth").attr("style", "display:none");
+            $(".IntGrptd").attr("style", "display:none");
+
+            $(".DispForth").attr("style", "display:none");
+            $(".DispFortd").attr("style", "display:none");
+
+            $(".AllImpth").attr("style", "display:none");
+            $(".AllImpTptd").attr("style", "display:none");
+        }
+        else if (ModuleCode == "263") {
+            $(".AddConth").attr("style", "display:none");
+            $(".AddContd").attr("style", "display:none");
+        }
+    }
+
 </script>
 
 <style>
@@ -632,7 +669,7 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li id="btnUser">
-                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditViewExtdGrp(0, 'ADD')" />
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditViewExtdGrp(0, 'ADD', 0)" />
                             </li>
                         </ul>
                     </div>
@@ -655,6 +692,8 @@
                                     listitems.Add(new SelectListItem() { Text = "--Please Select--", Value = "0" });
                                     listitems.Add(new SelectListItem() { Text = "Title", Value = "27" });
                                     listitems.Add(new SelectListItem() { Text = "Party", Value = "10" });
+                                    listitems.Add(new SelectListItem() { Text = "OEM", Value = "260" });
+                                    listitems.Add(new SelectListItem() { Text = "Booking Sheet", Value = "263" });
                                 }
 
                                 @Html.DropDownList("DropDownListValue", listitems,  new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
@@ -701,7 +740,7 @@
     </section>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%; overflow-y:auto;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="pupupHtml">
