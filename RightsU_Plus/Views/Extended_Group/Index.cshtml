@@ -292,7 +292,7 @@
                     CommandName = "";
                 if (ModuleCode != 0) {
                     $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
-                }           
+                }
                 BindExtdGrpDetail(0, CommandName, ModuleCode);
             },
             error: function (result) {
@@ -332,7 +332,6 @@
     }
 
     function BindExtdGrpDetail(Id, CommandName, ModuleCode) {
-       // alert("Testing1");
         debugger;
         $.ajax({
             type: "POST",
@@ -352,6 +351,12 @@
                 $('#divExtdGrpDtl').html(result);
                 HideShowTD(ModuleCode);
                 var length = $("table tr[id*='trBookDetail_']").length
+                if (length == 0) {
+                    $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
+                }
+                else {
+                    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                }
                 $('#lblRecordCountPopup').text(length);
                 initializeTooltip();
                 initializeChosen();
@@ -396,7 +401,7 @@
         //    returnVal = false;
         //}
         //if (ImpType == "") {
-        //    $('#ddlImportType_' + rowNumber).val('').attr('required', true)         
+        //    $('#ddlImportType_' + rowNumber).val('').attr('required', true)
         //    returnVal = false;
         //}
 
@@ -456,6 +461,7 @@
 
     function DeleteGroupDetail(DetailId, confirmed) {
         debugger;
+        var ModuleCode = $("#ddlModule").val();
         if (!checkCurrentAction())
             return false;
 
@@ -473,8 +479,16 @@
                 }),
                 success: function (result) {
                     if (result.Status == "S") {
-                        $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
-                        BindExtdGrpDetail(0, "");
+                        debugger;
+                        //var length = $("table tr[id*='trBookDetail_']").length;
+                        //if (length == 0) {
+                        //  $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
+                        //}
+                        //else {
+                        //    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                        //}
+
+                        BindExtdGrpDetail(0, "", ModuleCode);
                     }
                 },
                 error: function (result) {
@@ -485,7 +499,7 @@
         else {
             Command_Name = "DELETE_GROUP_DETAIL";
             dummyGuid_G = DetailId;
-            
+
             $('#popup').css('z-index','1040');
             showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
         }
@@ -508,7 +522,7 @@
                 success: function (result) {
                     if (result.Status == "S") {
                         showAlert("S", result.Message);
-                        BindExtdGrpDetail(0, "", ModuleCode);                    
+                        BindExtdGrpDetail(0, "", ModuleCode);
                     }
                     else {
                         showAlert("E", result.Message);
@@ -606,13 +620,13 @@
         if (ModuleCode == "27" || ModuleCode == "260") {
             $(".AddConth").attr("style", "display:none");
             $(".AddContd").attr("style", "display:none");
-               
+
             $(".IntrGrpth").attr("style", "display:none");
             $(".IntGrptd").attr("style", "display:none");
-               
+
             $(".DispForth").attr("style", "display:none");
             $(".DispFortd").attr("style", "display:none");
-               
+
             $(".AllImpth").attr("style", "display:none");
             $(".AllImpTptd").attr("style", "display:none");
         }
@@ -696,14 +710,14 @@
                                     listitems.Add(new SelectListItem() { Text = "Booking Sheet", Value = "263" });
                                 }
 
-                                @Html.DropDownList("DropDownListValue", listitems,  new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
+                                @Html.DropDownList("DropDownListValue", listitems, new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
                             <td id="txtSort" style="width:32%;">
-                                @objMessageKey.SortBy:                           
+                                @objMessageKey.SortBy:
                                 @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
                         </tr>
