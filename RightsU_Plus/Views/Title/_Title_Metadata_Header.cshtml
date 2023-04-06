@@ -59,9 +59,9 @@
             $('.divgvAdditionalField').hide();
             $('.divgvAdditionalFieldGrid').hide();
             $("#btnAddAdditional").hide();
-            if (EpisodeDetailCount == 0) {
+            //if (EpisodeDetailCount == 0) {
                 $("#btnAddEpisode").show();
-            }
+            //}
             if (IsView == "Y") {
                 ViewEpisodeDetails();
                 $("#ActionTH").hide();
@@ -126,11 +126,11 @@
                 $("#ViewAddEpisodeTable").empty();
                 $("#ViewAddEpisodeTable").html(result);
                 var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
-                if (EpisodeDetailCount > 0) {
-                    $('#btnAddEpisode').hide();
-                } else {
-                    $("#btnAddEpisode").show();
-                }
+                //if (EpisodeDetailCount > 0) {
+                //    $('#btnAddEpisode').hide();
+                //} else {
+                //    $("#btnAddEpisode").show();
+                //}
             }
         });
     }

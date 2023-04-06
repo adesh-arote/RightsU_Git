@@ -1352,7 +1352,7 @@ namespace RightsU_Plus.Controllers
                     if (objSessionVendorDetails.EntityState == State.Added)
                     {
                         objDBVendor.AL_Vendor_Details.Add(objSessionVendorDetails);
-                    }                    
+                    }
                 }
             }
 
@@ -1371,6 +1371,9 @@ namespace RightsU_Plus.Controllers
                             objDBVendorRule.Rule_Name = objSessionVendorRule.Rule_Name;
                             objDBVendorRule.Rule_Short_Name = objSessionVendorRule.Rule_Short_Name;
                             objDBVendorRule.Rule_Type = objSessionVendorRule.Rule_Type;
+                            objDBVendorRule.Is_Active = objSessionVendorRule.Is_Active;
+                            objDBVendorRule.EntityState = objSessionVendorRule.EntityState;
+                            objDBVendorRule.Criteria = objSessionVendorRule.Criteria;
                         }
 
                         foreach (AL_Vendor_Rule_Criteria objSessionVendorRuleCriteria in objSessionVendorRule.AL_Vendor_Rule_Criteria)
@@ -1409,6 +1412,7 @@ namespace RightsU_Plus.Controllers
                         {
                             objDBVendorOem.AL_OEM_Code = objSessionVendorOEM.AL_OEM_Code;
                             objDBVendorOem.EntityState = objSessionVendorOEM.EntityState;
+                            objDBVendorOem.Is_Active = objSessionVendorOEM.Is_Active;
                         }
                     }
                     if (objSessionVendorOEM.AL_Vendor_OEM_Code < 0)
@@ -1435,6 +1439,34 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
+            var VendorPartyCheck = new Vendor_Service(objLoginEntity.ConnectionStringName).GetById(objDBVendor.Vendor_Code);
+            string DBPartyType = objSessVendor.Party_Type;
+            if (VendorPartyCheck != null)
+            {
+                DBPartyType = VendorPartyCheck.Party_Type;
+            }
+
+            if (objSessVendor.Party_Type == "V" && DBPartyType != objSessVendor.Party_Type)
+            {
+                //Entity state deleted for Everything when Previously selected Client was changed to Vendor
+                foreach (AL_Vendor_Rule objDBRule in objDBVendor.AL_Vendor_Rule)
+                {
+                    foreach (AL_Vendor_Rule_Criteria objDBRuleCrite in objDBRule.AL_Vendor_Rule_Criteria)
+                    {
+                        objDBRuleCrite.EntityState = State.Deleted;
+                    }
+                    objDBRule.EntityState = State.Deleted;
+                }
+                foreach (AL_Vendor_OEM objDBOEM in objDBVendor.AL_Vendor_OEM)
+                {
+                    objDBOEM.EntityState = State.Deleted;
+                }
+                foreach (AL_Vendor_TnC objDBTnC in objDBVendor.AL_Vendor_TnC)
+                {
+                    objDBTnC.EntityState = State.Deleted;
+                }
+            }
+
             return objDBVendor;
         }
 
@@ -1453,7 +1485,12 @@ namespace RightsU_Plus.Controllers
 
             //List of Pref Exclusion
 
-            ViewBag.PrefExclusion = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name");
+            List<Extended_Columns_Value> lstPrefExcValues = new List<Extended_Columns_Value>();
+            Extended_Columns_Value_Service objExtColValService = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName);
+            RightsU_Entities.System_Parameter_New PrefExc_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_Keyword_PrefExclusion_Code").FirstOrDefault();
+            string PrefExcludVal = PrefExc_system_Parameter.Parameter_Value;
+            lstPrefExcValues = objExtColValService.SearchFor(s => true).Where(w => w.Columns_Code.ToString() == PrefExcludVal).ToList();
+            ViewBag.PrefExclusion = new MultiSelectList(lstPrefExcValues, "Columns_Value_Code", "Columns_Value");
 
             List<Extended_Group> lstExtGrp = new List<Extended_Group>();
             Extended_Group_Service objExtGrpService = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
@@ -1474,11 +1511,16 @@ namespace RightsU_Plus.Controllers
                 if (objVendorDetail.Pref_Exclusion_Codes != null)
                 {
                     SelectedPrefExclusionValues = objVendorDetail.Pref_Exclusion_Codes.Split(',').ToList();
-                    objVendorDetail.SelectedPrefExclusionValues = string.Join(",", lstBanner.Where(w => SelectedPrefExclusionValues.Any(b => b == w.Banner_Code.ToString())).Select(s => s.Banner_Name));
+                    objVendorDetail.SelectedPrefExclusionValues = string.Join(",", lstPrefExcValues.Where(w => SelectedPrefExclusionValues.Any(b => b == w.Columns_Value_Code.ToString())).Select(s => s.Columns_Value));
+                }
+
+                if (objVendorDetail.Extended_Group_Code_Booking != null)
+                {
+                    objVendorDetail.SelectedBookingSheetValue = lstExtGrp.Where(w => w.Extended_Group_Code == objVendorDetail.Extended_Group_Code_Booking).FirstOrDefault().Group_Name;
                 }
 
                 ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedBannerValues);
-                ViewBag.PrefExclusion = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedPrefExclusionValues);
+                ViewBag.PrefExclusion = new MultiSelectList(lstPrefExcValues, "Columns_Value_Code", "Columns_Value", SelectedPrefExclusionValues);
                 ViewBag.ExtGrpCfg = new SelectList(lstExtGrp, "Extended_Group_Code", "Group_Name", objVendorDetail.Extended_Group_Code_Booking);
             }
             objVendorDetail.SelectedPartyType = objSessVendor.Party_Type;
@@ -1544,6 +1586,17 @@ namespace RightsU_Plus.Controllers
         {
             List<AL_Vendor_Rule> lstVendorRule = new List<AL_Vendor_Rule>();
             lstVendorRule = objSessVendor.AL_Vendor_Rule.ToList();
+            foreach (AL_Vendor_Rule aL_Vendor_Rule in lstVendorRule)
+            {
+                if (aL_Vendor_Rule.Rule_Type == "M")
+                {
+                    aL_Vendor_Rule.Rule_Type_Name = "Movie";
+                }
+                if (aL_Vendor_Rule.Rule_Type == "S")
+                {
+                    aL_Vendor_Rule.Rule_Type_Name = "Show";
+                }
+            }
             ViewBag.CommandNameCRList = CommandName;
 
             return PartialView("_ContentRule", lstVendorRule);
@@ -1570,6 +1623,11 @@ namespace RightsU_Plus.Controllers
             FetchAllExtendedColumns();
             CheckForSelectedValues();
 
+            if (CommandName == "EDIT")
+            {
+                UsedDDlExtendedColumnsLst = objVr.AL_Vendor_Rule_Criteria.Select(s => Convert.ToInt32(s.Columns_Code)).ToList();
+            }
+
             return PartialView("_ContentRulePopup", objVendorRule);
         }
 
@@ -1582,7 +1640,7 @@ namespace RightsU_Plus.Controllers
             string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Select(s => s.ExtendedColumnNames).ToList());
             ALVendorRule.Criteria = CommaSeparatedCriteria;
             ALVendorRule.Is_Active = "Y";
-            
+
             if (ALVendorRule.AL_Vendor_Rule_Code == 0)
             {
                 if (objSessVendor.AL_Vendor_Rule.Count == 0)
@@ -1709,9 +1767,9 @@ namespace RightsU_Plus.Controllers
             if (CrCCode != 0)
             {
                 AL_Vendor_Rule_Criteria objVRC;
-                
+
                 objVRC = objVr.AL_Vendor_Rule_Criteria.Where(w => w.AL_Vendor_Rule_Criteria_Code == CrCCode).FirstOrDefault();
-                
+
                 CreateExtendedDataObject(Convert.ToInt32(objVRC.Columns_Code));
                 DisableDDlList = UsedDDlExtendedColumnsLst.Where(w => w != objVRC.Columns_Code).ToList();
                 ViewBag.ExtendedColumnDDl = new SelectList(DDlExtendedColumnsLst, "Columns_Code", "Columns_Name", objVRC.Columns_Code, DisableDDlList);

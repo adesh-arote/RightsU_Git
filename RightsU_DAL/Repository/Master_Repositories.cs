@@ -271,6 +271,9 @@ namespace RightsU_DAL
             if (objToSave.Vendor_Contacts != null) objToSave.Vendor_Contacts = objSaveEntities.SaveVendorContact(objToSave.Vendor_Contacts, base.DataContext);
             if (objToSave.Vendor_Role != null) objToSave.Vendor_Role = objSaveEntities.SaveVendorRole(objToSave.Vendor_Role, base.DataContext);
             if (objToSave.Vendor_Country != null) objToSave.Vendor_Country = objSaveEntities.SaveVendorCountry(objToSave.Vendor_Country, base.DataContext);
+            if (objToSave.AL_Vendor_Rule != null) objToSave.AL_Vendor_Rule = objSaveEntities.SaveVendorRule(objToSave.AL_Vendor_Rule, base.DataContext);
+            if (objToSave.AL_Vendor_OEM != null) objToSave.AL_Vendor_OEM = objSaveEntities.SaveVendorOEM(objToSave.AL_Vendor_OEM, base.DataContext);
+            if (objToSave.AL_Vendor_TnC != null) objToSave.AL_Vendor_TnC = objSaveEntities.SaveVendorTnC(objToSave.AL_Vendor_TnC, base.DataContext);
 
             if (objToSave.EntityState == State.Added)
             {
@@ -729,7 +732,7 @@ namespace RightsU_DAL
     public class Module_Status_History_Type_Repository : RightsU_Repository<Module_Status_History>
     {
         public Module_Status_History_Type_Repository(string conStr) : base(conStr) { }
-  
+
         public override void Save(Module_Status_History objToSave)
         {
             if (objToSave.EntityState == State.Added)
@@ -762,7 +765,7 @@ namespace RightsU_DAL
             if (objUser.Users_Configuration != null) objUser.Users_Configuration = objSaveEntities.SaveUserConfiguration(objUser.Users_Configuration, base.DataContext);
             if (objUser.Users_Exclusion_Rights != null) objUser.Users_Exclusion_Rights = objSaveEntities.SaveUserExclusionRights(objUser.Users_Exclusion_Rights, base.DataContext);
             if (objUser.Users_Detail != null) objUser.Users_Detail = objSaveEntities.SaveUserUsers_Detail(objUser.Users_Detail, base.DataContext);
-            
+
 
             if (objUser.EntityState == State.Added)
             {
@@ -1824,6 +1827,31 @@ namespace RightsU_DAL
             updatedList = new Save_Entitiy_Lists_Generic<ProjectMilestoneTitle>().SetListFlagsCUD(updatedList, dbContext);
             return updatedList;
         }
+
+        public ICollection<AL_Vendor_Rule> SaveVendorRule(ICollection<AL_Vendor_Rule> entityList, DbContext dbContext)
+        {
+            ICollection<AL_Vendor_Rule> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_Rule>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+        public ICollection<AL_Vendor_Rule_Criteria> SaveVendorRuleCriteria(ICollection<AL_Vendor_Rule_Criteria> entityList, DbContext dbContext)
+        {
+            ICollection<AL_Vendor_Rule_Criteria> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_Rule_Criteria>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+        public ICollection<AL_Vendor_OEM> SaveVendorOEM(ICollection<AL_Vendor_OEM> entityList, DbContext dbContext)
+        {
+            ICollection<AL_Vendor_OEM> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_OEM>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+        public ICollection<AL_Vendor_TnC> SaveVendorTnC(ICollection<AL_Vendor_TnC> entityList, DbContext dbContext)
+        {
+            ICollection<AL_Vendor_TnC> updatedList = entityList;
+            updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_TnC>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
     }
 
     public class Music_Album_Talent_Repository : RightsU_Repository<Music_Album_Talent>
@@ -2210,7 +2238,7 @@ namespace RightsU_DAL
         public override void Save(Email_Config_Detail_User objToSave)
         {
             Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
-            
+
             if (objToSave.EntityState == State.Added)
             {
                 base.Save(objToSave);
@@ -2389,26 +2417,26 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
-     public class System_Language_Repository : RightsU_Repository<System_Language>
-     {
-           public System_Language_Repository(string conStr) : base(conStr) { }
+    public class System_Language_Repository : RightsU_Repository<System_Language>
+    {
+        public System_Language_Repository(string conStr) : base(conStr) { }
 
-           public override void Save(System_Language objToSave)
-           {
-               if (objToSave.EntityState == State.Added)
-               {
-                   base.Save(objToSave);
-               }
-               else if (objToSave.EntityState == State.Modified)
-               {
-                   base.Update(objToSave);
-               }
-               else if (objToSave.EntityState == State.Deleted)
-               {
-                   base.Delete(objToSave);
-               }
-           }
-     }
+        public override void Save(System_Language objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+    }
     public class Email_Notification_Log_Repository : RightsU_Repository<Email_Notification_Log>
     {
         public Email_Notification_Log_Repository(string conStr) : base(conStr) { }
@@ -2450,7 +2478,7 @@ namespace RightsU_DAL
                 base.Delete(objToSave);
             }
         }
-       
+
     }
 
     public class Provisional_Deal_Run_Repository : RightsU_Repository<Provisional_Deal_Run>
@@ -3008,19 +3036,19 @@ namespace RightsU_DAL
     public class Title_Objection_Platform_Repository : RightsU_Repository<Title_Objection_Platform>
     {
         public Title_Objection_Platform_Repository(string conStr) : base(conStr) { }
-      
+
     }
 
     public class Title_Objection_Territory_Repository : RightsU_Repository<Title_Objection_Territory>
     {
         public Title_Objection_Territory_Repository(string conStr) : base(conStr) { }
-       
+
     }
 
     public class Title_Objection_Rights_Period_Repository : RightsU_Repository<Title_Objection_Rights_Period>
     {
         public Title_Objection_Rights_Period_Repository(string conStr) : base(conStr) { }
-       
+
     }
 
     public class Title_Objection_Type_Repository : RightsU_Repository<Title_Objection_Type>
@@ -3139,7 +3167,7 @@ namespace RightsU_DAL
     {
         public Digital_Config_Repository(string constr) : base(constr) { }
     }
-    
+
     public class Extended_Group_Config_Repository : RightsU_Repository<Extended_Group_Config>
     {
         public Extended_Group_Config_Repository(string conStr) : base(conStr) { }
@@ -3189,7 +3217,7 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
-    
+
     #region------------Aeroplay---------------
 
     public class AL_Vendor_Details_Repository : RightsU_Repository<AL_Vendor_Details>

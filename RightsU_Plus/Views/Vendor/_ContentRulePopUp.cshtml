@@ -74,7 +74,15 @@
             <b>Name</b>
         </td>
         <td>
-            <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                @Model.Rule_Name
+            }
+            else
+            {
+                <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+            }
+
             <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
             <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
             <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
@@ -85,7 +93,15 @@
             <b>Short Name</b>
         </td>
         <td>
-            <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                @Model.Rule_Short_Name
+            }
+            else
+            {
+                <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+            }
+
         </td>
     </tr>
     <tr>
@@ -118,7 +134,10 @@
     <div class="form_links">
         <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
             <li>
-                <button class="btn btn-primary" onclick="SaveContentRule()"> Save Content </button>
+                @if (ViewBag.CommandNameCR != "VIEW")
+                {
+                    <button class="btn btn-primary" onclick="SaveContentRule()"> Save Rule </button>
+                }
                 <button class="btn btn-primary" onclick="CloseContentRulePopup()"> Close </button>
             </li>
         </ul>

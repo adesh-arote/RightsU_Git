@@ -248,63 +248,6 @@
         $('#AdditionalInfoPopUp').modal('hide');
     }
 
-    function SwitchVendorClient() {
-        debugger;
-        if ($('input[name="Vendor"]:checked').val() == "V") {
-            $('#Switch').html('Vendor selected');
-            $("#PrefExclusion").attr('disabled', true).trigger("chosen:updated");
-            $("#PrefExclusion").val("").trigger("chosen:updated");
-            $("#Banner").removeAttr('disabled').trigger("chosen:updated");
-            $('#AddInfoGrid').empty();
-        } else if ($('input[name="Vendor"]:checked').val() == "C") {
-            $('#Switch').html('Client selected');
-            $("#Banner").attr('disabled', true).trigger("chosen:updated");
-            $("#Banner").val("").trigger("chosen:updated");
-            $("#PrefExclusion").removeAttr('disabled').trigger("chosen:updated");
-            AdditionalInfoTab('CR', '', 0);
-        }
-        initializeChosen();
-    }
-
-    function AdditionalInfoTab(NewTab, commandName, id) {
-        debugger;
-
-        if ($('input[name="Vendor"]:checked').val() == "C") {
-
-            if (NewTab == "CR") {
-                var URL_LoadTab = URL_ContentRule;
-                $("[id*='AdditionalInfoTab']").removeClass('active');
-                $("#AdditionalInfoTabCR").addClass('active');
-            }
-            if (NewTab == "OEM") {
-                var URL_LoadTab = URL_OEM;
-                $("[id*='AdditionalInfoTab']").removeClass('active');
-                $("#AdditionalInfoTabOEM").addClass('active');
-            }
-            if (NewTab == "TNC") {
-                var URL_LoadTab = URL_TnC;
-                $("[id*='AdditionalInfoTab']").removeClass('active');
-                $("#AdditionalInfoTabTNC").addClass('active');
-            }
-            $.ajax({
-                type: "POST",
-                url: URL_LoadTab,
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                dataType: "html", data: JSON.stringify({
-                    TabName: NewTab,
-                    commandName: commandName,
-                    Id: id
-                }),
-                success: function (result) {
-                    debugger;
-                    $('#AddInfoGrid').html(result);
-                }
-            });
-        }
-    }
-
 </script>
 <div class="main_section">
     <section class="rightsU_container clearfix">

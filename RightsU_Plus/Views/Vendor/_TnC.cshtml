@@ -1,15 +1,25 @@
 ﻿@model List<RightsU_Entities.AL_Vendor_TnC>
 
 <script>
+    $(document).ready(function () {
+        debugger;
+        $("#tncRemark").keyup(function () {
+            $("#UsedLetters").html($("#tncRemark").val().length);
+        });
+        $("#tncRemark").click(function () {
+            $("#UsedLetters").html($("#tncRemark").val().length);
+        });
+    });
+
     function checkCurrentActionTnC() {
         debugger;
         var action = $("#hdnActionTnC").val();
         if (action == "ADD") {
-            showAlert("E", "Complete Add Operation First")
+            showAlert("E", "Complete Add Operation First");
             return false;
         }
         else if (action == "EDIT") {
-            showAlert("E", "Complete Edit Operation First")
+            showAlert("E", "Complete Edit Operation First");
             return false;
         }
         return true;
@@ -86,11 +96,14 @@
 
 <div style="padding:1%">
     <span style="font-size:18px"> Terms and Conditions </span>
-    <button class="btn btn-primary pull-right" onclick="AddEditTnC('TNC', 'ADD', 0)"> Add </button>
+    @if (ViewBag.CommandNameTnC != "VIEW")
+    {
+        <button class="btn btn-primary pull-right" onclick="AddEditTnC('TNC', 'ADD', 0)"> Add </button>
+    }
 </div>
 
-<table class="table table-bordered table-hover">
-    <thead>
+<table class="table table-bordered table-hover" id="TnCTable">
+    <thead id="TnCHead">
         <tr>
             <th style="width:20%">
                 Sr. No.
@@ -98,12 +111,15 @@
             <th style="width:60%">
                 Remark
             </th>
-            <th style="width:20%">
-                Action
-            </th>
+            @if (ViewBag.CommandNameTnC != "VIEW")
+            {
+                <th style="width:20%">
+                    Action
+                </th>
+            }
         </tr>
     </thead>
-    <tbody>
+    <tbody id="TnCBody">
         @foreach (var item in Model)
         {
             iTnC++;
@@ -114,7 +130,9 @@
                         @iTnC
                     </td>
                     <td>
-                        <input type="text" style="width:100%" id="tncRemark" value="@item.TnC_Description" />
+                        @*<input type="text" style="width:100%" id="tncRemark" value="@item.TnC_Description" />*@
+                        <textarea style="width:100%" id="tncRemark" maxlength="500">@item.TnC_Description</textarea>
+                        <div class="pull-right"><span id="UsedLetters">0</span>/500</div>
                         <input type="hidden" id="hdnTnCCode" value="@item.AL_Vendor_TnC_Code" />
                     </td>
                     <td>
@@ -130,13 +148,16 @@
                     <td>
                         @item.TnC_Description
                     </td>
-                    <td>
-                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditTnC('TNC', 'EDIT', '@item.AL_Vendor_TnC_Code')"></a>
-                        @if (item.AL_Vendor_TnC_Code < 0)
-                        {
-                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteTnc('@item.AL_Vendor_TnC_Code')"></a>
-                        }
-                    </td>
+                    if (ViewBag.CommandNameTnC != "VIEW")
+                    {
+                        <td>
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditTnC('TNC', 'EDIT', '@item.AL_Vendor_TnC_Code')"></a>
+                            @if (item.AL_Vendor_TnC_Code < 0)
+                            {
+                                <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteTnc('@item.AL_Vendor_TnC_Code')"></a>
+                            }
+                        </td>
+                    }
                 }
             </tr>
         }
@@ -147,7 +168,9 @@
                     New
                 </td>
                 <td>
-                    <input type="text" style="width:100%" id="tncRemark" />
+                    @*<input type="text" style="width:100%" id="tncRemark" />*@
+                    <textarea style="width:100%" id="tncRemark" maxlength="500"></textarea>
+                    <div class="pull-right"><span id="UsedLetters">0</span>/500</div>
                 </td>
                 <td>
                     <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveTnC()"></a>
