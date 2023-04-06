@@ -259,7 +259,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchOnList(string searchText, string TabName)
         {
-            int recorcount = 0;
+            int recordcount = 0;
             if (TabName == "BS")
             {
                 if (!string.IsNullOrEmpty(searchText))
@@ -272,7 +272,7 @@ namespace RightsU_Plus.Controllers
                     lstBooking_Sheet_Searched = lstBooking_Sheet;
                 }
                     
-                recorcount = lstBooking_Sheet_Searched.Count;
+                recordcount = lstBooking_Sheet_Searched.Count;
             }
             else if(TabName == "PR")
             {
@@ -286,12 +286,12 @@ namespace RightsU_Plus.Controllers
                     lstRecommendation_Searched = lstRecommendation;
                 }
                     
-                recorcount = lstRecommendation_Searched.Count;
+                recordcount = lstRecommendation_Searched.Count;
             }
 
             var obj = new
             {
-                Record_Count = recorcount
+                Record_Count = recordcount
             };
 
             return Json(obj);
@@ -304,28 +304,29 @@ namespace RightsU_Plus.Controllers
             string Status = "";
             string Message = "";
             Dictionary<string, object> obj = new Dictionary<string, object>();
+            AL_Booking_Sheet objABS = new AL_Booking_Sheet();
             USPAL_GetReCommendationList_Result objRc = new USPAL_GetReCommendationList_Result();
 
             if (RecommendationCode != 0)
             {
                 objRc = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetReCommendationList().Where(w => w.AL_Recommendation_Code == RecommendationCode).FirstOrDefault();
-               
-                objBooking_Sheet.AL_Recommendation_Code = objRc.AL_Recommendation_Code;               
-                objBooking_Sheet.Last_Action_By = objLoginUser.Users_Code;
-                objBooking_Sheet.Last_Updated_Time = DateTime.Now;
-                objBooking_Sheet.Record_Status = "P";
 
-                objBooking_Sheet.Vendor_Code = 2470;
+                objABS.AL_Recommendation_Code = objRc.AL_Recommendation_Code;
+                objABS.Last_Action_By = objLoginUser.Users_Code;
+                objABS.Last_Updated_Time = DateTime.Now;
+                objABS.Record_Status = "P";
+
+                objABS.Vendor_Code = 2481;
                 
                 Random ran = new Random();
                 int SheetNo = ran.Next(1, 100);
-                objBooking_Sheet.Booking_Sheet_No = "BS000" + SheetNo;
+                objABS.Booking_Sheet_No = "BS000" + SheetNo;
 
-                objBooking_Sheet.EntityState = State.Added;
+                objABS.EntityState = State.Added;
             }
 
             dynamic resultSet;
-            if (!objBooking_Sheet_Service.Save(objBooking_Sheet, out resultSet))
+            if (!objBooking_Sheet_Service.Save(objABS, out resultSet))
             {
                 Status = "E";
                 Message = resultSet;        
@@ -342,6 +343,13 @@ namespace RightsU_Plus.Controllers
                 Message = Message
             };
             return Json(Obj);
+        }
+
+        public JsonResult GetFileName(int BookingSheetCode)
+        {              
+            string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
+     
+            return Json(Filename);
         }
     }
 }

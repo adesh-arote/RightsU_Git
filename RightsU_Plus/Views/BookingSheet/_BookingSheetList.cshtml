@@ -11,12 +11,12 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th rowspan="2">Clients</th>
-            <th rowspan="2">Proposal Id</th>
-            <th rowspan="2">Booking Sheet No.</th>
+            <th rowspan="2" style="width:15%">Booking Sheet No.</th>
+            <th rowspan="2" style="width:15%">Clients</th>
+            <th rowspan="2" style="width:15%">Proposal Id</th>
             <th colspan="2">No. of content</th>
-            <th rowspan="2">Update By</th>
-            <th rowspan="2">Updated on</th>
+            <th rowspan="2" style="width:15%">Last Action By</th>
+            <th rowspan="2">Last Action on</th>
             <th rowspan="2">Action</th>
         </tr>
         <tr>
@@ -29,51 +29,51 @@
         {
             foreach (var item in Model)
             {
-                <tr>
-                    <td style="text-align:center">
-                        @*@Html.DisplayFor(modelItem => item.Vendor_Name)*@
-                        @item.Vendor_Name
-                    </td>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Proposal_No)
-                    </td>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
-                    </td>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Movie_Content_Count)
-                    </td>
-                    <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Show_Content_Count)
-                    </td>
-                    <td style="text-align:center">
-                        @*@Html.DisplayFor(modelItem => item.Last_Action_By)*@
-                        <span>
-                            @{
-                                string UpdateBy = "";
-                                if (item.Last_Action_By > 0 && item.Last_Action_By != null)
-                                {
-                                    UpdateBy = ((IEnumerable<RightsU_Entities.User>)ViewBag.UserCode).Where(a => a.Users_Code == item.Last_Action_By).Select(b => b.Login_Name).FirstOrDefault();
-                                }
-                                @UpdateBy
-                            }
-                        </span>
-                    </td>
-                    <td style="text-align:center">
-                        @item.Last_Updated_Time.Value.ToString("dd MMM yyyy")
-                    </td>
-                    <td style="text-align:center">
+        <tr>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.Vendor_Name)*@
+                @item.Vendor_Name
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.Proposal_No)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.Movie_Content_Count)
+            </td>
+            <td style="text-align:center">
+                @Html.DisplayFor(modelItem => item.Show_Content_Count)
+            </td>
+            <td style="text-align:center">
+                @*@Html.DisplayFor(modelItem => item.Last_Action_By)*@
+                <span>
+                    @{
+                        string UpdateBy = "";
+                        if (item.Last_Action_By > 0 && item.Last_Action_By != null)
+                        {
+                            UpdateBy = ((IEnumerable<RightsU_Entities.User>)ViewBag.UserCode).Where(a => a.Users_Code == item.Last_Action_By).Select(b => b.First_Name + " " + b.Last_Name).FirstOrDefault();
+                        }
+                        @UpdateBy
+                    }
+                </span>
+            </td>
+            <td style="text-align:center">
+                @item.Last_Updated_Time.Value.ToString("dd MMM yyyy")
+            </td>
+            <td style="text-align:center">
 
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
+                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
 
-                        <a title="Import" class="glyphicon glyphicon-save" style="cursor:pointer;"></a>
+                @*@Html.ActionLink(" ", "ImportExportBookingSheet", "BookingSheet", new { @class = "glyphicon glyphicon-floppy-open", @style = "cursor:pointer; color:#42a832;", @title = "Import/Export" })*@
 
-                        <a title="Export" class="glyphicon glyphicon-export" style="cursor:pointer;"></a>
+                @*<a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor:pointer; color:#42a832;"></a>*@
 
-                        @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer; color:red"></a>*@
+                <a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>
 
-                    </td>
-                </tr>
+            </td>
+        </tr>
             }
         }
         else

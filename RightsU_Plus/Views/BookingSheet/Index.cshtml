@@ -17,7 +17,7 @@
     var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
     var URL_SearchBookingSheet = '@Url.Action("SearchOnList", "BookingSheet")';
     var URL_GenerateBookingSheet = '@Url.Action("GenerateBookingSheet", "BookingSheet")';
-
+    var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -62,9 +62,10 @@
     }
 
     function btnSearch_OnClick() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-        debugger;
+        
         var searchText = $('#searchCommon').val();
 
         if (searchText == '') {
@@ -124,6 +125,7 @@
     }
 
     function SetPaging() {
+        debugger;
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
         var recordCount = parseInt($('#hdnRecordCount').val());
@@ -157,6 +159,7 @@
     }
 
     function pageselectCallback(page_index, jq) {
+        debugger;
         //if (checkCurrentAction()) {
             $('.required').removeClass('required');
 
@@ -173,6 +176,7 @@
     }
 
     function txtPageSize_OnChange() {
+        debugger;
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         if (!ValidatePageSize())
@@ -183,6 +187,7 @@
     }
 
     function ValidatePageSize() {
+        debugger;
         var recordPerPage = $('#txtPageSize').val()
         if ($(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
@@ -283,7 +288,8 @@
             success: function (result) {
                 if (result.Status == "S") {
                     showAlert("S", result.Message);
-                    PendingRecommendationsList();
+                    //PendingRecommendationsList();
+                    SearchOnList("", TabName);
                 }
                 else {
                     showAlert("E", result.Message);
@@ -291,6 +297,30 @@
             }
         })
     }
+
+    function DownloadLink(filename) {
+        debugger;
+        window.location.href = "/Download/" + filename;
+    }
+
+    //function DownloadLink(BkSheetCode) {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_GetFileName,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            BookingSheetCode: BkSheetCode
+    //        }),
+    //        success: function (Filename) {
+    //            debugger;
+    //            window.location.href = "/Download/" + Filename;
+    //            SearchOnList("", TabName);            
+    //        }
+    //    })    
+    //}
 
 </script>
 
