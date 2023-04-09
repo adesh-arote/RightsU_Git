@@ -24,6 +24,7 @@
     var URL_EditEpisodeData = '@Url.Action("AddEditEpisodeData", "Title")';
     var URL_ViewEpisodeData = '@Url.Action("ViewEpisodeData", "Title")';
     var URL_ProceedEpDetail = '@Url.Action("ProceedEpisodeDetail", "Title")';
+    var URL_DeleteEpisodeDetail = '@Url.Action("DeleteEpisodeDetails", "Title")';
     var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
 
     $('#tabs ul li').click(function () {
@@ -206,6 +207,25 @@
             }
         });
     }
+
+    function DeleteEpisodeDetails(TitleDetailCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteEpisodeDetail,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleEpisodeDetailCode: TitleDetailCode
+            }),
+            success: function (result) {
+                debugger;
+                showAlert(result.status, result.message);
+                EditEpisodeDetails('', '');
+            }
+        });
+    }
 </script>
 
 <div id="tabs" class="tabbable">
@@ -299,5 +319,5 @@
 </script>
 
 @*<button type="button" class="pull-right" onclick="alert($('#EpisodeTabAdditionalField tbody tr').length); $('#btnAddEpisode').hide();">
-    SHOW TR COUNT
-</button>*@
+        SHOW TR COUNT
+    </button>*@

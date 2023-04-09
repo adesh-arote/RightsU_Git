@@ -4147,7 +4147,7 @@ namespace RightsU_Plus.Controllers
             List<Title_Episode_Details> listTitleEpisodeDetail = new List<Title_Episode_Details>();
             listTitleEpisodeDetail = lstEpisodeDetails.Where(w => w.Title_Code == objTED.Title_Code).ToList();
             string TDBind = "";
-            foreach (Title_Episode_Details objTEDlst in listTitleEpisodeDetail)
+            foreach (Title_Episode_Details objTEDlst in listTitleEpisodeDetail.Where(w => w.EntityState != State.Deleted))
             {
                 string status = "";
                 if (objTEDlst.Status == "P")
@@ -4170,7 +4170,8 @@ namespace RightsU_Plus.Controllers
                     }
                     else
                     {
-                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a> <a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"ProceedEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', '" + objTEDlst.Episode_Nos + "', '" + objTEDlst.Remarks + "', '" + objTEDlst.Title_Code + "')\"></a> </td></tr>";
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a> <a class=\"glyphicon glyphicon-trash\" title=\"Delete\" onclick=\"DeleteEpisodeDetails(" + objTEDlst.Title_Episode_Detail_Code + ")\"></a> </td></tr>";
+                        //<a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"ProceedEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', '" + objTEDlst.Episode_Nos + "', '" + objTEDlst.Remarks + "', '" + objTEDlst.Title_Code + "')\"></a>
                     }
                 }
             }
@@ -4254,6 +4255,38 @@ namespace RightsU_Plus.Controllers
             //Call procedure
             //return Json("Episode details sent for auto data generation");
             return Json("");
+        }
+
+        public ActionResult DeleteEpisodeDetails(int TitleEpisodeDetailCode)
+        {
+            string status = "S";
+            string message = "";
+
+            Title_Episode_Details ObjDeleteEpsDetails = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == TitleEpisodeDetailCode).FirstOrDefault();
+            if (ObjDeleteEpsDetails != null)
+            {
+                if (ObjDeleteEpsDetails.Title_Episode_Detail_Code < 0)
+                {
+                    lstEpisodeDetails.Remove(ObjDeleteEpsDetails);
+                }
+                else if (ObjDeleteEpsDetails.Title_Episode_Detail_Code > 0)
+                {
+                    ObjDeleteEpsDetails.EntityState = State.Deleted;
+                }
+            }
+            else
+            {
+                status = "E";
+                message = objMessageKey.FileNotFound;
+            }
+
+            var obj = new
+            {
+                status,
+                message
+            };
+
+            return Json(obj);
         }
 
         public RightsU_Entities.Title DBSaveEpisodeDetails(RightsU_Entities.Title objTitle)

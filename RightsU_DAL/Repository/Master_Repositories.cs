@@ -92,6 +92,7 @@ namespace RightsU_DAL
             if (objTitle.Title_Talent != null) objTitle.Title_Talent = objSaveEntities.SaveTalent(objTitle.Title_Talent, base.DataContext);
             if (objTitle.Title_Geners != null) objTitle.Title_Geners = objSaveEntities.SaveGenre(objTitle.Title_Geners, base.DataContext);
             if (objTitle.Title_Country != null) objTitle.Title_Country = objSaveEntities.SaveCountry(objTitle.Title_Country, base.DataContext);
+            if (objTitle.Title_Episode_Details != null) objTitle.Title_Episode_Details = objSaveEntities.SaveTitleEpisodeDetails(objTitle.Title_Episode_Details, base.DataContext);
 
             if (objTitle.EntityState == State.Added)
             {
@@ -139,6 +140,15 @@ namespace RightsU_DAL
             UpdatedGenre = new Save_Entitiy_Lists_Generic<Title_Country>().SetListFlagsCUD(UpdatedGenre, dbContext);
 
             return UpdatedGenre;
+        }
+
+        public ICollection<Title_Episode_Details> SaveTitleEpisodeDetails(ICollection<Title_Episode_Details> entityTitles, DbContext dbContext)
+        {
+            ICollection<Title_Episode_Details> UpdatedEpisodeDetails = entityTitles;
+
+            UpdatedEpisodeDetails = new Save_Entitiy_Lists_Generic<Title_Episode_Details>().SetListFlagsCUD(UpdatedEpisodeDetails, dbContext);
+
+            return UpdatedEpisodeDetails;
         }
     }
 
