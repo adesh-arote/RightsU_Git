@@ -855,7 +855,24 @@ namespace RightsU_Plus.Controllers
             }
             #endregion
 
+            System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+            List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+            int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
 
+            if (DealTypeIncluded == 1)
+            {
+                if (objTitle.Title_Episode_Details.Count() < 1)
+                {
+                    Title_Episode_Details objNewTED = new Title_Episode_Details();
+                    objNewTED.EntityState = State.Added;
+                    objNewTED.Episode_Nos = 1;
+                    objNewTED.Remarks = objTitle.Title_Name;
+                    objNewTED.Status = "P";
+                    objNewTED.Inserted_On = DateTime.Now;
+                    objNewTED.Inserted_By = objLoginUser.Users_Code;
+                    objTitle.Title_Episode_Details.Add(objNewTED);
+                }
+            }
 
             //if (objTitle.Title_Code > 0)
             //    objTitle.EntityState = State.Modified;
@@ -1020,6 +1037,9 @@ namespace RightsU_Plus.Controllers
                 TabNAme = hdnAlternateTabName,
                 ConfigCode = hdnAlternateConfigCode
             };
+
+            int SentTitleCodeToProc = TitleCode;
+            var SentTitleObj = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_Title_Content_Gen_From_Title(SentTitleCodeToProc);
 
             return Json(objs);
         }
@@ -2971,7 +2991,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult BindTitleMetadataHeader()
         {
             List<Extended_Group> objExt_Grp = new List<Extended_Group>();
-            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27).OrderBy(x => x.Group_Order).ToList();
+            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle).OrderBy(x => x.Group_Order).ToList();
             ViewBag.ExtendedGroup = objExt_Grp;
             return PartialView("~/Views/Title/_Title_Metadata_Header.cshtml", objExt_Grp);
         }
@@ -2984,7 +3004,7 @@ namespace RightsU_Plus.Controllers
 
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
             var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
-            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
             lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
             TabShortName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).Select(x => x.Short_Name).FirstOrDefault();
@@ -3141,7 +3161,7 @@ namespace RightsU_Plus.Controllers
 
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
             var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
-            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
             lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
 
@@ -3213,7 +3233,7 @@ namespace RightsU_Plus.Controllers
             foreach (Extended_Columns EC in columnList)
             {
                 var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
-                var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+                var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
                 lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
                 int? TabCodeGrid = 0;
                 TabCodeGrid = lstextGrpConfig.Where(w => w.Columns_Code == EC.Columns_Code).Select(w => w.Extended_Group_Code).FirstOrDefault();
@@ -3419,7 +3439,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            int TabCode = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).Select(b => b.Extended_Group_Code).FirstOrDefault();
+            int TabCode = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).Select(b => b.Extended_Group_Code).FirstOrDefault();
 
             int rowNum = 0;
             var MapExtDetail = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code).ToList();
@@ -3773,7 +3793,7 @@ namespace RightsU_Plus.Controllers
                     }
                 }
             }
-            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid").FirstOrDefault();
+            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").FirstOrDefault();
             int ExtColCount = objExtGrp.Extended_Group_Config.Select(s => s.Extended_Columns).Count();
             int ColValCount = columnValueList.Count();
             if (ExtColCount > ColValCount)
@@ -4154,9 +4174,9 @@ namespace RightsU_Plus.Controllers
                 {
                     status = "Pending";
                 }
-                if (objTEDlst.Status == "S")
+                if (objTEDlst.Status == "C")
                 {
-                    status = "Proceed";
+                    status = "Complete";
                 }
                 if (objTEDlst.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code && CommandName == "EDIT")
                 {
@@ -4164,9 +4184,9 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    if (objTEDlst.Status == "S")
+                    if (objTEDlst.Status == "C")
                     {
-                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td></td></tr>";
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td> <a class=\"glyphicon glyphicon-eye-open\" title=\"View Title Contents\" onclick=\"ViewTitleEpisodeDetailsTC('" + objTEDlst.Title_Episode_Detail_Code + "')\"></a> </td></tr>";
                     }
                     else
                     {
@@ -4190,7 +4210,23 @@ namespace RightsU_Plus.Controllers
             string TDBind = "";
             foreach (Title_Episode_Details objTED in listTitleEpisodeDetail)
             {
-                TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + objTED.Status + "</td></tr>";
+                string status = "";
+                if (objTED.Status == "P")
+                {
+                    status = "Pending";
+                }
+                if (objTED.Status == "C")
+                {
+                    status = "Complete";
+                }
+                if (objTED.Status == "C")
+                {
+                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + status + "</td><td> <a class=\"glyphicon glyphicon-eye-open\" title=\"View Title Contents\" onclick=\"ViewTitleEpisodeDetailsTC('" + objTED.Title_Episode_Detail_Code + "')\"></a> </td></tr>";
+                }
+                else
+                {
+                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + status + "</td></tr>";
+                }
             }
             return Json(TDBind);
         }
@@ -4291,7 +4327,11 @@ namespace RightsU_Plus.Controllers
 
         public RightsU_Entities.Title DBSaveEpisodeDetails(RightsU_Entities.Title objTitle)
         {
-            if (objTitle.Deal_Type_Code == 11)
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            int DealTypeIncluded = lstShowCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
+
+            if (DealTypeIncluded == 1)
             {
                 foreach (Title_Episode_Details objTEDSess in lstEpisodeDetails)
                 {
@@ -4324,10 +4364,27 @@ namespace RightsU_Plus.Controllers
             return objTitle;
         }
 
+        #region 
+
+        public ActionResult ViewTitleEpisodeDetailsTC(int TitleEpisodeDetailCode, string CurrentTitleURL)
+        {
+            Title_Episode_Details_TC_Service objTEDTCservice = new Title_Episode_Details_TC_Service(objLoginEntity.ConnectionStringName);
+            List<Title_Episode_Details_TC> lstEpisodeContent = new List<Title_Episode_Details_TC>();
+            lstEpisodeContent = objTEDTCservice.SearchFor(s => true).Where(w => w.Title_Episode_Detail_Code == TitleEpisodeDetailCode).ToList();
+            //RightsU_Entities.Title objTitle = new RightsU_Entities.Title();
+            string TitleName = new Title_Episode_Details_Service(objLoginEntity.ConnectionStringName).GetById(TitleEpisodeDetailCode).Title.Title_Name;
+            //return RedirectToAction("SearchProgram", "Title_Content", new { searchText = "Wandering Minds", episodeFrom = 0, episodeTo = 0 });
+            TempData["SearchTitleInTitleContent"] = TitleName;
+            TempData["CurrentTitleURL"] = CurrentTitleURL;
+            return Json(TitleName);
+        }
+
+        #endregion
+
         public string ValidateDuplicate(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex, int Title_Code = 0)
         {
             string isDuplicate = "";
-            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == 27 && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).FirstOrDefault();
+            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).FirstOrDefault();
             List<Extended_Group_Config> lstExtGrpCfgWithDuplicateVal = new List<Extended_Group_Config>();
 
             foreach (Extended_Group_Config objExtGrpCfg in objExtGrp.Extended_Group_Config)

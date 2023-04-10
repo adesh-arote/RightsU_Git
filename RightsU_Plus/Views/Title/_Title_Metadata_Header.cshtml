@@ -17,6 +17,8 @@
     {
         textalignlast = "right";
     }
+    RightsU_Entities.System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+    List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
 }
 
 <script>
@@ -26,6 +28,7 @@
     var URL_ProceedEpDetail = '@Url.Action("ProceedEpisodeDetail", "Title")';
     var URL_DeleteEpisodeDetail = '@Url.Action("DeleteEpisodeDetails", "Title")';
     var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
+    var URL_ViewTitleEpsDetailContent = '@Url.Action("ViewTitleEpisodeDetailsTC", "Title")';
 
     $('#tabs ul li').click(function () {
         debugger;
@@ -223,6 +226,27 @@
                 debugger;
                 showAlert(result.status, result.message);
                 EditEpisodeDetails('', '');
+            }
+        });
+    }
+
+    function ViewTitleEpisodeDetailsTC(TitleEpsDtlCode) {
+        debugger;
+        var CurrentTitleUrl = window.location.href;
+        $.ajax({
+            type: "POST",
+            url: URL_ViewTitleEpsDetailContent,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleEpisodeDetailCode: TitleEpsDtlCode,
+                CurrentTitleURL: CurrentTitleUrl
+            }),
+            success: function (result) {
+                debugger;
+                @*window.location.href = '@Url.Action("SearchProgram", "Title_Content", new { searchText = "", episodeFrom = 0, episodeTo = 0 })';*@
+                window.location.href = '@Url.Action("Index", "Title_Content")';
             }
         });
     }

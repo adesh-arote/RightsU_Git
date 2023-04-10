@@ -1810,5 +1810,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USPAL_GetReCommendationList();
         }
+
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(int? TitleCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_Title_Content_Gen_From_Title(TitleCode);
+        }
     }
 }

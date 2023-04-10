@@ -2184,7 +2184,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Key>
             <PropertyRef Name="Digital_Code" />
           </Key>
-          <Property Name="Digital_Code" Type="int" Nullable="false" />
+          <Property Name="Digital_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Digital_Name" Type="nvarchar" MaxLength="200" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -2192,7 +2192,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Key>
             <PropertyRef Name="Digital_Config_Code" />
           </Key>
-          <Property Name="Digital_Config_Code" Type="int" Nullable="false" />
+          <Property Name="Digital_Config_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Digital_Code" Type="int" />
           <Property Name="Digital_Tab_Code" Type="int" />
           <Property Name="Page_Group" Type="nvarchar" MaxLength="50" />
@@ -4770,7 +4770,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Key>
             <PropertyRef Name="Supplementary_Data_Code" />
           </Key>
-          <Property Name="Supplementary_Data_Code" Type="int" Nullable="false" />
+          <Property Name="Supplementary_Data_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Supplementary_Type" Type="varchar" MaxLength="10" />
           <Property Name="Data_Description" Type="nvarchar" MaxLength="100" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
@@ -15100,6 +15100,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_Title_Content_Gen_From_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TitleCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USPBindJobAndExecute" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Type" Type="varchar" Mode="In" />
           <Parameter Name="JobName" Type="varchar" Mode="In" />
@@ -22573,6 +22576,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <FunctionImport Name="USPAL_GetBookingSheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingSheetList_Result)" />
           <FunctionImport Name="USPAL_GetReCommendationList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetReCommendationList_Result)" />
+          <FunctionImport Name="USPAL_Title_Content_Gen_From_Title" ReturnType="Collection(String)">
+            <Parameter Name="TitleCode" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -48772,6 +48778,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_Title_Content_Gen_From_Title" FunctionName="RightsU_NeoModel.Store.USPAL_Title_Content_Gen_From_Title" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

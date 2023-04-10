@@ -2094,7 +2094,7 @@ namespace RightsU_Plus.Controllers
         private void FetchAllExtendedColumns()
         {
             List<RightsU_Entities.Extended_Columns> lstExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
-            List<RightsU_Entities.Extended_Group> lstExtendedGroups = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Module_Code == 10).ToList();
+            List<RightsU_Entities.Extended_Group> lstExtendedGroups = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Module_Code == GlobalParams.ModuleCodeForVendor).ToList();
             List<int> UsedExtendedColumns = new List<int>();
             foreach (Extended_Group eg in lstExtendedGroups)
             {

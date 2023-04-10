@@ -1791,5 +1791,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPAL_GetReCommendationList();
         }
+
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(int? TitleCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_Title_Content_Gen_From_Title(TitleCode);
+        }
     }
 }

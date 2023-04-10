@@ -455,6 +455,11 @@
                     SetPaging("LIST_PAGE");
                     BindProgramList(changeMu);
                     hideLoading();
+                    debugger;
+                    if (result.ListSearchedFromTitle == 'Y') {
+                        $("#BackToTitleBtn").attr("style", "display:block");
+                        $("#BackToTitleBtn").attr("onclick", "window.location.href = '" + result.TitleUrl + "'");
+                    }
                 }
             },
             error: function (result) {
@@ -1411,6 +1416,9 @@
             <div class="container acq main_col">
                 <div id="divPartialTab">
                 </div>
+                <button id="BackToTitleBtn" class="btn btn-primary" onclick="" style="display:none">
+                    Back To Title
+                </button>
             </div>
         </section>
     </div>
