@@ -22577,7 +22577,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USPAL_GetBookingSheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingSheetList_Result)" />
           <FunctionImport Name="USPAL_GetReCommendationList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetReCommendationList_Result)" />
           <FunctionImport Name="USPAL_Title_Content_Gen_From_Title" ReturnType="Collection(String)">
-            <Parameter Name="TitleCode" Mode="In" Type="Int32" />
+          <Parameter Name="TitleCode" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -38721,6 +38721,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Show_Content_Count" Nullable="true" />
           <Property Type="Int32" Name="Last_Action_By" Nullable="true" />
           <Property Type="DateTime" Name="Last_Updated_Time" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Record_Status" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
         </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
@@ -38730,6 +38733,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
+          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -48762,6 +48766,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Show_Content_Count" ColumnName="Show_Content_Count" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
+                <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
+                <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -48775,6 +48782,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Cycle" ColumnName="Cycle" />
                 <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
                 <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
