@@ -200,6 +200,7 @@
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />
     <Compile Include="Master_Entities\Digital_Tab.cs" />
+    <Compile Include="Master_Entities\DM_Booking_Sheet_Data.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />

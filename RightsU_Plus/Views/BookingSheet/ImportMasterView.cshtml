@@ -289,35 +289,6 @@
 
 </script>
 
-<script>
-    var URL_ImportedSheetView = '@Url.Action("BindImportedSheetView", "BookingSheet")';
-    //var URL_ = '@Url.Action("ImportedSheetView", "BookingSheet")';
-
-    function ImportedSheetView(DM_Master_Import_Code, fileType) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_ImportedSheetView,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            dataType: "html",
-            data: JSON.stringify({
-                DM_Master_Import_Code: DM_Master_Import_Code,
-                fileType: fileType
-            }),
-            success: function (result) {
-                debugger;
-                
-                //window.location.href = URL_ImportMasterView;
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
-    }
-</script>
-
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
