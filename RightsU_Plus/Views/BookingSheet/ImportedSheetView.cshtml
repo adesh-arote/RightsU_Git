@@ -1,0 +1,128 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType objSDMCFT = new RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType();
+    if (Session["objDMCFT"] != null)
+    {
+        objSDMCFT = (RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType)Session["objDMCFT"];
+    }
+}
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "MV";
+
+    $(document).ready(function () {
+
+        //SearchOnList("", TabName);
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+
+    });
+
+    function OpenTab(NewTab) {
+        debugger;
+        if (NewTab == "MV") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabBkgsht").addClass('active');
+            TabName = NewTab;
+        }
+        if (NewTab == "SH") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabPdngrmdn").addClass('active');
+            TabName = NewTab;
+        }
+    }
+</script>
+
+<div class="main_section">
+    <div class="container acq main_col">
+        <div class="top_area">
+            <div class="title_block clearfix">
+                <h2 class="pull-left">
+                    Booking Sheet Details
+                </h2>
+                <span class="pull-left" style="margin-top: 23px;margin-left: 80px;">
+                    <input type="checkbox" name="chkError" id="chkError" value="Y" onclick="OnChecked()" /><span>Error</span> &nbsp;&nbsp;
+                    <input type="checkbox" name="chkError" id="chkNoError" value="N" onclick="OnChecked()" /><span>Non Error</span>
+                </span>
+                <span class="pull-left" style="margin-top: 15px; margin-left: 7px; position: absolute;">
+                    <input type="text" name="txtSearchCommon" id="searchCommon" class="search" placeholder="Title Name, Title Type, Language, Key Star Cast, Director, Music Label, Year of Release, Status" style="width:600px; height:30px;" />
+                    <input type="button" class="btn btn-primary" name="btnSearch" id="btnSearch" value="Search" onclick="btnSearch_OnClick()" style="vertical-align: top;" />
+                    <input type="button" class="btn btn-primary" name="btnShowAll" id="btnShowAll" value="Show All" style="margin-right:5px; vertical-align: top;" onclick="btnShowAll_OnClick()" />
+                    <a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>
+                </span>
+            </div>
+        </div>
+        @*<input type="hidden" id="hdnPageNo" name="hdnPageNo" />
+        <div class="paging_area clearfix" style="margin-top: 5px;">
+            <div id="ErrorPagination" class="pagination" style="margin-right: 10px;">
+            </div>
+            <span class="pull-left" id="lblTotal">Total Records : </span>
+            <span class="pull-right">
+                Page Size:
+                @*<input type="text" id="txtErrorPageSize" class="smallTextBox pagingSize" value="@(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize)"
+                onchange="PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="3" onblur="setDefaultPaging('txtErrorPageSize')" />
+                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+            </span>
+        </div>*@
+
+        <div class="grid_area">
+            
+            <div class="paging_area clearfix">
+                <span class="pull-left">Total Records: </span>
+                <span class="pull-left" id="lblRecordCount"></span>
+                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                <div id="Pagination" class="pagination">
+                </div>
+                <span class="pull-right">
+                    Page Size:
+                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                </span>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable" id="divAlternateConfig">
+                        <input type="hidden" id="hdnTabName" value="TA" />
+                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                            <li class="active" id="tabBkgsht">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV')">Movie</a>
+                            </li>
+                            <li id="tabPdngrmdn">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH')">Show</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
+                    <input type="hidden" id="hdnAction" value="" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                    <div id="divBindList" class="deal clearfix">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div>
+            <input type="button" value="BACK" class="btn btn-primary" onclick="return btnCancel();" />
+        </div>
+    </div>
+</div>
+

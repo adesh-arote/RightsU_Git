@@ -1364,6 +1364,7 @@
     <Content Include="Views\BookingSheet\_MasterImportList.cshtml" />
     <Content Include="UploadBookingSheet\Import\638168158002973682~EpisodeTitle_Import.xlsx" />
     <Content Include="UploadBookingSheet\Import\638168216183881734~EpisodeTitle_Import %281%29.xlsx" />
+    <Content Include="Views\BookingSheet\ImportedSheetView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

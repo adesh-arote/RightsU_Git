@@ -161,7 +161,7 @@ namespace RightsU_Plus.Controllers
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------
-
+       
         private SelectDateAndBKSCode objSDAB
         {
             get
@@ -171,6 +171,17 @@ namespace RightsU_Plus.Controllers
                 return (SelectDateAndBKSCode)Session["objSDAB"];
             }
             set { Session["objSDAB"] = value; }
+        }
+
+        private SelectDmMasterCodeAndFiletType objDMCFT
+        {
+            get
+            {
+                if (Session["objDMCFT"] == null)
+                    Session["objDMCFT"] = new SelectDmMasterCodeAndFiletType();
+                return (SelectDmMasterCodeAndFiletType)Session["objDMCFT"];
+            }
+            set { Session["objDMCFT"] = value; }
         }
 
         #endregion
@@ -403,6 +414,7 @@ namespace RightsU_Plus.Controllers
             //int BookingSheetCode = 0;
             //DateTime? MaxDate = null;
             MasterImportData();
+            objDMCFT = null;
 
             List<SelectListItem> lstFliter = new List<SelectListItem>();
             lstFliter.Add(new SelectListItem { Text = "All", Value = "A", Selected = true });
@@ -571,11 +583,42 @@ namespace RightsU_Plus.Controllers
 
             return Json(Obj);
         }
+
+        //---------------------------------------------------------FileUpload-------------------------------------------------------------------------------
+
+        public ActionResult ImportedSheetView(int DM_Master_Import_Code, string fileType = "")
+        {
+            MovieTabData();
+            ShowTabData();
+            objDMCFT.DmMasterImportCode = DM_Master_Import_Code;
+            objDMCFT.FileType = fileType;
+            
+            return View();
+        }
+
+        private void MovieTabData()
+        {
+            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+        }
+
+        private void ShowTabData()
+        {
+            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+        }
+
     }
 
+    #region
     public class SelectDateAndBKSCode
     {
         public DateTime MaxDate { get; set; }
         public int BookingSheetCode { get; set; }
     }
+
+    public class SelectDmMasterCodeAndFiletType
+    {
+        public string FileType { get; set; }
+        public int DmMasterImportCode { get; set; }
+    }
+    #endregion
 }

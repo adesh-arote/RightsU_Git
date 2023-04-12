@@ -16,7 +16,7 @@
             <th style="width:15%">Uploaded By</th>
             <th style="width:15%">Uploaded On</th>
             <th style="width:10%">Status</th>
-            <th style="width:25%">Status Bar</th>         
+            @*<th style="width:25%">Status Bar</th>*@         
             <th>Action</th>
         </tr>      
     </thead>
@@ -48,11 +48,11 @@
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Status)
                     </td>
-                    <td style="text-align:center">
+                    @*<td style="text-align:center">
                         
-                    </td>            
+                    </td>*@            
                     <td style="text-align:center">
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>                  
                     </td>
                 </tr>
             }
