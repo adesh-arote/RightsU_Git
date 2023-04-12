@@ -2,6 +2,9 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.OleDb;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,27 +14,6 @@ namespace RightsU_Plus.Controllers
     public class BookingSheetController : BaseController
     {
         #region --- Properties ---
-        //private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet
-        //{
-        //    get
-        //    {
-        //        if (Session["lstBooking_Sheet"] == null)
-        //            Session["lstBooking_Sheet"] = new List<RightsU_Entities.AL_Booking_Sheet>();
-        //        return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet"];
-        //    }
-        //    set { Session["lstBooking_Sheet"] = value; }
-        //}
-
-        //private List<RightsU_Entities.AL_Booking_Sheet> lstBooking_Sheet_Searched
-        //{
-        //    get
-        //    {
-        //        if (Session["lstBooking_Sheet_Searched"] == null)
-        //            Session["lstBooking_Sheet_Searched"] = new List<RightsU_Entities.AL_Booking_Sheet>();
-        //        return (List<RightsU_Entities.AL_Booking_Sheet>)Session["lstBooking_Sheet_Searched"];
-        //    }
-        //    set { Session["lstBooking_Sheet_Searched"] = value; }
-        //}
 
         private List<USPAL_GetBookingSheetList_Result> lstBooking_Sheet
         {
@@ -80,28 +62,7 @@ namespace RightsU_Plus.Controllers
             set { Session["objBooking_Sheet_Service"] = value; }
         }
 
-
-        //private List<RightsU_Entities.AL_Recommendation> lstRecommendation
-        //{
-        //    get
-        //    {
-        //        if (Session["lstRecommendation"] == null)
-        //            Session["lstRecommendation"] = new List<RightsU_Entities.AL_Recommendation>();
-        //        return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation"];
-        //    }
-        //    set { Session["lstRecommendation"] = value; }
-        //}
-
-        //private List<RightsU_Entities.AL_Recommendation> lstRecommendation_Searched
-        //{
-        //    get
-        //    {
-        //        if (Session["lstRecommendation_Searched"] == null)
-        //            Session["lstRecommendation_Searched"] = new List<RightsU_Entities.AL_Recommendation>();
-        //        return (List<RightsU_Entities.AL_Recommendation>)Session["lstRecommendation_Searched"];
-        //    }
-        //    set { Session["lstRecommendation_Searched"] = value; }
-        //}
+        //--------------------------------------------------------------------------------------------------------------------------------------------------
 
         private List<USPAL_GetReCommendationList_Result> lstRecommendation
         {
@@ -149,13 +110,76 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objRecommendation_Service"] = value; }
         }
-       
+
+        //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private List<RightsU_Entities.DM_Master_Import> lstImportMaster
+        {
+            get
+            {
+                if (Session["lstImportMaster"] == null)
+                    Session["lstImportMaster"] = new List<RightsU_Entities.DM_Master_Import>();
+                return (List<RightsU_Entities.DM_Master_Import>)Session["lstImportMaster"];
+            }
+            set { Session["lstImportMaster"] = value; }
+        }
+
+        List<RightsU_Entities.DM_Master_Import> lstMasterImportSearched
+        {
+            get
+            {
+                if (Session["lstMasterImportSearched"] == null)
+                    Session["lstMasterImportSearched"] = new List<RightsU_Entities.DM_Master_Import>();
+                return (List<RightsU_Entities.DM_Master_Import>)Session["lstMasterImportSearched"];
+            }
+            set
+            {
+                Session["lstMasterImportSearched"] = value;
+            }
+        }
+
+        private RightsU_Entities.DM_Master_Import objMaster_Import
+        {
+            get
+            {
+                if (Session["objMaster_Import"] == null)
+                    Session["objMaster_Import"] = new RightsU_Entities.DM_Master_Import();
+                return (RightsU_Entities.DM_Master_Import)Session["objMaster_Import"];
+            }
+            set { Session["objMaster_Import"] = value; }
+        }
+
+        private DM_Master_Import_Service objMasterImport_Service
+        {
+            get
+            {
+                if (Session["objMasterImport_Service"] == null)
+                    Session["objMasterImport_Service"] = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName);
+                return (DM_Master_Import_Service)Session["objMasterImport_Service"];
+            }
+            set { Session["objMasterImport_Service"] = value; }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private SelectDateAndBKSCode objSDAB
+        {
+            get
+            {
+                if (Session["objSDAB"] == null)
+                    Session["objSDAB"] = new SelectDateAndBKSCode();
+                return (SelectDateAndBKSCode)Session["objSDAB"];
+            }
+            set { Session["objSDAB"] = value; }
+        }
+
         #endregion
 
-        //-----------------------------------------------------Paging--------------------------------------------------------------------------------------
+        //-----------------------------------------------------Paging---------------------------------------------------------------------------------------
 
         public ActionResult Index()
         {
+            objSDAB = null;
             BookingSheetData();
             PendingReccomendationData();
 
@@ -208,7 +232,7 @@ namespace RightsU_Plus.Controllers
             }
 
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ClientName = lstVendors;
+            ViewBag.ClientCode = lstVendors;
 
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
@@ -271,7 +295,7 @@ namespace RightsU_Plus.Controllers
                     BookingSheetData();
                     lstBooking_Sheet_Searched = lstBooking_Sheet;
                 }
-                    
+
                 recordcount = lstBooking_Sheet_Searched.Count;
             }
             else if(TabName == "PR")
@@ -285,7 +309,7 @@ namespace RightsU_Plus.Controllers
                     PendingReccomendationData();
                     lstRecommendation_Searched = lstRecommendation;
                 }
-                    
+
                 recordcount = lstRecommendation_Searched.Count;
             }
 
@@ -297,7 +321,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        //-----------------------------------------------------GenerateBookingSheet-----------------------------------------------------------------------------
+        //-----------------------------------------------------GenerateBookingSheet-------------------------------------------------------------------------
 
         public JsonResult GenerateBookingSheet(int RecommendationCode)
         {
@@ -316,8 +340,8 @@ namespace RightsU_Plus.Controllers
                 objABS.Last_Updated_Time = DateTime.Now;
                 objABS.Record_Status = "P";
 
-                objABS.Vendor_Code = 2481;
-                
+                objABS.Vendor_Code = objRc.Vendor_Code;
+
                 Random ran = new Random();
                 int SheetNo = ran.Next(1, 100);
                 objABS.Booking_Sheet_No = "BS000" + SheetNo;
@@ -329,12 +353,12 @@ namespace RightsU_Plus.Controllers
             if (!objBooking_Sheet_Service.Save(objABS, out resultSet))
             {
                 Status = "E";
-                Message = resultSet;        
+                Message = resultSet;
             }
             else
             {
                 Status = "S";
-                Message = "Sheet Generated Succesfully";      
+                Message = "Sheet Generated Succesfully";
             }
 
             var Obj = new
@@ -345,11 +369,213 @@ namespace RightsU_Plus.Controllers
             return Json(Obj);
         }
 
+        //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
+
         public JsonResult GetFileName(int BookingSheetCode)
-        {              
+        {
             string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
-     
+
             return Json(Filename);
         }
+
+        //-----------------------------------------------------BookingSheetImport---------------------------------------------------------------------------
+
+        public JsonResult BindImportExportView(int BookingSheetCode)
+        {
+            string status = "S";
+            AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
+            List<AL_Booking_Sheet_Details> lstBKSDetails = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
+
+            DateTime? maxDate = lstBKSDetails.Select(s => s.Action_Date).Max();
+
+            objSDAB.BookingSheetCode = BookingSheetCode;
+            objSDAB.MaxDate = Convert.ToDateTime(maxDate);
+
+            var obj = new
+            {
+                status
+            };
+            return Json(obj);
+        }
+
+        public ActionResult ImportMasterView()
+        {
+            //int BookingSheetCode = 0;
+            //DateTime? MaxDate = null;
+            MasterImportData();
+
+            List<SelectListItem> lstFliter = new List<SelectListItem>();
+            lstFliter.Add(new SelectListItem { Text = "All", Value = "A", Selected = true });
+            lstFliter.Add(new SelectListItem { Text = "Error", Value = "E" });
+            lstFliter.Add(new SelectListItem { Text = "In Process", Value = "N" });
+            lstFliter.Add(new SelectListItem { Text = "Success", Value = "S" });
+            ViewBag.FilterBy = lstFliter;
+
+            //BookingSheetCode = Convert.ToInt32(TempData["BookingSheetCode"]);
+            //ViewBag.BKSCode = BookingSheetCode;
+
+            //MaxDate = Convert.ToDateTime(TempData["MaxDate"]);
+            //ViewBag.MaxDate = MaxDate;
+
+            return View();
+        }
+
+        private void MasterImportData()
+        {
+            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+        }
+
+        public ActionResult BindImportMasterList(int pageNo, int recordPerPage, string FilterBy)
+        {
+            List<DM_Master_Import> lst = new List<DM_Master_Import>();
+            User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
+
+            int RecordCount = 0;
+            RecordCount = lstMasterImportSearched.Count;
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetImportMasterPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (FilterBy == "A")
+                    lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
+            ViewBag.UserCodes = lstUser;
+
+            return PartialView("_MasterImportList", lst);
+        }
+
+        private int GetImportMasterPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
+        {
+            noOfRecordSkip = noOfRecordTake = 0;
+            if (recordCount > 0)
+            {
+                int cnt = pageNo * recordPerPage;
+                if (cnt >= recordCount)
+                {
+                    int v1 = recordCount / recordPerPage;
+                    if ((v1 * recordPerPage) == recordCount)
+                        pageNo = v1;
+                    else
+                        pageNo = v1 + 1;
+                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
+                if (recordCount < (noOfRecordSkip + recordPerPage))
+                    noOfRecordTake = recordCount - noOfRecordSkip;
+                else
+                    noOfRecordTake = recordPerPage;
+            }
+            return pageNo;
+        }
+
+        public JsonResult SearchOnImportMasterList(string searchText)
+        {
+            int recordcount = 0;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                //lstMasterImportSearched = lstImportMaster.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
+            }
+            else
+            {
+                MasterImportData();
+                lstMasterImportSearched = lstImportMaster;
+            }
+
+            recordcount = lstMasterImportSearched.Count;
+
+            var obj = new
+            {
+                Record_Count = recordcount
+            };
+            return Json(obj);
+        }
+
+        //---------------------------------------------------------FileUpload-------------------------------------------------------------------------------
+
+        public ActionResult UploadFiles(HttpPostedFileBase InputFile, int BookingSheetCode)
+        {
+            string message = "";
+            string status = "";
+            
+            DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
+
+            if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
+            {
+                var PostedFile = InputFile;
+                string fullPath = Server.MapPath("~") + "\\" + ConfigurationManager.AppSettings["UploadSheetPath"];
+                string ext = System.IO.Path.GetExtension(PostedFile.FileName);
+
+                if (ext == ".xlsx" || ext == ".xls")
+                {
+                    try
+                    {
+                        #region EXCEL File Upload 
+                        string strActualFileNameWithDate;
+                        string fileExtension = "";
+                        string strFileName = System.IO.Path.GetFileName(PostedFile.FileName);
+                        fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
+                        strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
+                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strActualFileNameWithDate);
+                        PostedFile.SaveAs(fullpathname);                            
+                        #endregion
+
+                        dynamic resultSet;
+                        obj_DM_Master_Import.File_Name = PostedFile.FileName;
+                        obj_DM_Master_Import.System_File_Name = strActualFileNameWithDate;
+                        obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
+                        obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
+                        obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
+                        obj_DM_Master_Import.Action_On = DateTime.Now;
+                        obj_DM_Master_Import.Status = "P";
+                        obj_DM_Master_Import.File_Type = "B";
+                        obj_DM_Master_Import.Record_Code = BookingSheetCode;
+                        obj_DM_Master_Import.EntityState = State.Added;
+                        if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
+                        {
+                            status = "E";
+                            message = "File not saved";
+                        }
+                        else
+                        {
+                            status = "S";
+                            message = "File Imported successfully";
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        message = ex.Message;
+                        status = "E";
+                    }
+
+                }
+                else
+                {
+                    message = "Please select excel file...";
+                    status = "E";
+                }
+            }
+            else
+            {
+                message = "Please select excel file...";
+                status = "E";
+            }
+
+            var Obj = new
+            {
+                Status = status,
+                Message = message
+            };
+
+            return Json(Obj);
+        }
+    }
+
+    public class SelectDateAndBKSCode
+    {
+        public DateTime MaxDate { get; set; }
+        public int BookingSheetCode { get; set; }
     }
 }

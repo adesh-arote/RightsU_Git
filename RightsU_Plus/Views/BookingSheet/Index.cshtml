@@ -17,7 +17,7 @@
     var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
     var URL_SearchBookingSheet = '@Url.Action("SearchOnList", "BookingSheet")';
     var URL_GenerateBookingSheet = '@Url.Action("GenerateBookingSheet", "BookingSheet")';
-    var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
+    //var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -298,10 +298,10 @@
         })
     }
 
-    function DownloadLink(filename) {
-        debugger;
-        window.location.href = "/Download/" + filename;
-    }
+    //function DownloadLink(filename) {
+    //    debugger;
+    //    window.location.href = "/Download/" + filename;
+    //}
 
     //function DownloadLink(BkSheetCode) {
     //    debugger;
@@ -321,6 +321,36 @@
     //        }
     //    })    
     //}
+
+    
+</script>
+
+<script>
+    var URL_RedirectView = '@Url.Action("BindImportExportView", "BookingSheet")';
+    var URL_ImportMasterView = '@Url.Action("ImportMasterView", "BookingSheet")';
+
+    function ImportMasterView(BookingsheetCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RedirectView,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                BookingsheetCode: BookingsheetCode
+            }),
+            success: function (result) {
+                debugger;
+                
+                window.location.href = URL_ImportMasterView;
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
 
 </script>
 

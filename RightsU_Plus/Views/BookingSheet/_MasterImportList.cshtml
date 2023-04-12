@@ -1,0 +1,67 @@
+﻿@model List<RightsU_Entities.DM_Master_Import>
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:25%">File Name</th>
+            <th style="width:15%">Uploaded By</th>
+            <th style="width:15%">Uploaded On</th>
+            <th style="width:10%">Status</th>
+            <th style="width:25%">Status Bar</th>         
+            <th>Action</th>
+        </tr>      
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.System_File_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @*@Html.DisplayFor(modelItem => item.Upoaded_By)*@
+                        <span>
+                            @{
+                                string Uploaded_By = "";
+                                if (item.Upoaded_By > 0 && item.Upoaded_By != null)
+                                {
+                                    Uploaded_By = ((IEnumerable<RightsU_Entities.User>)ViewBag.UserCodes).Where(a => a.Users_Code == item.Upoaded_By).Select(b => b.First_Name + " " + b.Last_Name).FirstOrDefault();
+                                }
+                                @Uploaded_By
+                            }
+                        </span>
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Uploaded_Date)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td style="text-align:center">
+                        
+                    </td>            
+                    <td style="text-align:center">
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

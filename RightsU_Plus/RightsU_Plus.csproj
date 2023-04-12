@@ -1360,10 +1360,15 @@
     <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditALOem.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditFieldValue.cshtml" />
+    <Content Include="Views\BookingSheet\ImportMasterView.cshtml" />
+    <Content Include="Views\BookingSheet\_MasterImportList.cshtml" />
+    <Content Include="UploadBookingSheet\Import\638168158002973682~EpisodeTitle_Import.xlsx" />
+    <Content Include="UploadBookingSheet\Import\638168216183881734~EpisodeTitle_Import %281%29.xlsx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\modules\" />
+    <Folder Include="UploadBookingSheet\Export\" />
     <Folder Include="UploadFolder\Title_Images\" />
     <Folder Include="Views\Music_Title_List\" />
     <Folder Include="Views\Shared\Demo_Digital\css\" />

@@ -13,7 +13,7 @@
         <tr>
             <th rowspan="2" style="width:15%">Booking Sheet No.</th>
             <th rowspan="2" style="width:15%">Clients</th>
-            <th rowspan="2" style="width:15%">Proposal Id</th>
+            <th rowspan="2" style="width:15%">Proposal - CY</th>
             <th colspan="2">No. of content</th>
             <th rowspan="2" style="width:15%">Last Action By</th>
             <th rowspan="2">Last Action on</th>
@@ -34,11 +34,19 @@
                 @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
             </td>
             <td>
-                @*@Html.DisplayFor(modelItem => item.Vendor_Name)*@
-                @item.Vendor_Name
+                <span>
+                    @{
+                        string Client_Name = "";
+                        if (item.Vendor_Code > 0 && item.Vendor_Code != null)
+                        {
+                            Client_Name = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientCode).Where(a => a.Vendor_Code == item.Vendor_Code).Select(s => s.Vendor_Name).FirstOrDefault();
+                        }
+                        @Client_Name
+                    }
+                </span>
             </td>
             <td style="text-align:center">
-                @Html.DisplayFor(modelItem => item.Proposal_No)
+                @Html.DisplayFor(modelItem => item.Proposal___CY)
             </td>
             <td style="text-align:center">
                 @Html.DisplayFor(modelItem => item.Movie_Content_Count)
@@ -63,15 +71,14 @@
                 @item.Last_Updated_Time.Value.ToString("dd MMM yyyy")
             </td>
             <td style="text-align:center">
+                @if (item.Record_Status == "C")
+                {
+                    <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
 
-                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>
+                    <a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="ImportMasterView('@item.AL_Booking_Sheet_Code')"></a>
 
-                @*@Html.ActionLink(" ", "ImportExportBookingSheet", "BookingSheet", new { @class = "glyphicon glyphicon-floppy-open", @style = "cursor:pointer; color:#42a832;", @title = "Import/Export" })*@
-
-                @*<a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor:pointer; color:#42a832;"></a>*@
-
-                <a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>
-
+                    @*<a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>*@
+                }
             </td>
         </tr>
             }

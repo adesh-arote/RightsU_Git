@@ -1,0 +1,363 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    RightsU_Plus.Controllers.SelectDateAndBKSCode objDateBK = new RightsU_Plus.Controllers.SelectDateAndBKSCode();
+    if (Session["objSDAB"] != null)
+    {
+        objDateBK = (RightsU_Plus.Controllers.SelectDateAndBKSCode)Session["objSDAB"];
+    }
+
+    string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadSheetPath"];
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, Filter_By = "A";
+
+    var DownloadPath = '@DownloadPath';
+
+    var URL_BindImportMasterList = '@Url.Action("BindImportMasterList", "BookingSheet")';
+    var URL_SearchOnImportMasterList = '@Url.Action("SearchOnImportMasterList", "BookingSheet")';
+    var URL_UploadFiles = '@Url.Action("UploadFiles", "BookingSheet")';
+    var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
+
+    $(document).ready(function () {
+        if (LayoutDirection_G == "RTL") {
+            $('#btnUser').css("float", "right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlFilterBy_chosen').css("text-align", "right");
+        }
+        else {
+            $('#btnUser').css("float", "left");
+            $('#txtSort').css("text-align", "right");
+            $('#ddlFilterBy_chosen').css("text-align", "left");
+        }
+
+        addNumeric();
+        SearchOnImportMasterList("");
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlFilterBy").change(function () {
+            Filter_By = $('#ddlFilterBy').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchOnImportMasterList(searchtext);
+        });
+    });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $('#searchCommon').val();
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchOnImportMasterList(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        Filter_By = "A";
+        $("#ddlFilterBy").find("option").attr("selected", false);
+        $("#ddlFilterBy").val('A').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+
+        SearchOnImportMasterList("");
+    }
+
+    function SearchOnImportMasterList(searchText) {
+        debugger;
+        $('#searchCommon').val(searchText);
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchOnImportMasterList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+            }),
+            async: false,
+            success: function (result) {
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging();
+                BindImportMasterList();
+            }
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        //if (checkCurrentAction()) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindImportMasterList();
+        else
+            IsCall = 'Y';
+        //}
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindImportMasterList();
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function BindImportMasterList() {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindImportMasterList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                FilterBy: Filter_By
+            }),
+            success: function (result) {
+                $('#divBindMasterList').empty();
+                $('#divBindMasterList').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Uploadfile() {
+        debugger;
+        showLoading();
+        //var txtpageSize = $('#txtPageSize').val(10);
+        //var FilterBy = $('#ddlFilterBy').val('A');
+        var BookingSheetCode = $('#hiddenBksCode').val();
+        var files = $("#fileUpload").get(0).files;
+        var formdata = new FormData();    
+        if (files.length > 0) {           
+            //formdata.append("FilterBy", FilterBy);
+            //formdata.append("txtpageSize", txtpageSize);
+            formdata.append("InputFile", files[0]);
+            formdata.append("BookingSheetCode", BookingSheetCode);        
+        }
+        else {
+            showAlert("a", "Please select File");
+            hideLoading();
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_UploadFiles,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: true,
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    SearchOnImportMasterList("");
+                    hideLoading();
+                }            
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function DownloadLink(BkSheetCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GetFileName,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BookingSheetCode: BkSheetCode
+            }),
+            success: function (Filename) {
+                debugger;
+                window.location.href = DownloadPath + Filename;
+                SearchOnImportMasterList("");            
+            }
+        })    
+    }
+
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Booking Sheet Import
+                    </h2>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:50%;" colspan="5">
+                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objDateBK.BookingSheetCode')" />
+                                <span>(Latest Refreshed Sheet Date) @objDateBK.MaxDate.ToString("dd-MMM-yyyy")</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 6%; vertical-align: middle;">
+                                Import Booking Sheet:
+                            </td>
+                            <td style="width: 15%;">
+                                <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                            </td>
+                            <td style="width: 15%;">
+                                <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
+                                <input type="hidden" id="hiddenBksCode" value="@objDateBK.BookingSheetCode" />
+                            </td>
+                            <td style="width: 5%; vertical-align: middle;">
+                                Filter By Status :
+                            </td>
+                            <td>
+                                @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divBindMasterList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div>
+                        @Html.ActionLink("Back to List", "Index", "BookingSheet", new { @class = "btn btn-primary" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
