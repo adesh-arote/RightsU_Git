@@ -2203,6 +2203,14 @@ namespace RightsU_Plus.Controllers
                 // Or contains ("CB, RB, SDTED, DATE")
                 //obj.Add("Checkbox", "something");
             }
+            else if (SelectedExCol.Control_Type == "DATE")
+            {
+                objSessDictionary.Add("Date", "<input type=\"date\" id=\"CrCData\">");
+            }
+            else if (SelectedExCol.Control_Type == "INT")
+            {
+                objSessDictionary.Add("Number", "<input type=\"number\" id=\"CrCData\">");
+            }
 
             objSessDictionary.Add("ControlType", SelectedExCol.Control_Type);
             //obj = SelectListItem, IsMultiSelect, TextBox, ControlType

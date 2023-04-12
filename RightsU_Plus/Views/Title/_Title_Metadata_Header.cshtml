@@ -29,6 +29,9 @@
     var URL_DeleteEpisodeDetail = '@Url.Action("DeleteEpisodeDetails", "Title")';
     var EpisodeDetailCount = $('#EpisodeTabAdditionalField tbody tr').length;
     var URL_ViewTitleEpsDetailContent = '@Url.Action("ViewTitleEpisodeDetailsTC", "Title")';
+    var URL_TitleContent = '@Url.Action("Index", "Title_Content")';
+    var URL_GetProgramShowList = '@Url.Action("ProgramShowList", "Title")';
+    var lstProgramShow;
 
     $('#tabs ul li').click(function () {
         debugger;
@@ -245,10 +248,42 @@
             }),
             success: function (result) {
                 debugger;
-                @*window.location.href = '@Url.Action("SearchProgram", "Title_Content", new { searchText = "", episodeFrom = 0, episodeTo = 0 })';*@
-                window.location.href = '@Url.Action("Index", "Title_Content")';
+                window.location.href = URL_TitleContent;
             }
         });
+    }
+
+    function ProgramShowLst() {
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: URL_GetProgramShowList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                debugger;
+                lstProgramShow = result;
+
+                var DealTypeCode = $('#Deal_Type_Code').val();
+                var DealExistsInArray = jQuery.inArray(DealTypeCode, lstProgramShow);
+                if (DealExistsInArray == -1) {
+                    $("#liExtGrp_100").hide();
+                }
+                $("#EpisodeTabAdditionalField").hide();
+
+                if (typeof TitleTypeCode != undefined) {
+                    ShowHideEpisodeTabView();
+                }
+            }
+        });
+    }
+
+    function ShowHideEpisodeTabView() {
+        var TitleDealExistsInArray = jQuery.inArray(TitleTypeCode, lstProgramShow);
+        if (TitleDealExistsInArray != -1) {
+            $("#liExtGrp_100").show();
+        }
     }
 </script>
 
@@ -325,15 +360,18 @@
 <script>
     $(document).ready(function () {
         debugger;
-        var DealTypeCode = $('#Deal_Type_Code').val();
-        if (DealTypeCode != "11") {
-            $("#liExtGrp_100").hide();
-        }
-        $("#EpisodeTabAdditionalField").hide();
+        ProgramShowLst();
 
-        if (TitleTypeCode == '11') {
-            $("#liExtGrp_100").show();
-        }
+        //var DealTypeCode = $('#Deal_Type_Code').val();
+        //if (DealTypeCode != "11") {
+        //    $("#liExtGrp_100").hide();
+        //}
+        //$("#EpisodeTabAdditionalField").hide();
+
+        //if (TitleTypeCode == '11') {
+        //    $("#liExtGrp_100").show();
+        //}
+
         $("#txtEpisodeNumber").numeric({
             allowMinus: false,
             allowThouSep: true,

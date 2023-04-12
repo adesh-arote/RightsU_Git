@@ -262,7 +262,7 @@
     <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="AdditionalInfoPopUp" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup hdnScroll" id="AdditionalInfoPopUp" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="popupHtml">
@@ -272,7 +272,7 @@
     </div>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="ContentRuleModalPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup hdnScroll" id="ContentRuleModalPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="ContentPopup">
@@ -281,3 +281,18 @@
         </div>
     </div>
 </div>
+
+<style>
+    .hdnScroll {
+        overflow: scroll !important;
+    }
+
+        .hdnScroll::-webkit-scrollbar {
+            display: none;
+        }
+
+    .hdnScroll {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>

@@ -131,6 +131,15 @@
                 else if (result.ControlType == "TXT") {
                     $("#DataInputs").html(result.TextBox);
                 }
+                else if (result.ControlType == "DATE") {
+                    $("#DataInputs").html(result.Date);
+                }
+                else if (result.ControlType == "INT") {
+                    $("#DataInputs").html(result.Number);
+                }
+                else {
+                    $("#DataInputs").html("");
+                }
                 initializeChosen();
             }
         });
@@ -198,6 +207,14 @@
                         else if (ViewBag.Controltype == "TXT")
                         {
                             <input type="text" id="CrCData" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "DATE")
+                        {
+                            <input type="date" id="CrCData" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "INT")
+                        {
+                            <input type="number" id="CrCData" value="@item.Columns_Value" />
                         }
                     </td>
                     <td>

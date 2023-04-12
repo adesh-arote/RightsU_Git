@@ -171,7 +171,8 @@
 
         var DealTypeCode = $('#Deal_Type_Code').val();
 
-        if (DealTypeCode == "11") {
+        var DealExistsInArray = jQuery.inArray(DealTypeCode, lstProgramShow);
+        if (DealExistsInArray != -1) {
             $("#liExtGrp_100").show();
         } else {
             $("#liExtGrp_100").hide();

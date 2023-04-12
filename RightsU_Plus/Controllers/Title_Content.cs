@@ -189,9 +189,9 @@ namespace RightsU_Plus.Controllers
             string TitleUrl = "";
             if (TempData["SearchTitleInTitleContent"] != null)
             {
-                searchText = TempData["SearchTitleInTitleContent"].ToString();
+                searchText = Convert.ToString(TempData["SearchTitleInTitleContent"]);
                 ViewBag.ListSearchedFromTitle = "Y";
-                TitleUrl = TempData["CurrentTitleURL"].ToString();
+                TitleUrl = Convert.ToString(TempData["CurrentTitleURL"]);
                 ListSearchedFromTitle = "Y";
             }
             if (objSearch.SearchText != null && objSearch.EpisodeFrom > 0 && objSearch.EpisodeTo > 0)
@@ -240,6 +240,7 @@ namespace RightsU_Plus.Controllers
             obj.Add("Record_Count", lstContent.Count);
             obj.Add("ListSearchedFromTitle", ListSearchedFromTitle);
             obj.Add("TitleUrl", TitleUrl);
+            obj.Add("PopulateSearchBox", searchText);
             return Json(obj);
         }
 

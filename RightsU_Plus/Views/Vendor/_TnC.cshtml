@@ -1,5 +1,13 @@
 ﻿@model List<RightsU_Entities.AL_Vendor_TnC>
 
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
 <script>
     $(document).ready(function () {
         debugger;
@@ -9,6 +17,15 @@
         $("#tncRemark").click(function () {
             $("#UsedLetters").html($("#tncRemark").val().length);
         });
+
+        
+        $('.ExtendTnC').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
     });
 
     function checkCurrentActionTnC() {
@@ -145,7 +162,7 @@
                     <td>
                         @iTnC
                     </td>
-                    <td>
+                    <td class="ExtendTnC">
                         @item.TnC_Description
                     </td>
                     if (ViewBag.CommandNameTnC != "VIEW")

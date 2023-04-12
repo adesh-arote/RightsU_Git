@@ -459,6 +459,8 @@
                     if (result.ListSearchedFromTitle == 'Y') {
                         $("#BackToTitleBtn").attr("style", "display:block");
                         $("#BackToTitleBtn").attr("onclick", "window.location.href = '" + result.TitleUrl + "'");
+                        $("#searchCommon").val(result.PopulateSearchBox);
+                        $("#hdnSearchBox").val(result.PopulateSearchBox);
                     }
                 }
             },

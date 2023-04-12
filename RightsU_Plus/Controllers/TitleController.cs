@@ -1825,6 +1825,8 @@ namespace RightsU_Plus.Controllers
                                     {
                                         lstDBExtendedColumns.ForEach(t => { if (t.Map_Extended_Columns_Code == code) t.EntityState = State.Deleted; });
                                     }
+                                    //Object removed from gvExtended to re-populate dropdowns (check BindNewRowDdl method)
+                                    gvExtended.Remove(obj);
                                 }
                                 catch { }
                             }
@@ -1873,6 +1875,7 @@ namespace RightsU_Plus.Controllers
                         if (hdnType == "D")
                         {
                             lstAddedExtendedColumns.Remove(objMEc);
+                            gvExtended.Remove(obj);
                         }
                     }
                     //}
@@ -4455,6 +4458,14 @@ namespace RightsU_Plus.Controllers
             }
 
             return isDuplicate;
+        }
+
+        public ActionResult ProgramShowList()
+        {
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+
+            return Json(lstShowCode, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
