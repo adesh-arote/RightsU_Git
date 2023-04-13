@@ -1393,6 +1393,8 @@
     <Content Include="UploadBookingSheet\Import\Result_BS_No_25.xlsx" />
     <Content Include="UploadBookingSheet\Import\Result_BS_No_26.xlsx" />
     <Content Include="UploadBookingSheet\Import\Sample.xlsx" />
+    <Content Include="Views\BookingSheet\_MovieSheetData.cshtml" />
+    <Content Include="Views\BookingSheet\_ShowSheetData.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

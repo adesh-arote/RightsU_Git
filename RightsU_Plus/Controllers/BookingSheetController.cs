@@ -669,12 +669,11 @@ namespace RightsU_Plus.Controllers
             lstBSShowDataSearched = lstBSShowData = objBSData_Service.SearchFor(x => true).Where(w => w.Sheet_Name == "Show").ToList();
         }
 
-        public ActionResult BindMovieSheetList(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
+        public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            lstBulkImport = new DM_Booking_Sheet_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Master_Import_Code &&  x.Col1 == "TitleName").ToList();
-
+            lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
             ViewBag.RecordCount = lstBulkImport.Count - 1;
 
             int RecordCount = 0;
@@ -689,7 +688,6 @@ namespace RightsU_Plus.Controllers
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    //lst = lstBSMovieDataSearched.OrderByDescending(o => o.DM_Booking_Sheet_Data_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                     lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                     lst.Insert(0, firstItem);
             }
@@ -698,25 +696,36 @@ namespace RightsU_Plus.Controllers
                 lst.Insert(0, firstItem);
             }
 
-            return PartialView("_MovieSheetList", lst);
+            return PartialView("_MovieSheetData", lst);
         }
 
-        public ActionResult BindShowSheetList(int pageNo, int recordPerPage, string sortType)
+        public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
-            List<DM_Booking_Sheet_Data> lst = new List<DM_Booking_Sheet_Data>();
-           
+            List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
+
+            lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+            ViewBag.RecordCount = lstBulkImport.Count - 1;
+
             int RecordCount = 0;
-            RecordCount = lstBSShowDataSearched.Count;
+            RecordCount = ViewBag.RecordCount;
+
+            var firstItem = lstBulkImport[0];
+            lstBulkImport.RemoveAt(0);
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstBSShowDataSearched.OrderByDescending(o => o.DM_Booking_Sheet_Data_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+            }
+            else
+            {
+                lst.Insert(0, firstItem);
             }
 
-            return PartialView("_ShowSheetList", lst);
+            return PartialView("_ShowSheetData", lst);
         }
     }
 

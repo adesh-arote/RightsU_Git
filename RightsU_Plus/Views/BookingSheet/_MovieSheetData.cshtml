@@ -1,0 +1,13 @@
+﻿@model List<RightsU_Entities.DM_Booking_Sheet_Data>
+
+@{
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+
+
