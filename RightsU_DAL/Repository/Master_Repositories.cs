@@ -3580,5 +3580,30 @@ namespace RightsU_DAL
         }
     }
 
+    public class DM_Booking_Sheet_Data_Repository : RightsU_Repository<DM_Booking_Sheet_Data>
+    {
+        public DM_Booking_Sheet_Data_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(DM_Booking_Sheet_Data objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(DM_Booking_Sheet_Data objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
     #endregion
 }

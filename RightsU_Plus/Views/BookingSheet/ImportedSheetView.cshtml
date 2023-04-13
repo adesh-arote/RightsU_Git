@@ -18,12 +18,14 @@
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "MV";
 
-    var URL_BindMovieList = '@Url.Action("BindMovieList", "BookingSheet")';
-    var URL_BindShowList = '@Url.Action("BindShowList", "BookingSheet")';
+    var DMICode = '@objSDMCFT.DmMasterImportCode';
+
+    var URL_BindMovieSheetList = '@Url.Action("BindMovieSheetList", "BookingSheet")';
+    var URL_BindShowSheetList = '@Url.Action("BindShowSheetList", "BookingSheet")';
     var URL_SearchOnList = '@Url.Action("SearchOnList", "BookingSheet")';
 
     $(document).ready(function () {
-        //SearchOnList("", TabName);
+        SearchOnList("", TabName);
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -36,12 +38,12 @@
         debugger;
         if (NewTab == "MV") {
             $("[id*='tab']").removeClass('active');
-            $("#tabBkgsht").addClass('active');
+            $("#tabMovie").addClass('active');
             TabName = NewTab;
         }
         if (NewTab == "SH") {
             $("[id*='tab']").removeClass('active');
-            $("#tabPdngrmdn").addClass('active');
+            $("#tabShow").addClass('active');
             TabName = NewTab;
         }
     }
@@ -97,10 +99,10 @@
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
                 if (TabName == "MV") {
-                    //BindbookingSheetList();
+                    BindMovieSheetList(DMICode);
                 }
                 if (TabName == "SH") {
-                    //PendingRecommendationsList();
+                    BindShowSheetList(DMICode);
                 }
             }
         });
@@ -180,14 +182,14 @@
         return false
     }
 
-    function BindMovieList() {
+    function BindMovieSheetList(DMICode) {
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
         debugger;
         $.ajax({
             type: "POST",
-            url: URL_BindMovieList,
+            url: URL_BindMovieSheetList,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -195,7 +197,8 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                sortType: sort_Type
+                sortType: sort_Type,
+                DM_Master_Import_Code: DMICode
             }),
             success: function (result) {
                 $('#divBindList').empty();
@@ -207,14 +210,14 @@
         });
     }
 
-    function BindShowList() {
+    function BindShowSheetList(DMICode) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
         $.ajax({
             type: "POST",
-            url: URL_BindShowList,
+            url: URL_BindShowSheetList,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -222,7 +225,8 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                sortType: sort_Type
+                sortType: sort_Type,
+                DM_Master_Import_Code: DMICode
             }),
             success: function (result) {
                 $('#divBindList').empty();
@@ -255,19 +259,6 @@
                 </span>
             </div>
         </div>
-        @*<input type="hidden" id="hdnPageNo" name="hdnPageNo" />
-        <div class="paging_area clearfix" style="margin-top: 5px;">
-            <div id="ErrorPagination" class="pagination" style="margin-right: 10px;">
-            </div>
-            <span class="pull-left" id="lblTotal">Total Records : </span>
-            <span class="pull-right">
-                Page Size:
-                @*<input type="text" id="txtErrorPageSize" class="smallTextBox pagingSize" value="@(Convert.ToInt32(ViewBag.txtpageSize) == 0 || ViewBag.txtpageSize == null ? 10 : ViewBag.txtpageSize)"
-                onchange="PageSize_OnChange();" onkeypress="return isNumber(event);" maxlength="3" onblur="setDefaultPaging('txtErrorPageSize')" />
-                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
-            </span>
-        </div>*@
-
         <div class="grid_area">         
             <div class="paging_area clearfix">
                 <span class="pull-left">Total Records: </span>

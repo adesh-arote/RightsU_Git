@@ -8475,5 +8475,66 @@ namespace RightsU_BLL
         }
     }
 
+    public class DM_Booking_Sheet_Data_Service : BusinessLogic<DM_Booking_Sheet_Data>
+    {
+        private readonly DM_Booking_Sheet_Data_Repository objRepository;
+
+        public DM_Booking_Sheet_Data_Service(string Connection_Str)
+        {
+            this.objRepository = new DM_Booking_Sheet_Data_Repository(Connection_Str);
+        }
+        public IQueryable<DM_Booking_Sheet_Data> SearchFor(Expression<Func<DM_Booking_Sheet_Data, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public DM_Booking_Sheet_Data GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(DM_Booking_Sheet_Data objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(DM_Booking_Sheet_Data objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(DM_Booking_Sheet_Data objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.DM_Booking_Sheet_Data_Code == objToValidate.DM_Booking_Sheet_Data_Code).Count() > 0)
+            {
+                resultSet = "Booking Sheet Data already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
     #endregion
 }

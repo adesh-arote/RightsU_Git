@@ -161,7 +161,70 @@ namespace RightsU_Plus.Controllers
         }
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------
-       
+
+        private List<RightsU_Entities.DM_Booking_Sheet_Data> lstBSMovieData
+        {
+            get
+            {
+                if (Session["lstBSMovieData"] == null)
+                    Session["lstBSMovieData"] = new List<RightsU_Entities.DM_Booking_Sheet_Data>();
+                return (List<RightsU_Entities.DM_Booking_Sheet_Data>)Session["lstBSMovieData"];
+            }
+            set { Session["lstBSMovieData"] = value; }
+        }
+
+        private List<RightsU_Entities.DM_Booking_Sheet_Data> lstBSShowData
+        {
+            get
+            {
+                if (Session["lstBSShowData"] == null)
+                    Session["lstBSShowData"] = new List<RightsU_Entities.DM_Booking_Sheet_Data>();
+                return (List<RightsU_Entities.DM_Booking_Sheet_Data>)Session["lstBSShowData"];
+            }
+            set { Session["lstBSShowData"] = value; }
+        }
+
+        List<RightsU_Entities.DM_Booking_Sheet_Data> lstBSMovieDataSearched
+        {
+            get
+            {
+                if (Session["lstBSMovieDataSearched"] == null)
+                    Session["lstBSMovieDataSearched"] = new List<RightsU_Entities.DM_Booking_Sheet_Data>();
+                return (List<RightsU_Entities.DM_Booking_Sheet_Data>)Session["lstBSMovieDataSearched"];
+            }
+            set
+            {
+                Session["lstBSMovieDataSearched"] = value;
+            }
+        }
+
+        List<RightsU_Entities.DM_Booking_Sheet_Data> lstBSShowDataSearched
+        {
+            get
+            {
+                if (Session["lstBSShowDataSearched"] == null)
+                    Session["lstBSShowDataSearched"] = new List<RightsU_Entities.DM_Booking_Sheet_Data>();
+                return (List<RightsU_Entities.DM_Booking_Sheet_Data>)Session["lstBSShowDataSearched"];
+            }
+            set
+            {
+                Session["lstBSShowDataSearched"] = value;
+            }
+        }
+
+        private DM_Booking_Sheet_Data_Service objBSData_Service
+        {
+            get
+            {
+                if (Session["objBSData_Service"] == null)
+                    Session["objBSData_Service"] = new DM_Booking_Sheet_Data_Service(objLoginEntity.ConnectionStringName);
+                return (DM_Booking_Sheet_Data_Service)Session["objBSData_Service"];
+            }
+            set { Session["objBSData_Service"] = value; }
+        }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------------------
+
         private SelectDateAndBKSCode objSDAB
         {
             get
@@ -598,14 +661,63 @@ namespace RightsU_Plus.Controllers
 
         private void MovieTabData()
         {
-            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+            lstBSMovieDataSearched = lstBSMovieData = objBSData_Service.SearchFor(x => true).Where(w => w.Sheet_Name == "Movie").ToList();
         }
 
         private void ShowTabData()
         {
-            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+            lstBSShowDataSearched = lstBSShowData = objBSData_Service.SearchFor(x => true).Where(w => w.Sheet_Name == "Show").ToList();
         }
 
+        public ActionResult BindMovieSheetList(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
+        {
+            List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
+
+            lstBulkImport = new DM_Booking_Sheet_Data_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Master_Import_Code &&  x.Col1 == "TitleName").ToList();
+
+            ViewBag.RecordCount = lstBulkImport.Count - 1;
+
+            int RecordCount = 0;
+            //RecordCount = lstBSMovieDataSearched.Count;
+            RecordCount = ViewBag.RecordCount;
+
+            var firstItem = lstBulkImport[0];
+            lstBulkImport.RemoveAt(0);
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    //lst = lstBSMovieDataSearched.OrderByDescending(o => o.DM_Booking_Sheet_Data_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+            }
+            else
+            {
+                lst.Insert(0, firstItem);
+            }
+
+            return PartialView("_MovieSheetList", lst);
+        }
+
+        public ActionResult BindShowSheetList(int pageNo, int recordPerPage, string sortType)
+        {
+            List<DM_Booking_Sheet_Data> lst = new List<DM_Booking_Sheet_Data>();
+           
+            int RecordCount = 0;
+            RecordCount = lstBSShowDataSearched.Count;
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstBSShowDataSearched.OrderByDescending(o => o.DM_Booking_Sheet_Data_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            return PartialView("_ShowSheetList", lst);
+        }
     }
 
     #region
