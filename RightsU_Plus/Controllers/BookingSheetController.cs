@@ -678,11 +678,11 @@ namespace RightsU_Plus.Controllers
 
             int RecordCount = 0;
             //RecordCount = lstBSMovieDataSearched.Count;
-            RecordCount = ViewBag.RecordCount;
-
+        
             var firstItem = lstBulkImport[0];
             lstBulkImport.RemoveAt(0);
 
+            RecordCount = ViewBag.RecordCount; //this could be change
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
@@ -706,12 +706,12 @@ namespace RightsU_Plus.Controllers
             lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
             ViewBag.RecordCount = lstBulkImport.Count - 1;
 
-            int RecordCount = 0;
-            RecordCount = ViewBag.RecordCount;
+            int RecordCount = 0;         
 
             var firstItem = lstBulkImport[0];
             lstBulkImport.RemoveAt(0);
 
+            RecordCount = ViewBag.RecordCount;
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;

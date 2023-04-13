@@ -46,6 +46,7 @@
             $("#tabShow").addClass('active');
             TabName = NewTab;
         }
+        SearchOnList("", TabName);
     }
 
     function btnSearch_OnClick() {
@@ -182,7 +183,7 @@
         return false
     }
 
-    function BindMovieSheetList(DMICode) {
+    function BindMovieSheetData(DMICode) {
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
@@ -210,7 +211,7 @@
         });
     }
 
-    function BindShowSheetList(DMICode) {
+    function BindShowSheetData(DMICode) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
