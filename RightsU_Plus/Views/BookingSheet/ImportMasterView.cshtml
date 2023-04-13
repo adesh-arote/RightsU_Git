@@ -22,6 +22,7 @@
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, Filter_By = "A";
 
     var DownloadPath = '@DownloadPath';
+    var BksCode = '@objDateBK.BookingSheetCode';
 
     var URL_BindImportMasterList = '@Url.Action("BindImportMasterList", "BookingSheet")';
     var URL_SearchOnImportMasterList = '@Url.Action("SearchOnImportMasterList", "BookingSheet")';
@@ -119,7 +120,7 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
-                BindImportMasterList();
+                BindImportMasterList(BksCode);
             }
         });
     }
@@ -169,7 +170,7 @@
         var pageNo = page_index + 1
         $('#hdnPageNo').val(pageNo);
         if (IsCall == 'Y')
-            BindImportMasterList();
+            BindImportMasterList(BksCode);
         else
             IsCall = 'Y';
         //}
@@ -182,7 +183,7 @@
         if (!ValidatePageSize())
             return false;
 
-        BindImportMasterList();
+        BindImportMasterList(BksCode);
         SetPaging();
     }
 
@@ -198,7 +199,7 @@
         return false
     }
 
-    function BindImportMasterList() {
+    function BindImportMasterList(BksCode) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
@@ -213,7 +214,8 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                FilterBy: Filter_By
+                FilterBy: Filter_By,
+                BookingSheetCode: BksCode
             }),
             success: function (result) {
                 $('#divBindMasterList').empty();
@@ -270,6 +272,9 @@
 
     function DownloadLink(BkSheetCode) {
         debugger;
+        //var url = window.location.pathname;
+        //var url = window.location.href;
+        //var url = window.location.origin;
         $.ajax({
             type: "POST",
             url: URL_GetFileName,
@@ -281,7 +286,7 @@
             }),
             success: function (Filename) {
                 debugger;
-                window.location.href = DownloadPath + Filename;
+                window.location.href = window.location.origin + "/" + DownloadPath + Filename;
                 SearchOnImportMasterList("");            
             }
         })    

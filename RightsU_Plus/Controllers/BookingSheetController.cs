@@ -384,7 +384,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetFileName(int BookingSheetCode)
         {
-            string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
+            string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Excel_File).FirstOrDefault();
 
             return Json(Filename);
         }
@@ -434,10 +434,10 @@ namespace RightsU_Plus.Controllers
 
         private void MasterImportData()
         {
-            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code != null).ToList();
+            lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code == objSDAB.BookingSheetCode).ToList();
         }
 
-        public ActionResult BindImportMasterList(int pageNo, int recordPerPage, string FilterBy)
+        public ActionResult BindImportMasterList(int pageNo, int recordPerPage, string FilterBy, int BookingSheetCode)
         {
             List<DM_Master_Import> lst = new List<DM_Master_Import>();
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);

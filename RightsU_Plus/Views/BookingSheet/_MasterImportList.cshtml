@@ -12,10 +12,10 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th style="width:25%">File Name</th>
-            <th style="width:15%">Uploaded By</th>
-            <th style="width:15%">Uploaded On</th>
-            <th style="width:10%">Status</th>
+            <th style="width:35%">File Name</th>
+            <th style="width:20%">Uploaded By</th>
+            <th style="width:20%">Uploaded On</th>
+            <th style="width:15%">Status</th>
             @*<th style="width:25%">Status Bar</th>*@         
             <th>Action</th>
         </tr>      
@@ -23,6 +23,8 @@
     <tbody>
         @if (Model.Count() > 0)
         {
+            DateTime maxUploadedFileDate = new DateTime();
+            maxUploadedFileDate = Model.Select(s => s.Uploaded_Date).FirstOrDefault().Value;
             foreach (var item in Model)
             {
                 <tr>
@@ -52,7 +54,10 @@
                         
                     </td>*@            
                     <td style="text-align:center">
-                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>                  
+                        @if (maxUploadedFileDate == item.Uploaded_Date)
+                        {
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
+                        }
                     </td>
                 </tr>
             }
