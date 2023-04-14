@@ -149,6 +149,10 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\System.Web.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -1331,7 +1335,7 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
-    <Content Include="Views\_ViewStart.cshtml" />
+    <!-- <Content Include="Views\_ViewStart.cshtml" /> -->
     <Content Include="Views\Extended_Group\Index.cshtml" />
     <Content Include="Views\Extended_Group\_ExtendedGroupList.cshtml" />
     <Content Include="Views\Extended_Group\_AddEditViewExtdGrp.cshtml" />
@@ -1360,6 +1364,8 @@
     <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditALOem.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditFieldValue.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Aeroplay.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

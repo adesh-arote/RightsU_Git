@@ -81,7 +81,8 @@
     , URL_Deal_For_Approval_Music = '@Url.Action("Deal_For_Approval", "Global", new {
                                     DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForMusicDeal, Record_Locking_Code = "RecordLockingCode" })'
     , URL_Syn_Approve_Reject = '@Url.Action("Syn_Approve_Reject_Deal", "Global")'
-    , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")';
+            , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")',
+    URL_BindAeroplay = '@Url.Action("BindAeroplay", "Global")';
 
         $(document).ready(function () {
             //  $("#triangle").css({ "top": "-13px" });
@@ -855,6 +856,54 @@
             window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
         }
 
+        function LoadAeroplay() {
+            window.location.href = '@Url.Action("BindAeroplay", "Global")';
+        }
+        function LoadAeroplayAjax(UsersCode) {
+            debugger;
+           
+            //var pageNo = $('#hdnPageNo').val();
+            //var recordPerPage = $('#txtPageSize').val();
+           // window.location.href = '@Url.Action("BindAeroplay", "Global")';
+
+            $.ajax({
+                type: "POST",
+                url: URL_BindAeroplay,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    UsersCode: UsersCode
+                    //recordPerPage: recordPerPage,
+                    //Language_Code: Language_Code,
+                    //commandName: commandName,
+                    //sortType: sort_Type
+
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        
+                        $('#Aeroplaypopup').modal();
+                        $('#AeroplaypupupHtml').empty();
+                        $('#AeroplaypupupHtml').html(result);
+                        //initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function ClosePopup() {
+            debugger;
+            $('#Aeroplaypopup').modal('hide');
+            $('#AeroplaypupupHtml').empty();
+        }
     </script>
 </head>
 
@@ -923,8 +972,11 @@
 
                             }
 
-                            @*<li class="seperator"></li>
-                                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                            <li class="seperator"></li>
+                            <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-globe" href="#"></a>
+                            </li>
+                            @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
                                     <a class="glyphicon glyphicon-calendar" href="#"></a>
                                 </li>
                                 <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
@@ -1377,6 +1429,15 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </div>
     </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Aeroplaypopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:100%;padding-right:0px !important;margin-left:0px !important;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <div class="form_fields acq" id="AeroplaypupupHtml">
+
+                </div>
+            </div>
+        </div>
+    </div>
     <input type="hidden" id="hdnSelectedEmail" />
     <input type="hidden" id="hdnSeenCount" />
     <input type="hidden" id="hdnCurrNoti" />
@@ -1452,7 +1513,7 @@
 
     function showPrevious() {
         debugger;
-     
+
         $('#btnNext').attr('disabled', false);
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();

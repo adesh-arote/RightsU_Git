@@ -13,7 +13,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
-
+using System.Web.Cors;
 
 namespace RightsU_Plus.Controllers
 {
@@ -795,6 +795,13 @@ namespace RightsU_Plus.Controllers
             Response.OutputStream.Write(buffer, 0, buffer.Length);
             Response.End();
             return RedirectToAction("Index", new { Message = "Attachment File downloaded successfully" });
+        }
+        
+        public PartialViewResult BindAeroplay(int UsersCode)
+        {
+            //Currency objCurrency = new Currency();
+            ViewBag.UsersCode = UsersCode;
+            return PartialView("~/Views/Shared/_Aeroplay.cshtml");
         }
     }
 }
