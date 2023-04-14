@@ -48,15 +48,31 @@
                         @Html.DisplayFor(modelItem => item.Uploaded_Date)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Status)
+                        @if (item.Status == "P" || item.Status == "N")
+                        {
+                            <span>In Process</span>
+                        }
+                        @if (item.Status == "S")
+                        {
+                            <span>Success</span>
+                        }
+                        @if (item.Status == "E")
+                        {
+                            <span>Error</span>
+                        }
                     </td>
                     @*<td style="text-align:center">
                         
                     </td>*@            
                     <td style="text-align:center">
-                        @if (maxUploadedFileDate == item.Uploaded_Date)
+                        @*@if (maxUploadedFileDate == item.Uploaded_Date)*@
+                        @if (item.Status == "S" || item.Status == "E")
                         {
                             <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
+                        }
+                        @if (item.Status == "P" || item.Status == "N")
+                        {
+                            <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>

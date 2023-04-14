@@ -44,6 +44,10 @@
         addNumeric();
         SearchOnImportMasterList("");
 
+        if ("@ViewBag.Message" != "") {
+           showAlert("S","@ViewBag.Message");
+        }
+
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -308,7 +312,7 @@
                         <tr>
                             <td style="width:50%;" colspan="5">
                                 <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objDateBK.BookingSheetCode')" />
-                                <span>(Latest Refreshed Sheet Date) @objDateBK.MaxDate.ToString("dd-MMM-yyyy")</span>
+                                <span>(Latest Refreshed On : @objDateBK.MaxDate)</span>
                             </td>
                         </tr>
                         <tr>

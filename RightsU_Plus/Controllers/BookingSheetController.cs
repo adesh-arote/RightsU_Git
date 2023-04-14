@@ -476,7 +476,7 @@ namespace RightsU_Plus.Controllers
         {
             //int BookingSheetCode = 0;
             //DateTime? MaxDate = null;
-            MasterImportData();
+            //MasterImportData();
             objDMCFT = null;
 
             List<SelectListItem> lstFliter = new List<SelectListItem>();
@@ -492,11 +492,20 @@ namespace RightsU_Plus.Controllers
             //MaxDate = Convert.ToDateTime(TempData["MaxDate"]);
             //ViewBag.MaxDate = MaxDate;
 
+            if (Session["Message"] != null)
+            {                                            //-----To show messages
+                ViewBag.Message = Session["Message"];
+                Session["Message"] = null;
+            }
+
             return View();
         }
 
         private void MasterImportData()
         {
+            lstImportMaster = new List<DM_Master_Import>();
+            lstMasterImportSearched = new List<DM_Master_Import>();
+            objMasterImport_Service = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName);
             lstMasterImportSearched = lstImportMaster = objMasterImport_Service.SearchFor(x => true).Where(w => w.Record_Code == objSDAB.BookingSheetCode).ToList();
         }
 
@@ -551,6 +560,7 @@ namespace RightsU_Plus.Controllers
 
             if (!string.IsNullOrEmpty(searchText))
             {
+                MasterImportData();
                 //lstMasterImportSearched = lstImportMaster.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
             }
             else
@@ -611,37 +621,37 @@ namespace RightsU_Plus.Controllers
                         if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
                         {
                             status = "E";
-                            message = "File not saved";
+                            Session["Message"] = "File not saved";
                         }
                         else
                         {
                             status = "S";
-                            message = "File Imported successfully";
+                            Session["Message"] = "File Imported successfully";
                         }
                     }
                     catch (Exception ex)
                     {
-                        message = ex.Message;
+                        Session["Message"] = ex.Message;
                         status = "E";
                     }
 
                 }
                 else
                 {
-                    message = "Please select excel file...";
+                    Session["Message"] = "Please select excel file...";
                     status = "E";
                 }
             }
             else
             {
-                message = "Please select excel file...";
+                Session["Message"] = "Please select excel file...";
                 status = "E";
             }
 
             var Obj = new
             {
                 Status = status,
-                Message = message
+                Message = Session["Message"]
             };
 
             return Json(Obj);
