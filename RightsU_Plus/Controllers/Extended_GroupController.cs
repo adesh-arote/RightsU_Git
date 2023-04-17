@@ -225,9 +225,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.ddlValidation = lstValidation;
 
             List<SelectListItem> lstDisplayFor = new List<SelectListItem>();
-            lstDisplayFor.Add(new SelectListItem { Text = "Movie", Value = "Mv" });
-            lstDisplayFor.Add(new SelectListItem { Text = "Show", Value = "Sh" });
-            lstDisplayFor.Add(new SelectListItem { Text = "Both", Value = "Bt" });
+            lstDisplayFor.Add(new SelectListItem { Text = "Movie", Value = "M" });
+            lstDisplayFor.Add(new SelectListItem { Text = "Show", Value = "S" });
+            lstDisplayFor.Add(new SelectListItem { Text = "Both", Value = "B" });
             ViewBag.ddlDisplayFor = lstDisplayFor;
 
             List<SelectListItem> lstImportType = new List<SelectListItem>();
@@ -268,7 +268,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    List<string> SelectedDisplayFor = lstDisplayFor.Where(w => Detail.Display_Name.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Value).ToList();
+                    string SelectedDisplayFor = lstDisplayFor.Where(w => Detail.Display_Name.Any(a => w.Value == a.ToString())).Select(s => s.Value).FirstOrDefault();
                     ViewBag.SelectedDisplay = new SelectList(lstDisplayFor, "Value", "Text", SelectedDisplayFor);
                 }
 
@@ -279,8 +279,8 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    List<string> SelectedImportType = lstImportType.Where(w => Detail.Allow_Import.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Value).ToList();
-                    ViewBag.SelectedImportType = new SelectList(lstImportType, "Value", "Text", SelectedImportType);
+                    string SelectedImportTypeValue = lstImportType.Where(w => Detail.Allow_Import.Any(a => w.Value == a.ToString())).Select(s => s.Value).FirstOrDefault();
+                    ViewBag.SelectedImportType = new SelectList(lstImportType, "Value", "Text", SelectedImportTypeValue);
                 }
 
                 ViewBag.DetailId = Detail.Extended_Group_Config_Code;

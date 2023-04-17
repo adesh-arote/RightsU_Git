@@ -42,6 +42,10 @@
                         $("#ContentPopup").empty();
                         $('#ContentRuleModalPopup').modal('hide');
                         AdditionalInfoTab("CR", "", 0);
+                        $("#SaveAdditionalInfoBtn").prop("disabled", false);
+                        $("#CloseAdditionalInfoBtn").prop("disabled", false);
+                        $("#AddEditContentRuleBtn").prop("disabled", false);
+                        $("#ContentRuleTable tbody tr td a").prop("disabled", false);
                     }
                 });
             }
@@ -49,9 +53,15 @@
     }
 
     function CloseContentRulePopup() {
-        $('#hdnActionCRGrid').val("");
-        $('#ContentPopup').empty();
-        $('#ContentRuleModalPopup').modal('hide');
+        if (checkCurrentActionCRGrid()) {
+            $('#hdnActionCRGrid').val("");
+            $('#ContentPopup').empty();
+            $('#ContentRuleModalPopup').modal('hide');
+            $("#SaveAdditionalInfoBtn").prop("disabled", false);
+            $("#CloseAdditionalInfoBtn").prop("disabled", false);
+            $("#AddEditContentRuleBtn").prop("disabled", false);
+            $("#ContentRuleTable tbody tr td a").css("pointer-events", "auto");
+        }
     }
 </script>
 
@@ -59,22 +69,75 @@
         <span style="font-size:18px"> Content Rule </span>
     </div>*@
 
-<div class="modal_block modal_header">
+@*<div class="modal_block modal_header">
     <a class="close" onclick="CloseContentRulePopup()">
         <span>×</span>
         <span class="sr-only">Close</span>
     </a>
 
     <h2> Content Rule </h2>
-</div>
-
-<table class="table">
+</div>*@
+<style>
+    #ContentRulePopUpTable tr td {
+        width: 20%;
+        text-align: center;
+    }
+</style>
+<table id="ContentRulePopUpTable" class="table">
     <tr>
+        <td>
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                <b>@Model.Rule_Name</b>
+            }
+            else
+            {
+                <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" maxlength="100" />
+            }
+
+            <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+            <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+            <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+        </td>
+        <td>
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                <b>@Model.Rule_Short_Name</b>
+            }
+            else
+            {
+                <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="50" />
+            }
+        </td>
+        <td>
+            @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movie</span>
+            @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
+        </td>
+        <td>
+            <span id="SelectedCriteriaTd"></span>
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                <b>@Model.Criteria</b>
+            }
+        </td>
+        <td>
+
+        </td>
+    </tr>
+    @*<tr>
         <td style="width:25%; padding-left:2%">
             <b>Name</b>
         </td>
         <td>
-            <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                @Model.Rule_Name
+            }
+            else
+            {
+                <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+            }
+
             <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
             <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
             <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
@@ -85,7 +148,15 @@
             <b>Short Name</b>
         </td>
         <td>
-            <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+            @if (ViewBag.CommandNameCR == "VIEW")
+            {
+                @Model.Rule_Short_Name
+            }
+            else
+            {
+                <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+            }
+
         </td>
     </tr>
     <tr>
@@ -96,12 +167,12 @@
             @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movies</span>
             @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
         </td>
-    </tr>
+    </tr>*@
 </table>
 
-<div class="grid_area" style="margin: 0 auto; width: 98%;">
+<div class="grid_area">
     <div class="tab-content clearfix table-wrapper scale_table_container">
-        <div class="scale_table_block" id="ContentRuleGrid" style="max-height:500px">
+        <div class="scale_table_block" id="ContentRuleGrid">
 
         </div>
     </div>
@@ -114,11 +185,14 @@
 
 
 
-<div class="modal_block_full" style="margin-top: 10px;">
+<div class="modal_block_full">
     <div class="form_links">
-        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+        <ul class="modal_block clearfix" style="padding-left:10px;">
             <li>
-                <button class="btn btn-primary" onclick="SaveContentRule()"> Save Content </button>
+                @if (ViewBag.CommandNameCR != "VIEW")
+                {
+                    <button class="btn btn-primary" onclick="SaveContentRule()"> Save Rule </button>
+                }
                 <button class="btn btn-primary" onclick="CloseContentRulePopup()"> Close </button>
             </li>
         </ul>

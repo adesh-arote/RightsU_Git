@@ -1,0 +1,167 @@
+﻿@model List<RightsU_Entities.DM_Booking_Sheet_Data>
+
+@{
+    string Message = Convert.ToString(Session["Message"]);
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+
+    $(document).ready(function () {
+        $('#lblRecordCount').text(@ViewBag.RecordCount);
+    });
+
+</script>
+
+<style>
+    table {
+        border: 1px solid black;
+    }
+
+    th {
+        font-weight: bold;
+        width: 8%;
+    }
+
+    div.scrollmenu {
+        background-color: #333;
+        overflow: auto;
+        white-space: nowrap;
+    }
+
+        div.scrollmenu a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+        }
+
+            div.scrollmenu a:hover {
+                background-color: #777;
+            }
+</style>
+
+<div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection class="scrollmenu">
+    <table class="table table-bordered table-hover" id="tblDMImport">
+        <thead>
+            <tr>
+                @{
+                    int Count = 0, locTitleName = 0;
+                    foreach (var item in Model)
+                    {
+                        int i = 0;
+                        Count = Count + 1;
+                        var type = item.GetType();
+                        var properties = type.GetProperties();
+                        if (Count > 1)
+                        {
+                            item.Record_Status = item.Is_Ignore == "Y" ? "Ignore" : item.Record_Status == null ? "" : item.Record_Status;
+                        }
+                    <tr>
+                        @foreach (var property in properties)
+                        {
+                            if (i > 2)
+                            {
+                                if (Count == 1)
+                                {
+                                    if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Title Name")
+                                    {
+                                        locTitleName = i;
+                                    }
+                                    if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
+                                    {
+                                        <th style="width:8%;font-weight:900;"> @property.GetValue(item, null)</th>
+                                    }
+                                    else if (property.Name == "Record_Status")
+                                    {
+                                        <th style="width:8%;font-weight:900;">Record Status</th>
+                                    }
+                                    else if (property.Name == "Error_Message")
+                                    {
+                                        <th style="width:8%;font-weight:900;">Error Message</th>
+                                    }
+                                }
+                                else
+                                {
+                                    if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
+                                    {
+                                        if (locTitleName == i)
+                                        {
+                                            if (@property.GetValue(item, null) != "")
+                                            {
+                                                <td style="width:16%;color:blue;" class="Highlight" onclick="BindMappingPopUp('@item.DM_Booking_Sheet_Data_Code')" onmouseover="this.style.cursor='pointer';">
+                                                    @property.GetValue(item, null)
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            string temp;
+                                            if (property.Name.ToUpper() == "RECORD_STATUS")
+                                            {
+                                                temp = property.GetValue(item, null).ToString();
+                                                switch (temp)
+                                                {
+                                                    case "R":
+                                                        <td style="width:16%;">Resolve Conflict</td>
+                                                        break;
+                                                    case "C":
+                                                        <td style="width:16%;">Success</td>
+                                                        break;
+                                                    case "E":
+                                                        <td style="width:16%;">Error</td>
+                                                        break;
+                                                    case "N":
+                                                        <td style="width:16%;">New Record</td>
+                                                        break;
+                                                    default:
+                                                        <td style="width:16%;"></td>
+                                                        break;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                if (property.Name == "Col1")
+                                                {
+                                                    <td style="width:16%;" align="center"> @property.GetValue(item, null)</td>
+                                                }
+                                                else if (property.Name == "Error_Message")
+                                                {
+                                                    <td style="width:16%;">  @property.GetValue(item, null) </td>
+                                                }
+                                                else
+                                                {
+                                                    <td style="width:16%;"> @property.GetValue(item, null)</td>
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
+                                    {
+                                        <td style="width:16%;"></td>
+                                    }
+                                }
+                            }
+                            i++;
+                        }
+
+                    </tr>
+                }
+                }
+
+            </thead>
+
+        </table>
+    </div>
+
+

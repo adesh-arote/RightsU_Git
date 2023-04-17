@@ -20,5 +20,6 @@ namespace RightsU_Entities
         public string Cycle { get; set; }
         public string Vendor_Name { get; set; }
         public string Proposal___CY { get; set; }
+        public int Vendor_Code { get; set; }
     }
 }

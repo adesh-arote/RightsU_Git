@@ -1078,6 +1078,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" Width="1.5" PointX="46.75" PointY="47.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

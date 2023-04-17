@@ -86,8 +86,7 @@
                     <input type="text" id="txtIntGrpName_@rowZero" value="" class="form_input input-sm" autocomplete="off" />
                 </td>
                 <td class="DispFortd">
-                    @Html.DropDownList("ddlDisplayFor", (IEnumerable<SelectListItem>)ViewBag.ddlDisplayFor, "Please Select", htmlAttributes: new { @id = "txtDisplayName_" + rowZero, @class = "form_input chosen-select" })
-                    @*<input type="text" id="txtDisplayName_@rowZero" value="" class="form_input input-sm" autocomplete="off" />*@
+                    @Html.DropDownList("ddlDisplayFor", (IEnumerable<SelectListItem>)ViewBag.ddlDisplayFor, "Please Select", htmlAttributes: new { @id = "txtDisplayName_" + rowZero, @class = "form_input chosen-select" })          
                 </td>
                 <td class="AllImpTptd">
                     @Html.DropDownList("ddlImportType", (IEnumerable<SelectListItem>)ViewBag.ddlImportType, "Please Select", htmlAttributes: new { @id = "ddlImportType_" + rowZero, @class = "form_input chosen-select" })
@@ -123,32 +122,20 @@
                             @Html.DropDownList("lstValidation", (IEnumerable<SelectListItem>)ViewBag.SelectedValidation as MultiSelectList, new { @id = "ddlValidations_" + rowNumber, @multiple = "multiple", @class = "ddlSumo" })
                         </td>
                         <td class="AddContd">
-                            @Html.TextAreaFor(model => item.Additional_Condition, new { @id = "txtAddCon_" + rowNumber, @*@style ="resize:horizontal; min-width:100%;",*@@maxlength = "4500"
-                        })
+                            @Html.TextAreaFor(model => item.Additional_Condition, new { @id = "txtAddCon_" + rowNumber, @maxlength = "4500" })
                         </td>
                         <td class="IntGrptd">
                             <input type="text" id="txtIntGrpName_@rowNumber" value="@item.Inter_Group_Name" class="form_input input-sm" autocomplete="off" />
                         </td>
                         <td class="DispFortd">
-                            @Html.DropDownList("lstDisplayFor", (IEnumerable<SelectListItem>)ViewBag.SelectedDisplay as SelectList, new { @id = "txtDisplayName_" + rowNumber, @class = "form_input chosen-select" })
-                            @*<input type="text" id="txtDisplayName_@rowNumber" value="@item.Display_Name" class="form_input input-sm" autocomplete="off" />*@
+                            @Html.DropDownList("lstDisplayFor", (IEnumerable<SelectListItem>)ViewBag.SelectedDisplay, "Please Select", htmlAttributes: new { @id = "txtDisplayName_" + rowNumber, @class = "form_input chosen-select" })
                         </td>
                         <td class="AllImpTptd">
-                            @Html.DropDownList("ddlImportType", (IEnumerable<SelectListItem>)ViewBag.SelectedImportType as SelectList, new { @id = "ddlImportType_" + rowNumber, @class = "form_input chosen-select" })
+                            @Html.DropDownList("lstImportType", (IEnumerable<SelectListItem>)ViewBag.SelectedImportType, "Please Select", htmlAttributes:  new { @id = "ddlImportType_" + rowNumber, @class = "form_input chosen-select" })
                         </td>
                         <td style="text-align:center">
                             <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDetail(@item.Extended_Group_Config_Code, @rowNumber)"></a>
                             <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
-
-                            @*@if (item.Is_Active == "Y")
-                            {
-                                <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="ActivateDeactivateGrpDtl('N', '@item.Extended_Group_Config_Code')"></a>
-                            }
-                            @if (item.Is_Active == "N")
-                            {
-                                <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="ActivateDeactivateGrpDtl('Y', '@item.Extended_Group_Config_Code')"></a>
-                            }*@
-
                         </td>
                     }
                     else
@@ -156,7 +143,7 @@
                         <td style="text-align:center;">
                             <span>@rowNumber</span>
                         </td>
-                        <td style="text-align:center;">
+                        <td @*style="text-align:center;"*@>
                             <span>
                                 @{
                                     string Metadata = "";
@@ -200,53 +187,37 @@
                         <td class="IntGrptd">
                             <span>@item.Inter_Group_Name</span>
                         </td>
-                        <td class="DispFortd">
-                            @{
-                                string SelectedDisplayFor = "";
-                            }
+                        <td class="DispFortd">                          
                             @if (item.Display_Name == null)
                             {
                                 <span></span>
                             }
                             else
                             {
+                                string SelectedDisplayFor = "";
                                 {
-                                    List<SelectListItem> lstDisplayFor = new List<SelectListItem>();
-                                    lstDisplayFor.Add(new SelectListItem { Text = "Movie", Value = "Mv" });
-                                    lstDisplayFor.Add(new SelectListItem { Text = "Show", Value = "Sh" });
-                                    lstDisplayFor.Add(new SelectListItem { Text = "Both", Value = "Bt" });
+                                    List<SelectListItem> lstDisplayFor2 = (List<SelectListItem>)ViewBag.ddlDisplayFor;
 
-                                    //List<string> SelectedImportTypes = lstImportType.Where(w => item.Allow_Import.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Text).ToList();
-                                    //SelectedImportType = string.Join(", ", SelectedImportTypes);
-
-                                    SelectedDisplayFor = lstDisplayFor.Where(w => w.Value == item.Display_Name).Select(s => s.Text).FirstOrDefault();
+                                    SelectedDisplayFor = lstDisplayFor2.Where(w => w.Value == item.Display_Name).Select(s => s.Text).FirstOrDefault();
                                 }
                                 @SelectedDisplayFor
                             }
 
                         </td>
-                        <td class="AllImpTptd">
-                            @{
-                                string SelectedImportType = "";
-                            }
+                        <td class="AllImpTptd">                       
                             @if (item.Allow_Import == null)
                             {
                                 <span></span>
                             }
                             else
                             {
+                                string AllowedImportType = "";
                                 {
-                                    List<SelectListItem> lstImportType = new List<SelectListItem>();
-                                    lstImportType.Add(new SelectListItem { Text = "Only Export", Value = "E" });
-                                    lstImportType.Add(new SelectListItem { Text = "Only Import", Value = "I" });
-                                    lstImportType.Add(new SelectListItem { Text = "Both", Value = "B" });
+                                    List<SelectListItem> lstImportType1 = (List<SelectListItem>)ViewBag.ddlImportType;
 
-                                    //List<string> SelectedImportTypes = lstImportType.Where(w => item.Allow_Import.ToList().Any(a => w.Value == a.ToString())).Select(s => s.Text).ToList();
-                                    //SelectedImportType = string.Join(", ", SelectedImportTypes);
-
-                                    SelectedImportType = lstImportType.Where(w => w.Value == item.Allow_Import).Select(s => s.Text).FirstOrDefault();
+                                    AllowedImportType = lstImportType1.Where(w => w.Value == item.Allow_Import).Select(s => s.Text).FirstOrDefault();
                                 }
-                                @SelectedImportType
+                                @AllowedImportType
                             }
                         </td>
                         if (ViewBag.CommandName != "VIEW")

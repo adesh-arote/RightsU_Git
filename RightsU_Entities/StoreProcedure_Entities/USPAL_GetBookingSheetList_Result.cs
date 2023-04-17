@@ -24,5 +24,8 @@ namespace RightsU_Entities
         public Nullable<int> Show_Content_Count { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        public string Record_Status { get; set; }
+        public string Excel_File { get; set; }
+        public string Proposal___CY { get; set; }
     }
 }

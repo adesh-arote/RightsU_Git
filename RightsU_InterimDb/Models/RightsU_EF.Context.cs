@@ -468,6 +468,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public DbSet<AL_Recommendation> AL_Recommendation { get; set; }
         public DbSet<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
+        public DbSet<DM_Booking_Sheet_Data> DM_Booking_Sheet_Data { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
@@ -5617,6 +5618,24 @@ namespace RightsU_InterimDb.Models
         public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetReCommendationList_Result>("USPAL_GetReCommendationList");
+        }
+    
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(Nullable<int> titleCode)
+        {
+            var titleCodeParameter = titleCode.HasValue ?
+                new ObjectParameter("TitleCode", titleCode) :
+                new ObjectParameter("TitleCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPAL_Title_Content_Gen_From_Title", titleCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(Nullable<int> extendedColumnsCode)
+        {
+            var extendedColumnsCodeParameter = extendedColumnsCode.HasValue ?
+                new ObjectParameter("ExtendedColumnsCode", extendedColumnsCode) :
+                new ObjectParameter("ExtendedColumnsCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGet_DDLValues_For_ExtendedColumns_Result>("USPGet_DDLValues_For_ExtendedColumns", extendedColumnsCodeParameter);
         }
     }
 }

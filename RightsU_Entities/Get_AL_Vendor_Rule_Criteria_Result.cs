@@ -28,6 +28,14 @@ namespace RightsU_Entities
         public string SelectedBannerValues { get; set; }
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public string SelectedPrefExclusionValues { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string SelectedBookingSheetValue { get; set; }
+    }
+
+    public partial class AL_Vendor_Rule
+    {
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public string Rule_Type_Name { get; set; }
     }
 }
 

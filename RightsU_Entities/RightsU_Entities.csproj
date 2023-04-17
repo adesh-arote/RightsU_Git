@@ -200,6 +200,7 @@
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />
     <Compile Include="Master_Entities\Digital_Tab.cs" />
+    <Compile Include="Master_Entities\DM_Booking_Sheet_Data.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />
@@ -469,6 +470,7 @@
     <Compile Include="StoreProcedure_Entities\USPGetAiredNotAiredDates_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetTitleCode_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetTitleEpisodes_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPGet_DDLValues_For_ExtendedColumns_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPListResolveConflict_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPMHCueSheetList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPMHMusicTitleAlbumSearch_Result.cs" />

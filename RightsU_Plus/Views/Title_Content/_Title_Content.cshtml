@@ -8,6 +8,10 @@
 <script>
     $(document).ready(function () {
         var searchText = "@Html.Raw(ViewBag.SearchText)";
+        if ($("#hdnSearchBox").val() != "") {
+            searchText = $("#hdnSearchBox").val();
+            $("#hdnSearchBox").val("");
+        }
         var episodeFrom = @ViewBag.EpisodeFrom;
         var episodeTo = @ViewBag.EpisodeTo;
         var pageNo = @ViewBag.PageNo;
@@ -102,3 +106,4 @@
         </div>
     </div>
 </div>
+<input type="hidden" id="hdnSearchBox" />

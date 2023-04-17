@@ -8,6 +8,7 @@
 </style>
 
 <script>
+    //var SelectedCriteria = "";
     $(document).ready(function () {
         debugger;
         initializeChosen();
@@ -73,6 +74,9 @@
     }
 
     function CancelCRC() {
+        //var ReplaceTxt = $("#CrCField option:selected").text() + ",";
+        //SelectedCriteria = SelectedCriteria.replace(ReplaceTxt, '');
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
         $('#hdnActionCRGrid').val("");
         BindContentRuleGrid('', 0, 0);
     }
@@ -101,6 +105,8 @@
         debugger;
         //alert("Called Change Data Input function");
         var FieldType = $("#CrCField").val();
+        //SelectedCriteria = $("#SelectedCriteriaTd").html() + $("#CrCField option:selected").text() + ",";
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
         $.ajax({
             type: "POST",
             url: URL_ChangeDataInputType,
@@ -131,6 +137,24 @@
                 else if (result.ControlType == "TXT") {
                     $("#DataInputs").html(result.TextBox);
                 }
+                else if (result.ControlType == "DATE") {
+                    $("#DataInputs").html(result.Date);
+                }
+                else if (result.ControlType == "INT") {
+                    $("#DataInputs").html(result.Number);
+                }
+                else if (result.ControlType == "CB") {
+                    $("#DataInputs").html(result.CheckBox);
+                }
+                else if (result.ControlType == "RB") {
+                    $("#DataInputs").html(result.RadioButton);
+                }
+                else if (result.ControlType == "SDTED") {
+                    $("#DataInputs").html(result.StartDateEndDate);
+                }
+                else {
+                    $("#DataInputs").html("");
+                }
                 initializeChosen();
             }
         });
@@ -145,7 +169,10 @@
 
 <div style="padding:1%">
     <span style="font-size:18px"> Criteria </span>
-    <button class="btn btn-primary pull-right" onclick="BindContentRuleGrid('ADD', 0, '@ViewBag.CrCodeOnAdd')"> Add </button>
+    @if (ViewBag.CommandNameCrC != "VIEW")
+    {
+        <button class="btn btn-primary pull-right" onclick="BindContentRuleGrid('ADD', 0, '@ViewBag.CrCodeOnAdd')"> Add </button>
+    }
 </div>
 
 <table class="table table-bordered table-hover">
@@ -160,9 +187,12 @@
             <th style="width:30%">
                 Data
             </th>
-            <th style="width:20%">
-                Actions
-            </th>
+            @if (ViewBag.CommandNameCrC != "VIEW")
+            {
+                <th style="width:20%">
+                    Actions
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -183,7 +213,7 @@
                     <td>
                         @if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "N")
                         {
-                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>)ViewBag.DDlSelectList, new { @id = "CrCData", style = "width:100%" })
+                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>)ViewBag.DDlSelectList, new { @id = "CrCData", @class = "chosen-select", style = "width:100%" })
                         }
                         else if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "Y")
                         {
@@ -192,6 +222,14 @@
                         else if (ViewBag.Controltype == "TXT")
                         {
                             <input type="text" id="CrCData" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "DATE")
+                        {
+                            <input type="date" id="CrCData" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "INT")
+                        {
+                            <input type="number" id="CrCData" value="@item.Columns_Value" />
                         }
                     </td>
                     <td>
@@ -217,13 +255,18 @@
                             @item.Columns_Value
                         }
                     </td>
-                    <td>
-                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="BindContentRuleGrid('EDIT', '@item.AL_Vendor_Rule_Criteria_Code', '@ViewBag.CrCodeOnAdd')"></a>
-                        @if (item.AL_Vendor_Rule_Criteria_Code < 0)
-                        {
-                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRuleCriteria('@item.AL_Vendor_Rule_Criteria_Code')"></a>
-                        }
-                    </td>
+                    if (ViewBag.CommandNameCrC != "VIEW")
+                    {
+                        <td>
+
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="BindContentRuleGrid('EDIT', '@item.AL_Vendor_Rule_Criteria_Code', '@ViewBag.CrCodeOnAdd')"></a>
+                            @if (item.AL_Vendor_Rule_Criteria_Code < 0)
+                            {
+                                <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRuleCriteria('@item.AL_Vendor_Rule_Criteria_Code')"></a>
+                            }
+
+                        </td>
+                    }
                 }
             </tr>
         }

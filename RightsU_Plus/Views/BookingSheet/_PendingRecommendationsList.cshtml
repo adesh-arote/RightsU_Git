@@ -11,9 +11,9 @@
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th>Client Name</th>
-            <th>Proposal - CY</th>
-            <th>Cycle</th>
+            <th style="width:20%">Client Name</th>
+            <th style="width:20%">Proposal - CY</th>
+            <th style="width:20%">Cycle</th>
             <th style="width: 15%;">Action</th>
         </tr>
     </thead>
@@ -23,7 +23,7 @@
             foreach (var item in Model)
             {
                 <tr>
-                    <td style="text-align:center">
+                    <td>
                         @Html.DisplayFor(modelItem => item.Vendor_Name)
                     </td>
                     <td style="text-align:center">

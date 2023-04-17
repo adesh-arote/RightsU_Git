@@ -538,6 +538,9 @@
     <Compile Include="Models\DM_AQDeal.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DM_Booking_Sheet_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DM_Content_Music.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1367,6 +1370,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USPGetTitleEpisodes_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPGet_DDLValues_For_ExtendedColumns_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USPListResolveConflict_Result.cs">

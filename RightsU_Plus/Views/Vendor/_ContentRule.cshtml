@@ -57,6 +57,10 @@
     function AddEditContentRule(TabName, commandName, CRCode) {
         //Open Other View of CR. Send ID.
         debugger;
+        $("#SaveAdditionalInfoBtn").prop("disabled", true);
+        $("#CloseAdditionalInfoBtn").prop("disabled", true);
+        $("#AddEditContentRuleBtn").prop("disabled", true);
+        $("#ContentRuleTable tbody tr td a").css("pointer-events", "none");
         $.ajax({
             type: "POST",
             url: URL_ContentRulePopup,
@@ -71,10 +75,14 @@
             }),
             success: function (result) {
                 debugger;
-                $("#ContentRuleModalPopup").modal();
+                //$("#ContentRuleModalPopup").modal();
                 $("#ContentPopup").empty();
                 $("#ContentPopup").html(result);
-                BindContentRuleGrid('', 0, CRCode);
+                if (commandName == "VIEW") {
+                    BindContentRuleGrid(commandName, 0, CRCode);
+                } else {
+                    BindContentRuleGrid('', 0, CRCode);
+                }
             }
         });
     }
@@ -105,22 +113,34 @@
 
 <div style="padding:1%">
     <span style="font-size:18px"> Content Rule </span>
-    <button class="btn btn-primary pull-right" onclick="AddEditContentRule('TNC', 'ADD', 0)"> Add </button>
+    @if (ViewBag.CommandNameCRList != "VIEW")
+    {
+        <button id="AddEditContentRuleBtn" class="btn btn-primary pull-right" onclick="AddEditContentRule('CR', 'ADD', 0)"> Add </button>
+    }
     <input type="hidden" id="hdnActionCR" name="hdnActionCR" value="" />
     <input type="hidden" id="hdnActionCRGrid" name="hdnActionCRGrid" value="" />
 </div>
 
-<table class="table table-bordered table-hover">
+<style>
+    #ContentRuleTable thead tr th{
+        width:20%;
+    }
+    #ContentRuleTable tbody tr td {
+        text-align:center;
+    }
+</style>
+
+<table id="ContentRuleTable" class="table table-bordered table-hover">
     <thead>
         <tr>
-            <th>
-                Sr. No.
-            </th>
             <th>
                 Name
             </th>
             <th>
                 Short Name
+            </th>
+            <th>
+                Content Type
             </th>
             <th>
                 Criteria
@@ -133,11 +153,11 @@
     <tbody>
         @foreach (var item in Model)
         {
-            iCR++;
+            //iCR++;
             <tr>
-                <td>
+                @*<td>
                     @iCR
-                </td>
+                </td>*@
                 <td>
                     @item.Rule_Name
                 </td>
@@ -145,39 +165,45 @@
                     @item.Rule_Short_Name
                 </td>
                 <td>
+                    @item.Rule_Type_Name
+                </td>
+                <td>
                     @item.Criteria
                 </td>
                 <td>
-                    @if (item.Is_Active == "Y")
+                    @if (ViewBag.CommandNameCRList != "VIEW")
                     {
-                        <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditContentRule('CR', 'EDIT', '@item.AL_Vendor_Rule_Code')"></a>
-                    }
-                    else
-                    {
-                        <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
-                    }
+                        if (item.Is_Active == "Y")
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditContentRule('CR', 'EDIT', '@item.AL_Vendor_Rule_Code')"></a>
+                        }
+                        else
+                        {
+                            <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                        }
 
-                    @if (item.Is_Active == "Y" && item.AL_Vendor_Rule_Code > 0)
-                    {
-                        <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DEACTIVATE')"></a>
+                        if (item.Is_Active == "Y" && item.AL_Vendor_Rule_Code > 0)
+                        {
+                            <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DEACTIVATE')"></a>
+                        }
+                        else if (item.Is_Active == "N" && item.AL_Vendor_Rule_Code > 0)
+                        {
+                            <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'ACTIVATE')"></a>
+                        }
+                        else if (item.AL_Vendor_Rule_Code < 0)
+                        {
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DELETE')"></a>
+                        }
                     }
-                    else if (item.Is_Active == "N" && item.AL_Vendor_Rule_Code > 0)
-                    {
-                        <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'ACTIVATE')"></a>
-                    }
-                    else if (item.AL_Vendor_Rule_Code < 0)
-                    {
-                        <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code', 'DELETE')"></a>
-                    }
-                    @*<a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRule('@item.AL_Vendor_Rule_Code')"></a>*@
+                    <a title="View" class="glyphicon glyphicon-eye-open" onclick="AddEditContentRule('CR', 'VIEW', '@item.AL_Vendor_Rule_Code')"></a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-@*<div id="ContentPopup">
+<div id="ContentPopup">
 
-    </div>*@
+    </div>
 
 @*To use Modal Popup, Uncomment Popup with ID ContentRuleModalPopup from Vendor Folder Index Page, comment above div with Id Content Popup and Uncomment the Modal initializer from script*@

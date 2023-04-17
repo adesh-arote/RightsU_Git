@@ -109,6 +109,7 @@
             });
         }
         function UploadTitle() {
+            debugger;
             showLoading();
             var txtpageSize = $('#txtPageSize').val();
             $('#ddlFilterBy').val('A').trigger('chosen:updated');
@@ -138,6 +139,7 @@
                 processData: false,
                 data: formdata,
                 success: function (result) {
+                    debugger;
                     $('#gvArea').html(result);
                     SetTitlePaging();
                     CheckPendingStatus();
@@ -388,7 +390,7 @@
             window.location.href = URL;
         }
         function BindViewData(masterImportCode) {
-            debugger
+            debugger;
             var URL = '@Url.Action("BindView", "DM_Title_Master_Import", new
                   {
                       DM_Master_Import_Code = "_DM_Import_Master_Code_",
