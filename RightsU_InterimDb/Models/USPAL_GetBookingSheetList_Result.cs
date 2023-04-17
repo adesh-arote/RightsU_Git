@@ -27,5 +27,6 @@ namespace RightsU_InterimDb.Models
         public string Record_Status { get; set; }
         public string Excel_File { get; set; }
         public string Proposal___CY { get; set; }
+        public string Cycle { get; set; }
     }
 }

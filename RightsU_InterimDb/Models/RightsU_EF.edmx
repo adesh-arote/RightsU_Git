@@ -39156,6 +39156,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Record_Status" Nullable="true" MaxLength="5" />
           <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
+		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
         </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
@@ -49417,6 +49418,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
                 <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
                 <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
+				<ScalarProperty Name="Cycle" ColumnName="Cycle" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

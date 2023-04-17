@@ -1383,10 +1383,8 @@
     <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditALOem.cshtml" />
     <Content Include="Views\AL_Oem\_AddEditFieldValue.cshtml" />
-<<<<<<< HEAD
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_Aeroplay.cshtml" />
-=======
     <Content Include="Views\BookingSheet\ImportMasterView.cshtml" />
     <Content Include="Views\BookingSheet\_MasterImportList.cshtml" />
     <Content Include="Views\BookingSheet\ImportedSheetView.cshtml" />
@@ -1405,7 +1403,6 @@
     <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" />
     <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" />
     <Content Include="UploadFolder\BookingSheet\Sample.xlsx" />
->>>>>>> 5174c726f8917f0067c060522892f9f5f7cfe6fe
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,10 +8,10 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 
-    RightsU_Plus.Controllers.SelectDateAndBKSCode objDateBK = new RightsU_Plus.Controllers.SelectDateAndBKSCode();
+    RightsU_Plus.Controllers.SelectedBKDetails objBKDetails = new RightsU_Plus.Controllers.SelectedBKDetails();
     if (Session["objSDAB"] != null)
     {
-        objDateBK = (RightsU_Plus.Controllers.SelectDateAndBKSCode)Session["objSDAB"];
+        objBKDetails = (RightsU_Plus.Controllers.SelectedBKDetails)Session["objSDAB"];
     }
 
     string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadSheetPath"];
@@ -22,7 +22,7 @@
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, Filter_By = "A";
 
     var DownloadPath = '@DownloadPath';
-    var BksCode = '@objDateBK.BookingSheetCode';
+    var BksCode = '@objBKDetails.BookingSheetCode';
 
     var URL_BindImportMasterList = '@Url.Action("BindImportMasterList", "BookingSheet")';
     var URL_SearchOnImportMasterList = '@Url.Action("SearchOnImportMasterList", "BookingSheet")';
@@ -297,36 +297,26 @@
 
 </script>
 
-<style>
-    .vl {
-        border-left: 1px solid black;
-        height: 10%;
-        position: absolute;
-        left:47%;
-        top: 10px;
-    }
-</style>
-
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="">
                 <div class="title_block dotted_border clearfix">
-                    <div class="col-md-3"><h2 >Booking Sheet Import</h2></div>
+                    <div class="col-md-3"><h2>Booking Sheet Import</h2></div>
                     
-                    <div class="col-md-3"><h3>@objDateBK.Client_Name</h3></div>
+                    <div class="col-md-3"><h4 style="margin-top: 20px;">Client :- @objBKDetails.Client_Name</h4></div>
                     
-                    <div class="col-md-3"><h3>@objDateBK.Proposal_CY</h3></div>
+                    <div class="col-md-3"><h4 style="margin-top: 20px;">Proposal :- @objBKDetails.Proposal_CY</h4></div>
                     
-                    <div class="col-md-3"><h3>@*@objDateBK.Client_Name*@</h3></div>
+                    <div class="col-md-3"><h4 style="margin-top: 20px; text-align:center;">Cycle :- @objBKDetails.Cycle</h4></div>
                 </div>
 
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
                             <td style="width:50%;" colspan="5">
-                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objDateBK.BookingSheetCode')" style="display:none;"/>
-                                <span id="RefreshDate" style="display:none;">(Latest Refreshed On : @objDateBK.MaxDate)</span>
+                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" style="display:none;"/>
+                                <span id="RefreshDate" style="display:none;">(Latest Refreshed On : @objBKDetails.MaxDate)</span>
                             </td>
                         </tr>
                         <tr>
@@ -338,7 +328,7 @@
                             </td>
                             <td style="width: 15%;">
                                 <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
-                                <input type="hidden" id="hiddenBksCode" value="@objDateBK.BookingSheetCode" />
+                                <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
                             </td>
                             <td style="width: 5%; vertical-align: middle;">
                                 Filter By Status :

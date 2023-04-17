@@ -225,13 +225,13 @@ namespace RightsU_Plus.Controllers
 
         //--------------------------------------------------------------------------------------------------------------------------------------------------
 
-        private SelectDateAndBKSCode objSDAB
+        private SelectedBKDetails objSDAB
         {
             get
             {
                 if (Session["objSDAB"] == null)
-                    Session["objSDAB"] = new SelectDateAndBKSCode();
-                return (SelectDateAndBKSCode)Session["objSDAB"];
+                    Session["objSDAB"] = new SelectedBKDetails();
+                return (SelectedBKDetails)Session["objSDAB"];
             }
             set { Session["objSDAB"] = value; }
         }
@@ -376,7 +376,7 @@ namespace RightsU_Plus.Controllers
 
                 recordcount = lstBooking_Sheet_Searched.Count;
             }
-            else if(TabName == "PR")
+            else if (TabName == "PR")
             {
                 if (!string.IsNullOrEmpty(searchText))
                 {
@@ -466,6 +466,7 @@ namespace RightsU_Plus.Controllers
 
             string ClientName = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
             string Proposal_Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Proposal___CY).FirstOrDefault();
+            string Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Cycle).FirstOrDefault();
 
             DateTime? maxDate = lstBKSDetails.Select(s => s.Action_Date).Max();
 
@@ -473,6 +474,7 @@ namespace RightsU_Plus.Controllers
             objSDAB.MaxDate = Convert.ToDateTime(maxDate);
             objSDAB.Client_Name = ClientName;
             objSDAB.Proposal_CY = Proposal_Cycle;
+            objSDAB.Cycle = Cycle;
 
             var obj = new
             {
@@ -483,9 +485,6 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult ImportMasterView()
         {
-            //int BookingSheetCode = 0;
-            //DateTime? MaxDate = null;
-            //MasterImportData();
             objDMCFT = null;
 
             List<SelectListItem> lstFliter = new List<SelectListItem>();
@@ -494,12 +493,6 @@ namespace RightsU_Plus.Controllers
             lstFliter.Add(new SelectListItem { Text = "In Process", Value = "N" });
             lstFliter.Add(new SelectListItem { Text = "Success", Value = "S" });
             ViewBag.FilterBy = lstFliter;
-
-            //BookingSheetCode = Convert.ToInt32(TempData["BookingSheetCode"]);
-            //ViewBag.BKSCode = BookingSheetCode;
-
-            //MaxDate = Convert.ToDateTime(TempData["MaxDate"]);
-            //ViewBag.MaxDate = MaxDate;
 
             return View();
         }
@@ -540,7 +533,7 @@ namespace RightsU_Plus.Controllers
             {
                 isShow = "N";
             }
-            else if(lstImportMaster.Count() == 0)
+            else if (lstImportMaster.Count() == 0)
             {
                 isShow = "N";
             }
@@ -609,7 +602,7 @@ namespace RightsU_Plus.Controllers
         {
             string message = "";
             string status = "";
-            
+
             DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
 
             if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
@@ -629,7 +622,7 @@ namespace RightsU_Plus.Controllers
                         fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
                         strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
                         string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strActualFileNameWithDate);
-                        PostedFile.SaveAs(fullpathname);                            
+                        PostedFile.SaveAs(fullpathname);
                         #endregion
 
                         dynamic resultSet;
@@ -690,7 +683,7 @@ namespace RightsU_Plus.Controllers
             ShowTabData();
             objDMCFT.DmMasterImportCode = DM_Master_Import_Code;
             objDMCFT.FileType = fileType;
-            
+
             return View();
         }
 
@@ -713,7 +706,7 @@ namespace RightsU_Plus.Controllers
 
             int RecordCount = 0;
             //RecordCount = lstBSMovieDataSearched.Count;
-        
+
             var firstItem = lstBulkImport[0];
             lstBulkImport.RemoveAt(0);
 
@@ -724,7 +717,7 @@ namespace RightsU_Plus.Controllers
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
                     lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
+                lst.Insert(0, firstItem);
             }
             else
             {
@@ -742,7 +735,7 @@ namespace RightsU_Plus.Controllers
             lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
             ViewBag.RecordCount = lstBulkImport.Count - 1;
 
-            int RecordCount = 0;         
+            int RecordCount = 0;
 
             var firstItem = lstBulkImport[0];
             lstBulkImport.RemoveAt(0);
@@ -754,7 +747,7 @@ namespace RightsU_Plus.Controllers
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
                     lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
+                lst.Insert(0, firstItem);
             }
             else
             {
@@ -766,12 +759,13 @@ namespace RightsU_Plus.Controllers
     }
 
     #region
-    public class SelectDateAndBKSCode
+    public class SelectedBKDetails
     {
         public DateTime MaxDate { get; set; }
         public int BookingSheetCode { get; set; }
         public string Client_Name { get; set; }
         public string Proposal_CY { get; set; }
+        public string Cycle { get; set; }
     }
 
     public class SelectDmMasterCodeAndFiletType
