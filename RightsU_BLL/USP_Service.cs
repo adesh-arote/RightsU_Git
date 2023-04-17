@@ -1797,5 +1797,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPAL_Title_Content_Gen_From_Title(TitleCode);
         }
+
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(int? extendedColumnsCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
+        }
     }
 }

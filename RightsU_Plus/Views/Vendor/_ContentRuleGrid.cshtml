@@ -8,6 +8,7 @@
 </style>
 
 <script>
+    //var SelectedCriteria = "";
     $(document).ready(function () {
         debugger;
         initializeChosen();
@@ -73,6 +74,9 @@
     }
 
     function CancelCRC() {
+        //var ReplaceTxt = $("#CrCField option:selected").text() + ",";
+        //SelectedCriteria = SelectedCriteria.replace(ReplaceTxt, '');
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
         $('#hdnActionCRGrid').val("");
         BindContentRuleGrid('', 0, 0);
     }
@@ -101,6 +105,8 @@
         debugger;
         //alert("Called Change Data Input function");
         var FieldType = $("#CrCField").val();
+        //SelectedCriteria = $("#SelectedCriteriaTd").html() + $("#CrCField option:selected").text() + ",";
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
         $.ajax({
             type: "POST",
             url: URL_ChangeDataInputType,
@@ -198,7 +204,7 @@
                     <td>
                         @if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "N")
                         {
-                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>)ViewBag.DDlSelectList, new { @id = "CrCData", style = "width:100%" })
+                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>)ViewBag.DDlSelectList, new { @id = "CrCData", @class = "chosen-select", style = "width:100%" })
                         }
                         else if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "Y")
                         {

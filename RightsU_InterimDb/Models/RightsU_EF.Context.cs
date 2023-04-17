@@ -5628,5 +5628,14 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPAL_Title_Content_Gen_From_Title", titleCodeParameter);
         }
+    
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(Nullable<int> extendedColumnsCode)
+        {
+            var extendedColumnsCodeParameter = extendedColumnsCode.HasValue ?
+                new ObjectParameter("ExtendedColumnsCode", extendedColumnsCode) :
+                new ObjectParameter("ExtendedColumnsCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGet_DDLValues_For_ExtendedColumns_Result>("USPGet_DDLValues_For_ExtendedColumns", extendedColumnsCodeParameter);
+        }
     }
 }

@@ -57,6 +57,10 @@
     function AddEditContentRule(TabName, commandName, CRCode) {
         //Open Other View of CR. Send ID.
         debugger;
+        $("#SaveAdditionalInfoBtn").prop("disabled", true);
+        $("#CloseAdditionalInfoBtn").prop("disabled", true);
+        $("#AddEditContentRuleBtn").prop("disabled", true);
+        $("#ContentRuleTable tbody tr td a").css("pointer-events", "none");
         $.ajax({
             type: "POST",
             url: URL_ContentRulePopup,
@@ -71,7 +75,7 @@
             }),
             success: function (result) {
                 debugger;
-                $("#ContentRuleModalPopup").modal();
+                //$("#ContentRuleModalPopup").modal();
                 $("#ContentPopup").empty();
                 $("#ContentPopup").html(result);
                 if (commandName == "VIEW") {
@@ -111,13 +115,22 @@
     <span style="font-size:18px"> Content Rule </span>
     @if (ViewBag.CommandNameCRList != "VIEW")
     {
-        <button class="btn btn-primary pull-right" onclick="AddEditContentRule('CR', 'ADD', 0)"> Add </button>
+        <button id="AddEditContentRuleBtn" class="btn btn-primary pull-right" onclick="AddEditContentRule('CR', 'ADD', 0)"> Add </button>
     }
     <input type="hidden" id="hdnActionCR" name="hdnActionCR" value="" />
     <input type="hidden" id="hdnActionCRGrid" name="hdnActionCRGrid" value="" />
 </div>
 
-<table class="table table-bordered table-hover">
+<style>
+    #ContentRuleTable thead tr th{
+        width:20%;
+    }
+    #ContentRuleTable tbody tr td {
+        text-align:center;
+    }
+</style>
+
+<table id="ContentRuleTable" class="table table-bordered table-hover">
     <thead>
         <tr>
             <th>
@@ -189,8 +202,8 @@
     </tbody>
 </table>
 
-@*<div id="ContentPopup">
+<div id="ContentPopup">
 
-    </div>*@
+    </div>
 
 @*To use Modal Popup, Uncomment Popup with ID ContentRuleModalPopup from Vendor Folder Index Page, comment above div with Id Content Popup and Uncomment the Modal initializer from script*@

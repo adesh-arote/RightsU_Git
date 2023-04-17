@@ -1372,6 +1372,9 @@
     <Compile Include="Models\USPGetTitleEpisodes_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USPGet_DDLValues_For_ExtendedColumns_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USPListResolveConflict_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

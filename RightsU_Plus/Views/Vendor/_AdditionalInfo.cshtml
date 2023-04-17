@@ -72,10 +72,10 @@
 </script>
 
 <div class="modal_block modal_header">
-    <a class="close" onclick="ClosePopup()">
+    @*<a class="close" onclick="ClosePopup()">
         <span>×</span>
         <span class="sr-only">Close</span>
-    </a>
+    </a>*@
 
     <h2>Additional Info</h2>
 </div>
@@ -216,11 +216,11 @@
             @if (ViewBag.DisplayMode != "VIEW")
             {
                 <li>
-                    <button type="button" class="btn btn-primary" onclick="SaveAdditionalInfo()">Save</button>
+                    <button type="button" id="SaveAdditionalInfoBtn" class="btn btn-primary" onclick="SaveAdditionalInfo()">Save</button>
                 </li>
             }
             <li>
-                <button type="button" class="btn btn-primary" onclick="ClosePopup()">Close</button>
+                <button type="button" id="CloseAdditionalInfoBtn" class="btn btn-primary" onclick="ClosePopup()">Close</button>
             </li>
         </ul>
     </div>

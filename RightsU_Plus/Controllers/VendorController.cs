@@ -264,13 +264,13 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        private List<SelectObject> lstSelectObject
+        private List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result> lstSelectObject
         {
             get
             {
                 if (Session["varListType"] == null)
-                    Session["varListType"] = new List<SelectObject>();
-                return (List<SelectObject>)Session["varListType"];
+                    Session["varListType"] = new List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result>();
+                return (List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result>)Session["varListType"];
             }
             set
             {
@@ -1781,7 +1781,7 @@ namespace RightsU_Plus.Controllers
 
                 if (controlType.ToString() == "DDL" && isMultiSelect.ToString() == "N")
                 {
-                    ViewBag.DDlSelectList = new MultiSelectList(lstSelectObject, "Columns_Value_Code", "ColumnsValue", SelectedColumnValues);
+                    ViewBag.DDlSelectList = new SelectList(lstSelectObject, "Columns_Value_Code", "ColumnsValue", objVRC.Columns_Value);
                 }
                 else if (controlType.ToString() == "DDL" && isMultiSelect.ToString() == "Y")
                 {
@@ -2140,39 +2140,52 @@ namespace RightsU_Plus.Controllers
             Extended_Columns SelectedExCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Columns_Code == SelectedFieldType).FirstOrDefault();
             //Dictionary<string, object> obj = new Dictionary<string, object>();
             objSessDictionary = new Dictionary<string, object>();
-            List<SelectObject> lstCol = new List<SelectObject>();
+            List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result> lstCol = new List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result>();
 
             if (SelectedExCol.Control_Type == "DDL")
             {
                 if (SelectedExCol.Ref_Table != null)
                 {
-                    if (SelectedExCol.Ref_Table.ToUpper() == "TALENT".ToUpper())
+                    #region
+                    //if (SelectedExCol.Ref_Table.ToUpper() == "TALENT".ToUpper())
+                    //{
+                    //    string ColumnsCode = SelectedExCol.Columns_Code.ToString();
+                    //    string AdditionalCondition = SelectedExCol.Additional_Condition.ToString();
+
+                    //    int RoleCode = 0;
+
+                    //    if (AdditionalCondition != "")
+                    //        RoleCode = Convert.ToInt32(AdditionalCondition);
+                    //    lstCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y").Select(i => new SelectObject { ColumnsValue = i.Talent_Name, Columns_Value_Code = i.Talent_Code }).ToList();
+                    //}
+
+                    //if (SelectedExCol.Ref_Table.ToUpper() == "Extended_Columns_Value".ToUpper())
+                    //{
+                    //    int Column_Code = Convert.ToInt32(SelectedFieldType);
+                    //    lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new SelectObject { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
+                    //}
+                    //if (SelectedExCol.Ref_Table.ToUpper() == "Banner".ToUpper())
+                    //{
+                    //    int AdditionalConditionCode = Convert.ToInt32(SelectedExCol.Additional_Condition);
+                    //    lstCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(y => new SelectObject { ColumnsValue = y.Banner_Name, Columns_Value_Code = y.Banner_Code }).ToList();
+                    //}
+                    #endregion
+
+                    if (SelectedExCol.Is_Defined_Values == "N")
                     {
-                        string ColumnsCode = SelectedExCol.Columns_Code.ToString();
-                        string AdditionalCondition = SelectedExCol.Additional_Condition.ToString();
-
-                        int RoleCode = 0;
-
-                        if (AdditionalCondition != "")
-                            RoleCode = Convert.ToInt32(AdditionalCondition);
-                        lstCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y").Select(i => new SelectObject { ColumnsValue = i.Talent_Name, Columns_Value_Code = i.Talent_Code }).ToList();
+                        //Procedure Call
+                        lstCol = new USP_Service(objLoginEntity.ConnectionStringName).USPGet_DDLValues_For_ExtendedColumns(SelectedFieldType).ToList();
                     }
-
-                    if (SelectedExCol.Ref_Table.ToUpper() == "Extended_Columns_Value".ToUpper())
+                    else
                     {
                         int Column_Code = Convert.ToInt32(SelectedFieldType);
-                        lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new SelectObject { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
-                    }
-                    if (SelectedExCol.Ref_Table.ToUpper() == "Banner".ToUpper())
-                    {
-                        int AdditionalConditionCode = Convert.ToInt32(SelectedExCol.Additional_Condition);
-                        lstCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(y => new SelectObject { ColumnsValue = y.Banner_Name, Columns_Value_Code = y.Banner_Code }).ToList();
+                        lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
                     }
                 }
                 else
                 {
                     int Column_Code = Convert.ToInt32(SelectedFieldType);
-                    lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new SelectObject { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
+                    lstCol = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Column_Code).Select(y => new RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result { ColumnsValue = y.Columns_Value, Columns_Value_Code = y.Columns_Value_Code }).ToList();
                 }
                 lstSelectObject = lstCol;
 

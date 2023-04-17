@@ -470,6 +470,7 @@
     <Compile Include="StoreProcedure_Entities\USPGetAiredNotAiredDates_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetTitleCode_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetTitleEpisodes_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPGet_DDLValues_For_ExtendedColumns_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPListResolveConflict_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPMHCueSheetList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPMHMusicTitleAlbumSearch_Result.cs" />
