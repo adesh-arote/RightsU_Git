@@ -2224,6 +2224,27 @@ namespace RightsU_Plus.Controllers
             {
                 objSessDictionary.Add("Number", "<input type=\"number\" id=\"CrCData\">");
             }
+            else if (SelectedExCol.Control_Type == "CB")
+            {
+                string CheckBoxes = "";
+                string CBValue = "RB";
+                CheckBoxes = "<input type=\"checkbox\" id=\"CrCData\" name=\"Vendor\" value=\"" + CBValue + "\">";
+                objSessDictionary.Add("CheckBox", CheckBoxes);
+            }
+            else if (SelectedExCol.Control_Type == "RB")
+            {
+                string RadioButtons = "";
+                string RBValue = "RB";
+                RadioButtons = "<input type=\"radio\" id=\"CrCData\" name=\"Vendor\" value=\"" + RBValue + "\">";
+                objSessDictionary.Add("RadioButton", RadioButtons);
+            }
+            else if (SelectedExCol.Control_Type == "SDTED")
+            {
+                string StartDate = "<input type=\"date\" id=\"CrCData\">";
+                string EndDate = "<input type=\"date\" id=\"CrCData\">";
+                string Dates = StartDate + EndDate;
+                objSessDictionary.Add("StartDateEndDate", Dates);
+            }
 
             objSessDictionary.Add("ControlType", SelectedExCol.Control_Type);
             //obj = SelectListItem, IsMultiSelect, TextBox, ControlType

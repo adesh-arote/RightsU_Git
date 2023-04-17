@@ -92,7 +92,7 @@
             }
             else
             {
-                <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" />
+                <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" maxlength="100" />
             }
 
             <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
@@ -106,7 +106,7 @@
             }
             else
             {
-                <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="5" />
+                <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="50" />
             }
         </td>
         <td>

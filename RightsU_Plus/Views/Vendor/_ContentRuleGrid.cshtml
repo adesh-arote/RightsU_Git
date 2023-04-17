@@ -143,6 +143,15 @@
                 else if (result.ControlType == "INT") {
                     $("#DataInputs").html(result.Number);
                 }
+                else if (result.ControlType == "CB") {
+                    $("#DataInputs").html(result.CheckBox);
+                }
+                else if (result.ControlType == "RB") {
+                    $("#DataInputs").html(result.RadioButton);
+                }
+                else if (result.ControlType == "SDTED") {
+                    $("#DataInputs").html(result.StartDateEndDate);
+                }
                 else {
                     $("#DataInputs").html("");
                 }
