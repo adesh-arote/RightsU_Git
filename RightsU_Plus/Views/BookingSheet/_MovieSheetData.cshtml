@@ -49,19 +49,18 @@
 <div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection class="scrollmenu">
     <table class="table table-bordered table-hover" id="tblDMImport">
         <thead>
-            <tr>
-                @{
-                    int Count = 0, locTitleName = 0;
-                    foreach (var item in Model)
+            @{
+                int Count = 0, locTitleName = 0;
+                foreach (var item in Model)
+                {
+                    int i = 0;
+                    Count = Count + 1;
+                    var type = item.GetType();
+                    var properties = type.GetProperties();
+                    if (Count > 1)
                     {
-                        int i = 0;
-                        Count = Count + 1;
-                        var type = item.GetType();
-                        var properties = type.GetProperties();
-                        if (Count > 1)
-                        {
-                            item.Record_Status = item.Is_Ignore == "Y" ? "Ignore" : item.Record_Status == null ? "" : item.Record_Status;
-                        }
+                        item.Record_Status = item.Is_Ignore == "Y" ? "Ignore" : item.Record_Status == null ? "" : item.Record_Status;
+                    }
                     <tr>
                         @foreach (var property in properties)
                         {
@@ -69,22 +68,23 @@
                             {
                                 if (Count == 1)
                                 {
-                                    if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Title Name")
+                                    if (property.Name == "Record_Status")
+                                    {
+                                        <th style="width:8%;font-weight:900;"> Record Status </th>
+                                    }
+                                    if (property.Name == "Error_Message")
+                                    {
+                                        <th style="width:8%;font-weight:900;"> Error Message </th>
+                                    }
+                                    else if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Title Name")
                                     {
                                         locTitleName = i;
                                     }
-                                    if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
+                                    else if (property.GetValue(item, null) != null && property.Name != "Is_Ignore")
                                     {
                                         <th style="width:8%;font-weight:900;"> @property.GetValue(item, null)</th>
                                     }
-                                    else if (property.Name == "Record_Status")
-                                    {
-                                        <th style="width:8%;font-weight:900;">Record Status</th>
-                                    }
-                                    else if (property.Name == "Error_Message")
-                                    {
-                                        <th style="width:8%;font-weight:900;">Error Message</th>
-                                    }
+
                                 }
                                 else
                                 {
@@ -143,7 +143,7 @@
                                                 {
                                                     <td style="width:16%;"> @property.GetValue(item, null)</td>
                                                 }
-                                            }                                        
+                                            }
                                         }
                                     }
                                     else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
@@ -157,10 +157,8 @@
 
                     </tr>
                 }
-                }
-
-            </thead>
-
-        </table>
-    </div>
+            }
+        </thead>
+    </table>
+</div>
 

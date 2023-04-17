@@ -44,10 +44,6 @@
         addNumeric();
         SearchOnImportMasterList("");
 
-        if ("@ViewBag.Message" != "") {
-           showAlert("S","@ViewBag.Message");
-        }
-
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -234,14 +230,10 @@
     function Uploadfile() {
         debugger;
         showLoading();
-        //var txtpageSize = $('#txtPageSize').val(10);
-        //var FilterBy = $('#ddlFilterBy').val('A');
         var BookingSheetCode = $('#hiddenBksCode').val();
         var files = $("#fileUpload").get(0).files;
         var formdata = new FormData();    
-        if (files.length > 0) {           
-            //formdata.append("FilterBy", FilterBy);
-            //formdata.append("txtpageSize", txtpageSize);
+        if (files.length > 0) {
             formdata.append("InputFile", files[0]);
             formdata.append("BookingSheetCode", BookingSheetCode);        
         }
@@ -265,8 +257,15 @@
                 debugger;
                 if (result.Status == "S") {
                     SearchOnImportMasterList("");
+                    showAlert("S", result.Message);
                     hideLoading();
-                }            
+                    $("#fileUpload").val('');                   
+                }
+                else {
+                    showAlert("E", result.Message);
+                    hideLoading();
+                    $("#fileUpload").val('');                
+                }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -298,21 +297,36 @@
 
 </script>
 
+<style>
+    .vl {
+        border-left: 1px solid black;
+        height: 10%;
+        position: absolute;
+        left:47%;
+        top: 10px;
+    }
+</style>
+
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="">
                 <div class="title_block dotted_border clearfix">
-                    <h2 class="pull-left">
-                        Booking Sheet Import
-                    </h2>
+                    <div class="col-md-3"><h2 >Booking Sheet Import</h2></div>
+                    
+                    <div class="col-md-3"><h3>@objDateBK.Client_Name</h3></div>
+                    
+                    <div class="col-md-3"><h3>@objDateBK.Proposal_CY</h3></div>
+                    
+                    <div class="col-md-3"><h3>@*@objDateBK.Client_Name*@</h3></div>
                 </div>
+
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
                             <td style="width:50%;" colspan="5">
-                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objDateBK.BookingSheetCode')" />
-                                <span>(Latest Refreshed On : @objDateBK.MaxDate)</span>
+                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objDateBK.BookingSheetCode')" style="display:none;"/>
+                                <span id="RefreshDate" style="display:none;">(Latest Refreshed On : @objDateBK.MaxDate)</span>
                             </td>
                         </tr>
                         <tr>

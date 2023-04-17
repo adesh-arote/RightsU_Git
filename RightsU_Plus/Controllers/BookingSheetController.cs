@@ -259,8 +259,8 @@ namespace RightsU_Plus.Controllers
 
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
-            //lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
-            //lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Sort Booking Sheet No Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Sort Booking Sheet No Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
 
             //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
@@ -303,6 +303,10 @@ namespace RightsU_Plus.Controllers
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
                     lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "NA")
+                    lst = lstBooking_Sheet_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "ND")
+                    lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
@@ -376,7 +380,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    lstRecommendation_Searched = lstRecommendation.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Proposal_No != null && w.Proposal_No.ToString().Contains(searchText.ToString()))).ToList();
+                    lstRecommendation_Searched = lstRecommendation.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString())).ToList();
                 }
                 else
                 {
@@ -460,10 +464,15 @@ namespace RightsU_Plus.Controllers
             AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
             List<AL_Booking_Sheet_Details> lstBKSDetails = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
 
+            string ClientName = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
+            string Proposal_Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Proposal___CY).FirstOrDefault();
+
             DateTime? maxDate = lstBKSDetails.Select(s => s.Action_Date).Max();
 
             objSDAB.BookingSheetCode = BookingSheetCode;
             objSDAB.MaxDate = Convert.ToDateTime(maxDate);
+            objSDAB.Client_Name = ClientName;
+            objSDAB.Proposal_CY = Proposal_Cycle;
 
             var obj = new
             {
@@ -492,12 +501,6 @@ namespace RightsU_Plus.Controllers
             //MaxDate = Convert.ToDateTime(TempData["MaxDate"]);
             //ViewBag.MaxDate = MaxDate;
 
-            if (Session["Message"] != null)
-            {                                            //-----To show messages
-                ViewBag.Message = Session["Message"];
-                Session["Message"] = null;
-            }
-
             return View();
         }
 
@@ -514,6 +517,8 @@ namespace RightsU_Plus.Controllers
             List<DM_Master_Import> lst = new List<DM_Master_Import>();
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
+            string isShow = "";
+
             int RecordCount = 0;
             RecordCount = lstMasterImportSearched.Count;
 
@@ -523,7 +528,27 @@ namespace RightsU_Plus.Controllers
                 pageNo = GetImportMasterPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (FilterBy == "A")
                     lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (FilterBy == "E")
+                    lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Where(w => w.Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (FilterBy == "N")
+                    lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Where(w => w.Status == "N" || w.Status == "P").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (FilterBy == "S")
+                    lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Where(w => w.Status == "S").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+
+            if (lstImportMaster.Where(w => w.Status == "P" || w.Status == "N").Count() > 0)
+            {
+                isShow = "N";
+            }
+            else if(lstImportMaster.Count() == 0)
+            {
+                isShow = "N";
+            }
+            else
+            {
+                isShow = "Y";
+            }
+            ViewBag.isButtonShow = isShow;
 
             List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCodes = lstUser;
@@ -621,37 +646,37 @@ namespace RightsU_Plus.Controllers
                         if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
                         {
                             status = "E";
-                            Session["Message"] = "File not saved";
+                            message = "File not saved";
                         }
                         else
                         {
                             status = "S";
-                            Session["Message"] = "File Imported successfully";
+                            message = "File Imported successfully";
                         }
                     }
                     catch (Exception ex)
                     {
-                        Session["Message"] = ex.Message;
+                        message = ex.Message;
                         status = "E";
                     }
 
                 }
                 else
                 {
-                    Session["Message"] = "Please select excel file...";
+                    message = "Please select excel file...";
                     status = "E";
                 }
             }
             else
             {
-                Session["Message"] = "Please select excel file...";
+                message = "Please select excel file...";
                 status = "E";
             }
 
             var Obj = new
             {
                 Status = status,
-                Message = Session["Message"]
+                Message = message
             };
 
             return Json(Obj);
@@ -705,6 +730,7 @@ namespace RightsU_Plus.Controllers
             {
                 lst.Insert(0, firstItem);
             }
+            // lst = lst.Skip()
 
             return PartialView("_MovieSheetData", lst);
         }
@@ -744,6 +770,8 @@ namespace RightsU_Plus.Controllers
     {
         public DateTime MaxDate { get; set; }
         public int BookingSheetCode { get; set; }
+        public string Client_Name { get; set; }
+        public string Proposal_CY { get; set; }
     }
 
     public class SelectDmMasterCodeAndFiletType

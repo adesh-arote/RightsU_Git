@@ -21,14 +21,21 @@
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
-            $('#btnUser').css("float", "right");
-            $('#txtSort').css("text-align", "left");
-            //$('#ddlSortType_chosen').css("text-align", "right");
+            //$('#btnUser').css("float", "right");
+            //$('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
         }
         else {
-            $('#btnUser').css("float", "left");
-            $('#txtSort').css("text-align", "right");
-            //$('#ddlSortType_chosen').css("text-align", "left");
+            //$('#btnUser').css("float", "left");
+            //$('#txtSort').css("text-align", "right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+
+        if (TabName == "BS") {
+            $("#searchCommon").attr('placeholder', 'Booking Sheet No, Client Name');
+        }
+        if (TabName == "PR") {
+            $("#searchCommon").attr('placeholder', 'Client Name');
         }
 
         if ("@ViewBag.Message" != "") {
@@ -134,7 +141,7 @@
 
         var cnt = pageNo * recordPerPage;
         if (cnt >= recordCount) {
-            var v1 = parseInt(recordCount / recordPerPage);
+            var v1 = parseInt(recordCount / recordPerPage);      
             if ((v1 * recordPerPage) == recordCount)
                 pageNo = v1;
             else
@@ -160,7 +167,6 @@
 
     function pageselectCallback(page_index, jq) {
         debugger;
-        //if (checkCurrentAction()) {
             $('.required').removeClass('required');
 
             if (!ValidatePageSize())
@@ -168,11 +174,17 @@
 
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
-            if (IsCall == 'Y')
+        if (IsCall == 'Y') {
+            if (TabName == "BS") {
                 BindbookingSheetList();
-            else
-                IsCall = 'Y';
-        //}
+            }
+            if (TabName == "PR") {
+                PendingRecommendationsList();
+            }
+        }
+        else {
+            IsCall = 'Y';
+        }          
     }
 
     function txtPageSize_OnChange() {
@@ -181,8 +193,13 @@
         $('.required').removeClass('required');
         if (!ValidatePageSize())
             return false;
-
-        BindbookingSheetList();
+        if (TabName == "BS") {
+            BindbookingSheetList();
+        }
+        if (TabName == "PR") {
+            PendingRecommendationsList();
+        }
+        
         SetPaging();
     }
 
@@ -263,12 +280,18 @@
                 //URL_LoadTab = URL_BindBookingSheetList;
                 $("[id*='tab']").removeClass('active');
                 $("#tabBkgsht").addClass('active');
+                $("#searchCommon").attr('placeholder', 'Booking Sheet No., Client Name');
+                $('#txtSort').show();
+                $('#ddlSort').show();
                 TabName = NewTab;
             }
             if (NewTab == "PR") {
                 //URL_LoadTab = URL_PendingRecommendations;
                 $("[id*='tab']").removeClass('active');
                 $("#tabPdngrmdn").addClass('active');
+                $("#searchCommon").attr('placeholder', 'Client Name');
+                $('#txtSort').hide();
+                $('#ddlSort').hide();
                 TabName = NewTab;
         }
         SearchOnList("", TabName);
@@ -376,11 +399,13 @@
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
-                            <td id="txtSort" style="width:3%;vertical-align: middle;text-align:center;">
-                                @objMessageKey.SortBy:
+                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                                <div id="txtSort">@objMessageKey.SortBy:</div>
                             </td>
-                            <td style="width:10%">
-                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            <td style="width:10%; text-align:left;">
+                                <div id="ddlSort">
+                                    @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                                </div>
                             </td>
                         </tr>
                     </table>

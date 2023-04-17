@@ -9,6 +9,23 @@
     }
 }
 
+<script>
+    var ButtonShowOrHide = "@ViewBag.isButtonShow";
+    
+    $(document).ready(function () {
+        debugger;
+        if (ButtonShowOrHide == "N") {
+            $('#btnSheetDownload').hide();
+            $('#RefreshDate').hide();
+        }
+        else{                  
+            $('#btnSheetDownload').show();
+            $('#RefreshDate').show();
+        }
+
+    });
+</script>
+
 <table class="table table-bordered table-hover">
     <thead>
         <tr>
