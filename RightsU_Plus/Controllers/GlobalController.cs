@@ -13,7 +13,6 @@ using System.Data.Entity.Core.Objects;
 using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
-using System.Web.Cors;
 
 namespace RightsU_Plus.Controllers
 {

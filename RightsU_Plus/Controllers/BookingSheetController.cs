@@ -722,9 +722,7 @@ namespace RightsU_Plus.Controllers
             else
             {
                 lst.Insert(0, firstItem);
-            }
-            // lst = lst.Skip()
-
+            }           
             return PartialView("_MovieSheetData", lst);
         }
 
