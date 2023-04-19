@@ -27,13 +27,20 @@
                         @Html.DisplayFor(modelItem => item.Vendor_Name)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Proposal___CY)
+                        @Html.DisplayFor(modelItem => item.Proposal_CY)
                     </td>
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Cycle)
                     </td>
                     <td style="text-align:center">
-                        <input type="button" title="Export"class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
+                        @if (item.IsMinimum == "Y")
+                        {
+                            <input type="button" title="Export" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
+                        }
+                        else if (item.IsMinimum == "N")
+                        {
+                            <input type="button" title="Export" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" disabled/>
+                        }
                     </td>
                 </tr>
             }

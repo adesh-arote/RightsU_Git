@@ -13,13 +13,14 @@ namespace RightsU_InterimDb.Models
     
     public partial class USPAL_GetReCommendationList_Result
     {
-        public int AL_Proposal_Code { get; set; }
-        public int AL_Recommendation_Code { get; set; }
+        public Nullable<int> AL_Proposal_Code { get; set; }
+        public Nullable<int> AL_Recommendation_Code { get; set; }
         public string Proposal_No { get; set; }
         public Nullable<int> Refresh_Cycle_No { get; set; }
         public string Cycle { get; set; }
         public string Vendor_Name { get; set; }
-        public string Proposal___CY { get; set; }
-        public int Vendor_Code { get; set; }
+        public string Proposal_CY { get; set; }
+        public Nullable<int> Vendor_Code { get; set; }
+        public string IsMinimum { get; set; }
     }
 }

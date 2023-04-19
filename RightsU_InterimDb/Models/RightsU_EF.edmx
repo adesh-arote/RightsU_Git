@@ -39159,14 +39159,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
 		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
         </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
-          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
-          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="false" />
-          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
+          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="true" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="1000" />
           <Property Type="Int32" Name="Refresh_Cycle_No" Nullable="true" />
-          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
-          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
+          <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="Vendor_Code" Nullable="true" />
+		  <Property Type="String" Name="IsMinimum" Nullable="true" MaxLength="10" />
         </ComplexType>
         <EntityType Name="DM_Booking_Sheet_Data">
           <Key>
@@ -49431,8 +49432,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Refresh_Cycle_No" ColumnName="Refresh_Cycle_No" />
                 <ScalarProperty Name="Cycle" ColumnName="Cycle" />
                 <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
-                <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
+                <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
                 <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+				<ScalarProperty Name="IsMinimum" ColumnName="IsMinimum" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
