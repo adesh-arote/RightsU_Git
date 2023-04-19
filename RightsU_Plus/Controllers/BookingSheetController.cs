@@ -697,62 +697,172 @@ namespace RightsU_Plus.Controllers
             lstBSShowDataSearched = lstBSShowData = objBSData_Service.SearchFor(x => true).Where(w => w.Sheet_Name == "Show").ToList();
         }
 
-        public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
+        public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code, string IsSearch)
         {
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-            ViewBag.RecordCount = lstBulkImport.Count - 1;
-
-            int RecordCount = 0;
-            //RecordCount = lstBSMovieDataSearched.Count;
-
-            var firstItem = lstBulkImport[0];
-            lstBulkImport.RemoveAt(0);
-
-            RecordCount = ViewBag.RecordCount; //this could be change
-            if (RecordCount > 0)
+            if(IsSearch == "Y")
             {
-                int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                lst.Insert(0, firstItem);
+                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                ViewBag.RecordCount = lstBulkImport.Count - 1;
+
+                int RecordCount = 0;
+                
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = ViewBag.RecordCount; //this could be change
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                }
             }
-            else
+            else if(IsSearch == "N")
             {
-                lst.Insert(0, firstItem);
-            }           
+                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                ViewBag.RecordCount = lstBulkImport.Count - 1;
+
+                int RecordCount = 0;      
+
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = ViewBag.RecordCount; //this could be change
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                }
+            }                  
             return PartialView("_MovieSheetData", lst);
         }
 
-        public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
+        public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code, string IsSearch)
         {
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-            ViewBag.RecordCount = lstBulkImport.Count - 1;
-
-            int RecordCount = 0;
-
-            var firstItem = lstBulkImport[0];
-            lstBulkImport.RemoveAt(0);
-
-            RecordCount = ViewBag.RecordCount;
-            if (RecordCount > 0)
+            if (IsSearch == "Y")
             {
-                int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                lst.Insert(0, firstItem);
-            }
-            else
-            {
-                lst.Insert(0, firstItem);
-            }
+                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                ViewBag.RecordCount = lstBulkImport.Count - 1;
 
+                int RecordCount = 0;
+
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = ViewBag.RecordCount;
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                }
+            }
+            else if (IsSearch == "N")
+            {
+                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                ViewBag.RecordCount = lstBulkImport.Count - 1;
+
+                int RecordCount = 0;
+
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = ViewBag.RecordCount;
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                }
+            }
             return PartialView("_ShowSheetData", lst);
+        }
+
+        public JsonResult SearchOnSheet(string searchText, string TabName, int DM_Master_Import_Code)
+        {              
+            int recordcount = 0;
+            string IsSearch = "";
+            if (TabName == "MV")
+            {
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    lstBSMovieDataSearched = lstBSMovieData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
+                    //lstBSMovieDataSearched = lstBSMovieData.Where(x => ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code)) || ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Record_Status != null && x.Record_Status.ToString().Contains(searchText.ToString().ToUpper())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
+                    ViewBag.RecordCount = lstBSMovieDataSearched.Count();
+                    IsSearch = "Y";
+                }
+                else
+                {
+                    MovieTabData();
+                    lstBSMovieDataSearched = lstBSMovieData;
+                    ViewBag.RecordCount = lstBSMovieDataSearched.Count();
+                    IsSearch = "N";
+                }
+                recordcount = ViewBag.RecordCount;
+            }
+            else if (TabName == "SH")
+            {
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    lstBSShowDataSearched = lstBSShowData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
+                    //lstBSShowDataSearched = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString()))).ToList();
+                    ViewBag.RecordCount = lstBSShowDataSearched.Count();
+                    IsSearch = "Y";
+                }
+                else
+                {
+                    ShowTabData();
+                    lstBSShowDataSearched = lstBSShowData;
+                    ViewBag.RecordCount = lstBSShowDataSearched.Count();
+                    IsSearch = "N";
+                }
+                recordcount = ViewBag.RecordCount;
+            }
+            var obj = new
+            {
+                Record_Count = recordcount,
+                Is_Search = IsSearch
+            };
+            return Json(obj);
+        }
+
+        public bool MyContains(object instance, string word)
+        {
+            return instance.GetType()
+                    .GetProperties()
+                    .Where(x => x.PropertyType == typeof(string))
+                    .Select(x => (string)x.GetValue(instance, null))
+                    .Where(x => x != null)
+                    .Any(x => x.IndexOf(word, StringComparison.CurrentCultureIgnoreCase) >= 0);
         }
     }
 
