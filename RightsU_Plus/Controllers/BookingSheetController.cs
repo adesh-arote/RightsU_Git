@@ -512,7 +512,7 @@ namespace RightsU_Plus.Controllers
             List<DM_Master_Import> lst = new List<DM_Master_Import>();
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
-            string isShow = "";
+            //string isShow = "";
 
             int RecordCount = 0;
             RecordCount = lstMasterImportSearched.Count;
@@ -531,16 +531,16 @@ namespace RightsU_Plus.Controllers
                     lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Where(w => w.Status == "S").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
-            if (lstImportMaster.Where(w => w.Status == "P" || w.Status == "N").Count() > 0)
-            {
-                isShow = "N";
-            }
-            else if (lstImportMaster.Where(w => w.Status == "E" || w.Status == "S").Count() > 0)
-            {
-                isShow = "Y";
-            }
+            //if (lstImportMaster.Where(w => w.Status == "P" || w.Status == "N").Count() > 0)
+            //{
+            //    isShow = "N";
+            //}
+            //else if (lstImportMaster.Where(w => w.Status == "E" || w.Status == "S").Count() > 0)
+            //{
+            //    isShow = "Y";
+            //}
             
-            ViewBag.isButtonShow = isShow;
+            //ViewBag.isButtonShow = isShow;
 
             List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCodes = lstUser;
