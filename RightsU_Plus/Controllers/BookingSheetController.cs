@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Microsoft.Reporting.WebForms;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Data.OleDb;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
@@ -533,14 +535,11 @@ namespace RightsU_Plus.Controllers
             {
                 isShow = "N";
             }
-            else if (lstImportMaster.Count() == 0)
-            {
-                isShow = "N";
-            }
-            else
+            else if (lstImportMaster.Where(w => w.Status == "E" || w.Status == "S").Count() > 0)
             {
                 isShow = "Y";
             }
+            
             ViewBag.isButtonShow = isShow;
 
             List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
@@ -697,120 +696,77 @@ namespace RightsU_Plus.Controllers
             lstBSShowDataSearched = lstBSShowData = objBSData_Service.SearchFor(x => true).Where(w => w.Sheet_Name == "Show").ToList();
         }
 
-        public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code, string IsSearch)
+        public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
+            int RecordCount = 0;
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            if(IsSearch == "Y")
+            lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+            int Rcount = lstBulkImport.Count - 1;
+
+            var firstItem = lstBulkImport[0];
+            lstBulkImport.RemoveAt(0);
+
+            RecordCount = Rcount;
+            if (RecordCount > 0)
             {
-                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                ViewBag.RecordCount = lstBulkImport.Count - 1;
-
-                int RecordCount = 0;
-                
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
-
-                RecordCount = ViewBag.RecordCount; //this could be change
-                if (RecordCount > 0)
-                {
-                    int noOfRecordSkip, noOfRecordTake;
-                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                    if (sortType == "T")
-                        lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
-                }
-                else
-                {
-                    lst.Insert(0, firstItem);
-                }
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "E")
+                    lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "N")
+                    lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                lst.Insert(0, firstItem);
+                DataTable dt = ToDataTable(lst);
             }
-            else if(IsSearch == "N")
+            else
             {
-                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                ViewBag.RecordCount = lstBulkImport.Count - 1;
+                lst.Insert(0, firstItem);
+                DataTable dt = ToDataTable(lst);
+            }
 
-                int RecordCount = 0;      
-
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
-
-                RecordCount = ViewBag.RecordCount; //this could be change
-                if (RecordCount > 0)
-                {
-                    int noOfRecordSkip, noOfRecordTake;
-                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                    if (sortType == "T")
-                        lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
-                }
-                else
-                {
-                    lst.Insert(0, firstItem);
-                }
-            }                  
             return PartialView("_MovieSheetData", lst);
         }
 
-        public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code, string IsSearch)
+        public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
+            int RecordCount = 0;
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            if (IsSearch == "Y")
+            lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+            int Rcount = lstBulkImport.Count - 1;
+
+            var firstItem = lstBulkImport[0];
+            lstBulkImport.RemoveAt(0);
+
+            RecordCount = Rcount;
+            if (RecordCount > 0)
             {
-                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                ViewBag.RecordCount = lstBulkImport.Count - 1;
-
-                int RecordCount = 0;
-
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
-
-                RecordCount = ViewBag.RecordCount;
-                if (RecordCount > 0)
-                {
-                    int noOfRecordSkip, noOfRecordTake;
-                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                    if (sortType == "T")
-                        lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
-                }
-                else
-                {
-                    lst.Insert(0, firstItem);
-                }
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "E")
+                    lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                if (sortType == "N")
+                    lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                lst.Insert(0, firstItem);
+                DataTable dt = ToDataTable(lst);
             }
-            else if (IsSearch == "N")
+            else
             {
-                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                ViewBag.RecordCount = lstBulkImport.Count - 1;
-
-                int RecordCount = 0;
-
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
-
-                RecordCount = ViewBag.RecordCount;
-                if (RecordCount > 0)
-                {
-                    int noOfRecordSkip, noOfRecordTake;
-                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                    if (sortType == "T")
-                        lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    lst.Insert(0, firstItem);
-                }
-                else
-                {
-                    lst.Insert(0, firstItem);
-                }
+                lst.Insert(0, firstItem);
+                DataTable dt = ToDataTable(lst);
             }
+
             return PartialView("_ShowSheetData", lst);
         }
 
         public JsonResult SearchOnSheet(string searchText, string TabName, int DM_Master_Import_Code)
-        {              
+        {
             int recordcount = 0;
-            string IsSearch = "";
             if (TabName == "MV")
             {
                 if (!string.IsNullOrEmpty(searchText))
@@ -818,14 +774,13 @@ namespace RightsU_Plus.Controllers
                     lstBSMovieDataSearched = lstBSMovieData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
                     //lstBSMovieDataSearched = lstBSMovieData.Where(x => ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code)) || ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Record_Status != null && x.Record_Status.ToString().Contains(searchText.ToString().ToUpper())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
                     ViewBag.RecordCount = lstBSMovieDataSearched.Count();
-                    IsSearch = "Y";
+
                 }
                 else
                 {
                     MovieTabData();
                     lstBSMovieDataSearched = lstBSMovieData;
                     ViewBag.RecordCount = lstBSMovieDataSearched.Count();
-                    IsSearch = "N";
                 }
                 recordcount = ViewBag.RecordCount;
             }
@@ -836,23 +791,118 @@ namespace RightsU_Plus.Controllers
                     lstBSShowDataSearched = lstBSShowData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
                     //lstBSShowDataSearched = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString()))).ToList();
                     ViewBag.RecordCount = lstBSShowDataSearched.Count();
-                    IsSearch = "Y";
                 }
                 else
                 {
                     ShowTabData();
                     lstBSShowDataSearched = lstBSShowData;
                     ViewBag.RecordCount = lstBSShowDataSearched.Count();
-                    IsSearch = "N";
                 }
                 recordcount = ViewBag.RecordCount;
             }
             var obj = new
             {
                 Record_Count = recordcount,
-                Is_Search = IsSearch
             };
             return Json(obj);
+        }
+
+        public ActionResult ErrorMessagePopUp(int DM_Booking_Sheet_Data_Code, string TabName)
+        {
+            DM_Booking_Sheet_Data objDBS = new DM_Booking_Sheet_Data();
+            DM_Booking_Sheet_Data_Service objDBS_Service = new DM_Booking_Sheet_Data_Service(objLoginEntity.ConnectionStringName);
+            var SeperatedString = new List<string>();
+            if (TabName == "MV")
+            {
+                int count = lstBSMovieDataSearched.Where(w => w.DM_Booking_Sheet_Data_Code == DM_Booking_Sheet_Data_Code).Count();
+                if (count > 0)
+                {
+                    objDBS = objDBS_Service.GetById(DM_Booking_Sheet_Data_Code);
+                    SeperatedString = objDBS.Error_Message.Split('~').ToList();
+                    var firstItem = SeperatedString[0];
+                    SeperatedString.RemoveAt(0);
+                }
+            }
+            else if (TabName == "SH")
+            {
+                int count = lstBSShowDataSearched.Where(w => w.DM_Booking_Sheet_Data_Code == DM_Booking_Sheet_Data_Code).Count();
+                if (count > 0)
+                {
+                    objDBS = objDBS_Service.GetById(DM_Booking_Sheet_Data_Code);
+                    SeperatedString = objDBS.Error_Message.Split('~').ToList();
+                    var firstItem = SeperatedString[0];
+                    SeperatedString.RemoveAt(0);
+                }
+            }
+            string MessageTr = "";
+            int i = 1;
+            foreach (string msg in SeperatedString)
+            {
+                MessageTr = MessageTr + "<tr><td>" + i + "</td><td>" + msg.TrimEnd(' ').TrimEnd(',') + "</td></tr>";
+                i++;
+            }
+
+            return Json(MessageTr);
+        }
+
+        public void ExportToExcel(int DM_Import_Master_Code = 0, string TabName = "")
+        {
+            ReportViewer ReportViewer1 = new ReportViewer();
+            ReportParameter[] parm = new ReportParameter[2];
+            string extension;
+            string encoding;
+            string mimeType;
+            string[] streams;
+            Warning[] warnings;
+
+            parm[0] = new ReportParameter("DM_Master_Import_Code", Convert.ToString(DM_Import_Master_Code));
+            parm[1] = new ReportParameter("TabName", TabName);
+
+            ReportViewer1.ServerReport.ReportPath = string.Empty;
+            if (ReportViewer1.ServerReport.ReportPath == "")
+            {
+                ReportSetting objRS = new ReportSetting();
+                ReportViewer1.ServerReport.ReportPath = objRS.GetReport("rptExportToExcelBulkImport");
+            }
+            ReportCredential();
+            ReportViewer1.ServerReport.SetParameters(parm);
+            Byte[] buffer = ReportViewer1.ServerReport.Render("Excel", null, out extension, out encoding, out mimeType, out streams, out warnings);
+            Response.Clear();
+            Response.ContentType = "application/excel";
+            if (TabName == "MV")
+                Response.AddHeader("Content-disposition", "filename=MovieSheetDetails.xls");
+            else if (TabName == "SH")
+                Response.AddHeader("Content-disposition", "filename=ShowShetDetails.xls");
+            Response.OutputStream.Write(buffer, 0, buffer.Length);
+            Response.End();
+        }
+
+        //-----------------------------------------------------------------GenericMethods--------------------------------------------------------------------
+
+        public void ReportCredential()
+        {
+            ReportViewer ReportViewer1 = new ReportViewer();
+            var rptCredetialList = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.IsActive == "Y" && w.Parameter_Name.Contains("RPT_")).ToList();
+
+            string ReportingServer = rptCredetialList.Where(x => x.Parameter_Name == "RPT_ReportingServer").Select(x => x.Parameter_Value).FirstOrDefault();//  ConfigurationManager.AppSettings["ReportingServer"];
+            string IsCredentialRequired = rptCredetialList.Where(x => x.Parameter_Name == "RPT_IsCredentialRequired").Select(x => x.Parameter_Value).FirstOrDefault();// ConfigurationManager.AppSettings["IsCredentialRequired"];
+
+            if (IsCredentialRequired.ToUpper() == "TRUE")
+            {
+                string CredentialPassWord = rptCredetialList.Where(x => x.Parameter_Name == "RPT_CredentialsUserPassWord").Select(x => x.Parameter_Value).FirstOrDefault();// ConfigurationManager.AppSettings["CredentialsUserPassWord"];
+                string CredentialUser = rptCredetialList.Where(x => x.Parameter_Name == "RPT_CredentialsUserName").Select(x => x.Parameter_Value).FirstOrDefault();//  ConfigurationManager.AppSettings["CredentialsUserName"];
+                string CredentialdomainName = rptCredetialList.Where(x => x.Parameter_Name == "RPT_CredentialdomainName").Select(x => x.Parameter_Value).FirstOrDefault();//  ConfigurationManager.AppSettings["CredentialdomainName"];
+
+                ReportViewer1.ServerReport.ReportServerCredentials = new ReportServerCredentials(CredentialUser, CredentialPassWord, CredentialdomainName);
+            }
+
+            ReportViewer1.Visible = true;
+            ReportViewer1.ServerReport.Refresh();
+            ReportViewer1.ProcessingMode = ProcessingMode.Remote;
+            if (ReportViewer1.ServerReport.ReportServerUrl.OriginalString == "http://localhost/reportserver")
+            {
+                ReportViewer1.ServerReport.ReportServerUrl = new Uri(ReportingServer);
+            }
         }
 
         public bool MyContains(object instance, string word)
@@ -863,6 +913,33 @@ namespace RightsU_Plus.Controllers
                     .Select(x => (string)x.GetValue(instance, null))
                     .Where(x => x != null)
                     .Any(x => x.IndexOf(word, StringComparison.CurrentCultureIgnoreCase) >= 0);
+        }
+
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            //Get all the properties
+            System.Reflection.PropertyInfo[] Props = typeof(T).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            foreach (System.Reflection.PropertyInfo prop in Props)
+            {
+                //Defining type of data column gives proper data table 
+                var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
+                //Setting column names as Property names
+                dataTable.Columns.Add(prop.Name, type);
+            }
+            foreach (T item in items)
+            {
+                var values = new object[Props.Length];
+                for (int i = 0; i < Props.Length; i++)
+                {
+                    //inserting property values to datatable rows
+                    values[i] = Props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+            //put a breakpoint here and check datatable
+            return dataTable;
         }
     }
 

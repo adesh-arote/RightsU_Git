@@ -16,13 +16,14 @@
 }
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "MV", IsSearch = "N";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "MV";
 
     var DMICode = '@objSDMCFT.DmMasterImportCode';
 
     var URL_BindMovieSheetData = '@Url.Action("BindMovieSheetData", "BookingSheet")';
     var URL_BindShowSheetData = '@Url.Action("BindShowSheetData", "BookingSheet")';
     var URL_SearchOnSheet = '@Url.Action("SearchOnSheet", "BookingSheet")';
+    var URL_ErrorMessagePopUp = '@Url.Action("ErrorMessagePopUp", "BookingSheet")';
 
     $(document).ready(function () {
         SearchOnSheet("", TabName, DMICode);
@@ -73,6 +74,8 @@
             return false;
 
         sort_Type = "T";
+        $("#chkError").prop('checked', false);
+        $("#chkNoError").prop('checked', false);      
         $('#hdnPageNo').val(1);
 
         SearchOnSheet("", TabName, DMICode);
@@ -101,13 +104,13 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 $("#IsSearched").val(result.Is_Search);
-                IsSearch = result.Is_Search;
+                //IsSearch = result.Is_Search;
                 SetPaging();
                 if (TabName == "MV") {
-                    BindMovieSheetData(DMICode, IsSearch);
+                    BindMovieSheetData(DMICode, sort_Type);
                 }
                 if (TabName == "SH") {
-                    BindShowSheetData(DMICode, IsSearch);
+                    BindShowSheetData(DMICode, sort_Type);
                 }
             }
         });
@@ -158,10 +161,11 @@
         $('#hdnPageNo').val(pageNo);
         if (IsCall == 'Y') {
             if (TabName = "MV") {
-                BindMovieSheetData(DMICode);
+                BindMovieSheetData(DMICode, sort_Type);
             }
-            else {
-                BindShowSheetData(DMICode);
+            else if (TabName = "SH")
+            {
+                BindShowSheetData(DMICode, sort_Type);
             }
         }          
         else
@@ -175,7 +179,12 @@
         if (!ValidatePageSize())
             return false;
 
-        BindMovieSheetData();
+        if (TabName = "MV") {
+            BindMovieSheetData(DMICode, sort_Type);
+        }
+        else if (TabName = "SH") {
+            BindShowSheetData(DMICode, sort_Type);
+        }
         SetPaging();
     }
 
@@ -191,7 +200,7 @@
         return false
     }
 
-    function BindMovieSheetData(DMICode, IsSearch) {
+    function BindMovieSheetData(DMICode, sort_Type) {
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
@@ -207,8 +216,7 @@
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
                 sortType: sort_Type,
-                DM_Master_Import_Code: DMICode,
-                IsSearch: IsSearch
+                DM_Master_Import_Code: DMICode
             }),
             success: function (result) {
                 $('#divBindList').empty();
@@ -220,7 +228,7 @@
         });
     }
 
-    function BindShowSheetData(DMICode, IsSearch) {
+    function BindShowSheetData(DMICode, sort_Type) {
         debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
@@ -236,8 +244,7 @@
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
                 sortType: sort_Type,
-                DM_Master_Import_Code: DMICode,
-                IsSearch: IsSearch
+                DM_Master_Import_Code: DMICode
             }),
             success: function (result) {
                 $('#divBindList').empty();
@@ -250,25 +257,72 @@
     }
 
     function OnChecked() {
-        debugger   
-        //$('#searchCommon').attr('required', false);
-        //$('#searchCommon').val('');
+        debugger;  
+        $('#searchCommon').attr('required', false);
+        $('#searchCommon').val('');
+
         if (($("#chkError").is(":checked")) && ($("#chkNoError").not(":checked"))) {
-            
+            sort_Type = "E";
+        }     
+        else if (($("#chkNoError").is(":checked")) && ($("#chkError").not(":checked"))) {
+            sort_Type = "N";
         }
-        if (($("#chkNoError").is(":checked")) && ($("#chkError").not(":checked"))) {
-            
+        else if (($("#chkError").attr('checked', false)) && ($("#chkNoError").attr('checked', false))) {
+            sort_Type = "T";
+        }    
+
+        if (TabName == "MV") {
+            BindMovieSheetData(DMICode, sort_Type)
         }
-        if (($("#chkNoError").is(":checked")) && ($("#chkError").is(":checked"))) {
-            
+        if (TabName == "SH") {
+            BindShowSheetData(DMICode, sort_Type)
         }
+    }
+
+    function BindErrorPopUp(Id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ErrorMessagePopUp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DM_Booking_Sheet_Data_Code: Id,
+                TabName: TabName
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#ErrorMesseageTbl').empty();
+                $('#ErrorMesseageTbl').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        debugger;
+     
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        
         if (TabName = "MV") {
-            BindMovieSheetData(DMICode);
+            BindMovieSheetData(DMICode, sort_Type);
         }
-        else {
-            BindShowSheetData(DMICode);
+        else if (TabName = "SH") {
+            BindShowSheetData(DMICode, sort_Type);
         }
-        //BindTitleView(0, DM_Master_Import_Code, '', File_Type,'N');
+    }
+
+    function ExportToExcel() {
+        debugger;
+        var DM_Master_Import_Code = DMICode;
+        var TabToExport = TabName;
+        window.location.href = '@Url.Action("ExportToExcel", "BookingSheet")?DM_Import_Master_Code=' +
+            DM_Master_Import_Code + '&TabName=' + TabToExport;
     }
 
 </script>
@@ -281,15 +335,15 @@
                     Booking Sheet Details
                 </h2>
                 <span class="pull-left" style="margin-top: 23px;margin-left: 80px;">
-                    <input type="checkbox" name="chkError" id="chkError" value="Y" onclick="OnChecked()" /><span>Error</span> &nbsp;&nbsp;
-                    <input type="checkbox" name="chkError" id="chkNoError" value="N" onclick="OnChecked()" /><span>Non Error</span>
+                    <input type="radio" name="chkError" id="chkError" value="Y" onclick="OnChecked()" /><span>Error</span> &nbsp;&nbsp;
+                    <input type="radio" name="chkError" id="chkNoError" value="N" onclick="OnChecked()" /><span>Non Error</span>
                 </span>
                 <span class="pull-left" style="margin-top: 15px; margin-left: 7px; position: absolute;">
                     <input type="hidden" id="IsSearched" value=""/>
                     <input type="text" name="txtSearchCommon" id="searchCommon" class="search" placeholder="Title Name, Title Type, Language, Cast, Director, Status" style="width:600px; height:30px;" />
                     <input type="button" class="btn btn-primary" name="btnSearch" id="btnSearch" value="Search" onclick="btnSearch_OnClick()" style="vertical-align: top;" />
                     <input type="button" class="btn btn-primary" name="btnShowAll" id="btnShowAll" value="Show All" style="margin-right:5px; vertical-align: top;" onclick="btnShowAll_OnClick()" />
-                    @*<a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>*@
+                    <a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>
                 </span>
             </div>
         </div>
@@ -340,4 +394,30 @@
         </div>
     </div>
 </div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields" id="pupupHtml">
+                <div class="modal_block modal_header">
+                    <a class="close" onclick="ClosePopup()">
+                        <span>X</span>
+                        <span class="sr-only">Close</span>
+                    </a>
+                    <h2>Error Message</h2>
+                </div>
+                <div style="margin:20px;">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <table class="table table-bordered table-hover">
+                                <tbody id="ErrorMesseageTbl"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 

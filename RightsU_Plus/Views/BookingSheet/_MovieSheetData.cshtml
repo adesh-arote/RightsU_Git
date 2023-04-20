@@ -72,9 +72,9 @@
                                     {
                                         <th style="width:8%;font-weight:900;"> Record Status </th>
                                     }
-                                    else if (property.Name == "Error_Message")
+                                    if (property.Name == "Error_Message")
                                     {
-                                        <th style="width:8%;font-weight:900;"> Error Message </th>
+                                        @*<th style="width:8%;font-weight:900;"> Error Message </th>*@
                                     }
                                     else if (property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "Movie" || property.GetValue(item, null) != null && property.GetValue(item, null).ToString() == "H")
                                     {
@@ -97,7 +97,7 @@
                                         {
                                             if (@property.GetValue(item, null) != "")
                                             {
-                                                <td style="width:16%;color:blue;" class="Highlight" onclick="BindMappingPopUp('@item.DM_Booking_Sheet_Data_Code')" onmouseover="this.style.cursor='pointer';">
+                                                <td style="width:16%;">
                                                     @property.GetValue(item, null)
                                                 </td>
                                             }
@@ -121,7 +121,7 @@
                                                         <td style="width:16%;">Success</td>
                                                         break;
                                                     case "E":
-                                                        <td style="width:16%;">Error</td>
+                                                        <td style="width:16%; color:blue;" class="Highlight" onclick="BindErrorPopUp('@item.DM_Booking_Sheet_Data_Code')" onmouseover="this.style.cursor='pointer';">Error</td>
                                                         break;
                                                     case "N":
                                                         <td style="width:16%;">New Record</td>
@@ -139,11 +139,11 @@
                                                 }
                                                 else if (property.Name == "Error_Message")
                                                 {
-                                                    <td style="width:16%;"> @property.GetValue(item, null) </td>
+                                                    @*<td style="width:16%;">@property.GetValue(item, null)</td>*@
                                                 }
                                                 else if (property.Name == "Data_Type" || property.Name == "Sheet_Name")
                                                 {
-                                                    @*<td style="width:16%;"> @property.GetValue(item, null)</td>*@
+
                                                 }
                                                 else
                                                 {
@@ -152,10 +152,10 @@
                                             }
                                         }
                                     }
-                                    else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
-                                    {
-                                        <td style="width:16%;"></td>
-                                    }
+                                    @*else if (property.Name.ToUpper() == "ERROR_MESSAGE" && property.GetValue(item, null) == null)
+                                        {
+                                            <td style="width:16%;"></td>
+                                        }*@
                                 }
                             }
                             i++;
