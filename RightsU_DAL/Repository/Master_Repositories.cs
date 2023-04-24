@@ -3605,5 +3605,105 @@ namespace RightsU_DAL
         }
     }
 
+    public class AL_Purchase_Order_Repository : RightsU_Repository<AL_Purchase_Order>
+    {
+        public AL_Purchase_Order_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Purchase_Order objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Purchase_Order objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Purchase_Order_Details_Repository : RightsU_Repository<AL_Purchase_Order_Details>
+    {
+        public AL_Purchase_Order_Details_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Purchase_Order_Details objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Purchase_Order_Details objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Load_Sheet_Repository : RightsU_Repository<AL_Load_Sheet>
+    {
+        public AL_Load_Sheet_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Load_Sheet objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Load_Sheet objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
+    public class AL_Load_Sheet_Details_Repository : RightsU_Repository<AL_Load_Sheet_Details>
+    {
+        public AL_Load_Sheet_Details_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Load_Sheet_Details objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Load_Sheet_Details objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+
     #endregion
 }

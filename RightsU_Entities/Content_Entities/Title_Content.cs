@@ -49,5 +49,6 @@ namespace RightsU_Entities
         public virtual ICollection<Title_Episode_Details_TC> Title_Episode_Details_TC { get; set; }
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     }
 }

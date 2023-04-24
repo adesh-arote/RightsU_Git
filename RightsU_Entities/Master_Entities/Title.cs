@@ -134,5 +134,6 @@ namespace RightsU_Entities
         public virtual ICollection<Title_Episode_Details> Title_Episode_Details { get; set; }
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     }
 }

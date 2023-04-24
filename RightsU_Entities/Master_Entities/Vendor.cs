@@ -97,5 +97,6 @@ namespace RightsU_Entities
         public virtual ICollection<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
         public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
         public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     }
 }

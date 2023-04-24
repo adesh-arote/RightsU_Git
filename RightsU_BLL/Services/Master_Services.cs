@@ -8536,5 +8536,127 @@ namespace RightsU_BLL
         }
     }
 
+    public class AL_Purchase_Order_Service : BusinessLogic<AL_Purchase_Order>
+    {
+        private readonly AL_Purchase_Order_Repository objRepository;
+
+        public AL_Purchase_Order_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Purchase_Order_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order> SearchFor(Expression<Func<AL_Purchase_Order, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Purchase_Order_Code == objToValidate.AL_Purchase_Order_Code).Count() > 0)
+            {
+                resultSet = "Purchase Order already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Purchase_Order_Details_Service : BusinessLogic<AL_Purchase_Order_Details>
+    {
+        private readonly AL_Purchase_Order_Details_Repository objRepository;
+
+        public AL_Purchase_Order_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Purchase_Order_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order_Details> SearchFor(Expression<Func<AL_Purchase_Order_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Purchase_Order_Code == objToValidate.AL_Purchase_Order_Code).Count() > 0)
+            {
+                resultSet = "Purchase Order Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
     #endregion
 }
