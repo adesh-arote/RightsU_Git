@@ -8647,9 +8647,131 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AL_Purchase_Order_Code == objToValidate.AL_Purchase_Order_Code).Count() > 0)
+            if (SearchFor(s => s.AL_Purchase_Order_Details_Code == objToValidate.AL_Purchase_Order_Details_Code).Count() > 0)
             {
                 resultSet = "Purchase Order Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Load_Sheet_Service : BusinessLogic<AL_Load_Sheet>
+    {
+        private readonly AL_Load_Sheet_Repository objRepository;
+
+        public AL_Load_Sheet_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Load_Sheet_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Load_Sheet> SearchFor(Expression<Func<AL_Load_Sheet, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Load_Sheet GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Load_Sheet objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Load_Sheet objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Load_Sheet objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Load_Sheet_Code == objToValidate.AL_Load_Sheet_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Load_Sheet_Details_Service : BusinessLogic<AL_Load_Sheet_Details>
+    {
+        private readonly AL_Load_Sheet_Details_Repository objRepository;
+
+        public AL_Load_Sheet_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Load_Sheet_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Load_Sheet_Details> SearchFor(Expression<Func<AL_Load_Sheet_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Load_Sheet_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Load_Sheet_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Load_Sheet_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Load_Sheet_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Load_Sheet_Details_Code == objToValidate.AL_Load_Sheet_Details_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
                 return false;
             }
 
