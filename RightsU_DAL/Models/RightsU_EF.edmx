@@ -1190,6 +1190,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
         </EntityType>
+        <EntityType Name="AL_Load_Sheet">
+          <Key>
+            <PropertyRef Name="AL_Load_Sheet_Code" />
+          </Key>
+          <Property Name="AL_Load_Sheet_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Load_Sheet_No" Type="varchar" MaxLength="50" />
+          <Property Name="Load_Sheet_Month" Type="date" />
+          <Property Name="Remarks" Type="varchar" MaxLength="4000" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Download_File_Name" Type="varchar" MaxLength="200" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Updated_By" Type="int" />
+          <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AL_Load_Sheet_Details">
+          <Key>
+            <PropertyRef Name="AL_Load_Sheet_Details_Code" />
+          </Key>
+          <Property Name="AL_Load_Sheet_Details_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Load_Sheet_Code" Type="int" />
+          <Property Name="AL_Booking_Sheet_Code" Type="int" />
+        </EntityType>
         <EntityType Name="AL_OEM">
           <Key>
             <PropertyRef Name="AL_OEM_Code" />
@@ -1202,6 +1226,38 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AL_Purchase_Order">
+          <Key>
+            <PropertyRef Name="AL_Purchase_Order_Code" />
+          </Key>
+          <Property Name="AL_Purchase_Order_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Booking_Sheet_Code" Type="int" />
+          <Property Name="AL_Proposal_Code" Type="int" />
+          <Property Name="Remarks" Type="varchar" MaxLength="4000" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Updated_By" Type="int" />
+          <Property Name="Updated_On" Type="datetime" />
+          <Property Name="Lock_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AL_Purchase_Order_Details">
+          <Key>
+            <PropertyRef Name="AL_Purchase_Order_Details_Code" />
+          </Key>
+          <Property Name="AL_Purchase_Order_Details_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Purchase_Order_Code" Type="int" />
+          <Property Name="PO_Number" Type="varchar" MaxLength="50" />
+          <Property Name="LP_Start" Type="date" />
+          <Property Name="LP_End" Type="date" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Title_Content_Code" Type="int" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Excel_File_Name" Type="varchar" MaxLength="200" />
+          <Property Name="PDF_File_Name" Type="varchar" MaxLength="200" />
+          <Property Name="Generated_On" Type="datetime" />
         </EntityType>
         <EntityType Name="AL_Recommendation">
           <Key>
@@ -8761,6 +8817,90 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AL_Load_Sheet_Details_AL_Booking_Sheet">
+          <End Role="AL_Booking_Sheet" Type="Self.AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Load_Sheet_Details" Type="Self.AL_Load_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Load_Sheet_Details">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Load_Sheet_Details_AL_Load_Sheet">
+          <End Role="AL_Load_Sheet" Type="Self.AL_Load_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Load_Sheet_Details" Type="Self.AL_Load_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Load_Sheet">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Load_Sheet_Details">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_AL_Booking_Sheet">
+          <End Role="AL_Booking_Sheet" Type="Self.AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Purchase_Order" Type="Self.AL_Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_AL_Purchase_Order">
+          <End Role="AL_Purchase_Order" Type="Self.AL_Purchase_Order" Multiplicity="0..1" />
+          <End Role="AL_Purchase_Order_Details" Type="Self.AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Purchase_Order">
+              <PropertyRef Name="AL_Purchase_Order_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="AL_Purchase_Order_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="AL_Purchase_Order_Details" Type="Self.AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="AL_Purchase_Order_Details" Type="Self.AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AL_Purchase_Order_Details" Type="Self.AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AL_Recommendation_Content_AL_Recommendation">
           <End Role="AL_Recommendation" Type="Self.AL_Recommendation" Multiplicity="0..1" />
           <End Role="AL_Recommendation_Content" Type="Self.AL_Recommendation_Content" Multiplicity="*" />
@@ -15520,7 +15660,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="AL_Booking_Sheet" EntityType="Self.AL_Booking_Sheet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Booking_Sheet_Details" EntityType="Self.AL_Booking_Sheet_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Lab" EntityType="Self.AL_Lab" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Load_Sheet" EntityType="Self.AL_Load_Sheet" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Load_Sheet_Details" EntityType="Self.AL_Load_Sheet_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_OEM" EntityType="Self.AL_OEM" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Purchase_Order" EntityType="Self.AL_Purchase_Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Purchase_Order_Details" EntityType="Self.AL_Purchase_Order_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Recommendation" EntityType="Self.AL_Recommendation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Recommendation_Content" EntityType="Self.AL_Recommendation_Content" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Vendor_Details" EntityType="Self.AL_Vendor_Details" Schema="dbo" store:Type="Tables" />
@@ -17201,6 +17345,34 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_AL_Booking_Sheet_Vendor" Association="Self.FK_AL_Booking_Sheet_Vendor">
             <End Role="Vendor" EntitySet="Vendor" />
             <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Load_Sheet_Details_AL_Booking_Sheet" Association="Self.FK_AL_Load_Sheet_Details_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Load_Sheet_Details" EntitySet="AL_Load_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Load_Sheet_Details_AL_Load_Sheet" Association="Self.FK_AL_Load_Sheet_Details_AL_Load_Sheet">
+            <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
+            <End Role="AL_Load_Sheet_Details" EntitySet="AL_Load_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_AL_Booking_Sheet" Association="Self.FK_AL_Purchase_Order_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Purchase_Order" EntitySet="AL_Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_AL_Purchase_Order" Association="Self.FK_AL_Purchase_Order_Details_AL_Purchase_Order">
+            <End Role="AL_Purchase_Order" EntitySet="AL_Purchase_Order" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Title" Association="Self.FK_AL_Purchase_Order_Details_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Title_Content" Association="Self.FK_AL_Purchase_Order_Details_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Vendor" Association="Self.FK_AL_Purchase_Order_Details_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
           </AssociationSet>
           <AssociationSet Name="FK_AL_Recommendation_Content_AL_Recommendation" Association="Self.FK_AL_Recommendation_Content_AL_Recommendation">
             <End Role="AL_Recommendation" EntitySet="AL_Recommendation" />
@@ -23009,8 +23181,40 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
           <EntitySet Name="DM_Booking_Sheet_Data" EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" />
           <FunctionImport Name="USPGet_DDLValues_For_ExtendedColumns" ReturnType="Collection(RightsU_NeoModel.USPGet_DDLValues_For_ExtendedColumns_Result)">
-            <Parameter Name="ExtendedColumnsCode" Mode="In" Type="Int32" />
+          <Parameter Name="ExtendedColumnsCode" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="AL_Load_Sheet" EntityType="RightsU_NeoModel.AL_Load_Sheet" />
+          <EntitySet Name="AL_Load_Sheet_Details" EntityType="RightsU_NeoModel.AL_Load_Sheet_Details" />
+          <EntitySet Name="AL_Purchase_Order" EntityType="RightsU_NeoModel.AL_Purchase_Order" />
+          <EntitySet Name="AL_Purchase_Order_Details" EntityType="RightsU_NeoModel.AL_Purchase_Order_Details" />
+          <AssociationSet Name="FK_AL_Load_Sheet_Details_AL_Booking_Sheet" Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Load_Sheet_Details" EntitySet="AL_Load_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_AL_Booking_Sheet" Association="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Purchase_Order" EntitySet="AL_Purchase_Order" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Load_Sheet_Details_AL_Load_Sheet" Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet">
+            <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
+            <End Role="AL_Load_Sheet_Details" EntitySet="AL_Load_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_AL_Purchase_Order" Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_AL_Purchase_Order">
+            <End Role="AL_Purchase_Order" EntitySet="AL_Purchase_Order" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Title" Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Title_Content" Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Purchase_Order_Details_Vendor" Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -25876,6 +26080,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Episode_Details" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_Title" FromRole="Title" ToRole="Title_Episode_Details" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="Title" ToRole="AL_Booking_Sheet_Details" />
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" FromRole="Title" ToRole="AL_Recommendation_Content" />
+          <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" FromRole="Title" ToRole="AL_Purchase_Order_Details" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -26141,6 +26346,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Vendor_Rule" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Vendor" FromRole="Vendor" ToRole="AL_Vendor_Rule" />
           <NavigationProperty Name="AL_Vendor_TnC" Relationship="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" FromRole="Vendor" ToRole="AL_Vendor_TnC" />
           <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="Vendor" ToRole="AL_Booking_Sheet" />
+          <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" FromRole="Vendor" ToRole="AL_Purchase_Order_Details" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -33891,6 +34097,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Episode_Details_TC" Relationship="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" FromRole="Title_Content" ToRole="Title_Episode_Details_TC" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Booking_Sheet_Details" />
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" FromRole="Title_Content" ToRole="AL_Recommendation_Content" />
+          <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Purchase_Order_Details" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -38943,6 +39150,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="AL_Booking_Sheet" ToRole="Vendor" />
           <NavigationProperty Name="AL_Recommendation" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" FromRole="AL_Booking_Sheet" ToRole="AL_Recommendation" />
           <Property Name="Excel_File" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AL_Load_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Load_Sheet_Details" />
+          <NavigationProperty Name="AL_Purchase_Order" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Purchase_Order" />
         </EntityType>
         <EntityType Name="AL_Booking_Sheet_Details">
           <Key>
@@ -39159,15 +39368,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
 		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
         </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
-          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
-          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="false" />
-          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
+          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
+          <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="true" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="1000" />
           <Property Type="Int32" Name="Refresh_Cycle_No" Nullable="true" />
-          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="50" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="86" />
-          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
-		  <Property Type="String" Name="IsMinimum" Nullable="false" />
+          <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
+          <Property Type="Int32" Name="Vendor_Code" Nullable="true" />
+		  <Property Type="String" Name="IsMinimum" Nullable="true" MaxLength="10" />
         </ComplexType>
         <EntityType Name="DM_Booking_Sheet_Data">
           <Key>
@@ -39385,6 +39594,155 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="ColumnsValue" Nullable="false" MaxLength="1" />
           <Property Type="Int32" Name="Columns_Value_Code" Nullable="false" />
         </ComplexType>
+        <EntityType Name="AL_Load_Sheet">
+          <Key>
+            <PropertyRef Name="AL_Load_Sheet_Code" />
+          </Key>
+          <Property Name="AL_Load_Sheet_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Load_Sheet_No" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Load_Sheet_Month" Type="DateTime" Precision="0" />
+          <Property Name="Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Download_File_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="Int32" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AL_Load_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" FromRole="AL_Load_Sheet" ToRole="AL_Load_Sheet_Details" />
+        </EntityType>
+        <EntityType Name="AL_Load_Sheet_Details">
+          <Key>
+            <PropertyRef Name="AL_Load_Sheet_Details_Code" />
+          </Key>
+          <Property Name="AL_Load_Sheet_Details_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Load_Sheet_Code" Type="Int32" />
+          <Property Name="AL_Booking_Sheet_Code" Type="Int32" />
+          <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Load_Sheet_Details" ToRole="AL_Booking_Sheet" />
+          <NavigationProperty Name="AL_Load_Sheet" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" FromRole="AL_Load_Sheet_Details" ToRole="AL_Load_Sheet" />
+        </EntityType>
+        <EntityType Name="AL_Purchase_Order">
+          <Key>
+            <PropertyRef Name="AL_Purchase_Order_Code" />
+          </Key>
+          <Property Name="AL_Purchase_Order_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Booking_Sheet_Code" Type="Int32" />
+          <Property Name="AL_Proposal_Code" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Updated_By" Type="Int32" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <Property Name="Lock_Time" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" FromRole="AL_Purchase_Order" ToRole="AL_Booking_Sheet" />
+          <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_AL_Purchase_Order" FromRole="AL_Purchase_Order" ToRole="AL_Purchase_Order_Details" />
+        </EntityType>
+        <EntityType Name="AL_Purchase_Order_Details">
+          <Key>
+            <PropertyRef Name="AL_Purchase_Order_Details_Code" />
+          </Key>
+          <Property Name="AL_Purchase_Order_Details_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Purchase_Order_Code" Type="Int32" />
+          <Property Name="PO_Number" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Start" Type="DateTime" Precision="0" />
+          <Property Name="LP_End" Type="DateTime" Precision="0" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Title_Content_Code" Type="Int32" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Excel_File_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="PDF_File_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Generated_On" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AL_Purchase_Order" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_AL_Purchase_Order" FromRole="AL_Purchase_Order_Details" ToRole="AL_Purchase_Order" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" FromRole="AL_Purchase_Order_Details" ToRole="Title" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" FromRole="AL_Purchase_Order_Details" ToRole="Title_Content" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" FromRole="AL_Purchase_Order_Details" ToRole="Vendor" />
+        </EntityType>
+        <Association Name="FK_AL_Load_Sheet_Details_AL_Booking_Sheet">
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Load_Sheet_Details" Role="AL_Load_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Load_Sheet_Details">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_AL_Booking_Sheet">
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Purchase_Order" Role="AL_Purchase_Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Load_Sheet_Details_AL_Load_Sheet">
+          <End Type="RightsU_NeoModel.AL_Load_Sheet" Role="AL_Load_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Load_Sheet_Details" Role="AL_Load_Sheet_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Load_Sheet">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Load_Sheet_Details">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_AL_Purchase_Order">
+          <End Type="RightsU_NeoModel.AL_Purchase_Order" Role="AL_Purchase_Order" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Purchase_Order_Details" Role="AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Purchase_Order">
+              <PropertyRef Name="AL_Purchase_Order_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="AL_Purchase_Order_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Purchase_Order_Details" Role="AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Purchase_Order_Details" Role="AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Purchase_Order_Details_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Purchase_Order_Details" Role="AL_Purchase_Order_Details" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Purchase_Order_Details">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -49660,6 +50018,66 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="AL_Load_Sheet">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Load_Sheet">
+              <MappingFragment StoreEntitySet="AL_Load_Sheet">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Download_File_Name" ColumnName="Download_File_Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Load_Sheet_Month" ColumnName="Load_Sheet_Month" />
+                <ScalarProperty Name="Load_Sheet_No" ColumnName="Load_Sheet_No" />
+                <ScalarProperty Name="AL_Load_Sheet_Code" ColumnName="AL_Load_Sheet_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Load_Sheet_Details">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Load_Sheet_Details">
+              <MappingFragment StoreEntitySet="AL_Load_Sheet_Details">
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Load_Sheet_Code" ColumnName="AL_Load_Sheet_Code" />
+                <ScalarProperty Name="AL_Load_Sheet_Details_Code" ColumnName="AL_Load_Sheet_Details_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Purchase_Order">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Purchase_Order">
+              <MappingFragment StoreEntitySet="AL_Purchase_Order">
+                <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="AL_Proposal_Code" ColumnName="AL_Proposal_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Purchase_Order_Code" ColumnName="AL_Purchase_Order_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Purchase_Order_Details">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Purchase_Order_Details">
+              <MappingFragment StoreEntitySet="AL_Purchase_Order_Details">
+                <ScalarProperty Name="Generated_On" ColumnName="Generated_On" />
+                <ScalarProperty Name="PDF_File_Name" ColumnName="PDF_File_Name" />
+                <ScalarProperty Name="Excel_File_Name" ColumnName="Excel_File_Name" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="LP_End" ColumnName="LP_End" />
+                <ScalarProperty Name="LP_Start" ColumnName="LP_Start" />
+                <ScalarProperty Name="PO_Number" ColumnName="PO_Number" />
+                <ScalarProperty Name="AL_Purchase_Order_Code" ColumnName="AL_Purchase_Order_Code" />
+                <ScalarProperty Name="AL_Purchase_Order_Details_Code" ColumnName="AL_Purchase_Order_Details_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -49674,7 +50092,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-         <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

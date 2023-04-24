@@ -469,6 +469,10 @@ namespace RightsU_InterimDb.Models
         public DbSet<AL_Recommendation> AL_Recommendation { get; set; }
         public DbSet<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
         public DbSet<DM_Booking_Sheet_Data> DM_Booking_Sheet_Data { get; set; }
+        public DbSet<AL_Load_Sheet> AL_Load_Sheet { get; set; }
+        public DbSet<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
+        public DbSet<AL_Purchase_Order> AL_Purchase_Order { get; set; }
+        public DbSet<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

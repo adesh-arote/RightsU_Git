@@ -17,6 +17,8 @@ namespace RightsU_InterimDb.Models
         public AL_Booking_Sheet()
         {
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
+            this.AL_Load_Sheet_Details = new HashSet<AL_Load_Sheet_Details>();
+            this.AL_Purchase_Order = new HashSet<AL_Purchase_Order>();
         }
     
     	public State EntityState { get; set; }    public int AL_Booking_Sheet_Code { get; set; }
@@ -38,5 +40,7 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public virtual Vendor Vendor { get; set; }
         public virtual AL_Recommendation AL_Recommendation { get; set; }
+        public virtual ICollection<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
+        public virtual ICollection<AL_Purchase_Order> AL_Purchase_Order { get; set; }
     }
 }

@@ -1079,6 +1079,17 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" />
         <EntityTypeShape EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" Width="1.5" PointX="46.75" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet" Width="1.5" PointX="35.875" PointY="95.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet_Details" Width="1.5" PointX="38.125" PointY="91.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order" Width="1.5" PointX="21.125" PointY="113.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order_Details" Width="1.5" PointX="23.375" PointY="91" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_AL_Purchase_Order" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

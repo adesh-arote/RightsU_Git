@@ -39,5 +39,7 @@ namespace RightsU_Entities
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public virtual Vendor Vendor { get; set; }
         public virtual AL_Recommendation AL_Recommendation { get; set; }
+        public virtual ICollection<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
+        public virtual ICollection<AL_Purchase_Order> AL_Purchase_Order { get; set; }
     }
 }
