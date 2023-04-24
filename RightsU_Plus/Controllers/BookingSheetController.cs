@@ -9,7 +9,7 @@ using System.Data.OleDb;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using UTOFrameWork.FrameworkClasses;
+using UTOFrameWork.FrameworkClasses; 
 
 namespace RightsU_Plus.Controllers
 {
@@ -539,7 +539,7 @@ namespace RightsU_Plus.Controllers
             //{
             //    isShow = "Y";
             //}
-            
+
             //ViewBag.isButtonShow = isShow;
 
             List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
@@ -683,6 +683,12 @@ namespace RightsU_Plus.Controllers
             objDMCFT.DmMasterImportCode = DM_Master_Import_Code;
             objDMCFT.FileType = fileType;
 
+            if (Session["Message"] != null)
+            {                                            //-----To show success messages
+                ViewBag.Message = Session["Message"];
+                Session["Message"] = null;
+            }
+
             return View();
         }
 
@@ -698,33 +704,42 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
+            string message = "";          
             int RecordCount = 0;
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
-
-            lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-            int Rcount = lstBulkImport.Count - 1;
-
-            var firstItem = lstBulkImport[0];
-            lstBulkImport.RemoveAt(0);
-
-            RecordCount = Rcount;
-            if (RecordCount > 0)
+            try
             {
-                int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                if (sortType == "E")
-                    lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                if (sortType == "N")
-                    lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                lst.Insert(0, firstItem);
-                DataTable dt = ToDataTable(lst);
+                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                int Rcount = lstBulkImport.Count - 1;
+
+                //var newBulkList = lstBulkImport.Select(x => new { Record_Status = x.Record_Status, Error_Message = x.Error_Message, Col1 = x.Col1, Col2 = x.Col2, Col3 = x.Col3 });
+
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = Rcount;
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    if (sortType == "E")
+                        lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    if (sortType == "N")
+                        lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                    DataTable dt = ToDataTable(lst);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                    DataTable dt = ToDataTable(lst);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                lst.Insert(0, firstItem);
-                DataTable dt = ToDataTable(lst);
+                message = ex.Message;
             }
 
             return PartialView("_MovieSheetData", lst);
@@ -732,33 +747,41 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult BindShowSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
+            string message = "";
             int RecordCount = 0;
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
-            lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-            int Rcount = lstBulkImport.Count - 1;
-
-            var firstItem = lstBulkImport[0];
-            lstBulkImport.RemoveAt(0);
-
-            RecordCount = Rcount;
-            if (RecordCount > 0)
+            try
             {
-                int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "T")
-                    lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                if (sortType == "E")
-                    lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                if (sortType == "N")
-                    lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                lst.Insert(0, firstItem);
-                DataTable dt = ToDataTable(lst);
+                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                int Rcount = lstBulkImport.Count - 1;
+
+                var firstItem = lstBulkImport[0];
+                lstBulkImport.RemoveAt(0);
+
+                RecordCount = Rcount;
+                if (RecordCount > 0)
+                {
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    if (sortType == "E")
+                        lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    if (sortType == "N")
+                        lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst.Insert(0, firstItem);
+                    DataTable dt = ToDataTable(lst);
+                }
+                else
+                {
+                    lst.Insert(0, firstItem);
+                    DataTable dt = ToDataTable(lst);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                lst.Insert(0, firstItem);
-                DataTable dt = ToDataTable(lst);
+                message = ex.Message;
             }
 
             return PartialView("_ShowSheetData", lst);
@@ -872,7 +895,7 @@ namespace RightsU_Plus.Controllers
             if (TabName == "MV")
                 Response.AddHeader("Content-disposition", "filename=MovieSheetDetails.xls");
             else if (TabName == "SH")
-                Response.AddHeader("Content-disposition", "filename=ShowShetDetails.xls");
+                Response.AddHeader("Content-disposition", "filename=ShowSheetDetails.xls");
             Response.OutputStream.Write(buffer, 0, buffer.Length);
             Response.End();
         }

@@ -32,7 +32,7 @@
                 btnSearch_OnClick()
                 return false;
             }
-        });
+        });    
     });
 
     function OpenTab(NewTab) {
@@ -211,7 +211,6 @@
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-            dataType: "html",
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
@@ -219,6 +218,7 @@
                 DM_Master_Import_Code: DMICode
             }),
             success: function (result) {
+                debugger;
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
             },
@@ -239,7 +239,6 @@
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-            dataType: "html",
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
