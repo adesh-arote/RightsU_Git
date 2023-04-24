@@ -9,7 +9,7 @@ using System.Data.OleDb;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using UTOFrameWork.FrameworkClasses; 
+using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
@@ -248,6 +248,20 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objDMCFT"] = value; }
         }
+
+        //--------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private AL_Purchase_Order_Service objPurchase_Order_Service
+        {
+            get
+            {
+                if (Session["objPurchase_Order_Service"] == null)
+                    Session["objPurchase_Order_Service"] = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName);
+                return (AL_Purchase_Order_Service)Session["objPurchase_Order_Service"];
+            }
+            set { Session["objPurchase_Order_Service"] = value; }
+        }
+
 
         #endregion
 
@@ -704,7 +718,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult BindMovieSheetData(int pageNo, int recordPerPage, string sortType, int DM_Master_Import_Code)
         {
-            string message = "";          
+            string message = "";
             int RecordCount = 0;
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
             try
@@ -899,6 +913,47 @@ namespace RightsU_Plus.Controllers
             Response.OutputStream.Write(buffer, 0, buffer.Length);
             Response.End();
         }
+
+        //-----------------------------------------------------------------PurchaseOrder--------------------------------------------------------------------
+
+        public JsonResult GeneratePO(int BookingSheetCode, int ProposalCode)
+        {
+            string Status = "";
+            string Message = "";
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            AL_Purchase_Order objAPO = new AL_Purchase_Order();
+
+            objAPO.AL_Booking_Sheet_Code = BookingSheetCode;
+            objAPO.AL_Proposal_Code = ProposalCode;
+            objAPO.Remarks = "TestSachin";
+            objAPO.Status = "P";
+            objAPO.Inserted_By = objLoginUser.Users_Code;
+            objAPO.Inserted_On = DateTime.Now;
+            objAPO.Updated_By = objLoginUser.Users_Code;
+            objAPO.Updated_On = DateTime.Now;
+
+            objAPO.EntityState = State.Added;
+
+
+            dynamic resultSet;
+            if (!objPurchase_Order_Service.Save(objAPO, out resultSet))
+            {
+                Status = "E";
+                Message = resultSet;
+            }
+            else
+            {
+                Status = "S";
+                Message = "Purchase Order Generated Succesfully";
+            }
+
+            var Obj = new
+            {
+                Status = Status,
+                Message = Message
+            };
+            return Json(Obj);
+        }       
 
         //-----------------------------------------------------------------GenericMethods--------------------------------------------------------------------
 

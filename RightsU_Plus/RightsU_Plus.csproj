@@ -231,6 +231,7 @@
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -1403,6 +1404,8 @@
     <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" />
     <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" />
     <Content Include="UploadFolder\BookingSheet\Sample.xlsx" />
+    <Content Include="Views\PurchaseOrder\Index.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PurchaseOrderList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

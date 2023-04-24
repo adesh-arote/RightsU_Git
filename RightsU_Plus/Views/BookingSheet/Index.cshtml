@@ -17,6 +17,7 @@
     var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
     var URL_SearchBookingSheet = '@Url.Action("SearchOnList", "BookingSheet")';
     var URL_GenerateBookingSheet = '@Url.Action("GenerateBookingSheet", "BookingSheet")';
+    var URL_GeneratePO = '@Url.Action("GeneratePO", "BookingSheet")';
     //var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
 
     $(document).ready(function () {
@@ -313,6 +314,31 @@
                     showAlert("S", result.Message);
                     //PendingRecommendationsList();
                     SearchOnList("", TabName);
+                }
+                else {
+                    showAlert("E", result.Message);
+                }
+            }
+        })
+    }
+
+    function GeneratePO(BkCode, PrCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GeneratePO,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BookingsheetCode: BkCode,
+                ProposalCode: PrCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    BindbookingSheetList();
                 }
                 else {
                     showAlert("E", result.Message);
