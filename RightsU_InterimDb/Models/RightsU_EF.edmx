@@ -15452,7 +15452,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Territory_Code" Type="varchar" Mode="In" />
           <Parameter Name="Country_Code" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USPAL_GetBookingsheetDataForLoadsheet" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="LoadsheetMonth" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetLoadsheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_Title_Content_Gen_From_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TitleCode" Type="int" Mode="In" />
@@ -23215,6 +23219,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Vendor" EntitySet="Vendors" />
             <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
           </AssociationSet>
+          <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
+            <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USPAL_GetLoadsheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetLoadsheetList_Result)" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -39743,6 +39751,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USPAL_GetBookingsheetDataForLoadsheet_Result">
+          <Property Type="String" Name="Vendor_Name" Nullable="false" MaxLength="16" />
+          <Property Type="String" Name="Booking_Sheet_No" Nullable="false" MaxLength="7" />
+          <Property Type="String" Name="Proposal_Cycle" Nullable="false" MaxLength="22" />
+          <Property Type="String" Name="Cycle" Nullable="false" MaxLength="11" />
+        </ComplexType>
+        <ComplexType Name="USPAL_GetLoadsheetList_Result">
+          <Property Type="Int32" Name="AL_Load_Sheet_Code" Nullable="false" />
+          <Property Type="String" Name="Load_sheet_No" Nullable="false" MaxLength="7" />
+          <Property Type="DateTime" Name="Load_Sheet_Month" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="NoOfBookingSheet" Nullable="false" />
+          <Property Type="String" Name="Status" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="InsertedBy" Nullable="false" MaxLength="5" />
+          <Property Type="DateTime" Name="Inserted_On" Nullable="false" Precision="23" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -50078,6 +50101,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetBookingsheetDataForLoadsheet" FunctionName="RightsU_NeoModel.Store.USPAL_GetBookingsheetDataForLoadsheet">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result">
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
+                <ScalarProperty Name="Proposal_Cycle" ColumnName="Proposal_Cycle" />
+                <ScalarProperty Name="Cycle" ColumnName="Cycle" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetLoadsheetList" FunctionName="RightsU_NeoModel.Store.USPAL_GetLoadsheetList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetLoadsheetList_Result">
+                <ScalarProperty Name="AL_Load_Sheet_Code" ColumnName="AL_Load_Sheet_Code" />
+                <ScalarProperty Name="Load_sheet_No" ColumnName="Load_sheet_No" />
+                <ScalarProperty Name="Load_Sheet_Month" ColumnName="Load_Sheet_Month" />
+                <ScalarProperty Name="NoOfBookingSheet" ColumnName="NoOfBookingSheet" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

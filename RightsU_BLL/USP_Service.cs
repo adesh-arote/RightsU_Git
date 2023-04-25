@@ -1803,5 +1803,17 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
         }
+
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth);
+        }
+
+        public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetLoadsheetList();
+        }
     }
 }
