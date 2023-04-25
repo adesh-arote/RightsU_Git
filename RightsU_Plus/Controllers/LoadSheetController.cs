@@ -1,4 +1,5 @@
 ﻿using RightsU_BLL;
+using RightsU_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,6 +31,34 @@ namespace RightsU_Plus.Controllers
                 return (List<RightsU_Entities.AL_Load_Sheet>)Session["lstAL_Load_Sheet_Searched"];
             }
             set { Session["lstAL_Load_Sheet_Searched"] = value; }
+        }
+
+        List<USPAL_GetLoadsheetList_Result> lstLoadSheet_Searched
+        {
+            get
+            {
+                if (Session["lstLoadSheet_Searched"] == null)
+                    Session["lstLoadSheet_Searched"] = new List<USPAL_GetLoadsheetList_Result>();
+                return (List<USPAL_GetLoadsheetList_Result>)Session["lstLoadSheet_Searched"];
+            }
+            set
+            {
+                Session["lstLoadSheet_Searched"] = value;
+            }
+        }
+
+        List<USPAL_GetBookingsheetDataForLoadsheet_Result> lstBookingsheetDataForLoadsheet_Searched
+        {
+            get
+            {
+                if (Session["lstBookingsheetDataForLoadsheet_Searched"] == null)
+                    Session["lstBookingsheetDataForLoadsheet_Searched"] = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+                return (List<USPAL_GetBookingsheetDataForLoadsheet_Result>)Session["lstBookingsheetDataForLoadsheet_Searched"];
+            }
+            set
+            {
+                Session["lstBookingsheetDataForLoadsheet_Searched"] = value;
+            }
         }
 
         private RightsU_Entities.AL_Load_Sheet objAL_Load_Sheet
@@ -69,33 +98,72 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
             ViewBag.UserModuleRights = GetUserModuleRights();
-            lstAL_Load_Sheet_Searched = objAL_Load_Sheet_Service.SearchFor(x => true).ToList();
+            lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
             return View("~/Views/LoadSheet/Index.cshtml");
         }
-        public PartialViewResult AddLoadSheet(int loadSheetCode, string commandName)
-        {
-           
 
+        public JsonResult SearchBookingsheet(string searchText)
+        {
             
-            return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", null);
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
+            }
+            else
+                lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
+
+            var obj = new
+            {
+                Record_Count = lstBookingsheetDataForLoadsheet_Searched.Count
+            };
+
+            return Json(obj);
         }
 
-        public PartialViewResult BindLoadSheetList(int pageNo, int recordPerPage, string sortType)
+        public PartialViewResult OpenBookingsheetPopup()
         {
-            List<RightsU_Entities.AL_Load_Sheet> lst = new List<RightsU_Entities.AL_Load_Sheet>();
+            List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+            return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", lst);
+        }
+        public PartialViewResult BindBookingsheet(int pageNo, int recordPerPage, string sortType)
+        {
+            lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
+            List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
             int RecordCount = 0;
-            RecordCount = lstAL_Load_Sheet_Searched.Count;
+            RecordCount = lstBookingsheetDataForLoadsheet_Searched.Count;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstAL_Load_Sheet_Searched.OrderByDescending(o => o.Updated_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBookingsheetDataForLoadsheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else if (sortType == "NA")
-                    lst = lstAL_Load_Sheet_Searched.OrderBy(o => o.Load_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBookingsheetDataForLoadsheet_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
-                    lst = lstAL_Load_Sheet_Searched.OrderByDescending(o => o.Load_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBookingsheetDataForLoadsheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+
+            return PartialView("~/Views/LoadSheet/_BookingsheetList.cshtml", lst);
+        }
+
+        public PartialViewResult BindLoadSheetList(int pageNo, int recordPerPage, string sortType)
+        {
+            List<USPAL_GetLoadsheetList_Result> lst = new List<USPAL_GetLoadsheetList_Result>();
+            int RecordCount = 0;
+            RecordCount = lstLoadSheet_Searched.Count;
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstLoadSheet_Searched.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else if (sortType == "NA")
+                    lst = lstLoadSheet_Searched.OrderBy(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else
+                    lst = lstLoadSheet_Searched.OrderByDescending(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/LoadSheet/_LoadSheetList.cshtml", lst);

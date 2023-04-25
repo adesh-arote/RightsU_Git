@@ -1,5 +1,4 @@
-﻿
-
+﻿@model List<RightsU_Entities.USPAL_GetBookingsheetDataForLoadsheet_Result>
 @using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -28,6 +27,145 @@
             $('#chkAll').prop('checked', false);
         }
     });
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchBookingsheet(searchText);
+    }
+
+    function SearchBookingsheet(searchText) {
+        debugger;
+        $('#searchCommon').val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchBookingsheet,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo_BS').text(1);
+                    $('#hdnPageNo_BS').val(1);
+                    $('#lblRecordCount_BS').text(result.Record_Count);
+                    $("#hdnRecordCount_BS").val(result.Record_Count);
+                    SetPaging_BS()
+                    BindBookingsheet();
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SetPaging_BS() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo_BS').val());
+        var recordCount = parseInt($('#hdnRecordCount_BS').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch_BS').val());
+        var recordPerPage = parseInt($('#txtPageSize_BS').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo_BS').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination_BS").pagination(recordCount, opt);
+    }
+
+    function BindBookingsheet() {
+        debugger;
+        var pageNo = $('#hdnPageNo_BS').val();
+        var recordPerPage = $('#txtPageSize_BS').val();
+
+        $('#hdnAction').val("");
+        $.ajax({
+            type: "POST",
+            url: URL_BindBookingsheet,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: "T"
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    //$('#popup').modal();
+                    $('#divBookingsheetList').empty();
+                    $('#divBookingsheetList').html(result);
+                    //if (commandName != "VIEW")
+                    //    commandName = "";
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function pageselectCallback(page_index, jq) {
+        //if (checkCurrentAction()) {
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo_BS').val(pageNo);
+        if (IsCall == 'Y')
+            BindBookingsheet();
+        else
+            IsCall = 'Y';
+        //}
+    }
 </script>
 <div class="modal_block modal_header">
     <a class="close" onclick="ClosePopup()">
@@ -43,7 +181,10 @@
                 Loadsheet for month :
             </td>
             <td style="width:30%;">
-                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" />
+                @*<input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" />*@
+                <input type="month" id="searchCommon" name="start"
+                       min="1950-03" value="" style="line-height:20px;width:75%">
+
             </td>
             <td>
                 <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
@@ -52,55 +193,37 @@
     </table>
 </div>
 <div class="grid_area" style="margin: 0 auto; width: 98%;">
-    <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+    <div class="paging_area clearfix">
         <span class="pull-left">@objMessageKey.TotalRecords: </span>
-        <span class="pull-left" id="lblRecordCountPopup"></span>
+        <span class="pull-left" id="lblRecordCount_BS"></span>
+        <input type="hidden" id="hdnPageNo_BS" name="hdnPageNo" value="1" />
+        <input type="hidden" id="hdnPagePerBatch_BS" name="hdnPagePerBatch" value="5" />
+        <input type="hidden" id="hdnRecordCount_BS" name="hdnRecordCount" value="0" />
 
+        <div id="Pagination_BS" class="pagination">
+        </div>
+        <span class="pull-right">
+            @objMessageKey.PageSize:
+            <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+        </span>
     </div>
     <div class="tab-content clearfix table-wrapper scale_table_container">
-        <div class="scale_table_block" id="divCurrencyExchangeRate" style="overflow:auto; max-height:500px">
+        <div class="scale_table_block" id="divBookingsheetList" style="overflow:auto; max-height:500px">
             <table class="table table-bordered table-hover" id="tblMusicLink">
                 <thead>
                     <tr>
-                        <th style="width:15%;"><input type="checkbox" id="chkAll" /></th>
-                        <th style="width:35%;">Client Name</th>
-                        <th style="width:35%;">Booking Sheet No.</th>
-                        <th style="width:35%;">Proposal Cycle</th>
-                        <th style="width:35%;">Cycle</th>
+                        <th style="width:5%;"><input type="checkbox" id="chkAll" /></th>
+                        <th style="width:20%;">Client Name</th>
+                        <th style="width:25%;">Booking Sheet No.</th>
+                        <th style="width:30%;">Proposal Cycle</th>
+                        <th style="width:20%;">Cycle</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @*@if (Model.Count > 0)
-                        {*@
 
-                    @*foreach (var item in Model)
-                        {*@
                     <tr>
-                        <td style="text-align:center; width:15%; text-align:center !important">
-                            <input type="checkbox" id="chk" class="checkbox" />
-                            <input type="hidden" name="name" value="a" id="hdnTitleCode" />
-
-                        </td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
+                        <td colspan="7">No recordfound</td>
                     </tr>
-                    <tr>
-                        <td>
-                            <input type="checkbox" id="chk1" class="checkbox" />
-                            <input type="hidden" name="name" value="a" id="hdnTitleCode" />
-
-                        </td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    </tr>
-
-
-                    @*  }*@
-                    @*}*@
 
                 </tbody>
             </table>

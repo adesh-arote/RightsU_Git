@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.AL_Load_Sheet>
+﻿@model List<RightsU_Entities.USPAL_GetLoadsheetList_Result>
 @using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -27,22 +27,22 @@
             {
                 <tr>
                     <td class="expand_Currency_Name">
-                        <span>1</span>
+                        <span>@item.Load_sheet_No</span>
                     </td>
                     <td style="text-align:center;">
-                        <span>1</span>
+                        <span>@item.Load_Sheet_Month</span>
                     </td>
                     <td align="center">
-                        <span>1</span>
+                        <span>@item.NoOfBookingSheet</span>
                     </td>
                     <td align="center">
-                        <span>1</span>
+                        <span>@item.Status</span>
                     </td>
                     <td>
-                        1
+                        @item.InsertedBy
                     </td>
                     <td>
-                        1
+                        @item.Inserted_On
                     </td>
                     <td align="center">
                             <a title="@objMessageKey.Cannoteditthiscurrencyasitisdeactivated" class="glyphicon glyphicon-chevron-down" onclick="return false;"></a>

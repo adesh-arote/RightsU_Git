@@ -12,8 +12,10 @@
 
 <script>
       var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code;
-    var URL_AddLoadSheet = '@Url.Action("AddLoadSheet", "LoadSheet")';
+    var URL_BindBookingsheet = '@Url.Action("BindBookingsheet", "LoadSheet")';
     var URL_BindLoadSheetList = '@Url.Action("BindLoadSheetList", "LoadSheet")';
+    var URL_SearchBookingsheet = '@Url.Action("SearchBookingsheet", "LoadSheet")';
+    var URL_OpenBookingsheetPopup = '@Url.Action("OpenBookingsheetPopup", "LoadSheet")'
 
     $(document).ready(function () {
         debugger;
@@ -52,25 +54,21 @@
         });
     }
 
-    function AddLoadSheet(loadSheetCode, commandName) {
-        debugger;
-        $('.required').removeClass('required');
-        $("[required='required']").removeAttr("required");
+    
 
-        $('#hdnAction').val("");
+    
+
+    function OpenBookingsheetPopup() {
         $.ajax({
             type: "POST",
-            url: URL_AddLoadSheet,
+            url: URL_OpenBookingsheetPopup,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-            dataType: "html",
             data: JSON.stringify({
-                loadSheetCode: loadSheetCode,
-                commandName: commandName
             }),
+            async: false,
             success: function (result) {
-                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -78,14 +76,76 @@
                     $('#popup').modal();
                     $('#pupupHtml').empty();
                     $('#pupupHtml').html(result);
-                    if (commandName != "VIEW")
-                        commandName = "";
                 }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
+                hideLoading();
             }
         });
+        
+    }
+
+   
+
+   
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+
+        $(".exchangeRate").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: 9999,
+            min: 0
+        });
+    }
+
+    function pageselectCallback(page_index, jq) {
+        //if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo_BS').val(pageNo);
+            if (IsCall == 'Y')
+                BindBookingsheet();
+            else
+                IsCall = 'Y';
+        //}
+    }
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindBookingsheet()
+        SetPaging_BS();
+    }
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize_BS').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize_BS').attr('required', true)
+        return false
+    }
+
+    function pageBinding() {
+        BindBookingsheet()
+        SetPaging_BS();
     }
 
 </script>
@@ -103,7 +163,7 @@
                             <li id="btnUser">
                                 @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
                                 {*@
-                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddLoadSheet(0, 'ADD')" />
+                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup()" />
                                 @*}*@
                             </li>
                         </ul>
@@ -139,7 +199,7 @@
         </div>
     </section>
 </div>
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:80%">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="form_fields acq" id="pupupHtml">
