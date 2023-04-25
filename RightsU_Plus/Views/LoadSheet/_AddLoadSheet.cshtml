@@ -1,0 +1,121 @@
+﻿
+
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+    function ClosePopup() {
+
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+    }
+
+    $('#chkAll').on("click", function () {
+        var IsCheck = $(this).prop("checked");
+        $('input[type="checkbox"]').prop('checked', IsCheck);
+    });
+
+    $('.checkbox').on("click", function () {
+        if ($('.checkbox:checked').length == $('.checkbox').length) {
+            $('#chkAll').prop('checked', true);
+        } else {
+            $('#chkAll').prop('checked', false);
+        }
+    });
+</script>
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    <h2>Create New LoadSheet</h2>
+</div>
+<div class="search_area" style="background-color: ; padding:5px;">
+    <table class="table">
+        <tr>
+            <td style="width:25%;text-align:center;padding-top:8px;">
+                Loadsheet for month :
+            </td>
+            <td style="width:30%;">
+                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" />
+            </td>
+            <td>
+                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+        <span class="pull-left" id="lblRecordCountPopup"></span>
+
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="divCurrencyExchangeRate" style="overflow:auto; max-height:500px">
+            <table class="table table-bordered table-hover" id="tblMusicLink">
+                <thead>
+                    <tr>
+                        <th style="width:15%;"><input type="checkbox" id="chkAll" /></th>
+                        <th style="width:35%;">Client Name</th>
+                        <th style="width:35%;">Booking Sheet No.</th>
+                        <th style="width:35%;">Proposal Cycle</th>
+                        <th style="width:35%;">Cycle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*@if (Model.Count > 0)
+                        {*@
+
+                    @*foreach (var item in Model)
+                        {*@
+                    <tr>
+                        <td style="text-align:center; width:15%; text-align:center !important">
+                            <input type="checkbox" id="chk" class="checkbox" />
+                            <input type="hidden" name="name" value="a" id="hdnTitleCode" />
+
+                        </td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="chk1" class="checkbox" />
+                            <input type="hidden" name="name" value="a" id="hdnTitleCode" />
+
+                        </td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+
+
+                    @*  }*@
+                    @*}*@
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+
+                <input type="button" class="btn btn-primary" value="Generate Loadsheet" onclick="GenerateLoadsheet()" />
+
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

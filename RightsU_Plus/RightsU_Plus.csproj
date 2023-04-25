@@ -231,6 +231,7 @@
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\LoadSheetController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -1354,7 +1355,7 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
-    <!-- <Content Include="Views\_ViewStart.cshtml" /> -->
+    <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Extended_Group\Index.cshtml" />
     <Content Include="Views\Extended_Group\_ExtendedGroupList.cshtml" />
     <Content Include="Views\Extended_Group\_AddEditViewExtdGrp.cshtml" />
@@ -1390,19 +1391,22 @@
     <Content Include="Views\BookingSheet\ImportedSheetView.cshtml" />
     <Content Include="Views\BookingSheet\_MovieSheetData.cshtml" />
     <Content Include="Views\BookingSheet\_ShowSheetData.cshtml" />
-    <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" />
-    <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" />
-    <Content Include="UploadFolder\BookingSheet\Sample.xlsx" />
+    <Content Include="Views\LoadSheet\Index.cshtml" />
+    <Content Include="Views\LoadSheet\_AddLoadSheet.cshtml" />
+    <Content Include="Views\LoadSheet\_LoadSheetList.cshtml" />
+    <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Sample.xlsx" /> -->
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1479,8 +1483,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Home.Master" />
-    <Content Include="Download\Title_Import_Sample.xlsx" />
-    <Content Include="Download\EpisodeTitle_Import.xlsx" />
+    <!-- <Content Include="Download\Title_Import_Sample.xlsx" /> -->
+    <!-- <Content Include="Download\EpisodeTitle_Import.xlsx" /> -->
     <Content Include="JS_Core\Acq_Deal_Gen.min.js.map">
       <DependentUpon>Acq_Deal_Gen.js</DependentUpon>
     </Content>

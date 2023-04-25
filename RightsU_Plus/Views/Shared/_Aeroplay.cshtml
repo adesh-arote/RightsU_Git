@@ -5,7 +5,7 @@
 <script>
     $(document).ready(function() {
         //$("#divAeroplay").load( "http://192.168.0.114/rightsopedia/#/login" );
-        alert("RU User: " +@ViewBag.UsersCode);
+        //alert("RU User: " +@ViewBag.UsersCode);
         var link = document.getElementById("objAeroplay");
         link.setAttribute('data', 'http://192.168.0.114/aeroplay/#/welcome?UserCode=' +@ViewBag.UsersCode );
       });
@@ -22,7 +22,7 @@
         </section>
     </div>*@
 <div class="modal_block modal_header">
-    <a class="close" onclick="ClosePopup()">
+    <a class="close" onclick="ClosePopup()" style="margin-top: -10px ">
         <span>X</span>
         <span class="sr-only">Close</span>
     </a>

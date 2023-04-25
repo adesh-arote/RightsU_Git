@@ -859,6 +859,11 @@
         function LoadAeroplay() {
             window.location.href = '@Url.Action("BindAeroplay", "Global")';
         }
+        function LoadBookingSheet() {
+            debugger;
+            window.location.href = '@Url.Action("Index", "BookingSheet")';
+        }
+
         function LoadAeroplayAjax(UsersCode) {
             debugger;
            
@@ -913,9 +918,9 @@
             <div class="navigation" onclick="RightmenuHide()">
                 <ul>
                     @*<li class="home_button" title="Home" data-placement="right">
-                            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
-                        </li>
-                        <li class="seperator"></li>*@
+            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+        </li>
+        <li class="seperator"></li>*@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
@@ -976,15 +981,18 @@
                             <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-globe" href="#"></a>
                             </li>
+                            <li title="BookingSheet" class="showhidetooltip menu_margin"  data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
+                            </li>
                             @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-calendar" href="#"></a>
-                                </li>
-                                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-phone" href="#"></a>
-                                </li>
-                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-tent" href="#"></a>
-                                </li>*@
+                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                </li>
+                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                </li>
+                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-tent" href="#"></a>
+                </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
@@ -1018,10 +1026,10 @@
                             }
 
                             @*{
-                                    <li title="Digital" data-placement="right">
-                                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
-                                    </li>
-                                }*@
+                    <li title="Digital" data-placement="right">
+                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                    </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
@@ -1036,11 +1044,11 @@
                                 </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
-                                {
-                                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
-                                       <a class="glyphicon glyphicon-tasks" href="#"></a>
-                                   </li>
-                                }*@
+                {
+                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                   </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
@@ -1054,11 +1062,11 @@
                                 <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
-                                {
-                                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
-                                        <a class="glyphicon glyphicon-open" href="#"></a>
-                                    </li>
-                                }*@
+                {
+                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                        <a class="glyphicon glyphicon-open" href="#"></a>
+                    </li>
+                }*@
 
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
@@ -1076,8 +1084,8 @@
                         }
                     }
                     @*<li title="Log Out" data-placement="right">
-                            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-                        </li>*@
+            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+        </li>*@
                 </ul>
             </div>
             <div class="header-nav ">
@@ -1429,7 +1437,7 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </div>
     </div>
-    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Aeroplaypopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:100%;padding-right:0px !important;margin-left:0px !important;">
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Aeroplaypopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:100%;padding-right:0px !important;margin-left:4px !important;position:absolute;top:0;width: 100%!important;">
         <div class="modal-dialog">
             <div class="modal-content clearfix">
                 <div class="form_fields acq" id="AeroplaypupupHtml">
