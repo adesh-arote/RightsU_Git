@@ -1,5 +1,4 @@
-﻿@model List<RightsU_Entities.AL_Purchase_Order>
-
+﻿@model List<RightsU_Entities.USPAL_GetPurchaseOrderList_Result>
 @using UTOFrameWork.FrameworkClasses
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -17,7 +16,7 @@
             <th style="width:15%">Booking Sheet No</th>
             <th style="width:12%">Created On</th>
             <th style="width:12%">Created By</th>
-            <th style="width: 10%;">Stauts</th>
+            <th style="width: 10%;">Status</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -28,13 +27,13 @@
             {
                 <tr>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Remarks)
+                        @Html.DisplayFor(modelItem => item.Vendor_Name)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.AL_Proposal_Code)
+                        @Html.DisplayFor(modelItem => item.Proposal_CY)
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Remarks)
+                        @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
                     </td>
                     <td style="text-align:center">
                         @item.Inserted_On.Value.ToString("dd MMM yyyy")
@@ -45,7 +44,8 @@
                                 string ActionBy = "";
                                 if (item.Inserted_By > 0 && item.Inserted_By != null)
                                 {
-                                    ActionBy = ((IEnumerable<RightsU_Entities.User>)ViewBag.UserCode).Where(a => a.Users_Code == item.Inserted_By).Select(b => b.First_Name + " " + b.Last_Name).FirstOrDefault();
+                                    ActionBy = ((IEnumerable<RightsU_Entities.User>
+                                        )ViewBag.UserCode).Where(a => a.Users_Code == item.Inserted_By).Select(b => b.First_Name + " " + b.Last_Name).FirstOrDefault();
                                 }
                                 @ActionBy
                             }
@@ -59,12 +59,12 @@
                         {
                             @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>*@
 
-                            <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="ViewPO('@item.AL_Purchase_Order_Code')"></a>
-                            <a title="Download ALL" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="DownloadAll('@item.AL_Purchase_Order_Code')"></a>
+                            <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code')"></a>
+                            <a title="Download All" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="DownloadAll('@item.AL_Purchase_Order_Code')"></a>
 
                             @*<a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>*@
                         }
-                        @if (item.Status != "C")
+                        @if (item.Status == "P")
                         {
                             <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }

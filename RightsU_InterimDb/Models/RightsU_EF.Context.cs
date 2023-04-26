@@ -5655,5 +5655,19 @@ namespace RightsU_InterimDb.Models
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetLoadsheetList_Result>("USPAL_GetLoadsheetList");
         }
+    
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet1(string loadsheetMonth)
+        {
+            var loadsheetMonthParameter = loadsheetMonth != null ?
+                new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
+                new ObjectParameter("LoadsheetMonth", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet1", loadsheetMonthParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList");
+        }
     }
 }

@@ -7,15 +7,23 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+
+    RightsU_Plus.Controllers.PoDetails objPoDetails = new RightsU_Plus.Controllers.PoDetails();
+    if (Session["objPoD"] != null)
+    {
+        objPoDetails = (RightsU_Plus.Controllers.PoDetails)Session["objPoD"];
+    }
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", TabName = "MV";
 
     var URL_SearchPOList = '@Url.Action("SearchPOList", "PurchaseOrder")';
     var URL_BindPOList = '@Url.Action("BindPOList", "PurchaseOrder")';
-    
+    var URL_BindPODetails = '@Url.Action("BindPODetails", "PurchaseOrder")';
+    var URL_BindTabData = '@Url.Action("BindTabData", "PurchaseOrder")';
+
     $(document).ready(function () {
         debugger;
         if (LayoutDirection_G == "RTL") {
@@ -204,6 +212,9 @@
                 sortType: sort_Type
             }),
             success: function (result) {
+                debugger;
+                $('#PodList').hide();
+                $('#PoList').show();
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
 
@@ -214,64 +225,207 @@
             }
         });
     }
-   
+
+    function BindPODetails(POC) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPODetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "html",
+            data: JSON.stringify({
+                Purchase_Order_Code: POC
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    $('#PoList').hide();
+                    $('#PodList').show();
+                    //$('#divBindPoDetails').empty();
+                    //$('#divBindPoDetails').html(result);
+                    OpenTab(TabName, POC);
+                    addNumeric();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OpenTab(NewTab,PoCode) {
+        debugger;
+        if (NewTab == "MV") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabMovie").addClass('active');
+            TabName = NewTab;
+        }
+        else if (NewTab == "SH") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabShow").addClass('active');
+            TabName = NewTab;
+        }
+        BindTabData(TabName , PoCode);
+    }
+
+    function BindTabData(TabName, PoCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindTabData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TabName: TabName,
+                Purchase_Order_Code: PoCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "E") {
+                    showAlert("E", result.message)
+                }
+                else {
+                    $('#divBindTab').empty();
+                    $('#divBindTab').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
 </script>
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
-            <div class="">
-                <div class="title_block dotted_border clearfix">
-                    <h2 class="pull-left">
-                        Purchase Order
-                    </h2>
-                </div>
-                <div class="search_area" style="background-color: #eee; padding:5px;">
-                    <table class="table">
-                        <tr>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
-                                Search :
-                            </td>
-                            <td style="width:10%;vertical-align: middle;" align="left">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" autocomplete="off" />
-                            </td>
-                            <td style="width:10%;vertical-align: middle;">
-                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
-                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
-                            </td>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
-                                <div id="txtSort">@objMessageKey.SortBy:</div>
-                            </td>
-                            <td style="width:10%; text-align:left;">
-                                <div id="ddlSort">
-                                    @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="grid_area">
-                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
-                    <div class="paging_area clearfix">
-                        <span class="pull-left">Total Records: </span>
-                        <span class="pull-left" id="lblRecordCount"></span>
-                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
-                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
-                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
-
-                        <div id="Pagination" class="pagination">
-                        </div>
-                        <span class="pull-right">
-                            Page Size:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
-                        </span>
+            <div id="PoList">
+                <div class="">
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            Purchase Order
+                        </h2>
                     </div>
-                    <div class="tab-content clearfix table-wrapper scale_table_container">
-                        <div class="scale_table_block">
-                            <input type="hidden" id="hdnAction" value="" />
-                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
-                            <div id="divBindList" class="deal clearfix">
+                    <div class="search_area" style="background-color: #eee; padding:5px;">
+                        <table class="table">
+                            <tr>
+                                <td style="width:3%;vertical-align: middle;text-align:center;">
+                                    Search :
+                                </td>
+                                <td style="width:10%;vertical-align: middle;" align="left">
+                                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" autocomplete="off" />
+                                </td>
+                                <td style="width:10%;vertical-align: middle;">
+                                    <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                    <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                                </td>
+                                <td style="width:3%;vertical-align: middle;text-align:center;">
+                                    <div id="txtSort">@objMessageKey.SortBy:</div>
+                                </td>
+                                <td style="width:10%; text-align:left;">
+                                    <div id="ddlSort">
+                                        @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="grid_area">
+                        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left">Total Records: </span>
+                            <span class="pull-left" id="lblRecordCount"></span>
+                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
 
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                Page Size:
+                                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                            </span>
+                        </div>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block">
+                                <input type="hidden" id="hdnAction" value="" />
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                <div id="divBindList" class="deal clearfix">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="PodList" style="display:none;">
+                <div id="divBindPoDetails" class="deal clearfix">
+                    <div class="acq main_col">
+                        <div class="top_area">
+                            <div class="title_block clearfix">
+                                <h2 class="pull-left">
+                                    Purchase Order Details
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="search_area" style="background-color: #eee; padding:5px;">
+                            <table class="table">
+                                <tr>
+                                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                                        <b>Client Name :</b>
+                                    </td>
+                                    <td style="width:10%; text-align:left;">
+                                        <span>@objPoDetails.Client_Name</span>
+                                    </td>
+                                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                                        <b>Booking Sheet No :</b>
+                                    </td>
+                                    <td style="width:10%; text-align:left;">
+                                        <span>@objPoDetails.Booking_sheet_No</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                                        <b>Proposal - CY :</b>
+                                    </td>
+                                    <td style="width:10%; text-align:left;">
+                                        <span>@objPoDetails.Proposal_Cy</span>
+                                    </td>
+                                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                                        <b>Created On :</b>
+                                    </td>
+                                    <td style="width:10%; text-align:left;">
+                                        <span>@objPoDetails.Created_On</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <div class="grid_area">
+                                <div class="navigation_tabs">
+                                    <div class="tabbable" id="divAlternateConfig">
+                                        <input type="hidden" id="hdnTabName" value="TA" />
+                                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                            <li class="active" id="tabMovie">
+                                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
+                                            </li>
+                                            <li id="tabShow">
+                                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content clearfix table-wrapper scale_table_container">
+                                <div class="scale_table_block">
+                                    <div id="divBindTab" class="deal clearfix">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -280,13 +434,3 @@
         </div>
     </section>
 </div>
-
-@*<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%;">
-        <div class="modal-dialog">
-            <div class="modal-content clearfix">
-                <div class="form_fields acq" id="pupupHtml">
-
-                </div>
-            </div>
-        </div>
-    </div>*@

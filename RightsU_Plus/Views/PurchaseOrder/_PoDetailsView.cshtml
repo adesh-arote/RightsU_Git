@@ -1,0 +1,87 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    RightsU_Plus.Controllers.PoDetails objPoDetails = new RightsU_Plus.Controllers.PoDetails();
+    if (Session["objPoD"] != null)
+    {
+        objPoDetails = (RightsU_Plus.Controllers.PoDetails)Session["objPoD"];
+    }
+}
+
+
+<div>
+    <div class="acq main_col">
+        <div class="top_area">
+            <div class="title_block clearfix">
+                <h2 class="pull-left">
+                    Purchase Order Details
+                </h2>
+            </div>
+        </div>
+        <div class="search_area" style="background-color: #eee; padding:5px;">
+            <table class="table">
+                <tr>
+                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                        <b>Client Name :</b>
+                    </td>
+                    <td style="width:10%; text-align:left;">
+                        <span>@objPoDetails.Client_Name</span>
+                    </td>
+                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                        <b>Booking Sheet No :</b>
+                    </td>
+                    <td style="width:10%; text-align:left;">
+                        <span>@objPoDetails.Booking_sheet_No</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                        <b>Proposal - CY :</b>
+                    </td>
+                    <td style="width:10%; text-align:left;">
+                        <span>@objPoDetails.Proposal_Cy</span>
+                    </td>
+                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                        <b>Created On :</b>
+                    </td>
+                    <td style="width:10%; text-align:left;">
+                        <span>@objPoDetails.Created_On</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable" id="divAlternateConfig">
+                        <input type="hidden" id="hdnTabName" value="TA" />
+                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                            <li class="active" id="tabMovie">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
+                            </li>
+                            <li id="tabShow">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
+                    <input type="hidden" id="hdnAction" value="" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                    <div id="divBindTab" class="deal clearfix">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

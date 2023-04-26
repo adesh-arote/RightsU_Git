@@ -2,6 +2,7 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,24 +13,49 @@ namespace RightsU_Plus.Controllers
     {
         #region --- Properties ---
 
-        private List<RightsU_Entities.AL_Purchase_Order> lstPO
+        //private List<RightsU_Entities.AL_Purchase_Order> lstPO
+        //{
+        //    get
+        //    {
+        //        if (Session["lstPO"] == null)
+        //            Session["lstPO"] = new List<RightsU_Entities.AL_Purchase_Order>();
+        //        return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPO"];
+        //    }
+        //    set { Session["lstPO"] = value; }
+        //}
+
+        //List<RightsU_Entities.AL_Purchase_Order> lstPOSearched
+        //{
+        //    get
+        //    {
+        //        if (Session["lstPOSearched"] == null)
+        //            Session["lstPOSearched"] = new List<RightsU_Entities.AL_Purchase_Order>();
+        //        return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPOSearched"];
+        //    }
+        //    set
+        //    {
+        //        Session["lstPOSearched"] = value;
+        //    }
+        //}
+
+        private List<USPAL_GetPurchaseOrderList_Result> lstPO
         {
             get
             {
                 if (Session["lstPO"] == null)
-                    Session["lstPO"] = new List<RightsU_Entities.AL_Purchase_Order>();
-                return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPO"];
+                    Session["lstPO"] = new List<USPAL_GetPurchaseOrderList_Result>();
+                return (List<USPAL_GetPurchaseOrderList_Result>)Session["lstPO"];
             }
             set { Session["lstPO"] = value; }
         }
 
-        List<RightsU_Entities.AL_Purchase_Order> lstPOSearched
+        List<USPAL_GetPurchaseOrderList_Result> lstPOSearched
         {
             get
             {
                 if (Session["lstPOSearched"] == null)
-                    Session["lstPOSearched"] = new List<RightsU_Entities.AL_Purchase_Order>();
-                return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPOSearched"];
+                    Session["lstPOSearched"] = new List<USPAL_GetPurchaseOrderList_Result>();
+                return (List<USPAL_GetPurchaseOrderList_Result>)Session["lstPOSearched"];
             }
             set
             {
@@ -48,9 +74,85 @@ namespace RightsU_Plus.Controllers
             set { Session["objPO_Service"] = value; }
         }
 
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private List<RightsU_Entities.AL_Purchase_Order_Details> lstMovieTabData
+        {
+            get
+            {
+                if (Session["lstMovieTabData"] == null)
+                    Session["lstMovieTabData"] = new List<RightsU_Entities.AL_Purchase_Order_Details>();
+                return (List<RightsU_Entities.AL_Purchase_Order_Details>)Session["lstMovieTabData"];
+            }
+            set { Session["lstMovieTabData"] = value; }
+        }
+
+        private List<RightsU_Entities.AL_Purchase_Order_Details> lstShowTabData
+        {
+            get
+            {
+                if (Session["lstShowTabData"] == null)
+                    Session["lstShowTabData"] = new List<RightsU_Entities.AL_Purchase_Order_Details>();
+                return (List<RightsU_Entities.AL_Purchase_Order_Details>)Session["lstShowTabData"];
+            }
+            set { Session["lstShowTabData"] = value; }
+        }
+
+        List<RightsU_Entities.AL_Purchase_Order_Details> lstMovieDataSearched
+        {
+            get
+            {
+                if (Session["lstMovieDataSearched"] == null)
+                    Session["lstMovieDataSearched"] = new List<RightsU_Entities.AL_Purchase_Order_Details>();
+                return (List<RightsU_Entities.AL_Purchase_Order_Details>)Session["lstMovieDataSearched"];
+            }
+            set
+            {
+                Session["lstMovieDataSearched"] = value;
+            }
+        }
+
+        List<RightsU_Entities.AL_Purchase_Order_Details> lstShowDataSearched
+        {
+            get
+            {
+                if (Session["lstShowDataSearched"] == null)
+                    Session["lstShowDataSearched"] = new List<RightsU_Entities.AL_Purchase_Order_Details>();
+                return (List<RightsU_Entities.AL_Purchase_Order_Details>)Session["lstShowDataSearched"];
+            }
+            set
+            {
+                Session["lstShowDataSearched"] = value;
+            }
+        }
+
+        private AL_Purchase_Order_Details_Service objPoDetailsData_Service
+        {
+            get
+            {
+                if (Session["objPoDetailsData_Service"] == null)
+                    Session["objPoDetailsData_Service"] = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+                return (AL_Purchase_Order_Details_Service)Session["objPoDetailsData_Service"];
+            }
+            set { Session["objPoDetailsData_Service"] = value; }
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private PoDetails objPoD
+        {
+            get
+            {
+                if (Session["objPoD"] == null)
+                    Session["objPoD"] = new PoDetails();
+                return (PoDetails)Session["objPoD"];
+            }
+            set { Session["objPoD"] = value; }
+        }
+
         #endregion
 
-        //-----------------------------------------------------POPaging---------------------------------------------------------------------------------------
+        //-----------------------------------------------------POPaging--------------------------------------------------------------------------------------
 
         public ActionResult Index()
         {
@@ -72,13 +174,14 @@ namespace RightsU_Plus.Controllers
 
         private void POData()
         {
-            lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
-            //lstBooking_Sheet_Searched = lstBooking_Sheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().ToList();
+            //lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
+            lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().ToList();
         }
 
         public ActionResult BindPOList(int pageNo, int recordPerPage, string sortType)
         {
-            List<AL_Purchase_Order> lst = new List<AL_Purchase_Order>();
+            List<USPAL_GetPurchaseOrderList_Result> lst = new List<USPAL_GetPurchaseOrderList_Result>();
+            //List<AL_Purchase_Order> lst = new List<AL_Purchase_Order>();
             Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
@@ -102,6 +205,8 @@ namespace RightsU_Plus.Controllers
 
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
+
+
 
             return PartialView("_PurchaseOrderList", lst);
         }
@@ -131,7 +236,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchPOList(string searchText)
         {
-            if (!string.IsNullOrEmpty(searchText) )
+            if (!string.IsNullOrEmpty(searchText))
             {
                 lstPOSearched = lstPO.Where(w => w.Remarks != null && w.Remarks.ToUpper().Contains(searchText.ToUpper())).ToList();
             }
@@ -145,5 +250,146 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
+        public JsonResult BindPODetails(int Purchase_Order_Code)
+        {          
+            USPAL_GetPurchaseOrderList_Result objPO = new USPAL_GetPurchaseOrderList_Result();
+            objPO = lstPO.Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code).FirstOrDefault();
+
+            objPoD.Client_Name = objPO.Vendor_Name;
+            objPoD.Booking_sheet_No = objPO.Booking_Sheet_No;
+            objPoD.Proposal_Cy = objPO.Proposal_CY;
+            objPoD.Created_On = Convert.ToDateTime(objPO.Inserted_On);
+            objPoD.Purchase_Order_Code = objPO.AL_Purchase_Order_Code;
+
+            MovieTabData();
+            ShowTabData();
+
+            var obj = new
+            {
+                Status = "S",
+            };
+            return Json(obj);
+        }
+
+        private void MovieTabData()
+        {
+            lstMovieDataSearched = lstMovieTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => w.Title_Content_Code == 1).ToList();
+        }
+
+        private void ShowTabData()
+        {
+            lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => w.Title_Content_Code != 1).ToList();
+        }
+
+        public ActionResult BindTabData(string TabName, int Purchase_Order_Code)
+        {
+            string message = "";
+            int RecordCount = 0;
+            List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
+
+            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            ViewBag.ClientCode = lstVendors;
+
+            Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+            List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
+            ViewBag.TitleCode = lstTitles;
+
+            if (TabName == "MV")
+            {
+                try
+                {
+                    lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                    int Rcount = lstTabData.Count();
+
+                    RecordCount = Rcount;
+                    if (RecordCount > 0)
+                    {
+                        lst = lstTabData;
+                        DataTable dt = ToDataTable(lst);
+                    }
+                    else
+                    {
+                        lst = lstMovieDataSearched;
+                        DataTable dt = ToDataTable(lst);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                }
+                return PartialView("_MovieTabDataView", lst);
+            }
+            else if(TabName == "SH")
+            {
+                try
+                {
+                    lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                    int Rcount = lstTabData.Count();
+
+                    RecordCount = Rcount;
+                    if (RecordCount > 0)
+                    {
+                        lst = lstTabData;
+
+                        DataTable dt = ToDataTable(lst);
+                    }
+                    else
+                    {
+                        lst = lstShowDataSearched;
+                        DataTable dt = ToDataTable(lst);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    message = ex.Message;
+                }
+                return PartialView("_ShowTabDataView", lst);
+            }
+
+            var obj = new
+            {
+                Status = "E",
+                message
+            };
+            return Json(obj);
+        }
+
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            DataTable dataTable = new DataTable(typeof(T).Name);
+
+            //Get all the properties
+            System.Reflection.PropertyInfo[] Props = typeof(T).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
+            foreach (System.Reflection.PropertyInfo prop in Props)
+            {
+                //Defining type of data column gives proper data table 
+                var type = (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) ? Nullable.GetUnderlyingType(prop.PropertyType) : prop.PropertyType);
+                //Setting column names as Property names
+                dataTable.Columns.Add(prop.Name, type);
+            }
+            foreach (T item in items)
+            {
+                var values = new object[Props.Length];
+                for (int i = 0; i < Props.Length; i++)
+                {
+                    //inserting property values to datatable rows
+                    values[i] = Props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+            //put a breakpoint here and check datatable
+            return dataTable;
+        }
+    }
+
+    public class PoDetails
+    {
+        public string Client_Name { get; set; }
+        public string Booking_sheet_No { get; set; }
+        public string Proposal_Cy { get; set; }
+        public DateTime Created_On { get; set; }
+        public int Purchase_Order_Code { get; set; }
     }
 }

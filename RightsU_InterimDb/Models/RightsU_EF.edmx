@@ -3354,9 +3354,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Validations" Type="varchar" MaxLength="50" />
           <Property Name="Additional_Condition" Type="varchar(max)" />
           <Property Name="Inter_Group_Name" Type="varchar" MaxLength="50" />
-          <Property Name="Display_Name" Type="varchar" MaxLength="100" />
-          <Property Name="Target_Table" Type="varchar" MaxLength="100" />
-          <Property Name="Target_Column" Type="varchar" MaxLength="100" />
+          <Property Name="Display_Name" Type="varchar" MaxLength="100" />        
           <Property Name="Allow_Import" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -15459,6 +15457,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetLoadsheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetPurchaseOrderList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_Title_Content_Gen_From_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TitleCode" Type="int" Mode="In" />
@@ -23226,8 +23225,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
           <FunctionImport Name="USPAL_GetLoadsheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetLoadsheetList_Result)" />
           <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet1" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
-            <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+          <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
           </FunctionImport>
+          <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -38869,9 +38869,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Inter_Group_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Display_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Allow_Import" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Target_Table" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Target_Column" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />        
         </EntityType>
         <EntityType Name="Title_Episode_Details">
           <Key>
@@ -39773,6 +39771,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Status" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="InsertedBy" Nullable="false" MaxLength="5" />
           <Property Type="DateTime" Name="Inserted_On" Nullable="false" Precision="23" />
+        </ComplexType>
+        <ComplexType Name="USPAL_GetPurchaseOrderList_Result">
+          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
+          <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="86" />
+          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="Inserted_On" Nullable="true" Precision="23" />
+          <Property Type="Int32" Name="Inserted_By" Nullable="true" />
+          <Property Type="String" Name="Status" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="AL_Purchase_Order_Code" Nullable="false" />
+          <Property Type="Int32" Name="AL_Booking_Sheet_Code" Nullable="true" />
+          <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="4000" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -49592,8 +49603,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Group_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group_Config">
               <MappingFragment StoreEntitySet="Extended_Group_Config">
-                <ScalarProperty Name="Target_Column" ColumnName="Target_Column" />
-                <ScalarProperty Name="Target_Table" ColumnName="Target_Table" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Allow_Import" ColumnName="Allow_Import" />
                 <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
@@ -50142,6 +50151,23 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Proposal_Cycle" ColumnName="Proposal_Cycle" />
                 <ScalarProperty Name="Cycle" ColumnName="Cycle" />
                 <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetPurchaseOrderList" FunctionName="RightsU_NeoModel.Store.USPAL_GetPurchaseOrderList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result">
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
+                <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="AL_Purchase_Order_Code" ColumnName="AL_Purchase_Order_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Proposal_Code" ColumnName="AL_Proposal_Code" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

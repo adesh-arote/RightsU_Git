@@ -1411,6 +1411,9 @@
     <Content Include="Views\LoadSheet\_AddLoadSheet.cshtml" />
     <Content Include="Views\LoadSheet\_LoadSheetList.cshtml" />
     <Content Include="Views\LoadSheet\_BookingsheetList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_MovieTabDataView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PoDetailsView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_ShowTabDataView.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
