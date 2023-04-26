@@ -3354,7 +3354,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Validations" Type="varchar" MaxLength="50" />
           <Property Name="Additional_Condition" Type="varchar(max)" />
           <Property Name="Inter_Group_Name" Type="varchar" MaxLength="50" />
-          <Property Name="Display_Name" Type="varchar" MaxLength="100" />        
+          <Property Name="Display_Name" Type="varchar" MaxLength="100" />
           <Property Name="Allow_Import" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
@@ -38869,7 +38869,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Inter_Group_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Display_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Allow_Import" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />        
+          <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Title_Episode_Details">
           <Key>
@@ -39369,16 +39369,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
-          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="1000" />
           <Property Type="Int32" Name="Movie_Content_Count" Nullable="true" />
           <Property Type="Int32" Name="Show_Content_Count" Nullable="true" />
           <Property Type="Int32" Name="Last_Action_By" Nullable="true" />
           <Property Type="DateTime" Name="Last_Updated_Time" Nullable="true" Precision="23" />
           <Property Type="String" Name="Record_Status" Nullable="true" MaxLength="5" />
-          <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="100" />
-          <Property Type="String" Name="Proposal___CY" Nullable="true" MaxLength="86" />
-		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="1000" />
+		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Validations" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Cell_Status" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="AllowPO" Nullable="true" MaxLength="5" />
         </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
@@ -49818,8 +49821,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
                 <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
-                <ScalarProperty Name="Proposal___CY" ColumnName="Proposal - CY" />
 				<ScalarProperty Name="Cycle" ColumnName="Cycle" />
+                <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
+                <ScalarProperty Name="Validations" ColumnName="Validations" />
+                <ScalarProperty Name="Cell_Status" ColumnName="Cell_Status" />
+                <ScalarProperty Name="AllowPO" ColumnName="AllowPO" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

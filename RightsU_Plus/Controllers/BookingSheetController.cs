@@ -324,6 +324,7 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "ND")
                     lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
+            DataTable dt = ToDataTable(lst);
 
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
             ViewBag.ClientCode = lstVendors;
@@ -481,7 +482,7 @@ namespace RightsU_Plus.Controllers
             List<AL_Booking_Sheet_Details> lstBKSDetails = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
 
             string ClientName = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Vendor_Name).FirstOrDefault();
-            string Proposal_Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Proposal___CY).FirstOrDefault();
+            string Proposal_Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Proposal_CY).FirstOrDefault();
             string Cycle = lstBooking_Sheet_Searched.Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Cycle).FirstOrDefault();
 
             DateTime? maxDate = lstBKSDetails.Select(s => s.Action_Date).Max();
