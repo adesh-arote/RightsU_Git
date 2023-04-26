@@ -23,6 +23,8 @@
     var URL_BindPOList = '@Url.Action("BindPOList", "PurchaseOrder")';
     var URL_BindPODetails = '@Url.Action("BindPODetails", "PurchaseOrder")';
     var URL_BindTabData = '@Url.Action("BindTabData", "PurchaseOrder")';
+    var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
+    var URL_BindShowTabData = '@Url.Action("BindShowTabData", "PurchaseOrder")';
 
     $(document).ready(function () {
         debugger;
@@ -213,8 +215,8 @@
             }),
             success: function (result) {
                 debugger;
-                $('#PodList').hide();
-                $('#PoList').show();
+                //$('#PodList').hide();
+                //$('#PoList').show();
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
 
@@ -240,14 +242,20 @@
             }),
             success: function (result) {
                 debugger;
-                if (result.Status == "S") {
-                    $('#PoList').hide();
-                    $('#PodList').show();
-                    //$('#divBindPoDetails').empty();
-                    //$('#divBindPoDetails').html(result);
-                    OpenTab(TabName, POC);
-                    addNumeric();
-                }
+                //if (result.Status == "S") {
+                //    //$('#PoList').hide();
+                //    //$('#PodList').show();
+                //    //$('#divBindPoDetails').empty();
+                //    //$('#divBindPoDetails').html(result);
+                //    OpenTab(TabName, POC);
+                //    addNumeric();
+                //}
+                $('#PoList').hide();
+                $('#PodList').show();
+                $('#divBindPoDetails').empty();
+                $('#divBindPoDetails').html(result);
+                OpenTab(TabName, POC);
+                
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -267,7 +275,13 @@
             $("#tabShow").addClass('active');
             TabName = NewTab;
         }
-        BindTabData(TabName , PoCode);
+        //BindTabData(TabName , PoCode);
+        if (TabName == "MV") {
+            BindMovieTabData(PoCode)
+        }
+        if (TabName == "SH") {
+            BindShowTabData(PoCode)
+        }
     }
 
     function BindTabData(TabName, PoCode) {
@@ -291,6 +305,50 @@
                     $('#divBindTab').empty();
                     $('#divBindTab').html(result);
                 }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindMovieTabData(PoCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindMovieTabData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Purchase_Order_Code: PoCode
+            }),
+            success: function (result) {
+                debugger;
+                $('#divBindTab').empty();
+                $('#divBindTab').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindShowTabData(PoCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindShowTabData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Purchase_Order_Code: PoCode
+            }),
+            success: function (result) {
+                debugger;
+                $('#divBindTab').empty();
+                $('#divBindTab').html(result);
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -355,7 +413,7 @@
                                 <input type="hidden" id="hdnAction" value="" />
                                 <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                                 <div id="divBindList" class="deal clearfix">
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -364,7 +422,7 @@
             </div>
             <div id="PodList" style="display:none;">
                 <div id="divBindPoDetails" class="deal clearfix">
-                    <div class="acq main_col">
+                    @*<div class="acq main_col">
                         <div class="top_area">
                             <div class="title_block clearfix">
                                 <h2 class="pull-left">
@@ -428,7 +486,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>*@
                 </div>
             </div>
         </div>

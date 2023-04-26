@@ -916,6 +916,16 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------------------PurchaseOrder--------------------------------------------------------------------
 
+        public ActionResult RemarkPopUp(int Booking_Sheet_Code, int Proposal_Code)
+        {         
+            string InputArea = "";
+
+            InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
+                "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code+ "," + Proposal_Code + ")\"></td></tr>";
+            
+         return Json(InputArea);
+        }
+
         public JsonResult GeneratePO(int BookingSheetCode, int ProposalCode)
         {
             string Status = "";

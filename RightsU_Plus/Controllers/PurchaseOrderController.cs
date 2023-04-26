@@ -206,8 +206,6 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
 
-
-
             return PartialView("_PurchaseOrderList", lst);
         }
 
@@ -251,8 +249,8 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult BindPODetails(int Purchase_Order_Code)
-        {          
+        public ActionResult BindPODetails(int Purchase_Order_Code)
+        {
             USPAL_GetPurchaseOrderList_Result objPO = new USPAL_GetPurchaseOrderList_Result();
             objPO = lstPO.Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code).FirstOrDefault();
 
@@ -265,11 +263,7 @@ namespace RightsU_Plus.Controllers
             MovieTabData();
             ShowTabData();
 
-            var obj = new
-            {
-                Status = "S",
-            };
-            return Json(obj);
+            return PartialView("_PoDetailsView");
         }
 
         private void MovieTabData()
@@ -282,7 +276,7 @@ namespace RightsU_Plus.Controllers
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => w.Title_Content_Code != 1).ToList();
         }
 
-        public ActionResult BindTabData(string TabName, int Purchase_Order_Code)
+        public ActionResult BindMovieTabData(int Purchase_Order_Code)
         {
             string message = "";
             int RecordCount = 0;
@@ -296,64 +290,67 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
             ViewBag.TitleCode = lstTitles;
 
-            if (TabName == "MV")
+            try
             {
-                try
-                {
-                    lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-                    int Rcount = lstTabData.Count();
+                lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                int Rcount = lstTabData.Count();
 
-                    RecordCount = Rcount;
-                    if (RecordCount > 0)
-                    {
-                        lst = lstTabData;
-                        DataTable dt = ToDataTable(lst);
-                    }
-                    else
-                    {
-                        lst = lstMovieDataSearched;
-                        DataTable dt = ToDataTable(lst);
-                    }
-                }
-                catch (Exception ex)
+                RecordCount = Rcount;
+                if (RecordCount > 0)
                 {
-                    message = ex.Message;
+                    lst = lstTabData;
+                    DataTable dt = ToDataTable(lst);
                 }
-                return PartialView("_MovieTabDataView", lst);
+                else
+                {
+                    lst = lstMovieDataSearched;
+                    DataTable dt = ToDataTable(lst);
+                }
             }
-            else if(TabName == "SH")
+            catch (Exception ex)
             {
-                try
-                {
-                    lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-                    int Rcount = lstTabData.Count();
-
-                    RecordCount = Rcount;
-                    if (RecordCount > 0)
-                    {
-                        lst = lstTabData;
-
-                        DataTable dt = ToDataTable(lst);
-                    }
-                    else
-                    {
-                        lst = lstShowDataSearched;
-                        DataTable dt = ToDataTable(lst);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    message = ex.Message;
-                }
-                return PartialView("_ShowTabDataView", lst);
+                message = ex.Message;
             }
+            return PartialView("_MovieTabDataView", lst);
+        }
 
-            var obj = new
+        public ActionResult BindShowTabData(string TabName, int Purchase_Order_Code)
+        {
+            string message = "";
+            int RecordCount = 0;
+            List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
+
+            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            ViewBag.ClientCode = lstVendors;
+
+            Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+            List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
+            ViewBag.TitleCode = lstTitles;
+
+            try
             {
-                Status = "E",
-                message
-            };
-            return Json(obj);
+                lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                int Rcount = lstTabData.Count();
+
+                RecordCount = Rcount;
+                if (RecordCount > 0)
+                {
+                    lst = lstTabData;
+
+                    DataTable dt = ToDataTable(lst);
+                }
+                else
+                {
+                    lst = lstShowDataSearched;
+                    DataTable dt = ToDataTable(lst);
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+            return PartialView("_ShowTabDataView", lst);
         }
 
         public static DataTable ToDataTable<T>(List<T> items)
@@ -393,3 +390,79 @@ namespace RightsU_Plus.Controllers
         public int Purchase_Order_Code { get; set; }
     }
 }
+
+#region
+//public ActionResult BindTabData(string TabName, int Purchase_Order_Code)
+//{
+//    string message = "";
+//    int RecordCount = 0;
+//    List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
+
+//    Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+//    List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+//    ViewBag.ClientCode = lstVendors;
+
+//    Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+//    List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
+//    ViewBag.TitleCode = lstTitles;
+
+//    if (TabName == "MV")
+//    {
+//        try
+//        {
+//            lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+//            int Rcount = lstTabData.Count();
+
+//            RecordCount = Rcount;
+//            if (RecordCount > 0)
+//            {
+//                lst = lstTabData;
+//                DataTable dt = ToDataTable(lst);
+//            }
+//            else
+//            {
+//                lst = lstMovieDataSearched;
+//                DataTable dt = ToDataTable(lst);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            message = ex.Message;
+//        }
+//        return PartialView("_MovieTabDataView", lst);
+//    }
+//    else if (TabName == "SH")
+//    {
+//        try
+//        {
+//            lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+//            int Rcount = lstTabData.Count();
+
+//            RecordCount = Rcount;
+//            if (RecordCount > 0)
+//            {
+//                lst = lstTabData;
+
+//                DataTable dt = ToDataTable(lst);
+//            }
+//            else
+//            {
+//                lst = lstShowDataSearched;
+//                DataTable dt = ToDataTable(lst);
+//            }
+//        }
+//        catch (Exception ex)
+//        {
+//            message = ex.Message;
+//        }
+//        return PartialView("_ShowTabDataView", lst);
+//    }
+
+//    var obj = new
+//    {
+//        Status = "E",
+//        message
+//    };
+//    return Json(obj);
+//}
+#endregion

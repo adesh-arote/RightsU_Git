@@ -35,11 +35,11 @@
                     <td style="text-align:center">
                         @if (item.IsMinimum == "Y")
                         {
-                            <input type="button" title="Export" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
+                            <input type="button" title="Generate Booking Sheet" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" />
                         }
                         else if (item.IsMinimum == "N")
                         {
-                            <input type="button" title="Export" class="btn btn-primary" value="Generate Booking Sheet" style="cursor: pointer;" onclick="GenerateBookingSheet(@item.AL_Recommendation_Code)" disabled/>
+                            <input type="button" title="Generate Booking Sheet" class="btn btn-primary disabled" value="Generate Booking Sheet" style="cursor: not-allowed;" />
                         }
                     </td>
                 </tr>

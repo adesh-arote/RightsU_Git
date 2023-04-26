@@ -17,6 +17,7 @@
     var URL_PendingRecommendationsList = '@Url.Action("PendingRecommendationsList", "BookingSheet")';
     var URL_SearchBookingSheet = '@Url.Action("SearchOnList", "BookingSheet")';
     var URL_GenerateBookingSheet = '@Url.Action("GenerateBookingSheet", "BookingSheet")';
+    var URL_RemarkPopup = '@Url.Action("RemarkPopUp", "BookingSheet")';
     var URL_GeneratePO = '@Url.Action("GeneratePO", "BookingSheet")';
     //var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
 
@@ -73,7 +74,7 @@
         debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-        
+
         var searchText = $('#searchCommon').val();
 
         if (searchText == '') {
@@ -142,7 +143,7 @@
 
         var cnt = pageNo * recordPerPage;
         if (cnt >= recordCount) {
-            var v1 = parseInt(recordCount / recordPerPage);      
+            var v1 = parseInt(recordCount / recordPerPage);
             if ((v1 * recordPerPage) == recordCount)
                 pageNo = v1;
             else
@@ -185,7 +186,7 @@
         }
         else {
             IsCall = 'Y';
-        }          
+        }
     }
 
     function txtPageSize_OnChange() {
@@ -200,7 +201,7 @@
         if (TabName == "PR") {
             PendingRecommendationsList();
         }
-        
+
         SetPaging();
     }
 
@@ -214,11 +215,6 @@
         }
         $('#txtPageSize').attr('required', true)
         return false
-    }
-
-    function pageBinding() {
-        BindbookingSheetList();
-        SetPaging();
     }
 
     function BindbookingSheetList() {
@@ -324,6 +320,12 @@
 
     function GeneratePO(BkCode, PrCode) {
         debugger;
+        var Remark = $("#Remark").val();
+        if (Remark == "") {
+            $('#Remark').val('').attr('required', true)
+            return false;
+        }
+
         $.ajax({
             type: "POST",
             url: URL_GeneratePO,
@@ -347,31 +349,38 @@
         })
     }
 
-    //function DownloadLink(filename) {
-    //    debugger;
-    //    window.location.href = "/Download/" + filename;
-    //}
+    function RemarkPopup(BSCode, PCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RemarkPopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Booking_Sheet_Code: BSCode,
+                Proposal_Code: PCode
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#RemarkPopupTbl').empty();
+                $('#RemarkPopupTbl').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
 
-    //function DownloadLink(BkSheetCode) {
-    //    debugger;
-    //    $.ajax({
-    //        type: "POST",
-    //        url: URL_GetFileName,
-    //        traditional: true,
-    //        enctype: 'multipart/form-data',
-    //        contentType: "application/json; charset=utf-8",
-    //        data: JSON.stringify({
-    //            BookingSheetCode: BkSheetCode
-    //        }),
-    //        success: function (Filename) {
-    //            debugger;
-    //            window.location.href = "/Download/" + Filename;
-    //            SearchOnList("", TabName);            
-    //        }
-    //    })    
-    //}
+    function ClosePopup() {
+        debugger;
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
 
-    
+        BindbookingSheetList();
+    }
+
 </script>
 
 <script>
@@ -392,7 +401,7 @@
             }),
             success: function (result) {
                 debugger;
-                
+
                 window.location.href = URL_ImportMasterView;
             },
             error: function (result) {
@@ -482,16 +491,60 @@
     </section>
 </div>
 
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="modal_block modal_header">
+                <a class="close" onclick="ClosePopup()">
+                    <span>X</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>Generate Purchase Order</h2>
+            </div>
 
+            <div class="modal_block">
+                <table class="add_title_popup">
+                    <tbody id="RemarkPopupTbl"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
 @*<td style="width:3%; vertical-align: middle;">
-    @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
-</td>
+        @Html.DropDownList("lstVendors", ViewBag.DdlClient as SelectList, "--Please Select--", new { @id = "searchCommon", @class = "form_input chosen-select" })
+    </td>
 
-<div class="right_nav pull-right">
-    <ul>
-        <li id="btnUser">
-            @Html.ActionLink("Create", "Create", "", new { @class = "btn btn-primary" })
-        </li>
-    </ul>
-</div>*@
+    <div class="right_nav pull-right">
+        <ul>
+            <li id="btnUser">
+                @Html.ActionLink("Create", "Create", "", new { @class = "btn btn-primary" })
+            </li>
+        </ul>
+    </div>
+
+    function DownloadLink(filename) {
+        debugger;
+        window.location.href = "/Download/" + filename;
+    }
+
+    function DownloadLink(BkSheetCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GetFileName,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BookingSheetCode: BkSheetCode
+            }),
+            success: function (Filename) {
+                debugger;
+                window.location.href = "/Download/" + Filename;
+                SearchOnList("", TabName);
+            }
+        })
+    }
+*@
+
