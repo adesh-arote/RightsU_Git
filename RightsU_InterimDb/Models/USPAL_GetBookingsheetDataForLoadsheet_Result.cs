@@ -17,5 +17,6 @@ namespace RightsU_InterimDb.Models
         public string Booking_Sheet_No { get; set; }
         public string Proposal_Cycle { get; set; }
         public string Cycle { get; set; }
+        public int AL_Booking_Sheet_Code { get; set; }
     }
 }
