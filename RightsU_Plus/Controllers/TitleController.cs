@@ -2893,6 +2893,101 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
+        public void DummySampleDownload(string TitleType)
+        {
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
+            string filePath;
+            filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
+            FileInfo fileInfo = new FileInfo(filePath);
+            FileInfo fileTemplate;
+
+            fileTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Utility_Sample.xlsx"));
+            using (ExcelPackage exlPackage = new ExcelPackage(fileInfo, fileTemplate))
+            {
+                List<DM_Title_Import_Utility> lstDMtIU = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").OrderBy(o => o.Order_No).ToList();
+                //List<DM_Title_Import_Utility_Test> lstDMtIU = new List<DM_Title_Import_Utility_Test>();
+                //lstDMtIU = GenericListData();
+                ExcelWorksheet exlWorksheet = exlPackage.Workbook.Worksheets[1];
+                int ColNo = 1, RowNo = 1;
+                Color colRed = System.Drawing.ColorTranslator.FromHtml("#F73131");
+                Color colGreen = System.Drawing.ColorTranslator.FromHtml("#8FD64B");
+
+                exlWorksheet.Cells[RowNo, ColNo].Value = "Excel Sr. No";
+                exlWorksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                exlWorksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                exlWorksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+
+                if (TitleType == "M")
+                {
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "M" || w.Import_Type == null).ToList();
+                }
+                else if (TitleType == "S")
+                {
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "S" || w.Import_Type == null).ToList();
+                }
+                else
+                {
+
+                }
+                foreach (var item in lstDMtIU)
+                {
+                    ColNo++;
+                    exlWorksheet.Cells[RowNo, ColNo].Value = item.Display_Name;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    if (item.validation.Contains("man"))
+                    {
+                        exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+                    }
+                    else
+                    {
+                        exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colGreen);
+                    }
+                }
+
+                ColNo = 1;
+                for (int i = 1; i <= 2; i++)
+                {
+                    RowNo = i + 1;
+                    exlWorksheet.Cells[RowNo, ColNo].Value = i;
+                }
+                exlPackage.Save();
+            }
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/ms-excel";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + fileInfo.Name);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
+        }
+
+        //public List<DM_Title_Import_Utility_Test> GenericListData()
+        //{
+        //    List<DM_Title_Import_Utility_Test> lst = new List<DM_Title_Import_Utility_Test>()
+        //    {
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Name", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Type", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Language", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Release Year", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Desc", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Name", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Type", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Language", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Release Year", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Desc", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Episode No", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" }
+        //    };
+
+        //    return lst;
+        //}
+
         /*
         public void SampleDownload()
         {

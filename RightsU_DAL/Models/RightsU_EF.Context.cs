@@ -2502,7 +2502,7 @@ namespace RightsU_DAL
         }
 
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-      List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
+      List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code, string TitleType
         )
         {
             var proc = new USP_Title_Import_Utility_PI();
@@ -2510,6 +2510,7 @@ namespace RightsU_DAL
             proc.callFor = CallFor;
             proc.User_Code = User_Code;
             proc.DM_Master_Import_Code = DM_Master_Import_Code;
+            proc.TitleType = TitleType;
             return this.Database.ExecuteStoredProcedure<USP_Title_Import_Utility_PI>(proc);
         }
 

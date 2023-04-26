@@ -16,69 +16,69 @@
     <meta charset="utf-8" />
     <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
     <style>
-        #ddlFilterBy_chosen {
-            width: 100%;
-            /*text-align: left;*/
-        }
-    
-        .search_area {
-            border-bottom: 1px dotted #777;
-            margin-bottom: 5px;
+                #ddlFilterBy_chosen {
+                    width: 100%;
+                    /*text-align: left;*/
+                }
 
-        }
+                .search_area {
+                    border-bottom: 1px dotted #777;
+                    margin-bottom: 5px;
+                }
 
-        #divSearch {
-            padding: 6px 10px;
-            margin-bottom: 5px;
-            border: 1px solid #ddd;
-            background-color: #eee;
-        }
+                #divSearch {
+                    padding: 6px 10px;
+                    margin-bottom: 5px;
+                    border: 1px solid #ddd;
+                    background-color: #eee;
+                }
 
-            /*#divSearch > ul > li {
-                float: left;
-                min-height: 32px;
-                list-style-type: none;
-                padding: 0 3px;
-            }
+                    /*#divSearch > ul > li {
+                        float: left;
+                        min-height: 32px;
+                        list-style-type: none;
+                        padding: 0 3px;
+                    }
 
 
-            #divSearch .chosen-container {
-                margin: 0;
+                    #divSearch .chosen-container {
+                        margin: 0;
+                    }*/
+
+                    #divSearch .checkbox-inline {
+                        margin-bottom: 7px;
+                    }
+
+                .top_filter {
+                    margin-top: 22px;
+                }
+                /*.pull-left-Head {
+                float: right !important;
+                padding-right:1%;
             }*/
 
-            #divSearch .checkbox-inline {
-                margin-bottom: 7px;
-            }
-
-        .top_filter {
-            margin-top: 22px;
-        }
-           /*.pull-left-Head {
-        float: right !important;
-        padding-right:1%;
-    }*/
-
-    /*.pull-right-Head {
-        float: left !important;
-    }*/
-     /*.pagination-Head {
-    float: left !important;
-    margin-top: 4px;
-     display: flex;
-}*/
-      .right_nav li {
-            float: left;
-            list-style-type: none;
-            margin: 0 7px;
-        }
-        
-        /*.right_nav_Head li {
-            float: right;
-            list-style-type: none;
-            margin: 0 7px;
+                /*.pull-right-Head {
+                float: left !important;
+            }*/
+                /*.pagination-Head {
+            float: left !important;
+            margin-top: 4px;
+             display: flex;
         }*/
+                .right_nav li {
+                    float: left;
+                    list-style-type: none;
+                    margin: 0 7px;
+                }
+
+                /*.right_nav_Head li {
+                    float: right;
+                    list-style-type: none;
+                    margin: 0 7px;
+                }*/
     </style>
     <script>
+        var URL_SampleExcelDownload = '@Url.Action("DummySampleDownload", "Title")';
         URL_Reload_Current_Page = '@Url.Action("titleImport", "Title")';
         var URL_GetTitleFileImportStatus = '@Url.Action("GetTitleFileImportStatus", "DM_Title_Master_Import")';
         $(document).ready(function () {
@@ -110,6 +110,11 @@
         }
         function UploadTitle() {
             debugger;
+            var SelectedTitleType = $("#TitleType:checked").val();
+            if (SelectedTitleType == undefined) {
+                showAlert("E", "Please select type of title");
+                return false;
+            }
             showLoading();
             var txtpageSize = $('#txtPageSize').val();
             $('#ddlFilterBy').val('A').trigger('chosen:updated');
@@ -120,13 +125,14 @@
                 formdata.append("InputFile", files[0]);
                 formdata.append("FilterBy", FilterBy);
                 formdata.append("txtpageSize", txtpageSize);
+                formdata.append("SelectedTitleType", SelectedTitleType);
             }
             else {
                 showAlert("a", "Please select File");
                 hideLoading();
                 return false;
             }
-            
+
             $.ajax({
 
                 type: "POST",
@@ -149,7 +155,7 @@
                     alert('Error: ' + result.responseText);
                 }
             });
-           
+
         }
         function PopulateTitleGrid(PageNo) {
             debugger
@@ -401,6 +407,30 @@
             URL = URL.replace(/amp;/g, "");
             window.location.href = URL;
         }
+
+        function SampleDownloadMovieShowExl() {
+            debugger;
+            var SelectedTitleType = $("#TitleType:checked").val();
+            if (SelectedTitleType == undefined) {
+                showAlert("E", "Please select type of title");
+                return false;
+            }
+            window.location.href = URL_SampleExcelDownload + "?TitleType=" + SelectedTitleType;
+            //$.ajax({
+            //    type: "POST",
+            //    url: URL_SampleExcelDownload,
+            //    traditional: true,
+            //    enctype: 'multipart/form-data',
+            //    contentType: "application/json; charset=utf-8",
+            //    data: JSON.stringify({
+            //        TitleType: SelectedTitleType
+            //    }),
+            //    success: function (result) {
+            //        debugger;
+
+            //    }
+            //});
+        }
     </script>
 </head>
 <body>
@@ -414,6 +444,26 @@
                     <div id="divSearch" class="search_area clearfix">
                         <div class="">
                             <table>
+                                @*<tr id="FirstUl">
+                                        <td style="width:10%;">
+                                            @objMessageKey.UploadFile:
+                                        </td>
+                                        <td style="width:25%;">
+                                            <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                        </td>
+                                        <td style="width:8%;">
+                                            <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
+                                        </td>
+                                        <td style="width:12%;">
+                                            <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary"
+                                                   onclick="@(" window.location.href='" + @Url.Action("SampleDownload", "Title") + "' ")    ;" />
+                                        </td>
+                                        <td style="width:20%; text-align:right">Filter By Status : </td>
+                                        <td style="width:15%">
+                                            @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                        </td>
+
+                                    </tr>*@
                                 <tr id="FirstUl">
                                     <td style="width:10%;">
                                         @objMessageKey.UploadFile:
@@ -421,19 +471,20 @@
                                     <td style="width:25%;">
                                         <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
                                     </td>
-                                    <td style="width:8%;">
-                                        <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
+                                    <td style="width:10%;">
+                                        <input type="radio" value="M" id="TitleType" name="TitleTypeName" /> @objMessageKey.Movie
+                                        <input type="radio" value="S" id="TitleType" name="TitleTypeName" /> @objMessageKey.Show
                                     </td>
-                                    <td style="width:12%;">
-                                        <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary"
-                                               onclick="@(" window.location.href='" + @Url.Action("SampleDownload", "Title") + "' ")    ;" />
+                                    <td style="width:20%;">
+                                        <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
+                                        <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary" onclick="SampleDownloadMovieShowExl()" />
                                     </td>
                                     <td style="width:20%; text-align:right">Filter By Status : </td>
                                     <td style="width:15%">
                                         @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
                                     </td>
-
                                 </tr>
+                                <tr></tr>
                             </table>
                         </div>
                     </div>
@@ -448,11 +499,11 @@
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return Page_OnChange();" 
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return Page_OnChange();"
                                    onkeypress="return isNumber(event);" maxlength="2" onblur="setDefaultPaging('txtPageSize')" />
                         </span>
                     </div>
-                  
+
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">
                             <div id="gvArea" class="deal clearfix">

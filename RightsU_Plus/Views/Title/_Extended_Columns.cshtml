@@ -1117,8 +1117,10 @@
             else if (Control_Type == "DATE") {
                 if (document.getElementById(count + '_txtControlType') != null)
                     document.getElementById(count + '_txtControlType').style.display = "";
-                $("#" + count + '_txtControlType').prop("type", "date");
+                $("#" + count + '_txtControlType').prop("type", "text");
+                $("#" + count + '_txtControlType').addClass("isDatepicker");
                 $("#" + count + '_txtControlType').val(labelName);
+                $(".isDatepicker").datepicker();
 
                 if (document.getElementById(count + '_ddlControlType') != null)
                     document.getElementById(count + '_ddlControlType').style.display = "none";

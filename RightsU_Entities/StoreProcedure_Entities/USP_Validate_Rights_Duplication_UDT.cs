@@ -1698,6 +1698,8 @@ namespace RightsU_Entities
         public string callFor { get; set; }
         [StoredProcedureParameter(SqlDbType.Int, ParameterName = "DM_Master_Import_Code")]
         public int DM_Master_Import_Code { get; set; }
+        [StoredProcedureParameter(SqlDbType.VarChar, ParameterName = "TitleType")]
+        public string TitleType { get; set; }
         public string Result { get; set; }
     }
 

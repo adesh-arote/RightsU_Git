@@ -1,5 +1,13 @@
 ﻿@model RightsU_Entities.AL_Vendor_Rule
 
+@{ 
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
 <script>
     function SaveContentRule() {
         debugger;
@@ -110,8 +118,8 @@
             }
         </td>
         <td>
-            @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movie</span>
-            @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
+            @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>@objMessageKey.Movie</span>
+            @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>@objMessageKey.Show</span>
         </td>
         <td>
             <span id="SelectedCriteriaTd"></span>
