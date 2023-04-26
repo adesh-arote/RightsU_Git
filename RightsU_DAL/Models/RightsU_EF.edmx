@@ -39369,20 +39369,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="false" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Proposal_No" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="50" />
           <Property Type="Int32" Name="Movie_Content_Count" Nullable="true" />
           <Property Type="Int32" Name="Show_Content_Count" Nullable="true" />
           <Property Type="Int32" Name="Last_Action_By" Nullable="true" />
           <Property Type="DateTime" Name="Last_Updated_Time" Nullable="true" Precision="23" />
           <Property Type="String" Name="Record_Status" Nullable="true" MaxLength="5" />
           <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="1000" />
-		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="50" />
+		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Validations" Nullable="true" MaxLength="1000" />
-          <Property Type="String" Name="Cell_Status" Nullable="true" MaxLength="5" />
-          <Property Type="String" Name="AllowPO" Nullable="true" MaxLength="5" />
-        </ComplexType>
+          </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
           <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="true" />
@@ -49823,10 +49820,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
 				<ScalarProperty Name="Cycle" ColumnName="Cycle" />
                 <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
-                <ScalarProperty Name="Validations" ColumnName="Validations" />
-                <ScalarProperty Name="Cell_Status" ColumnName="Cell_Status" />
-                <ScalarProperty Name="AllowPO" ColumnName="AllowPO" />
-              </ComplexTypeMapping>
+                </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USPAL_GetReCommendationList" FunctionName="RightsU_NeoModel.Store.USPAL_GetReCommendationList">

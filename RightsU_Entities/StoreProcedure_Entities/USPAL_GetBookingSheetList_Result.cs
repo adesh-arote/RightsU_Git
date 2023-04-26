@@ -13,10 +13,10 @@ namespace RightsU_Entities
 
     public partial class USPAL_GetBookingSheetList_Result
     {
-        public Nullable<int> AL_Booking_Sheet_Code { get; set; }
-        public Nullable<int> AL_Recommendation_Code { get; set; }
-        public Nullable<int> Vendor_Code { get; set; }
-        public Nullable<int> AL_Proposal_Code { get; set; }
+        public int AL_Booking_Sheet_Code { get; set; }
+        public int AL_Recommendation_Code { get; set; }
+        public int Vendor_Code { get; set; }
+        public int AL_Proposal_Code { get; set; }
         public string Vendor_Name { get; set; }
         public string Proposal_No { get; set; }
         public string Booking_Sheet_No { get; set; }
@@ -28,8 +28,5 @@ namespace RightsU_Entities
         public string Excel_File { get; set; }
         public string Cycle { get; set; }
         public string Proposal_CY { get; set; }
-        public string Validations { get; set; }
-        public string Cell_Status { get; set; }
-        public string AllowPO { get; set; }
     }
 }
