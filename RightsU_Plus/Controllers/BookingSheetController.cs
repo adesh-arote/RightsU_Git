@@ -920,10 +920,33 @@ namespace RightsU_Plus.Controllers
         public ActionResult RemarkPopUp(int Booking_Sheet_Code, int Proposal_Code)
         {         
             string InputArea = "";
+            int Count = 0;
+            int TotalCount = 0;
+            string ValidationFlag = "";
 
-            InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
-                "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code+ "," + Proposal_Code + ")\"></td></tr>";
-            
+            AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
+
+            Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+
+            if(Count == TotalCount)
+            {
+                ValidationFlag = "Y";
+            }
+            else
+            {
+                ValidationFlag = "N";
+            }
+
+            if (ValidationFlag == "Y")
+            {
+                InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
+                    "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
+            }
+            else
+            {
+                InputArea = "<tr><td style=\"text-align:center\"><p style=\"color:red\"><b>You cannot generate purchase order. Please check mandatory fields again..!</b></p></td></tr>";
+            }
          return Json(InputArea);
         }
 

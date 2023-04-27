@@ -356,6 +356,35 @@
         });
     }
 
+    function DownloadLink(filename) {
+        debugger;
+        var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
+        var save = document.createElement('a');
+        save.href = url;
+        save.download = filename;
+        save.target = '_blank';
+        save.click();
+        
+    }
+
+    //function DownloadLink(PODCode) {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_GetFileName,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            PurchaseOrderDetailCode: PODCode
+    //        }),
+    //        success: function (Filename) {
+    //            debugger;
+    //            window.location.origin + "/Download/PurchaseOrder/" + Filename;
+    //        }
+    //    })
+    //}
+
 </script>
 
 <div class="main_section">

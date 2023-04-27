@@ -25,7 +25,7 @@
         {
             foreach (var item in Model)
             {
-                <tr>                 
+                <tr>
                     <td>
                         <span>
                             @{
@@ -58,8 +58,8 @@
                     </td>
                     <td style="text-align:center">
                         @if (item.Status == "C")
-                        {                         
-                            <a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>
+                        {
+                            <a title="Download" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('rpt_AL_Purchase_Order.pdf')" download></a>
                         }
                         @if (item.Status != "C")
                         {

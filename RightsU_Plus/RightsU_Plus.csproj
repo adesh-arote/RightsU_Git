@@ -1062,6 +1062,7 @@
     <Content Include="Download\BookingSheet\Result_BS_No_27.xlsx" />
     <Content Include="Download\BookingSheet\Result_BS_No_28.xlsx" />
     <Content Include="Download\BookingSheet\Sample.xlsx" />
+    <Content Include="Download\PurchaseOrder\rpt_AL_Purchase_Order.pdf" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
     <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />

@@ -379,6 +379,17 @@ namespace RightsU_Plus.Controllers
             //put a breakpoint here and check datatable
             return dataTable;
         }
+
+        //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
+
+        //public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        //{
+        //    AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+        //
+        //    string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s).FirstOrDefault();
+        //
+        //    return Json(Filename);
+        //}
     }
 
     public class PoDetails
