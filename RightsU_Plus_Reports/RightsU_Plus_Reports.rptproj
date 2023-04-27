@@ -117,6 +117,8 @@
     <Report Include="rptTitleMilestone.rdl" />
     <Report Include="rptTitleMilestoneList.rdl" />
     <Report Include="rpt_Acquisition_Expiry.rdl" />
+    <Report Include="rpt_AL_Purchase_Order.rdl" />
+    <Report Include="rpt_AL_Purchase_Order_OEM_Sub_Report.rdl" />
     <Report Include="rpt_Deal_WFStatus_Pending.rdl" />
     <Report Include="rpt_Episodic_Cost.rdl" />
     <Report Include="rpt_Self_Avail.rdl" />
