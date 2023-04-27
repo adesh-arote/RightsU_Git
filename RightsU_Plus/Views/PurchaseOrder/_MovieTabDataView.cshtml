@@ -59,7 +59,7 @@
                     <td style="text-align:center">
                         @if (item.Status == "C")
                         {
-                            <a title="Download" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('rpt_AL_Purchase_Order.pdf')" download></a>
+                            <a title="Download" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('@item.AL_Purchase_Order_Details_Code')" download></a>
                         }
                         @if (item.Status != "C")
                         {

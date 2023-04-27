@@ -156,7 +156,14 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index()
         {
-            POData();
+            int BookingSheetNo = 0;
+            if (Session["BookingSheetNo"] != null)
+            {                                            //-----To show success messages
+                BookingSheetNo = Convert.ToInt32(Session["BookingSheetNo"]);
+                //Session["BookingSheetNo"] = null;
+            }
+
+            POData(BookingSheetNo);
 
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });
@@ -172,10 +179,10 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        private void POData()
+        private void POData(int BookingSheetCode)
         {
             //lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
-            lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().ToList();
+            lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
         }
 
         public ActionResult BindPOList(int pageNo, int recordPerPage, string sortType)
@@ -314,7 +321,7 @@ namespace RightsU_Plus.Controllers
             return PartialView("_MovieTabDataView", lst);
         }
 
-        public ActionResult BindShowTabData(string TabName, int Purchase_Order_Code)
+        public ActionResult BindShowTabData(int Purchase_Order_Code)
         {
             string message = "";
             int RecordCount = 0;
@@ -342,7 +349,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lst = lstShowDataSearched;
+                    lst = lstTabData;
                     DataTable dt = ToDataTable(lst);
                 }
             }
@@ -382,14 +389,15 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
 
-        //public JsonResult GetFileName(int PurchaseOrderDetailCode)
-        //{
-        //    AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
-        //
-        //    string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s).FirstOrDefault();
-        //
-        //    return Json(Filename);
-        //}
+        public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        {
+            AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+        
+            string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+        
+            return Json(Filename);
+        }
+
     }
 
     public class PoDetails

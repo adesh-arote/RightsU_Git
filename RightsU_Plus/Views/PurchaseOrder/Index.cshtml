@@ -13,11 +13,15 @@
     {
         objPoDetails = (RightsU_Plus.Controllers.PoDetails)Session["objPoD"];
     }
+
+    string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadReportPath"];
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", TabName = "MV";
+
+    var DownloadPath = '@DownloadPath';
 
     var URL_SearchPOList = '@Url.Action("SearchPOList", "PurchaseOrder")';
     var URL_BindPOList = '@Url.Action("BindPOList", "PurchaseOrder")';
@@ -25,6 +29,7 @@
     var URL_BindTabData = '@Url.Action("BindTabData", "PurchaseOrder")';
     var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
     var URL_BindShowTabData = '@Url.Action("BindShowTabData", "PurchaseOrder")';
+    var URL_GetFileName = '@Url.Action("GetFileName", "PurchaseOrder")';
 
     $(document).ready(function () {
         debugger;
@@ -356,34 +361,39 @@
         });
     }
 
-    function DownloadLink(filename) {
-        debugger;
-        var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
-        var save = document.createElement('a');
-        save.href = url;
-        save.download = filename;
-        save.target = '_blank';
-        save.click();
-        
-    }
-
-    //function DownloadLink(PODCode) {
+    //function DownloadLink(filename) {
     //    debugger;
-    //    $.ajax({
-    //        type: "POST",
-    //        url: URL_GetFileName,
-    //        traditional: true,
-    //        enctype: 'multipart/form-data',
-    //        contentType: "application/json; charset=utf-8",
-    //        data: JSON.stringify({
-    //            PurchaseOrderDetailCode: PODCode
-    //        }),
-    //        success: function (Filename) {
-    //            debugger;
-    //            window.location.origin + "/Download/PurchaseOrder/" + Filename;
-    //        }
-    //    })
+    //    var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
+    //    var save = document.createElement('a');
+    //    save.href = url;
+    //    save.download = filename;
+    //    save.target = '_blank';
+    //    save.click();
+    //    
     //}
+
+    function DownloadLink(PODCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_GetFileName,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderDetailCode: PODCode
+            }),
+            success: function (Filename) {
+                debugger;
+                var url = window.location.origin + "/" + DownloadPath + Filename;
+                var save = document.createElement('a');
+                save.href = url;
+                save.download = Filename;
+                //save.target = '_blank';
+                save.click();
+            }
+        })
+    }
 
 </script>
 

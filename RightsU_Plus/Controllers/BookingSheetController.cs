@@ -477,7 +477,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult BindImportExportView(int BookingSheetCode)
         {
-            string status = "S";
+            string status = "S";    
             AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
             List<AL_Booking_Sheet_Details> lstBKSDetails = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
 
@@ -503,6 +503,11 @@ namespace RightsU_Plus.Controllers
         public ActionResult ImportMasterView()
         {
             objDMCFT = null;
+            if(objSDAB != null)
+            {
+                int BookingSheetCode = Convert.ToInt32(objSDAB.BookingSheetCode);
+                BindImportExportView(BookingSheetCode);
+            }            
 
             List<SelectListItem> lstFliter = new List<SelectListItem>();
             lstFliter.Add(new SelectListItem { Text = "All", Value = "A", Selected = true });
@@ -657,6 +662,13 @@ namespace RightsU_Plus.Controllers
                         }
                         else
                         {
+                            AL_Booking_Sheet obj_AL_Booking_Sheet = new AL_Booking_Sheet();
+                            obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
+
+                            obj_AL_Booking_Sheet.Record_Status = "I";
+
+                            obj_AL_Booking_Sheet.EntityState = State.Modified;
+                            objBooking_Sheet_Service.Save(obj_AL_Booking_Sheet, out resultSet);
                             status = "S";
                             message = "File Imported successfully";
                         }
@@ -923,30 +935,44 @@ namespace RightsU_Plus.Controllers
             int Count = 0;
             int TotalCount = 0;
             string ValidationFlag = "";
+            int ValidCount = 0;
 
             AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
+
+            ValidCount = objPurchase_Order_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
             TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
-            if(Count == TotalCount)
+            if (ValidCount > 0)
             {
-                ValidationFlag = "Y";
+                Session["BookingSheetNo"] = Booking_Sheet_Code;
+                return Json("Redirect");
             }
             else
-            {
-                ValidationFlag = "N";
+            { 
+                if (Count == TotalCount)
+                {
+                    ValidationFlag = "Y";
+                }
+                else
+                {
+                    ValidationFlag = "N";
+                }
+
+                if (ValidationFlag == "Y")
+                {
+                    InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
+                        "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
+                }
+                else
+                {
+                    InputArea = "<tr><td style=\"text-align:center\"><p style=\"color:red\"><b>You cannot generate purchase order. Please check mandatory fields again..!</b></p></td></tr>";
+                }
             }
 
-            if (ValidationFlag == "Y")
-            {
-                InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
-                    "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
-            }
-            else
-            {
-                InputArea = "<tr><td style=\"text-align:center\"><p style=\"color:red\"><b>You cannot generate purchase order. Please check mandatory fields again..!</b></p></td></tr>";
-            }
+            Session["BookingSheetNo"] = Booking_Sheet_Code;
+
          return Json(InputArea);
         }
 

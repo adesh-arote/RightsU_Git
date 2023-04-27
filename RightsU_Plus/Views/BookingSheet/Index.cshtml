@@ -20,6 +20,7 @@
     var URL_RemarkPopup = '@Url.Action("RemarkPopUp", "BookingSheet")';
     var URL_GeneratePO = '@Url.Action("GeneratePO", "BookingSheet")';
     //var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
+    var URL_PurchaseOrderView = '@Url.Action("Index", "PurchaseOrder")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -338,9 +339,12 @@
             }),
             success: function (result) {
                 debugger;
-                if (result.Status == "S") {
+                if (result.Status == "S") {                   
                     showAlert("S", result.Message);
-                    BindbookingSheetList();
+                    ClosePopup();
+                    window.location.href = URL_PurchaseOrderView;
+
+                    //BindbookingSheetList();
                 }
                 else {
                     showAlert("E", result.Message);
@@ -363,9 +367,14 @@
             }),
             success: function (result) {
                 debugger;
-                $('#popup').modal();
-                $('#RemarkPopupTbl').empty();
-                $('#RemarkPopupTbl').html(result);
+                if (result == "Redirect") {
+                    window.location.href = URL_PurchaseOrderView;
+                }
+                else {
+                    $('#popup').modal();
+                    $('#RemarkPopupTbl').empty();
+                    $('#RemarkPopupTbl').html(result);
+                }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
