@@ -25,8 +25,116 @@
         <CommandText>USPAL_GetPurchaseOrderOEMDataForSubReport</CommandText>
       </Query>
       <Fields>
-        <Field Name="OEM_Name">
-          <DataField>OEM_Name</DataField>
+        <Field Name="Client_Name">
+          <DataField>Client_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Name">
+          <DataField>Vendor_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Address">
+          <DataField>Vendor_Address</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Phone_No">
+          <DataField>Vendor_Phone_No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Email">
+          <DataField>Vendor_Email</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Period">
+          <DataField>Period</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Period_Month">
+          <DataField>Period_Month</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PO_Generate_Date">
+          <DataField>PO_Generate_Date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Purchase_Order_No">
+          <DataField>Purchase_Order_No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TitleName">
+          <DataField>TitleName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Airline">
+          <DataField>Airline</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Version">
+          <DataField>Version</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lang1">
+          <DataField>Lang1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Embedded_Subs">
+          <DataField>Embedded Subs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remarks">
+          <DataField>Remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="File_details">
+          <DataField>File details</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PO_Booking">
+          <DataField>PO Booking</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Cost_per_flight_USD">
+          <DataField>Estimated Screening Cost per flight USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Total_USD">
+          <DataField>Estimated Screening Total USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Duplication_Cost_per_flight_USD">
+          <DataField>Duplication Cost per flight USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Duplication_Total_USD">
+          <DataField>Duplication Total USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Miscellaneous_Items">
+          <DataField>Miscellaneous Items</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Miscellaneous_Charges">
+          <DataField>Miscellaneous Charges</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Master_delivery_date">
+          <DataField>Master delivery date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Trailer_delivery_date">
+          <DataField>Trailer delivery date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Delivery_and_Payment_remarks">
+          <DataField>Delivery and Payment remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OEM_Company_Name">
+          <DataField>OEM_Company_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="OEM_Company_Short_Name">
+          <DataField>OEM_Company_Short_Name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -187,7 +295,7 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!OEM_Name.Value</Value>
+                                  <Value>=Fields!OEM_Company_Short_Name.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -329,7 +437,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Matthew Thorpe-Beeston</Value>
+                                  <Value>=Fields!Vendor_Name.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -344,10 +452,38 @@
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>Sales Executive, Content &amp; Channels
+                                  <Value>=Fields!Vendor_Address.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>
 IMG
-M: +44 (7741) 910249
-Matthew.ThorpeBeeston@img.com</Value>
+M: +</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Vendor_Phone_No.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve">
+</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Vendor_Email.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -557,7 +693,15 @@ The HUB</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Panasonic Avionics Corporation
+                                  <Value>=Fields!OEM_Company_Name.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>
 Smartjog to Panasonic (Cloud)</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
@@ -643,7 +787,7 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Malaysia Airlines</Value>
+                                  <Value>=Fields!Client_Name.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -767,7 +911,7 @@ Smartjog to Panasonic (Cloud)</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>Maybe I Do</Value>
+                                  <Value>=Fields!TitleName.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -786,7 +930,7 @@ Smartjog to Panasonic (Cloud)</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>ED</Value>
+                                  <Value>=Fields!Version.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -804,7 +948,7 @@ Smartjog to Panasonic (Cloud)</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>ENG</Value>
+                                  <Value>=Fields!Lang1.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -822,7 +966,7 @@ Smartjog to Panasonic (Cloud)</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>ENG</Value>
+                                  <Value>=Fields!Embedded_Subs.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -858,7 +1002,7 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>0523-1023</Value>
+                                  <Value>=Fields!Period.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -870,7 +1014,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>6 Months
+                                  <Value>=Fields!Period_Month.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value> Months
 
 </Value>
                                   <Style>
@@ -879,7 +1030,15 @@ Smartjog to Panasonic (Cloud)</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>Date: 04/03/2023</Value>
+                                  <Value>Date: </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!PO_Generate_Date.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -892,7 +1051,15 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>PO No. - MH/Aeroplay/79006</Value>
+                                  <Value>PO No. - </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Purchase_Order_No.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
