@@ -76,9 +76,10 @@
     }
 
     function btnSearch_OnClick() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-        debugger;
+        
         var searchText = $('#searchCommon').val();
 
         if (searchText == '') {
@@ -91,7 +92,7 @@
 
     function btnShowAll_OnClick() {
         debugger;
-        $('#ddlSearchModule').val('0').trigger('chosen:updated');
+        //$('#ddlSortType').val('0').trigger('chosen:updated');
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -414,7 +415,7 @@
                                     Search :
                                 </td>
                                 <td style="width:10%;vertical-align: middle;" align="left">
-                                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" autocomplete="off" />
+                                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Client Name, Booking Sheet No" autocomplete="off" />
                                 </td>
                                 <td style="width:10%;vertical-align: middle;">
                                     <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">

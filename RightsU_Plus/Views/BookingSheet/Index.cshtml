@@ -88,7 +88,7 @@
 
     function btnShowAll_OnClick() {
         debugger;
-        $('#ddlSearchModule').val('0').trigger('chosen:updated');
+        $('#ddlSortType').val('0').trigger('chosen:updated');
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -353,7 +353,7 @@
         })
     }
 
-    function RemarkPopup(BSCode, PCode) {
+    function RemarkPopup(BSCode, PCode, config) {
         debugger;
         $.ajax({
             type: "POST",
@@ -363,7 +363,8 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 Booking_Sheet_Code: BSCode,
-                Proposal_Code: PCode
+                Proposal_Code: PCode,
+                config: config
             }),
             success: function (result) {
                 debugger;

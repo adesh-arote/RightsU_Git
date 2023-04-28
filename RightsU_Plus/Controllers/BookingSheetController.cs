@@ -270,6 +270,10 @@ namespace RightsU_Plus.Controllers
         public ActionResult Index()
         {
             objSDAB = null;
+
+            Session["BookingSheetCode"] = null;
+            Session["config"] = null;
+
             BookingSheetData();
             PendingReccomendationData();
 
@@ -929,7 +933,7 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------------------PurchaseOrder--------------------------------------------------------------------
 
-        public ActionResult RemarkPopUp(int Booking_Sheet_Code, int Proposal_Code)
+        public ActionResult RemarkPopUp(int Booking_Sheet_Code, int Proposal_Code, string config)
         {         
             string InputArea = "";
             int Count = 0;
@@ -946,7 +950,8 @@ namespace RightsU_Plus.Controllers
 
             if (ValidCount > 0)
             {
-                Session["BookingSheetNo"] = Booking_Sheet_Code;
+                Session["config"] = config;
+                Session["BookingSheetCode"] = Booking_Sheet_Code;
                 return Json("Redirect");
             }
             else
@@ -971,7 +976,7 @@ namespace RightsU_Plus.Controllers
                 }
             }
 
-            Session["BookingSheetNo"] = Booking_Sheet_Code;
+            Session["BookingSheetCode"] = Booking_Sheet_Code;
 
          return Json(InputArea);
         }

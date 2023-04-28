@@ -81,3 +81,12 @@
 
     </tbody>
 </table>
+
+<div>
+    <div style="margin:20px; text-align:left">
+        @if (ViewBag.Configuration == "config")
+        {
+            @Html.ActionLink("Booking Sheet List", "Index", "BookingSheet", null, new { @class = "btn btn-primary" })
+        }
+    </div>
+</div>

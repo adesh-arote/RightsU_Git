@@ -157,12 +157,17 @@ namespace RightsU_Plus.Controllers
         public ActionResult Index()
         {
             int BookingSheetNo = 0;
-            if (Session["BookingSheetNo"] != null)
+            if (Session["BookingSheetCode"] != null)
             {                                            //-----To show success messages
-                BookingSheetNo = Convert.ToInt32(Session["BookingSheetNo"]);
-                //Session["BookingSheetNo"] = null;
+                BookingSheetNo = Convert.ToInt32(Session["BookingSheetCode"]);
+                //Session["BookingSheetCode"] = null;
             }
-
+            if(Session["config"] != null)
+            {
+                string config = "";
+                config = Convert.ToString(Session["config"]);
+            }
+            
             POData(BookingSheetNo);
 
             List<SelectListItem> lstSort = new List<SelectListItem>();
@@ -179,10 +184,17 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        private void POData(int BookingSheetCode)
+        private void POData(int BookingSheetCode = 0)
         {
-            //lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
-            lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
+            if (BookingSheetCode > 0)
+            {
+                //lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
+                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
+            }
+            else
+            {
+                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().ToList();
+            }
         }
 
         public ActionResult BindPOList(int pageNo, int recordPerPage, string sortType)
@@ -202,9 +214,9 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "T")
                     lst = lstPOSearched.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 if (sortType == "NA")
-                    lst = lstPOSearched.OrderBy(o => o.AL_Purchase_Order_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstPOSearched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 if (sortType == "ND")
-                    lst = lstPOSearched.OrderByDescending(o => o.AL_Purchase_Order_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstPOSearched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
@@ -212,6 +224,13 @@ namespace RightsU_Plus.Controllers
 
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
+
+            if (Session["config"] != null)
+            {
+                string config = "";
+                config = Convert.ToString(Session["config"]);
+                ViewBag.Configuration = config;
+            }
 
             return PartialView("_PurchaseOrderList", lst);
         }
@@ -243,7 +262,7 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstPOSearched = lstPO.Where(w => w.Remarks != null && w.Remarks.ToUpper().Contains(searchText.ToUpper())).ToList();
+                lstPOSearched = lstPO.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToUpper().Contains(searchText.ToUpper()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
             }
             else
                 lstPOSearched = lstPO;
