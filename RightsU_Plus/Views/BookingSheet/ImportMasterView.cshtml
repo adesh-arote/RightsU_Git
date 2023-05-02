@@ -302,13 +302,27 @@
         <div class="container acq main_col">
             <div class="">
                 <div class="title_block dotted_border clearfix">
-                    <div class="col-md-3"><h2>Booking Sheet Import</h2></div>
-                    
-                    <div class="col-md-3"><h4 style="margin-top: 20px;">Client :- @objBKDetails.Client_Name</h4></div>
-                    
-                    <div class="col-md-3"><h4 style="margin-top: 20px;">Proposal :- @objBKDetails.Proposal_CY</h4></div>
-                    
-                    <div class="col-md-3"><h4 style="margin-top: 20px; text-align:center;">Cycle :- @objBKDetails.Cycle</h4></div>
+                    <div class="col-md-3"><h2>Booking Sheet Import/Export</h2></div>
+
+                    @*<div class="col-md-3"><span style="margin-top: 20px;"><b>Client :-</b>@objBKDetails.Client_Name</span></div>
+                    <div class="col-md-3"><span style="margin-top: 20px;"><b>Proposal :-</b> @objBKDetails.Proposal_CY</span></div>
+                    <div class="col-md-3"><span style="margin-top: 20px; text-align:center;"><b>Cycle :-</b> @objBKDetails.Cycle</span></div>*@
+                </div>
+
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="text-align:center">
+                                <span style="margin-top: 20px;"><b>Client :- </b>@objBKDetails.Client_Name</span>
+                            </td>
+                            <td style="text-align:center">
+                                <span style="margin-top: 20px;"><b>Proposal :- </b> @objBKDetails.Proposal_CY</span>
+                            </td>
+                            <td style="text-align:center">
+                                <span style="margin-top: 20px; text-align:center;"><b>Cycle :- </b> @objBKDetails.Cycle</span>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
 
                 <div class="search_area" style="background-color: #eee; padding:5px;">
@@ -316,27 +330,51 @@
                         <tr>
                             <td style="width:50%;" colspan="5">
                                 <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
-                                <span id="RefreshDate">(Latest Refreshed On : @objBKDetails.MaxDate)</span>
+                                <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
                             </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 6%; vertical-align: middle;">
-                                Import Booking Sheet:
-                            </td>
-                            <td style="width: 15%;">
-                                <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
-                            </td>
-                            <td style="width: 15%;">
-                                <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
-                                <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
-                            </td>
-                            <td style="width: 5%; vertical-align: middle;">
+                            <td style="width: 25%;vertical-align: middle;text-align: right;">
                                 Filter By Status :
                             </td>
                             <td>
                                 @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
                                 <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
                             </td>
+                        </tr>
+                        @*<tr>
+                    <td style="width: 6%; vertical-align: middle;">
+                        Import Booking Sheet:
+                    </td>
+                    <td style="width: 15%;">
+                        <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                    </td>
+                    <td style="width: 15%;">
+                        <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
+                        <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
+                    </td>
+                    <td style="width: 5%; vertical-align: middle;">
+                        Filter By Status :
+                    </td>
+                    <td>
+                        @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                        <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
+                    </td>
+                </tr>*@
+                    </table>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width: 15%; vertical-align: middle;">
+                                <b>Import Booking Sheet:</b>
+                            </td>
+                            <td style="width: 25%;">
+                                <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                            </td>
+                            <td style="width: 15%;">
+                                <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
+                                <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
+                            </td>
+                            <td></td>
                         </tr>
                     </table>
                 </div>

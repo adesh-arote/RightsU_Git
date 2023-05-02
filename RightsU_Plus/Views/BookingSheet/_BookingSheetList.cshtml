@@ -74,17 +74,18 @@
                     <td style="text-align:center">
                         @item.Last_Updated_Time.Value.ToString("dd MMM yyyy")
                     </td>
-                    <td style="text-align:center">
+                    <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Booking_Sheet_Code@item.Record_Status clsTdAction1_@item.AL_Proposal_Code@item.Record_Status" >
                         @if (item.Record_Status == "C")
                         {
                             @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>*@
 
                             <a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="ImportMasterView('@item.AL_Booking_Sheet_Code')"></a>
                             <a title="Generate Purchase Order" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="RemarkPopup('@item.AL_Booking_Sheet_Code','@item.AL_Proposal_Code','config')"></a>
+                            <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet('@item.AL_Booking_Sheet_Code')"></a>
                         }
-                        @if (item.Record_Status != "C")
+                        else
                         {
-                            <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>

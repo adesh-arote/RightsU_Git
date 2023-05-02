@@ -54,19 +54,16 @@
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Status)
                     </td>
-                    <td style="text-align:center">
+                    <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status">
                         @if (item.Status == "C")
                         {
-                            @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>*@
-
                             <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code')"></a>
+                            <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshPoList('@item.AL_Purchase_Order_Code','@item.AL_Booking_Sheet_Code' )"></a>
                             @*<a title="Download All" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="DownloadAll('@item.AL_Purchase_Order_Code')"></a>*@
-
-                            @*<a title="Download Booking Sheet" class="glyphicon glyphicon-collapse-down" style="cursor:pointer; color:#42a832;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>*@
                         }
-                        @if (item.Status == "P")
+                        else
                         {
-                            <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>

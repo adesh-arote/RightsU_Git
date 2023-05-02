@@ -294,12 +294,16 @@ namespace RightsU_Plus.Controllers
 
         private void MovieTabData()
         {
-            lstMovieDataSearched = lstMovieTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => w.Title_Content_Code == 1).ToList();
+            System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+            List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+            lstMovieDataSearched = lstMovieTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstMovieCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
         private void ShowTabData()
         {
-            lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => w.Title_Content_Code != 1).ToList();
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
         public ActionResult BindMovieTabData(int Purchase_Order_Code)
@@ -379,6 +383,67 @@ namespace RightsU_Plus.Controllers
             return PartialView("_ShowTabDataView", lst);
         }
 
+        public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
+        {
+            string recordStatus = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).Select(s => s.Status).FirstOrDefault();
+
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+            };
+            return Json(obj);
+
+
+        }
+
+        public JsonResult RefreshBookingSheet(int PurchaseOrderCode, int BookingSheetCode)
+        {
+            string status = "S", message = "";
+
+            AL_Purchase_Order obj_AL_Purchase_Order = new AL_Purchase_Order();
+            obj_AL_Purchase_Order = objPO_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
+
+            obj_AL_Purchase_Order.Status = "P";
+            obj_AL_Purchase_Order.EntityState = State.Modified;
+
+            dynamic resultSet;
+            if (!objPO_Service.Save(obj_AL_Purchase_Order, out resultSet))
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                message = objMessageKey.Recordsavedsuccessfully;
+
+                obj_AL_Purchase_Order = null;
+                objPO_Service = null;
+
+                POData(BookingSheetCode);
+            }
+
+            var obj = new
+            {
+                RecordCount = lstPOSearched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
+
+        //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
+
+        public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        {
+            AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+        
+            string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+        
+            return Json(Filename);
+        }
+
+        //-----------------------------------------------------------------GenericMethods--------------------------------------------------------------------
+
         public static DataTable ToDataTable<T>(List<T> items)
         {
             DataTable dataTable = new DataTable(typeof(T).Name);
@@ -405,18 +470,6 @@ namespace RightsU_Plus.Controllers
             //put a breakpoint here and check datatable
             return dataTable;
         }
-
-        //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
-
-        public JsonResult GetFileName(int PurchaseOrderDetailCode)
-        {
-            AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
-        
-            string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
-        
-            return Json(Filename);
-        }
-
     }
 
     public class PoDetails

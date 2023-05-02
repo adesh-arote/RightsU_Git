@@ -420,6 +420,55 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        public JsonResult GetbookingSheetStatus(int BookingSheetCode)
+        {
+            string recordStatus = new AL_Booking_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Record_Status).FirstOrDefault();
+            
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+            };
+            return Json(obj);
+
+
+        }
+
+        public JsonResult RefreshBookingSheet(int BookingSheetCode)
+        {
+            string status = "S", message = "";
+
+            AL_Booking_Sheet obj_AL_Booking_Sheet = new AL_Booking_Sheet();
+            obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
+
+            obj_AL_Booking_Sheet.Record_Status = "P";
+            obj_AL_Booking_Sheet.Excel_File = "";
+            obj_AL_Booking_Sheet.EntityState = State.Modified;
+            
+            dynamic resultSet;
+            if (!objBooking_Sheet_Service.Save(obj_AL_Booking_Sheet, out resultSet))
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                message = objMessageKey.Recordsavedsuccessfully;
+
+                objBooking_Sheet = null;
+                objBooking_Sheet_Service = null;
+
+                BookingSheetData();           
+            }
+
+            var obj = new
+            {
+                RecordCount = lstBooking_Sheet_Searched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
+
         //-----------------------------------------------------GenerateBookingSheet-------------------------------------------------------------------------
 
         public JsonResult GenerateBookingSheet(int RecommendationCode)
@@ -981,7 +1030,7 @@ namespace RightsU_Plus.Controllers
          return Json(InputArea);
         }
 
-        public JsonResult GeneratePO(int BookingSheetCode, int ProposalCode)
+        public JsonResult GeneratePO(int BookingSheetCode, int ProposalCode, string Remark)
         {
             string Status = "";
             string Message = "";
@@ -990,7 +1039,7 @@ namespace RightsU_Plus.Controllers
 
             objAPO.AL_Booking_Sheet_Code = BookingSheetCode;
             objAPO.AL_Proposal_Code = ProposalCode;
-            objAPO.Remarks = "TestSachin";
+            objAPO.Remarks = Remark;
             objAPO.Status = "P";
             objAPO.Inserted_By = objLoginUser.Users_Code;
             objAPO.Inserted_On = DateTime.Now;

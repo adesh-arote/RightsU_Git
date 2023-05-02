@@ -21,6 +21,8 @@
     var URL_GeneratePO = '@Url.Action("GeneratePO", "BookingSheet")';
     //var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
     var URL_PurchaseOrderView = '@Url.Action("Index", "PurchaseOrder")';
+    var URL_GetbookingSheetStatus = '@Url.Action("GetbookingSheetStatus", "BookingSheet")';
+    var URL_RefreshBookingSheet = '@Url.Action("RefreshBookingSheet", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -238,6 +240,7 @@
             success: function (result) {
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
+                CheckPendingStatus();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -335,7 +338,9 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 BookingsheetCode: BkCode,
-                ProposalCode: PrCode
+                ProposalCode: PrCode,
+                Remark: Remark
+
             }),
             success: function (result) {
                 debugger;
@@ -389,6 +394,94 @@
         $('#popup').modal('hide');
 
         BindbookingSheetList();
+    }
+
+    function CheckPendingStatus() {
+        debugger;
+        var pendingRecord = 0;
+        $(".deal_action").each(function () {
+            debugger;
+            var Sibling = $(this).attr('class').split(' ')[2];
+            
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var BookingSheetCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+                if (isNaN(Sibling.substr(Sibling.length - 1)))
+                var ProposalCode = Sibling.slice(13, Sibling.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetbookingSheetStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            BookingSheetCode: BookingSheetCode
+                        }),
+                        success: function (result) {
+                            debugger
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "P") {
+                                $("#imgLoading_" + BookingSheetCode).css("display", '');
+                                pendingRecord++;
+                            }
+                            else if (result.RecordStatus == "I" ) {
+                                $("#imgLoading_" + BookingSheetCode).css("display", '');
+                                pendingRecord++;
+
+                                $('.clsTdStatus_' + BookingSheetCode + 'I').empty();
+                                $('.clsTdStatus_' + BookingSheetCode + 'I').append(status);
+                            }
+                            else if (result.RecordStatus == "C") {
+                                $("#imgLoading_" + BookingSheetCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="ImportMasterView(' + BookingSheetCode + ');"</a>' +
+                                    '<a title="Generate Purchase Order" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="RemarkPopup(' + BookingSheetCode + ',' + ProposalCode +',' + config + ')"></a>' +
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + BookingSheetCode + ');"></a>';
+                                $('.' + SiblingClass).append(a);
+
+                                $('.clsTdStatus_' + BookingSheetCode + 'P').empty();
+                                $('.clsTdStatus_' + BookingSheetCode + 'C').append(status);
+                                initializeTooltip();
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+        });
+
+        if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatus, 5000);
+        }
+    }
+
+    function RefreshBookingSheet(BookingSheetCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RefreshBookingSheet,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BookingSheetCode: BookingSheetCode
+            }),
+            success: function (result) {
+                debugger;
+                SearchOnList("", TabName);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
     }
 
 </script>

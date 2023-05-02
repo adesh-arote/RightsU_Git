@@ -8281,11 +8281,11 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AL_Booking_Sheet_Code == objToValidate.AL_Booking_Sheet_Code).Count() > 0)
-            {
-                resultSet = "Booking sheet already exists";
-                return false;
-            }
+            //if (SearchFor(s => s.AL_Booking_Sheet_Code == objToValidate.AL_Booking_Sheet_Code).Count() > 0)
+            //{
+            //    resultSet = "Booking sheet already exists";
+            //    return false;
+            //}
 
             resultSet = "";
             return true;
