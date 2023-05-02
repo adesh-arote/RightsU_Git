@@ -2,6 +2,7 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -104,7 +105,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchBookingsheet(string searchText)
         {
-            
+
             if (!string.IsNullOrEmpty(searchText))
             {
                 lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
@@ -120,8 +121,10 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public PartialViewResult OpenBookingsheetPopup()
+        public PartialViewResult OpenBookingsheetPopup(string CommandName, int AL_Load_Sheet_Code)
         {
+            ViewBag.CommandName = "View";
+            ViewBag.AL_Load_Sheet_Code = AL_Load_Sheet_Code;
             List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
             return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", lst);
         }
@@ -169,6 +172,118 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/LoadSheet/_LoadSheetList.cshtml", lst);
         }
 
+        public JsonResult SearchLoadSheet(string searchText)
+        {
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                lstLoadSheet_Searched = lstLoadSheet_Searched.Where(w => w.Load_sheet_No.ToUpper().Contains(searchText.ToUpper())
+                || w.Status.ToUpper().Contains(searchText.ToUpper())).ToList();
+            }
+            else
+                lstLoadSheet_Searched = lstLoadSheet_Searched;
+
+            var obj = new
+            {
+                Record_Count = lstLoadSheet_Searched.Count
+            };
+
+            return Json(obj);
+        }
+
+        public JsonResult GenerateLoadSheet(string bookinSheetCodes)
+        {
+            string status = "S", message = "";
+
+            List<AL_Load_Sheet_Details> lst = new List<AL_Load_Sheet_Details>();
+
+            foreach (var item in bookinSheetCodes.Split(','))
+            {
+                AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
+                objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
+
+                lst.Add(objloadSheetDetails);
+
+            }
+
+            objAL_Load_Sheet_Service = null;
+            objAL_Load_Sheet.EntityState = State.Added;
+            objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
+            objAL_Load_Sheet.Load_Sheet_Month = DateTime.Now;
+            objAL_Load_Sheet.Remarks = "Test";
+            objAL_Load_Sheet.Status = "P";
+            objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
+            objAL_Load_Sheet.Inserted_On = DateTime.Now;
+            objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
+            objAL_Load_Sheet.Updated_On = DateTime.Now;
+            objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
+
+            dynamic resultSet;
+            if (!objAL_Load_Sheet_Service.Save(objAL_Load_Sheet, out resultSet))
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                message = objMessageKey.Recordsavedsuccessfully;
+
+                objAL_Load_Sheet = null;
+                objAL_Load_Sheet_Service = null;
+
+                lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+                //FetchData();
+            }
+
+            var obj = new
+            {
+                RecordCount = lstLoadSheet_Searched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
+
+        public JsonResult RefreshLoadSheet(int AL_Load_Sheet_Code)
+        {
+            string status = "S", message = "";
+            AL_Load_Sheet_Service objService = new AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName);
+            AL_Load_Sheet objToSave = new AL_Load_Sheet();
+
+            List<AL_Load_Sheet_Details> lst = new List<AL_Load_Sheet_Details>();
+            objToSave = objService.GetById(AL_Load_Sheet_Code);
+
+            //objToSave.AL_Load_Sheet_Details = new AL_Load_Sheet_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code).ToList();
+            objToSave.EntityState = State.Modified;
+            objToSave.Status = "P";
+            objToSave.Download_File_Name = "";
+
+            dynamic resultSet;
+            bool isValid = objService.Save(objToSave, out resultSet);
+
+            if (!isValid)
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                message = objMessageKey.Recordsavedsuccessfully;
+
+                objAL_Load_Sheet = null;
+                objAL_Load_Sheet_Service = null;
+
+                lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+                //FetchData();
+            }
+
+            var obj = new
+            {
+                RecordCount = lstLoadSheet_Searched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
 
         private string GetUserModuleRights()
         {
@@ -202,5 +317,83 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
+        public JsonResult GetLoadSheetStatus(int AL_Load_Sheet_Code)
+        {
+            string recordStatus = new RightsU_BLL.AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code).Select(s => s.Status).FirstOrDefault();
+            double TotalCount = new RightsU_BLL.AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code).Count();
+            double PendingCount = new RightsU_BLL.AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code && x.Status == "P").Count();
+
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+                TotalCount = TotalCount,
+                PendingCount = PendingCount
+            };
+            return Json(obj);
+        }
+
+
+        public JsonResult ValidateDownload(int AL_Load_Sheet_Code)
+        {
+            string FileName = Convert.ToString(new AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).GetById(AL_Load_Sheet_Code).Download_File_Name);
+            string fullPath = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"]);
+            string path = fullPath + FileName;
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = path
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = ""
+                };
+                return Json(obj);
+            }
+        }
+
+        public void Download(int AL_Load_Sheet_Code)
+        {
+            string FileName = new AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).GetById(AL_Load_Sheet_Code).Download_File_Name.ToString();
+            string fullPath = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadFilePath"]);
+            string path = fullPath + FileName;
+            FileInfo file = new FileInfo(path);
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            if (file.Exists)
+            {
+                byte[] bts = System.IO.File.ReadAllBytes(path);
+                Response.Clear();
+                Response.ClearHeaders();
+                Response.AddHeader("Content-Type", "Application/ms-excel");
+                Response.AddHeader("Content-Length", bts.Length.ToString());
+                Response.AddHeader("Content-Disposition", "attachment;   filename=" + FileName);
+                Response.BinaryWrite(bts);
+                Response.Flush();
+                //WebClient client = new WebClient();
+                //Byte[] buffer = client.DownloadData(path);
+                //Response.Clear();
+                //Response.ContentType = "application/ms-excel";
+                //Response.AddHeader("content-disposition", "Attachment;filename=" + fileName);
+                //Response.WriteFile(path);
+                //Response.End();
+
+            }
+        }
+        private string GenerateId()
+        {
+            string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).FirstOrDefault().Load_Sheet_No;
+            int lastAddedId = Convert.ToInt32(LS_No.Split('-')[1]); // get this value from database
+            string demo = Convert.ToString(lastAddedId + 1).PadLeft(4, '0');
+            return demo;
+            // it will return 0009
+        }
+
+        
     }
 }

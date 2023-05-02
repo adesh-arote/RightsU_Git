@@ -8708,11 +8708,11 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_Load_Sheet objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AL_Load_Sheet_Code == objToValidate.AL_Load_Sheet_Code).Count() > 0)
-            {
-                resultSet = "Load Sheet already exists";
-                return false;
-            }
+            //if (SearchFor(s => s.AL_Load_Sheet_Code == objToValidate.AL_Load_Sheet_Code).Count() > 0)
+            //{
+            //    resultSet = "Load Sheet already exists";
+            //    return false;
+            //}
 
             resultSet = "";
             return true;

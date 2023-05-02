@@ -8,6 +8,12 @@
     }
 }
 <script>
+    $(document).ready(function () {
+        debugger;
+        alert(@ViewBag.CommandName);
+
+    });
+
     function ClosePopup() {
 
         $('#hdnAction').val("");
@@ -33,7 +39,7 @@
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
-        if (!ValidatePageSize())
+        if (!ValidatePageSize_BS())
             return false;
 
         var searchText = $.trim($('#searchCommon').val());
@@ -104,7 +110,7 @@
         $('#hdnPageNo_BS').val(pageNo);
 
         var opt = null;
-        opt = { callback: pageselectCallback };
+        opt = { callback: pageselectCallback_BS };
         opt["items_per_page"] = recordPerPage;
         opt["num_display_entries"] = pagePerBatch;
         opt["num"] = 10;
@@ -150,12 +156,22 @@
             }
         });
     }
+    function ValidatePageSize_BS() {
+        var recordPerPage = $('#txtPageSize_BS').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize_BS').attr('required', true)
+        return false
+    }
 
-    function pageselectCallback(page_index, jq) {
+    function pageselectCallback_BS(page_index, jq) {
         //if (checkCurrentAction()) {
         $('.required').removeClass('required');
 
-        if (!ValidatePageSize())
+        if (!ValidatePageSize_BS())
             return false;
 
         var pageNo = page_index + 1
@@ -165,6 +181,16 @@
         else
             IsCall = 'Y';
         //}
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize_BS())
+            return false;
+
+        BindBookingsheet()
+        SetPaging_BS();
     }
 </script>
 <div class="modal_block modal_header">
@@ -229,6 +255,8 @@
             </table>
         </div>
     </div>
+    <span>Remarks:</span>
+    <textarea style="width:100%" id="tncRemark" maxlength="500"></textarea>
 </div>
 <div class="modal_block_full" style="margin-top: 10px;">
     <div class="form_links">
