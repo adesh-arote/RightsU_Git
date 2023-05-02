@@ -1,8 +1,7 @@
 ﻿@model List<RightsU_Entities.AL_Purchase_Order_Details>
 
 @using UTOFrameWork.FrameworkClasses
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+@{    
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
@@ -78,3 +77,9 @@
 
     </tbody>
 </table>
+
+<div>
+    <div style="margin:20px; text-align:left">
+        @Html.ActionLink("Back To List", "Index", "PurchaseOrder", null, new { @class = "btn btn-primary" })
+    </div>
+</div>
