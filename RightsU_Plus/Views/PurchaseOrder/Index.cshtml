@@ -431,17 +431,10 @@
                             if (result == "true") {
                                 redirectToLogin();
                             }
-                            if (result.RecordStatus == "P") {
+                            if (result.RecordStatus == "P" || result.RecordStatus == "I") {
                                 $("#imgLoading_" + PurchaseOrderCode).css("display", '');
                                 pendingRecord++;
                             }
-                            //else if (result.RecordStatus == "I") {
-                            //    $("#imgLoading_" + BookingSheetCode).css("display", '');
-                            //    pendingRecord++;
-
-                            //    $('.clsTdStatus_' + BookingSheetCode + 'I').empty();
-                            //    $('.clsTdStatus_' + BookingSheetCode + 'I').append(status);
-                            //}
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoading_" + PurchaseOrderCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
@@ -449,9 +442,7 @@
                                 var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ');"</a>' +
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
-
-                                $('.clsTdStatus_' + PurchaseOrderCode + 'P').empty();
-                                $('.clsTdStatus_' + PurchaseOrderCode + 'C').append(status);
+                                
                                 initializeTooltip();
                             }
                         },

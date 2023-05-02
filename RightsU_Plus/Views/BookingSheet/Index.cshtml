@@ -402,13 +402,17 @@
         $(".deal_action").each(function () {
             debugger;
             var Sibling = $(this).attr('class').split(' ')[2];
+            var Sibling1 = $(this).attr('class').split(' ')[3];
             
             var SiblingClass = $(this).attr('class').split(' ')[1];
             if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
                 var BookingSheetCode = SiblingClass.slice(12, SiblingClass.length - 1);
 
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
-                var ProposalCode = Sibling.slice(13, Sibling.length - 1);
+                    var ProposalCode = Sibling.slice(13, Sibling.length - 1);
+
+                if (isNaN(Sibling1.substr(Sibling1.length - 2)))
+                    var config = Sibling1.slice(13, Sibling1.length - 2);
 
                 if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
                     $.ajax({
@@ -426,16 +430,9 @@
                             if (result == "true") {
                                 redirectToLogin();
                             }
-                            if (result.RecordStatus == "P") {
+                            if (result.RecordStatus == "P" || result.RecordStatus == "I") {
                                 $("#imgLoading_" + BookingSheetCode).css("display", '');
                                 pendingRecord++;
-                            }
-                            else if (result.RecordStatus == "I" ) {
-                                $("#imgLoading_" + BookingSheetCode).css("display", '');
-                                pendingRecord++;
-
-                                $('.clsTdStatus_' + BookingSheetCode + 'I').empty();
-                                $('.clsTdStatus_' + BookingSheetCode + 'I').append(status);
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoading_" + BookingSheetCode).css("display", 'none');
@@ -446,8 +443,6 @@
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
 
-                                $('.clsTdStatus_' + BookingSheetCode + 'P').empty();
-                                $('.clsTdStatus_' + BookingSheetCode + 'C').append(status);
                                 initializeTooltip();
                             }
                         },
