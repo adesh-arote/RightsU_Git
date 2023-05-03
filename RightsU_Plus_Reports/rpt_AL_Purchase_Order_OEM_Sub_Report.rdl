@@ -51,7 +51,7 @@
         </Field>
         <Field Name="Period_Month">
           <DataField>Period_Month</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
+          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="PO_Generate_Date">
           <DataField>PO_Generate_Date</DataField>
@@ -135,6 +135,34 @@
         </Field>
         <Field Name="OEM_Company_Short_Name">
           <DataField>OEM_Company_Short_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lab">
+          <DataField>Lab</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lab_Contact_Name">
+          <DataField>Lab_Contact_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MPEG">
+          <DataField>MPEG</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AspectRatio">
+          <DataField>AspectRatio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FileName">
+          <DataField>FileName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="System">
+          <DataField>System</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PODelivaryText">
+          <DataField>PODelivaryText</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -656,8 +684,24 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Miguel Delgado
-The HUB</Value>
+                                  <Value>=Fields!Lab_Contact_Name.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve">
+</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Lab.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -701,8 +745,16 @@ The HUB</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>
-Smartjog to Panasonic (Cloud)</Value>
+                                  <Value xml:space="preserve">
+</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!PODelivaryText.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1196,7 +1248,21 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>VERSION - Ed </Value>
+                                  <Value>VERSION - </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Version.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1208,7 +1274,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>MPEG - Mp4 </Value>
+                                  <Value>MPEG - </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!MPEG.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1220,7 +1293,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>ASPECT RATIO - 16:9 </Value>
+                                  <Value>ASPECT RATIO - </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!AspectRatio.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1232,7 +1312,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>SYSTEM - eX1, eX2, eX3 </Value>
+                                  <Value>SYSTEM - </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!System.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1244,7 +1331,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>FILE NAME - mhm052300006m4.mpg </Value>
+                                  <Value>FILE NAME -  </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!FileName.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1466,7 +1560,28 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Master File Delivery to PAC by 17th March 2023</Value>
+                                  <Value>Master File Delivery to </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!OEM_Company_Short_Name.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value> by </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Master_delivery_date.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1539,7 +1654,14 @@ Smartjog to Panasonic (Cloud)</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Trailer File Delivery to Aeroplay by 15th March 2023</Value>
+                                  <Value>Trailer File Delivery to Aeroplay by </Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!Trailer_delivery_date.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1721,16 +1843,31 @@ Smartjog to Panasonic (Cloud)</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Image Name="Image3">
-                          <Source>Embedded</Source>
-                          <Value>Signature1</Value>
-                          <Sizing>FitProportional</Sizing>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
                           </Style>
-                        </Image>
+                        </Textbox>
                         <ColSpan>2</ColSpan>
                       </CellContents>
                     </TablixCell>
