@@ -24,6 +24,8 @@
     var URL_BindShowSheetData = '@Url.Action("BindShowSheetData", "BookingSheet")';
     var URL_SearchOnSheet = '@Url.Action("SearchOnSheet", "BookingSheet")';
     var URL_ErrorMessagePopUp = '@Url.Action("ErrorMessagePopUp", "BookingSheet")';
+    //var URL_GetImportedSheetStatus = '@Url.Action("GetImportedSheetStatus", "BookingSheet")';
+    //var URL_RefreshImportedSheet = '@Url.Action("RefreshImportedSheet", "BookingSheet")';
 
     $(document).ready(function () {
         SearchOnSheet("", TabName, DMICode);
@@ -308,13 +310,92 @@
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         
-        if (TabName = "MV") {
-            BindMovieSheetData(DMICode, sort_Type);
-        }
-        else if (TabName = "SH") {
-            BindShowSheetData(DMICode, sort_Type);
-        }
+        //if (TabName = "MV") {
+        //    BindMovieSheetData(DMICode, sort_Type);
+        //}
+        //else if (TabName = "SH") {
+        //    BindShowSheetData(DMICode, sort_Type);
+        //}
     }
+
+    //function CheckPendingStatus() {
+    //    debugger;
+    //    var pendingRecord = 0;
+    //    $(".deal_action").each(function () {
+    //        debugger;
+    //        var Sibling = $(this).attr('class').split(' ')[2];
+
+    //        var SiblingClass = $(this).attr('class').split(' ')[1];
+    //        if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+    //            var DmMasterCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+    //            if (isNaN(Sibling.substr(Sibling.length - 1)))
+    //                var FileType = Sibling.slice(13, Sibling.length - 1);
+
+    //            if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+    //                $.ajax({
+    //                    type: "POST",
+    //                    url: URL_GetImportedSheetStatus,
+    //                    traditional: true,
+    //                    enctype: 'multipart/form-data',
+    //                    contentType: "application/json; charset=utf-8",
+    //                    async: false,
+    //                    data: JSON.stringify({
+    //                        DmMasterCode: DmMasterCode
+    //                    }),
+    //                    success: function (result) {
+    //                        debugger
+    //                        if (result == "true") {
+    //                            redirectToLogin();
+    //                        }
+    //                        if (result.RecordStatus == "P" || result.RecordStatus == "I") {
+    //                            $("#imgLoading_" + DmMasterCode).css("display", '');
+    //                            pendingRecord++;
+    //                        }
+    //                        else if (result.RecordStatus == "C") {
+    //                            $("#imgLoading_" + DmMasterCode).css("display", 'none');
+    //                            $('.' + SiblingClass).empty();
+
+    //                            var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="(' + DmMasterCode + ');"</a>' +
+    //                                '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + DmMasterCode + ');"></a>';
+    //                            $('.' + SiblingClass).append(a);
+
+    //                            initializeTooltip();
+    //                            SearchOnSheet(searchText, TabName, DmMasterCode);
+    //                        }
+    //                    },
+    //                    error: function (result) {
+    //                    }
+    //                });
+    //            }
+    //        }
+    //    });
+
+    //    if (pendingRecord > 0) {
+    //        setTimeout(CheckPendingStatus, 5000);
+    //    }
+    //}
+
+    //function RefreshImportedSheet(DmMasterCode) {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_RefreshImportedSheet,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            DmMasterCode: DmMasterCode
+    //        }),
+    //        success: function (result) {
+    //            debugger;
+    //            SearchOnList("", TabName);
+    //        },
+    //        error: function (result) {
+    //            alert('Error: ' + result.responseText);
+    //        }
+    //    });
+    //}
 
     function ExportToExcel() {
         debugger;
@@ -342,7 +423,7 @@
                     <input type="text" name="txtSearchCommon" id="searchCommon" class="search" placeholder="Title Name, Title Type, Language, Cast, Director, Status" style="width:600px; height:30px;" />
                     <input type="button" class="btn btn-primary" name="btnSearch" id="btnSearch" value="Search" onclick="btnSearch_OnClick()" style="vertical-align: top;" />
                     <input type="button" class="btn btn-primary" name="btnShowAll" id="btnShowAll" value="Show All" style="margin-right:5px; vertical-align: top;" onclick="btnShowAll_OnClick()" />
-                    <a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>
+                    @*<a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>*@
                 </span>
             </div>
         </div>

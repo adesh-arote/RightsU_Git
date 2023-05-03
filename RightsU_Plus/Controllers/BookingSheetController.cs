@@ -422,6 +422,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetbookingSheetStatus(int BookingSheetCode)
         {
+            BookingSheetData();
             string recordStatus = new AL_Booking_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Record_Status).FirstOrDefault();
             
             var obj = new
@@ -429,8 +430,6 @@ namespace RightsU_Plus.Controllers
                 RecordStatus = recordStatus,
             };
             return Json(obj);
-
-
         }
 
         public JsonResult RefreshBookingSheet(int BookingSheetCode)
@@ -668,6 +667,54 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        //public JsonResult GetImportedSheetStatus(int DmMasterCode)
+        //{
+        //    MasterImportData();
+        //    string recordStatus = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).Select(s => s.Status).FirstOrDefault();
+
+        //    var obj = new
+        //    {
+        //        RecordStatus = recordStatus,
+        //    };
+        //    return Json(obj);
+        //}
+
+        //public JsonResult RefreshImportedSheet(int DmMasterCode)
+        //{
+        //    string status = "S", message = "";
+
+        //    DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
+        //    obj_DM_Master_Import = objMasterImport_Service.SearchFor(s => true).Where(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
+
+        //    obj_DM_Master_Import.Status = "P";
+        //    obj_DM_Master_Import.File_Type = "B";
+        //    obj_DM_Master_Import.EntityState = State.Modified;
+
+        //    dynamic resultSet;
+        //    if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
+        //    {
+        //        status = "E";
+        //        message = resultSet;
+        //    }
+        //    else
+        //    {
+        //        message = objMessageKey.Recordsavedsuccessfully;
+
+        //        obj_DM_Master_Import = null;
+        //        objMasterImport_Service = null;
+
+        //        MasterImportData();
+        //    }
+
+        //    var obj = new
+        //    {
+        //        RecordCount = lstMasterImportSearched.Count,
+        //        Status = status,
+        //        Message = message
+        //    };
+        //    return Json(obj);
+        //}
+
         //---------------------------------------------------------FileUpload-------------------------------------------------------------------------------
 
         public ActionResult UploadFiles(HttpPostedFileBase InputFile, int BookingSheetCode)
@@ -786,18 +833,27 @@ namespace RightsU_Plus.Controllers
         {
             string message = "";
             int RecordCount = 0;
+            
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
+            DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
             {
                 lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                int Rcount = lstBulkImport.Count - 1;
+                if(lstBulkImport.Count != 0)
+                {
+                    RecordCount = lstBulkImport.Count - 1;
+                    ViewBag.RecordCount = RecordCount;
 
+                    firstItem = lstBulkImport[0];
+                    lstBulkImport.RemoveAt(0);
+                }
+                else
+                {
+                    RecordCount = lstBulkImport.Count();
+                    ViewBag.RecordCount = RecordCount;
+                }
                 //var newBulkList = lstBulkImport.Select(x => new { Record_Status = x.Record_Status, Error_Message = x.Error_Message, Col1 = x.Col1, Col2 = x.Col2, Col3 = x.Col3 });
 
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
-
-                RecordCount = Rcount;
                 if (RecordCount > 0)
                 {
                     int noOfRecordSkip, noOfRecordTake;
@@ -813,7 +869,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lst.Insert(0, firstItem);
+                    lst = lstBulkImport;
                     DataTable dt = ToDataTable(lst);
                 }
             }
@@ -829,17 +885,26 @@ namespace RightsU_Plus.Controllers
         {
             string message = "";
             int RecordCount = 0;
-            List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
 
+            List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
+            DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
             {
                 lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                int Rcount = lstBulkImport.Count - 1;
+                if (lstBulkImport.Count != 0)
+                {
+                    RecordCount = lstBulkImport.Count - 1;
+                    ViewBag.RecordCount = RecordCount;
 
-                var firstItem = lstBulkImport[0];
-                lstBulkImport.RemoveAt(0);
+                    firstItem = lstBulkImport[0];
+                    lstBulkImport.RemoveAt(0);
+                }
+                else
+                {
+                    RecordCount = lstBulkImport.Count();
+                    ViewBag.RecordCount = RecordCount;
+                }
 
-                RecordCount = Rcount;
                 if (RecordCount > 0)
                 {
                     int noOfRecordSkip, noOfRecordTake;
@@ -855,7 +920,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lst.Insert(0, firstItem);
+                    lst = lstBulkImport;
                     DataTable dt = ToDataTable(lst);
                 }
             }

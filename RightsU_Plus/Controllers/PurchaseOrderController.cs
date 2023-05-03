@@ -323,12 +323,11 @@ namespace RightsU_Plus.Controllers
             try
             {
                 lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-                int Rcount = lstTabData.Count();
+                RecordCount = lstTabData.Count();
 
-                RecordCount = Rcount;
                 if (RecordCount > 0)
                 {
-                    lst = lstTabData;
+                    lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
                     DataTable dt = ToDataTable(lst);
                 }
                 else
@@ -396,7 +395,7 @@ namespace RightsU_Plus.Controllers
 
         }
 
-        public JsonResult RefreshBookingSheet(int PurchaseOrderCode, int BookingSheetCode)
+        public JsonResult RefreshPoList(int PurchaseOrderCode, int BookingSheetCode)
         {
             string status = "S", message = "";
 

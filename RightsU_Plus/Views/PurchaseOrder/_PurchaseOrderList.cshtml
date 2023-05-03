@@ -52,7 +52,15 @@
                         </span>
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Status)
+                        @*@Html.DisplayFor(modelItem => item.Status)*@
+                        @if(item.Status == "C")
+                        {
+                            <span>Success</span>
+                        }
+                        else
+                        {
+                            <span>In Progress</span>
+                        }
                     </td>
                     <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status">
                         @if (item.Status == "C")
