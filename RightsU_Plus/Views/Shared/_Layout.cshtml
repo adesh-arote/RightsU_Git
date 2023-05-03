@@ -981,8 +981,11 @@
                             <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-globe" href="#"></a>
                             </li>
-                            <li title="BookingSheet" class="showhidetooltip menu_margin"  data-placement="@dataPlacement">
+                            <li title="BookingSheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
+                            </li>
+                            <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-bookmark" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "LoadSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
                             </li>
                             @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
                     <a class="glyphicon glyphicon-calendar" href="#"></a>
