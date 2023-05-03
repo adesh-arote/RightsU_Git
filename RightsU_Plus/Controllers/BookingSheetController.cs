@@ -456,7 +456,7 @@ namespace RightsU_Plus.Controllers
                 objBooking_Sheet = null;
                 objBooking_Sheet_Service = null;
 
-                BookingSheetData();           
+                BookingSheetData();
             }
 
             var obj = new
@@ -762,6 +762,9 @@ namespace RightsU_Plus.Controllers
                         }
                         else
                         {
+                            objBooking_Sheet_Service = null;
+                            BookingSheetData();
+
                             AL_Booking_Sheet obj_AL_Booking_Sheet = new AL_Booking_Sheet();
                             obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
 
