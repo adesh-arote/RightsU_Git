@@ -1196,7 +1196,7 @@ namespace RightsU_Plus.Controllers
                         obj.IsDelete = "N";
                     }
                 }
-                int? TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                int? TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
                 int? Row_No = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Map_Extended_Columns_Code == obj.Map_Extended_Columns_Code).Select(x => x.Row_No).FirstOrDefault();
                 obj.Extended_Group_Code = TabCode;
                 obj.Row_No = Row_No;
