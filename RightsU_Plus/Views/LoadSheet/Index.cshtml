@@ -333,6 +333,11 @@
                             if (result.RecordStatus == "P") {
                                 $("#imgLoading_" + AL_Load_Sheet_Code).css("display", '');
                                 pendingRecord++;
+
+                                 var status = '<span>Waiting</span>'
+
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').empty();
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').append(status);
                             }
                             else if (result.RecordStatus == "W") {
                                 $("#imgLoading_" + AL_Load_Sheet_Code).css("display", '');

@@ -105,13 +105,14 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SearchBookingsheet(string searchText)
         {
+            lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(searchText).ToList();
 
-            if (!string.IsNullOrEmpty(searchText))
-            {
-                lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
-            }
-            else
-                lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
+            //if (!string.IsNullOrEmpty(searchText))
+            //{
+            //    lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(searchText).ToList();
+            //}
+            //else
+            //    lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
 
             var obj = new
             {
@@ -130,7 +131,7 @@ namespace RightsU_Plus.Controllers
         }
         public PartialViewResult BindBookingsheet(int pageNo, int recordPerPage, string sortType)
         {
-            lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
+            //lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
             List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
             int RecordCount = 0;
             RecordCount = lstBookingsheetDataForLoadsheet_Searched.Count;
