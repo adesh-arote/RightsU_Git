@@ -134,6 +134,14 @@
           <DataField>Total_OEM_Count</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
+        <Field Name="Client_Name_New">
+          <DataField>Client_Name_New</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Name_New">
+          <DataField>Vendor_Name_New</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
     </DataSet>
     <DataSet Name="DataSet2">
@@ -430,7 +438,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Vendor_Name.Value</Value>
+                                  <Value>=Fields!Vendor_Name_New.Value</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -453,7 +461,6 @@
                                 </TextRun>
                                 <TextRun>
                                   <Value>
-IMG
 M: +</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
@@ -648,7 +655,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Client_Name.Value</Value>
+                                  <Value>=Fields!Client_Name_New.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -1020,7 +1027,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Remarks.Value</Value>
+                                  <Value>=Fields!File_details.Value</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2600,7 +2607,6 @@ Phone: +65 (0) 31632622</Value>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
