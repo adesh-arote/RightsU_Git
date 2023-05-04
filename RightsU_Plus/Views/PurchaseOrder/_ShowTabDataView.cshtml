@@ -41,7 +41,7 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.PO_Number)
                     </td>
-                    <td style="text-align:center">
+                    <td>
                         <span>
                             @{
                                 string title_Name = "";
@@ -54,14 +54,22 @@
                         </span>
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.Status)
+                        @*@Html.DisplayFor(modelItem => item.Status)*@
+                        @if (item.Status == "C")
+                        {
+                            <span>Success</span>
+                        }
+                        else
+                        {
+                            <span>Error</span>
+                        }
                     </td>
                     <td style="text-align:center">
                         @if (item.Status == "C")
                         {
-                            <a title="Download Booking Sheet" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink('EpisodeTitle_Import.xlsx')"></a>
+                            <a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink('@item.AL_Purchase_Order_Details_Code')" download></a>
                         }
-                        @if (item.Status != "C")
+                        else
                         {
                             <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }

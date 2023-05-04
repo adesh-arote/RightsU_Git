@@ -667,53 +667,53 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        //public JsonResult GetImportedSheetStatus(int DmMasterCode)
-        //{
-        //    MasterImportData();
-        //    string recordStatus = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).Select(s => s.Status).FirstOrDefault();
+        public JsonResult GetImportedSheetStatus(int DmMasterCode)
+        {
+            MasterImportData();
+            string recordStatus = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).Select(s => s.Status).FirstOrDefault();
 
-        //    var obj = new
-        //    {
-        //        RecordStatus = recordStatus,
-        //    };
-        //    return Json(obj);
-        //}
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+            };
+            return Json(obj);
+        }
 
-        //public JsonResult RefreshImportedSheet(int DmMasterCode)
-        //{
-        //    string status = "S", message = "";
+        public JsonResult RefreshImportedSheet(int DmMasterCode)
+        {
+            string status = "S", message = "";
 
-        //    DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
-        //    obj_DM_Master_Import = objMasterImport_Service.SearchFor(s => true).Where(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
+            DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
+            obj_DM_Master_Import = objMasterImport_Service.SearchFor(s => true).Where(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
 
-        //    obj_DM_Master_Import.Status = "P";
-        //    obj_DM_Master_Import.File_Type = "B";
-        //    obj_DM_Master_Import.EntityState = State.Modified;
+            obj_DM_Master_Import.Status = "P";
+            obj_DM_Master_Import.File_Type = "B";
+            obj_DM_Master_Import.EntityState = State.Modified;
 
-        //    dynamic resultSet;
-        //    if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
-        //    {
-        //        status = "E";
-        //        message = resultSet;
-        //    }
-        //    else
-        //    {
-        //        message = objMessageKey.Recordsavedsuccessfully;
+            dynamic resultSet;
+            if (!objMasterImport_Service.Save(obj_DM_Master_Import, out resultSet))
+            {
+                status = "E";
+                message = resultSet;
+            }
+            else
+            {
+                message = objMessageKey.Recordsavedsuccessfully;
 
-        //        obj_DM_Master_Import = null;
-        //        objMasterImport_Service = null;
+                obj_DM_Master_Import = null;
+                objMasterImport_Service = null;
 
-        //        MasterImportData();
-        //    }
+                MasterImportData();
+            }
 
-        //    var obj = new
-        //    {
-        //        RecordCount = lstMasterImportSearched.Count,
-        //        Status = status,
-        //        Message = message
-        //    };
-        //    return Json(obj);
-        //}
+            var obj = new
+            {
+                RecordCount = lstMasterImportSearched.Count,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
 
         //---------------------------------------------------------FileUpload-------------------------------------------------------------------------------
 

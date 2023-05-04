@@ -28,6 +28,8 @@
     var URL_SearchOnImportMasterList = '@Url.Action("SearchOnImportMasterList", "BookingSheet")';
     var URL_UploadFiles = '@Url.Action("UploadFiles", "BookingSheet")';
     var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
+    var URL_GetImportedSheetStatus = '@Url.Action("GetImportedSheetStatus", "BookingSheet")';
+    var URL_RefreshImportedSheet = '@Url.Action("RefreshImportedSheet", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -220,6 +222,8 @@
             success: function (result) {
                 $('#divBindMasterList').empty();
                 $('#divBindMasterList').html(result);
+
+                CheckPendingStatus();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -293,6 +297,86 @@
                 SearchOnImportMasterList("");            
             }
         })    
+    }
+
+    function CheckPendingStatus() {
+        debugger;
+        var pendingRecord = 0;
+        $(".deal_action").each(function () {
+            debugger;
+            var Sibling = $(this).attr('class').split(' ')[2];
+
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var DmMasterCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+                if (isNaN(Sibling.substr(Sibling.length - 1)))
+                    var FileType = Sibling.slice(13, Sibling.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetImportedSheetStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            DmMasterCode: DmMasterCode
+                        }),
+                        success: function (result) {
+                            debugger
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "P" || result.RecordStatus == "N") {
+                                $("#imgLoading_" + DmMasterCode).css("display", '');
+                                pendingRecord++;
+                            }
+                            else if (result.RecordStatus == "E" || result.RecordStatus == "S") {
+                                $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+                                var url123 = '@Url.Action("ImportedSheetView", "BookingSheet")';
+                                //onclick="(" window.location.href='" + Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
+                                var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href ="' + url123 +'?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '";"</a>' +
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + DmMasterCode + ');"></a>';
+                                $('.' + SiblingClass).append(a);
+
+                                initializeTooltip();
+                                SearchOnImportMasterList("");
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+        });
+
+        if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatus, 5000);
+        }
+    }
+
+    function RefreshImportedSheet(DmMasterCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RefreshImportedSheet,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DmMasterCode: DmMasterCode
+            }),
+            success: function (result) {
+                debugger;
+                SearchOnImportMasterList("");
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
     }
 
 </script>

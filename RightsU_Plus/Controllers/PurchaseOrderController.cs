@@ -188,7 +188,6 @@ namespace RightsU_Plus.Controllers
         {
             if (BookingSheetCode > 0)
             {
-                //lstPOSearched = lstPO = objPO_Service.SearchFor(x => true).OrderByDescending(o => o.Inserted_On).ToList();
                 lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
             }
             else
