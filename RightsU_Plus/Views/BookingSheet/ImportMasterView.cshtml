@@ -313,7 +313,7 @@
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
                     var FileType = Sibling.slice(13, Sibling.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'I') {
                     $.ajax({
                         type: "POST",
                         url: URL_GetImportedSheetStatus,
@@ -329,7 +329,7 @@
                             if (result == "true") {
                                 redirectToLogin();
                             }
-                            if (result.RecordStatus == "P" || result.RecordStatus == "N") {
+                            if (result.RecordStatus == "P" || result.RecordStatus == "N" || result.RecordStatus == "I") {
                                 $("#imgLoading_" + DmMasterCode).css("display", '');
                                 pendingRecord++;
                             }

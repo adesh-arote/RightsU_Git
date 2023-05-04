@@ -439,7 +439,7 @@ namespace RightsU_Plus.Controllers
             AL_Booking_Sheet obj_AL_Booking_Sheet = new AL_Booking_Sheet();
             obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
 
-            obj_AL_Booking_Sheet.Record_Status = "P";
+            obj_AL_Booking_Sheet.Record_Status = "I";
             obj_AL_Booking_Sheet.Excel_File = "";
             obj_AL_Booking_Sheet.EntityState = State.Modified;
             
@@ -1062,8 +1062,11 @@ namespace RightsU_Plus.Controllers
 
             ValidCount = objPurchase_Order_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
-            Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations == "man " && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            //Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+
+            Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && w.Allow_Import == "I" && (w.Columns_Value == "" || w.Columns_Value == null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             if (ValidCount > 0)
             {

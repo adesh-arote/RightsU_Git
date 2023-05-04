@@ -401,7 +401,7 @@ namespace RightsU_Plus.Controllers
             AL_Purchase_Order obj_AL_Purchase_Order = new AL_Purchase_Order();
             obj_AL_Purchase_Order = objPO_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
 
-            obj_AL_Purchase_Order.Status = "P";
+            obj_AL_Purchase_Order.Status = "I";
             obj_AL_Purchase_Order.EntityState = State.Modified;
 
             dynamic resultSet;

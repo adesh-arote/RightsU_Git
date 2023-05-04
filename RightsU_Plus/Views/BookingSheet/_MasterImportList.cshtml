@@ -64,7 +64,7 @@
                         @Html.DisplayFor(modelItem => item.Uploaded_Date)
                     </td>
                     <td style="text-align:center">
-                        @if (item.Status == "P" || item.Status == "N")
+                        @if (item.Status == "P" || item.Status == "N" || item.Status == "I")
                         {
                             <span>In Process</span>
                         }
@@ -86,9 +86,8 @@
                         {
                             <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
                             <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshImportedSheet('@item.DM_Master_Import_Code')"></a>
-
                         }
-                        @if (item.Status == "P" || item.Status == "N")
+                        else
                         {
                             <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
