@@ -156,10 +156,10 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Index()
         {
-            int BookingSheetNo = 0;
+            int BookingSheetCode = 0;
             if (Session["BookingSheetCode"] != null)
             {                                            //-----To show success messages
-                BookingSheetNo = Convert.ToInt32(Session["BookingSheetCode"]);
+                BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
                 //Session["BookingSheetCode"] = null;
             }
             if(Session["config"] != null)
@@ -168,7 +168,7 @@ namespace RightsU_Plus.Controllers
                 config = Convert.ToString(Session["config"]);
             }
             
-            POData(BookingSheetNo);
+            POData(BookingSheetCode);
 
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = "Latest Modified", Value = "T" });

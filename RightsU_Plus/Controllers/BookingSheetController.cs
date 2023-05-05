@@ -686,7 +686,7 @@ namespace RightsU_Plus.Controllers
             DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
             obj_DM_Master_Import = objMasterImport_Service.SearchFor(s => true).Where(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
 
-            obj_DM_Master_Import.Status = "P";
+            obj_DM_Master_Import.Status = "I";
             obj_DM_Master_Import.File_Type = "B";
             obj_DM_Master_Import.EntityState = State.Modified;
 
