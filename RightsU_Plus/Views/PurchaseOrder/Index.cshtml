@@ -454,9 +454,10 @@
             }
         });
 
-        if (pendingRecord > 0) {
-            setTimeout(CheckPendingStatus, 5000);
-        }
+        setTimeout(CheckPendingStatus, 5000);
+        //if (pendingRecord > 0) {
+        //    setTimeout(CheckPendingStatus, 5000);
+        //}
     }
 
     function RefreshPoList(PoCode, BkCode) {

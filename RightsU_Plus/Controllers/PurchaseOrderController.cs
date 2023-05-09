@@ -331,8 +331,8 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lst = lstMovieDataSearched;
-                    DataTable dt = ToDataTable(lst);
+                    //lst = lstMovieDataSearched;
+                    //DataTable dt = ToDataTable(lst);
                 }
             }
             catch (Exception ex)
@@ -370,8 +370,8 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    lst = lstTabData;
-                    DataTable dt = ToDataTable(lst);
+                    //lst = lstTabData;
+                    //DataTable dt = ToDataTable(lst);
                 }
             }
             catch (Exception ex)
