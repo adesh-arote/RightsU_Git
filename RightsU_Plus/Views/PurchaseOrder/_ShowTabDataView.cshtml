@@ -15,7 +15,7 @@
         <tr>
             <th style="width:15%">Banner</th>
             <th style="width:15%">PO Number</th>
-            <th style="width:15%">Show Names</th>
+            <th style="width:15%; display:none">Show Names</th>
             <th style="width:15%">Status</th>
             <th style="width:15%">Action</th>
         </tr>
@@ -41,16 +41,16 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.PO_Number)
                     </td>
-                    <td>
+                    <td style="display:none">
                         <span>
-                            @{
+                            @*@{
                                 string title_Name = "";
                                 if (item.Title_Code > 0 && item.Title_Code != null)
                                 {
                                     title_Name = ((IEnumerable<RightsU_Entities.Title>)ViewBag.TitleCode).Where(a => a.Title_Code == item.Title_Code).Select(s => s.Title_Name).FirstOrDefault();
                                 }
                                 @title_Name
-                            }
+                            }*@
                         </span>
                     </td>
                     <td style="text-align:center">

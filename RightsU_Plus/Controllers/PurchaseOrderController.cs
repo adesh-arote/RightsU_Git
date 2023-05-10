@@ -358,7 +358,7 @@ namespace RightsU_Plus.Controllers
 
             try
             {
-                lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
                 int Rcount = lstTabData.Count();
 
                 RecordCount = Rcount;
