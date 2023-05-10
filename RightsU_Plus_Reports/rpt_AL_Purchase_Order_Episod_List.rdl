@@ -503,10 +503,6 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>EP </Value>
-                                  <Style />
-                                </TextRun>
-                                <TextRun>
                                   <Value>=Fields!EpisodeNo.Value</Value>
                                   <Style />
                                 </TextRun>
@@ -558,6 +554,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
