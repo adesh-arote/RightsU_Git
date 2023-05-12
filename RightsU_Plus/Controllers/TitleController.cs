@@ -2920,15 +2920,15 @@ namespace RightsU_Plus.Controllers
 
                 if (TitleType == "M")
                 {
-                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "M" || w.Import_Type == null).ToList();
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "M").ToList();
                 }
                 else if (TitleType == "S")
                 {
-                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "S" || w.Import_Type == null).ToList();
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "S").ToList();
                 }
                 else
                 {
-
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == null).ToList();
                 }
                 foreach (var item in lstDMtIU)
                 {
