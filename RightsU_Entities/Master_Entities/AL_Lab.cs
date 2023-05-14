@@ -14,6 +14,10 @@ namespace RightsU_Entities
 
     public partial class AL_Lab
     {
+        public AL_Lab()
+        {
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
+        }
         public State EntityState { get; set; }
         public int AL_Lab_Code { get; set; }
         public string AL_Lab_Name { get; set; }
@@ -24,5 +28,6 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string Contact_Person { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

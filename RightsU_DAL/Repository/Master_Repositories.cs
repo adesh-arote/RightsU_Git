@@ -3705,5 +3705,53 @@ namespace RightsU_DAL
         }
     }
 
+    public class AL_Material_Tracking_Repository : RightsU_Repository<AL_Material_Tracking>
+    {
+        public AL_Material_Tracking_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Material_Tracking objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Material_Tracking objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+    public class AL_Material_Tracking_OEM_Repository : RightsU_Repository<AL_Material_Tracking_OEM>
+    {
+        public AL_Material_Tracking_OEM_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Material_Tracking_OEM objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Material_Tracking_OEM objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
     #endregion
 }

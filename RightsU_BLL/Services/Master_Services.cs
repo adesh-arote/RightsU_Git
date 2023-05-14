@@ -8780,5 +8780,127 @@ namespace RightsU_BLL
         }
     }
 
+    public class AL_Material_Tracking_Service : BusinessLogic<AL_Material_Tracking>
+    {
+        private readonly AL_Material_Tracking_Repository objRepository;
+
+        public AL_Material_Tracking_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Material_Tracking_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Material_Tracking> SearchFor(Expression<Func<AL_Material_Tracking, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Material_Tracking GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Material_Tracking objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Material_Tracking objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Material_Tracking objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Material_Tracking_Code == objToValidate.AL_Material_Tracking_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Material_Tracking_OEM_Service : BusinessLogic<AL_Material_Tracking_OEM>
+    {
+        private readonly AL_Material_Tracking_OEM_Repository objRepository;
+
+        public AL_Material_Tracking_OEM_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Material_Tracking_OEM_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Material_Tracking_OEM> SearchFor(Expression<Func<AL_Material_Tracking_OEM, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Material_Tracking_OEM GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Material_Tracking_OEM objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Material_Tracking_OEM objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Material_Tracking_OEM objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Material_Tracking_OEM_Code == objToValidate.AL_Material_Tracking_OEM_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
     #endregion
 }

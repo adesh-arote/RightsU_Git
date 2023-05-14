@@ -473,6 +473,8 @@ namespace RightsU_InterimDb.Models
         public DbSet<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
         public DbSet<AL_Purchase_Order> AL_Purchase_Order { get; set; }
         public DbSet<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        public DbSet<AL_Material_Tracking> AL_Material_Tracking { get; set; }
+        public DbSet<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {

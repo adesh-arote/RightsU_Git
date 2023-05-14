@@ -1214,6 +1214,41 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="AL_Load_Sheet_Code" Type="int" />
           <Property Name="AL_Booking_Sheet_Code" Type="int" />
         </EntityType>
+        <EntityType Name="AL_Material_Tracking">
+          <Key>
+            <PropertyRef Name="AL_Material_Tracking_Code" />
+          </Key>
+          <Property Name="AL_Material_Tracking_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Load_Sheet_Code" Type="int" />
+          <Property Name="AL_Booking_Sheet_Code" Type="int" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Title_Content_Code" Type="int" />
+          <Property Name="Vendor_Code" Type="int" />
+          <Property Name="AL_Lab_Code" Type="int" />
+          <Property Name="PO_Number" Type="varchar" MaxLength="50" />
+          <Property Name="PO_Status" Type="varchar" MaxLength="50" />
+          <Property Name="Poster" Type="varchar" MaxLength="50" />
+          <Property Name="Still" Type="varchar" MaxLength="50" />
+          <Property Name="Trailer" Type="varchar" MaxLength="50" />
+          <Property Name="Embedded_Subs" Type="varchar" MaxLength="500" />
+          <Property Name="Edited_Poster" Type="varchar" MaxLength="50" />
+          <Property Name="Edited_Still" Type="varchar" MaxLength="50" />
+          <Property Name="Master_In_House" Type="varchar" MaxLength="500" />
+          <Property Name="Status" Type="char" MaxLength="1" />
+        </EntityType>
+        <EntityType Name="AL_Material_Tracking_OEM">
+          <Key>
+            <PropertyRef Name="AL_Material_Tracking_OEM_Code" />
+          </Key>
+          <Property Name="AL_Material_Tracking_OEM_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AL_Material_Tracking_Code" Type="int" />
+          <Property Name="AL_OEM_Code" Type="int" />
+          <Property Name="Data_For" Type="char" MaxLength="1" />
+          <Property Name="Column_Value" Type="varchar" MaxLength="50" />
+          <Property Name="Delivery_Date" Type="date" />
+          <Property Name="Updated_By" Type="int" />
+          <Property Name="Updated_On" Type="datetime" />
+        </EntityType>
         <EntityType Name="AL_OEM">
           <Key>
             <PropertyRef Name="AL_OEM_Code" />
@@ -3355,7 +3390,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Additional_Condition" Type="varchar(max)" />
           <Property Name="Inter_Group_Name" Type="varchar" MaxLength="50" />
           <Property Name="Display_Name" Type="varchar" MaxLength="100" />
-          <Property Name="Allow_Import" Type="char" MaxLength="1" />
+		  <Property Name="Allow_Import" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Format_Show_Data">
@@ -8838,6 +8873,102 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="AL_Load_Sheet_Details">
               <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_Booking_Sheet">
+          <End Role="AL_Booking_Sheet" Type="Self.AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_Lab">
+          <End Role="AL_Lab" Type="Self.AL_Lab" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Lab">
+              <PropertyRef Name="AL_Lab_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Lab_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_Load_Sheet">
+          <End Role="AL_Load_Sheet" Type="Self.AL_Load_Sheet" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Load_Sheet">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking_OEM" Type="Self.AL_Material_Tracking_OEM" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Material_Tracking_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking_OEM">
+              <PropertyRef Name="AL_Material_Tracking_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_OEM_AL_OEM">
+          <End Role="AL_OEM" Type="Self.AL_OEM" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking_OEM" Type="Self.AL_Material_Tracking_OEM" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Title_Content">
+          <End Role="Title_Content" Type="Self.Title_Content" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Vendor">
+          <End Role="Vendor" Type="Self.Vendor" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Vendor_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15667,6 +15798,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="AL_Lab" EntityType="Self.AL_Lab" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Load_Sheet" EntityType="Self.AL_Load_Sheet" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Load_Sheet_Details" EntityType="Self.AL_Load_Sheet_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Material_Tracking" EntityType="Self.AL_Material_Tracking" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AL_Material_Tracking_OEM" EntityType="Self.AL_Material_Tracking_OEM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_OEM" EntityType="Self.AL_OEM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Purchase_Order" EntityType="Self.AL_Purchase_Order" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AL_Purchase_Order_Details" EntityType="Self.AL_Purchase_Order_Details" Schema="dbo" store:Type="Tables" />
@@ -17358,6 +17491,38 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_AL_Load_Sheet_Details_AL_Load_Sheet" Association="Self.FK_AL_Load_Sheet_Details_AL_Load_Sheet">
             <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
             <End Role="AL_Load_Sheet_Details" EntitySet="AL_Load_Sheet_Details" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Booking_Sheet" Association="Self.FK_AL_Material_Tracking_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Lab" Association="Self.FK_AL_Material_Tracking_AL_Lab">
+            <End Role="AL_Lab" EntitySet="AL_Lab" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Load_Sheet" Association="Self.FK_AL_Material_Tracking_AL_Load_Sheet">
+            <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking" Association="Self.FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+            <End Role="AL_Material_Tracking_OEM" EntitySet="AL_Material_Tracking_OEM" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_OEM_AL_OEM" Association="Self.FK_AL_Material_Tracking_OEM_AL_OEM">
+            <End Role="AL_OEM" EntitySet="AL_OEM" />
+            <End Role="AL_Material_Tracking_OEM" EntitySet="AL_Material_Tracking_OEM" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Title" Association="Self.FK_AL_Material_Tracking_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Title_Content" Association="Self.FK_AL_Material_Tracking_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Vendor" Association="Self.FK_AL_Material_Tracking_Vendor">
+            <End Role="Vendor" EntitySet="Vendor" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
           </AssociationSet>
           <AssociationSet Name="FK_AL_Purchase_Order_AL_Booking_Sheet" Association="Self.FK_AL_Purchase_Order_AL_Booking_Sheet">
             <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
@@ -23228,6 +23393,40 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" />
+          <EntitySet Name="AL_Material_Tracking" EntityType="RightsU_NeoModel.AL_Material_Tracking" />
+          <EntitySet Name="AL_Material_Tracking_OEM" EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" />
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Booking_Sheet" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet">
+            <End Role="AL_Booking_Sheet" EntitySet="AL_Booking_Sheet" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Lab" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab">
+            <End Role="AL_Lab" EntitySet="AL_Lab" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_Load_Sheet" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet">
+            <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking" Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+            <End Role="AL_Material_Tracking_OEM" EntitySet="AL_Material_Tracking_OEM" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Title" Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Title_Content" Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content">
+            <End Role="Title_Content" EntitySet="Title_Content" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_Vendor" Association="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor">
+            <End Role="Vendor" EntitySet="Vendors" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_OEM_AL_OEM" Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM">
+            <End Role="AL_OEM" EntitySet="AL_OEM" />
+            <End Role="AL_Material_Tracking_OEM" EntitySet="AL_Material_Tracking_OEM" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -26094,6 +26293,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" FromRole="Title" ToRole="AL_Booking_Sheet_Details" />
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" FromRole="Title" ToRole="AL_Recommendation_Content" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" FromRole="Title" ToRole="AL_Purchase_Order_Details" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title" FromRole="Title" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -26360,6 +26560,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Vendor_TnC" Relationship="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" FromRole="Vendor" ToRole="AL_Vendor_TnC" />
           <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="Vendor" ToRole="AL_Booking_Sheet" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" FromRole="Vendor" ToRole="AL_Purchase_Order_Details" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" FromRole="Vendor" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -34111,6 +34312,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Booking_Sheet_Details" />
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" FromRole="Title_Content" ToRole="AL_Recommendation_Content" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" FromRole="Title_Content" ToRole="AL_Purchase_Order_Details" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" FromRole="Title_Content" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="Title_Content_Version">
           <Key>
@@ -38968,6 +39170,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AL_Vendor_OEM" Relationship="RightsU_NeoModel.FK_AL_Vendor_OEM_AL_OEM" FromRole="AL_OEM" ToRole="AL_Vendor_OEM" />
+          <NavigationProperty Name="AL_Material_Tracking_OEM" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" FromRole="AL_OEM" ToRole="AL_Material_Tracking_OEM" />
         </EntityType>
         <EntityType Name="AL_Vendor_Details">
           <Key>
@@ -39140,6 +39343,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="Int32" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <Property Name="Contact_Person" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab" FromRole="AL_Lab" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="AL_Booking_Sheet">
           <Key>
@@ -39165,6 +39369,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Excel_File" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="AL_Load_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Load_Sheet_Details" />
           <NavigationProperty Name="AL_Purchase_Order" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Purchase_Order" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet" FromRole="AL_Booking_Sheet" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="AL_Booking_Sheet_Details">
           <Key>
@@ -39623,6 +39828,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Updated_On" Type="DateTime" Precision="3" />
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AL_Load_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" FromRole="AL_Load_Sheet" ToRole="AL_Load_Sheet_Details" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet" FromRole="AL_Load_Sheet" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="AL_Load_Sheet_Details">
           <Key>
@@ -39785,6 +39991,146 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="4000" />
         </ComplexType>
+        <EntityType Name="AL_Material_Tracking">
+          <Key>
+            <PropertyRef Name="AL_Material_Tracking_Code" />
+          </Key>
+          <Property Name="AL_Material_Tracking_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Load_Sheet_Code" Type="Int32" />
+          <Property Name="AL_Booking_Sheet_Code" Type="Int32" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Title_Content_Code" Type="Int32" />
+          <Property Name="Vendor_Code" Type="Int32" />
+          <Property Name="AL_Lab_Code" Type="Int32" />
+          <Property Name="PO_Number" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PO_Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Poster" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Still" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Trailer" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Embedded_Subs" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Edited_Poster" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Edited_Still" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Master_In_House" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet" FromRole="AL_Material_Tracking" ToRole="AL_Booking_Sheet" />
+          <NavigationProperty Name="AL_Lab" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab" FromRole="AL_Material_Tracking" ToRole="AL_Lab" />
+          <NavigationProperty Name="AL_Load_Sheet" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet" FromRole="AL_Material_Tracking" ToRole="AL_Load_Sheet" />
+          <NavigationProperty Name="AL_Material_Tracking_OEM" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking" FromRole="AL_Material_Tracking" ToRole="AL_Material_Tracking_OEM" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title" FromRole="AL_Material_Tracking" ToRole="Title" />
+          <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" FromRole="AL_Material_Tracking" ToRole="Title_Content" />
+          <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" FromRole="AL_Material_Tracking" ToRole="Vendor" />
+        </EntityType>
+        <EntityType Name="AL_Material_Tracking_OEM">
+          <Key>
+            <PropertyRef Name="AL_Material_Tracking_OEM_Code" />
+          </Key>
+          <Property Name="AL_Material_Tracking_OEM_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AL_Material_Tracking_Code" Type="Int32" />
+          <Property Name="AL_OEM_Code" Type="Int32" />
+          <Property Name="Data_For" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Column_Value" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Delivery_Date" Type="DateTime" Precision="0" />
+          <Property Name="Updated_By" Type="Int32" />
+          <Property Name="Updated_On" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking" FromRole="AL_Material_Tracking_OEM" ToRole="AL_Material_Tracking" />
+          <NavigationProperty Name="AL_OEM" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" FromRole="AL_Material_Tracking_OEM" ToRole="AL_OEM" />
+        </EntityType>
+        <Association Name="FK_AL_Material_Tracking_AL_Booking_Sheet">
+          <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Booking_Sheet">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Booking_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_Lab">
+          <End Type="RightsU_NeoModel.AL_Lab" Role="AL_Lab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Lab">
+              <PropertyRef Name="AL_Lab_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Lab_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_Load_Sheet">
+          <End Type="RightsU_NeoModel.AL_Load_Sheet" Role="AL_Load_Sheet" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Load_Sheet">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Load_Sheet_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking_OEM" Role="AL_Material_Tracking_OEM" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_Material_Tracking_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking_OEM">
+              <PropertyRef Name="AL_Material_Tracking_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Title_Content">
+          <End Type="RightsU_NeoModel.Title_Content" Role="Title_Content" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title_Content">
+              <PropertyRef Name="Title_Content_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Title_Content_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_Vendor">
+          <End Type="RightsU_NeoModel.Vendor" Role="Vendor" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Vendor">
+              <PropertyRef Name="Vendor_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="Vendor_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AL_Material_Tracking_OEM_AL_OEM">
+          <End Type="RightsU_NeoModel.AL_OEM" Role="AL_OEM" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking_OEM" Role="AL_Material_Tracking_OEM" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -50171,6 +50517,43 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="AL_Material_Tracking">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Material_Tracking">
+              <MappingFragment StoreEntitySet="AL_Material_Tracking">
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Master_In_House" ColumnName="Master_In_House" />
+                <ScalarProperty Name="Edited_Still" ColumnName="Edited_Still" />
+                <ScalarProperty Name="Edited_Poster" ColumnName="Edited_Poster" />
+                <ScalarProperty Name="Embedded_Subs" ColumnName="Embedded_Subs" />
+                <ScalarProperty Name="Trailer" ColumnName="Trailer" />
+                <ScalarProperty Name="Still" ColumnName="Still" />
+                <ScalarProperty Name="Poster" ColumnName="Poster" />
+                <ScalarProperty Name="PO_Status" ColumnName="PO_Status" />
+                <ScalarProperty Name="PO_Number" ColumnName="PO_Number" />
+                <ScalarProperty Name="AL_Lab_Code" ColumnName="AL_Lab_Code" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="Title_Content_Code" ColumnName="Title_Content_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Load_Sheet_Code" ColumnName="AL_Load_Sheet_Code" />
+                <ScalarProperty Name="AL_Material_Tracking_Code" ColumnName="AL_Material_Tracking_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AL_Material_Tracking_OEM">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Material_Tracking_OEM">
+              <MappingFragment StoreEntitySet="AL_Material_Tracking_OEM">
+                <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
+                <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
+                <ScalarProperty Name="Delivery_Date" ColumnName="Delivery_Date" />
+                <ScalarProperty Name="Column_Value" ColumnName="Column_Value" />
+                <ScalarProperty Name="Data_For" ColumnName="Data_For" />
+                <ScalarProperty Name="AL_OEM_Code" ColumnName="AL_OEM_Code" />
+                <ScalarProperty Name="AL_Material_Tracking_Code" ColumnName="AL_Material_Tracking_Code" />
+                <ScalarProperty Name="AL_Material_Tracking_OEM_Code" ColumnName="AL_Material_Tracking_OEM_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

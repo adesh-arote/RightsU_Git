@@ -38,6 +38,7 @@ namespace RightsU_Entities
             this.AL_Vendor_Rule = new HashSet<AL_Vendor_Rule>();
             this.AL_Vendor_TnC = new HashSet<AL_Vendor_TnC>();
             this.AL_Booking_Sheet = new HashSet<AL_Booking_Sheet>();
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
 
         public State EntityState { get; set; }
@@ -98,5 +99,6 @@ namespace RightsU_Entities
         public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
         public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
         public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

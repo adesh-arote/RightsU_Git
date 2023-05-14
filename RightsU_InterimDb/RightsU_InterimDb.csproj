@@ -331,6 +331,12 @@
     <Compile Include="Models\AL_Load_Sheet_Details.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AL_Material_Tracking.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Material_Tracking_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AL_OEM.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

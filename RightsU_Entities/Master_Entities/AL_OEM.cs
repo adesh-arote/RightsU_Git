@@ -17,6 +17,7 @@ namespace RightsU_Entities
         public AL_OEM()
         {
             this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
+            this.AL_Material_Tracking_OEM = new HashSet<AL_Material_Tracking_OEM>();
         }
 
         public State EntityState { get; set; }
@@ -30,5 +31,6 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
 
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        public virtual ICollection<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
     }
 }

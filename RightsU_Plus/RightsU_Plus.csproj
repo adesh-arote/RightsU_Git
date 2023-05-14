@@ -227,6 +227,7 @@
     <Compile Include="Controllers\AL_LabController.cs" />
     <Compile Include="Controllers\AL_OemController.cs" />
     <Compile Include="Controllers\BookingSheetController.cs" />
+    <Compile Include="Controllers\DeliveryTrackingController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
     <Compile Include="Controllers\BannerController.cs" />
     <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
@@ -1415,6 +1416,7 @@
     <Content Include="Views\PurchaseOrder\_MovieTabDataView.cshtml" />
     <Content Include="Views\PurchaseOrder\_PoDetailsView.cshtml" />
     <Content Include="Views\PurchaseOrder\_ShowTabDataView.cshtml" />
+    <Content Include="Views\DeliveryTracking\Index.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->

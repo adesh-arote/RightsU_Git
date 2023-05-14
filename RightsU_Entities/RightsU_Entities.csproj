@@ -154,6 +154,8 @@
     <Compile Include="Airlines\AL_Booking_Sheet_Details.cs" />
     <Compile Include="Airlines\AL_Load_Sheet.cs" />
     <Compile Include="Airlines\AL_Load_Sheet_Details.cs" />
+    <Compile Include="Airlines\AL_Material_Tracking.cs" />
+    <Compile Include="Airlines\AL_Material_Tracking_OEM.cs" />
     <Compile Include="Airlines\AL_Purchase_Order.cs" />
     <Compile Include="Airlines\AL_Purchase_Order_Details.cs" />
     <Compile Include="Airlines\AL_Recommendation.cs" />

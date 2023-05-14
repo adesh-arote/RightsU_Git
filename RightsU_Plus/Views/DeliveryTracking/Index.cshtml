@@ -1,0 +1,205 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+
+    var URL_SearchDeliveryTracking = '@Url.Action("SearchDeliveryTracking", "DeliveryTracking")';
+    var URL_BindMoviesList = '@Url.Action("BindMoviesList", "DeliveryTracking")';
+    var URL_BindShowsList = '@Url.Action("BindShowsList", "DeliveryTracking")';
+
+    function OpenTab(NewTab) {
+        debugger;
+        if (NewTab == "M") {
+            //URL_LoadTab = URL_BindBookingSheetList;
+            $("[id*='tab']").removeClass('active');
+            $("#tabBkgsht").addClass('active');
+            $("#searchCommon").attr('placeholder', 'Booking Sheet No., Client Name');
+            $('#txtSort').show();
+            $('#ddlSort').show();
+            TabName = NewTab;
+        }
+        if (NewTab == "S") {
+            //URL_LoadTab = URL_PendingRecommendations;
+            $("[id*='tab']").removeClass('active');
+            $("#tabPdngrmdn").addClass('active');
+            $("#searchCommon").attr('placeholder', 'Client Name');
+            $('#txtSort').hide();
+            $('#ddlSort').hide();
+            TabName = NewTab;
+        }
+        SearchDeliveryTracking("", TabName);
+    }
+
+    function SearchDeliveryTracking(searchText, TabName) {
+        debugger;
+        $('#searchCommon').val(searchText);
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchDeliveryTracking,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabName: TabName
+            }),
+            async: false,
+            success: function (result) {
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging();
+                if (TabName == "M") {
+                    BindMoviesList();
+                }
+                if (TabName == "S") {
+                    BindShowsList();
+                }
+            }
+        });
+    }
+
+    function BindMoviesList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindMoviesList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindShowsList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindShowsList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Booking Sheet
+                    </h2>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                                Search :
+                            </td>
+                            <td style="width:10%;vertical-align: middle;" align="left">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="" autocomplete="off" />
+                            </td>
+                            <td style="width:10%;vertical-align: middle;">
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                                <div id="txtSort">@objMessageKey.SortBy:</div>
+                            </td>
+                            <td style="width:10%; text-align:left;">
+                                <div id="ddlSort">
+                                    @*@Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })*@
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="grid_area">
+                        <div class="navigation_tabs">
+                            <div class="tabbable" id="divAlternateConfig">
+                                <input type="hidden" id="hdnTabName" value="TA" />
+                                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                    <li class="active" id="tabBkgsht">
+                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('M')">Movie</a>
+                                    </li>
+                                    <li id="tabPdngrmdn">
+                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('S')">Show</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divBindList" class="deal clearfix">
+                                ok
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

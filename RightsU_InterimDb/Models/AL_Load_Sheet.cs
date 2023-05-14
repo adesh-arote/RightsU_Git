@@ -17,6 +17,7 @@ namespace RightsU_InterimDb.Models
         public AL_Load_Sheet()
         {
             this.AL_Load_Sheet_Details = new HashSet<AL_Load_Sheet_Details>();
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
     
     	public State EntityState { get; set; }    public int AL_Load_Sheet_Code { get; set; }
@@ -32,5 +33,6 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
     
         public virtual ICollection<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

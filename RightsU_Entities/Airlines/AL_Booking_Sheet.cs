@@ -17,6 +17,7 @@ namespace RightsU_Entities
         public AL_Booking_Sheet()
         {
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
 
         public State EntityState { get; set; }
@@ -41,5 +42,6 @@ namespace RightsU_Entities
         public virtual AL_Recommendation AL_Recommendation { get; set; }
         public virtual ICollection<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
         public virtual ICollection<AL_Purchase_Order> AL_Purchase_Order { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

@@ -1090,6 +1090,16 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking" Width="1.5" PointX="49.625" PointY="71.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" Width="1.5" PointX="51.875" PointY="91.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
