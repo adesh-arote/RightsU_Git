@@ -29,12 +29,13 @@
                     <td>
                         <span>
                             @{
-                                string Client_Name = "";
-                                if (item.Vendor_Code > 0 && item.Vendor_Code != null)
-                                {
-                                    Client_Name = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientCode).Where(a => a.Vendor_Code == item.Vendor_Code).Select(s => s.Vendor_Name).FirstOrDefault();
-                                }
-                                @Client_Name
+                                @item.Vendor.Vendor_Name
+                                //string Client_Name = "";
+                                //if (item.Vendor_Code > 0 && item.Vendor_Code != null)
+                                //{
+                                //    Client_Name = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientCode).Where(a => a.Vendor_Code == item.Vendor_Code).Select(s => s.Vendor_Name).FirstOrDefault();
+                                //}
+                                //@Client_Name
                             }
                         </span>
                     </td>
@@ -53,25 +54,29 @@
                             }*@
                         </span>
                     </td>
-                    <td style="text-align:center">
+                    <td style="text-align:center" class="clsTdStatusdt_@item.AL_Purchase_Order_Details_Code@item.Status">
                         @*@Html.DisplayFor(modelItem => item.Status)*@
                         @if (item.Status == "C")
                         {
                             <span>Success</span>
+                        }
+                        else if (item.Status == "P" || item.Status == "I")
+                        {
+                            <span>In Progress</span>
                         }
                         else
                         {
                             <span>Error</span>
                         }
                     </td>
-                    <td style="text-align:center">
+                    <td style="text-align:center" class="deal_actionDt clsTdActiondt_@item.AL_Purchase_Order_Details_Code@item.Status">
                         @if (item.Status == "C")
                         {
                             <a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink('@item.AL_Purchase_Order_Details_Code')" download></a>
                         }
                         else
                         {
-                            <img title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>

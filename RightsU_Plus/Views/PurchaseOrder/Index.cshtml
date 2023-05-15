@@ -17,7 +17,6 @@
     string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadReportPath"];
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
-
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", TabName = "MV";
 
@@ -32,6 +31,7 @@
     var URL_GetFileName = '@Url.Action("GetFileName", "PurchaseOrder")';
     var URL_GetPurchaseOrderStatus = '@Url.Action("GetPurchaseOrderStatus", "PurchaseOrder")';
     var URL_RefreshPoList = '@Url.Action("RefreshPoList", "PurchaseOrder")';
+    var URL_GetPurchaseOrderDetailStatus = '@Url.Action("GetPurchaseOrderDetailStatus", "PurchaseOrder")';
 
     $(document).ready(function () {
         debugger;
@@ -81,7 +81,7 @@
         debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-        
+
         var searchText = $('#searchCommon').val();
 
         if (searchText == '') {
@@ -265,7 +265,8 @@
                 $('#divBindPoDetails').empty();
                 $('#divBindPoDetails').html(result);
                 OpenTab(TabName, POC);
-                
+                CheckPendingStatusForPod();
+
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -294,34 +295,6 @@
         }
     }
 
-    function BindTabData(TabName, PoCode) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_BindTabData,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                TabName: TabName,
-                Purchase_Order_Code: PoCode
-            }),
-            success: function (result) {
-                debugger;
-                if (result.Status == "E") {
-                    showAlert("E", result.message)
-                }
-                else {
-                    $('#divBindTab').empty();
-                    $('#divBindTab').html(result);
-                }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
-    }
-
     function BindMovieTabData(PoCode) {
         debugger;
         $.ajax({
@@ -337,6 +310,7 @@
                 debugger;
                 $('#divBindTab').empty();
                 $('#divBindTab').html(result);
+                CheckPendingStatusForPod();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -359,23 +333,13 @@
                 debugger;
                 $('#divBindTab').empty();
                 $('#divBindTab').html(result);
+                CheckPendingStatusForPod();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
             }
         });
     }
-
-    //function DownloadLink(filename) {
-    //    debugger;
-    //    var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
-    //    var save = document.createElement('a');
-    //    save.href = url;
-    //    save.download = filename;
-    //    save.target = '_blank';
-    //    save.click();
-    //    
-    //}
 
     function DownloadLink(PODCode) {
         debugger;
@@ -442,7 +406,12 @@
                                 var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ');"</a>' +
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
-                                
+
+                                var status = '<span>Success</span>'
+
+                                $('.clsTdStatus_' + PurchaseOrderCode + 'P').empty();
+                                $('.clsTdStatus_' + PurchaseOrderCode + 'P').append(status);
+
                                 initializeTooltip();
                                 SearchPOList("");
                             }
@@ -455,9 +424,9 @@
         });
 
         setTimeout(CheckPendingStatus, 5000);
-        //if (pendingRecord > 0) {
-        //    setTimeout(CheckPendingStatus, 5000);
-        //}
+        if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatus, 5000);
+        }
     }
 
     function RefreshPoList(PoCode, BkCode) {
@@ -482,8 +451,64 @@
         });
     }
 
-</script>
+    function CheckPendingStatusForPod() {
+        debugger;
+        var pendingRecord = 0;
+        $(".deal_actionDt").each(function () {
+            debugger;
 
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var PurchaseOrderDetailCode = SiblingClass.slice(14, SiblingClass.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'C') {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetPurchaseOrderDetailStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            PurchaseOrderDetailCode: PurchaseOrderDetailCode
+                        }),
+                        success: function (result) {
+                            debugger;                           
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "P" || result.RecordStatus == "I") {
+                                $("#imgLoading_" + PurchaseOrderDetailCode).css("display", '');
+                                pendingRecord++;
+                            }
+                            else if (result.RecordStatus == "C") {
+                                $("#imgLoading_" + PurchaseOrderDetailCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink(' + PurchaseOrderDetailCode +')" download></a>';
+                                $('.' + SiblingClass).append(a);
+
+                                var status = '<span>Success</span>'
+
+                                $('.clsTdStatusdt_' + PurchaseOrderDetailCode + 'P').empty();
+                                $('.clsTdStatusdt_' + PurchaseOrderDetailCode + 'P').append(status);
+
+                                initializeTooltip();
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+            }
+        });
+        setTimeout(CheckPendingStatusForPod, 5000);
+        if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatusForPod, 5000);
+        }
+    }
+
+</script>
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
@@ -526,7 +551,6 @@
                             <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
                             <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
                             <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
-
                             <div id="Pagination" class="pagination">
                             </div>
                             <span class="pull-right">
@@ -539,7 +563,6 @@
                                 <input type="hidden" id="hdnAction" value="" />
                                 <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                                 <div id="divBindList" class="deal clearfix">
-
                                 </div>
                             </div>
                         </div>
@@ -549,72 +572,113 @@
             <div id="PodList" style="display:none;">
                 <div id="divBindPoDetails" class="deal clearfix">
                     @*<div class="acq main_col">
-                        <div class="top_area">
-                            <div class="title_block clearfix">
-                                <h2 class="pull-left">
-                                    Purchase Order Details
-                                </h2>
-                            </div>
-                        </div>
-                        <div class="search_area" style="background-color: #eee; padding:5px;">
-                            <table class="table">
-                                <tr>
-                                    <td style="width:3%;vertical-align: middle;text-align:center;">
-                                        <b>Client Name :</b>
-                                    </td>
-                                    <td style="width:10%; text-align:left;">
-                                        <span>@objPoDetails.Client_Name</span>
-                                    </td>
-                                    <td style="width:3%;vertical-align: middle;text-align:center;">
-                                        <b>Booking Sheet No :</b>
-                                    </td>
-                                    <td style="width:10%; text-align:left;">
-                                        <span>@objPoDetails.Booking_sheet_No</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="width:3%;vertical-align: middle;text-align:center;">
-                                        <b>Proposal - CY :</b>
-                                    </td>
-                                    <td style="width:10%; text-align:left;">
-                                        <span>@objPoDetails.Proposal_Cy</span>
-                                    </td>
-                                    <td style="width:3%;vertical-align: middle;text-align:center;">
-                                        <b>Created On :</b>
-                                    </td>
-                                    <td style="width:10%; text-align:left;">
-                                        <span>@objPoDetails.Created_On</span>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div>
-                            <div class="grid_area">
-                                <div class="navigation_tabs">
-                                    <div class="tabbable" id="divAlternateConfig">
-                                        <input type="hidden" id="hdnTabName" value="TA" />
-                                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
-                                            <li class="active" id="tabMovie">
-                                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
-                                            </li>
-                                            <li id="tabShow">
-                                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                            <div class="top_area">
+                                <div class="title_block clearfix">
+                                    <h2 class="pull-left">
+                                        Purchase Order Details
+                                    </h2>
                                 </div>
                             </div>
-                            <div class="tab-content clearfix table-wrapper scale_table_container">
-                                <div class="scale_table_block">
-                                    <div id="divBindTab" class="deal clearfix">
+                            <div class="search_area" style="background-color: #eee; padding:5px;">
+                                <table class="table">
+                                    <tr>
+                                        <td style="width:3%;vertical-align: middle;text-align:center;">
+                                            <b>Client Name :</b>
+                                        </td>
+                                        <td style="width:10%; text-align:left;">
+                                            <span>@objPoDetails.Client_Name</span>
+                                        </td>
+                                        <td style="width:3%;vertical-align: middle;text-align:center;">
+                                            <b>Booking Sheet No :</b>
+                                        </td>
+                                        <td style="width:10%; text-align:left;">
+                                            <span>@objPoDetails.Booking_sheet_No</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:3%;vertical-align: middle;text-align:center;">
+                                            <b>Proposal - CY :</b>
+                                        </td>
+                                        <td style="width:10%; text-align:left;">
+                                            <span>@objPoDetails.Proposal_Cy</span>
+                                        </td>
+                                        <td style="width:3%;vertical-align: middle;text-align:center;">
+                                            <b>Created On :</b>
+                                        </td>
+                                        <td style="width:10%; text-align:left;">
+                                            <span>@objPoDetails.Created_On</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div>
+                                <div class="grid_area">
+                                    <div class="navigation_tabs">
+                                        <div class="tabbable" id="divAlternateConfig">
+                                            <input type="hidden" id="hdnTabName" value="TA" />
+                                            <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                                <li class="active" id="tabMovie">
+                                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
+                                                </li>
+                                                <li id="tabShow">
+                                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div class="scale_table_block">
+                                        <div id="divBindTab" class="deal clearfix">
 
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>*@
+                        </div>*@
                 </div>
             </div>
         </div>
     </section>
 </div>
+
+@*<script>
+        function BindTabData(TabName, PoCode) {
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: URL_BindTabData,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    TabName: TabName,
+                    Purchase_Order_Code: PoCode
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result.Status == "E") {
+                        showAlert("E", result.message)
+                    }
+                    else {
+                        $('#divBindTab').empty();
+                        $('#divBindTab').html(result);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+    function DownloadLink(filename) {
+        debugger;
+        var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
+        var save = document.createElement('a');
+        save.href = url;
+        save.download = filename;
+        save.target = '_blank';
+        save.click();
+    
+    }
+</script>*@

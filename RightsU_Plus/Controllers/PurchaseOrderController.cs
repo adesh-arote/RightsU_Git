@@ -311,13 +311,13 @@ namespace RightsU_Plus.Controllers
             int RecordCount = 0;
             List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
 
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ClientCode = lstVendors;
+            //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            //List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            //ViewBag.ClientCode = lstVendors;
 
-            Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
-            ViewBag.TitleCode = lstTitles;
+            //Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+            //List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
+            //ViewBag.TitleCode = lstTitles;
 
             try
             {
@@ -348,13 +348,13 @@ namespace RightsU_Plus.Controllers
             int RecordCount = 0;
             List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
 
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ClientCode = lstVendors;
+            //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+            //List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
+            //ViewBag.ClientCode = lstVendors;
 
-            Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
-            List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
-            ViewBag.TitleCode = lstTitles;
+            //Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+            //List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
+            //ViewBag.TitleCode = lstTitles;
 
             try
             {
@@ -383,6 +383,14 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
         {
+            int BookingSheetCode = 0;
+            if (Session["BookingSheetCode"] != null)
+            {                                            //-----To show success messages
+                BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
+                //Session["BookingSheetCode"] = null;
+            }
+            POData(BookingSheetCode);
+
             string recordStatus = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).Select(s => s.Status).FirstOrDefault();
 
             var obj = new
@@ -390,8 +398,17 @@ namespace RightsU_Plus.Controllers
                 RecordStatus = recordStatus,
             };
             return Json(obj);
+        }
 
+        public JsonResult GetPurchaseOrderDetailStatus(int PurchaseOrderDetailCode)
+        {
+            string recordStatus = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.Status).FirstOrDefault();
 
+            var obj = new
+            {
+                RecordStatus = recordStatus,
+            };
+            return Json(obj);
         }
 
         public JsonResult RefreshPoList(int PurchaseOrderCode, int BookingSheetCode)

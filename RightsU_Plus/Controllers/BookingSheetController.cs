@@ -1064,7 +1064,7 @@ namespace RightsU_Plus.Controllers
             //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" || w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             if (ValidCount > 0)
             {
