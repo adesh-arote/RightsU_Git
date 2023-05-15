@@ -161,16 +161,16 @@
         var pageNo = page_index + 1
         $('#hdnPageNo').val(pageNo);
         if (IsCall == 'Y') {
-            if (TabName = "MV") {
+            if (TabName == "MV") {
                 BindMovieSheetData(DMICode, sort_Type);
             }
-            else if (TabName = "SH")
-            {
+            if (TabName == "SH") {
                 BindShowSheetData(DMICode, sort_Type);
             }
-        }          
-        else
-            IsCall = 'Y';      
+        }
+        else {
+            IsCall = 'Y';
+        }              
     }
 
     function txtPageSize_OnChange() {

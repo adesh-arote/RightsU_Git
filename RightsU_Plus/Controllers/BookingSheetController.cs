@@ -841,8 +841,8 @@ namespace RightsU_Plus.Controllers
             DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
             {
-                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
-                if(lstBulkImport.Count != 0)
+                lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();              
+                if (lstBulkImport.Count != 0)
                 {
                     RecordCount = lstBulkImport.Count - 1;
                     ViewBag.RecordCount = RecordCount;
@@ -893,7 +893,7 @@ namespace RightsU_Plus.Controllers
             DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
             {
-                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();              
                 if (lstBulkImport.Count != 0)
                 {
                     RecordCount = lstBulkImport.Count - 1;
@@ -950,8 +950,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     MovieTabData();
-                    lstBSMovieDataSearched = lstBSMovieData;
-                    ViewBag.RecordCount = lstBSMovieDataSearched.Count();
+                    ViewBag.RecordCount = lstBSMovieData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D")).ToList().Count();
                 }
                 recordcount = ViewBag.RecordCount;
             }
@@ -966,8 +965,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     ShowTabData();
-                    lstBSShowDataSearched = lstBSShowData;
-                    ViewBag.RecordCount = lstBSShowDataSearched.Count();
+                    ViewBag.RecordCount = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D")).ToList().Count();
                 }
                 recordcount = ViewBag.RecordCount;
             }
@@ -1066,7 +1064,7 @@ namespace RightsU_Plus.Controllers
             //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" || w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             if (ValidCount > 0)
             {

@@ -401,8 +401,10 @@ namespace RightsU_Plus.Controllers
             AL_Purchase_Order obj_AL_Purchase_Order = new AL_Purchase_Order();
             obj_AL_Purchase_Order = objPO_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
 
+            RefreshPOD(PurchaseOrderCode,BookingSheetCode);
             obj_AL_Purchase_Order.Status = "I";
             obj_AL_Purchase_Order.EntityState = State.Modified;
+
 
             dynamic resultSet;
             if (!objPO_Service.Save(obj_AL_Purchase_Order, out resultSet))
@@ -427,6 +429,23 @@ namespace RightsU_Plus.Controllers
                 Message = message
             };
             return Json(obj);
+        }
+
+        public void RefreshPOD(int PurchaseOrderCode, int BookingSheetCode)
+        {
+            //AL_Purchase_Order_Details obj_AL_Purchase_Order_Details = new AL_Purchase_Order_Details();
+            List<AL_Purchase_Order_Details>  lst_AL_Purchase_Order_Details = new List<AL_Purchase_Order_Details>();
+
+            lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
+
+            foreach(AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
+            {
+                obj_AL_Purchase_Order_Details.Status = "P";
+                obj_AL_Purchase_Order_Details.EntityState = State.Modified;
+
+                dynamic resultSet;
+                objPoDetailsData_Service.Save(obj_AL_Purchase_Order_Details, out resultSet);           
+            }                     
         }
 
         //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------

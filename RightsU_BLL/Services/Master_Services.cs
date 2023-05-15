@@ -8647,11 +8647,11 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.AL_Purchase_Order_Details_Code == objToValidate.AL_Purchase_Order_Details_Code).Count() > 0)
-            {
-                resultSet = "Purchase Order Details already exists";
-                return false;
-            }
+            //if (SearchFor(s => s.AL_Purchase_Order_Details_Code == objToValidate.AL_Purchase_Order_Details_Code).Count() > 0)
+            //{
+            //    resultSet = "Purchase Order Details already exists";
+            //    return false;
+            //}
 
             resultSet = "";
             return true;
