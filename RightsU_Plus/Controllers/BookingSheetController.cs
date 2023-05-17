@@ -1188,9 +1188,9 @@ namespace RightsU_Plus.Controllers
         {
             string BS_No = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Booking_Sheet_Code).Select(s => s.Booking_Sheet_No).FirstOrDefault();
             int lastAddedNo = Convert.ToInt32(BS_No.Substring(2));
-            string demo = Convert.ToString(lastAddedNo + 1).PadLeft(4, '0');
+            string demo = Convert.ToString(lastAddedNo + 1).PadLeft(5, '0');
             return demo;
-            // it will return 0009
+            // it will return 00009
         }
     }
 
