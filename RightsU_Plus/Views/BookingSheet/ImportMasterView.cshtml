@@ -30,6 +30,7 @@
     var URL_GetFileName = '@Url.Action("GetFileName", "BookingSheet")';
     var URL_GetImportedSheetStatus = '@Url.Action("GetImportedSheetStatus", "BookingSheet")';
     var URL_RefreshImportedSheet = '@Url.Action("RefreshImportedSheet", "BookingSheet")';
+    var URL_ImportSheetView = '@Url.Action("ImportedSheetView", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -336,9 +337,8 @@
                             else if (result.RecordStatus == "E" || result.RecordStatus == "S") {
                                 $("#imgLoading_" + DmMasterCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
-                                var url123 = '@Url.Action("ImportedSheetView", "BookingSheet")';
-                                //onclick="(" window.location.href='" + Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
-                                var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href ="' + url123 +'?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '";"</a>' +
+
+                                var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href ="' + URL_ImportSheetView +'?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '";"</a>' +
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + DmMasterCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
 
@@ -353,9 +353,9 @@
             }
         });
 
-        if (pendingRecord > 0) {
+        //if (pendingRecord > 0) {
             setTimeout(CheckPendingStatus, 5000);
-        }
+        //}
     }
 
     function RefreshImportedSheet(DmMasterCode) {
@@ -387,10 +387,6 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <div><h2 class="pull-left">Booking Sheet Import/Export</h2></div>
-
-                    @*<div class="col-md-3"><span style="margin-top: 20px;"><b>Client :-</b>@objBKDetails.Client_Name</span></div>
-                    <div class="col-md-3"><span style="margin-top: 20px;"><b>Proposal :-</b> @objBKDetails.Proposal_CY</span></div>
-                    <div class="col-md-3"><span style="margin-top: 20px; text-align:center;"><b>Cycle :-</b> @objBKDetails.Cycle</span></div>*@
                 </div>
 
                 <div class="search_area" style="background-color: #eee; padding:5px;">
@@ -412,26 +408,7 @@
                                 <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
                                 <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
                             </td>
-                        </tr>
-                        @*<tr>
-                    <td style="width: 6%; vertical-align: middle;">
-                        Import Booking Sheet:
-                    </td>
-                    <td style="width: 15%;">
-                        <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
-                    </td>
-                    <td style="width: 15%;">
-                        <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
-                        <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
-                    </td>
-                    <td style="width: 5%; vertical-align: middle;">
-                        Filter By Status :
-                    </td>
-                    <td>
-                        @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
-                        <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
-                    </td>
-                </tr>*@
+                        </tr>               
                     </table>
                 </div>
                 <div class="search_area" style="background-color: #eee; padding:5px;">
