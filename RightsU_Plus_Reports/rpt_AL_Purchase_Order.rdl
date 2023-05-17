@@ -876,7 +876,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Embaded Sub : </Value>
+                                  <Value>Embedded Sub : </Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -2036,7 +2036,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>FLATE RATE</Value>
+                                  <Value>Flat Rate</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontSize>11pt</FontSize>
