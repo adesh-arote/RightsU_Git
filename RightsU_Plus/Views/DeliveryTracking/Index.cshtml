@@ -10,18 +10,58 @@
 }
 
 <script>
-
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "M";
+    arr = [];
     var URL_SearchDeliveryTracking = '@Url.Action("SearchDeliveryTracking", "DeliveryTracking")';
     var URL_BindMoviesList = '@Url.Action("BindMoviesList", "DeliveryTracking")';
     var URL_BindShowsList = '@Url.Action("BindShowsList", "DeliveryTracking")';
+    var URL_SaveDelivery = '@Url.Action("SaveDelivery", "DeliveryTracking")';
+
+    $(document).ready(function () {
+        if (LayoutDirection_G == "RTL") {
+
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+
+        if (TabName == "M") {
+            $("#searchCommon").attr('placeholder', 'Client, Cycle, Lab, Distributor, Display');
+        }
+        if (TabName == "S") {
+            $("#searchCommon").attr('placeholder', 'Client, Cycle, Lab, Distributor, Display');
+        }
+
+        if ("@ViewBag.Message" != "") {
+           showAlert("S","@ViewBag.Message");
+        }
+        SearchDeliveryTracking("", TabName);
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchOnList(searchtext, TabName);
+        });
+
+
+    });
 
     function OpenTab(NewTab) {
         debugger;
         if (NewTab == "M") {
-            //URL_LoadTab = URL_BindBookingSheetList;
+            //URL_LoadTab = URL_3;
             $("[id*='tab']").removeClass('active');
             $("#tabBkgsht").addClass('active');
-            $("#searchCommon").attr('placeholder', 'Booking Sheet No., Client Name');
+            $("#searchCommon").attr('placeholder', 'Client, Cycle, Lab, Distributor, Display');
             $('#txtSort').show();
             $('#ddlSort').show();
             TabName = NewTab;
@@ -30,7 +70,7 @@
             //URL_LoadTab = URL_PendingRecommendations;
             $("[id*='tab']").removeClass('active');
             $("#tabPdngrmdn").addClass('active');
-            $("#searchCommon").attr('placeholder', 'Client Name');
+            $("#searchCommon").attr('placeholder', 'Client, Cycle, Lab, Distributor, Display');
             $('#txtSort').hide();
             $('#ddlSort').hide();
             TabName = NewTab;
@@ -58,18 +98,19 @@
                 $('#hdnPageNo').val(1);
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
-                SetPaging();
-                if (TabName == "M") {
-                    BindMoviesList();
-                }
-                if (TabName == "S") {
-                    BindShowsList();
-                }
+                //SetPaging();
+                //if (TabName == "M") {
+                //    BindMoviesList("M",0);
+                //}
+                //if (TabName == "S") {
+                //    BindShowsList();
+                //}
+                BindMoviesList(TabName, 0)
             }
         });
     }
 
-    function BindMoviesList() {
+    function BindMoviesList(CommandName, id) {
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
@@ -84,7 +125,9 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                sortType: sort_Type
+                sortType: sort_Type,
+                CommandName: CommandName,
+                id: id
             }),
             success: function (result) {
                 $('#divBindList').empty();
@@ -124,6 +167,86 @@
             }
         });
     }
+
+    function SaveDeliveryTracking() {
+        debugger;
+        var deliveryTrackingList = new Array();
+
+        var bookinSheetCodes = [];
+        $.each($("#tblMoviesList tbody tr"), function (index, value) {
+            index = index + 1;
+
+
+            var BookingSheetCode = $('#' + index + '_hdnCnt').val();
+            var codes = '';
+            if ($('#chk_' + BookingSheetCode).is(':checked') == true) {
+                var AL_Material_Tracking_Code = $('#hdnPoster_' + index).val();
+
+                //if ($('#chk_Poster' + index).is(':checked')) {
+                //    PosterValue = "Yes";
+                //}
+                //else {
+                //    PosterValue = "No";
+                //}
+
+                var PosterValue = $('#chk_Poster' + index).is(':checked') == true ? "Yes" : "No";
+                var StillValue = $('#chk_Still' + index).is(':checked') == true ? "Yes" : "No";
+                var TrailerValue = $('#chk_Trailer' + index).is(':checked') == true ? "Yes" : "No";
+                var EditedPosterValue = $('#chk_EditedPoster' + index).is(':checked') == true ? "Yes" : "No";
+                var EditedStillValue = $('#chk_EditedStill' + index).is(':checked') == true ? "Yes" : "No";
+                var DeliveryDateValue = $('#txt_DeliveryDate' + index).val();
+                var PO_Status = $('#ddlPOStatus' + index).val();
+
+                deliveryTrackingList.push({
+                    Al_Material_Tracking_Code: AL_Material_Tracking_Code,
+                    Poster: PosterValue,
+                    Still: StillValue,
+                    Trailer: TrailerValue,
+                    Edited_Poster: EditedPosterValue,
+                    Edited_Still: EditedStillValue,
+                    Delivery_Date: DeliveryDateValue,
+                    PO_Status: PO_Status
+
+                })
+            }
+
+        })
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveDelivery,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            data: JSON.stringify({
+                lst: deliveryTrackingList
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+
+                }
+                else {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#hdnRecodLockingCode').val(0);
+
+                        //BindMoviesList("M",0);
+                        SearchDeliveryTracking("", TabName);
+
+                    }
+                    else
+                        showAlert("E", result.Message, "");
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        })
+    }
+
 </script>
 
 <div class="main_section">
@@ -132,8 +255,17 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        Booking Sheet
+                        Delivery Tracking
                     </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li>
+                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="">
+                                </a>
+
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
@@ -149,7 +281,7 @@
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
                             <td style="width:3%;vertical-align: middle;text-align:center;">
-                                <div id="txtSort">@objMessageKey.SortBy:</div>
+                                @*<div id="txtSort">@objMessageKey.SortBy:</div>*@
                             </td>
                             <td style="width:10%; text-align:left;">
                                 <div id="ddlSort">
@@ -190,15 +322,27 @@
                         </div>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">
-                        <div class="scale_table_block">
+                        <div class="scale_table_block" style="overflow-x:scroll">
                             <input type="hidden" id="hdnAction" value="" />
                             <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                             <div id="divBindList" class="deal clearfix">
-                                ok
+
                             </div>
                         </div>
                     </div>
                 </div>
+                @*<div class="modal_block_full" style="margin-top: 10px;">*@
+                <div class="form_links">
+                    <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                        <li>
+
+                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveDeliveryTracking()" />
+
+                            <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                        </li>
+                    </ul>
+                </div>
+                @*</div>*@
             </div>
         </div>
     </section>

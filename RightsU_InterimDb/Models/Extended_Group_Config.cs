@@ -24,6 +24,9 @@ namespace RightsU_InterimDb.Models
     	    public string Display_Name { get; set; }
     	    public string Allow_Import { get; set; }
     	    public string Is_Active { get; set; }
+    	    public string Target_Table { get; set; }
+    	    public string Target_Column { get; set; }
+    	    public string Default_Value { get; set; }
     
         public virtual Extended_Columns Extended_Columns { get; set; }
         public virtual Extended_Group Extended_Group { get; set; }

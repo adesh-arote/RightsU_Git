@@ -471,6 +471,8 @@
     <Compile Include="StatusMessage.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetBookingsheetDataForLoadsheet_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetBookingSheetList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPAL_GetDeliveryTrackingListMovies_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPAL_GetDeliveryTrackingList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetLoadsheetList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetPurchaseOrderList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetReCommendationList_Result.cs" />

@@ -3390,8 +3390,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Additional_Condition" Type="varchar(max)" />
           <Property Name="Inter_Group_Name" Type="varchar" MaxLength="50" />
           <Property Name="Display_Name" Type="varchar" MaxLength="100" />
-		  <Property Name="Allow_Import" Type="char" MaxLength="1" />
+          <Property Name="Target_Table" Type="varchar" MaxLength="100" />
+          <Property Name="Target_Column" Type="varchar" MaxLength="100" />
+          <Property Name="Allow_Import" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
+          <Property Name="Default_Value" Type="varchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="Format_Show_Data">
           <Key>
@@ -15587,6 +15590,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="LoadsheetMonth" Type="varchar" Mode="In" />
         </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetDeliveryTrackingList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Client" Type="int" Mode="In" />
+          <Parameter Name="Cycle" Type="varchar" Mode="In" />
+          <Parameter Name="AL_Lab_Code" Type="int" Mode="In" />
+          <Parameter Name="Distributor" Type="int" Mode="In" />
+          <Parameter Name="Display" Type="varchar" Mode="In" />
+          <Parameter Name="TabName" Type="char" Mode="In" />
+        </Function>
+        <Function Name="USPAL_GetDeliveryTrackingListMovies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Client" Type="int" Mode="In" />
+          <Parameter Name="Cycle" Type="varchar" Mode="In" />
+          <Parameter Name="AL_Lab_Code" Type="int" Mode="In" />
+          <Parameter Name="Distributor" Type="int" Mode="In" />
+          <Parameter Name="Display" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USPAL_GetLoadsheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetPurchaseOrderList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
@@ -23427,6 +23445,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_OEM" EntitySet="AL_OEM" />
             <End Role="AL_Material_Tracking_OEM" EntitySet="AL_Material_Tracking_OEM" />
           </AssociationSet>
+          <FunctionImport Name="USPAL_GetDeliveryTrackingListMovies" ReturnType="Collection(RightsU_NeoModel.USPAL_GetDeliveryTrackingListMovies_Result)">
+            <Parameter Name="Client" Mode="In" Type="Int32" />
+            <Parameter Name="Cycle" Mode="In" Type="String" />
+            <Parameter Name="AL_Lab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Distributor" Mode="In" Type="Int32" />
+            <Parameter Name="Display" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USPAL_GetDeliveryTrackingList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetDeliveryTrackingList_Result)">
+            <Parameter Name="Client" Mode="In" Type="Int32" />
+            <Parameter Name="Cycle" Mode="In" Type="String" />
+            <Parameter Name="AL_Lab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Distributor" Mode="In" Type="Int32" />
+            <Parameter Name="Display" Mode="In" Type="String" />
+            <Parameter Name="TabName" Mode="In" Type="String" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -39072,6 +39105,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Display_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="Allow_Import" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Target_Table" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Target_Column" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Default_Value" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Title_Episode_Details">
           <Key>
@@ -40131,6 +40167,48 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USPAL_GetDeliveryTrackingListMovies_Result">
+          <Property Type="Int32" Name="AL_Material_Tracking_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="false" MaxLength="15" />
+          <Property Type="String" Name="Vendor_Name" Nullable="false" MaxLength="9" />
+          <Property Type="String" Name="AL_Lab_Name" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="PO_Status" Nullable="false" MaxLength="18" />
+          <Property Type="String" Name="Poster" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="Still" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="Trailer" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="Embedded_Subs" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="Edited_Poster" Nullable="false" MaxLength="2" />
+          <Property Type="String" Name="Edited_Still" Nullable="false" MaxLength="3" />
+          <Property Type="String" Name="COL1" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL2" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL3" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL4" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL5" Nullable="false" MaxLength="1" />
+        </ComplexType>
+        <ComplexType Name="USPAL_GetDeliveryTrackingList_Result">
+          <Property Type="String" Name="AL_Material_Tracking_Code" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL1" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL2" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL3" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL4" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL5" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL6" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL7" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL8" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL9" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL10" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL11" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL12" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL13" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL14" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL15" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL16" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL17" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL18" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL19" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="COL20" Nullable="false" MaxLength="1" />
+          <Property Type="String" Name="Title_Name" Nullable="false" MaxLength="1" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -49949,6 +50027,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Group_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group_Config">
               <MappingFragment StoreEntitySet="Extended_Group_Config">
+                <ScalarProperty Name="Default_Value" ColumnName="Default_Value" />
+                <ScalarProperty Name="Target_Column" ColumnName="Target_Column" />
+                <ScalarProperty Name="Target_Table" ColumnName="Target_Table" />
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Allow_Import" ColumnName="Allow_Import" />
                 <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
@@ -50554,6 +50635,56 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetDeliveryTrackingListMovies" FunctionName="RightsU_NeoModel.Store.USPAL_GetDeliveryTrackingListMovies">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetDeliveryTrackingListMovies_Result">
+                <ScalarProperty Name="AL_Material_Tracking_Code" ColumnName="AL_Material_Tracking_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+                <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
+                <ScalarProperty Name="AL_Lab_Name" ColumnName="AL_Lab_Name" />
+                <ScalarProperty Name="PO_Status" ColumnName="PO_Status" />
+                <ScalarProperty Name="Poster" ColumnName="Poster" />
+                <ScalarProperty Name="Still" ColumnName="Still" />
+                <ScalarProperty Name="Trailer" ColumnName="Trailer" />
+                <ScalarProperty Name="Embedded_Subs" ColumnName="Embedded_Subs" />
+                <ScalarProperty Name="Edited_Poster" ColumnName="Edited_Poster" />
+                <ScalarProperty Name="Edited_Still" ColumnName="Edited_Still" />
+                <ScalarProperty Name="COL1" ColumnName="COL1" />
+                <ScalarProperty Name="COL2" ColumnName="COL2" />
+                <ScalarProperty Name="COL3" ColumnName="COL3" />
+                <ScalarProperty Name="COL4" ColumnName="COL4" />
+                <ScalarProperty Name="COL5" ColumnName="COL5" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetDeliveryTrackingList" FunctionName="RightsU_NeoModel.Store.USPAL_GetDeliveryTrackingList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetDeliveryTrackingList_Result">
+                <ScalarProperty Name="AL_Material_Tracking_Code" ColumnName="AL_Material_Tracking_Code" />
+                <ScalarProperty Name="COL1" ColumnName="COL1" />
+                <ScalarProperty Name="COL2" ColumnName="COL2" />
+                <ScalarProperty Name="COL3" ColumnName="COL3" />
+                <ScalarProperty Name="COL4" ColumnName="COL4" />
+                <ScalarProperty Name="COL5" ColumnName="COL5" />
+                <ScalarProperty Name="COL6" ColumnName="COL6" />
+                <ScalarProperty Name="COL7" ColumnName="COL7" />
+                <ScalarProperty Name="COL8" ColumnName="COL8" />
+                <ScalarProperty Name="COL9" ColumnName="COL9" />
+                <ScalarProperty Name="COL10" ColumnName="COL10" />
+                <ScalarProperty Name="COL11" ColumnName="COL11" />
+                <ScalarProperty Name="COL12" ColumnName="COL12" />
+                <ScalarProperty Name="COL13" ColumnName="COL13" />
+                <ScalarProperty Name="COL14" ColumnName="COL14" />
+                <ScalarProperty Name="COL15" ColumnName="COL15" />
+                <ScalarProperty Name="COL16" ColumnName="COL16" />
+                <ScalarProperty Name="COL17" ColumnName="COL17" />
+                <ScalarProperty Name="COL18" ColumnName="COL18" />
+                <ScalarProperty Name="COL19" ColumnName="COL19" />
+                <ScalarProperty Name="COL20" ColumnName="COL20" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

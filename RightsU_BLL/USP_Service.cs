@@ -1821,5 +1821,23 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPAL_GetPurchaseOrderList();
         }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingListMovies(client, cycle, aL_Lab_Code, distributor, display);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display, string tabName)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName);
+        }
+
+        public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            objUSPDAL.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
+        }
     }
 }

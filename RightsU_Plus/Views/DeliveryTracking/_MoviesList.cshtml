@@ -1,0 +1,373 @@
+﻿@model List<RightsU_Entities.USPAL_GetDeliveryTrackingList_Result>
+@using UTOFrameWork.FrameworkClasses
+@{
+    /**/
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script>
+
+
+    $(document).ready(function () {
+        $('#chkAll').on("click", function () {
+            debugger;
+            var IsCheck = $(this).prop("checked");
+            $('input[type="checkbox"]').prop('checked', IsCheck);
+        });
+
+        $('.checkbox').on("click", function () {
+            debugger;
+            if ($(this).prop("checked")) {
+
+                var id = this.value;
+                //arr.push(id);
+                $('#spanPoster_' + id).remove()
+
+                var htmlPoster = "";
+                var counterPoster = $('#hdnCounterPoster_' + id).val();
+                if ($('#hdnPoster_' + id).val() == 'Yes') {
+                    $('#hdnPoster_' + id).remove()
+                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" />'
+                }
+                else {
+                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" />'
+                }
+                $("#tdPoster_" + id).html(htmlPoster);
+
+                $('#spanStill_' + id).remove()
+                var htmlStill = "";
+                var counterStill = $('#hdnCounterStill_' + id).val();
+                if ($('#hdnStill_' + id).val() == 'Yes') {
+                    $('#hdnStill_' + id).remove()
+                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" />'
+                }
+                else {
+                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" />'
+                }
+                $("#tdStill_" + id).html(htmlStill);
+
+                $('#spanTrailer_' + id).remove()
+                var htmlTrailer = "";
+                var counterTrailer = $('#hdnCounterTrailer_' + id).val();
+                if ($('#hdnTrailer_' + id).val() == 'Yes') {
+                    $('#hdnTrailer_' + id).remove()
+                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" />'
+                }
+                else {
+                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" />'
+                }
+                $("#tdTrailer_" + id).html(htmlTrailer);
+
+                $('#spanEditedPoster_' + id).remove()
+                var htmlEditedPoster = "";
+                var counterEditedPoster = $('#hdnCounterEditedPoster_' + id).val();
+                if ($('#hdnEditedPoster_' + id).val() == 'Yes') {
+                    $('#hdnEditedPoster_' + id).remove()
+                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" />'
+                }
+                else {
+                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" />'
+                }
+                $("#tdEditedPoster_" + id).html(htmlEditedPoster);
+
+                $('#spanEditedStill_' + id).remove()
+                var htmlEditedStill = "";
+                var counterEditedStill = $('#hdnCounterEditedStill_' + id).val();
+                if ($('#hdnEditedStill_' + id).val() == 'Yes') {
+                    $('#hdnEditedStill_' + id).remove()
+                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedStill + '" />'
+                }
+                else {
+                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedStill + '" />'
+                }
+                $("#tdEditedStill_" + id).html(htmlEditedStill);
+
+
+                var DeliveryLastSavedDate = $('#spanDeliveryDate_' + id).text();
+                $('#spanDeliveryDate_' + id).remove()
+                var htmlDeliveryDate = "";
+                var counterDeliveryDate = $('#hdnCounterDeliveryDate_' + id).val();
+
+                //if ($('#hdnDeliveryDate_' + id).val() != '') {
+                //    $('#hdnDeliveryDate_' + id).remove()
+                htmlDeliveryDate = '<input placeholder="DD-MMM-YYYY" type="text" id="txt_DeliveryDate' + counterDeliveryDate + '" value="' + DeliveryLastSavedDate + '" style="width: 100px;"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
+                //}
+                //else {
+                //    htmlDeliveryDate = '<input type="text" id="chk_DeliveryDate' + counterDeliveryDate + '"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
+                //}
+                $("#tdDeliveryDate_" + id).html(htmlDeliveryDate);
+
+
+                var LastSavedPOStatus = $('#spanPOStatus_' + id).text();
+                $('#spanPOStatus_' + id).remove()
+                var htmlPOStatus = "";
+                var counterPOStatus = $('#hdnCounterPOStatus_' + id).val();
+
+                //if ($('#hdnDeliveryDate_' + id).val() != '') {
+                //    $('#hdnDeliveryDate_' + id).remove()
+                htmlPOStatus = '<select name="cars" id="ddlPOStatus' + counterPOStatus + '"><option value = "Sent" >Sent</option>' +
+                    '<option value="Not Sent">Not Sent</option>' +
+                    '</select > <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
+                //}
+                //else {
+                //    htmlDeliveryDate = '<input type="text" id="chk_DeliveryDate' + counterDeliveryDate + '"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
+                //}
+                $("#tdPOStatus_" + id).html(htmlPOStatus);
+
+                //BindMoviesList('EDIT', id);
+            }
+
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $('#chkAll').prop('checked', true);
+            } else {
+                $('#chkAll').prop('checked', false);
+            }
+        });
+
+        for (var i = 0; i < arr.length; i++) {
+
+            $('#chk_' + arr[i]).prop('checked', true)
+
+            //BindMoviesList('EDIT', arr[i]);
+        }
+
+    })
+
+</script>
+<style>
+
+    div.scrollmenu {
+        background-color: #333;
+        overflow: auto;
+        white-space: nowrap;
+    }
+
+        div.scrollmenu a {
+            display: inline-block;
+            color: white;
+            text-align: center;
+            padding: 14px;
+            text-decoration: none;
+        }
+
+            div.scrollmenu a:hover {
+                background-color: #777;
+            }
+
+</style>
+@{
+    int counter = 0;
+    <div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection class="scrollmenu">
+        <table class="table table-bordered table-hover" id="tblMoviesList">
+            <thead>
+
+                @if (Model.Count() > 0)
+                {
+
+                    <tr>
+                        <th width="100px" style="width:5%; text-align:center"><input type="checkbox" id="chkAll" style="display: none" /></th>
+                        <th style="width:15%">@Model[0].Title_Name</th>
+                        <th style="width:15%">@Model[0].COL1</th>
+                        <th style="width:15%">@Model[0].COL2</th>
+                        <th style="width:10%">@Model[0].COL3</th>
+                        <th style="width:12%">@Model[0].COL4</th>
+                        <th style="width: 10%;">@Model[0].COL5</th>
+                        <th style="width: 10%;">@Model[0].COL6</th>
+                        <th style="width: 10%;">@Model[0].COL7</th>
+                        <th style="width: 10%;">@Model[0].COL8</th>
+                        <th style="width: 10%;">@Model[0].COL9</th>
+                        <th style="width: 10%;">@Model[0].COL10</th>
+                        <th style="width: 10%;">@Model[0].COL11</th>
+                        <th style="width: 10%;">@Model[0].COL12</th>
+                        <th style="width: 10%;">@Model[0].COL13</th>
+                        @if (ViewBag.TabName == "S")
+                        {
+                            <th style="width: 10%;">@Model[0].COL14</th>
+                            <th style="width: 10%;">@Model[0].COL15</th>
+                            <th style="width: 10%;">@Model[0].COL16</th>
+                        }
+                    </tr>
+
+                }
+
+            </thead>
+            <tbody>
+                @if (Model.Count() > 0)
+                {
+                    if (ViewBag.TabName == "M")
+                    {
+                        for (int item = 0; item < Model.Count() - 1; item++)
+                        {
+                            counter += 1;
+                            <tr id="@Model[item+1].AL_Material_Tracking_Code">
+                                <td style="text-align:center !important; width:15%;">
+                                    <input type="checkbox" id="chk_@Model[item+1].AL_Material_Tracking_Code" class="checkbox" value="@Model[item+1].AL_Material_Tracking_Code" />
+                                    @Html.Hidden("hdnCnt", Model[item + 1].AL_Material_Tracking_Code, new { id = counter + "_hdnCnt" })
+
+                                </td>
+                                <td>
+                                    <span>
+                                        @Model[item + 1].Title_Name
+                                    </span>
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL1
+                                </td>
+                                <td style="text-align:center">
+                                    @Model[item + 1].COL2
+                                </td>
+                                <td style="text-align:center">
+                                    @Model[item + 1].COL3
+                                </td>
+                                @*<td>
+                                        @Model[item + 1].COL4
+                                    </td>*@
+                                <td style="text-align:center" id="tdPOStatus_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanPOStatus_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL4</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL4" id="hdnPOStatus_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterPOStatus_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL5
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL6
+                                </td>
+                                <td style="text-align:center" id="tdDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL7</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL7" id="hdnDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdPoster_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanPoster_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL8</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL8" id="hdnPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+
+
+                                <td style="text-align:center" id="tdStill_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL9</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL9" id="hdnStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdTrailer_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanTrailer_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL10</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL10" id="hdnTrailer_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterTrailer_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL11
+                                </td>
+                                <td style="text-align:center" id="tdEditedPoster_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanEditedPoster_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL12</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL12" id="hdnEditedPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterEditedPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdEditedStill_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanEditedStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL13</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL13" id="hdnEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        for (int item = 0; item < Model.Count() - 1; item++)
+                        {
+                            counter += 1;
+                            <tr id="@Model[item+1].AL_Material_Tracking_Code">
+                                <td style="text-align:center; width:15%; text-align:center !important">
+                                    <input type="checkbox" id="chk_@Model[item+1].AL_Material_Tracking_Code" class="checkbox" value="@Model[item+1].AL_Material_Tracking_Code" />
+                                    @Html.Hidden("hdnCnt", Model[item + 1].AL_Material_Tracking_Code, new { id = counter + "_hdnCnt" })
+
+                                </td>
+                                <td>
+                                    <span>
+                                        @Model[item + 1].Title_Name
+                                    </span>
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL1
+                                </td>
+                                <td style="text-align:center">
+                                    @Model[item + 1].COL2
+                                </td>
+                                <td style="text-align:center">
+                                    @Model[item + 1].COL3
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL4
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL5
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL6
+                                </td>
+                                @*<td>
+                                        @Model[item + 1].COL7
+                                    </td>*@
+                                <td style="text-align:center" id="tdPOStatus_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanPOStatus_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL7</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL7" id="hdnPOStatus_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterPOStatus_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL8
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL9
+                                </td>
+                                <td style="text-align:center" id="tdDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL10</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL10" id="hdnDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterDeliveryDate_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdPoster_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanPoster_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL11</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL11" id="hdnPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdStill_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL12</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL12" id="hdnStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdTrailer_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanTrailer_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL13</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL13" id="hdnTrailer_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterTrailer_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL14
+                                </td>
+                                <td style="text-align:center" id="tdEditedPoster_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanEditedPoster_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL15</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL15" id="hdnEditedPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterEditedPoster_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td style="text-align:center" id="tdEditedStill_@Model[item + 1].AL_Material_Tracking_Code">
+                                    <span id="spanEditedStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL16</span>
+                                    <input type="hidden" name="name" value="@Model[item + 1].COL16" id="hdnEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                    <input type="hidden" name="name" value="@counter" id="hdnCounterStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9">@objMessageKey.Norecordfound</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+}

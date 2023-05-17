@@ -5952,5 +5952,65 @@ namespace RightsU_DAL
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList");
         }
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
+        {
+            var clientParameter = client.HasValue ?
+                new ObjectParameter("Client", client) :
+                new ObjectParameter("Client", typeof(int));
+
+            var cycleParameter = cycle != null ?
+                new ObjectParameter("Cycle", cycle) :
+                new ObjectParameter("Cycle", typeof(string));
+
+            var aL_Lab_CodeParameter = aL_Lab_Code.HasValue ?
+                new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
+                new ObjectParameter("AL_Lab_Code", typeof(int));
+
+            var distributorParameter = distributor.HasValue ?
+                new ObjectParameter("Distributor", distributor) :
+                new ObjectParameter("Distributor", typeof(int));
+
+            var displayParameter = display != null ?
+                new ObjectParameter("Display", display) :
+                new ObjectParameter("Display", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display, string tabName)
+        {
+            var clientParameter = client.HasValue ?
+                new ObjectParameter("Client", client) :
+                new ObjectParameter("Client", typeof(int));
+
+            var cycleParameter = cycle != null ?
+                new ObjectParameter("Cycle", cycle) :
+                new ObjectParameter("Cycle", typeof(string));
+
+            var aL_Lab_CodeParameter = aL_Lab_Code.HasValue ?
+                new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
+                new ObjectParameter("AL_Lab_Code", typeof(int));
+
+            var distributorParameter = distributor.HasValue ?
+                new ObjectParameter("Distributor", distributor) :
+                new ObjectParameter("Distributor", typeof(int));
+
+            var displayParameter = display != null ?
+                new ObjectParameter("Display", display) :
+                new ObjectParameter("Display", typeof(string));
+
+            var tabNameParameter = tabName != null ?
+                new ObjectParameter("TabName", tabName) :
+                new ObjectParameter("TabName", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter);
+        }
+
+        public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
+        {
+            var proc = new USPAL_SaveDeliveryTracking();
+            proc.LstDeliveryTracking_UDT = LstDeliveryTracking_UDT;
+            this.Database.ExecuteStoredProcedure<USPAL_SaveDeliveryTracking>(proc);
+        }
     }
 }

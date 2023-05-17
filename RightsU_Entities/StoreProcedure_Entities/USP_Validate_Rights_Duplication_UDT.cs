@@ -1745,5 +1745,42 @@ namespace RightsU_Entities
         public int User_Code { get; set; }
         public string Result { get; set; }
     }
+
+    [UserDefinedTableType("DeliveryTracking_UDT")]
+    public class DeliveryTracking_UDT
+    {
+
+        [UserDefinedTableTypeColumn(1)]
+        public string AL_Material_Tracking_Code { get; set; }
+
+        [UserDefinedTableTypeColumn(2)]
+        public string PO_Status { get; set; }
+
+        [UserDefinedTableTypeColumn(3)]
+        public string Delivery_Date { get; set; }
+
+        [UserDefinedTableTypeColumn(4)]
+        public string Poster { get; set; }
+
+        [UserDefinedTableTypeColumn(5)]
+        public string Still { get; set; }
+
+        [UserDefinedTableTypeColumn(6)]
+        public string Trailer { get; set; }
+
+        [UserDefinedTableTypeColumn(7)]
+        public string Edited_Poster { get; set; }
+
+        [UserDefinedTableTypeColumn(8)]
+        public string Edited_Still { get; set; }
+    }
+
+    [StoredProcedure("USPAL_SaveDeliveryTracking")]
+    public class USPAL_SaveDeliveryTracking
+    {
+        [StoredProcedureParameter(SqlDbType.Udt, ParameterName = "DeliveryTracking_UDT")]
+        public List<DeliveryTracking_UDT> LstDeliveryTracking_UDT { get; set; }
+
+    }
 }
 
