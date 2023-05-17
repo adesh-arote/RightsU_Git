@@ -122,12 +122,18 @@
 </div>
 
 <style>
-    #ContentRuleTable thead tr th{
-        width:20%;
+    #ContentRuleTable {
+        table-layout: fixed;
     }
-    #ContentRuleTable tbody tr td {
-        text-align:center;
-    }
+
+        #ContentRuleTable thead tr th {
+            width: 20%;
+        }
+
+        #ContentRuleTable tbody tr td {
+            text-align: center;
+            word-wrap: break-word;
+        }
 </style>
 
 <table id="ContentRuleTable" class="table table-bordered table-hover">
@@ -156,8 +162,8 @@
             //iCR++;
             <tr>
                 @*<td>
-                    @iCR
-                </td>*@
+                        @iCR
+                    </td>*@
                 <td>
                     @item.Rule_Name
                 </td>
@@ -204,6 +210,6 @@
 
 <div id="ContentPopup">
 
-    </div>
+</div>
 
 @*To use Modal Popup, Uncomment Popup with ID ContentRuleModalPopup from Vendor Folder Index Page, comment above div with Id Content Popup and Uncomment the Modal initializer from script*@

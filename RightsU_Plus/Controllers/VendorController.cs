@@ -1636,51 +1636,59 @@ namespace RightsU_Plus.Controllers
             string status = "S";
             string message = "";
 
-            ALVendorRule.AL_Vendor_Rule_Criteria = objVr.AL_Vendor_Rule_Criteria;
-            string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Select(s => s.ExtendedColumnNames).ToList());
-            ALVendorRule.Criteria = CommaSeparatedCriteria;
-            ALVendorRule.Is_Active = "Y";
-
-            if (ALVendorRule.AL_Vendor_Rule_Code == 0)
+            if (CheckDuplicateContentRuleClientForSameType(ALVendorRule.Rule_Name, ALVendorRule.Rule_Type, ALVendorRule.AL_Vendor_Rule_Code, ALVendorRule.Vendor_Code))
             {
-                if (objSessVendor.AL_Vendor_Rule.Count == 0)
+                ALVendorRule.AL_Vendor_Rule_Criteria = objVr.AL_Vendor_Rule_Criteria;
+                string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Select(s => s.ExtendedColumnNames).ToList());
+                ALVendorRule.Criteria = CommaSeparatedCriteria;
+                ALVendorRule.Is_Active = "Y";
+
+                if (ALVendorRule.AL_Vendor_Rule_Code == 0)
                 {
-                    ALVendorRule.AL_Vendor_Rule_Code = -1;
-                    ALVendorRule.EntityState = State.Added;
+                    if (objSessVendor.AL_Vendor_Rule.Count == 0)
+                    {
+                        ALVendorRule.AL_Vendor_Rule_Code = -1;
+                        ALVendorRule.EntityState = State.Added;
+                    }
+                    else
+                    {
+                        ALVendorRule.AL_Vendor_Rule_Code = Convert.ToInt32(Session["tempCRID"]) - 1;
+                        ALVendorRule.EntityState = State.Added;
+                    }
+                    ALVendorRule.Is_Active = "Y";
+                    Session["tempCRID"] = ALVendorRule.AL_Vendor_Rule_Code;
+                    objSessVendor.AL_Vendor_Rule.Add(ALVendorRule);
                 }
                 else
                 {
-                    ALVendorRule.AL_Vendor_Rule_Code = Convert.ToInt32(Session["tempCRID"]) - 1;
-                    ALVendorRule.EntityState = State.Added;
+                    if (ALVendorRule.AL_Vendor_Rule_Code > 0)
+                    {
+                        AL_Vendor_Rule objAVR_DB = objSessVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == ALVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
+                        objAVR_DB.Rule_Name = ALVendorRule.Rule_Name;
+                        objAVR_DB.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
+                        objAVR_DB.Criteria = ALVendorRule.Criteria;
+                        objAVR_DB.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
+                        objAVR_DB.Rule_Type = ALVendorRule.Rule_Type;
+                        ALVendorRule.EntityState = State.Modified;
+                        objAVR_DB.EntityState = ALVendorRule.EntityState;
+                    }
+                    if (ALVendorRule.AL_Vendor_Rule_Code < 0)
+                    {
+                        AL_Vendor_Rule objAVR_Sess = objSessVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == ALVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
+                        objAVR_Sess.Rule_Name = ALVendorRule.Rule_Name;
+                        objAVR_Sess.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
+                        objAVR_Sess.Criteria = ALVendorRule.Criteria;
+                        objAVR_Sess.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
+                        objAVR_Sess.Rule_Type = ALVendorRule.Rule_Type;
+                        ALVendorRule.EntityState = State.Added;
+                        objAVR_Sess.EntityState = ALVendorRule.EntityState;
+                    }
                 }
-                ALVendorRule.Is_Active = "Y";
-                Session["tempCRID"] = ALVendorRule.AL_Vendor_Rule_Code;
-                objSessVendor.AL_Vendor_Rule.Add(ALVendorRule);
             }
             else
             {
-                if (ALVendorRule.AL_Vendor_Rule_Code > 0)
-                {
-                    AL_Vendor_Rule objAVR_DB = objSessVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == ALVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
-                    objAVR_DB.Rule_Name = ALVendorRule.Rule_Name;
-                    objAVR_DB.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
-                    objAVR_DB.Criteria = ALVendorRule.Criteria;
-                    objAVR_DB.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
-                    objAVR_DB.Rule_Type = ALVendorRule.Rule_Type;
-                    ALVendorRule.EntityState = State.Modified;
-                    objAVR_DB.EntityState = ALVendorRule.EntityState;
-                }
-                if (ALVendorRule.AL_Vendor_Rule_Code < 0)
-                {
-                    AL_Vendor_Rule objAVR_Sess = objSessVendor.AL_Vendor_Rule.Where(w => w.AL_Vendor_Rule_Code == ALVendorRule.AL_Vendor_Rule_Code).FirstOrDefault();
-                    objAVR_Sess.Rule_Name = ALVendorRule.Rule_Name;
-                    objAVR_Sess.Rule_Short_Name = ALVendorRule.Rule_Short_Name;
-                    objAVR_Sess.Criteria = ALVendorRule.Criteria;
-                    objAVR_Sess.AL_Vendor_Rule_Criteria = ALVendorRule.AL_Vendor_Rule_Criteria;
-                    objAVR_Sess.Rule_Type = ALVendorRule.Rule_Type;
-                    ALVendorRule.EntityState = State.Added;
-                    objAVR_Sess.EntityState = ALVendorRule.EntityState;
-                }
+                status = "E";
+                message = "Content rule with same Name and Title type for this vendor already exists";
             }
 
             objVr = null;
@@ -2249,6 +2257,20 @@ namespace RightsU_Plus.Controllers
             objSessDictionary.Add("ControlType", SelectedExCol.Control_Type);
             //obj = SelectListItem, IsMultiSelect, TextBox, ControlType
 
+        }
+
+        public bool CheckDuplicateContentRuleClientForSameType(string Rule_Name, string Rule_Type, int? AL_Vendor_Rule_Code, int? Vendor_Code)
+        {
+            int DuplicateCount = objSessVendor.AL_Vendor_Rule.Where(w => w.Rule_Name == Rule_Name && w.Rule_Type == Rule_Type && w.Vendor_Code == Vendor_Code && w.AL_Vendor_Rule_Code != AL_Vendor_Rule_Code).Count();
+
+            if (DuplicateCount > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         #endregion
     }
