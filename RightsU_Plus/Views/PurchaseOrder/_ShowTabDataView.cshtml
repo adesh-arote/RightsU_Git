@@ -27,35 +27,14 @@
             {
                 <tr>
                     <td>
-                        <span>
-                            @{
-                                @item.Vendor.Vendor_Name
-                                //string Client_Name = "";
-                                //if (item.Vendor_Code > 0 && item.Vendor_Code != null)
-                                //{
-                                //    Client_Name = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientCode).Where(a => a.Vendor_Code == item.Vendor_Code).Select(s => s.Vendor_Name).FirstOrDefault();
-                                //}
-                                //@Client_Name
-                            }
-                        </span>
+                        @item.Vendor.Vendor_Name
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.PO_Number)
                     </td>
                     <td style="display:none">
-                        <span>
-                            @*@{
-                                string title_Name = "";
-                                if (item.Title_Code > 0 && item.Title_Code != null)
-                                {
-                                    title_Name = ((IEnumerable<RightsU_Entities.Title>)ViewBag.TitleCode).Where(a => a.Title_Code == item.Title_Code).Select(s => s.Title_Name).FirstOrDefault();
-                                }
-                                @title_Name
-                            }*@
-                        </span>
                     </td>
-                    <td style="text-align:center" class="clsTdStatusdt_@item.AL_Purchase_Order_Details_Code@item.Status">
-                        @*@Html.DisplayFor(modelItem => item.Status)*@
+                    <td style="text-align:center" class="clsTdStatusdt_@item.AL_Purchase_Order_Details_Code@item.Status">                       
                         @if (item.Status == "C")
                         {
                             <span>Success</span>
@@ -88,12 +67,11 @@
                 <td colspan="9">@objMessageKey.Norecordfound</td>
             </tr>
         }
-
     </tbody>
 </table>
 
-<div>
+@*<div>
     <div style="margin:20px; text-align:left">
         @Html.ActionLink("Back To List", "Index", "PurchaseOrder", null, new { @class = "btn btn-primary" })
     </div>
-</div>
+</div>*@

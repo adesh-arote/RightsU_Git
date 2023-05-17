@@ -12,32 +12,7 @@ namespace RightsU_Plus.Controllers
     public class PurchaseOrderController : BaseController
     {
         #region --- Properties ---
-
-        //private List<RightsU_Entities.AL_Purchase_Order> lstPO
-        //{
-        //    get
-        //    {
-        //        if (Session["lstPO"] == null)
-        //            Session["lstPO"] = new List<RightsU_Entities.AL_Purchase_Order>();
-        //        return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPO"];
-        //    }
-        //    set { Session["lstPO"] = value; }
-        //}
-
-        //List<RightsU_Entities.AL_Purchase_Order> lstPOSearched
-        //{
-        //    get
-        //    {
-        //        if (Session["lstPOSearched"] == null)
-        //            Session["lstPOSearched"] = new List<RightsU_Entities.AL_Purchase_Order>();
-        //        return (List<RightsU_Entities.AL_Purchase_Order>)Session["lstPOSearched"];
-        //    }
-        //    set
-        //    {
-        //        Session["lstPOSearched"] = value;
-        //    }
-        //}
-
+       
         private List<USPAL_GetPurchaseOrderList_Result> lstPO
         {
             get
@@ -152,7 +127,7 @@ namespace RightsU_Plus.Controllers
 
         #endregion
 
-        //-----------------------------------------------------POPaging--------------------------------------------------------------------------------------
+        //-----------------------------------------------------Purchase Order and Purchase Order Details-----------------------------------------------------
 
         public ActionResult Index()
         {
@@ -199,8 +174,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult BindPOList(int pageNo, int recordPerPage, string sortType)
         {
             List<USPAL_GetPurchaseOrderList_Result> lst = new List<USPAL_GetPurchaseOrderList_Result>();
-            //List<AL_Purchase_Order> lst = new List<AL_Purchase_Order>();
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+                      
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
             int RecordCount = 0;
@@ -217,10 +191,7 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "ND")
                     lst = lstPOSearched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
-
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ClientCode = lstVendors;
-
+           
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
 
@@ -232,29 +203,6 @@ namespace RightsU_Plus.Controllers
             }
 
             return PartialView("_PurchaseOrderList", lst);
-        }
-
-        private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
-        {
-            noOfRecordSkip = noOfRecordTake = 0;
-            if (recordCount > 0)
-            {
-                int cnt = pageNo * recordPerPage;
-                if (cnt >= recordCount)
-                {
-                    int v1 = recordCount / recordPerPage;
-                    if ((v1 * recordPerPage) == recordCount)
-                        pageNo = v1;
-                    else
-                        pageNo = v1 + 1;
-                }
-                noOfRecordSkip = recordPerPage * (pageNo - 1);
-                if (recordCount < (noOfRecordSkip + recordPerPage))
-                    noOfRecordTake = recordCount - noOfRecordSkip;
-                else
-                    noOfRecordTake = recordPerPage;
-            }
-            return pageNo;
         }
 
         public JsonResult SearchPOList(string searchText)
@@ -311,14 +259,6 @@ namespace RightsU_Plus.Controllers
             int RecordCount = 0;
             List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
 
-            //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            //List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            //ViewBag.ClientCode = lstVendors;
-
-            //Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
-            //List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
-            //ViewBag.TitleCode = lstTitles;
-
             try
             {
                 lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
@@ -347,25 +287,15 @@ namespace RightsU_Plus.Controllers
             string message = "";
             int RecordCount = 0;
             List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
-
-            //Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-            //List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            //ViewBag.ClientCode = lstVendors;
-
-            //Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
-            //List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
-            //ViewBag.TitleCode = lstTitles;
-
+          
             try
             {
                 lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
-                int Rcount = lstTabData.Count();
-
-                RecordCount = Rcount;
+                RecordCount = lstTabData.Count();
+              
                 if (RecordCount > 0)
                 {
-                    lst = lstTabData;
-
+                    lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
                     DataTable dt = ToDataTable(lst);
                 }
                 else
@@ -380,6 +310,8 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("_ShowTabDataView", lst);
         }
+
+        //-------------------------------------------------Refresh PO/POD and GetStatus----------------------------------------------------------------------
 
         public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
         {
@@ -449,10 +381,8 @@ namespace RightsU_Plus.Controllers
         }
 
         public void RefreshPOD(int PurchaseOrderCode, int BookingSheetCode)
-        {
-            //AL_Purchase_Order_Details obj_AL_Purchase_Order_Details = new AL_Purchase_Order_Details();
+        {           
             List<AL_Purchase_Order_Details>  lst_AL_Purchase_Order_Details = new List<AL_Purchase_Order_Details>();
-
             lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
 
             foreach(AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
@@ -476,7 +406,30 @@ namespace RightsU_Plus.Controllers
             return Json(Filename);
         }
 
-        //-----------------------------------------------------------------GenericMethods--------------------------------------------------------------------
+        //--------------------------------------------------------GenericMethods-----------------------------------------------------------------------------
+
+        private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
+        {
+            noOfRecordSkip = noOfRecordTake = 0;
+            if (recordCount > 0)
+            {
+                int cnt = pageNo * recordPerPage;
+                if (cnt >= recordCount)
+                {
+                    int v1 = recordCount / recordPerPage;
+                    if ((v1 * recordPerPage) == recordCount)
+                        pageNo = v1;
+                    else
+                        pageNo = v1 + 1;
+                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
+                if (recordCount < (noOfRecordSkip + recordPerPage))
+                    noOfRecordTake = recordCount - noOfRecordSkip;
+                else
+                    noOfRecordTake = recordPerPage;
+            }
+            return pageNo;
+        }
 
         public static DataTable ToDataTable<T>(List<T> items)
         {
@@ -522,14 +475,6 @@ namespace RightsU_Plus.Controllers
 //    string message = "";
 //    int RecordCount = 0;
 //    List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
-
-//    Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
-//    List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-//    ViewBag.ClientCode = lstVendors;
-
-//    Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
-//    List<RightsU_Entities.Title> lstTitles = objTitle_Service.SearchFor(s => true).ToList();
-//    ViewBag.TitleCode = lstTitles;
 
 //    if (TabName == "MV")
 //    {

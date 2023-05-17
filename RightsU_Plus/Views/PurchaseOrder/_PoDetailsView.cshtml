@@ -73,13 +73,16 @@
                 </div>
             </div>
             <div class="tab-content clearfix table-wrapper scale_table_container">
-                <div class="scale_table_block">
+                <div class="scale_table_block" style="max-height: 400px;overflow-y: auto;">
                     <input type="hidden" id="hdnAction" value="" />
                     <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                     <div id="divBindTab" class="deal clearfix">
 
                     </div>
                 </div>
+            </div>
+            <div style="margin:20px; text-align:left">
+                @Html.ActionLink("Back To List", "Index", "PurchaseOrder", null, new { @class = "btn btn-primary" })
             </div>
         </div>
     </div>

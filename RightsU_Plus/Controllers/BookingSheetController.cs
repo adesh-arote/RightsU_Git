@@ -262,10 +262,9 @@ namespace RightsU_Plus.Controllers
             set { Session["objPurchase_Order_Service"] = value; }
         }
 
-
         #endregion
 
-        //-----------------------------------------------------Paging---------------------------------------------------------------------------------------
+        //--------------------------------------------------BookingSheet and Reccomendation-----------------------------------------------------------------
 
         public ActionResult Index()
         {
@@ -311,7 +310,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult BindBookingSheetList(int pageNo, int recordPerPage, string sortType)
         {
             List<USPAL_GetBookingSheetList_Result> lst = new List<USPAL_GetBookingSheetList_Result>();
-            Vendor_Service objVendor_Service = new Vendor_Service(objLoginEntity.ConnectionStringName);
+    
             User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
             int RecordCount = 0;
@@ -329,10 +328,7 @@ namespace RightsU_Plus.Controllers
                     lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             DataTable dt = ToDataTable(lst);
-
-            List<RightsU_Entities.Vendor> lstVendors = objVendor_Service.SearchFor(s => true).ToList();
-            ViewBag.ClientCode = lstVendors;
-
+            
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
 
@@ -355,29 +351,6 @@ namespace RightsU_Plus.Controllers
             }
 
             return PartialView("_PendingRecommendationsList", lst);
-        }
-
-        private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
-        {
-            noOfRecordSkip = noOfRecordTake = 0;
-            if (recordCount > 0)
-            {
-                int cnt = pageNo * recordPerPage;
-                if (cnt >= recordCount)
-                {
-                    int v1 = recordCount / recordPerPage;
-                    if ((v1 * recordPerPage) == recordCount)
-                        pageNo = v1;
-                    else
-                        pageNo = v1 + 1;
-                }
-                noOfRecordSkip = recordPerPage * (pageNo - 1);
-                if (recordCount < (noOfRecordSkip + recordPerPage))
-                    noOfRecordTake = recordCount - noOfRecordSkip;
-                else
-                    noOfRecordTake = recordPerPage;
-            }
-            return pageNo;
         }
 
         public JsonResult SearchOnList(string searchText, string TabName)
@@ -419,6 +392,8 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
+        //------------------------------------------------RefreshBookingSheet and GetStatus-----------------------------------------------------------------
 
         public JsonResult GetbookingSheetStatus(int BookingSheetCode)
         {
@@ -482,18 +457,20 @@ namespace RightsU_Plus.Controllers
             {
                 objRc = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetReCommendationList().Where(w => w.AL_Recommendation_Code == RecommendationCode).FirstOrDefault();
 
+                objBooking_Sheet_Service = null;
+                objABS.EntityState = State.Added;
+                objABS.Record_Status = "P";
+                objABS.Booking_Sheet_No = "BS" + GenerateBsNumber();
+                objABS.Vendor_Code = objRc.Vendor_Code;
                 objABS.AL_Recommendation_Code = objRc.AL_Recommendation_Code;
+                objABS.Inserted_By = objLoginUser.Users_Code;
+                objABS.Inserted_On = DateTime.Now;
                 objABS.Last_Action_By = objLoginUser.Users_Code;
                 objABS.Last_Updated_Time = DateTime.Now;
-                objABS.Record_Status = "P";
-
-                objABS.Vendor_Code = objRc.Vendor_Code;
-
-                Random ran = new Random();
-                int SheetNo = ran.Next(1, 100);
-                objABS.Booking_Sheet_No = "BS000" + SheetNo;
-
-                objABS.EntityState = State.Added;
+                
+                //Random ran = new Random();
+                //int SheetNo = ran.Next(1, 10000);
+                //objABS.Booking_Sheet_No = "BS" + SheetNo;               
             }
 
             dynamic resultSet;
@@ -504,6 +481,8 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
+                objBooking_Sheet_Service = null;
+            
                 Status = "S";
                 Message = "Sheet Generated Succesfully";
             }
@@ -516,7 +495,7 @@ namespace RightsU_Plus.Controllers
             return Json(Obj);
         }
 
-        //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
+        //----------------------------------------------------GetFileNameToDownload-------------------------------------------------------------------------
 
         public JsonResult GetFileName(int BookingSheetCode)
         {
@@ -592,7 +571,7 @@ namespace RightsU_Plus.Controllers
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
-                pageNo = GetImportMasterPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (FilterBy == "A")
                     lst = lstMasterImportSearched.OrderByDescending(o => o.Uploaded_Date).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 if (FilterBy == "E")
@@ -620,29 +599,6 @@ namespace RightsU_Plus.Controllers
             return PartialView("_MasterImportList", lst);
         }
 
-        private int GetImportMasterPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
-        {
-            noOfRecordSkip = noOfRecordTake = 0;
-            if (recordCount > 0)
-            {
-                int cnt = pageNo * recordPerPage;
-                if (cnt >= recordCount)
-                {
-                    int v1 = recordCount / recordPerPage;
-                    if ((v1 * recordPerPage) == recordCount)
-                        pageNo = v1;
-                    else
-                        pageNo = v1 + 1;
-                }
-                noOfRecordSkip = recordPerPage * (pageNo - 1);
-                if (recordCount < (noOfRecordSkip + recordPerPage))
-                    noOfRecordTake = recordCount - noOfRecordSkip;
-                else
-                    noOfRecordTake = recordPerPage;
-            }
-            return pageNo;
-        }
-
         public JsonResult SearchOnImportMasterList(string searchText)
         {
             int recordcount = 0;
@@ -666,6 +622,8 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
+        //-------------------------------------------------RefreshImportSheet and GetStatus-----------------------------------------------------------------
 
         public JsonResult GetImportedSheetStatus(int DmMasterCode)
         {
@@ -804,7 +762,7 @@ namespace RightsU_Plus.Controllers
             return Json(Obj);
         }
 
-        //---------------------------------------------------------SheetView-------------------------------------------------------------------------------
+        //-------------------------------------------------------ImportedSheetView--------------------------------------------------------------------------
 
         public ActionResult ImportedSheetView(int DM_Master_Import_Code, string fileType = "")
         {
@@ -1064,7 +1022,7 @@ namespace RightsU_Plus.Controllers
             //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" || w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             if (ValidCount > 0)
             {
@@ -1136,9 +1094,32 @@ namespace RightsU_Plus.Controllers
                 Message = Message
             };
             return Json(Obj);
-        }       
+        }
 
         //-----------------------------------------------------------------GenericMethods--------------------------------------------------------------------
+
+        private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
+        {
+            noOfRecordSkip = noOfRecordTake = 0;
+            if (recordCount > 0)
+            {
+                int cnt = pageNo * recordPerPage;
+                if (cnt >= recordCount)
+                {
+                    int v1 = recordCount / recordPerPage;
+                    if ((v1 * recordPerPage) == recordCount)
+                        pageNo = v1;
+                    else
+                        pageNo = v1 + 1;
+                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
+                if (recordCount < (noOfRecordSkip + recordPerPage))
+                    noOfRecordTake = recordCount - noOfRecordSkip;
+                else
+                    noOfRecordTake = recordPerPage;
+            }
+            return pageNo;
+        }
 
         public void ReportCredential()
         {
@@ -1201,6 +1182,15 @@ namespace RightsU_Plus.Controllers
             }
             //put a breakpoint here and check datatable
             return dataTable;
+        }
+
+        private string GenerateBsNumber()
+        {
+            string BS_No = objBooking_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Booking_Sheet_Code).Select(s => s.Booking_Sheet_No).FirstOrDefault();
+            int lastAddedNo = Convert.ToInt32(BS_No.Substring(2));
+            string demo = Convert.ToString(lastAddedNo + 1).PadLeft(4, '0');
+            return demo;
+            // it will return 0009
         }
     }
 

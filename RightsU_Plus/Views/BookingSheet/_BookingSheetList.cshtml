@@ -35,16 +35,7 @@
                         @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
                     </td>
                     <td>
-                        <span>
-                            @{
-                                string Client_Name = "";
-                                if (item.Vendor_Code > 0 && item.Vendor_Code != null)
-                                {
-                                    Client_Name = ((IEnumerable<RightsU_Entities.Vendor>)ViewBag.ClientCode).Where(a => a.Vendor_Code == item.Vendor_Code).Select(s => s.Vendor_Name).FirstOrDefault();
-                                }
-                                @Client_Name
-                            }
-                        </span>
+                        @item.Vendor_Name
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Proposal_CY)
@@ -58,8 +49,7 @@
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Show_Content_Count)
                     </td>
-                    <td style="text-align:center">
-                        @*@Html.DisplayFor(modelItem => item.Last_Action_By)*@
+                    <td style="text-align:center">                      
                         <span>
                             @{
                                 string UpdateBy = "";
@@ -77,8 +67,6 @@
                     <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Booking_Sheet_Code@item.Record_Status clsTdAction1_@item.AL_Proposal_Code@item.Record_Status clsTdAction2_config'@item.Record_Status" >
                         @if (item.Record_Status == "C")
                         {
-                            @*<a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;"></a>*@
-
                             <a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="ImportMasterView('@item.AL_Booking_Sheet_Code')"></a>
                             <a title="Generate Purchase Order" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="RemarkPopup('@item.AL_Booking_Sheet_Code','@item.AL_Proposal_Code','config')"></a>
                             <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet('@item.AL_Booking_Sheet_Code')"></a>
@@ -97,6 +85,5 @@
                 <td colspan="9">@objMessageKey.Norecordfound</td>
             </tr>
         }
-
     </tbody>
 </table>

@@ -252,14 +252,6 @@
             }),
             success: function (result) {
                 debugger;
-                //if (result.Status == "S") {
-                //    //$('#PoList').hide();
-                //    //$('#PodList').show();
-                //    //$('#divBindPoDetails').empty();
-                //    //$('#divBindPoDetails').html(result);
-                //    OpenTab(TabName, POC);
-                //    addNumeric();
-                //}
                 $('#PoList').hide();
                 $('#PodList').show();
                 $('#divBindPoDetails').empty();
@@ -473,7 +465,7 @@
                             PurchaseOrderDetailCode: PurchaseOrderDetailCode
                         }),
                         success: function (result) {
-                            debugger;                           
+                            debugger;
                             if (result == "true") {
                                 redirectToLogin();
                             }
@@ -571,114 +563,9 @@
             </div>
             <div id="PodList" style="display:none;">
                 <div id="divBindPoDetails" class="deal clearfix">
-                    @*<div class="acq main_col">
-                            <div class="top_area">
-                                <div class="title_block clearfix">
-                                    <h2 class="pull-left">
-                                        Purchase Order Details
-                                    </h2>
-                                </div>
-                            </div>
-                            <div class="search_area" style="background-color: #eee; padding:5px;">
-                                <table class="table">
-                                    <tr>
-                                        <td style="width:3%;vertical-align: middle;text-align:center;">
-                                            <b>Client Name :</b>
-                                        </td>
-                                        <td style="width:10%; text-align:left;">
-                                            <span>@objPoDetails.Client_Name</span>
-                                        </td>
-                                        <td style="width:3%;vertical-align: middle;text-align:center;">
-                                            <b>Booking Sheet No :</b>
-                                        </td>
-                                        <td style="width:10%; text-align:left;">
-                                            <span>@objPoDetails.Booking_sheet_No</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td style="width:3%;vertical-align: middle;text-align:center;">
-                                            <b>Proposal - CY :</b>
-                                        </td>
-                                        <td style="width:10%; text-align:left;">
-                                            <span>@objPoDetails.Proposal_Cy</span>
-                                        </td>
-                                        <td style="width:3%;vertical-align: middle;text-align:center;">
-                                            <b>Created On :</b>
-                                        </td>
-                                        <td style="width:10%; text-align:left;">
-                                            <span>@objPoDetails.Created_On</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div>
-                                <div class="grid_area">
-                                    <div class="navigation_tabs">
-                                        <div class="tabbable" id="divAlternateConfig">
-                                            <input type="hidden" id="hdnTabName" value="TA" />
-                                            <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
-                                                <li class="active" id="tabMovie">
-                                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
-                                                </li>
-                                                <li id="tabShow">
-                                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="tab-content clearfix table-wrapper scale_table_container">
-                                    <div class="scale_table_block">
-                                        <div id="divBindTab" class="deal clearfix">
 
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>*@
                 </div>
             </div>
         </div>
     </section>
 </div>
-
-@*<script>
-        function BindTabData(TabName, PoCode) {
-            debugger;
-            $.ajax({
-                type: "POST",
-                url: URL_BindTabData,
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    TabName: TabName,
-                    Purchase_Order_Code: PoCode
-                }),
-                success: function (result) {
-                    debugger;
-                    if (result.Status == "E") {
-                        showAlert("E", result.message)
-                    }
-                    else {
-                        $('#divBindTab').empty();
-                        $('#divBindTab').html(result);
-                    }
-                },
-                error: function (result) {
-                    alert('Error: ' + result.responseText);
-                }
-            });
-        }
-
-    function DownloadLink(filename) {
-        debugger;
-        var url = window.location.origin + "/Download/PurchaseOrder/" + filename;
-        var save = document.createElement('a');
-        save.href = url;
-        save.download = filename;
-        save.target = '_blank';
-        save.click();
-    
-    }
-</script>*@
