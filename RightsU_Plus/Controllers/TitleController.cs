@@ -1464,7 +1464,8 @@ namespace RightsU_Plus.Controllers
 
                 objTalent.Columns_Code = ExtendedColumnsCode;
                 objTalent.Columns_Value = ExtendedColumnValue;
-                ExtendedColumnsCode = 0;
+                objTalent.EntityState = State.Added;
+                //ExtendedColumnsCode = 0;
                 new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).Save(objTalent, out resultSet);
                 objJson.Add("Value", objTalent.Columns_Code);
                 objJson.Add("Text", objTalent.Columns_Value);
@@ -3463,7 +3464,7 @@ namespace RightsU_Plus.Controllers
         }
         public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
         {
-            string getText = "<input type=\"text\"  id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" value=\"" + SelectedValues + "\"" + required + " " + ValDuplicate + ">";
+            string getText = "<input type=\"text\" id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" value=\"" + SelectedValues + "\"" + required + " " + ValDuplicate + " style=\"width:100%\" maxlength=\"1000\" >";
             _fieldList = _fieldList + Columns_Code + "txtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
             return getText;
         }
@@ -3931,24 +3932,36 @@ namespace RightsU_Plus.Controllers
 
             foreach (int? RowDetail in lstRowDetail)
             {
+                rowNum = RowDetail;
+                if (rowNum > 0)
+                {
+                    Output = Output + "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+                }
                 foreach (var i in ListExtended_Columns_Data)
                 {
                     var ExtendedColumn = lstTabwiseData.Where(x => x.Columns_Code == i.Columns_Code && x.Row_No == RowDetail).FirstOrDefault();
-                    var ExtendedColumnDB = lstExtendedColumnDB.Where(x => x.Columns_Code == i.Columns_Code && x.Map_Extended_Columns_Code == ExtendedColumn.Map_Extended_Columns_Code).FirstOrDefault();
-                    rowNum = RowDetail;
-
-                    if (rowNum > 0 && Count == 0)
+                    USP_Bind_Extend_Column_Grid_Result ExtendedColumnDB = null;
+                    if (ExtendedColumn != null)
                     {
-                        Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+                        ExtendedColumnDB = lstExtendedColumnDB.Where(x => x.Columns_Code == i.Columns_Code && x.Map_Extended_Columns_Code == ExtendedColumn.Map_Extended_Columns_Code).FirstOrDefault();
                     }
-
-                    if (ExtendedColumnDB.Control_Type == "DDL")
+                    
+                    //if (rowNum > 0 && Count == 0)
+                    //{
+                    //    Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+                    //}
+                    
+                    if (ExtendedColumnDB != null && (ExtendedColumnDB.Control_Type == "DDL"))
                     {
                         Output = Output + "<td data-configitem =\"" + TabCode + "\">" + ExtendedColumnDB.Name + "</td>";
                     }
-                    if (ExtendedColumnDB.Control_Type == "TXT" || ExtendedColumnDB.Control_Type == "INT" || ExtendedColumnDB.Control_Type == "DBL" || ExtendedColumnDB.Control_Type == "DATE" || ExtendedColumnDB.Control_Type == "CHK")
+                    else if (ExtendedColumnDB != null && (ExtendedColumnDB.Control_Type == "TXT" || ExtendedColumnDB.Control_Type == "INT" || ExtendedColumnDB.Control_Type == "DBL" || ExtendedColumnDB.Control_Type == "DATE" || ExtendedColumnDB.Control_Type == "CHK"))
                     {
                         Output = Output + "<td>" + ExtendedColumnDB.Name + "</td>";
+                    }
+                    else
+                    {
+                        Output = Output + "<td></td>";
                     }
 
                     Count++;

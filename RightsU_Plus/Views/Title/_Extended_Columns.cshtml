@@ -9,6 +9,7 @@
            }
                <script type="text/javascript">
     var ExtendedColumnCode = "";
+    var isDefinedValue = "";
     //function Cancel(Type,RowNum)
     //{
     //    alert(Type + RowNum);
@@ -1048,7 +1049,10 @@
         else if (ExtendedColumnCode == "Extended_Columns_Value") {
         AddExtendedColumn();
        // ExtendedColumnCode = "";
-    }
+        }
+        else if (isDefinedValue == 'Y') {
+            AddExtendedColumn();
+        }
     else if (ExtendedColumnCode == "") {
         showAlert("E", "Please Select Field Name");
     }
@@ -1086,6 +1090,7 @@
             var Columns_Code = lstFieldProp[1];
             var Is_Ref = lstFieldProp[2];
             var Is_Defined_Values = lstFieldProp[3];
+            isDefinedValue = lstFieldProp[3];
             var Is_Multiple_Select = lstFieldProp[4];
             var Ref_Table = lstFieldProp[5];
             ExtendedColumnCode = Ref_Table;
