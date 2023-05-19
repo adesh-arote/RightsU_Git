@@ -5934,13 +5934,17 @@ namespace RightsU_DAL
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGet_DDLValues_For_ExtendedColumns_Result>("USPGet_DDLValues_For_ExtendedColumns", extendedColumnsCodeParameter);
         }
 
-        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth)
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, Nullable<int> loadSheetCode)
         {
             var loadsheetMonthParameter = loadsheetMonth != null ?
                 new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
                 new ObjectParameter("LoadsheetMonth", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet", loadsheetMonthParameter);
+            var loadSheetCodeParameter = loadSheetCode.HasValue ?
+                new ObjectParameter("LoadSheetCode", loadSheetCode) :
+                new ObjectParameter("LoadSheetCode", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet", loadsheetMonthParameter, loadSheetCodeParameter);
         }
 
         public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()

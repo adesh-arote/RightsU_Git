@@ -36,6 +36,9 @@ namespace RightsU_InterimDb.Models
     	    public string Edited_Still { get; set; }
     	    public string Master_In_House { get; set; }
     	    public string Status { get; set; }
+    	    public Nullable<int> AL_OEM_Code { get; set; }
+    	    public string OEM_File_Name { get; set; }
+    	    public Nullable<System.DateTime> Delivery_Date { get; set; }
     
         public virtual AL_Booking_Sheet AL_Booking_Sheet { get; set; }
         public virtual AL_Lab AL_Lab { get; set; }
@@ -44,5 +47,6 @@ namespace RightsU_InterimDb.Models
         public virtual Title Title { get; set; }
         public virtual Title_Content Title_Content { get; set; }
         public virtual Vendor Vendor { get; set; }
+        public virtual AL_OEM AL_OEM { get; set; }
     }
 }

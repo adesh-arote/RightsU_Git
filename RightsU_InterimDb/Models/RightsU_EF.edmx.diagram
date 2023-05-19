@@ -1100,6 +1100,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -1227,6 +1227,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="AL_Lab_Code" Type="int" />
           <Property Name="PO_Number" Type="varchar" MaxLength="50" />
           <Property Name="PO_Status" Type="varchar" MaxLength="50" />
+          <Property Name="AL_OEM_Code" Type="int" />
+          <Property Name="OEM_File_Name" Type="varchar" MaxLength="500" />
+          <Property Name="Delivery_Date" Type="date" />
           <Property Name="Poster" Type="varchar" MaxLength="50" />
           <Property Name="Still" Type="varchar" MaxLength="50" />
           <Property Name="Trailer" Type="varchar" MaxLength="50" />
@@ -8915,6 +8918,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_AL_Material_Tracking_AL_OEM">
+          <End Role="AL_OEM" Type="Self.AL_OEM" Multiplicity="0..1" />
+          <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
           <End Role="AL_Material_Tracking" Type="Self.AL_Material_Tracking" Multiplicity="0..1" />
           <End Role="AL_Material_Tracking_OEM" Type="Self.AL_Material_Tracking_OEM" Multiplicity="*" />
@@ -15588,6 +15603,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USPAL_GetBookingsheetDataForLoadsheet" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="LoadsheetMonth" Type="varchar" Mode="In" />
+          <Parameter Name="LoadSheetCode" Type="int" Mode="In" />
         </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetDeliveryTrackingList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
@@ -17520,6 +17536,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <AssociationSet Name="FK_AL_Material_Tracking_AL_Load_Sheet" Association="Self.FK_AL_Material_Tracking_AL_Load_Sheet">
             <End Role="AL_Load_Sheet" EntitySet="AL_Load_Sheet" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_OEM" Association="Self.FK_AL_Material_Tracking_AL_OEM">
+            <End Role="AL_OEM" EntitySet="AL_OEM" />
             <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
           </AssociationSet>
           <AssociationSet Name="FK_AL_Material_Tracking_OEM_AL_Material_Tracking" Association="Self.FK_AL_Material_Tracking_OEM_AL_Material_Tracking">
@@ -23405,10 +23425,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
           <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
           <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+            <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetLoadsheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetLoadsheetList_Result)" />
           <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet1" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
           <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+            <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" />
           <EntitySet Name="AL_Material_Tracking" EntityType="RightsU_NeoModel.AL_Material_Tracking" />
@@ -23460,6 +23482,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Display" Mode="In" Type="String" />
             <Parameter Name="TabName" Mode="In" Type="String" />
           </FunctionImport>
+          <AssociationSet Name="FK_AL_Material_Tracking_AL_OEM" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM">
+            <End Role="AL_OEM" EntitySet="AL_OEM" />
+            <End Role="AL_Material_Tracking" EntitySet="AL_Material_Tracking" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -39207,6 +39233,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AL_Vendor_OEM" Relationship="RightsU_NeoModel.FK_AL_Vendor_OEM_AL_OEM" FromRole="AL_OEM" ToRole="AL_Vendor_OEM" />
           <NavigationProperty Name="AL_Material_Tracking_OEM" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" FromRole="AL_OEM" ToRole="AL_Material_Tracking_OEM" />
+          <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM" FromRole="AL_OEM" ToRole="AL_Material_Tracking" />
         </EntityType>
         <EntityType Name="AL_Vendor_Details">
           <Key>
@@ -40055,6 +40082,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title" FromRole="AL_Material_Tracking" ToRole="Title" />
           <NavigationProperty Name="Title_Content" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" FromRole="AL_Material_Tracking" ToRole="Title_Content" />
           <NavigationProperty Name="Vendor" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" FromRole="AL_Material_Tracking" ToRole="Vendor" />
+          <Property Name="AL_OEM_Code" Type="Int32" />
+          <Property Name="OEM_File_Name" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Delivery_Date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="AL_OEM" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM" FromRole="AL_Material_Tracking" ToRole="AL_OEM" />
         </EntityType>
         <EntityType Name="AL_Material_Tracking_OEM">
           <Key>
@@ -40209,6 +40240,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="COL20" Nullable="false" MaxLength="1" />
           <Property Type="String" Name="Title_Name" Nullable="false" MaxLength="1" />
         </ComplexType>
+        <Association Name="FK_AL_Material_Tracking_AL_OEM">
+          <End Type="RightsU_NeoModel.AL_OEM" Role="AL_OEM" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.AL_Material_Tracking" Role="AL_Material_Tracking" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AL_OEM">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Principal>
+            <Dependent Role="AL_Material_Tracking">
+              <PropertyRef Name="AL_OEM_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -50601,6 +50644,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Material_Tracking">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Material_Tracking">
               <MappingFragment StoreEntitySet="AL_Material_Tracking">
+                <ScalarProperty Name="Delivery_Date" ColumnName="Delivery_Date" />
+                <ScalarProperty Name="OEM_File_Name" ColumnName="OEM_File_Name" />
+                <ScalarProperty Name="AL_OEM_Code" ColumnName="AL_OEM_Code" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Master_In_House" ColumnName="Master_In_House" />
                 <ScalarProperty Name="Edited_Still" ColumnName="Edited_Still" />

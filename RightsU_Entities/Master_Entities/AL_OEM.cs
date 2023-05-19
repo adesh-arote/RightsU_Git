@@ -18,6 +18,7 @@ namespace RightsU_Entities
         {
             this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
             this.AL_Material_Tracking_OEM = new HashSet<AL_Material_Tracking_OEM>();
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
 
         public State EntityState { get; set; }
@@ -32,5 +33,6 @@ namespace RightsU_Entities
 
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
         public virtual ICollection<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

@@ -1804,10 +1804,10 @@ namespace RightsU_BLL
             return objUSPDAL.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
         }
 
-        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth)
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, int? loadsheetCode)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth);
+            return objUSPDAL.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode);
         }
 
         public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()

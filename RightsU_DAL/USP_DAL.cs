@@ -1823,10 +1823,10 @@ namespace RightsU_DAL
             return objContext.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
         }
 
-        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth)
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, int? loadSheetCode)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth);
+            return objContext.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth,loadSheetCode);
         }
 
         public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
