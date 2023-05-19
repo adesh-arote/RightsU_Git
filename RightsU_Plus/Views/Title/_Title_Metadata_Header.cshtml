@@ -287,73 +287,77 @@
     }
 </script>
 
-<div id="tabs" class="tabbable">
-    <ul class="ulTabs nav nav-tabs nav-tab pull-left">
-        @if (ViewBag.ExtendedGroup != null)
-        {
-            int i = 0;
-            string ClsActive = "";
-
-            foreach (var item in ViewBag.ExtendedGroup)
-            {
-                if (i == 0)
+<div class="grid_area">
+    <div class="navigation_tabs">
+        <div id="tabs" class="tabbable">
+            <ul class="ulTabs nav nav-tabs nav-tab pull-left">
+                @if (ViewBag.ExtendedGroup != null)
                 {
-                    ClsActive = "active";
-                }
-                else
-                {
-                    ClsActive = "";
-                }
-                <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name" data-bind="@item.Short_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
-                i++;
-            }
-            <li id="liExtGrp_100" class="@ClsActive" data-configitem="100" data-content="" data-tabname="Episode" data-bind="E"><a data="" id="tab_1" href="#E" toggle="tab" role="tab" data-tabname="E" data-configitem="100"> Episode </a></li>
-        }
-    </ul>
-    <input type="hidden" name="name" id="hdnTabCode" value="0" />
-    <input type="hidden" name="name" id="hdnTabAddEditType" value="0" />
-    <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
-    <div class="divgvAdditionalField tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);"></div>
-    <div class="divgvAdditionalFieldGrid tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);"></div>
+                    int i = 0;
+                    string ClsActive = "";
 
-    <div id="EpisodeTabAdditionalField" class="tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);">
-        <table class="table table-hover table-bordered">
-            <thead>
-                <tr>
-                    <th class="custom_col_name">Number of Episodes</th>
-                    <th class="custom_col_name">Remark</th>
-                    <th class="custom_col_action">Status</th>
-                    <th class="custom_col_action" id="ActionTH">Action</th>
-                </tr>
-            </thead>
-            <tbody id="ViewAddEpisodeTable">
-                @*<tr id="trGrid_EpisodeNum" data-configitem="1">
-                        <td>
-                            <input type="text" id="txtEpisodeNumber" />
-                        </td>
-                        <td>
-                            <input type="text" id="txtRemark" style="width:100%" />
-                        </td>
-                        <td>
+                    foreach (var item in ViewBag.ExtendedGroup)
+                    {
+                        if (i == 0)
+                        {
+                            ClsActive = "active";
+                        }
+                        else
+                        {
+                            ClsActive = "";
+                        }
+                        <li id="liExtGrp_@item.Extended_Group_Code" class="@ClsActive" data-configitem="@item.Extended_Group_Code" data-content="@item.Add_Edit_Type" data-tabname="@item.Group_Name" data-bind="@item.Short_Name"><a data="" id="tab_@item.Extended_Group_Code" href="#@item.Short_Name" toggle="tab" role="tab" data-tabname="@item.Short_Name" data-configitem="@item.Extended_Group_Code"> @item.Group_Name </a></li>
+                        i++;
+                    }
+                    <li id="liExtGrp_100" class="@ClsActive" data-configitem="100" data-content="" data-tabname="Episode" data-bind="E"><a data="" id="tab_1" href="#E" toggle="tab" role="tab" data-tabname="E" data-configitem="100"> Episode </a></li>
+                }
+            </ul>
+            <input type="hidden" name="name" id="hdnTabCode" value="0" />
+            <input type="hidden" name="name" id="hdnTabAddEditType" value="0" />
+            <input type="hidden" name="name" id="hdnTabwiseName" value="0" />
+            <div class="divgvAdditionalField tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);"></div>
+            <div class="divgvAdditionalFieldGrid tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);"></div>
 
-                        </td>
-                        <td>
-                            <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a>
-                        </td>
-                    </tr>
-                    <tr>
-                            <td>
-                                <span id="spnEpisodeNumber"></span>
-                            </td>
-                            <td>
-                                <span id="spnEpisodeRemark"></span>
-                            </td>
-                            <td>
-                                <a class="glyphicon glyphicon-pencil" title="Edit" onclick="EditEpisodeDetails()"></a>
-                            </td>
-                        </tr>*@
-            </tbody>
-        </table>
+            <div id="EpisodeTabAdditionalField" class="tab-content clearfix table-wrapper scale_table_container" style="text-align-last:@(textalignlast);">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="custom_col_name">Number of Episodes</th>
+                            <th class="custom_col_name">Remark</th>
+                            <th class="custom_col_action">Status</th>
+                            <th class="custom_col_action" id="ActionTH">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ViewAddEpisodeTable">
+                        @*<tr id="trGrid_EpisodeNum" data-configitem="1">
+                                <td>
+                                    <input type="text" id="txtEpisodeNumber" />
+                                </td>
+                                <td>
+                                    <input type="text" id="txtRemark" style="width:100%" />
+                                </td>
+                                <td>
+
+                                </td>
+                                <td>
+                                    <a class="glyphicon glyphicon-arrow-up" title="Proceed" onclick="PostEpisodeDetails()"></a>
+                                </td>
+                            </tr>
+                            <tr>
+                                    <td>
+                                        <span id="spnEpisodeNumber"></span>
+                                    </td>
+                                    <td>
+                                        <span id="spnEpisodeRemark"></span>
+                                    </td>
+                                    <td>
+                                        <a class="glyphicon glyphicon-pencil" title="Edit" onclick="EditEpisodeDetails()"></a>
+                                    </td>
+                                </tr>*@
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
