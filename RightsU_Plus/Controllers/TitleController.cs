@@ -1668,6 +1668,15 @@ namespace RightsU_Plus.Controllers
                         objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
                     }
                 }
+                if (hdnControlType == "DDL")
+                {
+                    foreach (string str in arrColumnsValueCode)
+                    {
+                        Map_Extended_Columns_Details objMapExtDet = new Map_Extended_Columns_Details();
+                        objMapExtDet.Columns_Value_Code = Convert.ToInt32(str);
+                        objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
+                    }
+                }
 
                 lstAddedExtendedColumns.Add(objMapExtendedColumns);
             }
@@ -1865,7 +1874,16 @@ namespace RightsU_Plus.Controllers
                                 foreach (string str in arrColumnsValueCode)
                                 {
                                     int ColumnValueCode = Convert.ToInt32(str);
-                                    Map_Extended_Columns_Details objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+                                    Map_Extended_Columns_Details objMECD;
+                                    if (hdnIsMultipleSelect == "N")
+                                    {
+                                         objMECD = objMEc.Map_Extended_Columns_Details.FirstOrDefault();
+                                        objMECD.Columns_Value_Code = Convert.ToInt32(str);
+                                    }
+                                    else
+                                    {
+                                        objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+                                    }                                    
 
                                     if (objMECD == null)
                                     {
