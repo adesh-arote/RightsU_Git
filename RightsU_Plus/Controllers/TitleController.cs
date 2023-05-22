@@ -1356,13 +1356,17 @@ namespace RightsU_Plus.Controllers
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult BindddlBanner(string ColumnsCode, string AdditionalCondition)
+        public JsonResult BindddlExtendedColumns(string ColumnsCode, string AdditionalCondition)
         {
-            int RoleCode = 0;
+            //int RoleCode = 0;
 
-            if (AdditionalCondition != "")
-                RoleCode = Convert.ToInt32(AdditionalCondition);
-            var lstextCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => new { ColumnsValue = i.Banner_Name, Columns_Value_Code = i.Banner_Code }).ToList();
+            //if (AdditionalCondition != "")
+            //    RoleCode = Convert.ToInt32(AdditionalCondition);
+            //var lstextCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => new { ColumnsValue = i.Banner_Name, Columns_Value_Code = i.Banner_Code }).ToList();
+            //return Json(lstextCol, JsonRequestBehavior.AllowGet);
+            List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result> lstextCol = new List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result>();
+            lstextCol = new USP_Service(objLoginEntity.ConnectionStringName).USPGet_DDLValues_For_ExtendedColumns(Convert.ToInt32(ColumnsCode)).ToList();
+
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 

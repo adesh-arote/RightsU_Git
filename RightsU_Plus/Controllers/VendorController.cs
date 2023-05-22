@@ -1474,14 +1474,22 @@ namespace RightsU_Plus.Controllers
         {
             AL_Vendor_Details objVendorDetail = new AL_Vendor_Details();
             objVendorDetail = objSessALVendorDetails;
-            List<string> SelectedBannerValues = new List<string>();
+            //List<string> SelectedBannerValues = new List<string>();
+            string SelectedBannerValue = "";
             List<string> SelectedPrefExclusionValues = new List<string>();
             ViewBag.DisplayMode = CommandName;
 
             List<Banner> lstBanner = new List<Banner>();
             Banner_Service objBannerService = new Banner_Service(objLoginEntity.ConnectionStringName);
             lstBanner = objBannerService.SearchFor(s => true).ToList();
-            ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name");
+
+            #region
+            //Gets all banners that are used in Parties except the current one. ---- Below statement might need this condition in where block ' && objVendorDetail.Vendor.Is_Active != "N" '
+            List<string> UsedBannersList = new AL_Vendor_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.AL_Vendor_Detail_Code != objVendorDetail.AL_Vendor_Detail_Code && w.Banner_Codes != null).Select(s => s.Banner_Codes).ToList();
+            lstBanner = lstBanner.Where(w => !UsedBannersList.Any(a => a == Convert.ToString(w.Banner_Code))).ToList();
+            #endregion
+
+            ViewBag.Banner = new SelectList(lstBanner, "Banner_Code", "Banner_Name");
 
             //List of Pref Exclusion
 
@@ -1504,8 +1512,10 @@ namespace RightsU_Plus.Controllers
             {
                 if (objVendorDetail.Banner_Codes != null)
                 {
-                    SelectedBannerValues = objVendorDetail.Banner_Codes.Split(',').ToList();
-                    objVendorDetail.SelectedBannerValues = string.Join(",", lstBanner.Where(w => SelectedBannerValues.Any(a => a == w.Banner_Code.ToString())).Select(s => s.Banner_Name));
+                    //SelectedBannerValues = objVendorDetail.Banner_Codes.Split(',').ToList();
+                    //objVendorDetail.SelectedBannerValues = string.Join(",", lstBanner.Where(w => SelectedBannerValues.Any(a => a == w.Banner_Code.ToString())).Select(s => s.Banner_Name));
+                    SelectedBannerValue = objVendorDetail.Banner_Codes;
+                    objVendorDetail.SelectedBannerValues = lstBanner.Where(w => Convert.ToString(w.Banner_Code) == SelectedBannerValue).Select(s => s.Banner_Name).FirstOrDefault();
                 }
 
                 if (objVendorDetail.Pref_Exclusion_Codes != null)
@@ -1519,7 +1529,8 @@ namespace RightsU_Plus.Controllers
                     objVendorDetail.SelectedBookingSheetValue = lstExtGrp.Where(w => w.Extended_Group_Code == objVendorDetail.Extended_Group_Code_Booking).FirstOrDefault().Group_Name;
                 }
 
-                ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedBannerValues);
+                //ViewBag.Banner = new MultiSelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedBannerValues);
+                ViewBag.Banner = new SelectList(lstBanner, "Banner_Code", "Banner_Name", SelectedBannerValue);
                 ViewBag.PrefExclusion = new MultiSelectList(lstPrefExcValues, "Columns_Value_Code", "Columns_Value", SelectedPrefExclusionValues);
                 ViewBag.ExtGrpCfg = new SelectList(lstExtGrp, "Extended_Group_Code", "Group_Name", objVendorDetail.Extended_Group_Code_Booking);
             }

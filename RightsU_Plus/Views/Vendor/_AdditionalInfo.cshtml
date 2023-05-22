@@ -131,7 +131,8 @@
                         }
                         else
                         {
-                            @Html.DropDownList("Banner_Vendor", (IEnumerable<SelectListItem>)ViewBag.Banner as MultiSelectList, new { @id = "Banner", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })
+                            @Html.DropDownList("Banner_Vendor", (IEnumerable<SelectListItem>)ViewBag.Banner, "Please select", new { @id = "Banner", @style = "width:50%", @class = "chosen-select" })
+                            @*@Html.DropDownList("Banner_Vendor", (IEnumerable<SelectListItem>)ViewBag.Banner as MultiSelectList, new { @id = "Banner", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })*@
                         }
                     </td>
                 </tr>
