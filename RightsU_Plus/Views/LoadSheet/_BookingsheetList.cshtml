@@ -4,7 +4,10 @@
     <table class="table table-bordered table-hover" id="tblBookingSheet">
         <thead>
             <tr>
-                <th style="width:5%;"><input type="checkbox" id="chkAll" /></th>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <th style="width:5%;"><input type="checkbox" id="chkAll" /></th>
+                }
                 <th style="width:20%;">Client Name</th>
                 <th style="width:25%;">Booking Sheet No.</th>
                 <th style="width:30%;">Proposal Cycle</th>
@@ -19,11 +22,14 @@
                 {
                     counter += 1;
                     <tr>
-                        <td style="text-align:center; width:15%; text-align:center !important">
-                            <input type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
-                            @Html.Hidden("hdnCnt",item.AL_Booking_Sheet_Code, new { id = counter + "_hdnCnt"})
-                            
-                        </td>
+                        @if (ViewBag.CommandName != "VIEW")
+                        {
+                            <td style="width:5%; text-align:center;">
+                                <input type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
+                                @Html.Hidden("hdnCnt", item.AL_Booking_Sheet_Code, new { id = counter + "_hdnCnt" })
+
+                            </td>
+                        }
                         <td>@item.Vendor_Name</td>
                         <td>@item.Booking_Sheet_No</td>
                         <td>@item.Proposal_Cycle</td>

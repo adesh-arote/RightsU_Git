@@ -102,18 +102,20 @@ namespace RightsU_Plus.Controllers
             lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
             return View("~/Views/LoadSheet/Index.cshtml");
         }
-
-        public JsonResult SearchBookingsheet(string searchText)
+       
+        public JsonResult SearchBookingsheet(string loadsheetMonth = "", int loadsheetCode = 0, string CommandName = "")
         {
-            lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(searchText).ToList();
-
-            //if (!string.IsNullOrEmpty(searchText))
-            //{
-            //    lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(searchText).ToList();
-            //}
-            //else
-            //    lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
-
+            
+            if (!string.IsNullOrEmpty(loadsheetMonth) || (loadsheetCode > 0))
+            {
+                lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode).ToList();
+            }
+            else
+            {
+                lstBookingsheetDataForLoadsheet_Searched = null;
+                lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
+            }
+            
             var obj = new
             {
                 Record_Count = lstBookingsheetDataForLoadsheet_Searched.Count
@@ -122,17 +124,29 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public PartialViewResult OpenBookingsheetPopup(string CommandName, int AL_Load_Sheet_Code)
+        public PartialViewResult OpenBookingsheetPopup(string CommandName, string LoadSheetMonth = "", int AL_Load_Sheet_Code = 0)
         {
-            ViewBag.CommandName = "View";
-            ViewBag.AL_Load_Sheet_Code = AL_Load_Sheet_Code;
             List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+
+            ViewBag.CommandName = CommandName;
+            ViewBag.AL_Load_Sheet_Code = AL_Load_Sheet_Code;
+
+            if(CommandName == "VIEW")
+            {
+                AL_Load_Sheet objLoadSheet = objAL_Load_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Load_Sheet_Code == AL_Load_Sheet_Code).FirstOrDefault();
+                ViewBag.LoadsheetMonth = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("MMMM yyyy");
+                ViewBag.LSRemark = objLoadSheet.Remarks;
+            }
+            
             return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", lst);
         }
-        public PartialViewResult BindBookingsheet(int pageNo, int recordPerPage, string sortType)
+
+        public PartialViewResult BindBookingsheet(int pageNo, int recordPerPage, string sortType, string CommandName = "")
         {
-            //lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet("").ToList();
             List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+            
+            lst = lstBookingsheetDataForLoadsheet_Searched;          
+            
             int RecordCount = 0;
             RecordCount = lstBookingsheetDataForLoadsheet_Searched.Count;
 
@@ -147,7 +161,7 @@ namespace RightsU_Plus.Controllers
                 else
                     lst = lstBookingsheetDataForLoadsheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
-
+            ViewBag.CommandName = CommandName;
 
             return PartialView("~/Views/LoadSheet/_BookingsheetList.cshtml", lst);
         }
@@ -191,7 +205,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult GenerateLoadSheet(string bookinSheetCodes)
+        public JsonResult GenerateLoadSheet(string bookinSheetCodes, string Remark, DateTime LoadSheetMonth)
         {
             string status = "S", message = "";
 
@@ -203,14 +217,13 @@ namespace RightsU_Plus.Controllers
                 objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
 
                 lst.Add(objloadSheetDetails);
-
             }
 
             objAL_Load_Sheet_Service = null;
             objAL_Load_Sheet.EntityState = State.Added;
             objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
-            objAL_Load_Sheet.Load_Sheet_Month = DateTime.Now;
-            objAL_Load_Sheet.Remarks = "Test";
+            objAL_Load_Sheet.Load_Sheet_Month = LoadSheetMonth;
+            objAL_Load_Sheet.Remarks = Remark;
             objAL_Load_Sheet.Status = "P";
             objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
             objAL_Load_Sheet.Inserted_On = DateTime.Now;
@@ -227,10 +240,10 @@ namespace RightsU_Plus.Controllers
             else
             {
                 message = objMessageKey.Recordsavedsuccessfully;
-
+            
                 objAL_Load_Sheet = null;
                 objAL_Load_Sheet_Service = null;
-
+            
                 lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
                 //FetchData();
             }
@@ -334,7 +347,6 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-
         public JsonResult ValidateDownload(int AL_Load_Sheet_Code)
         {
             string FileName = Convert.ToString(new AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName).GetById(AL_Load_Sheet_Code).Download_File_Name);
@@ -386,6 +398,7 @@ namespace RightsU_Plus.Controllers
 
             }
         }
+
         private string GenerateId()
         {
             string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).FirstOrDefault().Load_Sheet_No;
@@ -393,8 +406,6 @@ namespace RightsU_Plus.Controllers
             string demo = Convert.ToString(lastAddedId + 1).PadLeft(4, '0');
             return demo;
             // it will return 0009
-        }
-
-        
+        }       
     }
 }

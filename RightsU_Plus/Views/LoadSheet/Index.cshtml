@@ -42,6 +42,7 @@
             }),
             async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -96,7 +97,8 @@
         });
     }
 
-    function OpenBookingsheetPopup(CommandName, AL_Load_Sheet_Code) {
+    function OpenBookingsheetPopup(CommandName, AL_Load_Sheet_Code, LoadSheetMonth) {
+        debugger;
         $.ajax({
             type: "POST",
             url: URL_OpenBookingsheetPopup,
@@ -105,10 +107,12 @@
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
                 CommandName: CommandName,
-                AL_Load_Sheet_Code: AL_Load_Sheet_Code
+                AL_Load_Sheet_Code: AL_Load_Sheet_Code,
+                LoadSheetMonth: LoadSheetMonth
             }),
             async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -116,6 +120,9 @@
                     $('#popup').modal();
                     $('#pupupHtml').empty();
                     $('#pupupHtml').html(result);
+                    if (CommandName == 'VIEW') {
+                        SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName) 
+                    }
                 }
             },
             error: function (result) {
@@ -145,6 +152,7 @@
     }
 
     function SetPaging() {
+        debugger;
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
         var recordCount = parseInt($('#hdnRecordCount').val());
@@ -192,6 +200,7 @@
                 IsCall = 'Y';
         //}
     }
+
     function txtPageSize_OnChange() {
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
@@ -201,6 +210,7 @@
         BindLoadSheetList()
         SetPaging();
     }
+
     function ValidatePageSize() {
         var recordPerPage = $('#txtPageSize').val()
         if ($.trim(recordPerPage) != '') {
@@ -233,7 +243,8 @@
                 bookinSheetCodes.push(codes);
             }
         })
-
+        var Remark = $("#tncRemark").val();
+        var LoadSheetMonth = $("#searchCommon").val();
 
         $.ajax({
             type: "POST",
@@ -244,6 +255,8 @@
             async: false,
             data: JSON.stringify({
                 bookinSheetCodes: bookinSheetCodes.join(','),
+                Remark: Remark,
+                LoadSheetMonth: LoadSheetMonth
             }),
             success: function (result) {
                 if (result == "true") {
@@ -452,7 +465,7 @@
                             <li id="btnUser">
                                 @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
                                 {*@
-                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('',0)" />
+                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0)" />
                                 @*}*@
                             </li>
                         </ul>
