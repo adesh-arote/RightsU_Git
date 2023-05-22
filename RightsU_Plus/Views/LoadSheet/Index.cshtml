@@ -29,6 +29,7 @@
     });
 
     function SearchLoadSheet(searchText) {
+        debugger;
         $('#searchCommon').val(searchText);
         showLoading();
         $.ajax({
@@ -64,6 +65,7 @@
     }
 
     function BindLoadSheetList() {
+        debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
@@ -186,7 +188,7 @@
     }
 
     function pageselectCallback(page_index, jq) {
-        //if (checkCurrentAction()) {
+        debugger;
             $('.required').removeClass('required');
 
             if (!ValidatePageSize())
@@ -198,10 +200,10 @@
             BindLoadSheetList();
             else
                 IsCall = 'Y';
-        //}
     }
 
     function txtPageSize_OnChange() {
+        debugger;
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
         if (!ValidatePageSize())
@@ -212,6 +214,7 @@
     }
 
     function ValidatePageSize() {
+        debugger;
         var recordPerPage = $('#txtPageSize').val()
         if ($.trim(recordPerPage) != '') {
             var pageSize = parseInt(recordPerPage);
@@ -221,14 +224,10 @@
         $('#txtPageSize').attr('required', true)
         return false
     }
-
-    function pageBinding() {
-        BindBookingsheet()
-        SetPaging_BS();
-    }
-
+   
     function GenerateLoadsheet() {
         debugger;
+        var ReturnVal = true;
         var bookinSheetCodes = [];
         $.each($("#tblBookingSheet tbody tr"), function (index, value) {
 
@@ -243,9 +242,21 @@
                 bookinSheetCodes.push(codes);
             }
         })
-        var Remark = $("#tncRemark").val();
         var LoadSheetMonth = $("#searchCommon").val();
-
+        var Remark = $("#tncRemark").val();
+      
+        if (LoadSheetMonth == "") {
+            $('#searchCommon').val('').attr('required', true)
+            ReturnVal =  false;
+        }
+        if (Remark == "") {
+            $('#tncRemark').val('').attr('required', true)
+            ReturnVal =  false;
+        }
+        if (ReturnVal == false) {
+            return false;
+        }
+             
         $.ajax({
             type: "POST",
             url: URL_GenerateLoadSheet,
@@ -259,13 +270,12 @@
                 LoadSheetMonth: LoadSheetMonth
             }),
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
-
                 }
                 else {
                     if (result.Status == "S") {
-                        
                         $('#lblRecordCount').text(result.RecordCount);
                         $('#hdnRecodLockingCode').val(0);
                         ClosePopup();
@@ -289,7 +299,7 @@
     }
 
     function ClosePopup() {
-
+        debugger;
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
@@ -318,10 +328,10 @@
     }
 
     function CheckPendingStatus() {
-        debugger
+        //debugger;
         var pendingRecord = 0;
         $(".deal_action").each(function () {
-            debugger
+            //debugger;
             var SiblingClass = $(this).attr('class').split(' ')[1];
             if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
                 var AL_Load_Sheet_Code = SiblingClass.slice(12, SiblingClass.length - 1);
@@ -339,7 +349,7 @@
                             AL_Load_Sheet_Code: AL_Load_Sheet_Code
                         }),
                         success: function (result) {
-                            debugger
+                            //debugger;
                             if (result == "true") {
                                 redirectToLogin();
                             }
@@ -484,7 +494,7 @@
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">

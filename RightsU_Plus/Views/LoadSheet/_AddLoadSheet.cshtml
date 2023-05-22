@@ -30,7 +30,7 @@
     });
 
     function ClosePopup() {
-
+        debugger;
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
@@ -236,15 +236,15 @@
 
 @if (ViewBag.CommandName != "VIEW")
 {
-    <div class="search_area" style="background-color: ; padding:5px;">
+    <div class="search_area" style="padding:5px;">
         <table class="table">
             <tr>
-                <td style="width:25%;text-align:center;padding-top:8px;">
+                <th style="width:15%;padding-top:8px;">
                     Loadsheet for month :
-                </td>
-                <td style="width:30%;">
+                </th>
+                <td style="width:20%;">
                     <input type="month" id="searchCommon" name="start"
-                           min="1950-03" value="" style="line-height:20px;width:75%">
+                           min="1950-03" value="" style="line-height:20px;width:85%">
                 </td>
                 <td>
                     <input type="hidden" id="hdnCommand" value="@ViewBag.CommandName" />
@@ -312,10 +312,10 @@ else
     <div class="search_area" style="padding:5px;">
         <table class="table">
             <tr>
-                <td style="width:25%;text-align:right;padding-top:8px;">
+                <th style="width:2%;padding-top:8px;">
                     Loadsheet for month :
-                </td>
-                <td style="width:25%;padding-top:8px;">
+                </th>
+                <td style="width:20%;padding-top:8px;">
                     @ViewBag.LoadsheetMonth
                 </td>
             </tr>

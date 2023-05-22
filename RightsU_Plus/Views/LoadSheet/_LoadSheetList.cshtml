@@ -30,7 +30,7 @@
                         <span>@item.Load_sheet_No</span>
                     </td>
                     <td style="text-align:center;">
-                        <span>@item.Load_Sheet_Month</span>
+                        <span>@item.Load_Sheet_Month.ToString("MMMM yyyy")</span>
                     </td>
                     <td align="center">
                         <span onclick="OpenBookingsheetPopup('VIEW',@item.AL_Load_Sheet_Code,'')" style="color: #2b64a5;font-weight: bolder;cursor: pointer;">@item.NoOfBookingSheet</span>
