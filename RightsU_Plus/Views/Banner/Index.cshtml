@@ -358,34 +358,37 @@
 
     function DeleteBanner(id) {
         debugger;
-        $.ajax({
-            type: "POST",
-            url: Url_DeleteBanner,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                id: id
-            }),
-            async: false,
-            success: function (result) {
-                debugger;
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    if (result.Is_Locked == "Y") {
-                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+        if (checkCurrentActionAttribGroup()) {
+            $.ajax({
+                type: "POST",
+                url: Url_DeleteBanner,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    id: id
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
                     }
-                    else
-                        showAlert("S", result.Message);
-                        SearchBanner("");
+                    else {
+                        if (result.Is_Locked == "Y") {
+                            Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        }
+                        else {
+                            showAlert(result.Status, result.Message);
+                        }
+                            SearchBanner("");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
                 }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
+            });
+        }
     }
 </script>
 

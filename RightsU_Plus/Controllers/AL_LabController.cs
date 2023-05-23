@@ -47,10 +47,6 @@ namespace RightsU_Plus.Controllers
             lstAL_Lab_Searched = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
             ViewBag.AL_LabCode = AL_Lab_Code;
             ViewBag.CommandName = commandName;
-            //if (sortType == "AA" || sortType == "AD")
-            //{
-            //    ViewBag.SortAttrType = sortType;
-            //}
             List<AL_Lab> lst = new List<AL_Lab>();
             if (lstAL_Lab_Group != null)
             {
@@ -236,27 +232,61 @@ namespace RightsU_Plus.Controllers
         public ActionResult DeleteAL_Lab(int id)
         {
             string message = "";
+            string status = "";
             AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
             AL_Lab AL_LabObj = objAL_Lab_Service.GetById(id);
-            AL_LabObj.EntityState = State.Deleted;
-            dynamic resultSet;
-            if (!objAL_Lab_Service.Delete(AL_LabObj, out resultSet))
+            if (CheckIfLabIsUsed(id))
             {
-                message = resultSet;
+                AL_LabObj.EntityState = State.Deleted;
+                dynamic resultSet;
+                if (!objAL_Lab_Service.Delete(AL_LabObj, out resultSet))
+                {
+                    message = resultSet;
+                }
+                else
+                {
+                    status = "S";
+                    message = objMessageKey.RecordDeletedsuccessfully;
+                }
             }
             else
             {
-                message = objMessageKey.RecordDeletedsuccessfully;
+                status = "E";
+                message = "Cannot delete selected Lab as it is already in use.";
             }
 
             var obj = new
             {
                 RecordCount = lstAL_Lab_Searched.Count,
-                Status = "S",
+                Status = status,
                 Message = message
             };
 
             return Json(obj);
+        }
+
+        public bool CheckIfLabIsUsed(int? LabCode)
+        {
+            List<Extended_Columns> lstExtColRefLab = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => (w.Ref_Table != null && w.Ref_Table.ToUpper() == "AL_Lab".ToUpper())).ToList();
+            int UsedCount = 0;
+            foreach (Extended_Columns eg in lstExtColRefLab)
+            {
+                UsedCount = eg.Map_Extended_Columns.Where(w => w.Columns_Value_Code == LabCode).Count();
+                if (UsedCount > 0)
+                {
+                    return false;
+                }
+                foreach (Map_Extended_Columns mec in eg.Map_Extended_Columns)
+                {
+                    UsedCount = mec.Map_Extended_Columns_Details.Where(w => w.Columns_Value_Code == LabCode).Count();
+                    if (UsedCount > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

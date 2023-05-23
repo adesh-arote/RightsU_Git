@@ -365,34 +365,37 @@
     //---------------Delete Function---------------------------
     function DeleteAL_Lab(id) {
         debugger;
-        $.ajax({
-            type: "POST",
-            url: Url_DeleteAL_Lab,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                id: id
-            }),
-            async: false,
-            success: function (result) {
-                debugger;
-                if (result == "true") {
-                    redirectToLogin();
-                }
-                else {
-                    if (result.Is_Locked == "Y") {
-                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+        if (checkCurrentActionAttribGroup()) {
+            $.ajax({
+                type: "POST",
+                url: Url_DeleteAL_Lab,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    id: id
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
                     }
-                    else
-                        showAlert("S", result.Message);
-                        SearchAL_Lab("");
+                    else {
+                        if (result.Is_Locked == "Y") {
+                            Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                        }
+                        else {
+                            showAlert(result.Status, result.Message);
+                        }                            
+                            SearchAL_Lab("");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
                 }
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
+            });
+        }
     }
 </script>
 
@@ -415,7 +418,7 @@
             <div class="">
                 <div class="title_block dotted_border clearfix">
                     <h2 class="pull-left">
-                        AL_Lab
+                        Lab
                     </h2>
                     <div class="right_nav pull-right">
                         <ul>
@@ -423,8 +426,8 @@
                                 <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditAL_Lab('ADD', 0)" />
                             </li>
                             @*<li>
-                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
-                            </li>*@
+                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                                </li>*@
                         </ul>
                     </div>
                 </div>
@@ -435,7 +438,7 @@
                                 @objMessageKey.SearchText :
                             </td>
                             <td style="width:25%; vertical-align:middle;">
-                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="AL_Lab Name, AL_Lab Short Name" maxlength="100" />
+                                <input autocomplete="off" type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Lab Name, Lab Short Name" maxlength="100" />
                             </td>
                             <td style="width:13%;vertical-align: middle; text-align:center;">
                                 <input autocomplete="off" type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">

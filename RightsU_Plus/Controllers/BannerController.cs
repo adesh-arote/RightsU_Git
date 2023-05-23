@@ -36,7 +36,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.LangCode = SysLanguageCode;
             List<Banner_Service> banner_Services = new List<Banner_Service>();
             List<SelectListItem> lstSort = new List<SelectListItem>();
-            lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "L" });
+            lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
             lstSort.Add(new SelectListItem { Text = "Banner Name Asc", Value = "NA" });
             lstSort.Add(new SelectListItem { Text = "Banner Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
@@ -54,7 +54,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.SortAttrType = sortType;
             }
             List<Banner> lst = new List<Banner>();
-            if(lstBanner_Group != null)
+            if (lstBanner_Group != null)
             {
                 lstBanner_Searched = lstBanner_Group;
             }
@@ -65,7 +65,7 @@ namespace RightsU_Plus.Controllers
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
-                if (sortType == "L")
+                if (sortType == "T")
                 {
                     lst = lstBanner_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
@@ -77,7 +77,6 @@ namespace RightsU_Plus.Controllers
                 {
                     lst = lstBanner_Searched.OrderByDescending(o => o.Banner_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
-
             }
 
             if (commandName == "ADD")
@@ -207,7 +206,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    if(Banner_Code > 0)
+                    if (Banner_Code > 0)
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
                     }
@@ -236,27 +235,63 @@ namespace RightsU_Plus.Controllers
         public ActionResult DeleteBanner(int id)
         {
             string message = "";
+            string status = "S";
             Banner_Service objBanner_Service = new Banner_Service(objLoginEntity.ConnectionStringName);
             Banner bannerObj = objBanner_Service.GetById(id);
-            bannerObj.EntityState = State.Deleted;
-            dynamic resultSet;
-            if (!objBanner_Service.Delete(bannerObj, out resultSet))
+            if (CheckIfBannerIsUsed(id))
             {
-                message = resultSet;
+                bannerObj.EntityState = State.Deleted;
+                dynamic resultSet;
+                if (!objBanner_Service.Delete(bannerObj, out resultSet))
+                {
+                    message = resultSet;
+                }
+                else
+                {
+                    status = "S";
+                    message = objMessageKey.RecordDeletedsuccessfully;
+                }
             }
             else
             {
-                message = objMessageKey.RecordDeletedsuccessfully;
+                status = "E";
+                message = "Cannot delete selected Banner as it is already in use.";
             }
+
 
             var obj = new
             {
                 RecordCount = lstBanner_Searched.Count,
-                Status = "S",
+                Status = status,
                 Message = message
             };
 
             return Json(obj);
+        }
+
+        public bool CheckIfBannerIsUsed(int? BannerCode)
+        {
+            List<Extended_Columns> lstExtColRefBanner = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => (w.Ref_Table != null && w.Ref_Table.ToUpper() == "Banner".ToUpper())).ToList();
+            int UsedCount = 0;
+
+            foreach (Extended_Columns eg in lstExtColRefBanner)
+            {
+                UsedCount = eg.Map_Extended_Columns.Where(w => w.Columns_Value_Code == BannerCode).Count();
+                if (UsedCount > 0)
+                {
+                    return false;
+                }
+                foreach (Map_Extended_Columns mec in eg.Map_Extended_Columns)
+                {
+                    UsedCount = mec.Map_Extended_Columns_Details.Where(w => w.Columns_Value_Code == BannerCode).Count();
+                    if (UsedCount > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
