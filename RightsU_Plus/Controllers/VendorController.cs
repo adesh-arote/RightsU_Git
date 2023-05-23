@@ -2237,7 +2237,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (SelectedExCol.Control_Type == "DATE")
             {
-                objSessDictionary.Add("Date", "<input type=\"date\" id=\"CrCData\">");
+                //Check for condition on view ContentRuleGrid to change text box to datepicker. Line -> (result.ControlType == "DATE")
+                objSessDictionary.Add("Date", "<input type=\"text\" id=\"CrCData\">");
             }
             else if (SelectedExCol.Control_Type == "INT")
             {

@@ -1877,13 +1877,16 @@ namespace RightsU_Plus.Controllers
                                     Map_Extended_Columns_Details objMECD;
                                     if (hdnIsMultipleSelect == "N")
                                     {
-                                         objMECD = objMEc.Map_Extended_Columns_Details.FirstOrDefault();
-                                        objMECD.Columns_Value_Code = Convert.ToInt32(str);
+                                        objMECD = objMEc.Map_Extended_Columns_Details.FirstOrDefault();
+                                        if (objMECD != null)
+                                        {
+                                            objMECD.Columns_Value_Code = Convert.ToInt32(str);
+                                        }
                                     }
                                     else
                                     {
                                         objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
-                                    }                                    
+                                    }
 
                                     if (objMECD == null)
                                     {
@@ -3967,12 +3970,12 @@ namespace RightsU_Plus.Controllers
                     {
                         ExtendedColumnDB = lstExtendedColumnDB.Where(x => x.Columns_Code == i.Columns_Code && x.Map_Extended_Columns_Code == ExtendedColumn.Map_Extended_Columns_Code).FirstOrDefault();
                     }
-                    
+
                     //if (rowNum > 0 && Count == 0)
                     //{
                     //    Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
                     //}
-                    
+
                     if (ExtendedColumnDB != null && (ExtendedColumnDB.Control_Type == "DDL"))
                     {
                         Output = Output + "<td data-configitem =\"" + TabCode + "\">" + ExtendedColumnDB.Name + "</td>";

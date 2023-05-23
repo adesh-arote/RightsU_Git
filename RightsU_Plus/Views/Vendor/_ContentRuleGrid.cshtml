@@ -139,6 +139,9 @@
                 }
                 else if (result.ControlType == "DATE") {
                     $("#DataInputs").html(result.Date);
+                    //Creates HTML TextBox. Add class to add datepicker for textbox
+                    //$("#CrCData").addClass("isDatepicker");
+                    //$(".isDatepicker").datepicker();
                 }
                 else if (result.ControlType == "INT") {
                     $("#DataInputs").html(result.Number);
