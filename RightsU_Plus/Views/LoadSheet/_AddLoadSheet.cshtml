@@ -7,21 +7,25 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 }
-<script>
+
+<script> 
     var Command_Name = "", sortType = "T";
 
     $(document).ready(function () {
         debugger;
-        //alert(ViewBag.CommandName);
-        //SearchBookingsheet("", "", CommandName);
+        if (Command_Name == "ADD") {
+            SearchBookingsheet("", "", Command_Name);
+        }      
     });
 
-    $('#chkAll').on("click", function () {
+    $('#chkAll').on("change", function () {
+        debugger;
         var IsCheck = $(this).prop("checked");
         $('input[type="checkbox"]').prop('checked', IsCheck);
     });
-
-    $('.checkbox').on("click", function () {
+    
+    $('.checkbox').on("change", function () {
+        debugger;
         if ($('.checkbox:checked').length == $('.checkbox').length) {
             $('#chkAll').prop('checked', true);
         } else {
@@ -34,6 +38,8 @@
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
+
+        BindLoadSheetList();
     }
 
     function btnSearch_OnClick() {
@@ -56,7 +62,7 @@
     }
 
     function btnClear_OnClick() {
-        debugger;       
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -65,7 +71,7 @@
 
         var searchText = $('#searchCommon').val('');
         var CommandName = $('#hdnCommand').val();
-       
+
         SearchBookingsheet(searchText, "", CommandName);
     }
 
@@ -96,7 +102,7 @@
                     $('#lblRecordCount_BS').text(result.Record_Count);
                     $("#hdnRecordCount_BS").val(result.Record_Count);
                     Command_Name = CommandName;
-                    SetPaging_BS();                    
+                    SetPaging_BS();
                     BindBookingsheet(CommandName);
                     hideLoading();
                 }
@@ -158,7 +164,7 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                sortType: sortType,              
+                sortType: sortType,
                 CommandName: CommandName
             }),
             success: function (result) {
@@ -170,7 +176,7 @@
                     //$('#popup').modal();
                     $('#divBookingsheetList').empty();
                     $('#divBookingsheetList').html(result);
-                    SetPaging_BS();                  
+                    SetPaging_BS();
                 }
             },
             error: function (result) {
@@ -206,7 +212,7 @@
             IsCall = 'Y';
     }
 
-    function txtPageSize_OnChange() {
+    function txtPageSize_BS_OnChange() {
         debugger;
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
@@ -266,7 +272,7 @@
             </div>
             <span class="pull-right">
                 @objMessageKey.PageSize:
-                <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_BS_OnChange()" onblur="setDefaultPaging('txtPageSize')">
             </span>
         </div>
         <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
@@ -291,14 +297,20 @@
                 </table>
             </div>
         </div>
-        <span>Remarks:</span>
-        <textarea style="width:100%; margin: 10px 0px 10px 0px" id="tncRemark" maxlength="500"></textarea>
+        <table class="table">
+            <tr>
+                <th style="text-align:left;padding-top:8px;">
+                    Remarks:
+                </th>
+            </tr>
+        </table>
+        @*<span>Remarks:</span>*@
+        <textarea style="width:100%; margin: 10px 0px 10px 0px; max-height:100px;" id="tncRemark" maxlength="500" rows="3"></textarea>
     </div>
     <div class="modal_block_full" style="margin-top: 10px;">
         <div class="form_links">
             <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
                 <li>
-
                     <input type="button" class="btn btn-primary" value="Generate Loadsheet" onclick="GenerateLoadsheet()" />
 
                     <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
@@ -312,12 +324,13 @@ else
     <div class="search_area" style="padding:5px;">
         <table class="table">
             <tr>
-                <th style="width:2%;padding-top:8px;">
+                <th style="width:15%;padding-top:8px;">
                     Loadsheet for month :
                 </th>
                 <td style="width:20%;padding-top:8px;">
                     @ViewBag.LoadsheetMonth
                 </td>
+                <td></td>
             </tr>
         </table>
     </div>
@@ -333,7 +346,7 @@ else
             </div>
             <span class="pull-right">
                 @objMessageKey.PageSize:
-                <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_BS_OnChange()" onblur="setDefaultPaging('txtPageSize')">
             </span>
         </div>
         <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
@@ -357,8 +370,24 @@ else
                 </table>
             </div>
         </div>
-        <span>Remarks:</span>
-        <textarea style="width:100%; margin: 10px 0px 10px 0px;" id="tncRemark" maxlength="500" readonly>@ViewBag.LSRemark</textarea>
+        <table class="table">
+            <tr>
+                <th style="text-align:left;padding-top:8px;">
+                    Remarks:
+                </th>                
+            </tr>
+        </table>
+        @*<span>Remarks:</span>*@
+        <textarea style="width:100%; margin: 10px 0px 10px 0px; max-height:100px;" id="tncRemark" maxlength="500" rows="3" readonly>@ViewBag.LSRemark</textarea>
+    </div>
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                <li>
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                </li>
+            </ul>
+        </div>
     </div>
 }
 

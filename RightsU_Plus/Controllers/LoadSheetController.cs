@@ -205,47 +205,54 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public JsonResult GenerateLoadSheet(string bookinSheetCodes, string Remark, DateTime LoadSheetMonth)
+        public JsonResult GenerateLoadSheet(string bookingSheetCodes, string Remark, DateTime LoadSheetMonth)
         {
             string status = "S", message = "";
 
             List<AL_Load_Sheet_Details> lst = new List<AL_Load_Sheet_Details>();
-
-            foreach (var item in bookinSheetCodes.Split(','))
+            try
             {
-                AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
-                objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
+                foreach (var item in bookingSheetCodes.Split(','))
+                {
+                    AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
+                    objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
 
-                lst.Add(objloadSheetDetails);
-            }
+                    lst.Add(objloadSheetDetails);
+                }
 
-            objAL_Load_Sheet_Service = null;
-            objAL_Load_Sheet.EntityState = State.Added;
-            objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
-            objAL_Load_Sheet.Load_Sheet_Month = LoadSheetMonth;
-            objAL_Load_Sheet.Remarks = Remark;
-            objAL_Load_Sheet.Status = "P";
-            objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
-            objAL_Load_Sheet.Inserted_On = DateTime.Now;
-            objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
-            objAL_Load_Sheet.Updated_On = DateTime.Now;
-            objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
-
-            dynamic resultSet;
-            if (!objAL_Load_Sheet_Service.Save(objAL_Load_Sheet, out resultSet))
-            {
-                status = "E";
-                message = resultSet;
-            }
-            else
-            {
-                message = objMessageKey.Recordsavedsuccessfully;
-            
-                objAL_Load_Sheet = null;
                 objAL_Load_Sheet_Service = null;
-            
-                lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
-                //FetchData();
+                objAL_Load_Sheet.EntityState = State.Added;
+                objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
+                objAL_Load_Sheet.Load_Sheet_Month = LoadSheetMonth;
+                objAL_Load_Sheet.Remarks = Remark;
+                objAL_Load_Sheet.Status = "P";
+                objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
+                objAL_Load_Sheet.Inserted_On = DateTime.Now;
+                objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
+                objAL_Load_Sheet.Updated_On = DateTime.Now;
+                objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
+
+                dynamic resultSet;
+                if (!objAL_Load_Sheet_Service.Save(objAL_Load_Sheet, out resultSet))
+                {
+                    status = "E";
+                    message = resultSet;
+                }
+                else
+                {
+                    message = objMessageKey.Recordsavedsuccessfully;
+
+                    objAL_Load_Sheet = null;
+                    objAL_Load_Sheet_Service = null;
+
+                    lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+                    //FetchData();
+                }
+            }
+            catch(Exception ex)
+            {
+                message = "Please search loadsheet for month and Select atleast one booking sheet.";
+                status = "E";
             }
 
             var obj = new

@@ -185,6 +185,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForTitleObjectionType = 253;
         public const int ModuleCodeForBookingSheet = 263;
         public const int ModuleCodeForLoadSheet = 264;
+        public const int ModuleCodeForPurchaseOrder = 265;
 
         #endregion
 

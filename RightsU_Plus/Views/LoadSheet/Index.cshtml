@@ -122,6 +122,7 @@
                     $('#popup').modal();
                     $('#pupupHtml').empty();
                     $('#pupupHtml').html(result);
+                    Command_Name = CommandName;
                     if (CommandName == 'VIEW') {
                         SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName) 
                     }
@@ -228,7 +229,7 @@
     function GenerateLoadsheet() {
         debugger;
         var ReturnVal = true;
-        var bookinSheetCodes = [];
+        var bookingSheetCodes = [];
         $.each($("#tblBookingSheet tbody tr"), function (index, value) {
 
             //var i = $(value).children().last();
@@ -239,9 +240,15 @@
             var codes = '';
             if ($('#chk_' + BookingSheetCode).is(':checked') == true) {
                 codes = $('#' + index + '_hdnCnt').val();
-                bookinSheetCodes.push(codes);
+                bookingSheetCodes.push(codes);
             }
         })
+        //if (bookingSheetCodes.length == 0)
+        //{
+        //    showAlert('E', "Please search Loadsheet for month and Select Booking Sheet.")
+        //    ReturnVal = false;
+        //}
+
         var LoadSheetMonth = $("#searchCommon").val();
         var Remark = $("#tncRemark").val();
       
@@ -265,7 +272,7 @@
             contentType: "application/json; charset=utf-8",
             async: false,
             data: JSON.stringify({
-                bookinSheetCodes: bookinSheetCodes.join(','),
+                bookingSheetCodes: bookingSheetCodes.join(','),
                 Remark: Remark,
                 LoadSheetMonth: LoadSheetMonth
             }),
@@ -303,6 +310,8 @@
         $('#hdnAction').val("");
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
+
+        BindLoadSheetList();
     }
 
     function DownloadLoadSheet(BkSheetCode) {
