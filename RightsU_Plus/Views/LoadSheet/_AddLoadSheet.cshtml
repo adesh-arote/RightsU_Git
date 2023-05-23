@@ -18,21 +18,6 @@
         }      
     });
 
-    $('#chkAll').on("change", function () {
-        debugger;
-        var IsCheck = $(this).prop("checked");
-        $('input[type="checkbox"]').prop('checked', IsCheck);
-    });
-    
-    $('.checkbox').on("change", function () {
-        debugger;
-        if ($('.checkbox:checked').length == $('.checkbox').length) {
-            $('#chkAll').prop('checked', true);
-        } else {
-            $('#chkAll').prop('checked', false);
-        }
-    });
-
     function ClosePopup() {
         debugger;
         $('#hdnAction').val("");

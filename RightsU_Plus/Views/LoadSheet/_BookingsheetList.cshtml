@@ -1,4 +1,22 @@
 ﻿@model List<RightsU_Entities.USPAL_GetBookingsheetDataForLoadsheet_Result>
+
+<script>
+    $('#chkAll').on("change", function () {
+        debugger;
+        var IsCheck = $(this).prop("checked");
+        $('input[type="checkbox"]').prop('checked', IsCheck);
+    });
+
+    $('.checkbox').on("change", function () {
+        debugger;
+        if ($('.checkbox:checked').length == $('.checkbox').length) {
+            $('#chkAll').prop('checked', true);
+        } else {
+            $('#chkAll').prop('checked', false);
+        }
+    });
+</script>
+
 @{
     int counter = 0;
     <table class="table table-bordered table-hover" id="tblBookingSheet">

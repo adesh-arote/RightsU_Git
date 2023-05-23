@@ -213,10 +213,13 @@ namespace RightsU_Plus.Controllers
             Extended_Columns_Service objExtended_Columns_Service = new Extended_Columns_Service(objLoginEntity.ConnectionStringName);
             Extended_Group_Config_Service objExtended_Group_Config_Service = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName);
 
-            List<Extended_Columns> lstExtendedColumns = objExtended_Columns_Service.SearchFor(s => true).ToList();
-            ViewBag.ddlMetadata = new SelectList(lstExtendedColumns, "Columns_Code", "Columns_Name");
-            ViewBag.ddlMetaData2 = lstExtendedColumns;
+            List<int?> UsedMetadata = objExtended_Group.Extended_Group_Config.Select(s => s.Columns_Code).ToList();
 
+            List<Extended_Columns> lstExtendedColumns = objExtended_Columns_Service.SearchFor(s => true).ToList();
+            ViewBag.ddlMetaData2 = lstExtendedColumns;
+            lstExtendedColumns = lstExtendedColumns.Where(w => !UsedMetadata.Any(a => a == w.Columns_Code)).ToList();
+            ViewBag.ddlMetadata = new SelectList(lstExtendedColumns, "Columns_Code", "Columns_Name");
+            
             List<SelectListItem> lstValidation = new List<SelectListItem>();
             lstValidation.Add(new SelectListItem { Text = "Mandatory", Value = "man" });
             lstValidation.Add(new SelectListItem { Text = "Duplicate", Value = "dup" });
