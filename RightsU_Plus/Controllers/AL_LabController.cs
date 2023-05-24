@@ -36,8 +36,8 @@ namespace RightsU_Plus.Controllers
             List<AL_Lab_Service> AL_Lab_Services = new List<AL_Lab_Service>();
             List<SelectListItem> lstSort = new List<SelectListItem>();
             lstSort.Add(new SelectListItem { Text = objMessageKey.LatestModified, Value = "T" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Asc", Value = "NA" });
-            lstSort.Add(new SelectListItem { Text = "Sort Name Desc", Value = "ND" });
+            lstSort.Add(new SelectListItem { Text = "Lab Name Asc", Value = "NA" });
+            lstSort.Add(new SelectListItem { Text = "Lab Name Desc", Value = "ND" });
             ViewBag.SortType = lstSort;
             return View();
         }
