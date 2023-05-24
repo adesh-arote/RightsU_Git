@@ -646,6 +646,48 @@ namespace RightsU_Plus.Controllers
         //public string Save(RightsU_Entities.Title objTitleModel, string Deal_Type_Code, string Title_Language_Code
         //    , string Original_Language_Code, string ddlCountry, string hdnProducer, string hdnDirector, string hdnGenres, string hdnStarCast, string hdnCountry)
         {
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            int DealShowType = lstShowCode.Where(w => w == Deal_Type_Code).Count();
+
+            if (DealShowType == 1)
+            {
+                bool IsSeasonAdded = true;
+                if (lstDBExtendedColumns.Count > 0)
+                {
+                    if(lstDBExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                    {
+                        IsSeasonAdded = false;
+                    }
+                }
+
+                if (lstAddedExtendedColumns.Count > 0)
+                {
+                    if (lstAddedExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                    {
+                        IsSeasonAdded = false;
+                    }
+                }
+
+                if (lstAddedExtendedColumns.Count == 0 && lstDBExtendedColumns.Count == 0)
+                {
+                    IsSeasonAdded = false;
+                }
+
+                if (!IsSeasonAdded)
+                {
+                    var SeasonCheckObj = new
+                    {
+                        Status = "E",
+                        Message = "Season is mandatory for selected Title type",
+                        HideLoading = "Y",
+                        TabNAme = hdnAlternateTabName,
+                        ConfigCode = hdnAlternateConfigCode
+                    };
+                    return Json(SeasonCheckObj);
+                }
+            }
+
             dynamic resultSet;
 
             int TitleCode = 0;

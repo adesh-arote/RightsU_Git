@@ -346,6 +346,9 @@
                 else
                 {
                     showAlert("E", result.Message);
+                    if (result.HideLoading == "Y") {
+                        hideLoading();
+                    }
                 }
             }
         }

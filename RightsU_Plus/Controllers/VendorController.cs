@@ -1695,16 +1695,16 @@ namespace RightsU_Plus.Controllers
                         objAVR_Sess.EntityState = ALVendorRule.EntityState;
                     }
                 }
+
+                objVr = null;
+                UsedDDlExtendedColumnsLst = null;
+                DDlExtendedColumnsLst = null;
             }
             else
             {
                 status = "E";
-                message = "Content rule with same Name and Title type for this vendor already exists";
+                message = "Content rule with same Name and Title type for this Party already exists";
             }
-
-            objVr = null;
-            UsedDDlExtendedColumnsLst = null;
-            DDlExtendedColumnsLst = null;
 
             var obj = new
             {
@@ -2273,7 +2273,7 @@ namespace RightsU_Plus.Controllers
 
         public bool CheckDuplicateContentRuleClientForSameType(string Rule_Name, string Rule_Type, int? AL_Vendor_Rule_Code, int? Vendor_Code)
         {
-            int DuplicateCount = objSessVendor.AL_Vendor_Rule.Where(w => w.Rule_Name == Rule_Name && w.Rule_Type == Rule_Type && w.Vendor_Code == Vendor_Code && w.AL_Vendor_Rule_Code != AL_Vendor_Rule_Code).Count();
+            int DuplicateCount = objSessVendor.AL_Vendor_Rule.Where(w => w.Rule_Name.ToUpper() == Rule_Name.ToUpper() && w.Rule_Type == Rule_Type && w.Vendor_Code == Vendor_Code && w.AL_Vendor_Rule_Code != AL_Vendor_Rule_Code).Count();
 
             if (DuplicateCount > 0)
             {
