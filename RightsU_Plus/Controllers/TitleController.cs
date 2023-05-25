@@ -3181,7 +3181,13 @@ namespace RightsU_Plus.Controllers
 
             if (Operation == "E")
             {
-                if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) != 0)
+                if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) != 0 && gvExtended.Count != 0)
+                {
+                    lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList();
+                    var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).Distinct().ToList();
+                    lstEditRecordDB = gvExtended.Where(w => lstColumnRowNo.Any(a => w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).ToList();
+                }
+                else if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) != 0)
                 {
                     lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList();
                 }
@@ -3215,7 +3221,7 @@ namespace RightsU_Plus.Controllers
                 {
                     if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
                     {
-                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) > 0)
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
                         {
                             SelectedValues = Convert.ToString(lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).Select(x => x.Columns_Value_Code).FirstOrDefault());
                         }
@@ -3226,7 +3232,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
                     {
-                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) > 0)
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
                         {
                             var EditRecordObj = lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).FirstOrDefault();
                             string a = string.Join(",", EditRecordObj.Map_Extended_Columns_Details.Select(s => s.Columns_Value_Code).ToList());
@@ -3239,7 +3245,7 @@ namespace RightsU_Plus.Controllers
                     }
                     else if (TabControls.Control_Type == "TXT" || TabControls.Control_Type == "INT" || TabControls.Control_Type == "DBL" || TabControls.Control_Type == "DATE" || TabControls.Control_Type == "CHK")
                     {
-                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) > 0)
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
                         {
                             SelectedValues = Convert.ToString(lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).Select(x => x.Column_Value).FirstOrDefault());
                         }
@@ -3748,24 +3754,44 @@ namespace RightsU_Plus.Controllers
                     int ColumnCode = Convert.ToInt32(config_Code);
                     //int RowNum = Convert.ToInt32(hdnRowNum);
                     //obj = gvExtended[RowNum - 1];
-                    obj = gvExtended.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+                    var chkObj = gvExtended.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
 
-                    OldColumnCode = obj.Columns_Code;
-
-                    if (hdnExtendedColumnsCode != "")
-                        obj.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
-                    if (hdnColumnValueCode != "")
+                    if (chkObj == null && config_Code > 1)
                     {
-                        if (hdnColumnValueCode.Split(',').Count() <= 1)
-                            obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                        var ChklstAdd = lstAddedExtendedColumns.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+                        if (ChklstAdd == null)
+                        {
+                            objMapExtCol.Row_No = Row_No;
+                            objMapExtCol.Columns_Code = Convert.ToInt32(config_Code);
+                            objMapExtCol.Table_Name = "TITLE";
+                            objMapExtCol.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                            objMapExtCol.Record_Code = Title_Code;
+                            objMapExtCol.EntityState = State.Added;
+                            lstAddedExtendedColumns.Add(objMapExtCol);
+                        }
                     }
-                    obj.Is_Ref = ExtendedColumns.Is_Ref;
-                    obj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
-                    obj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
-                    obj.Ref_Table = ExtendedColumns.Ref_Table;
-                    obj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
-                    obj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
-                    obj.Columns_Name = ExtendedColumns.Columns_Name;
+                    else
+                    {
+                        obj = gvExtended.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+
+                        OldColumnCode = obj.Columns_Code;
+
+                        if (hdnExtendedColumnsCode != "")
+                            obj.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
+                        if (hdnColumnValueCode != "")
+                        {
+                            if (hdnColumnValueCode.Split(',').Count() <= 1)
+                                obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                        }
+                        obj.Is_Ref = ExtendedColumns.Is_Ref;
+                        obj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
+                        obj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                        obj.Ref_Table = ExtendedColumns.Ref_Table;
+                        obj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
+                        obj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
+                        obj.Columns_Name = ExtendedColumns.Columns_Name;
+
+                    }
 
                     int MapExtendedColumnCode = 0;
                     hdnMEColumnCode = Convert.ToString(obj.Map_Extended_Columns_Code);
@@ -3905,7 +3931,11 @@ namespace RightsU_Plus.Controllers
                             //objMEc = lstDBExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.EntityState == State.Added).FirstOrDefault();
                             //if (objMEc == null)
                             //{
-                            objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == OldColumnCode).FirstOrDefault();
+                            if (OldColumnCode != 0)
+                                objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == OldColumnCode).FirstOrDefault();
+                            else
+                                objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == config_Code).FirstOrDefault();
+
                             objMEc.Columns_Code = ColumnCode;
                             if (hdnColumnValueCode.Split(',').Count() <= 0)
                                 objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
