@@ -31,6 +31,7 @@
     }
 
     function handleECancel(Type, RowNum) {
+        debugger;
 
         $("input[id][name$='_ddlControlType']").removeClass('required');
         $("input[id][name$='_ddlFieldNameList']").removeClass('required');
@@ -80,11 +81,15 @@
             $("#" + $("#hdnRowNum").val() + "_lblName").show();
         }
         $("#hdnRowNum").val('');
+        $('#hdnAction').val("");
     }
 
 
-    function EditClick(obj) {
+    function EditClick(obj, CommandName) {
         debugger;
+        //if (!checkCurrentAction())
+        //    return false;
+
         $("input[id][name$='_ddlControlType']").removeClass('required');
         $("input[id][name$='_ddlFieldNameList']").removeClass('required');
         $("input[id][name$='_txtControlType']").removeClass('required');
@@ -93,10 +98,8 @@
 
         var ColumnCode = $("#" + obj + "_hdnExtendedColumnsCode").val();
 
-        if ($("#hdnRowNum").val() != "") {
-            showAlert("e", "Please complete add/edit operation.", "");
+        if (!checkCurrentAction())
             return false;
-        }
         else {
             $("#hdnRowNum").val(obj);
             var ddl_first_col = "";
@@ -131,7 +134,7 @@
                     ColumnCode: ColumnCode,
                     RowNum: obj,
                     IsExists: IsExists,
-                    Ext_Grp_Code:2
+                    Ext_Grp_Code: 260
                 }),
                 async: false,
                 success: function (result) {
@@ -187,7 +190,7 @@
                 $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").attr('disabled', true);
             }
             $('select#' + $("#hdnRowNum").val() + '_ddlFieldNameList.form_input.chosen-select').trigger("chosen:updated");
-
+            $('#hdnAction').val(CommandName);
         }
     }
 
@@ -522,7 +525,7 @@
                                 var newhidden = "";
                                 if ($("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").length == 0)
                                     newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
-                                LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick(" + id + "); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(this);' class='glyphicon glyphicon-trash'></a> " + newhidden;
+                                LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick('" + id + "','EDIT'); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(this);' class='glyphicon glyphicon-trash'></a> " + newhidden;
                             }
 
                             $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
@@ -584,7 +587,8 @@
 
     function DeleteExtended(obj) {
         debugger;
-
+        if (!checkCurrentAction())
+            return false;
         if (confirmed) {
             dummyobj = "";
             confirmed = false;
@@ -882,7 +886,7 @@
                                     var newhidden = "";
                                     if ($("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").length == 0)
                                         newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
-                                    LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick(" + id + "); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(" + id + ");' class='glyphicon glyphicon-trash'></a> " + newhidden;
+                                    LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick('" + id + "','EDIT'); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(" + id + ");' class='glyphicon glyphicon-trash'></a> " + newhidden;
                                 }
 
                                 $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
@@ -1157,8 +1161,10 @@
 
     });
 
-     function btnAddExtendedData() {
-      debugger;
+    function btnAddExtendedData(CommandName) {
+         debugger;
+         if (!checkCurrentAction())
+             return false;
 
       if ($("#hdnRowNum").val() != "") {
             showAlert("e", "Please complete add/edit operation.", "");
@@ -1186,7 +1192,7 @@
                     ColumnCode: 0,
                     RowNum: count,
                     IsExists: IsExists,
-                    Ext_Grp_Code: 2
+                    Ext_Grp_Code: 260
                 }),
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
@@ -1198,6 +1204,7 @@
                     var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList");
                     $('#your-input').val(result.Columns_Value_Code);
                     //$('.chosen-select').chosen();
+                    $('#hdnAction').val(CommandName);
 
                 },
                 error: function (result) {
@@ -1350,7 +1357,7 @@
                                 <td>
                                     <a title="Update" class='glyphicon glyphicon-ok-circle' id="@("btnSave_gvExtended_" + counter)" onclick="SaveExtended(this);" style="display:none" />
                                     <a title="Cancel" class='glyphicon glyphicon-remove-circle' id="@("btnCancel_gvExtended_" + counter)" onclick="return handleECancel('E',@counter);" style="display:none" />
-                                    <a title="Edit" href="#" class="glyphicon glyphicon-pencil" id="@("imgEdit_" + counter)" onclick="EditClick(@counter);"></a>
+                                    <a title="Edit" href="#" class="glyphicon glyphicon-pencil" id="@("imgEdit_" + counter)" onclick="EditClick(@counter,'EDIT');"></a>
                                     @if (item.IsDelete == "Y" && item.Columns_Name != "Program Category")
                                     {<a title="Delete" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_" + counter)" onclick="DeleteExtended(this);"> </a>}
                                     else if (item.Columns_Name == "Program Category")

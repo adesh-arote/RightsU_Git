@@ -23,6 +23,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstOem_Searched"] = value; }
         }
+
         List<USP_Bind_Extend_Column_Grid_Result> OEMExtended
         {
             get
@@ -36,6 +37,7 @@ namespace RightsU_Plus.Controllers
                 Session["OEMExtended"] = value;
             }
         }    
+
         private List<RightsU_Entities.Map_Extended_Columns> lstAddedExtendedColumns
         {
             get
@@ -64,6 +66,7 @@ namespace RightsU_Plus.Controllers
             }
             return View();
         }
+
         public PartialViewResult BindALOemList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.AL_OEM> lst = new List<RightsU_Entities.AL_OEM>();
@@ -76,7 +79,7 @@ namespace RightsU_Plus.Controllers
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
                 {
-                    lst = lstOem_Searched.OrderByDescending(o => o.AL_OEM_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstOem_Searched.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 }
                 else if (sortType == "NA")
                 {
@@ -89,11 +92,13 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("~/Views/AL_Oem/_BindALOemList.cshtml", lst);
         }
+
         public void FetchData()
         {
             AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
             lstOem_Searched = aL_OEM_Service.SearchFor(x => true).OrderBy(o => o.AL_OEM_Code).ToList();
         }
+
         public JsonResult SearchALOem(string searchText)
         {
             FetchData();
@@ -112,6 +117,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -167,6 +173,7 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("~/Views/AL_Oem/_AddEditALOem.cshtml", aL_OEM);
         }
+
         [HttpPost]
         public PartialViewResult AddEditFieldValue(string CommandName, int Id)
         {
@@ -253,6 +260,7 @@ namespace RightsU_Plus.Controllers
                 FieldNameDDL += "</select>";
             return FieldNameDDL;
         }
+
         public JsonResult BinddlColumnsValue(string ColumnsCode, string AdditionalCondition)
         {
             int Column_Code = Convert.ToInt32(ColumnsCode);
@@ -583,7 +591,6 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region Save and Delete
-
         [HttpPost]
         public ActionResult SaveOEM(int Id, AL_OEM obj)
         {
@@ -612,6 +619,8 @@ namespace RightsU_Plus.Controllers
                     aL_OEM.Company_Short_Name = obj.Company_Short_Name;
                     aL_OEM.Inserted_On = DateTime.Now;
                     aL_OEM.Inserted_By = objLoginUser.Users_Code;
+                    aL_OEM.Last_Updated_Time = DateTime.Now;
+                    aL_OEM.Last_Action_By = objLoginUser.Users_Code;
 
                     aL_OEM.EntityState = State.Added;
 
@@ -806,7 +815,6 @@ namespace RightsU_Plus.Controllers
 
         }
         #endregion
-
 
         [HttpPost]
         public JsonResult CheckRecordLock(int AL_OemCode)

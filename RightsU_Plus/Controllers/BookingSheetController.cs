@@ -327,7 +327,7 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "ND")
                     lst = lstBooking_Sheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
-            DataTable dt = ToDataTable(lst);
+            //DataTable dt = ToDataTable(lst);
             
             List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
             ViewBag.UserCode = lstUsers;
@@ -826,12 +826,12 @@ namespace RightsU_Plus.Controllers
                     if (sortType == "N")
                         lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                     lst.Insert(0, firstItem);
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {
                     lst = lstBulkImport;
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
             }
             catch (Exception ex)
@@ -877,12 +877,12 @@ namespace RightsU_Plus.Controllers
                     if (sortType == "N")
                         lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                     lst.Insert(0, firstItem);
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {
                     lst = lstBulkImport;
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
             }
             catch (Exception ex)

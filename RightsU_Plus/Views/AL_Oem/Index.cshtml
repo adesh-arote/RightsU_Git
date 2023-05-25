@@ -23,7 +23,7 @@
 
     var URL_BindAddEditView = '@Url.Action("BindAddEditView", "AL_Oem")';
     var URl_AddEditFieldValuel = '@Url.Action("AddEditFieldValue", "AL_Oem")';
-  
+
      $(document).ready(function () {
         if(LayoutDirection_G == "RTL")
         {
@@ -139,6 +139,7 @@
         opt["current_page"] = index;
         $("#Pagination").pagination(recordCount, opt);
     }
+
     function pageselectCallback(page_index, jq) {
         if (checkCurrentAction()) {
             $('.required').removeClass('required');
@@ -154,6 +155,7 @@
                 IsCall = 'Y';
         }
     }
+
     function BindOemList() {
         debugger;
         var pageNo = $('#hdnPageNo').val();
@@ -181,6 +183,7 @@
             }
         });
     }
+
     function SearchOem(searchText) {
         debugger;
         $('#searchCommon').val(searchText);
@@ -245,7 +248,7 @@
                 else {
                     if (result.Is_Locked == "Y") {
                         AddEditALOem(CommandName, Id)
-                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); 
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code);
                         Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
                     }
                     else
@@ -261,6 +264,8 @@
 
     function SaveALOem(Id) {
         debugger;
+        if (!checkCurrentAction())
+            return false;
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
@@ -299,6 +304,7 @@
                 success: function (result) {
                     debugger;
                     if (result.Status == "S") {
+                        $('#hdnAction').val("");
                         window.location.href = Url_Index;
                     }
                     else {
@@ -315,6 +321,9 @@
 
     function DeleteALOem(Id) {
         debugger;
+        if (!checkCurrentAction())
+            return false;
+
             $.ajax({
                 type: "POST",
                 url: URL_DeleteOem,
@@ -345,11 +354,15 @@
 
     function ALOemCancel() {
         debugger;
+        if (!checkCurrentAction())
+            return false;
+
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
             ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
 
         $('#DivAddEditOem').empty();
+        $('#hdnAction').val("");
         $("#MainView").show();
         //var searchText = $('#searchCommon').val();
        // SearchOem("");
@@ -387,33 +400,29 @@
          });
     }
 
-
-
-
- function AddEditViewGrid(CommandName, Id) {
-            debugger;
-            $.ajax({
-                type: "POST",
-                url: '@Url.Action("AddEditFieldValue", "AL_Oem")',
-                traditional: true,
-                enctype: 'multipart/form-data',
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify({
-                    CommandName: CommandName,
-                    Id:Id
-                }),
-                async: false,
-                success: function (data) {
-                    debugger;
-                    $('#divEFDetails').empty();
-                    $('#divEFDetails').html(data);
-
-                },
-                error: function (data) {
-                    alert('Error: ' + data.responseText);
-                }
-            });
-        }
+    function AddEditViewGrid(CommandName, Id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddEditFieldValue", "AL_Oem")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                CommandName: CommandName,
+                Id:Id
+            }),
+            async: false,
+            success: function (data) {
+                debugger;
+                $('#divEFDetails').empty();
+                $('#divEFDetails').html(data);
+            },
+            error: function (data) {
+                alert('Error: ' + data.responseText);
+            }
+        });
+    }
 
 
 </script>
