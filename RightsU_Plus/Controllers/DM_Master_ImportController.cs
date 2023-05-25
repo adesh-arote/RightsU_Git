@@ -1922,6 +1922,8 @@ namespace RightsU_Plus.Controllers
         public int PageSize_PC { get; set; }
         public int PageNo_OL { get; set; }
         public int PageSize_OL { get; set; }
+        public int PageNo_PG { get; set; }
+        public int PageSize_PG { get; set; }
 
         public object GetPropertyValue(string propertyName)
         {
