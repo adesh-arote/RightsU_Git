@@ -100,97 +100,100 @@
             word-wrap: break-word;
         }
 </style>
-<table id="ContentRulePopUpTable" class="table">
-    <tr>
-        <td>
-            @if (ViewBag.CommandNameCR == "VIEW")
-            {
-                <b>@Model.Rule_Name</b>
-            }
-            else
-            {
-                <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" maxlength="100" />
-            }
-
-            <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
-            <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
-            <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
-        </td>
-        <td>
-            @if (ViewBag.CommandNameCR == "VIEW")
-            {
-                <b>@Model.Rule_Short_Name</b>
-            }
-            else
-            {
-                <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="50" />
-            }
-        </td>
-        <td>
-            @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>@objMessageKey.Movie</span>
-            @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>@objMessageKey.Show</span>
-        </td>
-        <td>
-            <span id="SelectedCriteriaTd"></span>
-            @if (ViewBag.CommandNameCR == "VIEW")
-            {
-                <b>@Model.Criteria</b>
-            }
-        </td>
-        <td>
-
-        </td>
-    </tr>
-    @*<tr>
-            <td style="width:25%; padding-left:2%">
-                <b>Name</b>
-            </td>
-            <td>
-                @if (ViewBag.CommandNameCR == "VIEW")
-                {
-                    @Model.Rule_Name
-                }
-                else
-                {
-                    <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
-                }
-
-                <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
-                <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
-                <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
-            </td>
-        </tr>
-        <tr>
-            <td style="width:25%; padding-left:2%">
-                <b>Short Name</b>
-            </td>
-            <td>
-                @if (ViewBag.CommandNameCR == "VIEW")
-                {
-                    @Model.Rule_Short_Name
-                }
-                else
-                {
-                    <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
-                }
-
-            </td>
-        </tr>
-        <tr>
-            <td style="width:25%; padding-left:2%">
-                <b>Content Type</b>
-            </td>
-            <td>
-                @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movies</span>
-                @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
-            </td>
-        </tr>*@
-</table>
 
 <div class="grid_area">
     <div class="tab-content clearfix table-wrapper scale_table_container">
-        <div class="scale_table_block" id="ContentRuleGrid">
+        <div class="scale_table_block">
+            <table id="ContentRulePopUpTable" class="table">
+                <tr>
+                    <td>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Rule_Name</b>
+                        }
+                        else
+                        {
+                            <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" maxlength="100" />
+                        }
 
+                        <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+                        <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+                        <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+                    </td>
+                    <td>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Rule_Short_Name</b>
+                        }
+                        else
+                        {
+                            <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="50" />
+                        }
+                    </td>
+                    <td>
+                        @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>@objMessageKey.Movie</span>
+                        @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>@objMessageKey.Show</span>
+                    </td>
+                    <td>
+                        <span id="SelectedCriteriaTd"></span>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Criteria</b>
+                        }
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+                @*<tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Name</b>
+                </td>
+                <td>
+                    @if (ViewBag.CommandNameCR == "VIEW")
+                    {
+                        @Model.Rule_Name
+                    }
+                    else
+                    {
+                        <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+                    }
+
+                    <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+                    <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+                    <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Short Name</b>
+                </td>
+                <td>
+                    @if (ViewBag.CommandNameCR == "VIEW")
+                    {
+                        @Model.Rule_Short_Name
+                    }
+                    else
+                    {
+                        <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+                    }
+
+                </td>
+            </tr>
+            <tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Content Type</b>
+                </td>
+                <td>
+                    @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movies</span>
+                    @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
+                </td>
+            </tr>*@
+            </table>
+
+            <div id="ContentRuleGrid">
+
+            </div>
         </div>
     </div>
 </div>

@@ -12,6 +12,7 @@
     $(document).ready(function () {
         debugger;
         initializeChosen();
+        AddSpaceAfterComma();
     });
 
     function SaveContentRuleCriteria() {
@@ -162,6 +163,18 @@
             }
         });
     }
+
+    function AddSpaceAfterComma() {
+        debugger;
+        var trCount = $("#ContentRuleGrid tbody tr").length;
+        var i = 0;
+        for (i; i <= trCount; i++) {
+            if ($("#SpnValue_" + i).html() != undefined && $("#SpnValue_" + i).html() != null && $("#SpnValue_" + i).html() != "") {
+                var HtmlInsert = $("#SpnValue_" + i).html();
+                $("#SpnValue_" + i).html(HtmlInsert.replace(/,/g, ', '));
+            }
+        }
+    }
 </script>
 
 @{
@@ -259,14 +272,16 @@
                         @item.ExtendedColumnNames
                     </td>
                     <td>
-                        @if (@item.DataFieldNames != null && @item.DataFieldNames != "")
-                        {
-                            @item.DataFieldNames
-                        }
-                        else
-                        {
-                            @item.Columns_Value
-                        }
+                        <span id="SpnValue_@iCrC">
+                            @if (@item.DataFieldNames != null && @item.DataFieldNames != "")
+                            {
+                                @item.DataFieldNames
+                            }
+                            else
+                            {
+                                @item.Columns_Value
+                            }
+                        </span>
                     </td>
                     if (ViewBag.CommandNameCrC != "VIEW")
                     {

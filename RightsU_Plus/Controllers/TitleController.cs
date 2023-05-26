@@ -653,17 +653,29 @@ namespace RightsU_Plus.Controllers
             if (DealShowType == 1)
             {
                 bool IsSeasonAdded = true;
-                if (lstDBExtendedColumns.Count > 0)
-                {
-                    if(lstDBExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
-                    {
-                        IsSeasonAdded = false;
-                    }
-                }
+                List<Map_Extended_Columns> CheckSeasonList = new List<Map_Extended_Columns>();
+                CheckSeasonList.AddRange(lstDBExtendedColumns);
+                CheckSeasonList.AddRange(lstAddedExtendedColumns);
 
-                if (lstAddedExtendedColumns.Count > 0)
+                //if (lstDBExtendedColumns.Count > 0)
+                //{
+                //    if (lstDBExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                //    {
+                //        IsSeasonAdded = false;
+                //    }
+                //}
+
+                //if (lstAddedExtendedColumns.Count > 0)
+                //{
+                //    if (lstAddedExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                //    {
+                //        IsSeasonAdded = false;
+                //    }
+                //}
+
+                if (CheckSeasonList.Count > 0)
                 {
-                    if (lstAddedExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                    if (CheckSeasonList.Where(w => w.Columns_Code == 31).Count() < 1)
                     {
                         IsSeasonAdded = false;
                     }

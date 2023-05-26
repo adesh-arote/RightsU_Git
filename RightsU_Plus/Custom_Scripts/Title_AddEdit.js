@@ -388,16 +388,22 @@ function SaveExtendedMetadata(IsValidate) {
             }),
             success: function (result) {
                 debugger;
-                $("#popAddExtendedMetadata").modal('hide');
+                //$("#popAddExtendedMetadata").modal('hide');
                 if (typeof result.ExtendedColumnError !== "undefined" && result.ExtendedColumnError != "") {
                     showAlert('E', result.ExtendedColumnError);
-                    $("#popAddExtendedMetadata").modal();
+                    //$("#popAddExtendedMetadata").modal();
                 }
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+                else {
+                    $("#popAddExtendedMetadata").modal('hide');
+                    $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+                }
                 
                 //AppendExtendedMetadata(selMulti, result);
-                
+                //Do check and verify previous code if issue arrises with current one. 
+                //1. Previous code hid the modal popup on error and then binded it again which left semi - transparent black screen when the popup was closed / canceled.
+                //2. As the Dropdown append code was also outside error block and did not check if result was success or error, it binded any receiving value to dropdown i.e. on error dropdown would
+                //have an option "undefined" as one of the selected option. 
             }
         });
 }
