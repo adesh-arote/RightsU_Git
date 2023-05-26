@@ -396,13 +396,8 @@
                                 $('.' + SiblingClass).empty();
 
                                 var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ');"</a>' +
-                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
-
-                                var status = '<span>Success</span>'
-
-                                $('.clsTdStatus_' + PurchaseOrderCode + 'P').empty();
-                                $('.clsTdStatus_' + PurchaseOrderCode + 'P').append(status);
 
                                 initializeTooltip();
                                 SearchPOList("");
@@ -415,10 +410,9 @@
             }
         });
 
-        setTimeout(CheckPendingStatus, 5000);
-        if (pendingRecord > 0) {
+        //if (pendingRecord > 0) {
             setTimeout(CheckPendingStatus, 5000);
-        }
+        //}
     }
 
     function RefreshPoList(PoCode, BkCode) {
@@ -480,11 +474,6 @@
                                 var a = '<a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink(' + PurchaseOrderDetailCode +')" download></a>';
                                 $('.' + SiblingClass).append(a);
 
-                                var status = '<span>Success</span>'
-
-                                $('.clsTdStatusdt_' + PurchaseOrderDetailCode + 'P').empty();
-                                $('.clsTdStatusdt_' + PurchaseOrderDetailCode + 'P').append(status);
-
                                 initializeTooltip();
                             }
                         },
@@ -494,10 +483,10 @@
                 }
             }
         });
-        setTimeout(CheckPendingStatusForPod, 5000);
-        if (pendingRecord > 0) {
+        
+        //if (pendingRecord > 0) {
             setTimeout(CheckPendingStatusForPod, 5000);
-        }
+        //}
     }
 
 </script>

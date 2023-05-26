@@ -13,11 +13,13 @@
 
     function ValidateDelete(obj) {
         debugger;
-
-        if ($("#hdnRowNum").val() != "") {
-            showAlert("e", "Please complete add/edit operation.", "");
+        if (!checkCurrentAction())
             return false;
-        }
+
+        //if ($("#hdnRowNum").val() != "") {
+        //    showAlert("e", "Please complete add/edit operation.", "");
+        //    return false;
+        //}
         dummyobj = obj;
         showAlert('I', "Are you sure you want to delete this right?", 'OKCANCEL');
     }
@@ -557,6 +559,7 @@
                             }
                         }
                         showAlert("S", result.Message);
+                        $('#hdnAction').val("");
                     }
                     else {
                         showAlert("E", result.Error);

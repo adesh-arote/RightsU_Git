@@ -360,7 +360,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    lstBooking_Sheet_Searched = lstBooking_Sheet.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
+                    lstBooking_Sheet_Searched = lstBooking_Sheet.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToUpper().Contains(searchText.ToUpper()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToUpper().Contains(searchText.ToUpper()))).ToList();
                 }
                 else
                 {
@@ -374,7 +374,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    lstRecommendation_Searched = lstRecommendation.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToString().Contains(searchText.ToString())).ToList();
+                    lstRecommendation_Searched = lstRecommendation.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToUpper().Contains(searchText.ToUpper())).ToList();
                 }
                 else
                 {

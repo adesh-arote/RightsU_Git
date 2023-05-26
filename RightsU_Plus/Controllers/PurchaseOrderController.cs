@@ -209,7 +209,7 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstPOSearched = lstPO.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToUpper().Contains(searchText.ToUpper()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToString().Contains(searchText.ToString()))).ToList();
+                lstPOSearched = lstPO.Where(w => w.Vendor_Name != null && w.Vendor_Name.ToUpper().Contains(searchText.ToUpper()) || (w.Booking_Sheet_No != null && w.Booking_Sheet_No.ToUpper().Contains(searchText.ToUpper()))).ToList();
             }
             else
                 lstPOSearched = lstPO;

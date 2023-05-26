@@ -793,8 +793,10 @@
     <Content Include="Images\Content.PNG" />
     <Content Include="Images\Criteria.jpg" />
     <Content Include="Images\criteria.png" />
+    <Content Include="Images\dollar.png" />
     <Content Include="Images\icon-search.png" />
     <Content Include="Images\NoImageFound.jpg" />
+    <Content Include="Images\PoMenu.png" />
     <Content Include="Images\Result.png" />
     <Content Include="Images\Results.jpg" />
     <Content Include="Images\r_Columns.jpg" />

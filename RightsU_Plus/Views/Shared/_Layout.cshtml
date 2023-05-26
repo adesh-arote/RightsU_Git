@@ -981,10 +981,10 @@
                             <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-globe" href="#"></a>
                             </li>
-                            <li title="BookingSheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                            <li title="Booking Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
                             </li>
-                            <li title="PurchaseOrder" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                            <li title="Purchase Order" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-list-alt" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "PurchaseOrder", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForPurchaseOrder })"></a>
                             </li>
                             <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
@@ -1004,34 +1004,34 @@
                 </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
-                              Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
                             {
-                                <li class="seperator "></li>
+                            <li class="seperator "></li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title))
                             {
-                                <li title="@objMessageKey.MusicTrack" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('M','pnlMusic');" data-placement="@dataPlacement">
-                                    @*<a class="glyphicon glyphicon-music btn btn-primary btn-lg" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "List", ControllerName = "Music_Title", IsMenu = "Y" })"></a>*@
-                                    <a class="glyphicon glyphicon-music" href="#"></a>
-                                </li>
+                            <li title="@objMessageKey.MusicTrack" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('M','pnlMusic');" data-placement="@dataPlacement">
+                                @*<a class="glyphicon glyphicon-music btn btn-primary btn-lg" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "List", ControllerName = "Music_Title", IsMenu = "Y" })"></a>*@
+                                <a class="glyphicon glyphicon-music" href="#"></a>
+                            </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Hub))
                             {
-                                <li title="Music Hub" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('O','pnlMusicHub');" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-play-circle" href="#"></a>
-                                </li>
+                            <li title="Music Hub" class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('O','pnlMusicHub');" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-play-circle" href="#"></a>
+                            </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
                             {
-                                <li title="@objMessageKey.Content" data-placement="@dataPlacement" class="menu_margin">
-                                    <a class="glyphicon glyphicon-copy" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Content", IsMenu = "Y" })"></a>
-                                </li>
+                            <li title="@objMessageKey.Content" data-placement="@dataPlacement" class="menu_margin">
+                                <a class="glyphicon glyphicon-copy" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "Title_Content", IsMenu = "Y" })"></a>
+                            </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters) ||
-                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
-                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
-                                <li class="seperator "></li>
+                            <li class="seperator "></li>
                             }
 
                             @*{
@@ -1041,16 +1041,16 @@
                 }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
-                                <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-font" href="#"></a>
-                                </li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-font" href="#"></a>
+                            </li>
                             }
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters))
                             {
-                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('A','pnlMasters');" title="@objMessageKey.Master" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-book" href="#"></a>
-                                </li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('A','pnlMasters');" title="@objMessageKey.Master" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-book" href="#"></a>
+                            </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
                 {
@@ -1060,15 +1060,15 @@
                 }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
-                                <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-list-alt" href="#"></a>
-                                </li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-list-alt" href="#"></a>
+                            </li>
                             }
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application) ||
-                                Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
                             {
-                                <li class="seperator"></li>
+                            <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
                 {
@@ -1080,22 +1080,22 @@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
                             {
-                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('C','pnlIPR');" title="@objMessageKey.IPR" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-registration-mark" href="#"></a>
-                                </li>
+                            <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('C','pnlIPR');" title="@objMessageKey.IPR" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-registration-mark" href="#"></a>
+                            </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
                             {
-                                <li onclick="javascript: loadNavMenu('D','pnlSettings');" title="@objMessageKey.Settings" data-placement="@dataPlacement" class="menu_margin">
-                                    <a class="glyphicon glyphicon-cog" href="#"></a>
-                                </li>
+                            <li onclick="javascript: loadNavMenu('D','pnlSettings');" title="@objMessageKey.Settings" data-placement="@dataPlacement" class="menu_margin">
+                                <a class="glyphicon glyphicon-cog" href="#"></a>
+                            </li>
                             }
-                        }
-                    }
-                    @*<li title="Log Out" data-placement="right">
-            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-        </li>*@
-                </ul>
+                            }
+                            }
+                            @*<li title="Log Out" data-placement="right">
+                    <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+                </li>*@
+                        </ul>
             </div>
             <div class="header-nav ">
                 <div class="site_logo pull-left">

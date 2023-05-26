@@ -68,8 +68,9 @@
                         @if (item.Record_Status == "C")
                         {
                             <a title="Import/Export" class="glyphicon glyphicon-floppy-open" style="cursor: pointer;" onclick="ImportMasterView('@item.AL_Booking_Sheet_Code')"></a>
-                            <a title="Generate Purchase Order" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="RemarkPopup('@item.AL_Booking_Sheet_Code','@item.AL_Proposal_Code','config')"></a>
-                            <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet('@item.AL_Booking_Sheet_Code')"></a>
+                            @*<a title="Generate Purchase Order" class="glyphicon glyphicon-share" style="cursor: pointer;" onclick="RemarkPopup('@item.AL_Booking_Sheet_Code','@item.AL_Proposal_Code','config')"></a>*@
+                            <a title="Generate Purchase Order" style="cursor: pointer;vertical-align: inherit;" onclick="RemarkPopup('@item.AL_Booking_Sheet_Code','@item.AL_Proposal_Code','config')"><img title="Purchase Order" src="~/Images/dollar.png" style="height: 19px; position:relative;" /></a>
+                            <a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshBookingSheet('@item.AL_Booking_Sheet_Code')"></a>
                         }
                         else
                         {
