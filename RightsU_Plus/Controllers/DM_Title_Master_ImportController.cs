@@ -1519,7 +1519,7 @@ namespace RightsU_Plus.Controllers
                             cmdExcel.Connection = cn;
                             sheetName = "Sheet1$";
 
-                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
+                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "] WHERE [F1] <> '' OR [F1] IS NOT NULL", cn);
                             da.Fill(ds);
                         }
                         catch (Exception ex)
