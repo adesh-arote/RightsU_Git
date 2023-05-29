@@ -226,6 +226,7 @@ namespace RightsU_Plus.Controllers
             lstValidation.Add(new SelectListItem { Text = "Reference", Value = "ref" });
             lstValidation.Add(new SelectListItem { Text = "0 or 1", Value = "0 & 1" });
             lstValidation.Add(new SelectListItem { Text = "Date", Value = "Date" });
+            lstValidation.Add(new SelectListItem { Text = "Purchase Order", Value = "PO" });
             ViewBag.ddlValidation = lstValidation;
 
             List<SelectListItem> lstDisplayFor = new List<SelectListItem>();

@@ -237,10 +237,10 @@
         showLoading();
         var BookingSheetCode = $('#hiddenBksCode').val();
         var files = $("#fileUpload").get(0).files;
-        var formdata = new FormData();    
+        var formdata = new FormData();
         if (files.length > 0) {
             formdata.append("InputFile", files[0]);
-            formdata.append("BookingSheetCode", BookingSheetCode);        
+            formdata.append("BookingSheetCode", BookingSheetCode);
         }
         else {
             showAlert("a", "Please select File");
@@ -264,12 +264,12 @@
                     SearchOnImportMasterList("");
                     showAlert("S", result.Message);
                     hideLoading();
-                    $("#fileUpload").val('');                   
+                    $("#fileUpload").val('');
                 }
                 else {
                     showAlert("E", result.Message);
                     hideLoading();
-                    $("#fileUpload").val('');                
+                    $("#fileUpload").val('');
                 }
             },
             error: function (result) {
@@ -295,9 +295,9 @@
             success: function (Filename) {
                 debugger;
                 window.location.href = window.location.origin + "/" + DownloadPath + Filename;
-                SearchOnImportMasterList("");            
+                SearchOnImportMasterList("");
             }
-        })    
+        })
     }
 
     function CheckPendingStatus() {
@@ -314,7 +314,7 @@
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
                     var FileType = Sibling.slice(13, Sibling.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'N' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'S' || SiblingClass.substr(SiblingClass.length - 1) == 'E') {
                     $.ajax({
                         type: "POST",
                         url: URL_GetImportedSheetStatus,
@@ -335,16 +335,33 @@
                                 pendingRecord++;
                             }
                             else if (result.RecordStatus == "E" || result.RecordStatus == "S") {
-                                $("#imgLoading_" + DmMasterCode).css("display", 'none');
-                                $('.' + SiblingClass).empty();
+                                if (result.LatestFile == "Y") {
+                                    if (result.FileError == "FE") {
+                                        $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                        $('.' + SiblingClass).empty();
 
-                                var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href ="' + URL_ImportSheetView +'?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '";"</a>' +
-                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + DmMasterCode + ');"></a>';
-                                $('.' + SiblingClass).append(a);
+                                        var a = '<a title="Error in uploaded file" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;"></a>';
+                                        $('.' + SiblingClass).append(a);
+                                    }
+                                    else {
+                                        $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                        $('.' + SiblingClass).empty();
 
+                                        //var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href ="' + URL_ImportSheetView + '?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '";"></a>' +
+                                        //    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshBookingSheet(' + DmMasterCode + ');"></a>';
+                                        //$('.' + SiblingClass).append(a);
+
+                                        var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href =\'' + URL_ImportSheetView + '?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '\';"></a>';
+                                        $('.' + SiblingClass).append(a);
+                                    }
+                                }
+                                else {
+                                    $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+                                }
                                 initializeTooltip();
-                                SearchOnImportMasterList("");
-                            }
+                                //SearchOnImportMasterList("");
+                            }                           
                         },
                         error: function (result) {
                         }
@@ -408,7 +425,7 @@
                                 <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
                                 <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
                             </td>
-                        </tr>               
+                        </tr>
                     </table>
                 </div>
                 <div class="search_area" style="background-color: #eee; padding:5px;">

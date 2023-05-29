@@ -594,7 +594,7 @@ namespace RightsU_Plus.Controllers
             //ViewBag.isButtonShow = isShow;
 
             List<RightsU_Entities.User> lstUser = objUser_Service.SearchFor(s => true).ToList();
-            ViewBag.UserCodes = lstUser;
+            ViewBag.UserCodes = lstUser;          
 
             return PartialView("_MasterImportList", lst);
         }
@@ -627,12 +627,36 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetImportedSheetStatus(int DmMasterCode)
         {
+            string fileError = "";
+            string latestFile = "";
             MasterImportData();
-            string recordStatus = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).Select(s => s.Status).FirstOrDefault();
+            DM_Master_Import objDMI = new DM_Master_Import();
+            objDMI = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
+            string recordStatus = objDMI.Status;
+            if (recordStatus == "E")
+            {
+                int ValidCount = objBSData_Service.SearchFor(s => true).Where(w => w.DM_Master_Import_Code == DmMasterCode).Count();
 
+                if (ValidCount == 0)
+                {
+                    fileError = "FE";
+                }
+            }
+
+            List<DM_Master_Import> lstDMI = objMasterImport_Service.SearchFor(s => true).Where(w => w.Record_Code == objDMI.Record_Code).ToList();
+
+            int DMICode = lstDMI.OrderByDescending(o => o.Uploaded_Date).Select(s => s.DM_Master_Import_Code).FirstOrDefault();
+
+            if (objDMI.DM_Master_Import_Code == DMICode)
+            {
+                latestFile = "Y";
+            }
+            
             var obj = new
             {
                 RecordStatus = recordStatus,
+                FileError = fileError,
+                LatestFile = latestFile
             };
             return Json(obj);
         }
@@ -1021,8 +1045,8 @@ namespace RightsU_Plus.Controllers
             //Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
             //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
-            Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper().Contains("MAN") && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => (w.Validations.ToUpper().Contains("MAN") || w.Validations.ToUpper().Contains("PO")) && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => (w.Validations.ToUpper().Contains("MAN") || w.Validations.ToUpper().Contains("PO")) && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null)  && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             if (ValidCount > 0)
             {
