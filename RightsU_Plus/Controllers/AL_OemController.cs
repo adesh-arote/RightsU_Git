@@ -36,7 +36,7 @@ namespace RightsU_Plus.Controllers
             {
                 Session["OEMExtended"] = value;
             }
-        }    
+        }
 
         private List<RightsU_Entities.Map_Extended_Columns> lstAddedExtendedColumns
         {
@@ -148,7 +148,7 @@ namespace RightsU_Plus.Controllers
         {
             lstAddedExtendedColumns = null;
             OEMExtended = null;
-  
+
             AL_OEM aL_OEM = new AL_OEM();
             AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
             if (CommandName == "ADD")
@@ -222,17 +222,17 @@ namespace RightsU_Plus.Controllers
             List<Extended_Columns> EditObjList = lstExtendedColumns;
 
             //------To Remove ColumnCode
-            if (lstAddedExtendedColumns.Count > 0 )
+            if (lstAddedExtendedColumns.Count > 0)
             {
-                if(ColumnCode == 0)
+                if (ColumnCode == 0)
                 {
                     lstExtendedColumns = lstExtendedColumns.Where(w => !lstAddedExtendedColumns.Any(a => w.Columns_Code == a.Columns_Code && a.EntityState != State.Deleted)).ToList();
-                }               
-                if(ColumnCode != 0)
+                }
+                if (ColumnCode != 0)
                 {
                     lstExtendedColumns = lstExtendedColumns.Where(w => !lstAddedExtendedColumns.Any(a => w.Columns_Code == a.Columns_Code && a.EntityState != State.Deleted)).ToList();
                     Extended_Columns objM = EditObjList.Where(a => a.Columns_Code == ColumnCode).FirstOrDefault();
-                     lstExtendedColumns.Add(objM);
+                    lstExtendedColumns.Add(objM);
                 }
             }
 
@@ -577,6 +577,8 @@ namespace RightsU_Plus.Controllers
                     Message = "Record updated successfully";
                 objJson.Add("Message", Message);
                 objJson.Add("Error", "");
+                int Count = lstAddedExtendedColumns.Count();
+                objJson.Add("RecordCount", Count);
             }
             else
             {
