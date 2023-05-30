@@ -202,10 +202,10 @@
         else if (VendorClient == "C") {
 
             PrefExclusionCode = $("#PrefExclusion").val();
-            if (PrefExclusionCode == "" || PrefExclusionCode == null) {
-                showAlert("E", "Please select Preference exclusions");
-                returnVal = false;
-            }
+            //if (PrefExclusionCode == "" || PrefExclusionCode == null) {
+            //    showAlert("E", "Please select Preference exclusions");
+            //    returnVal = false;
+            //}
             if (PrefExclusionCode != "" && PrefExclusionCode != null && PrefExclusionCode != undefined) {
                 PrefExclusionCode = PrefExclusionCode.join(',');
                 PrefExclusionValues = $("#PrefExclusion option:selected").map(function () {
