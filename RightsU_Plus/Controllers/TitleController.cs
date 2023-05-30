@@ -1724,11 +1724,18 @@ namespace RightsU_Plus.Controllers
                 }
                 if (hdnControlType == "DDL")
                 {
-                    foreach (string str in arrColumnsValueCode)
+                    if (hdnIsMultipleSelect.Trim().ToUpper() == "N")
                     {
-                        Map_Extended_Columns_Details objMapExtDet = new Map_Extended_Columns_Details();
-                        objMapExtDet.Columns_Value_Code = Convert.ToInt32(str);
-                        objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
+                        objMapExtendedColumns.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                    }
+                    else
+                    {
+                        foreach (string str in arrColumnsValueCode)
+                        {
+                            Map_Extended_Columns_Details objMapExtDet = new Map_Extended_Columns_Details();
+                            objMapExtDet.Columns_Value_Code = Convert.ToInt32(str);
+                            objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
+                        }
                     }
                 }
 
@@ -1912,6 +1919,11 @@ namespace RightsU_Plus.Controllers
                         objMEc.Columns_Code = ColumnCode;
                         if (hdnColumnValueCode.Split(',').Count() <= 0)
                             objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+                        if (hdnControlType == "DDL" && hdnIsMultipleSelect.Trim().ToUpper() == "N")
+                        {
+                            objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                        }
 
 
                         if (objMEc.Map_Extended_Columns_Details.Count > 0)
