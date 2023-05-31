@@ -157,7 +157,6 @@
             div.scrollmenu a:hover {
                 background-color: #777;
             }
-
 </style>
 @{
     int counter = 0;
@@ -190,6 +189,11 @@
                             <th style="width: 10%;">@Model[0].COL15</th>
                             <th style="width: 10%;">@Model[0].COL16</th>
                         }
+                        @if (ViewBag.TabName == "M")
+                        {
+                            <th style="width: 10%;">@Model[0].COL14</th>
+                        }
+
                     </tr>
 
                 }
@@ -271,6 +275,9 @@
                                     <span id="spanEditedStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL13</span>
                                     <input type="hidden" name="name" value="@Model[item + 1].COL13" id="hdnEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
                                     <input type="hidden" name="name" value="@counter" id="hdnCounterEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL14
                                 </td>
                             </tr>
                         }
@@ -355,6 +362,9 @@
                                     <span id="spanEditedStill_@Model[item + 1].AL_Material_Tracking_Code">@Model[item + 1].COL16</span>
                                     <input type="hidden" name="name" value="@Model[item + 1].COL16" id="hdnEditedStill_@Model[item + 1].AL_Material_Tracking_Code" />
                                     <input type="hidden" name="name" value="@counter" id="hdnCounterStill_@Model[item + 1].AL_Material_Tracking_Code" />
+                                </td>
+                                <td>
+                                    @Model[item + 1].COL17
                                 </td>
                             </tr>
                         }
