@@ -37,7 +37,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>11.97208cm</Width>
+                  <Width>12.23349cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -92,9 +92,8 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <Top>0.26141cm</Top>
-            <Left>0.26141cm</Left>
             <Height>0.65292cm</Height>
-            <Width>11.97208cm</Width>
+            <Width>12.23349cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -105,7 +104,7 @@
         <Height>0.46077in</Height>
         <Style>
           <Border>
-            <Style>Solid</Style>
+            <Style>None</Style>
           </Border>
         </Style>
       </Body>

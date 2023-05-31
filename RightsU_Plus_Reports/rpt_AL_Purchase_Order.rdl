@@ -175,16 +175,16 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>4.1727cm</Width>
+                  <Width>4.56973cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.09332cm</Width>
+                  <Width>4.49035cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.06686cm</Width>
+                  <Width>4.46389cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.09332cm</Width>
+                  <Width>4.88723cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -296,7 +296,6 @@
                           </Style>
                         </Image>
                         <ColSpan>2</ColSpan>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell />
@@ -3675,7 +3674,7 @@ Phone: +65 (0) 31632622</Value>
             <DataSetName>DataSet1</DataSetName>
             <Left>0.29104cm</Left>
             <Height>21cm</Height>
-            <Width>16.4262cm</Width>
+            <Width>18.41121cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3762,7 +3761,7 @@ Phone: +65 (0) 31632622</Value>
           </Border>
         </Style>
       </Body>
-      <Width>6.73809in</Width>
+      <Width>7.36309in</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
