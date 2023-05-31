@@ -267,7 +267,7 @@ namespace RightsU_Plus.Controllers
                 if (RecordCount > 0)
                 {
                     lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {
@@ -296,7 +296,7 @@ namespace RightsU_Plus.Controllers
                 if (RecordCount > 0)
                 {
                     lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
-                    DataTable dt = ToDataTable(lst);
+                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {

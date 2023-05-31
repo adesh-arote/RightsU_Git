@@ -308,7 +308,6 @@ namespace RightsU_Plus.Controllers
 
                 OEMExtended.Add(obj);
 
-
                 Map_Extended_Columns objMapExtendedColumns = new Map_Extended_Columns();
                 objMapExtendedColumns.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
                 objMapExtendedColumns.Table_Name = "AL_OEM";
@@ -401,10 +400,7 @@ namespace RightsU_Plus.Controllers
                         var FirstList = objMEc.Map_Extended_Columns_Details.Select(y => y.Columns_Value_Code.ToString()).Distinct().ToList();
                         var SecondList = arrColumnsValueCode.Distinct().ToList();
                         var Diff = FirstList.Except(SecondList);
-
-
-
-
+                        
                         foreach (string str in Diff)
                         {
                             if (str != "" && str != " ")
@@ -509,7 +505,6 @@ namespace RightsU_Plus.Controllers
                     }
                     else
                     {
-
                         //objMEc = lstDataBaseExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.EntityState == State.Added).FirstOrDefault();
                         //if (objMEc == null)
                         //{
@@ -544,7 +539,6 @@ namespace RightsU_Plus.Controllers
                                 }
                             }
                         }
-
                         if (hdnType == "D")
                         {
                             lstAddedExtendedColumns.Remove(objMEc);
@@ -563,7 +557,6 @@ namespace RightsU_Plus.Controllers
                             objMEc.EntityState = State.Modified;
                     }
                 }
-
             }
 
             Dictionary<string, object> objJson = new Dictionary<string, object>();
@@ -577,7 +570,7 @@ namespace RightsU_Plus.Controllers
                     Message = "Record updated successfully";
                 objJson.Add("Message", Message);
                 objJson.Add("Error", "");
-                int Count = lstAddedExtendedColumns.Count();
+                int Count = lstAddedExtendedColumns.Where(w => w.EntityState != State.Deleted).Count();
                 objJson.Add("RecordCount", Count);
             }
             else
@@ -585,9 +578,6 @@ namespace RightsU_Plus.Controllers
                 objJson.Add("Error", Message);
                 objJson.Add("Message", "");
             }
-
-
-
             return Json(objJson);
         }
         #endregion

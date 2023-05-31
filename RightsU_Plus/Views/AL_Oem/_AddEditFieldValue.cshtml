@@ -197,7 +197,7 @@
     }
 
     function ValidateGridRow(Control) {
-
+        debugger;
         if (Control != "imgDelete_") {
             var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
             var values = ddlFieldNameList.split("~");
@@ -597,14 +597,19 @@
             dummyobj = "";
             confirmed = false;
             var id = obj.id;
-            var value = id.substring(id.length - 1);
-            var Control = id.substring(id.length - 1, 0);
-            var test = id.substring(id.length - 2, id.length);
+            //var value = id.substring(id.length - 1);
+            //var Control = id.substring(id.length - 1, 0);
+            //var test = id.substring(id.length - 2, id.length);
+            //var validate = "";
+            //if (!test.indexOf("_") > 0)
+            //    value = id.substring(id.length - 1);
+            //else
+            //    value = test;
+
+            var DataArray = id.split("_");
+            var value = DataArray[1];
+            var Control = DataArray[0] + '_';
             var validate = "";
-            if (!test.indexOf("_") > 0)
-                value = id.substring(id.length - 1);
-            else
-                value = test;
 
             if ($("#hdnRowNum").val() != "") {
                 if ($("#hdnRowNum").val() != value) {
