@@ -1828,7 +1828,7 @@ namespace RightsU_BLL
             return objUSPDAL.USPAL_GetDeliveryTrackingListMovies(client, cycle, aL_Lab_Code, distributor, display);
         }
 
-        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display, string tabName)
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName);

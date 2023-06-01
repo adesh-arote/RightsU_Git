@@ -21,15 +21,27 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstGetDeliveryTrackingListMovies_Result"] = value; }
         }
-        private List<USPAL_GetDeliveryTrackingList_Result> lstGetDeliveryTrackingListMovies_Result_Searched
+
+        private List<USPAL_GetDeliveryTrackingList_Result> lstGetDeliveryTrackingListShows_Result
         {
             get
             {
-                if (Session["lstGetDeliveryTrackingListMovies_Result_Searched"] == null)
-                    Session["lstGetDeliveryTrackingListMovies_Result_Searched"] = new List<USPAL_GetDeliveryTrackingList_Result>();
-                return (List<USPAL_GetDeliveryTrackingList_Result>)Session["lstGetDeliveryTrackingListMovies_Result_Searched"];
+                if (Session["lstGetDeliveryTrackingListShows_Result"] == null)
+                    Session["lstGetDeliveryTrackingListShows_Result"] = new List<USPAL_GetDeliveryTrackingList_Result>();
+                return (List<USPAL_GetDeliveryTrackingList_Result>)Session["lstGetDeliveryTrackingListShows_Result"];
             }
-            set { Session["lstGetDeliveryTrackingListMovies_Result_Searched"] = value; }
+            set { Session["lstGetDeliveryTrackingListShows_Result"] = value; }
+        }
+
+        private List<USPAL_GetDeliveryTrackingList_Result> lstGetDeliveryTrackingList_Result_Searched
+        {
+            get
+            {
+                if (Session["lstGetDeliveryTrackingList_Result_Searched"] == null)
+                    Session["lstGetDeliveryTrackingList_Result_Searched"] = new List<USPAL_GetDeliveryTrackingList_Result>();
+                return (List<USPAL_GetDeliveryTrackingList_Result>)Session["lstGetDeliveryTrackingList_Result_Searched"];
+            }
+            set { Session["lstGetDeliveryTrackingList_Result_Searched"] = value; }
         }
 
         #endregion---------------------------------
@@ -54,21 +66,20 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public JsonResult SearchDeliveryTracking(string TabName = "", int Client = 0, string CycleDate = "", int Lab = 0, int Distributor = 0, string Display = "")
+        public JsonResult SearchDeliveryTracking(string TabName = "", string Client = "", string CycleDate = "", string Lab = "", string Distributor = "", string Display = "")
         {
             int recordcount = 0;
             if (TabName == "M")
             {
-                //lstGetDeliveryTrackingListMovies_Result_Searched = 
-                    GetDeliveryTrackingListMovies_Result(TabName, Client, CycleDate, Lab, Distributor, Display);
+                GetDeliveryTrackingListMovies_Result(TabName, Client, CycleDate, Lab, Distributor, Display);               
 
-                recordcount = lstGetDeliveryTrackingListMovies_Result_Searched.Count -1 ;
+                recordcount = lstGetDeliveryTrackingList_Result_Searched.Count -1 ;
             }
             else if (TabName == "S")
             {
-                GetDeliveryTrackingListShows_Result();
+                GetDeliveryTrackingListShows_Result(TabName, Client, CycleDate, Lab, Distributor, Display);
 
-                recordcount = lstGetDeliveryTrackingListMovies_Result_Searched.Count - 1;
+                recordcount = lstGetDeliveryTrackingList_Result_Searched.Count - 1;
             }
 
             var obj = new
@@ -79,16 +90,16 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListMovies_Result(string TabName, int Client, string CycleDate, int Lab, int Distributor, string Display)
+        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListMovies_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display)
         {
-            lstGetDeliveryTrackingListMovies_Result_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(0, "", 0, 0, "","M").ToList();
+            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListMovies_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList("", "", "", "", "","M").ToList();
             return lstGetDeliveryTrackingListMovies_Result;
         }
 
-        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListShows_Result()
+        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListShows_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display)
         {
-            lstGetDeliveryTrackingListMovies_Result_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(0, "", 0, 0, "", "S").ToList();
-            return lstGetDeliveryTrackingListMovies_Result;
+            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListShows_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList("", "", "", "", "", "S").ToList();
+            return lstGetDeliveryTrackingListShows_Result;
         }
 
         public ActionResult BindMoviesList(int pageNo, int recordPerPage, string sortType, string CommandName, int id)
@@ -102,7 +113,7 @@ namespace RightsU_Plus.Controllers
             //added by sachin shelar
             List<USPAL_GetDeliveryTrackingList_Result> MaterialTrackingList, lst = new List<USPAL_GetDeliveryTrackingList_Result>();
             USPAL_GetDeliveryTrackingList_Result firstItem = new USPAL_GetDeliveryTrackingList_Result();
-            MaterialTrackingList = lstGetDeliveryTrackingListMovies_Result_Searched.ToList();
+            MaterialTrackingList = lstGetDeliveryTrackingList_Result_Searched.ToList();
 
             if (MaterialTrackingList.Count != 0)
             {
@@ -116,7 +127,7 @@ namespace RightsU_Plus.Controllers
                 RecordCount = MaterialTrackingList.Count();               
             }
 
-            //RecordCount = lstGetDeliveryTrackingListMovies_Result_Searched.Count - 1; // commented by sachin shelar
+            //RecordCount = lstGetDeliveryTrackingList_Result_Searched.Count - 1; // commented by sachin shelar
 
             if (RecordCount > 0)
             {
@@ -125,9 +136,9 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "T")
                     lst = MaterialTrackingList.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();  // changed by sachin shelar
                 //if (sortType == "NA")
-                //    lst = lstGetDeliveryTrackingListMovies_Result_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //    lst = lstGetDeliveryTrackingList_Result_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 //if (sortType == "ND")
-                //    lst = lstGetDeliveryTrackingListMovies_Result_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //    lst = lstGetDeliveryTrackingList_Result_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 lst.Insert(0, firstItem); // added by sachin shelar
             }
 
@@ -142,18 +153,18 @@ namespace RightsU_Plus.Controllers
             //ViewBag.AL_Material_Tracking_Code = id;
 
             int RecordCount = 0;
-            RecordCount = lstGetDeliveryTrackingListMovies_Result_Searched.Count - 1;
+            RecordCount = lstGetDeliveryTrackingList_Result_Searched.Count - 1;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstGetDeliveryTrackingListMovies_Result_Searched;//.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstGetDeliveryTrackingList_Result_Searched;//.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 //if (sortType == "NA")
-                //    lst = lstGetDeliveryTrackingListMovies_Result_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //    lst = lstGetDeliveryTrackingList_Result_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 //if (sortType == "ND")
-                //    lst = lstGetDeliveryTrackingListMovies_Result_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                //    lst = lstGetDeliveryTrackingList_Result_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             return PartialView("~/Views/DeliveryTracking/_ShowsList.cshtml", lst);

@@ -5705,23 +5705,23 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
         }
     
-        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display, string tabName)
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName)
         {
-            var clientParameter = client.HasValue ?
+            var clientParameter = client != null ?
                 new ObjectParameter("Client", client) :
-                new ObjectParameter("Client", typeof(int));
+                new ObjectParameter("Client", typeof(string));
     
             var cycleParameter = cycle != null ?
                 new ObjectParameter("Cycle", cycle) :
                 new ObjectParameter("Cycle", typeof(string));
     
-            var aL_Lab_CodeParameter = aL_Lab_Code.HasValue ?
+            var aL_Lab_CodeParameter = aL_Lab_Code != null ?
                 new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
-                new ObjectParameter("AL_Lab_Code", typeof(int));
+                new ObjectParameter("AL_Lab_Code", typeof(string));
     
-            var distributorParameter = distributor.HasValue ?
+            var distributorParameter = distributor != null ?
                 new ObjectParameter("Distributor", distributor) :
-                new ObjectParameter("Distributor", typeof(int));
+                new ObjectParameter("Distributor", typeof(string));
     
             var displayParameter = display != null ?
                 new ObjectParameter("Display", display) :

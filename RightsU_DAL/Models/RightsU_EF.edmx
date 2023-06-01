@@ -15607,10 +15607,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USPAL_GetBookingSheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetDeliveryTrackingList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="Client" Type="int" Mode="In" />
+          <Parameter Name="Client" Type="varchar(max)" Mode="In" />
           <Parameter Name="Cycle" Type="varchar" Mode="In" />
-          <Parameter Name="AL_Lab_Code" Type="int" Mode="In" />
-          <Parameter Name="Distributor" Type="int" Mode="In" />
+          <Parameter Name="AL_Lab_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Distributor" Type="varchar(max)" Mode="In" />
           <Parameter Name="Display" Type="varchar" Mode="In" />
           <Parameter Name="TabName" Type="char" Mode="In" />
         </Function>
@@ -23424,12 +23424,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
           </AssociationSet>
           <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
-          <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+            <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
             <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetLoadsheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetLoadsheetList_Result)" />
           <FunctionImport Name="USPAL_GetBookingsheetDataForLoadsheet1" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingsheetDataForLoadsheet_Result)">
-          <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
+            <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
             <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" />
@@ -23475,10 +23475,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Display" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetDeliveryTrackingList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetDeliveryTrackingList_Result)">
-            <Parameter Name="Client" Mode="In" Type="Int32" />
+            <Parameter Name="Client" Mode="In" Type="String" />
             <Parameter Name="Cycle" Mode="In" Type="String" />
-            <Parameter Name="AL_Lab_Code" Mode="In" Type="Int32" />
-            <Parameter Name="Distributor" Mode="In" Type="Int32" />
+            <Parameter Name="AL_Lab_Code" Mode="In" Type="String" />
+            <Parameter Name="Distributor" Mode="In" Type="String" />
             <Parameter Name="Display" Mode="In" Type="String" />
             <Parameter Name="TabName" Mode="In" Type="String" />
           </FunctionImport>
