@@ -3770,6 +3770,19 @@ namespace RightsU_Plus.Controllers
 
                     if (chkObj == null && config_Code > 1)
                     {
+                        chkObj = obj;
+                        chkObj.Columns_Code = Convert.ToInt32(config_Code);
+                        chkObj.Is_Ref = ExtendedColumns.Is_Ref;
+                        chkObj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
+                        chkObj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                        chkObj.Ref_Table = ExtendedColumns.Ref_Table;
+                        chkObj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
+                        chkObj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
+                        chkObj.Columns_Name = ExtendedColumns.Columns_Name;
+                        chkObj.Row_No = rowNum;
+                        chkObj.Name = hdnExtendedColumnValue;
+                        chkObj.Column_Value = hdnExtendedColumnValue;
+                        gvExtended.Add(chkObj);
                         var ChklstAdd = lstAddedExtendedColumns.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
                         if (ChklstAdd == null)
                         {
@@ -3802,6 +3815,8 @@ namespace RightsU_Plus.Controllers
                         obj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
                         obj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
                         obj.Columns_Name = ExtendedColumns.Columns_Name;
+                        obj.Name = hdnExtendedColumnValue;
+                        obj.Column_Value = hdnExtendedColumnValue;
 
                     }
 
@@ -3978,6 +3993,10 @@ namespace RightsU_Plus.Controllers
                                     }
                                 }
                             }
+                            if (ControlType == "TXT" || ControlType == "INT" || ControlType == "DBL" || ControlType == "DATE" || ControlType == "CHK")
+                            {
+                                objMEc.Column_Value = hdnExtendedColumnValue;
+                            }                                
 
                             if (Operation == "D")
                             {
@@ -4606,6 +4625,7 @@ namespace RightsU_Plus.Controllers
             string isDuplicate = "";
             Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).FirstOrDefault();
             List<Extended_Group_Config> lstExtGrpCfgWithDuplicateVal = new List<Extended_Group_Config>();
+            List<USP_Bind_Extend_Column_Grid_Result> lstOfRecordsToCheckDuplicateFor = new List<USP_Bind_Extend_Column_Grid_Result>();
 
             foreach (Extended_Group_Config objExtGrpCfg in objExtGrp.Extended_Group_Config)
             {
@@ -4614,6 +4634,8 @@ namespace RightsU_Plus.Controllers
                     lstExtGrpCfgWithDuplicateVal.Add(objExtGrpCfg);
                 }
             }
+            //Total fields with duplication validation in a group. Group wise duplication check.
+            int totalFieldsToCheckDuplicate = lstExtGrpCfgWithDuplicateVal.Count();
 
             var Value = "";
             Value_list = Value_list.Substring(0, Value_list.Length - 2);
@@ -4626,13 +4648,13 @@ namespace RightsU_Plus.Controllers
                 int Columns_Code = Convert.ToInt32(vals[1]);
                 Extended_Columns ExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Columns_Code).FirstOrDefault();
                 int checkDuplicateCount = lstExtGrpCfgWithDuplicateVal.Where(w => w.Columns_Code == Columns_Code).Count();
+
                 if (checkDuplicateCount > 0)
                 {
                     if (ExtendedColumns.Control_Type == "DDL")
                     {
                         if (vals[0] != null && vals[0] != "")
                         {
-                            //arrColumnsValueCode = vals[0].Replace('-', ',').Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                             if (ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "Y")
                             {
                                 var MultiSelectColumnsValueCode = vals[0].Replace('-', ',');
@@ -4662,16 +4684,30 @@ namespace RightsU_Plus.Controllers
                     }
                     if (ExtendedColumns.Control_Type == "TXT" || ExtendedColumns.Control_Type == "INT" || ExtendedColumns.Control_Type == "DBL" || ExtendedColumns.Control_Type == "DATE" || ExtendedColumns.Control_Type == "CHK")
                     {
-                        var SingleValueField = vals[0];
-                        int Duplicate = gvExtended.Where(w => w.Name == SingleValueField && w.Row_No != Row_No).Count();
-                        if (Duplicate > 0)
-                        {
-                            isDuplicate = "Y";
-                            return isDuplicate;
-                        }
+                        //var SingleValueField = vals[0];
+                        //int Duplicate = gvExtended.Where(w => w.Name == SingleValueField && w.Row_No != Row_No).Count();
+                        //if (Duplicate > 0)
+                        //{
+                        //    isDuplicate = "Y";
+                        //    return isDuplicate;
+                        //}
+                        USP_Bind_Extend_Column_Grid_Result objToCheckDuplicate = new USP_Bind_Extend_Column_Grid_Result();
+                        objToCheckDuplicate.Column_Value = vals[0];
+                        objToCheckDuplicate.Name = vals[0];
+                        objToCheckDuplicate.Columns_Code = Convert.ToInt32(vals[1]);
+                        lstOfRecordsToCheckDuplicateFor.Add(objToCheckDuplicate);
                     }
                 }
-
+            }
+            //check duplicate for objects added in List with gvExtended
+            var GroupedByRowNum = gvExtended.GroupBy(g => g.Row_No).ToList();
+            foreach (var SingleGroup in GroupedByRowNum)
+            {
+                int IsDuplicateCount = SingleGroup.Where(w => lstOfRecordsToCheckDuplicateFor.Any(a => a.Columns_Code == w.Columns_Code && (a.Column_Value == w.Column_Value || a.Name == w.Name) && w.Row_No != Row_No)).Count();
+                if (IsDuplicateCount >= totalFieldsToCheckDuplicate)
+                {
+                    isDuplicate = "Y";
+                }
             }
 
             return isDuplicate;

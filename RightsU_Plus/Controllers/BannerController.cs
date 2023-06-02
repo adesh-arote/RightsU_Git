@@ -271,27 +271,47 @@ namespace RightsU_Plus.Controllers
 
         public bool CheckIfBannerIsUsed(int? BannerCode)
         {
-            List<Extended_Columns> lstExtColRefBanner = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => (w.Ref_Table != null && w.Ref_Table.ToUpper() == "Banner".ToUpper())).ToList();
-            int UsedCount = 0;
-
-            foreach (Extended_Columns eg in lstExtColRefBanner)
+            try
             {
-                UsedCount = eg.Map_Extended_Columns.Where(w => w.Columns_Value_Code == BannerCode).Count();
-                if (UsedCount > 0)
+                List<Extended_Columns> lstExtColRefBanner = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => (w.Ref_Table != null && w.Ref_Table.ToUpper() == "Banner".ToUpper())).ToList();
+                int UsedCount = 0;
+                if (lstExtColRefBanner != null)
                 {
-                    return false;
+                    foreach (Extended_Columns eg in lstExtColRefBanner)
+                    {
+                        UsedCount = eg.Map_Extended_Columns.Where(w => w.Columns_Value_Code == BannerCode).Count();
+                        if (UsedCount > 0)
+                        {
+                            return false;
+                        }
+                        foreach (Map_Extended_Columns mec in eg.Map_Extended_Columns)
+                        {
+                            UsedCount = mec.Map_Extended_Columns_Details.Where(w => w.Columns_Value_Code == BannerCode).Count();
+                            if (UsedCount > 0)
+                            {
+                                return false;
+                            }
+                        }
+                    }
                 }
-                foreach (Map_Extended_Columns mec in eg.Map_Extended_Columns)
+
+                string StrBannerCode = Convert.ToString(BannerCode);
+                if (StrBannerCode != null)
                 {
-                    UsedCount = mec.Map_Extended_Columns_Details.Where(w => w.Columns_Value_Code == BannerCode).Count();
-                    if (UsedCount > 0)
+                    List<AL_Vendor_Details> lstVendorBanners = new AL_Vendor_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Banner_Codes == StrBannerCode).ToList();
+                    if (lstVendorBanners.Count > 0)
                     {
                         return false;
                     }
                 }
-            }
 
-            return true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                string ExceptionMsg = ex.Message;
+                return false;
+            }
         }
     }
 }
