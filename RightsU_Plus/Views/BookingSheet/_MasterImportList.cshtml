@@ -63,7 +63,7 @@
                     <td style="text-align:center">
                         @Html.DisplayFor(modelItem => item.Uploaded_Date)
                     </td>
-                    <td style="text-align:center">
+                    <td style="text-align:center" class="clsTdStatus_@item.DM_Master_Import_Code@item.Status">
                         @if (item.Status == "P" || item.Status == "N" || item.Status == "I")
                         {
                             <span>In Process</span>
@@ -76,10 +76,7 @@
                         {
                             <span>Error</span>
                         }
-                    </td>
-                    @*<td style="text-align:center">
-                        
-                    </td>*@            
+                    </td>                            
                     <td style="text-align:center" class="deal_action clsTdAction_@item.DM_Master_Import_Code@item.Status clsTdAction1_@item.File_Type@item.Status">
                         @*@if (maxUploadedFileDate == item.Uploaded_Date)*@
                         @if (item.Status == "S" || item.Status == "E")

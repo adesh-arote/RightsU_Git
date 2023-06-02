@@ -334,7 +334,7 @@
                                 $("#imgLoading_" + DmMasterCode).css("display", '');
                                 pendingRecord++;
                             }
-                            else if (result.RecordStatus == "E" || result.RecordStatus == "S") {
+                            else if (result.RecordStatus == "E") {
                                 if (result.LatestFile == "Y") {
                                     if (result.FileError == "FE") {
                                         $("#imgLoading_" + DmMasterCode).css("display", 'none');
@@ -342,6 +342,11 @@
 
                                         var a = '<a title="Error in uploaded file" class="glyphicon glyphicon-exclamation-sign" style="cursor: pointer;"></a>';
                                         $('.' + SiblingClass).append(a);
+
+                                        var status = '<span>Error</span>'
+
+                                        $('.clsTdStatus_' + DmMasterCode + 'P').empty();
+                                        $('.clsTdStatus_' + DmMasterCode + 'P').append(status);
                                     }
                                     else {
                                         $("#imgLoading_" + DmMasterCode).css("display", 'none');
@@ -353,15 +358,38 @@
 
                                         var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href =\'' + URL_ImportSheetView + '?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '\';"></a>';
                                         $('.' + SiblingClass).append(a);
+
+                                        var status = '<span>Error</span>'
+
+                                        $('.clsTdStatus_' + DmMasterCode + 'P').empty();
+                                        $('.clsTdStatus_' + DmMasterCode + 'P').append(status);
                                     }
                                 }
                                 else {
                                     $("#imgLoading_" + DmMasterCode).css("display", 'none');
                                     $('.' + SiblingClass).empty();
                                 }
-                                initializeTooltip();
-                                //SearchOnImportMasterList("");
-                            }                           
+                            }
+                            else if (result.RecordStatus == "S") {
+                                if (result.LatestFile == "Y") {
+                                    $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+
+                                    var a = '<a title="View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="window.location.href =\'' + URL_ImportSheetView + '?DM_Master_Import_Code=' + DmMasterCode + '&amp;fileType=' + FileType + '\';"></a>';
+                                    $('.' + SiblingClass).append(a);
+
+                                    var status = '<span>Success</span>'
+
+                                    $('.clsTdStatus_' + DmMasterCode + 'P').empty();
+                                    $('.clsTdStatus_' + DmMasterCode + 'P').append(status);
+                                }
+                                else {
+                                    $("#imgLoading_" + DmMasterCode).css("display", 'none');
+                                    $('.' + SiblingClass).empty();
+                                }
+                            }
+                            initializeTooltip();
+                            //SearchOnImportMasterList("");
                         },
                         error: function (result) {
                         }
