@@ -347,7 +347,7 @@
                 if (result.Status == "S") {                   
                     showAlert("S", result.Message);
                     ClosePopup();
-                    window.location.href = URL_PurchaseOrderView;
+                    window.location.href = URL_PurchaseOrderView + '?bookingsheetcode=' + BkCode;
 
                     //BindbookingSheetList();
                 }
@@ -374,7 +374,7 @@
             success: function (result) {
                 debugger;
                 if (result == "Redirect") {
-                    window.location.href = URL_PurchaseOrderView;
+                    window.location.href = URL_PurchaseOrderView + '?bookingsheetcode=' + BSCode;
                 }
                 else {
                     $('#popup').modal();

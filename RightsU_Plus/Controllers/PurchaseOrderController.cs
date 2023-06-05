@@ -129,14 +129,20 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------Purchase Order and Purchase Order Details-----------------------------------------------------
 
-        public ActionResult Index()
+        public ActionResult Index(int BookingSheetCode = 0)
         {
-            int BookingSheetCode = 0;
-            if (Session["BookingSheetCode"] != null)
-            {                                            //-----To show success messages
-                BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
-                //Session["BookingSheetCode"] = null;
+            //int BookingSheetCode = 0;
+            if(BookingSheetCode == 0)
+            {
+                Session["BookingSheetCode"] = null;
+                Session["config"] = null;
             }
+
+            //if (Session["BookingSheetCode"] != null)
+            //{                                            //-----To show success messages
+            //    BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
+            //    //Session["BookingSheetCode"] = null;
+            //}
             if(Session["config"] != null)
             {
                 string config = "";
@@ -315,13 +321,13 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
         {
-            int BookingSheetCode = 0;
-            if (Session["BookingSheetCode"] != null)
-            {                                            //-----To show success messages
-                BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
-                //Session["BookingSheetCode"] = null;
-            }
-            POData(BookingSheetCode);
+            //int BookingSheetCode = 0;
+            //if (Session["BookingSheetCode"] != null)
+            //{                                            
+            //    BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
+            //    //Session["BookingSheetCode"] = null;
+            //}
+            //POData(BookingSheetCode);
 
             string recordStatus = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).Select(s => s.Status).FirstOrDefault();
 

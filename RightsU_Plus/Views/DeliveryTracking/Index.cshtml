@@ -149,12 +149,13 @@
 
         var bookinSheetCodes = [];
         $.each($("#tblMoviesList tbody tr"), function (index, value) {
+            debugger;
             index = index + 1;
-
 
             var BookingSheetCode = $('#' + index + '_hdnCnt').val();
             var codes = '';
             if ($('#chk_' + BookingSheetCode).is(':checked') == true) {
+                debugger;
                 var AL_Material_Tracking_Code = $('#hdnPoster_' + index).val();
 
                 //if ($('#chk_Poster' + index).is(':checked')) {
@@ -184,7 +185,6 @@
 
                 })
             }
-
         })
 
         $.ajax({
@@ -198,6 +198,7 @@
                 lst: deliveryTrackingList
             }),
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
 
@@ -441,7 +442,7 @@
                         </div>
                     </div>
                     <div class="tab-content clearfix table-wrapper scale_table_container">
-                        <div class="scale_table_block">
+                        <div class="scale_table_block" style="max-height: 400px; overflow-y: auto;">
                             <input type="hidden" id="hdnAction" value="" />
                             <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
                             <div id="divBindList" class="deal clearfix">

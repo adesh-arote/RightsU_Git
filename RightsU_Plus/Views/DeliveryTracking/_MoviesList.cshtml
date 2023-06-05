@@ -25,68 +25,67 @@
 
                 var id = this.value;
                 //arr.push(id);
-                $('#spanPoster_' + id).remove()
+                $('#spanPoster_' + id).remove()               
 
                 var htmlPoster = "";
                 var counterPoster = $('#hdnCounterPoster_' + id).val();
                 if ($('#hdnPoster_' + id).val() == 'Yes') {
                     $('#hdnPoster_' + id).remove()
-                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" />'
+                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" /> <input type="hidden" name="name" value="' + counterPoster + '" id="hdnCounterPoster_' + id + '" /> <input type="hidden" name="name" value="Yes" id="hdnPosterVal_' + counterPoster + '" />'
                 }
                 else {
-                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" />'
+                    htmlPoster = '<input type="checkbox" id="chk_Poster' + counterPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnPoster_' + counterPoster + '" /> <input type="hidden" name="name" value="' + counterPoster + '" id="hdnCounterPoster_' + id + '" /> <input type="hidden" name="name" value="No" id="hdnPosterVal_' + counterPoster + '" />'
                 }
                 $("#tdPoster_" + id).html(htmlPoster);
-
+            //----------------------------------------------------------------------------------------------------------------
                 $('#spanStill_' + id).remove()
                 var htmlStill = "";
                 var counterStill = $('#hdnCounterStill_' + id).val();
                 if ($('#hdnStill_' + id).val() == 'Yes') {
                     $('#hdnStill_' + id).remove()
-                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" />'
+                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" /> <input type="hidden" name="name" value="' + counterStill + '" id="hdnCounterStill_' + id + '" /> <input type="hidden" name="name" value="Yes" id="hdnStillVal_' + counterStill + '" />'
                 }
                 else {
-                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" />'
+                    htmlStill = '<input type="checkbox" id="chk_Still' + counterStill + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnStill_' + counterStill + '" /> <input type="hidden" name="name" value="' + counterStill + '" id="hdnCounterStill_' + id + '" /> <input type="hidden" name="name" value="No" id="hdnStillVal_' + counterStill + '" />'
                 }
                 $("#tdStill_" + id).html(htmlStill);
-
+            //----------------------------------------------------------------------------------------------------------------
                 $('#spanTrailer_' + id).remove()
                 var htmlTrailer = "";
                 var counterTrailer = $('#hdnCounterTrailer_' + id).val();
                 if ($('#hdnTrailer_' + id).val() == 'Yes') {
                     $('#hdnTrailer_' + id).remove()
-                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" />'
+                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" /> <input type="hidden" name="name" value="' + counterTrailer + '" id="hdnCounterTrailer_' + id + '" /> <input type="hidden" name="name" value="Yes" id="hdnTrailerVal_' + counterTrailer + '" />'
                 }
                 else {
-                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" />'
+                    htmlTrailer = '<input type="checkbox" id="chk_Trailer' + counterTrailer + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnTrailer_' + counterTrailer + '" /> <input type="hidden" name="name" value="' + counterTrailer + '" id="hdnCounterTrailer_' + id + '" /> <input type="hidden" name="name" value="No" id="hdnTrailerVal_' + counterTrailer + '" />'
                 }
                 $("#tdTrailer_" + id).html(htmlTrailer);
-
+            //----------------------------------------------------------------------------------------------------------------
                 $('#spanEditedPoster_' + id).remove()
                 var htmlEditedPoster = "";
                 var counterEditedPoster = $('#hdnCounterEditedPoster_' + id).val();
                 if ($('#hdnEditedPoster_' + id).val() == 'Yes') {
                     $('#hdnEditedPoster_' + id).remove()
-                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" />'
+                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedPoster_' + id + '" /> <input type="hidden" name="name" value="Yes" id="hdnEditedPosterVal_' + counterEditedPoster + '" />'
                 }
                 else {
-                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" />'
+                    htmlEditedPoster = '<input type="checkbox" id="chk_EditedPoster' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedPoster_' + counterEditedPoster + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedPoster_' + id + '" /> <input type="hidden" name="name" value="No" id="hdnEditedPosterVal_' + counterEditedPoster + '" />'
                 }
                 $("#tdEditedPoster_" + id).html(htmlEditedPoster);
-
+            //----------------------------------------------------------------------------------------------------------------
                 $('#spanEditedStill_' + id).remove()
                 var htmlEditedStill = "";
                 var counterEditedStill = $('#hdnCounterEditedStill_' + id).val();
                 if ($('#hdnEditedStill_' + id).val() == 'Yes') {
                     $('#hdnEditedStill_' + id).remove()
-                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedStill + '" />'
+                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline" checked/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedPoster + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedStill_' + id + '" /> <input type="hidden" name="name" value="Yes" id="hdnEditedStillVal_' + counterEditedPoster + '" />'
                 }
                 else {
-                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedStill + '" />'
+                    htmlEditedStill = '<input type="checkbox" id="chk_EditedStill' + counterEditedPoster + '" class="checkbox-inline"/> <input type="hidden" name="name" value="' + id + '" id="hdnEditedStill_' + counterEditedPoster + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedStill_' + id + '" /> <input type="hidden" name="name" value="No" id="hdnEditedStillVal_' + counterEditedPoster + '" />'
                 }
                 $("#tdEditedStill_" + id).html(htmlEditedStill);
-
-
+            //----------------------------------------------------------------------------------------------------------------
                 var DeliveryLastSavedDate = $('#spanDeliveryDate_' + id).text();
                 $('#spanDeliveryDate_' + id).remove()
                 var htmlDeliveryDate = "";
@@ -94,31 +93,123 @@
 
                 //if ($('#hdnDeliveryDate_' + id).val() != '') {
                 //    $('#hdnDeliveryDate_' + id).remove()
-                htmlDeliveryDate = '<input placeholder="DD-MMM-YYYY" type="text" id="txt_DeliveryDate' + counterDeliveryDate + '" value="' + DeliveryLastSavedDate + '" style="width: 100px;"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
+                htmlDeliveryDate = '<input placeholder="DD-MMM-YYYY" type="text" id="txt_DeliveryDate' + counterDeliveryDate + '" value="' + DeliveryLastSavedDate + '" style="width: 100px;"/> <input type="hidden" name="name" value="' + DeliveryLastSavedDate + '" id="hdnDeliveryDate_' + id + '" /> <input type="hidden" name="name" value="' + counterDeliveryDate + '" id="hdnCounterDeliveryDate_' + id + '" />'
                 //}
                 //else {
                 //    htmlDeliveryDate = '<input type="text" id="chk_DeliveryDate' + counterDeliveryDate + '"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
                 //}
                 $("#tdDeliveryDate_" + id).html(htmlDeliveryDate);
-
-
+            //----------------------------------------------------------------------------------------------------------------
                 var LastSavedPOStatus = $('#spanPOStatus_' + id).text();
                 $('#spanPOStatus_' + id).remove()
                 var htmlPOStatus = "";
                 var counterPOStatus = $('#hdnCounterPOStatus_' + id).val();
 
-                //if ($('#hdnDeliveryDate_' + id).val() != '') {
-                //    $('#hdnDeliveryDate_' + id).remove()
-                htmlPOStatus = '<select name="cars" id="ddlPOStatus' + counterPOStatus + '"><option value = "Sent" >Sent</option>' +
-                    '<option value="Not Sent">Not Sent</option>' +
-                    '</select > <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
-                //}
-                //else {
-                //    htmlDeliveryDate = '<input type="text" id="chk_DeliveryDate' + counterDeliveryDate + '"/> <input type="hidden" name="name" value="' + id + '" id="hdnDeliveryDate_' + counterDeliveryDate + '" />'
-                //}
+                if (LastSavedPOStatus == 'Not Sent') {
+                    $('#hdnPOStatus_' + id).remove()
+                    htmlPOStatus = '<select name="cars" id="ddlPOStatus' + counterPOStatus + '"><option value = "Sent" >Sent</option>' +
+                    '<option value="Not Sent" Selected>Not Sent</option>' +
+                    '</select > <input type="hidden" name="name" value="' + LastSavedPOStatus + '" id="hdnPOStatus_' + id + '" /> <input type="hidden" name="name" value="' + counterPOStatus + '" id="hdnCounterPOStatus_' + id + '" />'
+                }
+                else {
+                    htmlPOStatus = '<select name="cars" id="ddlPOStatus' + counterPOStatus + '"><option value = "Sent" Selected>Sent</option>' +
+                        '<option value="Not Sent">Not Sent</option>' +
+                        '</select > <input type="hidden" name="name" value="' + LastSavedPOStatus + '" id="hdnPOStatus_' + id + '" /> <input type="hidden" name="name" value="' + counterPOStatus + '" id="hdnCounterPOStatus_' + id + '" />'
+                }
                 $("#tdPOStatus_" + id).html(htmlPOStatus);
 
                 //BindMoviesList('EDIT', id);
+            }
+            else {
+                var id = this.value;
+
+                $('#spanPoster_' + id).remove();
+               
+                var htmlPoster = "";
+                var counterPoster = $('#hdnCounterPoster_' + id).val();
+                
+                if ($('#hdnPosterVal_' + counterPoster).val() == 'Yes') {
+                    //$('#hdnPoster_' + id).remove()
+                    htmlPoster = '<span id="spanPoster_' + id + '">Yes</span > <input type="hidden" name="name" value="Yes" id="hdnPoster_' + id + '" /> <input type="hidden" name="name" value="' + counterPoster + '" id="hdnCounterPoster_' + id + '" />'
+                }
+                else {
+                    htmlPoster = '<span id="spanPoster_' + id + '">No</span > <input type="hidden" name="name" value="No" id="hdnPoster_' + id + '" /> <input type="hidden" name="name" value="' + counterPoster + '" id="hdnCounterPoster_' + id + '" />'
+                }
+                $("#tdPoster_" + id).html(htmlPoster);
+             //-----------------------------------------------------------
+             
+                $('#spanStill_' + id).remove();
+
+                var htmlStill = "";
+                var counterStill = $('#hdnCounterStill_' + id).val();
+                if ($('#hdnStillVal_' + counterStill).val() == 'Yes') {
+                    $('#hdnStill_' + id).remove()
+                    htmlStill = '<span id="spanStill_' + id + '">Yes</span > <input type="hidden" name="name" value="Yes" id="hdnStill_' + id + '" /> <input type="hidden" name="name" value="' + counterStill + '" id="hdnCounterStill_' + id + '" />'
+                }
+                else {
+                    htmlStill = '<span id="spanStill_' + id + '">No</span > <input type="hidden" name="name" value="No" id="hdnStill_' + id + '" /> <input type="hidden" name="name" value="' + counterStill + '" id="hdnCounterStill_' + id + '" />'
+                }
+                $("#tdStill_" + id).html(htmlStill);
+             //-----------------------------------------------------------
+
+                $('#spanTrailer_' + id).remove()              
+
+                var htmlTrailer = "";
+                var counterTrailer = $('#hdnCounterTrailer_' + id).val();
+                if ($('#hdnTrailerVal_' + counterTrailer).val() == 'Yes') {
+                    $('#hdnTrailer_' + id).remove()
+                    htmlTrailer = '<span id="spanTrailer_' + id + '">Yes</span > <input type="hidden" name="name" value="Yes" id="hdnTrailer_' + id + '" /> <input type="hidden" name="name" value="' + counterTrailer + '" id="hdnCounterTrailer_' + id + '" />'
+                }
+                else {
+                    htmlTrailer = '<span id="spanTrailer_' + id + '">No</span > <input type="hidden" name="name" value="No" id="hdnTrailer_' + id + '" /> <input type="hidden" name="name" value="' + counterTrailer + '" id="hdnCounterTrailer_' + id + '" />'
+                }
+                $("#tdTrailer_" + id).html(htmlTrailer);
+             //-----------------------------------------------------------
+
+                $('#spanEditedPoster_' + id).remove()
+                var htmlEditedPoster = "";
+                var counterEditedPoster = $('#hdnCounterEditedPoster_' + id).val();
+                if ($('#hdnEditedPosterVal_' + counterEditedPoster).val() == 'Yes') {
+                    $('#hdnEditedPoster_' + id).remove()
+                    htmlEditedPoster = '<span id="spanEditedPoster_' + id + '">Yes</span > <input type="hidden" name="name" value="Yes" id="hdnEditedPoster_' + id + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedPoster_' + id + '" />'
+                }
+                else {
+                    htmlEditedPoster = '<span id="spanEditedPoster_' + id + '">No</span > <input type="hidden" name="name" value="No" id="hdnEditedPoster_' + id + '" /> <input type="hidden" name="name" value="' + counterEditedPoster + '" id="hdnCounterEditedPoster_' + id + '" />'
+                }
+                $("#tdEditedPoster_" + id).html(htmlEditedPoster);
+             //-----------------------------------------------------------
+
+                $('#spanEditedStill_' + id).remove()
+                var htmlEditedStill = "";
+                var counterEditedStill = $('#hdnCounterEditedStill_' + id).val();
+                if ($('#hdnEditedStillVal_' + counterEditedStill).val() == 'Yes') {
+                    $('#hdnEditedStill_' + id).remove()
+                    htmlEditedStill = '<span id="spanEditedPoster_' + id + '">Yes</span > <input type="hidden" name="name" value="Yes" id="hdnEditedStill_' + id + '" /> <input type="hidden" name="name" value="' + counterEditedStill + '" id="hdnCounterEditedStill_' + id + '" />'
+                }
+                else {
+                    htmlEditedStill = '<span id="spanEditedPoster_' + id + '">No</span > <input type="hidden" name="name" value="No" id="hdnEditedStill_' + id + '" /> <input type="hidden" name="name" value="' + counterEditedStill + '" id="hdnCounterEditedStill_' + id + '" />'
+                }
+                $("#tdEditedStill_" + id).html(htmlEditedStill);
+             //-----------------------------------------------------------
+
+                var DeliveryLastSavedDate = $('#hdnDeliveryDate_' + id).val();
+                $('#hdnDeliveryDate_' + id).remove()
+                var htmlDeliveryDate = "";
+                var counterDeliveryDate = $('#hdnCounterDeliveryDate_' + id).val();
+               
+                htmlDeliveryDate = '<span id="spanDeliveryDate_' + id + '">' + DeliveryLastSavedDate + '</span > <input type="hidden" name="name" value="' + DeliveryLastSavedDate + '" id="hdnDeliveryDate_' + id + '" /> <input type="hidden" name="name" value="' + counterDeliveryDate + '" id="hdnCounterDeliveryDate_' + id + '" />'
+                
+                $("#tdDeliveryDate_" + id).html(htmlDeliveryDate);
+             //-----------------------------------------------------------
+
+                var LastSavedPOStatus = $('#hdnPOStatus_' + id).val();
+                $('#hdnPOStatus_' + id).remove()
+                var htmlPOStatus = "";
+                var counterPOStatus = $('#hdnCounterPOStatus_' + id).val();
+               
+                htmlPOStatus = '<span id="spanPOStatus_' + id + '">' + LastSavedPOStatus + '</span > <input type="hidden" name="name" value="' + LastSavedPOStatus + '" id="hdnDeliveryDate_' + id + '" /> <input type="hidden" name="name" value="' + counterPOStatus + '" id="hdnCounterPOStatus_' + id + '" />'
+
+                $("#tdPOStatus_" + id).html(htmlPOStatus);
             }
 
             if ($('.checkbox:checked').length == $('.checkbox').length) {
