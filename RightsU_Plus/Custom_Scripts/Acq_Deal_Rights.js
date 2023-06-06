@@ -331,6 +331,7 @@ function CheckGreaterStartDate() {
 
 function CalculateTerm(startDate, endDate) {
     debugger;
+
     var val = CalculateMonthBetweenTwoDate(startDate, endDate);
     var year = val / 12;
     var month = val % 12;
@@ -349,18 +350,48 @@ function CalculateTerm(startDate, endDate) {
         day = 0;
     }
     else {
-        var m = endDate.getMonth(),
-            y = endDate.getFullYear();
-        var FirstDay = new Date(y, m, 1);
-        day = CalculateDaysBetweenTwoDates(FirstDay, endDate);
+        //var m = endDate.getMonth(),
+        //    y = endDate.getFullYear();
+        //var FirstDay = new Date(y, m, 1);
+        //day = CalculateDaysBetweenTwoDates(FirstDay, endDate);
 
-        //startDate.setMonth(startDate.getMonth() + month);
-        //startDate.setYear(startDate.getYear() + year);
+        ////startDate.setMonth(startDate.getMonth() + month);
+        ////startDate.setYear(startDate.getYear() + year);
 
-        m = startDate.getMonth(),
-            y = startDate.getFullYear();
-        var LastDay = new Date(y, m + 1, 0);
-        day = day + CalculateDaysBetweenTwoDates(startDate, LastDay);
+        //m = startDate.getMonth(),
+        //    y = startDate.getFullYear();
+        //var LastDay = new Date(y, m + 1, 0);
+        //day = day + CalculateDaysBetweenTwoDates(startDate, LastDay) + 1;
+
+        //var diff = new Date(
+        //    endDate.getFullYear() - startDate.getFullYear(),
+        //    endDate.getMonth() - startDate.getMonth(),
+        //    endDate.getDate() - startDate.getDate()
+        //);
+
+        //year = diff.getYear();
+        //month = diff.getMonth();
+        //day = diff.getDate();
+
+        var startYear = startDate.getFullYear();
+        var startMonth = startDate.getMonth();
+        var startDay = startDate.getDate();
+
+        var endYear = endDate.getFullYear();
+        var endMonth = endDate.getMonth();
+        var endDay = endDate.getDate();
+
+        // We calculate February based on end year as it might be a leep year which might influence the number of days.
+        var february = (endYear % 4 == 0 && endYear % 100 != 0) || endYear % 400 == 0 ? 29 : 28;
+        var daysOfMonth = [31, february, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        var startDateNotPassedInEndYear = (endMonth < startMonth) || endMonth == startMonth && endDay < startDay;
+        year = endYear - startYear - (startDateNotPassedInEndYear ? 1 : 0);
+
+        month = (12 + endMonth - startMonth - (endDay < startDay ? 1 : 0)) % 12;
+
+        // (12 + ...) % 12 makes sure index is always between 0 and 11
+        day = startDay <= endDay ? endDay - startDay : daysOfMonth[(12 + endMonth - 1) % 12] - startDay + endDay;
     }
     var term = parseInt(year) + '.' + month + "." + day;
     return term;

@@ -1,4 +1,5 @@
-﻿
+﻿SELECT [dbo].[UFN_Calculate_Term]('22-May-2023', '31-May-2023')
+
 CREATE FUNCTION [dbo].[UFN_Calculate_Term]
 (
 	@startDate DATETIME, 
