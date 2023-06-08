@@ -409,7 +409,8 @@ namespace RightsU_Plus.Controllers
         private string GenerateId()
         {
             string demo = "";
-            string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).Select(s => s.Load_Sheet_No).FirstOrDefault();     // get this value from database
+            //string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).FirstOrDefault().Load_Sheet_No;     // get this value from database
+            string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).Select(s => s.Load_Sheet_No).FirstOrDefault();
             if (!string.IsNullOrEmpty(LS_No))
             {
                 int lastAddedId = Convert.ToInt32(LS_No.Split('-')[1]); 
