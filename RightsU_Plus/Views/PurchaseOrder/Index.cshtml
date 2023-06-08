@@ -1,5 +1,4 @@
-﻿
-@using UTOFrameWork.FrameworkClasses
+﻿@using UTOFrameWork.FrameworkClasses
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     MessageKey objMessageKey = new MessageKey();
@@ -16,7 +15,8 @@
 
     string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadReportPath"];
 }
-<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+
 <script>
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", TabName = "MV";
 
@@ -31,7 +31,6 @@
     var URL_GetFileName = '@Url.Action("GetFileName", "PurchaseOrder")';
     var URL_GetPurchaseOrderStatus = '@Url.Action("GetPurchaseOrderStatus", "PurchaseOrder")';
     var URL_RefreshPoList = '@Url.Action("RefreshPoList", "PurchaseOrder")';
-    var URL_GetPurchaseOrderDetailStatus = '@Url.Action("GetPurchaseOrderDetailStatus", "PurchaseOrder")';
 
     $(document).ready(function () {
         debugger;
@@ -52,6 +51,7 @@
 
         addNumeric();
         SearchPOList("");
+
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -134,6 +134,7 @@
     }
 
     function SetPaging() {
+        debugger;
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
         var recordCount = parseInt($('#hdnRecordCount').val());
@@ -229,7 +230,7 @@
                 $('#divBindList').html(result);
 
                 CheckPendingStatus();
-
+                initializeTooltip();
                 addNumeric();
             },
             error: function (result) {
@@ -257,75 +258,8 @@
                 $('#divBindPoDetails').empty();
                 $('#divBindPoDetails').html(result);
                 OpenTab(TabName, POC);
-                CheckPendingStatusForPod();
+                //CheckPendingStatusForPod();
 
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
-    }
-
-    function OpenTab(NewTab,PoCode) {
-        debugger;
-        if (NewTab == "MV") {
-            $("[id*='tab']").removeClass('active');
-            $("#tabMovie").addClass('active');
-            TabName = NewTab;
-        }
-        else if (NewTab == "SH") {
-            $("[id*='tab']").removeClass('active');
-            $("#tabShow").addClass('active');
-            TabName = NewTab;
-        }
-        //BindTabData(TabName , PoCode);
-        if (TabName == "MV") {
-            BindMovieTabData(PoCode)
-        }
-        if (TabName == "SH") {
-            BindShowTabData(PoCode)
-        }
-    }
-
-    function BindMovieTabData(PoCode) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_BindMovieTabData,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Purchase_Order_Code: PoCode
-            }),
-            success: function (result) {
-                debugger;
-                $('#divBindTab').empty();
-                $('#divBindTab').html(result);
-                CheckPendingStatusForPod();
-            },
-            error: function (result) {
-                alert('Error: ' + result.responseText);
-            }
-        });
-    }
-
-    function BindShowTabData(PoCode) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_BindShowTabData,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                Purchase_Order_Code: PoCode
-            }),
-            success: function (result) {
-                debugger;
-                $('#divBindTab').empty();
-                $('#divBindTab').html(result);
-                CheckPendingStatusForPod();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -371,7 +305,7 @@
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
                     var BookingSheetCode = Sibling.slice(13, Sibling.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' ) {
                     $.ajax({
                         type: "POST",
                         url: URL_GetPurchaseOrderStatus,
@@ -390,6 +324,11 @@
                             if (result.RecordStatus == "P" || result.RecordStatus == "I") {
                                 $("#imgLoading_" + PurchaseOrderCode).css("display", '');
                                 pendingRecord++;
+
+                                var status = '<span>In Progress</span>'
+
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoading_" + PurchaseOrderCode).css("display", 'none');
@@ -399,14 +338,19 @@
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
 
-                                initializeTooltip();
-                                SearchPOList("");
+                                var status = '<span>Success</span>'
+
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+
+                                //initializeTooltip();
                             }
                         },
                         error: function (result) {
                         }
                     });
                 }
+                initializeTooltip();
             }
         });
 
@@ -437,59 +381,8 @@
         });
     }
 
-    function CheckPendingStatusForPod() {
-        debugger;
-        var pendingRecord = 0;
-        $(".deal_actionDt").each(function () {
-            debugger;
-
-            var SiblingClass = $(this).attr('class').split(' ')[1];
-            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
-                var PurchaseOrderDetailCode = SiblingClass.slice(14, SiblingClass.length - 1);
-
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'C') {
-                    $.ajax({
-                        type: "POST",
-                        url: URL_GetPurchaseOrderDetailStatus,
-                        traditional: true,
-                        enctype: 'multipart/form-data',
-                        contentType: "application/json; charset=utf-8",
-                        async: false,
-                        data: JSON.stringify({
-                            PurchaseOrderDetailCode: PurchaseOrderDetailCode
-                        }),
-                        success: function (result) {
-                            debugger;
-                            if (result == "true") {
-                                redirectToLogin();
-                            }
-                            if (result.RecordStatus == "P" || result.RecordStatus == "I") {
-                                $("#imgLoading_" + PurchaseOrderDetailCode).css("display", '');
-                                pendingRecord++;
-                            }
-                            else if (result.RecordStatus == "C") {
-                                $("#imgLoading_" + PurchaseOrderDetailCode).css("display", 'none');
-                                $('.' + SiblingClass).empty();
-
-                                var a = '<a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink(' + PurchaseOrderDetailCode +')" download></a>';
-                                $('.' + SiblingClass).append(a);
-
-                                initializeTooltip();
-                            }
-                        },
-                        error: function (result) {
-                        }
-                    });
-                }
-            }
-        });
-        
-        //if (pendingRecord > 0) {
-            setTimeout(CheckPendingStatusForPod, 5000);
-        //}
-    }
-
 </script>
+
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">

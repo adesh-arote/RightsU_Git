@@ -127,7 +127,7 @@ namespace RightsU_Plus.Controllers
 
         #endregion
 
-        //-----------------------------------------------------Purchase Order and Purchase Order Details-----------------------------------------------------
+        //-----------------------------------------------------Purchase Order--------------------------------------------------------------------------------
 
         public ActionResult Index(int BookingSheetCode = 0)
         {
@@ -138,11 +138,11 @@ namespace RightsU_Plus.Controllers
                 Session["config"] = null;
             }
 
-            //if (Session["BookingSheetCode"] != null)
-            //{                                            //-----To show success messages
-            //    BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
-            //    //Session["BookingSheetCode"] = null;
-            //}
+            if (Session["BookingSheetCode"] != null)
+            {                                            //-----To show success messages
+                BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
+                //Session["BookingSheetCode"] = null;
+            }
             if(Session["config"] != null)
             {
                 string config = "";
@@ -228,6 +228,8 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+        //-----------------------------------------------------Purchase Order Details------------------------------------------------------------------------
+
         public ActionResult BindPODetails(int Purchase_Order_Code)
         {
             USPAL_GetPurchaseOrderList_Result objPO = new USPAL_GetPurchaseOrderList_Result();
@@ -259,20 +261,63 @@ namespace RightsU_Plus.Controllers
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
-        public ActionResult BindMovieTabData(int Purchase_Order_Code)
+        public JsonResult SearchPoDetails(string searchText, string TabName, int Purchase_Order_Code)
+        {
+            int recordcount = 0;
+            if (TabName == "MV")
+            {
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    //recordcount = lstMovieDataSearched.Count();
+                }
+                else
+                {
+                    MovieTabData();
+                    lstMovieDataSearched = lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                    recordcount = lstMovieDataSearched.Count();
+                }
+            }
+            else if (TabName == "SH")
+            {
+                if (!string.IsNullOrEmpty(searchText))
+                {
+                    //recordcount = lstShowDataSearched.Count();
+                }
+                else
+                {
+                    ShowTabData();
+                    lstShowDataSearched = lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
+                    recordcount = lstShowDataSearched.Count();
+                }
+            }
+
+            var obj = new
+            {
+                Record_Count = recordcount,
+            };
+            return Json(obj);
+        }
+
+        public ActionResult BindMovieTabData(int Purchase_Order_Code, int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
             List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
 
             try
-            {
-                lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-                RecordCount = lstTabData.Count();
+            {              
+                RecordCount = lstMovieDataSearched.Count;
+                //lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                //RecordCount = lstTabData.Count();
 
                 if (RecordCount > 0)
                 {
-                    lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lstMovieDataSearched.OrderByDescending(o => o.Generated_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                                     
+                    //lst = lstMovieDataSearched.OrderByDescending(o => o.Generated_On).ToList();
                     //DataTable dt = ToDataTable(lst);
                 }
                 else
@@ -288,7 +333,7 @@ namespace RightsU_Plus.Controllers
             return PartialView("_MovieTabDataView", lst);
         }
 
-        public ActionResult BindShowTabData(int Purchase_Order_Code)
+        public ActionResult BindShowTabData(int Purchase_Order_Code, int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
@@ -296,12 +341,18 @@ namespace RightsU_Plus.Controllers
           
             try
             {
-                lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
-                RecordCount = lstTabData.Count();
+                RecordCount = lstShowDataSearched.Count;
+                //lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
+                //RecordCount = lstTabData.Count();
               
                 if (RecordCount > 0)
                 {
-                    lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
+                    int noOfRecordSkip, noOfRecordTake;
+                    pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                    if (sortType == "T")
+                        lst = lstShowDataSearched.OrderByDescending(o => o.Generated_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+
+                    //lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
                     //DataTable dt = ToDataTable(lst);
                 }
                 else

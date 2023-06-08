@@ -34,7 +34,7 @@
                     </td>
                     <td style="display:none">
                     </td>
-                    <td style="text-align:center" class="clsTdStatusdt_@item.AL_Purchase_Order_Details_Code@item.Status">                       
+                    <td style="text-align:center" class="clsTdStatusdtPOD_@item.AL_Purchase_Order_Details_Code@item.Status">                       
                         @if (item.Status == "C")
                         {
                             <span>Success</span>
@@ -55,7 +55,7 @@
                         }
                         else
                         {
-                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                            <img id="imgLoadingPOD_" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>
