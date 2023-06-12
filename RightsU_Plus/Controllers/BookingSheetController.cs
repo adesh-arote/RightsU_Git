@@ -261,7 +261,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objPurchase_Order_Service"] = value; }
         }
-
+       
         #endregion
 
         //--------------------------------------------------BookingSheet and Reccomendation-----------------------------------------------------------------
@@ -703,11 +703,11 @@ namespace RightsU_Plus.Controllers
         {
             string message = "";
             string status = "";
-
+            
             DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
 
             if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
-            {
+            {            
                 var PostedFile = InputFile;
                 string fullPath = Server.MapPath("~") + "\\" + ConfigurationManager.AppSettings["UploadSheetPath"];
                 string ext = System.IO.Path.GetExtension(PostedFile.FileName);
@@ -751,6 +751,8 @@ namespace RightsU_Plus.Controllers
                             obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
 
                             obj_AL_Booking_Sheet.Record_Status = "I";
+                            obj_AL_Booking_Sheet.Last_Action_By = objLoginUser.Users_Code;
+                            obj_AL_Booking_Sheet.Last_Updated_Time = DateTime.Now;
 
                             obj_AL_Booking_Sheet.EntityState = State.Modified;
                             objBooking_Sheet_Service.Save(obj_AL_Booking_Sheet, out resultSet);
