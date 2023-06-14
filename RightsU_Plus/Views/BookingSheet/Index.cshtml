@@ -46,6 +46,7 @@
         if ("@ViewBag.Message" != "") {
            showAlert("S","@ViewBag.Message");
         }
+        addNumeric();
         SearchOnList("", TabName);
 
         $('#searchCommon').keypress(function (e) {
