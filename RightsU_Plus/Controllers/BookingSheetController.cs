@@ -1281,12 +1281,12 @@ namespace RightsU_Plus.Controllers
 
             DataRow row1 = dt1.NewRow();
             row1["DisplayFor"] = 'M';
-            row1["DisplayName"] = "Movie";
+            row1["DisplayName"] = "Movies";
             dt1.Rows.Add(row1);
 
             DataRow row2 = dt1.NewRow();
             row2["DisplayFor"] = 'S';
-            row2["DisplayName"] = "Show";
+            row2["DisplayName"] = "TV Shows";
             dt1.Rows.Add(row2);
 
             for (int m = 0; m <= dt1.Rows.Count - 1; m++)
