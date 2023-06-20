@@ -340,8 +340,14 @@
 
                                 var status = '<span>Success</span>'
 
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                }                               
 
                                 //initializeTooltip();
                             }
