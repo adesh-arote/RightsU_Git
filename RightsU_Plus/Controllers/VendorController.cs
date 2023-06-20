@@ -1502,7 +1502,7 @@ namespace RightsU_Plus.Controllers
 
             List<Extended_Group> lstExtGrp = new List<Extended_Group>();
             Extended_Group_Service objExtGrpService = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
-            lstExtGrp = objExtGrpService.SearchFor(s => true).ToList();
+            lstExtGrp = objExtGrpService.SearchFor(s => true).Where(w => w.Module_Code == GlobalParams.ModuleCodeForBookingSheet).ToList();
             ViewBag.ExtGrpCfg = new SelectList(lstExtGrp, "Extended_Group_Code", "Group_Name");
 
             RightsU_Entities.System_Parameter_New system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Enable_Booking_Sheet_For_Party").FirstOrDefault();

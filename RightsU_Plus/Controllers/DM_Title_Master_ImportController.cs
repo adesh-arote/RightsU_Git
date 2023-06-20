@@ -1591,6 +1591,7 @@ namespace RightsU_Plus.Controllers
                                         obj_DM_Master_Import.Action_On = DateTime.Now;
                                         obj_DM_Master_Import.Status = "N";
                                         obj_DM_Master_Import.File_Type = "T";
+                                        obj_DM_Master_Import.Import_Type = SelectedTitleType;
                                         obj_DM_Master_Import.EntityState = State.Added;
                                         lst_DM_Master_Import.Add(obj_DM_Master_Import);
                                         objDMService.Save(obj_DM_Master_Import, out resultSet);

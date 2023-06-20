@@ -8,7 +8,8 @@
 }
 <script type="text/javascript">
 
-     var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+    var URL_SaveTitle = '@Url.Action("SaveTitle", "Acq_General")';
+    var URL_GetProgramShowListForTitleAdd = '@Url.Action("ProgramShowList", "Title")';
 
     $(document).ready(function () {
         debugger;
@@ -31,6 +32,8 @@
             }
             else
                 $("#liMusicLabel").hide();
+
+            ShowHideSeasonColumn();
         })
         $("#txtDuration").numeric({
             allowMinus: false,
@@ -40,6 +43,40 @@
             maxPreDecimalPlaces: 3
         });
     })
+
+    $("#intExtSeason").numeric({
+        allowMinus: false,
+        allowThouSep: false,
+        allowDecSep: false,
+        max: 999,
+        min: 1
+    });
+
+    function ShowHideSeasonColumn() {
+        debugger;
+        $.ajax({
+            type: "GET",
+            url: URL_GetProgramShowListForTitleAdd,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            success: function (result) {
+                debugger;
+                lstProgramShow = result;
+
+                var DealTypeCode = $('#ddlDealType').val();
+                var DealExistsInArray = jQuery.inArray(DealTypeCode, lstProgramShow);
+                if (DealExistsInArray !== -1) {
+                    $("#ExtendedSeasonColumn").attr("style", "display:block");
+                    ValidateSeason = "Y";
+                }
+                else {
+                    $("#ExtendedSeasonColumn").attr("style", "display:none");
+                    ValidateSeason = "";
+                }
+            }
+        });
+    }
 
     function LanguageOnChange(obj)
     {
@@ -210,6 +247,10 @@
                                 <label>@objMessageKey.MusicLabel</label>
                                 @Html.DropDownList("ddlMusicLabel", (List<SelectListItem>)ViewBag.MusicLabelList,
                                 new { @id = "ddlMusicLabel", @class = "form_input chosen-select" })
+                            </li>
+                            <li id="ExtendedSeasonColumn" style="display:none">
+                                <label>Season</label>
+                                <input type="text" id="intExtSeason" class="form_input" />
                             </li>
                         </ul>
                         <input type="hidden" name="IsTitleDurationMandatory" value="@ViewBag.IsTitleDurationMandatory" id="IsTitleDurationMandatory" />

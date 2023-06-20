@@ -86,7 +86,18 @@
                     {
                         Mapped_Name = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Program_Code == code).Select(s => s.Program_Name).FirstOrDefault();
                     }
-
+                    else if (ViewBag.TabName == "BA")
+                    {
+                        Mapped_Name = new RightsU_BLL.Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Banner_Code == code).Select(s => s.Banner_Name).FirstOrDefault();
+                    }
+                    else if (ViewBag.TabName == "LA")
+                    {
+                        Mapped_Name = new RightsU_BLL.AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Lab_Code == code).Select(s => s.AL_Lab_Name).FirstOrDefault();
+                    }
+                    else if (ViewBag.TabName == "VE")
+                    {
+                        Mapped_Name = new RightsU_BLL.Version_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Version_Code == code).Select(s => s.Version_Name).FirstOrDefault();
+                    }
                     <tr>
                         <td>
                             <label id="lblName_@item.DM_Master_Log_Code">@item.Name</label>

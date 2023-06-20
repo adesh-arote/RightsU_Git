@@ -728,7 +728,7 @@ namespace RightsU_Plus.Controllers
                 objTitle.Title_Image = newTitleImage;
             }
 
-            objTitle.Title_Name = objTitleModel.Title_Name;
+            objTitle.Title_Name = objTitleModel.Title_Name.Trim();
             objTitle.Original_Title = objTitleModel.Original_Title;
             objTitle.Year_Of_Production = objTitleModel.Year_Of_Production;
             if (hdnOriginalTitleCode != null)
@@ -4636,6 +4636,11 @@ namespace RightsU_Plus.Controllers
             }
             //Total fields with duplication validation in a group. Group wise duplication check.
             int totalFieldsToCheckDuplicate = lstExtGrpCfgWithDuplicateVal.Count();
+
+            if (totalFieldsToCheckDuplicate == 0)
+            {
+                return isDuplicate;
+            }
 
             var Value = "";
             Value_list = Value_list.Substring(0, Value_list.Length - 2);
