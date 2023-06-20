@@ -707,7 +707,7 @@ namespace RightsU_Plus.Controllers
 
         //---------------------------------------------------------FileUpload-------------------------------------------------------------------------------
 
-        public ActionResult UploadFiles(HttpPostedFileBase InputFile, int BookingSheetCode)
+        public ActionResult UploadFiles(HttpPostedFileBase InputFile, int BookingSheetCode, string Remark)
         {
             string message = "";
             string status = "";
@@ -750,6 +750,7 @@ namespace RightsU_Plus.Controllers
                             obj_DM_Master_Import.Status = "P";
                             obj_DM_Master_Import.File_Type = "B";
                             obj_DM_Master_Import.Record_Code = BookingSheetCode;
+                            obj_DM_Master_Import.Remarks = Remark;
                             obj_DM_Master_Import.EntityState = State.Added;
 
                             dynamic resultSet;
@@ -847,7 +848,7 @@ namespace RightsU_Plus.Controllers
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
             DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
-            {
+            {                
                 lstBulkImport = lstBSMovieDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
                 if (lstBulkImport.Count != 0)
                 {
@@ -870,10 +871,7 @@ namespace RightsU_Plus.Controllers
                     pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                     if (sortType == "T")
                         lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    if (sortType == "E")
-                        lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    if (sortType == "N")
-                        lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+
                     lst.Insert(0, firstItem);
                     //DataTable dt = ToDataTable(lst);
                 }
@@ -899,7 +897,7 @@ namespace RightsU_Plus.Controllers
             List<DM_Booking_Sheet_Data> lstBulkImport, lst = new List<DM_Booking_Sheet_Data>();
             DM_Booking_Sheet_Data firstItem = new DM_Booking_Sheet_Data();
             try
-            {
+            {      
                 lstBulkImport = lstBSShowDataSearched.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
                 if (lstBulkImport.Count != 0)
                 {
@@ -921,10 +919,7 @@ namespace RightsU_Plus.Controllers
                     pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                     if (sortType == "T")
                         lst = lst = lstBulkImport.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    if (sortType == "E")
-                        lst = lstBulkImport.Where(s => s.Record_Status == "E").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    if (sortType == "N")
-                        lst = lstBulkImport.Where(s => s.Record_Status == "C").Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+
                     lst.Insert(0, firstItem);
                     //DataTable dt = ToDataTable(lst);
                 }
@@ -942,39 +937,47 @@ namespace RightsU_Plus.Controllers
             return PartialView("_ShowSheetData", lst);
         }
 
-        public JsonResult SearchOnSheet(string searchText, string TabName, int DM_Master_Import_Code)
+        public JsonResult SearchOnSheet(string searchText = "", string TabName = "", int DM_Master_Import_Code = 0, string searchStatus = "")
         {
             int recordcount = 0;
             if (TabName == "MV")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                if (!string.IsNullOrEmpty(searchText) && searchStatus == "")
                 {
                     lstBSMovieDataSearched = lstBSMovieData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
-                    //lstBSMovieDataSearched = lstBSMovieData.Where(x => ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code)) || ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Record_Status != null && x.Record_Status.ToString().Contains(searchText.ToString().ToUpper())) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
-                    ViewBag.RecordCount = lstBSMovieDataSearched.Count();
-
+                    recordcount = lstBSMovieDataSearched.Count() - 1;
+                }
+                else if (!string.IsNullOrEmpty(searchStatus) && searchText == "")
+                {
+                    lstBSMovieDataSearched = lstBSMovieData.Where(x => ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Record_Status != null && x.Record_Status.ToString().Contains(searchStatus.ToString().ToUpper()))) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code)).ToList();
+                    recordcount = lstBSMovieDataSearched.Count() - 1;
                 }
                 else
                 {
-                    MovieTabData();
-                    ViewBag.RecordCount = lstBSMovieData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D")).ToList().Count();
-                }
-                recordcount = ViewBag.RecordCount;
+                    //MovieTabData();
+                    lstBSMovieDataSearched = lstBSMovieData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                    recordcount = lstBSMovieDataSearched.Count() - 1;
+                }                 
+                
             }
             else if (TabName == "SH")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                if (!string.IsNullOrEmpty(searchText) && searchStatus == "")
                 {
                     lstBSShowDataSearched = lstBSShowData.Where(m => (MyContains(m, searchText.ToUpper()) && (m.DM_Master_Import_Code == DM_Master_Import_Code) || (m.Data_Type == "H" && m.DM_Master_Import_Code == DM_Master_Import_Code))).ToList();
-                    //lstBSShowDataSearched = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Col1 != null && x.Col1.ToString().Contains(searchText.ToString()))).ToList();
-                    ViewBag.RecordCount = lstBSShowDataSearched.Count();
+                    recordcount = lstBSShowDataSearched.Count() - 1;
+                }
+                else if (!string.IsNullOrEmpty(searchStatus) && searchText == "")
+                {                
+                    lstBSShowDataSearched = lstBSShowData.Where(x => ((x.DM_Master_Import_Code == DM_Master_Import_Code) && (x.Record_Status != null && x.Record_Status.ToString().Contains(searchStatus.ToString().ToUpper()))) || (x.Data_Type == "H" && x.DM_Master_Import_Code == DM_Master_Import_Code)).ToList();
+                    recordcount = lstBSShowDataSearched.Count() - 1;                  
                 }
                 else
                 {
-                    ShowTabData();
-                    ViewBag.RecordCount = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D")).ToList().Count();
-                }
-                recordcount = ViewBag.RecordCount;
+                    //ShowTabData();
+                    lstBSShowDataSearched = lstBSShowData.Where(x => x.DM_Master_Import_Code == DM_Master_Import_Code && (x.Data_Type == "D" || x.Data_Type == "H")).ToList();
+                    recordcount = lstBSShowDataSearched.Count() - 1;
+                }             
             }
             var obj = new
             {
@@ -1062,13 +1065,13 @@ namespace RightsU_Plus.Controllers
             int TotalCount = 0;
             string ValidationFlag = "";
             int ValidCount = 0;
-
+            
             AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
 
             ValidCount = objPurchase_Order_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
             //Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
-            //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
+            //TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => w.Validations.ToUpper() == "MAN" && w.Cell_Status == "C" &&w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();         
 
             Count = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => (w.Validations.ToUpper().Contains("MAN") || w.Validations.ToUpper().Contains("PO")) && (w.Allow_Import == "I" || w.Allow_Import == "B") && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
             TotalCount = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => (w.Validations.ToUpper().Contains("MAN") || w.Validations.ToUpper().Contains("PO")) && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value != "" && w.Columns_Value != null) && w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();

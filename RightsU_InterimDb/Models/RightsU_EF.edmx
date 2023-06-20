@@ -2828,6 +2828,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Booking_Sheet_Data' does no
           <Property Name="Mapped_By" Type="char" MaxLength="1" />
           <Property Name="Import_Type" Type="char" MaxLength="1" />
           <Property Name="Record_Code" Type="int" />
+          <Property Name="Remarks" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="DM_Master_Log">
           <Key>
@@ -34184,6 +34185,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Import_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Record_Code" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="DM_Music_Title">
           <Key>
@@ -46581,6 +46583,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Master_Import">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Master_Import">
               <MappingFragment StoreEntitySet="DM_Master_Import">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
                 <ScalarProperty Name="Import_Type" ColumnName="Import_Type" />
                 <ScalarProperty Name="Mapped_By" ColumnName="Mapped_By" />

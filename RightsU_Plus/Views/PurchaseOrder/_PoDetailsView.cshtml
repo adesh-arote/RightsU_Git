@@ -22,6 +22,21 @@
     var URL_BindShowTabData = '@Url.Action("BindShowTabData", "PurchaseOrder")';
     var URL_GetPurchaseOrderDetailStatus = '@Url.Action("GetPurchaseOrderDetailStatus", "PurchaseOrder")';
 
+    $(document).ready(function () {
+        addNumeric();
+    });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
     function OpenTab(NewTab, PoCode) {
         debugger;
         if (NewTab == "MV") {
@@ -41,7 +56,7 @@
         //if (TabName == "SH") {
         //    BindShowTabData(PoCode)
         //}
-
+        $('#txtPageSize_POD').val(10)
         SearchPoDetails("", TabName, PoCode);
     }
 
@@ -355,10 +370,10 @@
                         <input type="hidden" id="hdnTabName" value="TA" />
                         <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
                             <li class="active" id="tabMovie">
-                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">Movie</a>
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">@objMessageKey.Movies</a>
                             </li>
                             <li id="tabShow">
-                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">Show</a>
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">@objMessageKey.TVShows</a>
                             </li>
                         </ul>
                     </div>

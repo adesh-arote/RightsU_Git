@@ -26,5 +26,6 @@ namespace RightsU_InterimDb.Models
     	    public string Mapped_By { get; set; }
     	    public string Import_Type { get; set; }
     	    public Nullable<int> Record_Code { get; set; }
+    	    public string Remarks { get; set; }
     }
 }

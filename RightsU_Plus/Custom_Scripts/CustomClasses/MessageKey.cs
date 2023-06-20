@@ -1665,6 +1665,11 @@ public class MessageKey
     #endregion
     #endregion
 
+    #region AL_Modules
+    public string Movies { get; set; }
+    public string TVShows { get; set; }
+    #endregion
+
     public string FPLinkExpire { get; set; }
     public string FPAlUpdatePassword { get; set; }
     public string FPSamePassword { get; set; }

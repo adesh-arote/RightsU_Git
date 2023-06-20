@@ -33,5 +33,6 @@ namespace RightsU_Entities
         public string Import_Type { get; set; }
         public virtual ICollection<DM_Master_Log> DM_Master_Log { get; set; }
         public Nullable<int> Record_Code { get; set; }
+        public string Remarks { get; set; }
     }
 }

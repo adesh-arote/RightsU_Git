@@ -234,16 +234,26 @@
 
     function Uploadfile() {
         debugger;
+        
+        var Remark = $('#remark').val();
+        if (Remark == '' || Remark == undefined) {
+            $('#remark').val('');
+            $('#remark').attr('required', true);
+            showAlert("E", "Remarks are Mandatory.");
+            return false;
+        }
         showLoading();
         var BookingSheetCode = $('#hiddenBksCode').val();
+        
         var files = $("#fileUpload").get(0).files;
         var formdata = new FormData();
         if (files.length > 0) {
             formdata.append("InputFile", files[0]);
             formdata.append("BookingSheetCode", BookingSheetCode);
+            formdata.append("Remark", Remark);
         }
         else {
-            showAlert("a", "Please select File");
+            showAlert("E", "Please choose file.");
             hideLoading();
             return false;
         }
@@ -265,11 +275,14 @@
                     showAlert("S", result.Message);
                     hideLoading();
                     $("#fileUpload").val('');
+                    $('#remark').val('');
+                    $('#remark').removeAttr('required');
                 }
                 else {
                     showAlert("E", result.Message);
                     hideLoading();
                     $("#fileUpload").val('');
+                    //$('#remark').val('');
                 }
             },
             error: function (result) {
@@ -437,10 +450,17 @@
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            <td>
+                            <td style="vertical-align: middle;">
                                 <span style="margin-top: 20px;"><b>Client :- </b>@objBKDetails.Client_Name</span>&nbsp;&nbsp;&nbsp;
                                 <span style="margin-top: 20px;"><b>Proposal :- </b>@objBKDetails.Proposal_CY</span>&nbsp;&nbsp;&nbsp;
                                 <span style="margin-top: 20px; text-align:center;"><b>Cycle :- </b> @objBKDetails.Cycle</span>
+                            </td>
+                            <td style="width: 25%;vertical-align: middle;text-align: right;">
+                                <b>Filter By Status :</b>
+                            </td>
+                            <td style="width: 25%;">
+                                @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
                             </td>
                         </tr>
                     </table>
@@ -462,19 +482,25 @@
                             <td style="width: 15%; vertical-align: middle;">
                                 <b>Import Booking Sheet:</b>
                             </td>
-                            <td style="width: 25%;">
+                            <td style="width: 25%;vertical-align: middle;">
                                 <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
                             </td>
-                            <td style="width: 15%;">
+                            <td style="width: 15%;vertical-align: middle;">
                                 <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
                                 <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
                             </td>
-                            <td style="width: 25%;vertical-align: middle;text-align: right;">
-                                <b>Filter By Status :</b>
+                            @*<td style="width: 25%;vertical-align: middle;text-align: right;">
+                            <b>Filter By Status :</b>
                             </td>
                             <td>
                                 @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
                                 <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
+                            </td>*@
+                            <td style="width: 10%; vertical-align: middle;">
+                                <b>Remarks:</b>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <textarea style="min-height:45px;" id="remark" class="textarea" cols="20"></textarea>
                             </td>
                         </tr>
                     </table>
