@@ -456,6 +456,8 @@ namespace RightsU_DAL
         public DbSet<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
         public DbSet<AL_Material_Tracking> AL_Material_Tracking { get; set; }
         public DbSet<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
+        public DbSet<AL_Purchase_Order_Rel> AL_Purchase_Order_Rel { get; set; }
+
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {
             var platformCodesParameter = platformCodes != null ?

@@ -59,8 +59,8 @@ namespace RightsU_InterimDb.Models
             this.Title_Episode_Details = new HashSet<Title_Episode_Details>();
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
             this.AL_Recommendation_Content = new HashSet<AL_Recommendation_Content>();
-            this.AL_Purchase_Order_Details = new HashSet<AL_Purchase_Order_Details>();
             this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
+            this.AL_Purchase_Order_Details = new HashSet<AL_Purchase_Order_Details>();
         }
     
     	public State EntityState { get; set; }    public int Title_Code { get; set; }
@@ -135,7 +135,7 @@ namespace RightsU_InterimDb.Models
         public virtual ICollection<Title_Episode_Details> Title_Episode_Details { get; set; }
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
-        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
         public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     }
 }

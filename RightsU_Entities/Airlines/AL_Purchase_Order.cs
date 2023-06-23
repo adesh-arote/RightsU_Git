@@ -13,7 +13,7 @@ namespace RightsU_Entities
     {
         public AL_Purchase_Order()
         {
-            this.AL_Purchase_Order_Details = new HashSet<AL_Purchase_Order_Details>();
+            this.AL_Purchase_Order_Rel = new HashSet<AL_Purchase_Order_Rel>();
         }
 
         public State EntityState { get; set; }
@@ -30,5 +30,6 @@ namespace RightsU_Entities
 
         public virtual AL_Booking_Sheet AL_Booking_Sheet { get; set; }
         public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Rel> AL_Purchase_Order_Rel { get; set; }
     }
 }

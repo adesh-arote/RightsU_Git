@@ -11,9 +11,13 @@ namespace RightsU_Entities
 
     public partial class AL_Purchase_Order_Details
     {
+        public AL_Purchase_Order_Details()
+        {
+            this.AL_Purchase_Order_Rel = new HashSet<AL_Purchase_Order_Rel>();
+        }
         public State EntityState { get; set; }
         public int AL_Purchase_Order_Details_Code { get; set; }
-        public Nullable<int> AL_Purchase_Order_Code { get; set; }
+        public Nullable<int> AL_Proposal_Code { get; set; }
         public string PO_Number { get; set; }
         public Nullable<System.DateTime> LP_Start { get; set; }
         public Nullable<System.DateTime> LP_End { get; set; }
@@ -25,9 +29,9 @@ namespace RightsU_Entities
         public string PDF_File_Name { get; set; }
         public Nullable<System.DateTime> Generated_On { get; set; }
 
-        public virtual AL_Purchase_Order AL_Purchase_Order { get; set; }
         public virtual Title Title { get; set; }
         public virtual Title_Content Title_Content { get; set; }
         public virtual Vendor Vendor { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Rel> AL_Purchase_Order_Rel { get; set; }
     }
 }

@@ -158,6 +158,7 @@
     <Compile Include="Airlines\AL_Material_Tracking_OEM.cs" />
     <Compile Include="Airlines\AL_Purchase_Order.cs" />
     <Compile Include="Airlines\AL_Purchase_Order_Details.cs" />
+    <Compile Include="Airlines\AL_Purchase_Order_Rel.cs" />
     <Compile Include="Airlines\AL_Recommendation.cs" />
     <Compile Include="Airlines\AL_Recommendation_Content.cs" />
     <Compile Include="Assign_Music_List.cs" />

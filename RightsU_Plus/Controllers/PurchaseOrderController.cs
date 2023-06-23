@@ -273,7 +273,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     MovieTabData();
-                    lstMovieDataSearched = lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                    lstMovieDataSearched = null;// to be changed by Sandip//lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
                     recordcount = lstMovieDataSearched.Count();
                 }
             }
@@ -286,7 +286,7 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     ShowTabData();
-                    lstShowDataSearched = lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
+                    lstShowDataSearched = null;// to be changed by Sandip //lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
                     recordcount = lstShowDataSearched.Count();
                 }
             }
@@ -440,9 +440,9 @@ namespace RightsU_Plus.Controllers
         public void RefreshPOD(int PurchaseOrderCode, int BookingSheetCode)
         {           
             List<AL_Purchase_Order_Details>  lst_AL_Purchase_Order_Details = new List<AL_Purchase_Order_Details>();
-            lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
+            lst_AL_Purchase_Order_Details = null; //to be changed by Sandip //objPoDetailsData_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
 
-            foreach(AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
+            foreach (AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
             {
                 obj_AL_Purchase_Order_Details.Status = "P";
                 obj_AL_Purchase_Order_Details.EntityState = State.Modified;

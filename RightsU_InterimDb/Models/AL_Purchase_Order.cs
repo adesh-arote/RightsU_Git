@@ -16,7 +16,7 @@ namespace RightsU_InterimDb.Models
     {
         public AL_Purchase_Order()
         {
-            this.AL_Purchase_Order_Details = new HashSet<AL_Purchase_Order_Details>();
+            this.AL_Purchase_Order_Rel = new HashSet<AL_Purchase_Order_Rel>();
         }
     
     	public State EntityState { get; set; }    public int AL_Purchase_Order_Code { get; set; }
@@ -31,6 +31,6 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
     
         public virtual AL_Booking_Sheet AL_Booking_Sheet { get; set; }
-        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Rel> AL_Purchase_Order_Rel { get; set; }
     }
 }

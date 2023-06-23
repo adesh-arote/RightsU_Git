@@ -346,6 +346,9 @@
     <Compile Include="Models\AL_Purchase_Order_Details.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AL_Purchase_Order_Rel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AL_Recommendation.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
