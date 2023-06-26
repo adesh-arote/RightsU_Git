@@ -61,7 +61,7 @@
                             <span>In Progress</span>
                         }
                     </td>
-                    <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status">
+                    <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status clsTdAction2_@item.AL_Proposal_Code@item.Status">
                         @if (item.Status == "C")
                         {
                             <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', @item.AL_Proposal_Code)"></a>
@@ -69,7 +69,7 @@
                         }
                         else
                         {
-                            <img id="imgLoading" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                            <img id="imgLoading_@item.AL_Purchase_Order_Code@item.Status" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                         }
                     </td>
                 </tr>

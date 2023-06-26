@@ -230,7 +230,7 @@
                 $('#divBindList').html(result);
 
                 CheckPendingStatus();
-                initializeTooltip();
+                //initializeTooltip();
                 addNumeric();
             },
             error: function (result) {
@@ -296,9 +296,8 @@
         debugger;
         var pendingRecord = 0;
         $(".deal_action").each(function () {
-            debugger;
-
             var Sibling = $(this).attr('class').split(' ')[2];
+            var Sibling1 = $(this).attr('class').split(' ')[3];
 
             var SiblingClass = $(this).attr('class').split(' ')[1];
             if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
@@ -307,7 +306,10 @@
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
                     var BookingSheetCode = Sibling.slice(13, Sibling.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'C' ) {
+                if (isNaN(Sibling1.substr(Sibling1.length - 1)))
+                    var ProposalCode = Sibling1.slice(13, Sibling1.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' ) {
                     $.ajax({
                         type: "POST",
                         url: URL_GetPurchaseOrderStatus,
@@ -328,15 +330,20 @@
                                 pendingRecord++;
 
                                 var status = '<span>In Progress</span>'
-
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                }                             
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoading_" + PurchaseOrderCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
 
-                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ');"</a>' +
+                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ');"</a>' +
                                     '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
                                 $('.' + SiblingClass).append(a);
 
