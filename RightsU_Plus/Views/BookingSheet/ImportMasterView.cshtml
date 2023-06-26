@@ -19,7 +19,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, Filter_By = "A";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, Filter_By = "A", sort_Type = "T", TabName = "DWN";;
 
     var DownloadPath = '@DownloadPath';
     var BksCode = '@objBKDetails.BookingSheetCode';
@@ -46,17 +46,24 @@
 
         addNumeric();
         SearchOnImportMasterList("");
+        initializeTooltip();
 
-        $('#searchCommon').keypress(function (e) {
-            if (e.keyCode == 13) {
-                btnSearch_OnClick()
-                return false;
-            }
-        });
+        //$('#searchCommon').keypress(function (e) {
+        //    if (e.keyCode == 13) {
+        //        btnSearch_OnClick()
+        //        return false;
+        //    }
+        //});
+        //$("#ddlFilterBy").change(function () {
+        //    Filter_By = $('#ddlFilterBy').val();
+        //    $('#hdnPageNo').val(1);
+        //    var searchtext = $("#searchCommon").val();
+        //    SearchOnImportMasterList(searchtext);
+        //});
         $("#ddlFilterBy").change(function () {
-            Filter_By = $('#ddlFilterBy').val();
+            var searchtext = $("#ddlFilterBy").val();
+            //Filter_By = $('#ddlFilterBy').val();
             $('#hdnPageNo').val(1);
-            var searchtext = $("#searchCommon").val();
             SearchOnImportMasterList(searchtext);
         });
     });
@@ -105,7 +112,7 @@
 
     function SearchOnImportMasterList(searchText) {
         debugger;
-        $('#searchCommon').val(searchText);
+        $('#ddlFilterBy').val(searchText);
 
         $.ajax({
             type: "POST",
@@ -217,7 +224,7 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                FilterBy: Filter_By,
+                SortType: sort_Type,
                 BookingSheetCode: BksCode
             }),
             success: function (result) {
@@ -234,28 +241,36 @@
 
     function Uploadfile() {
         debugger;
-        
+        showLoading();
+
         var Remark = $('#remark').val();
-        if (Remark == '' || Remark == undefined) {
+        var BookingSheetCode = $('#hiddenBksCode').val();
+        var files = $("#fileUpload").get(0).files;
+
+        if ((Remark == '' || Remark == undefined) && (files.length <= 0)) {
             $('#remark').val('');
+            hideLoading();
+            $('#fileUpload').attr('required', true);
             $('#remark').attr('required', true);
-            showAlert("E", "Remarks are Mandatory.");
+            showAlert("E", "Please choose file and fill remark.");
             return false;
         }
-        showLoading();
-        var BookingSheetCode = $('#hiddenBksCode').val();
-        
-        var files = $("#fileUpload").get(0).files;
-        var formdata = new FormData();
-        if (files.length > 0) {
+        else if ((Remark == '' || Remark == undefined) && (files.length > 0)) {
+            hideLoading();
+            $('#fileUpload').val('');
+            showAlert("E", "Please fill remark.");
+            return false;
+        }
+        else if ((Remark != '' || Remark != undefined) && (files.length <= 0)) {
+            hideLoading();
+            showAlert("E", "Please choose file.");
+            return false;
+        }
+        else {
+            var formdata = new FormData();
             formdata.append("InputFile", files[0]);
             formdata.append("BookingSheetCode", BookingSheetCode);
             formdata.append("Remark", Remark);
-        }
-        else {
-            showAlert("E", "Please choose file.");
-            hideLoading();
-            return false;
         }
 
         $.ajax({
@@ -272,8 +287,9 @@
                 debugger;
                 if (result.Status == "S") {
                     SearchOnImportMasterList("");
-                    showAlert("S", result.Message);
                     hideLoading();
+                    showAlert("S", result.Message);
+
                     $("#fileUpload").val('');
                     $('#remark').val('');
                     $('#remark').removeAttr('required');
@@ -437,6 +453,29 @@
         });
     }
 
+    function ChangeTab(NewTab) {
+        debugger;
+        if (NewTab == "DWN") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabDownload").addClass('active');
+            TabName = NewTab;
+        }
+        if (NewTab == "IMP") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabImport").addClass('active');
+            TabName = NewTab;
+        }
+
+        if (TabName == "DWN") {
+            $("#ImportTable").hide();
+            $("#DownloadTable").show();
+        }
+        if (TabName == "IMP") {
+            $("#DownloadTable").hide();
+            $("#ImportTable").show();
+        }
+    }
+
 </script>
 
 <div class="main_section">
@@ -455,58 +494,74 @@
                                 <span style="margin-top: 20px;"><b>Proposal :- </b>@objBKDetails.Proposal_CY</span>&nbsp;&nbsp;&nbsp;
                                 <span style="margin-top: 20px; text-align:center;"><b>Cycle :- </b> @objBKDetails.Cycle</span>
                             </td>
-                            <td style="width: 25%;vertical-align: middle;text-align: right;">
-                                <b>Filter By Status :</b>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="navigation_tabs">
+                    <div class="tabbable" id="divAlternateConfig">
+                        <input type="hidden" id="hdnTabName" value="TA" />
+                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                            <li class="active" id="tabDownload">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="ChangeTab('DWN')">DownLoad Sheet</a>
+                            </li>
+                            <li id="tabImport">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="ChangeTab('IMP')">Upload Sheet</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area">
+                    <table class="table" style="background-color: #eee; height:70px" id="DownloadTable">
+                        <tr>
+                            <td style="width: 10%; vertical-align: middle;">
+                                <b>Download Booking Sheet:</b>
                             </td>
-                            <td style="width: 25%;">
-                                @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
-                                <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
+                            <td style="width:50%; vertical-align: middle;" colspan="5">
+                                <input type="button" id="btnSheetDownload" value="Download" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
+                                <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <table class="table" id="ImportTable" style="background-color: #eee; height:70px; display:none;">
+                        <tr>
+                            <td style="width: 10%; vertical-align: middle;">
+                                <b>Import Booking Sheet:</b>
+                            </td>
+                            <td style="width: 20%;vertical-align: middle;">
+                                <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                            </td>
+                            <td style="width: 10%; vertical-align: middle; text-align:center;">
+                                <b>Remarks:</b>
+                            </td>
+                            <td style="width: 25%; vertical-align: middle;">
+                                <textarea style="min-height:45px;max-height:100px;" id="remark" class="textarea" cols="20"></textarea>
+                            </td>
+                            <td style="width: 10%;vertical-align: middle; text-align:center">
+                                <input type="button" style="width: 50%; cursor:pointer" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
+                                <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
                             </td>
                         </tr>
                     </table>
                 </div>
 
+                <div style="border-bottom: 1px dotted #777;"></div>
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            <td style="width:50%;" colspan="5">
-                                <input type="button" id="btnSheetDownload" value="Download Sheet" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
-                                <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
+                            <td style="width: 30%;vertical-align: middle;text-align: right;">
+                                <b>Filter By Status :</b>
                             </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="search_area" style="background-color: #eee; padding:5px;">
-                    <table class="table">
-                        <tr>
-                            <td style="width: 15%; vertical-align: middle;">
-                                <b>Import Booking Sheet:</b>
-                            </td>
-                            <td style="width: 25%;vertical-align: middle;">
-                                <input id="fileUpload" type="file" style="width:100%; background-color: white" name="" runat="server" accept=".xls,.xlsx" />
-                            </td>
-                            <td style="width: 15%;vertical-align: middle;">
-                                <input type="button" onclick="return Uploadfile();" class="btn btn-primary" value="Upload" />
-                                <input type="hidden" id="hiddenBksCode" value="@objBKDetails.BookingSheetCode" />
-                            </td>
-                            @*<td style="width: 25%;vertical-align: middle;text-align: right;">
-                            <b>Filter By Status :</b>
-                            </td>
-                            <td>
+                            <td style="width: 10%;">
                                 @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
                                 <input type="hidden" name="srchCommon" id="searchCommon" class="search" />
-                            </td>*@
-                            <td style="width: 10%; vertical-align: middle;">
-                                <b>Remarks:</b>
-                            </td>
-                            <td style="vertical-align: middle;">
-                                <textarea style="min-height:45px;" id="remark" class="textarea" cols="20"></textarea>
                             </td>
                         </tr>
                     </table>
                 </div>
                 <div class="grid_area">
-                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    @*<div style="border-bottom: 1px dotted #777; display:none;"></div>*@
                     <div class="paging_area clearfix">
                         <span class="pull-left">Total Records: </span>
                         <span class="pull-left" id="lblRecordCount"></span>

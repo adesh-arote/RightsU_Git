@@ -1304,6 +1304,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="AL_Purchase_Order_Rel_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="AL_Purchase_Order_Code" Type="int" />
           <Property Name="AL_Purchase_Order_Details_Code" Type="int" />
+          <Property Name="Status" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="AL_Recommendation">
           <Key>
@@ -40224,6 +40225,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="AL_Purchase_Order_Details_Code" Type="Int32" />
           <NavigationProperty Name="AL_Purchase_Order" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order" FromRole="AL_Purchase_Order_Rel" ToRole="AL_Purchase_Order" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order_Details" FromRole="AL_Purchase_Order_Rel" ToRole="AL_Purchase_Order_Details" />
+          <Property Name="Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <Association Name="FK_AL_Purchase_Order_Rel_AL_Purchase_Order">
           <End Type="RightsU_NeoModel.AL_Purchase_Order" Role="AL_Purchase_Order" Multiplicity="0..1" />
@@ -50771,6 +50773,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Purchase_Order_Rel">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Purchase_Order_Rel">
               <MappingFragment StoreEntitySet="AL_Purchase_Order_Rel">
+                <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="AL_Purchase_Order_Details_Code" ColumnName="AL_Purchase_Order_Details_Code" />
                 <ScalarProperty Name="AL_Purchase_Order_Code" ColumnName="AL_Purchase_Order_Code" />
                 <ScalarProperty Name="AL_Purchase_Order_Rel_Code" ColumnName="AL_Purchase_Order_Rel_Code" />

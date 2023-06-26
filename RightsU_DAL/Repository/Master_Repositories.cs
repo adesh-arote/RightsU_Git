@@ -3753,5 +3753,30 @@ namespace RightsU_DAL
             base.Delete(objToDelete);
         }
     }
+
+    public class Al_Purchase_Order_Rel_Repository : RightsU_Repository<AL_Purchase_Order_Rel>
+    {
+        public Al_Purchase_Order_Rel_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(AL_Purchase_Order_Rel objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(AL_Purchase_Order_Rel objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
     #endregion
 }

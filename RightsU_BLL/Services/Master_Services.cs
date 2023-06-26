@@ -8902,5 +8902,60 @@ namespace RightsU_BLL
         }
     }
 
+    public class AL_Purchase_Order_Rel_Service : BusinessLogic<AL_Purchase_Order_Rel>
+    {
+        private readonly Al_Purchase_Order_Rel_Repository objRepository;
+
+        public AL_Purchase_Order_Rel_Service(string Connection_Str)
+        {
+            this.objRepository = new Al_Purchase_Order_Rel_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order_Rel> SearchFor(Expression<Func<AL_Purchase_Order_Rel, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order_Rel GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order_Rel objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order_Rel objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order_Rel objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
     #endregion
 }

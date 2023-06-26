@@ -15,7 +15,7 @@
 }
 
 <script>
-    var POCode = "", sort_Type = "T", TabName = "MV";
+    var POCode = "", PRCode = "", sort_Type = "T", TabName = "MV";
 
     var URL_SearchPoDetails = '@Url.Action("SearchPoDetails", "PurchaseOrder")';
     var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
@@ -24,6 +24,19 @@
 
     $(document).ready(function () {
         addNumeric();
+
+        $('.checkbox-inline').on("click", function () {
+            debugger;
+            var PoCode = $("#HiddenPoCode").val();
+            var PrCode = $("#HiddenPrCode").val();
+            if ($(this).prop("checked")) {        
+                var searchText = "Holdover";
+                SearchPoDetails(searchText, TabName,PoCode, PrCode)
+            }
+            else {
+                SearchPoDetails("", TabName, PoCode, PrCode);
+            }
+        });
     });
 
     function addNumeric() {
@@ -37,30 +50,26 @@
         });
     }
 
-    function OpenTab(NewTab, PoCode) {
+    function OpenTab(NewTab, PoCode, PrCode) {
         debugger;
         if (NewTab == "MV") {
             $("[id*='tab']").removeClass('active');
             $("#tabMovie").addClass('active');
+            $("#Holdover").prop("checked", false);
             TabName = NewTab;
         }
         else if (NewTab == "SH") {
             $("[id*='tab']").removeClass('active');
             $("#tabShow").addClass('active');
+            $("#Holdover").prop("checked", false);
             TabName = NewTab;
         }
-        //BindTabData(TabName , PoCode);
-        //if (TabName == "MV") {
-        //    BindMovieTabData(PoCode)
-        //}
-        //if (TabName == "SH") {
-        //    BindShowTabData(PoCode)
-        //}
+        
         $('#txtPageSize_POD').val(10)
-        SearchPoDetails("", TabName, PoCode);
+        SearchPoDetails("", TabName, PoCode, PrCode);
     }
 
-    function SearchPoDetails(searchText, TabName, PoCode) {
+    function SearchPoDetails(searchText, TabName, PoCode, PrCode) {
         debugger;
         $('#searchCommon_POD').val(searchText);
 
@@ -73,7 +82,8 @@
             data: JSON.stringify({
                 searchText: searchText,
                 TabName: TabName,
-                Purchase_Order_Code: PoCode
+                Purchase_Order_Code: PoCode,
+                Proposal_Code: PrCode
             }),
             async: false,
             success: function (result) {
@@ -85,18 +95,21 @@
                 //$("#IsSearched").val(result.Is_Search);
                 //IsSearch = result.Is_Search;
                 POCode = PoCode;
+                PRCode = PrCode;
                 SetPaging_POD();
                 if (TabName == "MV") {
-                    BindMovieTabData(PoCode)
+                    //BindMovieTabData(PoCode)
+                    BindMovieTabData()
                 }
                 if (TabName == "SH") {
-                    BindShowTabData(PoCode)
+                    //BindShowTabData(PoCode)
+                    BindShowTabData()
                 }
             }
         });
     }
 
-    function BindMovieTabData(PoCode) {
+    function BindMovieTabData(/*PoCode, PRCode*/) {
         debugger;
 
         var pageNo = $('#hdnPageNo_POD').val();
@@ -109,7 +122,8 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Purchase_Order_Code: PoCode,
+                //Purchase_Order_Code: PoCode,
+                //Propsal_Code: PRCode,
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
                 sortType: sort_Type
@@ -127,7 +141,7 @@
         });
     }
 
-    function BindShowTabData(PoCode) {
+    function BindShowTabData(/*PoCode, PRCode*/) {
         debugger;
 
         var pageNo = $('#hdnPageNo_POD').val();
@@ -140,7 +154,8 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Purchase_Order_Code: PoCode,
+                //Purchase_Order_Code: PoCode,
+                //Propsal_Code: PRCode,
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
                 sortType: sort_Type
@@ -203,10 +218,12 @@
         $('#hdnPageNo_POD').val(pageNo);
         if (IsCall == 'Y') {
             if (TabName == "MV") {
-                BindMovieTabData(POCode)
+                //BindMovieTabData(POCode)
+                BindMovieTabData()
             }
             if (TabName == "SH") {
-                BindShowTabData(POCode)
+                //BindShowTabData(POCode)
+                BindShowTabData()
             }
         }
         else
@@ -221,10 +238,12 @@
             return false;
 
         if (TabName == "MV") {
-            BindMovieTabData(POCode)
+            //BindMovieTabData(POCode)
+            BindMovieTabData()
         }
         if (TabName == "SH") {
-            BindShowTabData(POCode)
+            //BindShowTabData(POCode)
+            BindShowTabData()
         }
         SetPaging_POD();
     }
@@ -367,13 +386,19 @@
             <div class="grid_area">
                 <div class="navigation_tabs">
                     <div class="tabbable" id="divAlternateConfig">
+                        <div class="pull-right" style="padding-right:100px;">
+                            <input type="checkbox" id="Holdover" class="checkbox-inline" />
+                            <input type="hidden" id="HiddenPoCode" value="@objPoDetails.Purchase_Order_Code" />
+                            <input type="hidden" id="HiddenPrCode" value="@objPoDetails.Proposal_Code" />
+                            <b>Include Holdover</b>
+                        </div>
                         <input type="hidden" id="hdnTabName" value="TA" />
                         <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
                             <li class="active" id="tabMovie">
-                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code')">@objMessageKey.Movies</a>
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV','@objPoDetails.Purchase_Order_Code','@objPoDetails.Proposal_Code')">@objMessageKey.Movies</a>
                             </li>
                             <li id="tabShow">
-                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code')">@objMessageKey.TVShows</a>
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH','@objPoDetails.Purchase_Order_Code','@objPoDetails.Proposal_Code')">@objMessageKey.TVShows</a>
                             </li>
                         </ul>
                     </div>

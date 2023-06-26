@@ -13,6 +13,7 @@ namespace RightsU_Entities
         public int AL_Purchase_Order_Rel_Code { get; set; }
         public Nullable<int> AL_Purchase_Order_Code { get; set; }
         public Nullable<int> AL_Purchase_Order_Details_Code { get; set; }
+        public string Status { get; set; }
 
         public virtual AL_Purchase_Order AL_Purchase_Order { get; set; }
         public virtual AL_Purchase_Order_Details AL_Purchase_Order_Details { get; set; }

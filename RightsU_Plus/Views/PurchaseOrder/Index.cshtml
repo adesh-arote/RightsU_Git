@@ -239,7 +239,7 @@
         });
     }
 
-    function BindPODetails(POC) {
+    function BindPODetails(POC, PRCode) {
         debugger;
         $.ajax({
             type: "POST",
@@ -249,7 +249,8 @@
             contentType: "application/json; charset=utf-8",
             //dataType: "html",
             data: JSON.stringify({
-                Purchase_Order_Code: POC
+                Purchase_Order_Code: POC,
+                Proposal_Code: PRCode
             }),
             success: function (result) {
                 debugger;
@@ -257,7 +258,8 @@
                 $('#PodList').show();
                 $('#divBindPoDetails').empty();
                 $('#divBindPoDetails').html(result);
-                OpenTab(TabName, POC);
+                //OpenTab(TabName, POC);
+                OpenTab(TabName, POC, PRCode);
                 //CheckPendingStatusForPod();
 
             },

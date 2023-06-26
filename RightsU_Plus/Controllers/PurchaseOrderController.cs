@@ -114,6 +114,19 @@ namespace RightsU_Plus.Controllers
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------
 
+        private AL_Purchase_Order_Rel_Service objPORel_Serice
+        {
+            get
+            {
+                if (Session["objPORel_Serice"] == null)
+                    Session["objPORel_Serice"] = new AL_Purchase_Order_Rel_Service(objLoginEntity.ConnectionStringName);
+                return (AL_Purchase_Order_Rel_Service)Session["objPORel_Serice"];
+            }
+            set { Session["objPORel_Serice"] = value; }
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
         private PoDetails objPoD
         {
             get
@@ -230,7 +243,7 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------Purchase Order Details------------------------------------------------------------------------
 
-        public ActionResult BindPODetails(int Purchase_Order_Code)
+        public ActionResult BindPODetails(int Purchase_Order_Code, int Proposal_Code)
         {
             USPAL_GetPurchaseOrderList_Result objPO = new USPAL_GetPurchaseOrderList_Result();
             objPO = lstPO.Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code).FirstOrDefault();
@@ -240,6 +253,7 @@ namespace RightsU_Plus.Controllers
             objPoD.Proposal_Cy = objPO.Proposal_CY;
             objPoD.Created_On = Convert.ToDateTime(objPO.Inserted_On);
             objPoD.Purchase_Order_Code = objPO.AL_Purchase_Order_Code;
+            objPoD.Proposal_Code = objPO.AL_Proposal_Code;
 
             MovieTabData();
             ShowTabData();
@@ -261,19 +275,28 @@ namespace RightsU_Plus.Controllers
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
-        public JsonResult SearchPoDetails(string searchText, string TabName, int Purchase_Order_Code)
+        public JsonResult SearchPoDetails(string searchText, string TabName, int Purchase_Order_Code, int Proposal_Code)
         {
+            List<AL_Purchase_Order_Details> lstPOD = new List<AL_Purchase_Order_Details>();
+            List<AL_Purchase_Order_Rel> lstPOR = new List<AL_Purchase_Order_Rel>();
+
             int recordcount = 0;
             if (TabName == "MV")
             {
                 if (!string.IsNullOrEmpty(searchText))
-                {
-                    //recordcount = lstMovieDataSearched.Count();
+                {           
+                    lstPOD = lstMovieTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "H").ToList();
+                    lstMovieDataSearched = lstPOD.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).ToList();
+                    recordcount = lstMovieDataSearched.Count();
                 }
                 else
                 {
-                    MovieTabData();
-                    lstMovieDataSearched = null;// to be changed by Sandip//lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+                    //MovieTabData();
+                    //lstMovieDataSearched = null;// to be changed by Sandip//lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
+
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "N").ToList();
+                    lstMovieDataSearched = lstMovieTabData.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code) && w.AL_Proposal_Code == Proposal_Code).ToList();
                     recordcount = lstMovieDataSearched.Count();
                 }
             }
@@ -281,12 +304,18 @@ namespace RightsU_Plus.Controllers
             {
                 if (!string.IsNullOrEmpty(searchText))
                 {
-                    //recordcount = lstShowDataSearched.Count();
+                    lstPOD = lstShowTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "H").ToList();
+                    lstShowDataSearched = lstPOD.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).GroupBy(g => g.PO_Number).Select(s => s.FirstOrDefault()).ToList();
+                    recordcount = lstShowDataSearched.Count();
                 }
                 else
                 {
-                    ShowTabData();
-                    lstShowDataSearched = null;// to be changed by Sandip //lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
+                    //ShowTabData();
+                    //lstShowDataSearched = null;// to be changed by Sandip //lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
+
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "N").ToList();
+                    lstShowDataSearched = lstShowTabData.Where(w => lstPOR.Any(a => (w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code) && w.AL_Proposal_Code == Proposal_Code)).GroupBy(g => g.PO_Number).Select(s => s.FirstOrDefault()).ToList();
                     recordcount = lstShowDataSearched.Count();
                 }
             }
@@ -298,7 +327,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public ActionResult BindMovieTabData(int Purchase_Order_Code, int pageNo, int recordPerPage, string sortType)
+        public ActionResult BindMovieTabData(/*int Purchase_Order_Code, int Propsal_Code,*/ int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
@@ -333,7 +362,7 @@ namespace RightsU_Plus.Controllers
             return PartialView("_MovieTabDataView", lst);
         }
 
-        public ActionResult BindShowTabData(int Purchase_Order_Code, int pageNo, int recordPerPage, string sortType)
+        public ActionResult BindShowTabData(/*int Purchase_Order_Code, int Propsal_Code,*/ int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
@@ -407,7 +436,7 @@ namespace RightsU_Plus.Controllers
             AL_Purchase_Order obj_AL_Purchase_Order = new AL_Purchase_Order();
             obj_AL_Purchase_Order = objPO_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
 
-            RefreshPOD(PurchaseOrderCode,BookingSheetCode);
+            RefreshPOD(PurchaseOrderCode);
             obj_AL_Purchase_Order.Status = "I";
             obj_AL_Purchase_Order.EntityState = State.Modified;
 
@@ -425,7 +454,7 @@ namespace RightsU_Plus.Controllers
                 obj_AL_Purchase_Order = null;
                 objPO_Service = null;
 
-                POData(BookingSheetCode);
+                //POData(BookingSheetCode);
             }
 
             var obj = new
@@ -437,11 +466,15 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public void RefreshPOD(int PurchaseOrderCode, int BookingSheetCode)
+        public void RefreshPOD(int PurchaseOrderCode)
         {           
             List<AL_Purchase_Order_Details>  lst_AL_Purchase_Order_Details = new List<AL_Purchase_Order_Details>();
-            lst_AL_Purchase_Order_Details = null; //to be changed by Sandip //objPoDetailsData_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
+            List<AL_Purchase_Order_Rel> lstPOR = new List<AL_Purchase_Order_Rel>();
 
+            lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode && w.Status == "N").ToList();
+            lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).ToList();
+            lst_AL_Purchase_Order_Details = lst_AL_Purchase_Order_Details.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).ToList();
+            
             foreach (AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
             {
                 obj_AL_Purchase_Order_Details.Status = "P";
@@ -523,6 +556,7 @@ namespace RightsU_Plus.Controllers
         public string Proposal_Cy { get; set; }
         public DateTime Created_On { get; set; }
         public int Purchase_Order_Code { get; set; }
+        public int? Proposal_Code { get; set; }
     }
 }
 
