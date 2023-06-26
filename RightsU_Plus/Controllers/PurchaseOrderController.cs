@@ -451,6 +451,8 @@ namespace RightsU_Plus.Controllers
             {
                 status = "S";
                 message = objMessageKey.Recordsavedsuccessfully;
+                var a = lstPOSearched.Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
+                a.Status = "I";
 
                 obj_AL_Purchase_Order = null;
                 objPO_Service = null;

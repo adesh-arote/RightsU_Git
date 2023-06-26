@@ -231,7 +231,7 @@
 
                 CheckPendingStatus();
                 //initializeTooltip();
-                addNumeric();
+                //addNumeric();
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -326,21 +326,21 @@
                                 redirectToLogin();
                             }
                             if (result.RecordStatus == "P" || result.RecordStatus == "I") {
-                                $("#imgLoading_" + PurchaseOrderCode).css("display", '');
-                                pendingRecord++;
+                                $("#imgLoadingPO_" + PurchaseOrderCode).css("display", '');
+                                //pendingRecord++;
 
                                 var status = '<span>In Progress</span>'
-                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
-                                }
-                                else {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
-                                }                             
+                                
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'C').empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'C').append(status);
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                                             
                             }
                             else if (result.RecordStatus == "C") {
-                                $("#imgLoading_" + PurchaseOrderCode).css("display", 'none');
+                                $("#imgLoadingPO_" + PurchaseOrderCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
 
                                 var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ');"</a>' +
