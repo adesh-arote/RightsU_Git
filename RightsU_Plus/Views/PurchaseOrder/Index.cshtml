@@ -307,7 +307,7 @@
                 if (isNaN(Sibling.substr(Sibling.length - 1)))
                     var BookingSheetCode = Sibling.slice(13, Sibling.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' ) {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'C' ) {
                     $.ajax({
                         type: "POST",
                         url: URL_GetPurchaseOrderStatus,
@@ -381,7 +381,12 @@
             }),
             success: function (result) {
                 debugger;
-                SearchPOList("");
+                if (result.Status == "S") {
+                    SearchPOList("");
+                }
+                else {
+                    showAlert('E', result.Message);
+                }     
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);

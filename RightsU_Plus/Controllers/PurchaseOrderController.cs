@@ -449,6 +449,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
+                status = "S";
                 message = objMessageKey.Recordsavedsuccessfully;
 
                 obj_AL_Purchase_Order = null;
