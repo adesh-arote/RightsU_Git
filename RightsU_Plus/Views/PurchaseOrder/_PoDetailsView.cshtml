@@ -31,9 +31,11 @@
             var PrCode = $("#HiddenPrCode").val();
             if ($(this).prop("checked")) {        
                 var searchText = "Holdover";
+                $('#txtPageSize_POD').val(10)
                 SearchPoDetails(searchText, TabName,PoCode, PrCode)
             }
             else {
+                $('#txtPageSize_POD').val(10)
                 SearchPoDetails("", TabName, PoCode, PrCode);
             }
         });

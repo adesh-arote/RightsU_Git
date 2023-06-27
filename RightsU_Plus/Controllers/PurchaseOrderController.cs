@@ -286,7 +286,7 @@ namespace RightsU_Plus.Controllers
                 if (!string.IsNullOrEmpty(searchText))
                 {           
                     lstPOD = lstMovieTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
-                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "H").ToList();
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();
                     lstMovieDataSearched = lstPOD.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).ToList();
                     recordcount = lstMovieDataSearched.Count();
                 }
@@ -305,7 +305,7 @@ namespace RightsU_Plus.Controllers
                 if (!string.IsNullOrEmpty(searchText))
                 {
                     lstPOD = lstShowTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
-                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "H").ToList();
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();
                     lstShowDataSearched = lstPOD.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).GroupBy(g => g.PO_Number).Select(s => s.FirstOrDefault()).ToList();
                     recordcount = lstShowDataSearched.Count();
                 }

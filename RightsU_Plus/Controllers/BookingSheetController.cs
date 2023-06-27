@@ -397,7 +397,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetbookingSheetStatus(int BookingSheetCode)
         {
-            //BookingSheetData();
+            BookingSheetData();
             string recordStatus = new AL_Booking_Sheet_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Record_Status).FirstOrDefault();
 
             var obj = new
@@ -548,7 +548,7 @@ namespace RightsU_Plus.Controllers
                 BindImportExportView(BookingSheetCode);
             }
 
-            MasterImportData();
+            //MasterImportData();
 
             List<SelectListItem> lstFliter = new List<SelectListItem>();
             lstFliter.Add(new SelectListItem { Text = "Show All", Value = "All", Selected = true });
@@ -630,7 +630,7 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                //MasterImportData();
+                MasterImportData();
                 lstMasterImportSearched = lstImportMaster;
             }
 
@@ -649,7 +649,8 @@ namespace RightsU_Plus.Controllers
         {
             string fileError = "";
             string latestFile = "";
-            //MasterImportData();
+            objMasterImport_Service = null;
+            MasterImportData();
             DM_Master_Import objDMI = new DM_Master_Import();
             objDMI = objMasterImport_Service.SearchFor(w => w.DM_Master_Import_Code == DmMasterCode).FirstOrDefault();
             string recordStatus = objDMI.Status;
@@ -753,6 +754,7 @@ namespace RightsU_Plus.Controllers
 
                         if (Validation == 0)
                         {
+                            objMasterImport_Service = null;
                             obj_DM_Master_Import.File_Name = PostedFile.FileName;
                             obj_DM_Master_Import.System_File_Name = strActualFileNameWithDate;
                             obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
@@ -774,7 +776,6 @@ namespace RightsU_Plus.Controllers
                             else
                             {
                                 objBooking_Sheet_Service = null;
-                                BookingSheetData();
 
                                 AL_Booking_Sheet obj_AL_Booking_Sheet = new AL_Booking_Sheet();
                                 obj_AL_Booking_Sheet = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).FirstOrDefault();
@@ -788,6 +789,8 @@ namespace RightsU_Plus.Controllers
 
                                 status = "S";
                                 message = objMessageKey.FileUploadedSuccessfully;
+
+                                BookingSheetData();
                             }
                         }
                         else
