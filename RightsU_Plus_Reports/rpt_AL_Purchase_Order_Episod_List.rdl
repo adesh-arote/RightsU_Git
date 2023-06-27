@@ -1,4 +1,710 @@
-﻿<?xml version="1.0" encoding="utf-8"?><Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner"><AutoRefresh>0</AutoRefresh><DataSources><DataSource Name="DS_Reports"><DataSourceReference>DS_Reports</DataSourceReference><rd:SecurityType>None</rd:SecurityType><rd:DataSourceID>05b4a34b-e00d-4190-956a-de29e22d20ba</rd:DataSourceID></DataSource></DataSources><DataSets><DataSet Name="DataSet1"><Query><DataSourceName>DS_Reports</DataSourceName><QueryParameters><QueryParameter Name="@AL_Purchase_Order_Details_Code"><Value>=Parameters!AL_Purchase_Order_Details_Code.Value</Value></QueryParameter></QueryParameters><CommandType>StoredProcedure</CommandType><CommandText>USPAL_GetPurchaseOrderDataForShowList</CommandText></Query><Fields><Field Name="EpisodeNo"><DataField>EpisodeNo</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="EpisodeTitle"><DataField>EpisodeTitle</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="TitleName"><DataField>TitleName</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Estimated_Screening_Cost_per_flight_USD"><DataField>Estimated Screening Cost per flight USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Estimated_Screening_Total_USD"><DataField>Estimated Screening Total USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Total_Purchase_Order_Value"><DataField>Total Purchase Order Value</DataField><rd:TypeName>System.Int32</rd:TypeName></Field><Field Name="Title_Content_Code"><DataField>Title_Content_Code</DataField><rd:TypeName>System.Int32</rd:TypeName></Field></Fields></DataSet><DataSet Name="DataSet2"><Query><DataSourceName>DS_Reports</DataSourceName><QueryParameters><QueryParameter Name="@AL_Purchase_Order_Details_Code"><Value>=Parameters!AL_Purchase_Order_Details_Code.Value</Value></QueryParameter></QueryParameters><CommandType>StoredProcedure</CommandType><CommandText>USPAL_GetPurchaseOrderDataForShowList</CommandText></Query><Fields><Field Name="Client_Name"><DataField>Client_Name</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Vendor_Name"><DataField>Vendor_Name</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Vendor_Address"><DataField>Vendor_Address</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Vendor_Phone_No"><DataField>Vendor_Phone_No</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Vendor_Email"><DataField>Vendor_Email</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Period"><DataField>Period</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Period_Month"><DataField>Period_Month</DataField><rd:TypeName>System.Int32</rd:TypeName></Field><Field Name="PO_Generate_Date"><DataField>PO_Generate_Date</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Purchase_Order_No"><DataField>Purchase_Order_No</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="TitleName"><DataField>TitleName</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Airline"><DataField>Airline</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Version"><DataField>Version</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Lang1"><DataField>Lang1</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Embedded_Subs"><DataField>Embedded Subs</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Remarks"><DataField>Remarks</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="File_details"><DataField>File details</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="PO_Booking"><DataField>PO Booking</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Estimated_Screening_Cost_per_flight_USD"><DataField>Estimated Screening Cost per flight USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Estimated_Screening_Total_USD"><DataField>Estimated Screening Total USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Duplication_Cost_per_flight_USD"><DataField>Duplication Cost per flight USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Duplication_Total_USD"><DataField>Duplication Total USD</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Miscellaneous_Items"><DataField>Miscellaneous Items</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Miscellaneous_Charges"><DataField>Miscellaneous Charges</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Master_delivery_date"><DataField>Master delivery date</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Trailer_delivery_date"><DataField>Trailer delivery date</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Delivery_and_Payment_remarks"><DataField>Delivery and Payment remarks</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Total_Purchase_Order_Value"><DataField>Total Purchase Order Value</DataField><rd:TypeName>System.Int32</rd:TypeName></Field><Field Name="Total_OEM_Count"><DataField>Total_OEM_Count</DataField><rd:TypeName>System.Int32</rd:TypeName></Field><Field Name="Studio"><DataField>Studio</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="Title_Content_Code"><DataField>Title_Content_Code</DataField><rd:TypeName>System.Int32</rd:TypeName></Field><Field Name="EpisodeNo"><DataField>EpisodeNo</DataField><rd:TypeName>System.String</rd:TypeName></Field><Field Name="EpisodeTitle"><DataField>EpisodeTitle</DataField><rd:TypeName>System.String</rd:TypeName></Field></Fields></DataSet></DataSets><ReportSections><ReportSection><Body><ReportItems><Tablix Name="Tablix1"><TablixBody><TablixColumns><TablixColumn><Width>2.9542cm</Width></TablixColumn><TablixColumn><Width>2.9542cm</Width></TablixColumn><TablixColumn><Width>2.84837cm</Width></TablixColumn><TablixColumn><Width>3.32589cm</Width></TablixColumn><TablixColumn><Width>2.9542cm</Width></TablixColumn><TablixColumn><Width>2.9542cm</Width></TablixColumn></TablixColumns><TablixRows><TablixRow><Height>0.65292cm</Height><TablixCells><TablixCell><CellContents><Textbox Name="Textbox1"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>Title</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox13"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>Episode</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox3"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>Episode #</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox5"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>Screening/Cycle</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox7"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>Cost/Flight (USD)</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox9"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>TOTAL (USD)</Value><Style><FontWeight>Bold</FontWeight><Color>White</Color><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox1</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><BackgroundColor>Navy</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell></TablixCells></TablixRow><TablixRow><Height>0.65292cm</Height><TablixCells><TablixCell><CellContents><Textbox Name="Textbox2"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!TitleName.Value</Value><Style><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox2</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox4"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EpisodeTitle.Value</Value><Style><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox4</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox6"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!EpisodeNo.Value</Value><Style><FontFamily>Segoe UI</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox6</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox8"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>1</Value><Style><FontFamily>Arial</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox8</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox10"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Estimated_Screening_Cost_per_flight_USD.Value</Value><Style><FontFamily>Arial</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox10</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell><TablixCell><CellContents><Textbox Name="Textbox12"><CanGrow>true</CanGrow><KeepTogether>true</KeepTogether><Paragraphs><Paragraph><TextRuns><TextRun><Value>=Fields!Estimated_Screening_Total_USD.Value</Value><Style><FontFamily>Arial</FontFamily></Style></TextRun></TextRuns><Style /></Paragraph></Paragraphs><rd:DefaultName>Textbox12</rd:DefaultName><Style><Border><Color>LightGrey</Color><Style>Solid</Style></Border><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style></Textbox></CellContents></TablixCell></TablixCells></TablixRow></TablixRows></TablixBody><TablixColumnHierarchy><TablixMembers><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /><TablixMember /></TablixMembers></TablixColumnHierarchy><TablixRowHierarchy><TablixMembers><TablixMember><KeepWithGroup>After</KeepWithGroup></TablixMember><TablixMember><Group Name="Details" /></TablixMember></TablixMembers></TablixRowHierarchy><DataSetName>DataSet1</DataSetName><Top>0.26141cm</Top><Left>0.26141cm</Left><Height>1.30584cm</Height><Width>17.99105cm</Width><Style><Border><Style>None</Style></Border></Style></Tablix></ReportItems><Height>0.73161in</Height><Style><Border><Style>Solid</Style></Border></Style></Body><Width>7.2485in</Width><Page><PageHeight>29.7cm</PageHeight><PageWidth>21cm</PageWidth><LeftMargin>1cm</LeftMargin><RightMargin>1cm</RightMargin><TopMargin>1cm</TopMargin><BottomMargin>1cm</BottomMargin><ColumnSpacing>0.13cm</ColumnSpacing><Style /></Page></ReportSection></ReportSections><ReportParameters><ReportParameter Name="AL_Purchase_Order_Details_Code"><DataType>Integer</DataType><Prompt>AL Purchase Order Details Code</Prompt></ReportParameter></ReportParameters><EmbeddedImages><EmbeddedImage Name="Aeroplay_Logo"><MIMEType>image/jpeg</MIMEType><ImageData>/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCACEAYADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooATFGKM0ZoAMUYozRmgAxRijNGaADFGKM0ZoAMUYo
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DS_Reports">
+      <DataSourceReference>DS_Reports</DataSourceReference>
+      <rd:SecurityType>None</rd:SecurityType>
+      <rd:DataSourceID>05b4a34b-e00d-4190-956a-de29e22d20ba</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@AL_Purchase_Order_Details_Code">
+            <Value>=Parameters!AL_Purchase_Order_Details_Code.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>USPAL_GetPurchaseOrderDataForShowList</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="EpisodeNo">
+          <DataField>EpisodeNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EpisodeTitle">
+          <DataField>EpisodeTitle</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TitleName">
+          <DataField>TitleName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Cost_per_flight_USD">
+          <DataField>Estimated Screening Cost per flight USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Total_USD">
+          <DataField>Estimated Screening Total USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total_Purchase_Order_Value">
+          <DataField>Total Purchase Order Value</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Title_Content_Code">
+          <DataField>Title_Content_Code</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DataSet2">
+      <Query>
+        <DataSourceName>DS_Reports</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@AL_Purchase_Order_Details_Code">
+            <Value>=Parameters!AL_Purchase_Order_Details_Code.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>USPAL_GetPurchaseOrderDataForShowList</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Client_Name">
+          <DataField>Client_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Name">
+          <DataField>Vendor_Name</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Address">
+          <DataField>Vendor_Address</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Phone_No">
+          <DataField>Vendor_Phone_No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Vendor_Email">
+          <DataField>Vendor_Email</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Period">
+          <DataField>Period</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Period_Month">
+          <DataField>Period_Month</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="PO_Generate_Date">
+          <DataField>PO_Generate_Date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Purchase_Order_No">
+          <DataField>Purchase_Order_No</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TitleName">
+          <DataField>TitleName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Airline">
+          <DataField>Airline</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Version">
+          <DataField>Version</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Lang1">
+          <DataField>Lang1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Embedded_Subs">
+          <DataField>Embedded Subs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Remarks">
+          <DataField>Remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="File_details">
+          <DataField>File details</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PO_Booking">
+          <DataField>PO Booking</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Cost_per_flight_USD">
+          <DataField>Estimated Screening Cost per flight USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Estimated_Screening_Total_USD">
+          <DataField>Estimated Screening Total USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Duplication_Cost_per_flight_USD">
+          <DataField>Duplication Cost per flight USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Duplication_Total_USD">
+          <DataField>Duplication Total USD</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Miscellaneous_Items">
+          <DataField>Miscellaneous Items</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Miscellaneous_Charges">
+          <DataField>Miscellaneous Charges</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Master_delivery_date">
+          <DataField>Master delivery date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Trailer_delivery_date">
+          <DataField>Trailer delivery date</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Delivery_and_Payment_remarks">
+          <DataField>Delivery and Payment remarks</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Total_Purchase_Order_Value">
+          <DataField>Total Purchase Order Value</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Total_OEM_Count">
+          <DataField>Total_OEM_Count</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="Studio">
+          <DataField>Studio</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Title_Content_Code">
+          <DataField>Title_Content_Code</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="EpisodeNo">
+          <DataField>EpisodeNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EpisodeTitle">
+          <DataField>EpisodeTitle</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>2.9542cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.9542cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.84837cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.32589cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.9542cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>2.9542cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.65292cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Title</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox13">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Episode</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Episode #</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox5">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Screening/Cycle</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cost/Flight (USD)</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox9">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>TOTAL (USD)</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.65292cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox2">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TitleName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox2</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!EpisodeTitle.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox6">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!EpisodeNo.Value</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>1</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox10">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Estimated_Screening_Cost_per_flight_USD.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox10</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox12">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Estimated_Screening_Total_USD.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <RepeatOnNewPage>true</RepeatOnNewPage>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DataSet1</DataSetName>
+            <Top>0.26141cm</Top>
+            <Left>0.26141cm</Left>
+            <Height>1.30584cm</Height>
+            <Width>17.99106cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>0.73161in</Height>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>7.2485in</Width>
+      <Page>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>1cm</TopMargin>
+        <BottomMargin>1cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="AL_Purchase_Order_Details_Code">
+      <DataType>Integer</DataType>
+      <Prompt>AL Purchase Order Details Code</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>1</NumberOfColumns>
+      <NumberOfRows>1</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>AL_Purchase_Order_Details_Code</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="Aeroplay_Logo">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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
@@ -14,8 +720,18 @@ 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
 f/BOz9n/AF39ln9jTwj4F8StYvrehtfG5a0lMsJ86/uJ12sQCfklXPHXNAHyf+0D+0Pp8v8AwUM+LvhLxz+1d4n+BOh+FLHQZNA0nTr7RrOO8+02kj3Mh+2Wc7uQ6p91gBu6V91fs8aXHpHwa0FIfGOq/EG3ktEng8Rak9vJc6vHIN6TM1vHFEcqwwURRjFfMfjL4QfG74Vfts/Fjx14K+Gfw+8f+HviJa6IsD6z4obSriyextpInXZ9jnDBmfIIYfdr6p+DeoeI9U+G+mT+LdC0zw34gaL/AEvTNPvzf21oQSAqTGOMuNoHOxeuO1AHxD8Bv+CgHj3wJ/wUe+L3hT4iXaXnwh1bx8vgrwhqjRKn/CNatHpNhdixnYAfursXTGJmJIlidSfnUD6E/wCCevxa8Q/F3w58U5vEWpy6pLoXxM8Q6HYNIiL9nsre62QwjaBkKvGTk+pNcj4a/wCCfMfjvw/+0x4b+IcFpc+HfjP43bxDppspz9ps4RpWmW0UwbAMVxHcWbuhUnG1DnsNb/glV+yz4/8A2Rv2f9f8OfEzXrHxT4p1Lxfq2ty6vbDb/aUVxMDHPIuAEldQGdRkBmPJoA8z/wCCnfgb4i+A/F/gbxH4S+PPxW8IW3jv4g6H4VudG04aQ2n2NtdyGKV4BNYySiQ7dwLyMNxPGOK+svgf8NdS+EvgG00bVfGHifx1dWzyO+s6+bb7dcBmJAf7NDDFhQQo2xg4HOTzXnv7cv7PWvftDaV8NINBNgr+EviJonii9+0ymMG0s5meUJgHL4IwOM+te1azay3uh3MMMht55YmSOVRkxsQQG/A80AW/NX+8Pzr5H/4LBf8ABVbwx/wTC/ZvvdWaa21f4ja/E1j4P8NxnzLrU75/ljcxj5vJRiGY98BR8zCvmi6/4J4/8FKtFtpNJ0v9tbwheaQTsjvb7wbb/b0j9c/Z3Jb3Lk+9d/8AsIf8G/3hz4C/HWL4zfGnx74j/aE+NEUgmtdb
-8RZNnpMg5DW1uzPhlP3SzEJwUVSKANf/AIIA/wDBOjXP2Nf2Z9Z8a/Erzrv41fGu/PifxddXPzXFuZCzxWjN1ynmOzj+/Iw/hFffQGBTYoRF7/WnYoAWikxRigBaKTFGKACilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==</ImageData></EmbeddedImage><EmbeddedImage Name="Signature1"><MIMEType>image/jpeg</MIMEType><ImageData>/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCABJAPYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACimmQA9R+dOoAKKKKACiiigAooooAKKKQnAoAWkPSqGpeKtO0jULS0ub6zgur9iltDJMqSXDAZIRScsQOeKwdW+LMcGtXGmadpOr6tqFqAZY4YkiWMHoS8zIrD/dLUAdWXKdeaxdN+Jnh/Wtfu
+8RZNnpMg5DW1uzPhlP3SzEJwUVSKANf/AIIA/wDBOjXP2Nf2Z9Z8a/Erzrv41fGu/PifxddXPzXFuZCzxWjN1ynmOzj+/Iw/hFffQGBTYoRF7/WnYoAWikxRigBaKTFGKACilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooASilooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q==</ImageData>
+    </EmbeddedImage>
+    <EmbeddedImage Name="Signature1">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCABJAPYDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACimmQA9R+dOoAKKKKACiiigAooooAKKKQnAoAWkPSqGpeKtO0jULS0ub6zgur9iltDJMqSXDAZIRScsQOeKwdW+LMcGtXGmadpOr6tqFqAZY4YkiWMHoS8zIrD/dLUAdWXKdeaxdN+Jnh/Wtfu
 9Ks9a0u71Swbbc2cN3G89ufR0B3L+IrITxB42vlYx+HNAiX+EXGtSK/4hLZx+TGsPwD+zrp8WgSt4psNI1fW72+n1G4uUgz5MsjsQInIDrsQqgYYJAzxnFAHpqTLIODT64e1+Et94Yug+g+JNWt4c5a11KVtSgb15lPnD22ygD0xxXaxBgo3H9KAH0UUjMEHPFAC0Vl+IPG2keFIVfUtSsbBJDtQ3E6xhz6DJGTXOL8YJNdCjQfD2vaoHGRcSW4s7dfctOUZgfWNXoA7YsF61FLfwwbd8qJubau443H0HvXCy6F478VMftOsaT4btW/g063N5dL9JpgI/wA4D9ab4N/Zz0fw9rI1TVLjUPFOsJIZIr7WZhcyWpzkeSmBHD/2zRSe5NAHoKuHGRyKKETy1wKKAFooooAKKKKACiiigAooooATaPQUtFRXN5FaRs8siRqgyzMcAD60AS1Qn8S2MGtJpzXVuL+SMyrbGQCVkBwWC9Sue/Sufk+PXgou6f8ACW+G9ycOBqUJK/X5uK8s/Zx8W6J8Qf2oPi9qNrq1jrN5Z3OnWFtLBciVYLQWkcnlpgkY86SUkjucHpQB9Aq+6uO+PHxTl+DXwk8ReKIdNfV20CxkvPsiS+X5oQZOWwdqgck4JABwD0rssYqprWk2+uaVc2l3BHc211E0MsUihklRgQykHqCCRQBxXh74ieLNa8N2WqJoGgXtvewR3Ciw1tpCysAfkLwIrde7D8KsRfHjS9OZU1+21DwtKxx/xNYhHD1x/wAfCFoM+3mZ9q4b4SatJ+zl43tPhxq1w8uiamXk8J3spG4ovL2Uh/vx5BQ/xKcdV59puYI7+zYNGrrIuCrDIINAHn3jH9oBbDx7B4T8O6f/AMJD4mmtRfPAZvs1rZW5OFlnm2ttDEEKFV2ODxjmrN98Tte8J2rXHiPw7HBpyqWlu9Ju31AW4Hd0MUcmOvKK+Mc4r5/8SfDq0/Zh/aj1TWP7XvfCGi+PxBHp
 2pxJ5mn2V2gKmzuI2UxJG5IdD+75DANmvdvCXxSv7LxRbeGPFtpbWmpXyv8AYLu1JNlqgQZYIG+aOQAgmNs8Z2swBIAPKPht4ST9rYX3xNsdWT+1LDWJYfCs5zLb6dBbu0eGjyATMCTJ35XB+UV6lc/EDxl/Y8lkvga6XXiTBHcxX1u2mq3TzvMZxLsHXb5W7oMd67HwR8OtH+HdndW+i2cenW15dSXssMZOzzZDl2AJwuTzhcD2q54h8W6X4U06S71K/srC3i+9LcTLEi/UsQKAJtCgubfS4Eu5RPcLGqyyBdokYDlgO2T27VcrhI/jhHrkuzw9omueIRkgT29t9ntfqJpyiOPeMtTzZ+OPFK4uLrS/DNu/VbNft10BjgiSRVjUg9vLce9AHZzXkduhZ3CqoySegFcnN8c/Dss0sGnXh1y6iYo8GlxteMjDsxjBVD/vkVFY/ArSHkMmry6h4imJyTql01xGe/8AqeIVx/soK67T9Kt9KtkhtoY4IYhtSONQqqPQAcUAcdF4s8YeJFRtP8PW+kxO2C+r3Y86Mf3hFDvVvoZVNSf8K11fWlH9teJ9SmXnfb6aosIGz7qWmH/f2u16UUAc94Y+FegeELhp7HTLWK6f79yU33En+9I2Xb8Sa6AIF6ClooAKKKKACiiigAqO4uVt0ySoxycnGKdK21K8X8aap/wsn9pWPwdqjtb+H9M0aPVjancg1uZ5pE2Mc4eGNUy0fRi43AgYIB3A+NOn6osw0S11DxHJDkH+zoQ0TEdQJ3Kwk+3mZrO1T47yeFbqx/t/w1rGh2Wo3UdlFdzyW0sccshwgk8qVioJ4zyMkZNd1p2n29hbpHbxxxxxgKiINqoPQAcVW8SeFLHxdYfZdQtobq33pJ5ciBl3IwdDg9wwBH0oAvwyeYucYp9RjFsnJ4qlaeL9Lv8AU5rKDUbOa8tv9dBHMrSxf7yg5H40AWdUedLJzbCMz4OwSZ2k44zjnFcF4a+N1xB4
 kttB8V6WfDmuXZK2v77z7HUmAyRbz4XLdTsdUfAJCkAmuj+JHiXV/CvhW5vtF0iPXr23G5bJrr7MZh3CvtYbvQEAH1ry+4+LXhP49+ALSDxdo17oVnrLJ9nkvwFijnDbV2XCErFMr9FcxyZ429qAPR/FXxr8OeCtX+wajfPFdiD7S8cVtLOYYs48yTy1bYuf4mwPeuR+MuiaP8c/BWlXllpNn450+O9jvIYItRVLa425GW6xygc/I/GR6ipPgN8Crn4eazr+sazqMms67rjxwy3jTu/m20C+XbkqQFWTy8eZsGGbmtRvgovh34hR6/4bmOkfa5c6vYp/x6akpB/ebOiTA4O9cFuQ2c5AA7SPilpvhhrXTdV0O+8IxSOlrZi5giFq7HhUWSF3jTJ4VXKkkgAEnFbk3ww0HUfGlp4lbT4v7as4Wt4btcpII26ocEbl74bODyMGtySxju4ts0ayLkHDDPI5B/P+VTIoRcDgUAIibKd1oprSKg5OPrQBzvxN+F+k/FTwxJper2xntmYSoyuY5IJFOUkjdSGR1PIYHIrnvhenjLw1qr6Nrk8WvWFrxDrDR/ZriQYBVXiAKOev7xSvIOUHU2/Fv7Qfh/w1cy2tvJd67qURKtY6PbPfXCsP4WEYIT/gZUe9Zejan4++KKO8lqfAOmOF2iQQ3mqSg9TjLQw46YIkJ56dwDtvFt3pCaHMNZNh9gdCswu9nkle4bfx+decaNB4Zh1eC/8ACPgdr+8tQ8dreR2iWltbhuG2SS7cKccmFWyPaux8N/BnRtDuRdTrc6vfB/MW61OdruaNvVC5Ij+kYUe1dYkaxjCjFAHFR+GfFfiy1xqmsw6Gh5MGjpvkX/ZM8ynI91iQ+4q/onwh0LRtQjvTZLeajGoUXt47XVyMDtJIWYfgQK6iigBqRLGOAB+FOoooAKKKKACiiigAooooAKKKKACiiigBGG4Vj+KfAOk+M4Fj1KxguxHkxl1+aIn+JG+8re6k
-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</ImageData></EmbeddedImage></EmbeddedImages><ConsumeContainerWhitespace>true</ConsumeContainerWhitespace><rd:ReportUnitType>Cm</rd:ReportUnitType><rd:ReportID>21b168e6-d2a3-4d86-ade1-1702cdf576b0</rd:ReportID></Report>
+GtmigDlrf4c3Gmw+XZeINbtol4VXljuSvGPvTI7n8Wp3/CLeIohti8SrtznMuno7fmCo/SunooA8n/aEt/Hfh/4I+JbvQ9bhm1i2sJJLbytMG8sB/D8557jg9K574dfs26V4c8CaXb2Ph/wTrdv9nR0u/Ia3uGJUfvRcgSM7N13jae9e63EP2iIrkjPcV5j4Z/Z6vfhh4ivLrwh4iutO0m+O6TQ9QRr3TrZs5zbLvR4M8/KHKc/c4oAzGtZ/CF4tpc654u8L2sjCOKe5uINRsWck/KJpkeVSeMeYVHQD0rvfh/8AC/T/AAT4Wm0xXn1KK8uJru6lvSsj3Uszl5GYBQvLMTgKAOwrG8UfC/VviVC+n+INXtv7CkZWks7C2MT3IVg22SVnY7SRyECNx97Fd7bReREF5OPWgBLazjs0CxqEVQFVVGAoHQAVLRRQAVieM5tQtNNM9pqFhp6W8izXEl1atcL5CnMigLImGKggNkhTglWxg7dIVBoA8dn/AGkNf8a+JLfS/BHgXX7+1uFff4i1eL+ztJtsA4wjn7TKc9AkQU/89F6jbtfgpqHitxN4x8QXut7mDNYWqnT9OHsYkYvIPUSyOp9K9FEKr0UCnHpQBQ0DwvYeF9OitNPs7aytYRiOGCNY40+igACr4GBSLnPOKdQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFADBAgbO0Zp4GBRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB//2Q==</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>21b168e6-d2a3-4d86-ade1-1702cdf576b0</rd:ReportID>
+</Report>
