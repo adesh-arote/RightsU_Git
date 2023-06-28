@@ -366,10 +366,10 @@
                                 $("#imgLoading_" + AL_Load_Sheet_Code).css("display", '');
                                 pendingRecord++;
 
-                                 var status = '<span>Waiting</span>'
+                                 var status = '<span>Pending</span>'
 
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').empty();
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').append(status);
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'P').empty();
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'P').append(status);
                             }
                             else if (result.RecordStatus == "W") {
                                 $("#imgLoading_" + AL_Load_Sheet_Code).css("display", '');
@@ -377,8 +377,8 @@
 
                                 var status = '<span>Waiting</span>'
 
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').empty();
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'W').append(status);
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'P').empty();
+                                $('.clsTdStatus_' + AL_Load_Sheet_Code+'P').append(status);
                             }
 
 
@@ -392,8 +392,15 @@
 
                                 var status = '<span>Success</span>'
 
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').empty();
-                                $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').append(status);
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'W') {
+                                    $('.clsTdStatus_' + AL_Load_Sheet_Code + 'W').empty();
+                                    $('.clsTdStatus_' + AL_Load_Sheet_Code + 'W').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').empty();
+                                    $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').append(status);
+                                    
+                                }
                                 initializeTooltip();
                             }
                             
