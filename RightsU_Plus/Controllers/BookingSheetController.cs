@@ -726,7 +726,14 @@ namespace RightsU_Plus.Controllers
             string status = "";
             int Validation = 0;
 
-            string AirlineName = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(x => x.Vendor.Vendor_Name).FirstOrDefault();
+            //string AirlineName = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(x => x.Vendor.Vendor_Name).FirstOrDefault();
+
+            AL_Vendor_Details_Service objAVDS = new AL_Vendor_Details_Service(objLoginEntity.ConnectionStringName);
+            AL_Booking_Sheet_Details_Service objABSD = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
+            List<AL_Booking_Sheet_Details> lstBSD = new List<AL_Booking_Sheet_Details>();
+            int? VendorCode = objBooking_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(x => x.Vendor_Code).FirstOrDefault();
+            int? GroupCode = objAVDS.SearchFor(s => true).Where(w => w.Vendor_Code == VendorCode).Select(x => x.Extended_Group_Code_Booking).FirstOrDefault();
+            lstBSD = objABSD.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode && w.Extended_Group_Code == GroupCode).ToList();
 
             DM_Master_Import obj_DM_Master_Import = new DM_Master_Import();
 
@@ -750,7 +757,7 @@ namespace RightsU_Plus.Controllers
                         PostedFile.SaveAs(fullpathname);
                         #endregion
 
-                        Validation = FileValidation(fullpathname, AirlineName);
+                        Validation = FileValidation(fullpathname, lstBSD);
 
                         if (Validation == 0)
                         {
@@ -797,7 +804,7 @@ namespace RightsU_Plus.Controllers
                         {
                             System.IO.File.Delete(fullpathname.Trim());
                             status = "E";
-                            message = "Pleae Check your uploaded file again. you have not uploaded " + AirlineName + " file. ";
+                            message = "Pleae Check your uploaded file again. you have uploaded invalid file. ";
                         }
                     }
                     else
@@ -1308,7 +1315,7 @@ namespace RightsU_Plus.Controllers
             // it will return 00009
         }
 
-        public static int FileValidation(string fullpathname, string AirlineName)
+        public static int FileValidation(string fullpathname, List<AL_Booking_Sheet_Details> lstBSD)
         {
             int validation = 0;
             string sheetName = "";
@@ -1337,11 +1344,22 @@ namespace RightsU_Plus.Controllers
 
             for (int m = 0; m <= dt1.Rows.Count - 1; m++)
             {
+                List<string> DBColumnList = new List<string>();
+                List<string> FileColumnList = new List<string>();
+                List<string> CheckList = new List<string>();
                 string DisplayFor = "";
                 DisplayFor = Convert.ToString(dt1.Rows[m][1]);
                 sheetName = DisplayFor + "$";
-                //Sheet_Name = DisplayFor;
                 ds.Clear();
+
+                if(sheetName == "Movies$")
+                {
+                    DBColumnList = lstBSD.Where(w => w.Display_Name == "M" || w.Display_Name == "B").Select(s => s.Extended_Columns.Columns_Name).Distinct().ToList();
+                }
+                else if(sheetName == "TV Shows$")
+                {
+                    DBColumnList = lstBSD.Where(w => w.Display_Name == "S" || w.Display_Name == "B").Select(s => s.Extended_Columns.Columns_Name).Distinct().ToList();
+                }
 
                 OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "] WHERE [F1] <> '' OR [F1] IS NOT NULL", cn);
                 da.Fill(ds);
@@ -1349,34 +1367,31 @@ namespace RightsU_Plus.Controllers
                 if (ds.Tables.Count > 0)
                 {
                     if (ds.Tables[0].Rows.Count > 1)
-                    {
-                        int jcnt = 0;
-                        string AirlineColName = "";
+                    {                        
                         for (int i = 0; i < 1; i++)
                         {
                             for (int j = 0; j < ds.Tables[0].Columns.Count; j++)
                             {
                                 string CellValue = Convert.ToString(ds.Tables[0].Rows[0][j]);
-                                if (CellValue.ToUpper() == "AIRLINE")
+                                if(CellValue != "")
                                 {
-                                    jcnt = j + 1;
-                                    break;
-                                }
+                                    FileColumnList.Add(CellValue);
+                                }               
                             }
                         }
-
-                        AirlineColName = 'F' + Convert.ToString(jcnt);
-
-                        for (int k = 1; k < ds.Tables[0].Rows.Count; k++)
+                        if(DBColumnList != null)
                         {
-                            string CellValue = Convert.ToString(ds.Tables[0].Rows[k][AirlineColName]);
+                            CheckList = DBColumnList.Except(FileColumnList).ToList();
 
-                            if (AirlineName != CellValue)
+                            if (CheckList.Count > 0)
                             {
                                 validation = 1;
-                                break;
                             }
-                        }
+                            else
+                            {
+                                validation = 0;
+                            }
+                        }     
                     }
                 }
                 if (validation == 1)
@@ -1384,7 +1399,6 @@ namespace RightsU_Plus.Controllers
                     break;
                 }
             }
-
             return validation;
         }
     }
