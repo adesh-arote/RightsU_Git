@@ -1389,6 +1389,12 @@ namespace RightsU_Plus.Controllers
                                     objDBVendorRuleCriteria.Columns_Value = objSessionVendorRuleCriteria.Columns_Value;
                                     objDBVendorRuleCriteria.EntityState = objSessionVendorRuleCriteria.EntityState;
                                 }
+                                if (objSessionVendorRuleCriteria.EntityState == State.Deleted)
+                                {
+                                    objDBVendorRuleCriteria.Columns_Code = objSessionVendorRuleCriteria.Columns_Code;
+                                    objDBVendorRuleCriteria.Columns_Value = objSessionVendorRuleCriteria.Columns_Value;
+                                    objDBVendorRuleCriteria.EntityState = objSessionVendorRuleCriteria.EntityState;
+                                }
                             }
                             if (objSessionVendorRuleCriteria.AL_Vendor_Rule_Criteria_Code < 0)
                             {
@@ -1650,7 +1656,7 @@ namespace RightsU_Plus.Controllers
             if (CheckDuplicateContentRuleClientForSameType(ALVendorRule.Rule_Name, ALVendorRule.Rule_Type, ALVendorRule.AL_Vendor_Rule_Code, ALVendorRule.Vendor_Code))
             {
                 ALVendorRule.AL_Vendor_Rule_Criteria = objVr.AL_Vendor_Rule_Criteria;
-                string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Select(s => s.ExtendedColumnNames).ToList());
+                string CommaSeparatedCriteria = string.Join(",", objVr.AL_Vendor_Rule_Criteria.Where(w => w.EntityState != State.Deleted).Select(s => s.ExtendedColumnNames).ToList());
                 ALVendorRule.Criteria = CommaSeparatedCriteria;
                 ALVendorRule.Is_Active = "Y";
 
@@ -1771,11 +1777,13 @@ namespace RightsU_Plus.Controllers
                 {
                     alVRC.ExtendedColumnNames = alVRC.Extended_Columns.Columns_Name;
                 }
-
-                UsedDDlExtendedColumnsLst.Add(Convert.ToInt32(alVRC.Columns_Code));
+                if (alVRC.EntityState != State.Deleted)
+                {
+                    UsedDDlExtendedColumnsLst.Add(Convert.ToInt32(alVRC.Columns_Code));
+                }
                 UsedDDlExtendedColumnsLst = UsedDDlExtendedColumnsLst.Distinct().ToList();
 
-                if (alVRC.DataFieldNames == null)
+                if (alVRC.DataFieldNames == null && alVRC.Extended_Columns.Control_Type == "DDL")
                 {
                     CreateExtendedDataObject(Convert.ToInt32(alVRC.Columns_Code));
                     List<string> SelectedValues = alVRC.Columns_Value.Split(',').ToList();
@@ -1808,8 +1816,13 @@ namespace RightsU_Plus.Controllers
                     ViewBag.DDlSelectList = new MultiSelectList(lstSelectObject, "Columns_Value_Code", "ColumnsValue", SelectedColumnValues);
                 }
             }
+            List<AL_Vendor_Rule_Criteria> lstVendorRuleCriteriaDisplay = lstVendorRuleCriteria.Where(w => w.EntityState != State.Deleted).ToList();
+            if (lstVendorRuleCriteriaDisplay == null)
+            {
+                lstVendorRuleCriteriaDisplay = new List<AL_Vendor_Rule_Criteria>();
+            }
 
-            return PartialView("_ContentRuleGrid", lstVendorRuleCriteria);
+            return PartialView("_ContentRuleGrid", lstVendorRuleCriteriaDisplay);
         }
 
         public ActionResult SaveContentPopupGrid(AL_Vendor_Rule_Criteria ALVendorRuleCriteria)
@@ -1877,7 +1890,15 @@ namespace RightsU_Plus.Controllers
 
             if (objVRC != null)
             {
-                objVr.AL_Vendor_Rule_Criteria.Remove(objVRC);
+                if (objVRC.AL_Vendor_Rule_Criteria_Code > 0)
+                {
+                    objVRC.EntityState = State.Deleted;
+                    UsedDDlExtendedColumnsLst.Remove(Convert.ToInt32(objVRC.Columns_Code));
+                }
+                else
+                {
+                    objVr.AL_Vendor_Rule_Criteria.Remove(objVRC);
+                }
                 CheckForSelectedValues();
             }
             else
@@ -2130,7 +2151,7 @@ namespace RightsU_Plus.Controllers
         private void CheckForSelectedValues()
         {
             List<int> UpdatedListOfSelectedalues = new List<int>();
-            UpdatedListOfSelectedalues = objVr.AL_Vendor_Rule_Criteria.Select(s => Convert.ToInt32(s.Columns_Code)).ToList();
+            UpdatedListOfSelectedalues = objVr.AL_Vendor_Rule_Criteria.Where(w => w.EntityState != State.Deleted).Select(s => Convert.ToInt32(s.Columns_Code)).ToList();
             UsedDDlExtendedColumnsLst = UsedDDlExtendedColumnsLst.Where(w => UpdatedListOfSelectedalues.Any(a => w == a)).ToList();
         }
 
@@ -2238,11 +2259,11 @@ namespace RightsU_Plus.Controllers
             else if (SelectedExCol.Control_Type == "DATE")
             {
                 //Check for condition on view ContentRuleGrid to change text box to datepicker. Line -> (result.ControlType == "DATE")
-                objSessDictionary.Add("Date", "<input type=\"text\" id=\"CrCData\">");
+                objSessDictionary.Add("Date", "<input type=\"text\" id=\"CrCData\" class=\"isDatepicker\" >");
             }
             else if (SelectedExCol.Control_Type == "INT")
             {
-                objSessDictionary.Add("Number", "<input type=\"number\" id=\"CrCData\">");
+                objSessDictionary.Add("Number", "<input type=\"text\" id=\"CrCData\" class=\"isNumeric\" >");
             }
             else if (SelectedExCol.Control_Type == "CB")
             {
@@ -2273,7 +2294,7 @@ namespace RightsU_Plus.Controllers
 
         public bool CheckDuplicateContentRuleClientForSameType(string Rule_Name, string Rule_Type, int? AL_Vendor_Rule_Code, int? Vendor_Code)
         {
-            int DuplicateCount = objSessVendor.AL_Vendor_Rule.Where(w => w.Rule_Name.ToUpper() == Rule_Name.ToUpper() && w.Rule_Type == Rule_Type && w.Vendor_Code == Vendor_Code && w.AL_Vendor_Rule_Code != AL_Vendor_Rule_Code).Count();
+            int DuplicateCount = objSessVendor.AL_Vendor_Rule.Where(w => w.Rule_Name.ToUpper() == Rule_Name.ToUpper() && w.Rule_Type == Rule_Type && w.AL_Vendor_Rule_Code != AL_Vendor_Rule_Code).Count();
 
             if (DuplicateCount > 0)
             {

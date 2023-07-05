@@ -1840,6 +1840,12 @@ namespace RightsU_DAL
 
         public ICollection<AL_Vendor_Rule> SaveVendorRule(ICollection<AL_Vendor_Rule> entityList, DbContext dbContext)
         {
+            Save_Master_Entities_Generic objSaveEntities;
+            foreach (AL_Vendor_Rule objAlVendorRule in entityList)
+            {
+                objSaveEntities = new Save_Master_Entities_Generic();
+                if (objAlVendorRule.AL_Vendor_Rule_Criteria != null) objAlVendorRule.AL_Vendor_Rule_Criteria = objSaveEntities.SaveVendorRuleCriteria(objAlVendorRule.AL_Vendor_Rule_Criteria, dbContext);
+            }
             ICollection<AL_Vendor_Rule> updatedList = entityList;
             updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_Rule>().SetListFlagsCUD(updatedList, dbContext);
             return updatedList;

@@ -8,11 +8,32 @@
     }
 }
 <script>
+    var URL_TitleImportError = '@Url.Action("TitleImportError", "DM_Title_Master_Import")';
 
     $(document).ready(function () {
         $('#lblTotal').text('Total Records : ' + @ViewBag.RecordCount);
     });
 
+    function ShowTitleImportError(DM_Title_Import_Utility_Data_Code) {
+        $.ajax({
+            type: "POST",
+            url: URL_TitleImportError,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DM_Title_Import_Utility_Data_Code: DM_Title_Import_Utility_Data_Code
+            }),
+            success: function (result) {
+                $("#ImportErrorPopup").modal();
+                $("#ErrorInfoDiv").empty();
+                $("#ErrorInfoDiv").html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        })
+    }
 </script>
 <style>
     table {
@@ -127,7 +148,7 @@
                                     }
                                     else if (property.Name == "Error_Message")
                                     {
-                                        <th style="width:8%;font-weight:900;">Error Message</th>
+                                        @*<th style="width:8%;font-weight:900;">Error Message</th>*@
                                     }
                                 }
                                 else
@@ -163,7 +184,8 @@
                                                         <td style="width:16%;">Success</td>
                                                         break;
                                                     case "E":
-                                                        <td style="width:16%;">Error</td>
+                                                        @*<td style="width:16%;">Error</td>*@
+                                                        <td style="width:16%;"><span style="color:blue" class="Highlight" onmouseover="this.style.cursor='pointer';" onclick="ShowTitleImportError('@item.DM_Title_Import_Utility_Data_Code')">Error</span></td>
                                                         break;
                                                     case "N":
                                                         <td style="width:16%;">New Record</td>
@@ -181,7 +203,7 @@
                                                 }
                                                 else if (property.Name == "Error_Message")
                                                 {
-                                                    <td style="width:16%;">  @property.GetValue(item, null) </td>
+                                                    @*<td style="width:16%;">  @property.GetValue(item, null) </td>*@
                                                 }
                                                 else
                                                 {
@@ -311,3 +333,26 @@
         userCollapseText: '<span>[^]</span>'
     });
     </script>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="ImportErrorPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <div class="form_fields" id="pupupHtml2">
+                    <div class="modal_block modal_header">
+                        <a class="close" onclick="$('#ImportErrorPopup').modal('hide');">
+                            <span>x</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2>Error</h2>
+                    </div>
+                    <div style="margin:20px;">
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block" style="max-height: 390px;overflow-y: auto;" id="ErrorInfoDiv">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -187,12 +187,13 @@ namespace RightsU_Plus.Controllers
             string Title_Content_Codes = "";
             string ListSearchedFromTitle = "";
             string TitleUrl = "";
-            if (TempData["SearchTitleInTitleContent"] != null)
+            if (TempData["IsSearchFromTitle"] != null)
             {
-                searchText = Convert.ToString(TempData["SearchTitleInTitleContent"]);
+                searchText = Convert.ToString(Session["SearchTitleInTitleContent"]);
                 ViewBag.ListSearchedFromTitle = "Y";
-                TitleUrl = Convert.ToString(TempData["CurrentTitleURL"]);
+                TitleUrl = Convert.ToString(Session["CurrentTitleURL"]);
                 ListSearchedFromTitle = "Y";
+                TempData["BackToListTitle"] = "Y";
             }
             if (objSearch.SearchText != null && objSearch.EpisodeFrom > 0 && objSearch.EpisodeTo > 0)
             {

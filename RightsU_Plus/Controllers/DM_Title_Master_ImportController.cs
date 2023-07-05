@@ -2137,5 +2137,14 @@ namespace RightsU_Plus.Controllers
                 ReportViewer1.ServerReport.ReportServerUrl = new Uri(ReportingServer);
             }
         }
+
+        public JsonResult TitleImportError(int DM_Title_Import_Utility_Data_Code)
+        {
+            string ErrorTbl = "<table class=\"table table-bordered table-hover\"><tbody><tr><td>";
+            string ErrorMsg = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).GetById(DM_Title_Import_Utility_Data_Code).Error_Message.Trim('~');
+            string ErrorTblEnd = "</td></tr></tbody></table>";
+            string ErrorHtml = ErrorTbl + ErrorMsg.Replace("~", "</td></tr><tr><td>") + ErrorTblEnd;
+            return Json(ErrorHtml);
+        }
     }
 }

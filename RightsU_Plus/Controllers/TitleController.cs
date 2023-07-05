@@ -1722,7 +1722,7 @@ namespace RightsU_Plus.Controllers
                         objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
                     }
                 }
-                if (hdnControlType == "DDL")
+                if (hdnControlType == "DDL" && hdnRefTable.Trim().ToUpper() != "TALENT")
                 {
                     foreach (string str in arrColumnsValueCode)
                     {
@@ -4613,8 +4613,9 @@ namespace RightsU_Plus.Controllers
             //RightsU_Entities.Title objTitle = new RightsU_Entities.Title();
             string TitleName = new Title_Episode_Details_Service(objLoginEntity.ConnectionStringName).GetById(TitleEpisodeDetailCode).Title.Title_Name;
             //return RedirectToAction("SearchProgram", "Title_Content", new { searchText = "Wandering Minds", episodeFrom = 0, episodeTo = 0 });
-            TempData["SearchTitleInTitleContent"] = TitleName;
-            TempData["CurrentTitleURL"] = CurrentTitleURL;
+            TempData["IsSearchFromTitle"] = "Y";
+            Session["SearchTitleInTitleContent"] = TitleName;
+            Session["CurrentTitleURL"] = CurrentTitleURL;
             return Json(TitleName);
         }
 
