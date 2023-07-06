@@ -15635,6 +15635,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Distributor" Type="varchar(max)" Mode="In" />
           <Parameter Name="Display" Type="varchar" Mode="In" />
           <Parameter Name="TabName" Type="char" Mode="In" />
+          <Parameter Name="IncludeHoldover" Type="char" Mode="In" />
         </Function>
         <Function Name="USPAL_GetDeliveryTrackingListMovies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Client" Type="int" Mode="In" />
@@ -23491,6 +23492,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Distributor" Mode="In" Type="String" />
             <Parameter Name="Display" Mode="In" Type="String" />
             <Parameter Name="TabName" Mode="In" Type="String" />
+            <Parameter Name="IncludeHoldover" Mode="In" Type="String" />
           </FunctionImport>
           <AssociationSet Name="FK_AL_Material_Tracking_AL_OEM" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM">
             <End Role="AL_OEM" EntitySet="AL_OEM" />

@@ -275,7 +275,7 @@ namespace RightsU_Plus.Controllers
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
-        public JsonResult SearchPoDetails(string searchText, string TabName, int Purchase_Order_Code, int Proposal_Code)
+        public JsonResult SearchPoDetails(string IncludeHoldover, string TabName, int Purchase_Order_Code, int Proposal_Code)
         {
             List<AL_Purchase_Order_Details> lstPOD = new List<AL_Purchase_Order_Details>();
             List<AL_Purchase_Order_Rel> lstPOR = new List<AL_Purchase_Order_Rel>();
@@ -283,7 +283,7 @@ namespace RightsU_Plus.Controllers
             int recordcount = 0;
             if (TabName == "MV")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                if (IncludeHoldover == "Y")
                 {           
                     lstPOD = lstMovieTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();
@@ -302,7 +302,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (TabName == "SH")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                if (IncludeHoldover == "Y")
                 {
                     lstPOD = lstShowTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();

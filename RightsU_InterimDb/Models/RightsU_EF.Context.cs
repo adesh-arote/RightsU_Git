@@ -5706,7 +5706,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
         }
     
-        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName)
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
         {
             var clientParameter = client != null ?
                 new ObjectParameter("Client", client) :
@@ -5732,7 +5732,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("TabName", tabName) :
                 new ObjectParameter("TabName", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter);
+            var includeHoldoverParameter = includeHoldover != null ?
+                new ObjectParameter("IncludeHoldover", includeHoldover) :
+                new ObjectParameter("IncludeHoldover", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter, includeHoldoverParameter);
         }
     }
 }

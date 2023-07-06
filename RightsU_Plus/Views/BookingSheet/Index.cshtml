@@ -61,7 +61,19 @@
             var searchtext = $("#searchCommon").val();
             SearchOnList(searchtext, TabName);
         });
+
+
     });
+
+    function tdExpander() {
+        $('.expand_ColumnNames').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+        });
+    }
 
     function addNumeric() {
         debugger;
@@ -378,10 +390,16 @@
                 if (result == "Redirect") {
                     window.location.href = URL_PurchaseOrderView + '?bookingsheetcode=' + BSCode;
                 }
-                else {
-                    $('#popup').modal();
+                else if (result.Popup == "Remark") {
+                    $('#remarkpopup').modal();
                     $('#RemarkPopupTbl').empty();
-                    $('#RemarkPopupTbl').html(result);
+                    $('#RemarkPopupTbl').html(result.InputArea);
+                }
+                else {
+                    $('#mandatoryFieldspopup').modal();
+                    $('#MandatoryFieldsPopupTbl').empty();
+                    $('#MandatoryFieldsPopupTbl').html(result.InputArea);
+                    tdExpander();
                 }
             },
             error: function (result) {
@@ -393,7 +411,9 @@
     function ClosePopup() {
         debugger;
         $('#hdnAction').val("");
-        $('#popup').modal('hide');
+        //$('#popup').modal('hide');
+        $('#remarkpopup').modal('hide');
+        $('#mandatoryFieldspopup').modal('hide');
 
         BindbookingSheetList();
     }
@@ -592,7 +612,7 @@
     </section>
 </div>
 
-<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="mandatoryFieldspopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content clearfix">
             <div class="modal_block modal_header">
@@ -602,7 +622,37 @@
                 </a>
                 <h2>Generate Purchase Order</h2>
             </div>
+            <div style="margin:20px;">
+                <p style="color:red;text-"><b>You cannot generate purchase order. Please check this mandatory fields again..!</b></p>
+                <div class="tab-content clearfix table-wrapper scale_table_container">
+                    <div class="scale_table_block" style="max-height: 390px;overflow-y: auto;">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width:5%;"></th>
+                                    <th style="width:30%;">Title Name</th>
+                                    <th>Required Fields</th>
+                                </tr>
+                            </thead>
+                            <tbody id="MandatoryFieldsPopupTbl"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="remarkpopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="modal_block modal_header">
+                <a class="close" onclick="ClosePopup()">
+                    <span>X</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>Generate Purchase Order</h2>
+            </div>
             <div class="modal_block">
                 <table class="add_title_popup">
                     <tbody id="RemarkPopupTbl"></tbody>

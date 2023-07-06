@@ -66,18 +66,18 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public JsonResult SearchDeliveryTracking(string TabName = "", string Client = "", string CycleDate = "", string Lab = "", string Distributor = "", string Display = "")
+        public JsonResult SearchDeliveryTracking(string TabName = "", string Client = "", string CycleDate = "", string Lab = "", string Distributor = "", string Display = "", string IncludeHoldover = "")
         {
             int recordcount = 0;
             if (TabName == "M")
             {
-                GetDeliveryTrackingListMovies_Result(TabName, Client, CycleDate, Lab, Distributor, Display);               
+                GetDeliveryTrackingListMovies_Result(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);               
 
                 recordcount = lstGetDeliveryTrackingList_Result_Searched.Count -1 ;
             }
             else if (TabName == "S")
             {
-                GetDeliveryTrackingListShows_Result(TabName, Client, CycleDate, Lab, Distributor, Display);
+                GetDeliveryTrackingListShows_Result(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
 
                 recordcount = lstGetDeliveryTrackingList_Result_Searched.Count - 1;
             }
@@ -90,15 +90,15 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListMovies_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display)
+        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListMovies_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display, string IncludeHoldover)
         {
-            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListMovies_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "M").ToList();
+            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListMovies_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "M", IncludeHoldover).ToList();
             return lstGetDeliveryTrackingListMovies_Result;
         }
 
-        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListShows_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display)
+        public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListShows_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display, string IncludeHoldover)
         {
-            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListShows_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "S").ToList();
+            lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListShows_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "S", IncludeHoldover).ToList();
             return lstGetDeliveryTrackingListShows_Result;
         }
 

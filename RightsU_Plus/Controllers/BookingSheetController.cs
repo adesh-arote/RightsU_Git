@@ -1107,14 +1107,17 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult RemarkPopUp(int Booking_Sheet_Code, int Proposal_Code, string config)
         {
-            string InputArea = "";
-            int Count = 0;
-            int TotalCount = 0;
-            string ValidationFlag = "";
+            string inputArea = "", ValidationFlag = "", popup = "",TitleName = "";
             int ValidCount = 0;
-            
+            //string ValidationFlag = "";  
+            //string popup = "";
+            //string TitleName = "";
+
+
             AL_Booking_Sheet_Details_Service objBooking_Sheet_Details_Service = new AL_Booking_Sheet_Details_Service(objLoginEntity.ConnectionStringName);
+            List<AL_Booking_Sheet_Details> lstAbsd = new List<AL_Booking_Sheet_Details>();
             List<int?> lstBSD1, lstBSD2, lstResult, lstCount, lstTotalCount = new List<int?>();
+            List<string> lstColumnNames = new List<string>();
 
             ValidCount = objPurchase_Order_Service.SearchFor(s => true).Where(w => w.AL_Booking_Sheet_Code == Booking_Sheet_Code).Count();
 
@@ -1148,19 +1151,40 @@ namespace RightsU_Plus.Controllers
 
                 if (ValidationFlag == "Y")
                 {
-                    InputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
+                    inputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
                         "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
+
+                    popup = "Remark";
                 }
                 else
                 {
-                    InputArea = "<tr><td style=\"text-align:center\"><p style=\"color:red\"><b>You cannot generate purchase order. Please check mandatory fields again..!</b></p></td></tr>";
+                    lstAbsd = objBooking_Sheet_Details_Service.SearchFor(s => true).Where(w => (w.AL_Booking_Sheet_Code == Booking_Sheet_Code) && (w.Validations.ToUpper().Contains("MAN") || w.Validations.ToUpper().Contains("PO")) && (w.Allow_Import == "I" || w.Allow_Import == "B") && (w.Columns_Value == "" || w.Columns_Value == null)).ToList();                 
+                    List<int?> lstTitles = lstAbsd.Select(s => s.Title_Code).Distinct().ToList();
+
+                    int i = 1;
+                    foreach (var title in lstTitles)
+                    {
+                        TitleName = lstAbsd.Where(w => w.Title_Code == title).Select(s => s.Title.Title_Name).FirstOrDefault();
+                        lstColumnNames = lstAbsd.Where(w => w.Title_Code == title).Select(s => s.Extended_Columns.Columns_Name).Distinct().ToList();
+
+                        inputArea = inputArea + "<tr><td style=\"text-align:center;\">" + i + "</td><td> " + TitleName + "</td><td class=\"expand_ColumnNames\">" + string.Join(", ", lstColumnNames) + "</td></tr>";
+                        i++;
+                    }
+
+                    popup = "Mandatory";
+                    //InputArea = "<tr><td style=\"text-align:center\"><p style=\"color:red\"><b>You cannot generate purchase order. Please check mandatory fields again..!</b></p></td></tr>";
                 }
             }
 
             Session["BookingSheetCode"] = Booking_Sheet_Code;
 
-            return Json(InputArea);
-        }
+            var obj = new
+            {
+                Popup = popup,
+                InputArea = inputArea
+            };
+        return Json(obj);
+    }
 
         public JsonResult GeneratePO(int BookingSheetCode, int ProposalCode, string Remark)
         {

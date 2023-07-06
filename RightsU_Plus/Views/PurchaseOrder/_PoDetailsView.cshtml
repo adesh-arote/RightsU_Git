@@ -15,7 +15,7 @@
 }
 
 <script>
-    var POCode = "", PRCode = "", sort_Type = "T", TabName = "MV";
+    var POCode = "", PRCode = "", sort_Type = "T", TabName = "MV", IncludeHoldover = "N";
 
     var URL_SearchPoDetails = '@Url.Action("SearchPoDetails", "PurchaseOrder")';
     var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
@@ -30,13 +30,15 @@
             var PoCode = $("#HiddenPoCode").val();
             var PrCode = $("#HiddenPrCode").val();
             if ($(this).prop("checked")) {        
-                var searchText = "Holdover";
+                //var searchText = "Holdover";
+                IncludeHoldover = "Y"
                 $('#txtPageSize_POD').val(10)
-                SearchPoDetails(searchText, TabName,PoCode, PrCode)
+                SearchPoDetails(IncludeHoldover, TabName,PoCode, PrCode)
             }
             else {
+                IncludeHoldover = "N"
                 $('#txtPageSize_POD').val(10)
-                SearchPoDetails("", TabName, PoCode, PrCode);
+                SearchPoDetails(IncludeHoldover, TabName, PoCode, PrCode);
             }
         });
     });
@@ -68,12 +70,12 @@
         }
         
         $('#txtPageSize_POD').val(10)
-        SearchPoDetails("", TabName, PoCode, PrCode);
+        SearchPoDetails(IncludeHoldover, TabName, PoCode, PrCode);
     }
 
-    function SearchPoDetails(searchText, TabName, PoCode, PrCode) {
+    function SearchPoDetails(IncludeHoldover, TabName, PoCode, PrCode) {
         debugger;
-        $('#searchCommon_POD').val(searchText);
+        //$('#searchCommon_POD').val(IncludeHoldover);
 
         $.ajax({
             type: "POST",
@@ -82,7 +84,8 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                searchText: searchText,
+                //searchText: searchText,
+                IncludeHoldover: IncludeHoldover,
                 TabName: TabName,
                 Purchase_Order_Code: PoCode,
                 Proposal_Code: PrCode
@@ -376,7 +379,7 @@
                 <input type="hidden" id="hdnPageNo_POD" name="hdnPageNo" value="1" />
                 <input type="hidden" id="hdnPagePerBatch_POD" name="hdnPagePerBatch" value="5" />
                 <input type="hidden" id="hdnRecordCount_POD" name="hdnRecordCount" value="0" />
-                <input type="hidden" name="srchCommon" id="searchCommon_POD" class="search" />
+                @*<input type="hidden" name="srchCommon" id="searchCommon_POD" class="search" />*@
 
                 <div id="Pagination_POD" class="pagination">
                 </div>
