@@ -10,7 +10,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", Module_Code_G = "258", SysLanguageCode_G = "1";
     var URL_BindBannerList = '@Url.Action("BindBanner_List", "Banner")';
     var URL_SearchBanner = '@Url.Action("SearchBanner", "Banner")';
     var URL_SaveBanner = '@Url.Action("SaveBanner", "Banner")';
@@ -390,6 +390,18 @@
             });
         }
     }
+
+    function ExportToExcel() {
+        debugger;
+        var type = "";
+        var Module_Name = "Banner";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+
+    }
+
 </script>
 
 <style>
