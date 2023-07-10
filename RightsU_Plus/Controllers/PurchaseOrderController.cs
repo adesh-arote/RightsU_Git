@@ -2,8 +2,11 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -490,13 +493,55 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
 
-        public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        //public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        //{
+        //    AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+        //
+        //    string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+        //
+        //    return Json(Filename);
+        //}
+
+        public JsonResult ValidateDownload(int PurchaseOrderDetailCode)
         {
             AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
-        
             string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
-        
-            return Json(Filename);
+            string FilePath = ConfigurationManager.AppSettings["DownloadReportPath"];
+            string path = HttpContext.Server.MapPath(FilePath + Filename);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = path
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = ""
+                };
+                return Json(obj);
+            }
+        }
+
+        public void DownloadFile(int PurchaseOrderDetailCode)
+        {
+            string DownloadPath = ConfigurationManager.AppSettings["DownloadReportPath"];
+            AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+            string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+            string filePath = HttpContext.Server.MapPath(DownloadPath + Filename);
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + Filename);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
         }
 
         //--------------------------------------------------------GenericMethods-----------------------------------------------------------------------------

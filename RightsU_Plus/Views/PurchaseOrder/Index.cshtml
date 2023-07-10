@@ -269,28 +269,28 @@
         });
     }
 
-    function DownloadLink(PODCode) {
-        debugger;
-        $.ajax({
-            type: "POST",
-            url: URL_GetFileName,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                PurchaseOrderDetailCode: PODCode
-            }),
-            success: function (Filename) {
-                debugger;
-                var url = window.location.origin + "/" + DownloadPath + Filename;
-                var save = document.createElement('a');
-                save.href = url;
-                save.download = Filename;
-                //save.target = '_blank';
-                save.click();
-            }
-        })
-    }
+    //function DownloadLink(PODCode) {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_GetFileName,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            PurchaseOrderDetailCode: PODCode
+    //        }),
+    //        success: function (Filename) {
+    //            debugger;
+    //            var url = window.location.origin + "/" + DownloadPath + Filename;
+    //            var save = document.createElement('a');
+    //            save.href = url;
+    //            save.download = Filename;
+    //            //save.target = '_blank';
+    //            save.click();
+    //        }
+    //    })
+    //}
 
     function CheckPendingStatus() {
         debugger;
@@ -330,14 +330,15 @@
                                 //pendingRecord++;
 
                                 var status = '<span>In Progress</span>'
-                                
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'C').empty();
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'C').append(status);
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
-                                                             
+
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                }                                                         
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoadingPO_" + PurchaseOrderCode).css("display", 'none');

@@ -21,6 +21,7 @@
     var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
     var URL_BindShowTabData = '@Url.Action("BindShowTabData", "PurchaseOrder")';
     var URL_GetPurchaseOrderDetailStatus = '@Url.Action("GetPurchaseOrderDetailStatus", "PurchaseOrder")';
+    var URL_ValidateDownload = '@Url.Action("ValidateDownload", "PurchaseOrder")';
 
     $(document).ready(function () {
         addNumeric();
@@ -29,7 +30,7 @@
             debugger;
             var PoCode = $("#HiddenPoCode").val();
             var PrCode = $("#HiddenPrCode").val();
-            if ($(this).prop("checked")) {        
+            if ($(this).prop("checked")) {
                 //var searchText = "Holdover";
                 IncludeHoldover = "Y"
                 $('#txtPageSize_POD').val(10)
@@ -68,7 +69,7 @@
             $("#Holdover").prop("checked", false);
             TabName = NewTab;
         }
-        
+
         $('#txtPageSize_POD').val(10)
         SearchPoDetails(IncludeHoldover, TabName, PoCode, PrCode);
     }
@@ -265,6 +266,38 @@
         return false
     }
 
+    function ValidateDownload(PurchaseOrderDetailCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDownload,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderDetailCode: PurchaseOrderDetailCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.path == "")
+                    showAlert('E', "File Not Found");
+                else {
+                    debugger;
+                    DownloadFile(PurchaseOrderDetailCode);
+                }
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function DownloadFile(PurchaseOrderDetailCode) {
+        debugger;
+        window.location.href = '@Url.Action("DownloadFile", "PurchaseOrder")?PurchaseOrderDetailCode=' + PurchaseOrderDetailCode;
+    }
+
     function CheckPendingStatusForPod() {
         debugger;
         var pendingRecord = 0;
@@ -297,24 +330,34 @@
 
                                 var status = '<span>In Progress</span>'
 
-                                $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').empty();
-                                $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').append(status);
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'I').empty();
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').empty();
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').append(status);
+                                }
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoadingPOD_" + PurchaseOrderDetailCode).css("display", 'none');
                                 $('.' + SiblingClass).empty();
 
-                                var a = '<a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink(' + PurchaseOrderDetailCode + ')" download></a>';
+                                var a = '<a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="ValidateDownload(' + PurchaseOrderDetailCode + ')"></a>';
                                 $('.' + SiblingClass).append(a);
 
                                 var status = '<span>Success</span>'
 
-                                $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').empty();
-                                $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').append(status);
-
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'I').empty();
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').empty();
+                                    $('.clsTdStatusdtPOD_' + PurchaseOrderDetailCode + 'P').append(status);
+                                }
                                 //initializeTooltip();
                             }
-                            
                         },
                         error: function (result) {
                         }

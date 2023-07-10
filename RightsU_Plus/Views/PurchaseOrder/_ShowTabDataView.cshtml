@@ -51,7 +51,7 @@
                     <td style="text-align:center" class="deal_actionDt clsTdActiondt_@item.AL_Purchase_Order_Details_Code@item.Status">
                         @if (item.Status == "C")
                         {
-                            <a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="DownloadLink('@item.AL_Purchase_Order_Details_Code')" download></a>
+                            <a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="ValidateDownload('@item.AL_Purchase_Order_Details_Code')"></a>
                         }
                         else
                         {

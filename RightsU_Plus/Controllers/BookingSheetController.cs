@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.OleDb;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using UTOFrameWork.FrameworkClasses;
@@ -505,11 +507,52 @@ namespace RightsU_Plus.Controllers
 
         //----------------------------------------------------GetFileNameToDownload-------------------------------------------------------------------------
 
-        public JsonResult GetFileName(int BookingSheetCode)
+        //public JsonResult GetFileName(int BookingSheetCode)
+        //{
+        //    string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Excel_File).FirstOrDefault();
+        //
+        //    return Json(Filename);
+        //}
+
+        public JsonResult ValidateDownload(int BookingSheetCode)
         {
             string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Excel_File).FirstOrDefault();
+            string FilePath = ConfigurationManager.AppSettings["DownloadSheetPath"];
+            string path = HttpContext.Server.MapPath(FilePath + Filename);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = path
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = ""
+                };
+                return Json(obj);
+            }
+        }
 
-            return Json(Filename);
+        public void DownloadSheet(int BookingSheetCode)
+        {
+            string filePath;
+            string DownloadPath = ConfigurationManager.AppSettings["DownloadSheetPath"];
+            string Filename = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingSheetList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).Select(s => s.Excel_File).FirstOrDefault();
+            filePath = HttpContext.Server.MapPath( DownloadPath + Filename);
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/ms-excel";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + Filename);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
         }
 
         //-----------------------------------------------------BookingSheetImport---------------------------------------------------------------------------
