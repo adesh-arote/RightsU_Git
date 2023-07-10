@@ -1129,7 +1129,7 @@
                 $("#" + count + '_txtControlType').prop("type", "text");
                 $("#" + count + '_txtControlType').addClass("isDatepicker");
                 $("#" + count + '_txtControlType').val(labelName);
-                $(".isDatepicker").datepicker();
+                $(".isDatepicker").datepicker({ dateFormat: 'dd-M-yy' });
 
                 if (document.getElementById(count + '_ddlControlType') != null)
                     document.getElementById(count + '_ddlControlType').style.display = "none";
