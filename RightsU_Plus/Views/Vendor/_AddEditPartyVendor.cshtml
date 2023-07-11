@@ -50,8 +50,9 @@
         showLoading();
         BindVendorContact();
         $("#hdnRecodLockingCode").val($("#hdnRecodLockingCode_temp").val());
-
+    
         $("#Country,#Theatrical").chosen();
+        $("#Theatrical_chosen").css("width", "100%");
         var Status = '@ViewData["Status"]';
         if (Status == 'A') {
             $("#btnSave").val("@objMessageKey.Save");
@@ -768,7 +769,7 @@
                                 }
                             </td>
                             <td>@objMessageKey.Theatrical</td>
-                            <td>
+                            <td style="display:none">
                                 @if (ViewBag.Mode == "V")
                                 {
                                     string theritical = string.Join(",", @objVendor.Vendor_Country.Where(w => w.Is_Theatrical == "Y").Select(c => c.Country.Country_Name).ToList());
@@ -778,6 +779,11 @@
                                 {
                                     @Html.ListBox("Theatrical", TempData["Theatrical"] as IEnumerable<SelectListItem>, new { @id = "ddlTheatrical", multiple = "multiple" })
                                 }
+                            </td>
+                            <td>
+                                @Html.DropDownList("Theatrical", new List<SelectListItem>
+                                    {new SelectListItem {Text = "No", Value = "N"},
+                                    new SelectListItem {Text = "Yes", Value = "Y" }}, new { @id = "Theatrical", @class = "form_input chosen-select" })
                             </td>
                         </tr>
                         <tr>
