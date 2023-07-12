@@ -315,7 +315,7 @@
           <Property Name="Created_By" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Acq_Deal_Mass_Territory_Update_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Acq_Deal_Mass_Territory_Update_Details">
           <Key>
             <PropertyRef Name="Acq_Deal_Mass_Update_Det_Code" />
@@ -416,6 +416,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Acq_Deal_Code" Type="int" />
           <Property Name="Cost_Type_Code" Type="int" />
           <Property Name="Payment_Term_Code" Type="int" />
+          <Property Name="Title_Code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
           <Property Name="Days_After" Type="int" />
           <Property Name="Percentage" Type="decimal" Precision="10" Scale="3" />
           <Property Name="Amount" Type="decimal" Precision="38" Scale="3" />
@@ -1578,7 +1581,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Upload_Type" Type="varchar" MaxLength="10" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.BV_HouseId_Data_Temp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.BV_HouseId_Data_Temp' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="BV_HouseId_Data_Temp">
           <Key>
             <PropertyRef Name="BV_HouseId_Data_Code" />
@@ -1810,7 +1813,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.BV_HouseId_Data_Temp' does not
           <Property Name="Country_Code" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.ChannelWiseConsumption_Report' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="ChannelWiseConsumption_Report">
           <Key>
             <PropertyRef Name="Deal_Movie_Code" />
@@ -2069,7 +2072,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.ChannelWiseConsumption_Report'
           <Property Name="Is_Show" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.DM_AQDeal' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DM_AQDeal">
           <Key>
             <PropertyRef Name="IntCode" />
@@ -2402,7 +2405,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_AQDeal' does not have a pri
           <Property Name="Public_Domain" Type="char" MaxLength="1" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.DM_Title' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="DM_Title">
           <Key>
             <PropertyRef Name="DM_Title_Code" />
@@ -3262,7 +3265,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Columns_Code" Type="int" />
           <Property Name="Columns_Value_Code" Type="int" />
           <Property Name="Column_Value" Type="nvarchar" MaxLength="1000" />
-          <Property Name="Is_Multiple_Select" Type="char" MaxLength="1" />
+          <Property Name="Is_Multiple_Select" Type="char" MaxLength="1" />          
         </EntityType>
         <EntityType Name="Map_Extended_Columns_Details">
           <Key>
@@ -3900,7 +3903,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="FileCode" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Paf_Details' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Paf_Details">
           <Key>
             <PropertyRef Name="Id" />
@@ -4211,7 +4214,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
           <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
-          
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -4399,7 +4401,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Position" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.RunData' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="RunData">
           <Key>
             <PropertyRef Name="Id" />
@@ -5760,7 +5762,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="HouseId_Prefix_Digits" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Err_Detail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Upload_Err_Detail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Upload_Err_Detail">
           <Key>
             <PropertyRef Name="Upload_Detail_Code" />
@@ -5775,7 +5777,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Err_Detail' does not ha
           <Property Name="Upload_Title_Type" Type="varchar" MaxLength="5" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Upload_Files' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Upload_Files">
           <Key>
             <PropertyRef Name="File_Code" />
@@ -7028,6 +7030,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Acq_Deal_Payment_Terms">
               <PropertyRef Name="Payment_Term_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Acq_Deal_Payment_Terms_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Payment_Terms" Type="Self.Acq_Deal_Payment_Terms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Payment_Terms">
+              <PropertyRef Name="Title_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15813,6 +15827,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Payment_Terms" EntitySet="Payment_Terms" />
             <End Role="Acq_Deal_Payment_Terms" EntitySet="Acq_Deal_Payment_Terms" />
           </AssociationSet>
+          <AssociationSet Name="FK_Acq_Deal_Payment_Terms_Title" Association="Self.FK_Acq_Deal_Payment_Terms_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Acq_Deal_Payment_Terms" EntitySet="Acq_Deal_Payment_Terms" />
+          </AssociationSet>
           <AssociationSet Name="FK_Acq_Deal_Pushback_Acq_Deal" Association="Self.FK_Acq_Deal_Pushback_Acq_Deal">
             <End Role="Acq_Deal" EntitySet="Acq_Deal" />
             <End Role="Acq_Deal_Pushback" EntitySet="Acq_Deal_Pushback" />
@@ -21837,6 +21855,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
           </FunctionImport>
+          <AssociationSet Name="FK_Acq_Deal_Payment_Terms_Title" Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Acq_Deal_Payment_Terms" EntitySet="Acq_Deal_Payment_Terms" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -23580,7 +23602,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Multiple_Select" Type="String" MaxLength="1" Unicode="false" FixedLength="true" />
           <NavigationProperty Name="Extended_Columns" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns" FromRole="Map_Extended_Columns" ToRole="Extended_Columns" />
           <NavigationProperty Name="Extended_Columns_Value" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Extended_Columns_Value" FromRole="Map_Extended_Columns" ToRole="Extended_Columns_Value" />
-          <NavigationProperty Name="Map_Extended_Columns_Details" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Details_Map_Extended_Columns" FromRole="Map_Extended_Columns" ToRole="Map_Extended_Columns_Details" />
+          <NavigationProperty Name="Map_Extended_Columns_Details" Relationship="RightsU_NeoModel.FK_Map_Extended_Columns_Details_Map_Extended_Columns" FromRole="Map_Extended_Columns" ToRole="Map_Extended_Columns_Details" />          
         </EntityType>
         <EntityType Name="Map_Extended_Columns_Details">
           <Key>
@@ -24697,6 +24719,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title_Objection" Relationship="RightsU_NeoModel.FK_Title_Objection_Title" FromRole="Title" ToRole="Title_Objection" />
           <NavigationProperty Name="Acq_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Acq_Deal_Supplementary_Title" FromRole="Title" ToRole="Acq_Deal_Supplementary" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Title" FromRole="Title" ToRole="Syn_Deal_Supplementary" />
+          <NavigationProperty Name="Acq_Deal_Payment_Terms" Relationship="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Title" FromRole="Title" ToRole="Acq_Deal_Payment_Terms" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -27405,6 +27428,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Acq_Deal" Relationship="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Acq_Deal" FromRole="Acq_Deal_Payment_Terms" ToRole="Acq_Deal" />
           <NavigationProperty Name="Cost_Type" Relationship="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Cost_Type" FromRole="Acq_Deal_Payment_Terms" ToRole="Cost_Type" />
           <NavigationProperty Name="Payment_Terms" Relationship="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Payment_Terms" FromRole="Acq_Deal_Payment_Terms" ToRole="Payment_Terms" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Title" FromRole="Acq_Deal_Payment_Terms" ToRole="Title" />
         </EntityType>
         <EntityType Name="Syn_Deal_Revenue">
           <Key>
@@ -32518,7 +32545,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Action_On" Type="DateTime" Precision="3" />
           <Property Name="Status" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
           <Property Name="File_Type" Type="String" MaxLength="2" FixedLength="false" Unicode="false" />
-          <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Mapped_By" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />          
         </EntityType>
         <EntityType Name="DM_Music_Title">
           <Key>
@@ -36280,7 +36307,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="validation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Is_Allowed_For_Resolve_Conflict" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShortName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />          
         </EntityType>
         <EntityType Name="DM_Title_Import_Utility_Data">
           <Key>
@@ -37412,6 +37439,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
         </ComplexType>
+        <Association Name="FK_Acq_Deal_Payment_Terms_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Payment_Terms" Role="Acq_Deal_Payment_Terms" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Payment_Terms">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -39141,7 +39180,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </EntitySetMapping>
           <EntitySetMapping Name="Map_Extended_Columns">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Map_Extended_Columns">
-              <MappingFragment StoreEntitySet="Map_Extended_Columns">
+              <MappingFragment StoreEntitySet="Map_Extended_Columns">                
                 <ScalarProperty Name="Map_Extended_Columns_Code" ColumnName="Map_Extended_Columns_Code" />
                 <ScalarProperty Name="Record_Code" ColumnName="Record_Code" />
                 <ScalarProperty Name="Table_Name" ColumnName="Table_Name" />
@@ -40644,6 +40683,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal_Payment_Terms">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Payment_Terms">
               <MappingFragment StoreEntitySet="Acq_Deal_Payment_Terms">
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
@@ -43742,6 +43784,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Master_Import">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Master_Import">
               <MappingFragment StoreEntitySet="DM_Master_Import">
+                
                 <ScalarProperty Name="Mapped_By" ColumnName="Mapped_By" />
                 <ScalarProperty Name="File_Type" ColumnName="File_Type" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
@@ -46274,6 +46317,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="DM_Title_Import_Utility">
             <EntityTypeMapping TypeName="RightsU_NeoModel.DM_Title_Import_Utility">
               <MappingFragment StoreEntitySet="DM_Title_Import_Utility">
+                
                 <ScalarProperty Name="ShortName" ColumnName="ShortName" />
                 <ScalarProperty Name="Is_Allowed_For_Resolve_Conflict" ColumnName="Is_Allowed_For_Resolve_Conflict" />
                 <ScalarProperty Name="validation" ColumnName="validation" />

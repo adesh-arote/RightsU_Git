@@ -27,9 +27,13 @@ namespace RightsU_Entities
         public int Inserted_By { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
-    
+        public Nullable<int> Title_Code { get; set; }
+        public Nullable<int> Episode_From { get; set; }
+        public Nullable<int> Episode_To { get; set; }
+
         public virtual Acq_Deal Acq_Deal { get; set; }
         public virtual Cost_Type Cost_Type { get; set; }
         public virtual Payment_Terms Payment_Terms { get; set; }
+        public virtual Title Title { get; set; }
     }
 }
