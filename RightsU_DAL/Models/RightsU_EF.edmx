@@ -31880,6 +31880,10 @@ warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Upload_Files' does not have
         <ComplexType Name="USP_List_Acq_PaymentTerms_Result">
           <Property Type="Int32" Name="Acq_Deal_Payment_Terms_Code" Nullable="false" />
           <Property Type="Int32" Name="Acq_Deal_Code" Nullable="true" />
+		  <Property Type="Int32" Name="Title_Code" Nullable="true" />
+		  <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500"  />
+		  <Property Type="Int32" Name="Episode_From" Nullable="true" />
+		  <Property Type="Int32" Name="Episode_To" Nullable="true" />
           <Property Type="Int32" Name="Cost_Type_Code" Nullable="true" />
           <Property Type="Int32" Name="Payment_Term_Code" Nullable="true" />
           <Property Type="Int32" Name="Days_After" Nullable="true" />
@@ -43275,6 +43279,10 @@ warning 6002: The table/view 'RightsU_EF_BlueAnt.dbo.Upload_Files' does not have
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_List_Acq_PaymentTerms_Result">
                 <ScalarProperty Name="Acq_Deal_Payment_Terms_Code" ColumnName="Acq_Deal_Payment_Terms_Code" />
                 <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+				<ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+				<ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+				<ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+				<ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
                 <ScalarProperty Name="Cost_Type_Code" ColumnName="Cost_Type_Code" />
                 <ScalarProperty Name="Payment_Term_Code" ColumnName="Payment_Term_Code" />
                 <ScalarProperty Name="Days_After" ColumnName="Days_After" />

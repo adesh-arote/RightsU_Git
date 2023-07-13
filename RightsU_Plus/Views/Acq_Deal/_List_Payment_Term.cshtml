@@ -25,6 +25,8 @@
 </style>
 <script>
     var URL_CTCODE = '@Url.Action("CostTypeAmount", "Acq_Payment_Term")';
+    var URL_BindCostTypeByTitleCode = '@Url.Action("BindCostTypeByTitleCode", "Acq_Payment_Term")';
+
     $(document).ready(function () {
         debugger;
         var i = 1;
@@ -75,7 +77,7 @@
         if ('@ViewBag.CommandName' == 'Edit') {
             CostTypeEDIT();
         }
-        
+
         //RemoveReqClass();
         tmp_ValidatePaymentTerm = 0;
         var SelectedddlFCostTypeCode = $('#ddl_Cost_Type_Code_' + strRowIndex).val();
@@ -111,7 +113,7 @@
             var ctCnt = 0;
         }
         else { var ctCnt = 1;}
-        
+
         CostType.each(function (ctrowId_Outer) {
             debugger;
             var CostTypeCode = 0, CostTypeAmt = 0;
@@ -360,8 +362,32 @@
                 error: function (result) {
                     alert('Error: ' + result.responseText);
                 }
-            });   
+            });
     }
+
+    function BindDrpCostType() {
+        var Title_Code = $('#ddlTitle_Code').val()
+        if ($('#ddlTitle_Code').val() == "") {
+            Title_Code = 0;
+        }
+        $.ajax({
+            url: URL_BindCostTypeByTitleCode,
+            type: "GET",
+            dataType: "json",
+            data: { Title_Code: parseInt(Title_Code) },
+            success: function (data) {
+                $('#ddl_Cost_Type_Code_0').empty();
+                $.each(data, function (i, item) {
+                    $("#ddl_Cost_Type_Code_0").append('<option value="'
+                        + item.Value + '">'
+                        + item.Text + '</option>');
+                });
+                initializeChosen();
+            }
+        });
+        initializeChosen();
+    }
+
 </script>
 <div class="paging_area clearfix">
     <span class="pull-left">@objMessageKey.TotalRecords:  @ViewBag.RecordCount</span>
@@ -379,16 +405,18 @@
         <tr>
             @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
             {
-                <th style="width: 30%;">@objMessageKey.PaymentTerm</th>
-                <th style="width: 20%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
+                <th style="width: 15%;">Title</th>
+                <th style="width: 25%;">@objMessageKey.PaymentTerm</th>
+                <th style="width: 10%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
                 <th style="width: 30%;">@objMessageKey.PercentageAmount</th>
                 <th style="width: 10%;">@objMessageKey.DueDate</th>
                 <th style="width: 10%;">@objMessageKey.Action</th>
             }
             else
             {
-                <th style="width: 30%;">@objMessageKey.PaymentTerm</th>
-                <th style="width: 20%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
+                <th style="width: 15%;">Title</th>
+                <th style="width: 25%;">@objMessageKey.PaymentTerm</th>
+                <th style="width: 10%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
                 <th style="width: 30%;">@objMessageKey.PercentageAmount</th>
                 <th style="width: 20%;">@objMessageKey.DueDate</th>
             }
@@ -400,9 +428,34 @@
             if (Model != null)
             {
                 int count = 0;
+                string title = "";
                 foreach (var item in Model)
                 {
                     count++;
+                    if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Program || ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                    {
+                        if (ViewBag.Deal_Type_Condition == UTOFrameWork.FrameworkClasses.GlobalParams.Deal_Music)
+                        {
+                            if (Convert.ToString(item.Episode_From) == "0")
+                            {
+                                title = item.Title_Name + " ( Unlimited )";
+                            }
+                            else
+                            {
+                                title = item.Title_Name + " ( " + item.Episode_From + " )";
+                            }
+
+                        }
+                        else
+                        {
+                            title = item.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                        }
+                        //title = item.Title.Title_Name + " ( " + item.Episode_From + " - " + item.Episode_To + " )";
+                    }
+                    else
+                    {
+                        title = item.Title_Name;
+                    }
                     <tr id="trList">
                         @{string dt = "";
                             if (Convert.ToDateTime(item.Due_Date) == DateTime.MinValue)
@@ -414,6 +467,9 @@
                                 dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
                             }}
                         <td>
+                            @Html.Label(title)
+                        </td>
+                        <td>
                             <label for="Payment_Terms1" id="Payment_Terms1">@item.Payment_Terms</label>
                             <label for="Payment_Terms_Code" value="@item.Payment_Term_Code" style="display:none;" id="Payment_Terms_Code">@item.Payment_Term_Code</label>
                             <label for="Cost_Type_Code" value="@item.Cost_Type_Code" style="display:none;" id="Cost_Type_Code">@item.Cost_Type_Code</label>
@@ -422,7 +478,7 @@
                             <label for="Days_After" id="Days_After">@item.Days_After</label>
                         </td>
                         <td>
-                            
+
                             <div style="width:60%; float:left;"><label for="Cost_Type_Name" id="Cost_Type_Name">@item.Cost_Type_Name</label></div>
                             <div style="width:133px; float:right;">
                                 <label for="Amount" id="Amount">@item.Amount</label>&nbsp;&nbsp;&nbsp;
@@ -449,28 +505,28 @@
         {
             <tr>
                 <td>
-                    @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:230px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
+                    @Html.DropDownList("Title_Code", TempData["Title_Code"] as IEnumerable<SelectListItem>, "Please Select", new { style = "width:180px;", @class = "form_input chosen-select", @id = "ddlTitle_Code" })
+                </td>
+                <td>
+                    @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:180px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
                     @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForPaymentTermAdd + "~"))
-    {
-                <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
-}
+                    {
+                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
+                    }
                 </td>
                 <td>
                     @Html.TextBox("Days_After", "", new { @class = "numberDaysText", style = "width:40px;", maxlength = 3, @id = "txt_Days_After" })
                 </td>
-                @{ 
+                @{
                     var Cost_Type_Code = Model.Select(s => s.Cost_Type_Code).FirstOrDefault();
                     //var Cost_Type_Amount = Model.Select(s => s.Cost_Type_Amount).FirstOrDefault();
                 }
-                <td>
-                    @*@Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:70px;", @class = "form_input chosen-select", onchange = "return validatePercent(txt_Percentage, this, ddl_Payment_Term_Code);", @id = "ddl_Cost_Type_Code_0" })*@
-                    @*@Html.TextBox("Percentage", "", new { @class = "numberText", style = "width:60px;", Title = "Percentage", maxlength = 7, onchange = "return validatePercent(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })
-        @Html.TextBox("Amount", "", new { @class = "numberText", style = "width:60px;", Title = "Amount", maxlength = 7, onchange = "return validatePercent(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
+                <td>                  
 
-                    @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:70px;", @class = "form_input chosen-select", onchange = "return CostTypeADD()", @id = "ddl_Cost_Type_Code_0" })
-                    <input class="text text-right" id="txtAmountSR_0" type="text" title="Amount"  value="" onkeyup="ValidPaymentTermOnAmount(0)" />
-                    <input class="text" id="txtPercentageSR_0" type="text"  value="" title="Percentage" onkeyup="ValidPaymentTermOnPercentage(0)" />
-                    @Html.Hidden("hdn_CostTypeCode_0", Model.Select(s=>s.Cost_Type_Code).FirstOrDefault())
+                    @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:70px;", @class = "form_input chosen-select", onchange = "return CostTypeADD()", @id = "ddl_Cost_Type_Code_0" }) @**@
+                    <input class="text text-right" id="txtAmountSR_0" type="text" title="Amount" value="" onkeyup="ValidPaymentTermOnAmount(0)" />
+                    <input class="text" id="txtPercentageSR_0" type="text" value="" title="Percentage" onkeyup="ValidPaymentTermOnPercentage(0)" />
+                    @Html.Hidden("hdn_CostTypeCode_0", Model.Select(s => s.Cost_Type_Code).FirstOrDefault())
                     @Html.Hidden("hdn_BudgetedAmt_0")
                 </td>
                 <td>
@@ -484,41 +540,43 @@
             </tr>
         }
         @if (Model != null && ViewBag.CommandName == "Edit")
+        {
+            int count = 0;
+            int i = 1;
+            foreach (var item in Model)
+            {
+                count++;
+                if (ViewBag.Acq_Deal_Payment_Terms_Code == item.Acq_Deal_Payment_Terms_Code)
+                {
+                    if (ViewBag.CommandName == "Edit")
                     {
-                        int count = 0;
-                        int i = 1;
-                        foreach (var item in Model)
-                        {
-                            count++;
-                            if (ViewBag.Acq_Deal_Payment_Terms_Code == item.Acq_Deal_Payment_Terms_Code)
-                            {
-                                if (ViewBag.CommandName == "Edit")
-                                {
                         <tr>
-                                        @{string dt = "";
-                                        if (Convert.ToDateTime(item.Due_Date) == DateTime.MinValue)
-                                        {
-                                            dt = "";
-                                        }
-                                        else
-                                        {
-                                            dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
-                                        }}
+                            @{string dt = "";
+                                if (Convert.ToDateTime(item.Due_Date) == DateTime.MinValue)
+                                {
+                                    dt = "";
+                                }
+                                else
+                                {
+                                    dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
+                                }}
+                            <td>
+                                @Html.DropDownList("ddlTitle_Code", (List<SelectListItem>)ViewBag.lstTitle, new { style = "width:250px;", @class = "form_input chosen-select" })
+                            </td>
                             <td>
                                 @Html.Hidden("Acq_Deal_Payment_Terms_Code", item.Acq_Deal_Payment_Terms_Code)
-                                @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:230px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
+                                @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:180px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
                                 @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForPaymentTermAdd + "~"))
-    {
-                            <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
-}
+                                {
+                                    <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
+                                }
                             </td>
                             <td>
                                 @Html.TextBox("Days_After", item.Days_After, new { @class = "smallTextBox numberDaysText", maxlength = 3, @id = "txt_Days_After" })
                             </td>
                             <td>
-                                @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_"+ i })
-                                @*@Html.TextBox("Percentage", item.Percentage, new { @class = "numberText", @style = "width:60px;", @maxlength = 7, @onchange = "return validatePercentOnEdit(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
-                                @Html.TextBox("Amount", item.Amount, new { @id = "txtAmountSR_" + i, @class = "text-right",@title= "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
+                                @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_" + i })
+                                @Html.TextBox("Amount", item.Amount, new { @id = "txtAmountSR_" + i, @class = "text-right", @title = "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
                                 @Html.TextBox("Percentage", item.Percentage, new { @id = "txtPercentageSR_" + i, @title = "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
                                 @Html.Hidden("hdn_CostTypeCode_" + i, item.Cost_Type_Code)
                                 @Html.Hidden("hdn_BudgetedAmt_" + i)
@@ -548,6 +606,9 @@
                                 dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
                             }}
                         <td>
+                            <label for="Payment_Terms_Title" style="display: none;" id="Payment_Terms_Title_Edit">@item.Payment_Term_Code</label>
+                        </td>
+                        <td>
                             <label for="Payment_Terms1" style="width: 200px;" id="Payment_Terms1_Edit">@item.Payment_Terms</label>
                             <label for="Payment_Terms_Code" style="display: none;" id="Payment_Terms_Code_Edit">@item.Payment_Term_Code</label>
                         </td>
@@ -555,7 +616,7 @@
                             <label for="Days_After" id="Days_After_Edit">@item.Days_After</label>
                         </td>
                         <td>
-                            
+
                             <div class="divBlock">
                                 <div style="width:50%; float:left;">
                                     <label for="Cost_Type_Name" id="Cost_Type_Name_Edit">@item.Cost_Type_Name</label>
