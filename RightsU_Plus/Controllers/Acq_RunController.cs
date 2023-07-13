@@ -1186,7 +1186,14 @@ namespace RightsU_Plus.Controllers
                             objChannel.Acq_Deal_Run_Channel_Code = c.Acq_Deal_Run_Channel_Code;
                             objChannel.Acq_Deal_Run_Code = c.Acq_Deal_Run_Code;
                             objChannel.Channel_Code = c.Channel_Code;
-                            objChannel.Do_Not_Consume_Rights = c.Do_Not_Consume_Rights;
+                            if(!string.IsNullOrEmpty(c.Do_Not_Consume_Rights))
+                            {
+                                objChannel.Do_Not_Consume_Rights = c.Do_Not_Consume_Rights;
+                            }
+                            else
+                            {
+                                objChannel.Do_Not_Consume_Rights = "N";
+                            }         
                             objChannel.Max_Runs = c.Max_Runs;
                             objChannel.Min_Runs = c.Min_Runs;
                             objChannel.EntityState = State.Added;
