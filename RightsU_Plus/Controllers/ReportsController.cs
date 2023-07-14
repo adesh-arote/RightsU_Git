@@ -3120,5 +3120,44 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
+
+        #region ---Self Utilization Report---
+
+        public ActionResult SelfUtilizationReport()
+        {
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDealListReport);
+            
+            ViewBag.ModeOfAcquisitionList = GetModeOfAcquisitionList();
+
+            return View();
+        }
+
+        public JsonResult BindTitleForSelfUtilizationReport(string keyword = "")
+        {
+            dynamic result = "";
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                List<string> terms = keyword.Split('﹐').ToList();
+                terms = terms.Select(s => s.Trim()).ToList();
+                string searchString = terms.LastOrDefault().ToString().Trim();
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())).Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+            }
+            return Json(result);
+        }
+
+        public PartialViewResult BindSelfUtilizationReport(string Title, string ModeOfAcquisitionCode)
+        {
+            string title_names = TitleAutosuggest(Title);
+
+            ReportParameter[] parm = new ReportParameter[2];
+            parm[0] = new ReportParameter("Title_Name", title_names);
+            parm[1] = new ReportParameter("ModeOfAcquisition", ModeOfAcquisitionCode);
+            ReportViewer rptViewer = BindReport(parm, "SELF_UTILIZATION_REPORT");
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+
+        #endregion
+
     }
 }

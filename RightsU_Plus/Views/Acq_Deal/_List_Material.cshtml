@@ -194,7 +194,7 @@
                         @Html.DropDownList("Material_Medium_Code", (List<SelectListItem>)ViewBag.lstMaterial_Medium, new { style = "width:200px;", @class = "form_input chosen-select" })
                     </td>
                     <td>
-                        @Html.TextBox("Quantity", (string)ViewBag.MaterialQtyDefaultValue, new { style = "width:100px;", maxlength = 5 })
+                        @Html.TextBox("Quantity", (string)ViewBag.MaterialQtyDefaultValue, new { style = "width:100px;", maxlength = 9 })
                     </td>
                     <td align="center">
                         @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Save" onclick="return checkForsave(0);" />*@
@@ -233,7 +233,7 @@
                                     @Html.DropDownList("Material_Medium_Code", (List<SelectListItem>)ViewBag.lstMaterial_Medium, new { style = "width:200px;", @class = "form_input chosen-select" })
                                 </td>
                                 <td>
-                                    @Html.TextBox("Quantity", item.Quantity, new { style = "width:100px;", maxlength = 5 })
+                                    @Html.TextBox("Quantity", item.Quantity, new { style = "width:100px;", maxlength = 9 })
                                 </td>
                                 <td align="center">
                                     @*<input type="image" class="glyphicon glyphicon-ok-circle" title="Update" onclick="return checkForsave(1);" />*@

@@ -1879,6 +1879,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptDealStatusReport";
             else if (ReportName == "rptIPR_IntDom_Report")
                 ReportPath = ReportFolder + "/rptIPR_IntDom";
+            else if (ReportName == "SELF_UTILIZATION_REPORT")
+                ReportPath = ReportFolder + "/rpt_Acq_Self_Utilization";
 
             return ReportPath;
         }

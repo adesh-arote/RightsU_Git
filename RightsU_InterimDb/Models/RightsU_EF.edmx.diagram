@@ -1038,6 +1038,7 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Acq_Deal_Payment_Terms_Title" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

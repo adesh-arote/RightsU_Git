@@ -56,6 +56,7 @@ namespace RightsU_Entities
             this.Title_Objection = new HashSet<Title_Objection>();
             this.Acq_Deal_Supplementary = new HashSet<Acq_Deal_Supplementary>();
             this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
+            this.Acq_Deal_Payment_Terms = new HashSet<Acq_Deal_Payment_Terms>();
         }
     
     	public State EntityState { get; set; }    public int Title_Code { get; set; }
@@ -127,5 +128,6 @@ namespace RightsU_Entities
         public virtual ICollection<Title_Objection> Title_Objection { get; set; }
         public virtual ICollection<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
         public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
+        public virtual ICollection<Acq_Deal_Payment_Terms> Acq_Deal_Payment_Terms { get; set; }
     }
 }

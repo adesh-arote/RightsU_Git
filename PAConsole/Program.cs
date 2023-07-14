@@ -46,12 +46,12 @@ namespace PAConsole
 
                                     DataTable dt = new DataTable();
                                     SqlDataAdapter adapt = new SqlDataAdapter(command);
-                                    command.Parameters.Add(new SqlParameter("@Agreement_No", ""));
-                                    command.Parameters.Add(new SqlParameter("@Title_Codes", "8040"));//604,25489
-                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", ""));
-                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", "1,2,5,6,7,8,9,10,11"));
-                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", 1));
-                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", "N"));
+                                    command.Parameters.Add(new SqlParameter("@Agreement_No", objAcq_Adv_Ancillary_Report.Agreement_No));
+                                    command.Parameters.Add(new SqlParameter("@Title_Codes", objAcq_Adv_Ancillary_Report.Title_Codes));//604,25489
+                                    command.Parameters.Add(new SqlParameter("@Platform_Codes", objAcq_Adv_Ancillary_Report.Platform_Codes));
+                                    command.Parameters.Add(new SqlParameter("@Ancillary_Type_Code", objAcq_Adv_Ancillary_Report.Ancillary_Type_Codes));
+                                    command.Parameters.Add(new SqlParameter("@Business_Unit_Code", objAcq_Adv_Ancillary_Report.Business_Unit_Code));
+                                    command.Parameters.Add(new SqlParameter("@IncludeExpired", objAcq_Adv_Ancillary_Report.IncludeExpired));
 
                                     connection.Open();
                                     command.CommandTimeout = Convert.ToInt32(ConfigurationManager.AppSettings["EF_TimeOut"].ToString());
@@ -159,7 +159,7 @@ namespace PAConsole
             }
             dt.AcceptChanges();
 
-            int Acq_Adv_Ancillary_Report_Code = 3;// objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
+            int Acq_Adv_Ancillary_Report_Code = objAcq_Adv_Ancillary_Report.Acq_Adv_Ancillary_Report_Code;
             try
             {
 
