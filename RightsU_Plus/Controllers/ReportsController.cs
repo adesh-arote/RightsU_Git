@@ -2522,7 +2522,7 @@ namespace RightsU_Plus.Controllers
         {
             string numberResult = numberformat.Split('~')[0];
 
-            ReportParameter[] parm = new ReportParameter[10];
+            ReportParameter[] parm = new ReportParameter[8];
             string TitleCodes = TitleAutosuggest(TitleCode);
             parm[0] = new ReportParameter("DealCode", AcqDealCode);
             parm[1] = new ReportParameter("TitleCode", TitleCodes);
@@ -2532,8 +2532,8 @@ namespace RightsU_Plus.Controllers
             parm[5] = new ReportParameter("Deal_Type_Code", DealTypeCode);
             parm[6] = new ReportParameter("NumberFormat", numberResult);
             parm[7] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-            parm[8] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-            parm[9] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+            //parm[8] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+            //parm[9] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
             ReportViewer rptViewer = BindReport(parm, "Episodic_Cost_Report");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
