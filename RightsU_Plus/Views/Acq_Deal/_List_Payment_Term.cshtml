@@ -20,7 +20,7 @@
         width: 92% !important;
     }*/
     ddl_Cost_Type_Code_0_chosen{
-        width:60px;
+        width:55px;
     }
 </style>
 <script>
@@ -406,18 +406,18 @@
             @if (ViewBag.PageMode != "V" && ViewBag.PageMode != "APRV" && ViewBag.PageMode != "EWOA")
             {
                 <th style="width: 15%;">Title</th>
-                <th style="width: 25%;">@objMessageKey.PaymentTerm</th>
+                <th style="width: 22%;">@objMessageKey.PaymentTerm</th>
                 <th style="width: 10%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
-                <th style="width: 30%;">@objMessageKey.PercentageAmount</th>
+                <th style="width: 35%;">@objMessageKey.PercentageAmount</th>
                 <th style="width: 10%;">@objMessageKey.DueDate</th>
                 <th style="width: 10%;">@objMessageKey.Action</th>
             }
             else
             {
                 <th style="width: 15%;">Title</th>
-                <th style="width: 25%;">@objMessageKey.PaymentTerm</th>
+                <th style="width: 22%;">@objMessageKey.PaymentTerm</th>
                 <th style="width: 10%;" class="longTH">@objMessageKey.DaysbeforeorafterMilestone</th>
-                <th style="width: 30%;">@objMessageKey.PercentageAmount</th>
+                <th style="width: 35%;">@objMessageKey.PercentageAmount</th>
                 <th style="width: 20%;">@objMessageKey.DueDate</th>
             }
         </tr>
@@ -479,10 +479,10 @@
                         </td>
                         <td>
 
-                            <div style="width:60%; float:left;"><label for="Cost_Type_Name" id="Cost_Type_Name">@item.Cost_Type_Name</label></div>
-                            <div style="width:133px; float:right;">
-                                <label for="Amount" id="Amount">@item.Amount</label>&nbsp;&nbsp;&nbsp;
-                                <label for="Percentage" id="Percentage">@item.Percentage</label>
+                            <div style="width:55%; float:left;"><label for="Cost_Type_Name" id="Cost_Type_Name">@item.Cost_Type_Name</label></div>
+                            <div style="width:153px; float:right;">
+                                <label for="Amount" id="Amount">@string.Format("{0:#,0.00}", item.Amount)</label>&nbsp;&nbsp;&nbsp;
+                                <label for="Percentage" id="Percentage">@string.Format("{0:#,0.00}", @item.Percentage)</label>
                                 <span id="percentageSign">%</span> &nbsp;&nbsp;
                             </div>
                         </td>
@@ -576,8 +576,8 @@
                             </td>
                             <td>
                                 @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_" + i })
-                                @Html.TextBox("Amount", item.Amount, new { @id = "txtAmountSR_" + i, @class = "text-right", @title = "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
-                                @Html.TextBox("Percentage", item.Percentage, new { @id = "txtPercentageSR_" + i, @title = "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
+                                @Html.TextBox("Amount", string.Format("{0:#,#.00}", item.Amount) , new { @id = "txtAmountSR_" + i, @class = "text-right", @title = "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
+                                @Html.TextBox("Percentage", string.Format("{0:#,#.00}", item.Percentage), new { @id = "txtPercentageSR_" + i, @title = "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
                                 @Html.Hidden("hdn_CostTypeCode_" + i, item.Cost_Type_Code)
                                 @Html.Hidden("hdn_BudgetedAmt_" + i)
                             </td>
@@ -618,13 +618,13 @@
                         <td>
 
                             <div class="divBlock">
-                                <div style="width:50%; float:left;">
+                                <div style="width:55%; float:left;">
                                     <label for="Cost_Type_Name" id="Cost_Type_Name_Edit">@item.Cost_Type_Name</label>
                                     <label for="Cost_Type_Code" style="display: none;" id="Cost_Type_Code_Edit">@item.Cost_Type_Code</label>
                                 </div>
-                                <div style="width:135px; float:right;">
-                                    <label for="Amount" id="Amount_Edit">@item.Amount</label>
-                                    <label for="Percentage" id="Percentage_Edit">@item.Percentage</label>
+                                <div style="width:153px; float:right;">
+                                    <label for="Amount" id="Amount_Edit">@string.Format("{0:#,0.00}", @item.Amount)</label>
+                                    <label for="Percentage" id="Percentage_Edit">@string.Format("{0:#,0.00}", @item.Percentage)</label>
                                     <span id="percentageSign_Edit">%</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </div>
 

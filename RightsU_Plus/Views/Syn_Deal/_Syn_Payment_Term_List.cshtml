@@ -379,11 +379,27 @@
          returnVal = ChkDuplicatePaymentTerm();
         if(canSave==0)
         {
+            if (Percentage1 != "") {
+                Percentage1 = parseFloat(RemoveComa1(Percentage1));
+            }
+            if (Amount1 != "") {
+                Amount1 = parseFloat(RemoveComa1(Amount1));
+            }
+
             SavePaymentTerms(Syn_Deal_Payment_Terms_Code, Payment_Term_Code, Cost_Type_Code1, Percentage1, Amount1,Days_After1,Due_Date)
         }
         return returnVal;
     }
 
+    function RemoveComa1(s) {
+        var s1 = '';
+
+        while (s.indexOf(',') != -1) {
+            s = s.replace(',', '');
+        }
+
+        return s;
+    }
 
       function ChkDuplicatePaymentTerm() {
         debugger;
