@@ -1694,10 +1694,11 @@ namespace RightsU_Plus.Controllers
                 }
             }
             ReportParameter[] parm;
-            if (BUName.Contains("English"))
-                parm = new ReportParameter[13];
-            else
-                parm = new ReportParameter[12];
+            //if (BUName.Contains("English"))
+            //    parm = new ReportParameter[11];
+            //else
+            parm = new ReportParameter[10];
+
             parm[0] = new ReportParameter("BU_Code", BU_Code);
             parm[1] = new ReportParameter("TitleCodes", title_names);
             parm[2] = new ReportParameter("Flag", "MOVIE");
@@ -1708,13 +1709,13 @@ namespace RightsU_Plus.Controllers
             parm[7] = new ReportParameter("Run_Type", RunType);
             parm[8] = new ReportParameter("IsDealExpire", IsDealExpire);
             parm[9] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-            parm[10] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
-            parm[11] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
-            if (BUName.Contains("English"))
-            {
-                parm[12] = new ReportParameter("Channel_Region", "0");
-                ReportName = "CHANNEL_WISE_CONSUMPTION_ENGLISH";
-            }
+            //parm[10] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
+            //parm[11] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+            //if (BUName.Contains("English"))
+            //{
+            // parm[12] = new ReportParameter("Channel_Region", "0");
+            ReportName = "CHANNEL_WISE_CONSUMPTION_ENGLISH";
+            //}
             ReportViewer rptViewer = BindReport(parm, "CHANNEL_WISE_CONSUMPTION_ENGLISH");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");

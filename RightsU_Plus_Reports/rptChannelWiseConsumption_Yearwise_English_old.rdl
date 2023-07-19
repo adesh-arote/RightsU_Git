@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -16,26 +16,26 @@
           <QueryParameter Name="@TitleCodes">
             <Value>=Parameters!TitleCodes.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@Flag">
-            <Value>=Parameters!Flag.Value</Value>
+          <QueryParameter Name="@ChannelCodes">
+            <Value>=Parameters!ChannelCodes.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@AllYears">
             <Value>=Parameters!AllYears.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@ChannelCodes">
-            <Value>=Parameters!ChannelCodes.Value</Value>
-          </QueryParameter>
-          <QueryParameter Name="@DMContentCodes">
-            <Value>=Parameters!DMContentCodes.Value</Value>
+          <QueryParameter Name="@Flag">
+            <Value>=Parameters!Flag.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@Run_Type">
             <Value>=Parameters!Run_Type.Value</Value>
           </QueryParameter>
-          <QueryParameter Name="@IsDealExpire">
-            <Value>=Parameters!IsDealExpire.Value</Value>
+          <QueryParameter Name="@DMContentCodes">
+            <Value>=Parameters!DMContentCodes.Value</Value>
           </QueryParameter>
           <QueryParameter Name="@Channel_Region">
             <Value>=Parameters!Channel_Region.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@IsDealExpire">
+            <Value>=Parameters!IsDealExpire.Value</Value>
           </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
@@ -44,91 +44,79 @@
       </Query>
       <Fields>
         <Field Name="Deal_no">
-          <DataField>Deal_No</DataField>
+          <DataField>Deal_no</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="English_title">
-          <DataField>English_Title</DataField>
+          <DataField>English_title</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Business_Unit">
-          <DataField>Business_Unit</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Rights_period">
-          <DataField>Rights_Period</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="ModeOfAcquisation">
-          <DataField>ModeOfAcquisation</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TitleType">
-          <DataField>TitleType</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Channel_code">
-          <DataField>Channel_Code</DataField>
+        <Field Name="Deal_movie_code">
+          <DataField>Deal_movie_code</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="Channel_name">
-          <DataField>Channel_Name</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Genre">
-          <DataField>Genre</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="TitleLanguage">
-          <DataField>TitleLanguage</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Deal_Code">
-          <DataField>Deal_Code</DataField>
+        <Field Name="Channel_Code">
+          <DataField>Channel_code</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="Title_Content_Code">
-          <DataField>Title_Content_Code</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Channels_Beam">
-          <DataField>Channels_Beam</DataField>
+        <Field Name="Channel_Name">
+          <DataField>Channel_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Channel_Id">
-          <DataField>Channel_Id</DataField>
+        <Field Name="Channels">
+          <DataField>Channels</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="NoOfRuns">
-          <DataField>NoOfRuns</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Run_Def_Type">
-          <DataField>Run_Def_Type</DataField>
+        <Field Name="Channel_Beam">
+          <DataField>Channel_Beam</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="Provision_Runs">
-          <DataField>Provision_Runs</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Consume_Runs">
-          <DataField>Consume_Runs</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
-        </Field>
-        <Field Name="Right_Name">
-          <DataField>Right_Name</DataField>
+        <Field Name="Run_definition_type">
+          <DataField>Run_definition_type</DataField>
           <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Balance_Runs">
-          <DataField>Balance_Runs</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
         <Field Name="Order_For_schedule">
           <DataField>Order_For_schedule</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="Deal_Type">
-          <DataField>Deal_Type</DataField>
+        <Field Name="Run_definition_group_code">
+          <DataField>Run_definition_group_code</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DMR_IsGroupCode">
+          <DataField>DMR_IsGroupCode</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ColorCode">
+          <DataField>ColorCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Rights_Period">
+          <DataField>Rights_period</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="NoOfRuns">
+          <DataField>NoOfRuns</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Provision_Runs">
+          <DataField>Provision_Runs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Balance_Runs">
+          <DataField>Balance_Runs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Consume_Runs">
+          <DataField>Consume_Runs</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RuleRight">
+          <DataField>RuleRight</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="AllYears">
+          <DataField>AllYears</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -381,161 +369,6 @@
                   </TablixCornerCell>
                   <TablixCornerCell>
                     <CellContents>
-                      <Textbox Name="Textbox28">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontFamily>Tahoma</FontFamily>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox28</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox31">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontFamily>Tahoma</FontFamily>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox31</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox34">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontFamily>Tahoma</FontFamily>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox34</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox46">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontFamily>Tahoma</FontFamily>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox46</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox52">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value />
-                                <Style>
-                                  <FontFamily>Tahoma</FontFamily>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style />
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox52</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
                       <Textbox Name="Textbox152">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
@@ -639,191 +472,6 @@
                             <TextRuns>
                               <TextRun>
                                 <Value>Deal No.</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontSize>12pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox18">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Business Unit</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontSize>12pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox19">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Mode Of Acquisition</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontSize>12pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox20">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Title Type</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontSize>12pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox22">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Genre</Value>
-                                <Style>
-                                  <FontFamily>Calibri</FontFamily>
-                                  <FontSize>12pt</FontSize>
-                                  <FontWeight>Bold</FontWeight>
-                                  <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
-                                </Style>
-                              </TextRun>
-                            </TextRuns>
-                            <Style>
-                              <TextAlign>Center</TextAlign>
-                            </Style>
-                          </Paragraph>
-                        </Paragraphs>
-                        <rd:DefaultName>Textbox15</rd:DefaultName>
-                        <Style>
-                          <Border>
-                            <Style>Solid</Style>
-                          </Border>
-                          <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
-                          <PaddingLeft>2pt</PaddingLeft>
-                          <PaddingRight>2pt</PaddingRight>
-                          <PaddingTop>2pt</PaddingTop>
-                          <PaddingBottom>2pt</PaddingBottom>
-                        </Style>
-                      </Textbox>
-                    </CellContents>
-                  </TablixCornerCell>
-                  <TablixCornerCell>
-                    <CellContents>
-                      <Textbox Name="Textbox23">
-                        <CanGrow>true</CanGrow>
-                        <KeepTogether>true</KeepTogether>
-                        <Paragraphs>
-                          <Paragraph>
-                            <TextRuns>
-                              <TextRun>
-                                <Value>Title Language</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontSize>12pt</FontSize>
@@ -1021,7 +669,7 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="textbox3">
+                        <Textbox Name="Provision_Runs">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
@@ -1040,7 +688,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>textbox3</rd:DefaultName>
+                          <rd:DefaultName>Provision_Runs</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1126,19 +774,109 @@
                     </TablixCell>
                   </TablixCells>
                 </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="Subreport1">
+                          <ReportName>rptChannelWiseConsumption_Yearwise_Sub_English</ReportName>
+                          <Parameters>
+                            <Parameter Name="DealMovieCode">
+                              <Value>=IIF(Fields!Deal_movie_code.Value Is Nothing,0,Fields!Deal_movie_code.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="ChannelCode">
+                              <Value>=IIF(Fields!Channel_Code.Value Is Nothing,0,Fields!Channel_Code.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="AllYears">
+                              <Value>=IIF(Parameters!AllYears.Value Is Nothing,0,Parameters!AllYears.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="YearDisp">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="PrimeOrYearWise">
+                              <Value>Y</Value>
+                            </Parameter>
+                            <Parameter Name="POPDescDisp">
+                              <Value>N</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!ParamExpandOrCollapse.Value = "Collapse"  AND Fields!Deal_movie_code.Value  &gt; 0 ,True, False)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.25in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Subreport Name="Subreport4">
+                          <ReportName>rptChannelWiseConsumption_Yearwise_Sub_English</ReportName>
+                          <Parameters>
+                            <Parameter Name="DealMovieCode">
+                              <Value>=IIF(Fields!Deal_movie_code.Value Is Nothing,0,Fields!Deal_movie_code.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="ChannelCode">
+                              <Value>=IIF(Fields!Channel_Code.Value Is Nothing,0,Fields!Channel_Code.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="AllYears">
+                              <Value>=IIF(Parameters!AllYears.Value Is Nothing,0,Parameters!AllYears.Value)</Value>
+                            </Parameter>
+                            <Parameter Name="YearDisp">
+                              <Value>N</Value>
+                            </Parameter>
+                            <Parameter Name="PrimeOrYearWise">
+                              <Value>P</Value>
+                            </Parameter>
+                            <Parameter Name="POPDescDisp">
+                              <Value>N</Value>
+                            </Parameter>
+                          </Parameters>
+                          <Visibility>
+                            <Hidden>=IIF(Parameters!ParamExpandOrCollapse.Value = "Collapse" AND Fields!Deal_movie_code.Value  &gt; 0 ,True, False)</Hidden>
+                          </Visibility>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                          </Style>
+                        </Subreport>
+                        <ColSpan>4</ColSpan>
+                      </CellContents>
+                      <DataElementOutput>Output</DataElementOutput>
+                    </TablixCell>
+                    <TablixCell />
+                    <TablixCell />
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
               </TablixRows>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember>
-                  <Group Name="Channel_name">
+                  <Group Name="Channel_Name">
                     <GroupExpressions>
-                      <GroupExpression>=Fields!Channel_name.Value</GroupExpression>
+                      <GroupExpression>=Fields!Channel_Name.Value</GroupExpression>
                     </GroupExpressions>
                   </Group>
                   <SortExpressions>
                     <SortExpression>
-                      <Value>=Fields!Channel_name.Value</Value>
+                      <Value>=Fields!Channel_Name.Value</Value>
                     </SortExpression>
                   </SortExpressions>
                   <TablixHeader>
@@ -1151,7 +889,7 @@
                           <Paragraph>
                             <TextRuns>
                               <TextRun>
-                                <Value>=Fields!Channel_name.Value</Value>
+                                <Value>=Fields!Channel_Name.Value</Value>
                                 <Style>
                                   <FontFamily>Calibri</FontFamily>
                                   <FontSize>12pt</FontSize>
@@ -1301,6 +1039,9 @@
                           </Textbox>
                         </CellContents>
                       </TablixHeader>
+                      <Visibility>
+                        <Hidden>true</Hidden>
+                      </Visibility>
                       <KeepTogether>true</KeepTogether>
                     </TablixMember>
                     <TablixMember>
@@ -1364,7 +1105,7 @@
                   <TablixHeader>
                     <Size>1.32292in</Size>
                     <CellContents>
-                      <Textbox Name="Deal_no1">
+                      <Textbox Name="Deal_no">
                         <CanGrow>true</CanGrow>
                         <KeepTogether>true</KeepTogether>
                         <Paragraphs>
@@ -1382,7 +1123,7 @@
                             <Style />
                           </Paragraph>
                         </Paragraphs>
-                        <rd:DefaultName>Deal_no1</rd:DefaultName>
+                        <rd:DefaultName>Deal_no</rd:DefaultName>
                         <Style>
                           <Border>
                             <Style>Solid</Style>
@@ -1397,7 +1138,7 @@
                   </TablixHeader>
                   <TablixMembers>
                     <TablixMember>
-                      <Group Name="matrix1_English_title">
+                      <Group Name="matrix1_English_Title">
                         <GroupExpressions>
                           <GroupExpression>=Fields!English_title.Value</GroupExpression>
                         </GroupExpressions>
@@ -1408,16 +1149,19 @@
                         </SortExpression>
                       </SortExpressions>
                       <TablixHeader>
-                        <Size>1in</Size>
+                        <Size>2.23958in</Size>
                         <CellContents>
-                          <Textbox Name="Business_Unit">
+                          <Textbox Name="English_title">
                             <CanGrow>true</CanGrow>
+                            <ToggleImage>
+                              <InitialState>=IIF(Parameters!ParamExpandOrCollapse.Value = "Expand", True, False)</InitialState>
+                            </ToggleImage>
                             <KeepTogether>true</KeepTogether>
                             <Paragraphs>
                               <Paragraph>
                                 <TextRuns>
                                   <TextRun>
-                                    <Value>=Fields!Business_Unit.Value</Value>
+                                    <Value>=Fields!English_title.Value</Value>
                                     <Style>
                                       <FontFamily>Calibri</FontFamily>
                                       <FontSize>11pt</FontSize>
@@ -1428,7 +1172,7 @@
                                 <Style />
                               </Paragraph>
                             </Paragraphs>
-                            <rd:DefaultName>Business_Unit</rd:DefaultName>
+                            <rd:DefaultName>English_title</rd:DefaultName>
                             <Style>
                               <Border>
                                 <Style>Solid</Style>
@@ -1444,16 +1188,16 @@
                       <TablixMembers>
                         <TablixMember>
                           <TablixHeader>
-                            <Size>1.76042in</Size>
+                            <Size>1in</Size>
                             <CellContents>
-                              <Textbox Name="ModeOfAcquisation">
+                              <Textbox Name="RuleRight">
                                 <CanGrow>true</CanGrow>
                                 <KeepTogether>true</KeepTogether>
                                 <Paragraphs>
                                   <Paragraph>
                                     <TextRuns>
                                       <TextRun>
-                                        <Value>=Fields!ModeOfAcquisation.Value</Value>
+                                        <Value>=Fields!RuleRight.Value</Value>
                                         <Style>
                                           <FontFamily>Calibri</FontFamily>
                                           <FontSize>11pt</FontSize>
@@ -1464,7 +1208,7 @@
                                     <Style />
                                   </Paragraph>
                                 </Paragraphs>
-                                <rd:DefaultName>ModeOfAcquisation</rd:DefaultName>
+                                <rd:DefaultName>RuleRight</rd:DefaultName>
                                 <Style>
                                   <Border>
                                     <Style>Solid</Style>
@@ -1479,53 +1223,29 @@
                           </TablixHeader>
                           <TablixMembers>
                             <TablixMember>
-                              <TablixHeader>
-                                <Size>1in</Size>
-                                <CellContents>
-                                  <Textbox Name="TitleType">
-                                    <CanGrow>true</CanGrow>
-                                    <KeepTogether>true</KeepTogether>
-                                    <Paragraphs>
-                                      <Paragraph>
-                                        <TextRuns>
-                                          <TextRun>
-                                            <Value>=Fields!TitleType.Value</Value>
-                                            <Style>
-                                              <FontFamily>Calibri</FontFamily>
-                                              <FontSize>11pt</FontSize>
-                                              <FontWeight>Normal</FontWeight>
-                                            </Style>
-                                          </TextRun>
-                                        </TextRuns>
-                                        <Style />
-                                      </Paragraph>
-                                    </Paragraphs>
-                                    <rd:DefaultName>TitleType</rd:DefaultName>
-                                    <Style>
-                                      <Border>
-                                        <Style>Solid</Style>
-                                      </Border>
-                                      <PaddingLeft>2pt</PaddingLeft>
-                                      <PaddingRight>2pt</PaddingRight>
-                                      <PaddingTop>2pt</PaddingTop>
-                                      <PaddingBottom>2pt</PaddingBottom>
-                                    </Style>
-                                  </Textbox>
-                                </CellContents>
-                              </TablixHeader>
+                              <Group Name="matrix1_Rights_period">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!Rights_Period.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                              <SortExpressions>
+                                <SortExpression>
+                                  <Value>=Fields!Rights_Period.Value</Value>
+                                </SortExpression>
+                              </SortExpressions>
                               <TablixMembers>
                                 <TablixMember>
                                   <TablixHeader>
-                                    <Size>1in</Size>
+                                    <Size>1.84375in</Size>
                                     <CellContents>
-                                      <Textbox Name="Genre">
+                                      <Textbox Name="Rights_period">
                                         <CanGrow>true</CanGrow>
                                         <KeepTogether>true</KeepTogether>
                                         <Paragraphs>
                                           <Paragraph>
                                             <TextRuns>
                                               <TextRun>
-                                                <Value>=Fields!Genre.Value</Value>
+                                                <Value>=Fields!Rights_Period.Value</Value>
                                                 <Style>
                                                   <FontFamily>Calibri</FontFamily>
                                                   <FontSize>11pt</FontSize>
@@ -1536,7 +1256,7 @@
                                             <Style />
                                           </Paragraph>
                                         </Paragraphs>
-                                        <rd:DefaultName>Genre</rd:DefaultName>
+                                        <rd:DefaultName>Rights_period</rd:DefaultName>
                                         <Style>
                                           <Border>
                                             <Style>Solid</Style>
@@ -1550,182 +1270,95 @@
                                     </CellContents>
                                   </TablixHeader>
                                   <TablixMembers>
-                                    <TablixMember>
-                                      <TablixHeader>
-                                        <Size>1.65625in</Size>
-                                        <CellContents>
-                                          <Textbox Name="TitleLanguage">
-                                            <CanGrow>true</CanGrow>
-                                            <KeepTogether>true</KeepTogether>
-                                            <Paragraphs>
-                                              <Paragraph>
-                                                <TextRuns>
-                                                  <TextRun>
-                                                    <Value>=Fields!TitleLanguage.Value</Value>
-                                                    <Style>
-                                                      <FontFamily>Calibri</FontFamily>
-                                                      <FontSize>11pt</FontSize>
-                                                      <FontWeight>Normal</FontWeight>
-                                                    </Style>
-                                                  </TextRun>
-                                                </TextRuns>
-                                                <Style />
-                                              </Paragraph>
-                                            </Paragraphs>
-                                            <rd:DefaultName>TitleLanguage</rd:DefaultName>
-                                            <Style>
-                                              <Border>
-                                                <Style>Solid</Style>
-                                              </Border>
-                                              <PaddingLeft>2pt</PaddingLeft>
-                                              <PaddingRight>2pt</PaddingRight>
-                                              <PaddingTop>2pt</PaddingTop>
-                                              <PaddingBottom>2pt</PaddingBottom>
-                                            </Style>
-                                          </Textbox>
-                                          <rd:Selected>true</rd:Selected>
-                                        </CellContents>
-                                      </TablixHeader>
-                                      <TablixMembers>
-                                        <TablixMember>
-                                          <TablixHeader>
-                                            <Size>2.23958in</Size>
-                                            <CellContents>
-                                              <Textbox Name="English_title">
-                                                <CanGrow>true</CanGrow>
-                                                <ToggleImage>
-                                                  <InitialState>=IIF(Parameters!ParamExpandOrCollapse.Value = "Expand", True, False)</InitialState>
-                                                </ToggleImage>
-                                                <KeepTogether>true</KeepTogether>
-                                                <Paragraphs>
-                                                  <Paragraph>
-                                                    <TextRuns>
-                                                      <TextRun>
-                                                        <Value>=Fields!English_title.Value</Value>
-                                                        <Style>
-                                                          <FontFamily>Calibri</FontFamily>
-                                                          <FontSize>11pt</FontSize>
-                                                          <FontWeight>Normal</FontWeight>
-                                                        </Style>
-                                                      </TextRun>
-                                                    </TextRuns>
-                                                    <Style />
-                                                  </Paragraph>
-                                                </Paragraphs>
-                                                <rd:DefaultName>English_title</rd:DefaultName>
-                                                <Style>
-                                                  <Border>
-                                                    <Style>Solid</Style>
-                                                  </Border>
-                                                  <PaddingLeft>2pt</PaddingLeft>
-                                                  <PaddingRight>2pt</PaddingRight>
-                                                  <PaddingTop>2pt</PaddingTop>
-                                                  <PaddingBottom>2pt</PaddingBottom>
-                                                </Style>
-                                              </Textbox>
-                                            </CellContents>
-                                          </TablixHeader>
-                                          <TablixMembers>
-                                            <TablixMember>
-                                              <TablixHeader>
-                                                <Size>1in</Size>
-                                                <CellContents>
-                                                  <Textbox Name="Right_Name">
-                                                    <CanGrow>true</CanGrow>
-                                                    <KeepTogether>true</KeepTogether>
-                                                    <Paragraphs>
-                                                      <Paragraph>
-                                                        <TextRuns>
-                                                          <TextRun>
-                                                            <Value>=Fields!Right_Name.Value</Value>
-                                                            <Style>
-                                                              <FontFamily>Calibri</FontFamily>
-                                                              <FontSize>11pt</FontSize>
-                                                              <FontWeight>Normal</FontWeight>
-                                                            </Style>
-                                                          </TextRun>
-                                                        </TextRuns>
-                                                        <Style />
-                                                      </Paragraph>
-                                                    </Paragraphs>
-                                                    <rd:DefaultName>Right_Name</rd:DefaultName>
-                                                    <Style>
-                                                      <Border>
-                                                        <Style>Solid</Style>
-                                                      </Border>
-                                                      <PaddingLeft>2pt</PaddingLeft>
-                                                      <PaddingRight>2pt</PaddingRight>
-                                                      <PaddingTop>2pt</PaddingTop>
-                                                      <PaddingBottom>2pt</PaddingBottom>
-                                                    </Style>
-                                                  </Textbox>
-                                                </CellContents>
-                                              </TablixHeader>
-                                              <TablixMembers>
-                                                <TablixMember>
-                                                  <Group Name="matrix1_Rights_period">
-                                                    <GroupExpressions>
-                                                      <GroupExpression>=Fields!Rights_period.Value</GroupExpression>
-                                                    </GroupExpressions>
-                                                  </Group>
-                                                  <SortExpressions>
-                                                    <SortExpression>
-                                                      <Value>=Fields!Rights_period.Value</Value>
-                                                    </SortExpression>
-                                                  </SortExpressions>
-                                                  <TablixMembers>
-                                                    <TablixMember>
-                                                      <TablixHeader>
-                                                        <Size>1.84375in</Size>
-                                                        <CellContents>
-                                                          <Textbox Name="Rights_period">
-                                                            <CanGrow>true</CanGrow>
-                                                            <KeepTogether>true</KeepTogether>
-                                                            <Paragraphs>
-                                                              <Paragraph>
-                                                                <TextRuns>
-                                                                  <TextRun>
-                                                                    <Value>=Fields!Rights_period.Value</Value>
-                                                                    <Style>
-                                                                      <FontFamily>Calibri</FontFamily>
-                                                                      <FontSize>11pt</FontSize>
-                                                                      <FontWeight>Normal</FontWeight>
-                                                                    </Style>
-                                                                  </TextRun>
-                                                                </TextRuns>
-                                                                <Style />
-                                                              </Paragraph>
-                                                            </Paragraphs>
-                                                            <rd:DefaultName>Rights_period</rd:DefaultName>
-                                                            <Style>
-                                                              <Border>
-                                                                <Style>Solid</Style>
-                                                              </Border>
-                                                              <PaddingLeft>2pt</PaddingLeft>
-                                                              <PaddingRight>2pt</PaddingRight>
-                                                              <PaddingTop>2pt</PaddingTop>
-                                                              <PaddingBottom>2pt</PaddingBottom>
-                                                            </Style>
-                                                          </Textbox>
-                                                        </CellContents>
-                                                      </TablixHeader>
-                                                      <TablixMembers>
-                                                        <TablixMember />
-                                                      </TablixMembers>
-                                                    </TablixMember>
-                                                  </TablixMembers>
-                                                  <DataElementOutput>Output</DataElementOutput>
-                                                  <KeepTogether>true</KeepTogether>
-                                                </TablixMember>
-                                              </TablixMembers>
-                                            </TablixMember>
-                                          </TablixMembers>
-                                        </TablixMember>
-                                      </TablixMembers>
-                                    </TablixMember>
+                                    <TablixMember />
                                   </TablixMembers>
                                 </TablixMember>
+                                <TablixMember>
+                                  <TablixHeader>
+                                    <Size>1.84375in</Size>
+                                    <CellContents>
+                                      <Subreport Name="Subreport2">
+                                        <ReportName>rptChannelWiseConsumption_Yearwise_Sub_English</ReportName>
+                                        <Parameters>
+                                          <Parameter Name="DealMovieCode">
+                                            <Value>=Fields!Deal_movie_code.Value</Value>
+                                          </Parameter>
+                                          <Parameter Name="ChannelCode">
+                                            <Value>=Parameters!ChannelCodes.Value</Value>
+                                          </Parameter>
+                                          <Parameter Name="AllYears">
+                                            <Value>=Parameters!AllYears.Value</Value>
+                                          </Parameter>
+                                          <Parameter Name="YearDisp">
+                                            <Value>Y</Value>
+                                          </Parameter>
+                                          <Parameter Name="IsDisplay_Date">
+                                            <Value>Y</Value>
+                                          </Parameter>
+                                          <Parameter Name="PrimeOrYearWise">
+                                            <Value>Y</Value>
+                                          </Parameter>
+                                          <Parameter Name="POPDescDisp">
+                                            <Value>N</Value>
+                                          </Parameter>
+                                        </Parameters>
+                                        <Visibility>
+                                          <Hidden>=IIF(Parameters!ParamExpandOrCollapse.Value = "Collapse", True, False)</Hidden>
+                                        </Visibility>
+                                        <Style>
+                                          <Border>
+                                            <Style>Solid</Style>
+                                          </Border>
+                                        </Style>
+                                      </Subreport>
+                                    </CellContents>
+                                  </TablixHeader>
+                                  <TablixMembers>
+                                    <TablixMember />
+                                  </TablixMembers>
+                                </TablixMember>
+                                <TablixMember>
+                                  <TablixHeader>
+                                    <Size>1.84375in</Size>
+                                    <CellContents>
+                                      <Subreport Name="Subreport5">
+                                        <ReportName>rptChannelWiseConsumption_Yearwise_Sub_English</ReportName>
+                                        <Parameters>
+                                          <Parameter Name="DealMovieCode">
+                                            <Value>=Fields!Deal_movie_code.Value</Value>
+                                          </Parameter>
+                                          <Parameter Name="ChannelCode">
+                                            <Value>=IIF(Fields!Channel_Code.Value Is Nothing,0,Fields!Channel_Code.Value)</Value>
+                                          </Parameter>
+                                          <Parameter Name="AllYears">
+                                            <Value>=Fields!AllYears.Value</Value>
+                                          </Parameter>
+                                          <Parameter Name="YearDisp">
+                                            <Value>N</Value>
+                                          </Parameter>
+                                          <Parameter Name="PrimeOrYearWise">
+                                            <Value>P</Value>
+                                          </Parameter>
+                                          <Parameter Name="POPDescDisp">
+                                            <Value>Y</Value>
+                                          </Parameter>
+                                        </Parameters>
+                                        <Visibility>
+                                          <Hidden>=IIF(Parameters!ParamExpandOrCollapse.Value = "Collapse", True, False)</Hidden>
+                                        </Visibility>
+                                        <Style>
+                                          <Border>
+                                            <Style>Solid</Style>
+                                          </Border>
+                                        </Style>
+                                      </Subreport>
+                                      <rd:Selected>true</rd:Selected>
+                                    </CellContents>
+                                  </TablixHeader>
+                                </TablixMember>
                               </TablixMembers>
+                              <DataElementOutput>Output</DataElementOutput>
+                              <KeepTogether>true</KeepTogether>
                             </TablixMember>
                           </TablixMembers>
                         </TablixMember>
@@ -1741,8 +1374,8 @@
             <RepeatRowHeaders>true</RepeatRowHeaders>
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DataSet</DataSetName>
-            <Height>0.67in</Height>
-            <Width>17.2396in</Width>
+            <Height>1.17in</Height>
+            <Width>10.82293in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2648,7 +2281,7 @@
         <Height>3.47989in</Height>
         <Style />
       </Body>
-      <Width>17.2396in</Width>
+      <Width>11.9271in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -2904,11 +2537,21 @@
       <AllowBlank>true</AllowBlank>
       <Prompt>BU_Code</Prompt>
     </ReportParameter>
+    <ReportParameter Name="SysLanguageCode">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>System Language Code</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Module_Code">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <Prompt>Module Code</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>8</NumberOfColumns>
-      <NumberOfRows>13</NumberOfRows>
+      <NumberOfRows>14</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -3094,6 +2737,16 @@
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>12</RowIndex>
           <ParameterName>BU_Code</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>13</RowIndex>
+          <ParameterName>SysLanguageCode</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>13</RowIndex>
+          <ParameterName>Module_Code</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

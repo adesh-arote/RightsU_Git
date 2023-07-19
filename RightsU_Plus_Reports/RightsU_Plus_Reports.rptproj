@@ -71,6 +71,7 @@
     <Report Include="rptAvail_Shows.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise_English.rdl" />
+    <Report Include="rptChannelWiseConsumption_Yearwise_English_old.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise_Sub.rdl" />
     <Report Include="rptChannelWiseConsumption_Yearwise_Sub_English.rdl" />
     <Report Include="rptChannelWiseMusicUsage.rdl" />
