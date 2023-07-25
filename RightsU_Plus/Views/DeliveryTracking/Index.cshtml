@@ -36,22 +36,22 @@
             if ($(this).prop("checked")) {
                 $('#txtPageSize_POD').val(10)
                 IncludeHoldover = "Y";       
-                var Client = $('#ddlClient').val();
-                var CycleDate = $('#CycleDate').val();
-                var Lab = $('#ddlLab').val();
-                var Distributor = $('#Distributor').val();
-                var Display = $('#ddlDisplayItem').val();
+                //var Client = $('#ddlClient').val();
+                //var CycleDate = $('#CycleDate').val();
+                //var Lab = $('#ddlLab').val();
+                //var Distributor = $('#Distributor').val();
+                //var Display = $('#ddlDisplayItem').val();
             }
             else {
                 $('#txtPageSize_POD').val(10)
                 IncludeHoldover = "N";
-                var Client = $('#ddlClient').val();
-                var CycleDate = $('#CycleDate').val();
-                var Lab = $('#ddlLab').val();
-                var Distributor = $('#Distributor').val();
-                var Display = $('#ddlDisplayItem').val();
+                //var Client = $('#ddlClient').val();
+                //var CycleDate = $('#CycleDate').val();
+                //var Lab = $('#ddlLab').val();
+                //var Distributor = $('#Distributor').val();
+                //var Display = $('#ddlDisplayItem').val();
             }
-            SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
+            //SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
         });
     });
 
@@ -67,8 +67,9 @@
             $("[id*='tab']").removeClass('active');
             $("#tabShw").addClass('active');
             $("#Holdover").prop("checked", false);
-            TabName = NewTab;
+            TabName = NewTab; 
         }
+        IncludeHoldover = "N"; 
         SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
     }
 
@@ -255,19 +256,19 @@
         var Lab = $('#ddlLab').val();
         var Distributor = $('#Distributor').val();
         var Display = $('#ddlDisplayItem').val();
-        $("#Holdover").prop("checked", false);
-        IncludeHoldover = "N";
+        //$("#Holdover").prop("checked", false);
+        //IncludeHoldover = "N";
 
-        if (Client == "" && CycleDate == "" && Lab == "" && Distributor == "" && Display == "") {
-            $('#ddlClient').attr('required', true);
-            $('#CycleDate').attr('required', true);
-            $('#ddlLab').attr('required', true);
-            $('#Distributor').attr('required', true);
-            $('#ddlDisplayItem').attr('required', true);
-
-            showAlert("E", "Please select atleast one input field.");
-            return false;
-        }
+        //if (Client == "" && CycleDate == "" && Lab == "" && Distributor == "" && Display == "") {
+        //    $('#ddlClient').attr('required', true);
+        //    $('#CycleDate').attr('required', true);
+        //    $('#ddlLab').attr('required', true);
+        //    $('#Distributor').attr('required', true);
+        //    $('#ddlDisplayItem').attr('required', true);
+        //
+        //    showAlert("E", "Please select atleast one input field.");
+        //    return false;
+        //}
 
         SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
     }
@@ -387,37 +388,38 @@
                 <div class="search_area" style="background-color: #eee; padding:5px;">
                     <table class="table">
                         <tr>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Client :
                             </td>
-                            <td style="width:10%;vertical-align: middle;">
+                            <td style="width:20%;vertical-align: middle;">
                                 @Html.DropDownList("lstClients", (IEnumerable<SelectListItem>)ViewBag.ddlClient, "Please Select", htmlAttributes: new { @id = "ddlClient", @class = "form_input chosen-select" })
                             </td>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Distributor :
                             </td>
-                            <td style="width:10%;vertical-align: middle;">
+                            <td style="width:20%;vertical-align: middle;">
                                 @Html.DropDownList("lstDistributors", (IEnumerable<SelectListItem>)ViewBag.ddlDistributor, "Please Select", htmlAttributes: new { @id = "Distributor", @class = "form_input chosen-select" })
                             </td>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Cycle :
                             </td>
-                            <td style="width:10%;vertical-align: middle;">
+                            <td style="width:20%;vertical-align: middle;">
                                 <input type="month" id="CycleDate" name="start"
                                        min="2001-01" value="" style="height:27px;width:50%">
                             </td>
+                            <td style="width:10%;vertical-align: middle;text-align:center;"></td>
                         </tr>
                         <tr>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Lab :
                             </td>
-                            <td style="width:10%;vertical-align: middle;">
+                            <td style="width:20%;vertical-align: middle;">
                                 @Html.DropDownList("lstLab", (IEnumerable<SelectListItem>)ViewBag.ddlLab, "Please Select", htmlAttributes: new { @id = "ddlLab", @class = "form_input chosen-select" })
                             </td>
-                            <td style="width:3%;vertical-align: middle;text-align:center;">
+                            <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Display :
                             </td>
-                            <td>
+                            <td style="width:20%;vertical-align: middle;">
                                 @{
                                     var Displayitems = new List<SelectListItem>();
                                     Displayitems.Add(new SelectListItem() { Text = "Pending", Value = "P" });
@@ -425,8 +427,13 @@
                                 }
                                 @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
-                            <td style="width:3%;vertical-align: middle;"></td>
-                            <td style="vertical-align: middle;">
+                            <td style="width:10%;vertical-align: middle;text-align:right;">
+                                <input type="checkbox" id="Holdover" class="checkbox-inline" style="width:20px;height:20px;" />&nbsp;                  
+                            </td>
+                            <td style="width:20%;vertical-align: middle;text-align:left;">
+                                Include Holdover
+                            </td>
+                            <td style="width:10%;vertical-align: middle;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
@@ -451,12 +458,12 @@
                     <div class="grid_area">
                         <div class="navigation_tabs">
                             <div class="tabbable" id="divAlternateConfig">
-                                <div class="pull-right" style="padding-right:100px;">
+                                @*<div class="pull-right" style="padding-right:100px;">
                                     <input type="checkbox" id="Holdover" class="checkbox-inline" />
                                     <input type="hidden" id="HiddenPoCode" />
                                     <input type="hidden" id="HiddenPrCode" />
                                     <b>Include Holdover</b>
-                                </div>
+                                </div>*@
                                 <input type="hidden" id="hdnTabName" value="TA" />
                                 <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
                                     <li class="active" id="tabMv">
