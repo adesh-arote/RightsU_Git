@@ -165,13 +165,27 @@
                 || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Choreographer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Lyricist
                 || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Director || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_VideoMusic
                 || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Singer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Other_Talent
-                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Contestant || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Producer)
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Contestant || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Producer
+                || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Funder || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim)
                 {
-                    <th class="movie">@ViewBag.Title_Label</th>
+                    if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Funder)
+                    {
+                        <th class="movie">Funder</th>
+                    }
+                    else if (ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim)
+                    {
+                        <th class="movie">Short Flim</th>
+                    }
+                    else
+                    {
+                        <th class="movie">@ViewBag.Title_Label</th>
+                    }
+
                     <th>Synopsis</th>
                     if (ViewBag.DealTypeCode_MasterDeal != GlobalParams.Deal_Type_Movie && ViewBag.DealTypeCode_MasterDeal > 0)
                     {
-                        <th>@objMessageKey.NoofAppearances</th>
+                        @*<th>@objMessageKey.NoofAppearances</th>*@
+                        <th>No of Appearances</th>
                     }
                     if (Is_AcqDealDueDiligence == "Y")
                     {
@@ -608,7 +622,7 @@
                             || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Director || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_VideoMusic
                             || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Singer || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Other_Talent
                             || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Contestant || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Producer
-                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim)
+                            || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_Funder || ViewBag.Deal_Type_Code == GlobalParams.Deal_Type_ShortFlim)
                             {
                                 <td>
                                     @Html.Label("Acq_Deal_Movie[" + i + "].Title.Synopsis", objADM.Title.Synopsis)
@@ -617,7 +631,7 @@
                                     @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_Starts_From", objADM.Episode_Starts_From)
                                     @Html.Hidden("Acq_Deal_Movie[" + i + "].Episode_End_To", objADM.Episode_End_To)
                                 </td>
-                                if (ViewBag.DealTypeCode_MasterDeal != GlobalParams.Deal_Type_Movie)
+                                if (ViewBag.DealTypeCode_MasterDeal != GlobalParams.Deal_Type_Movie && ViewBag.DealTypeCode_MasterDeal > 0)
                                 {
                                     <td>
                                         @if (ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_VIEW && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_APPROVE && ViewBag.Deal_Mode != GlobalParams.DEAL_MODE_EDIT_WO_APPROVAL)

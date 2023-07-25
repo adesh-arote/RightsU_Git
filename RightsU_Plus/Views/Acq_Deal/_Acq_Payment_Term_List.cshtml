@@ -305,7 +305,7 @@
             CostTypeEDIT();
             var AmtNew = $('#hdn_BudgetedAmt_' + i).val();
             var CTCODE = $('#hdn_CostTypeCode_' + i).val();
-            CostTypeCode_G = CTCODE;
+            CostTypeCode_G = CTCODE;           
         }
         else {
             Acq_Deal_Payment_Terms_Code_G = 0;
@@ -321,7 +321,8 @@
         var Payment_Term_Code = $("#ddl_Payment_Term_Code").val();
         var Due_Date=$('#Due_Date').val();
 
-        var Days_After1=$('#txt_Days_After').val();
+        var Days_After1 = $('#txt_Days_After').val();
+        var Title_Code = $("#ddlTitle_Code").val();
 
         if (Payment_Term_Code == "0") {
             $("#ddl_Payment_Term_Code").addClass('required');
@@ -329,6 +330,14 @@
             canSave=1;
             returnVal = false;
         }
+
+        if (Title_Code == "") {
+            $("#ddlTitle_Code").addClass('required');
+            $('#ddlTitle_Code').focus();
+            canSave = 1;
+            returnVal = false;
+        }
+
         if (Days_After1 == "") {
             $('#txt_Days_After').attr('required', true);
             $('#txt_Days_After').focus();
@@ -386,23 +395,38 @@
 
 
         if(returnVal)
-        {
+        {            
             if (NewRow == 1) {
                 validatePercent($("#txtPercentageSR_" + i), $("#txtAmountSR_" + i), $("#ddl_Cost_Type_Code_" + i), $("#ddl_Payment_Term_Code"), 1);
             }
             else {
                 validatePercent($("#txtPercentageSR_0"), $("#txtAmountSR_0") ,$("#ddl_Cost_Type_Code_0"), $("#ddl_Payment_Term_Code"), 0);
             }
-
         }
         returnVal =  ChkDuplicatePaymentTerm();
         if(canSave==0)
         {
-            showLoading();
-            SavePaymentTerms(Acq_Deal_Payment_Terms_Code, Payment_Term_Code, Cost_Type_Code1, Percentage1, Amount1, Days_After1, Due_Date)
+            if (Percentage1 != "") {
+                Percentage1 = parseFloat(RemoveComa1(Percentage1));
+            }
+            if (Amount1 != "") {
+                Amount1 = parseFloat(RemoveComa1(Amount1));
+            }
+            showLoading();            
+            SavePaymentTerms(Acq_Deal_Payment_Terms_Code, Payment_Term_Code, Cost_Type_Code1, Percentage1, Amount1, Days_After1, Due_Date, Title_Code)
             hideLoading();
         }
         return returnVal;
+    }
+
+    function RemoveComa1(s) {
+        var s1 = '';
+
+        while (s.indexOf(',') != -1) {
+            s = s.replace(',', '');
+        }
+
+        return s;
     }
 
     function ChkDuplicatePaymentTerm() {
@@ -697,7 +721,7 @@
             });
         }
     }
-    function SavePaymentTerms(Acq_Deal_Payment_Terms_Code,Payment_Term_Code,Cost_Type_Code,Percentage,Amount,Days_After,Due_Date)
+    function SavePaymentTerms(Acq_Deal_Payment_Terms_Code, Payment_Term_Code, Cost_Type_Code, Percentage, Amount, Days_After, Due_Date, Title_Code)
     {
         debugger;
         IsAddEditMode="N";
@@ -717,7 +741,8 @@
                 Percentage: Percentage,
                 Amount: Amount,
                 Days_After:Days_After,
-                Due_Date:Due_Date
+                Due_Date: Due_Date,
+                Title_Code: Title_Code
             }),
             success: function (result) {
                 if (result == "true")
@@ -782,7 +807,7 @@
 </script>
 <style>
     #ddl_Payment_Term_Code_chosen {
-        width: 292px !important;
+        width: 210px !important;
     }
 </style>
 <script>

@@ -427,8 +427,8 @@
                         <td>
                             <div style="width:60%; float:left;"><label for="Cost_Type_Name" id="Cost_Type_Name">@item.Cost_Type.Cost_Type_Name</label></div>
                             <div style="width:133px; float:right;">
-                                <label for="Amount" id="Amount" title="Amount">@item.Amount</label>&nbsp;&nbsp;&nbsp;
-                                <label for="Percentage" id="Percentage" title="Percentage">@item.Percentage</label>
+                                <label for="Amount" id="Amount" title="Amount">@string.Format("{0:#,0.00}", item.Amount)</label>&nbsp;&nbsp;&nbsp;
+                                <label for="Percentage" id="Percentage" title="Percentage">@string.Format("{0:#,0.00}", item.Percentage)</label>
                                 <span id="percentageSign">%</span> &nbsp;&nbsp;
                             </div>
                         </td>
@@ -516,8 +516,8 @@
                                 @*@Html.TextBox("Percentage", item.Percentage, new { @class = "numberText", @style = "width:60px;", @maxlength = 7, @onchange = "return validatePercentOnEdit(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
 
                                 @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_" + i })
-                                @Html.TextBox("Amount", item.Amount, new { @id = "txtAmountSR_" + i, @class = "text-right",@title="Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
-                                @Html.TextBox("Percentage", item.Percentage, new { @id = "txtPercentageSR_" + i,@title= "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
+                                @Html.TextBox("Amount", string.Format("{0:#,#.00}", item.Amount), new { @id = "txtAmountSR_" + i, @class = "text-right",@title="Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
+                                @Html.TextBox("Percentage", string.Format("{0:#,#.00}", item.Percentage), new { @id = "txtPercentageSR_" + i,@title= "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
                                 @Html.Hidden("hdn_CostTypeCode_" + i, item.Cost_Type_Code)
                                 @Html.Hidden("hdn_BudgetedAmt_" + i)
                             </td>
@@ -559,8 +559,8 @@
                                     <label for="Cost_Type_Code" style="display: none;" id="Cost_Type_Code_Edit">@item.Cost_Type.Cost_Type_Code</label>
                                 </div>
                                 <div style="width:135px; float:right;">
-                                    <label for="Amount" id="Amount_Edit">@item.Amount</label>
-                                    <label for="Percentage" id="Percentage_Edit">@item.Percentage</label>
+                                    <label for="Amount" id="Amount_Edit">@string.Format("{0:#,0.00}", item.Amount)</label>
+                                    <label for="Percentage" id="Percentage_Edit">@string.Format("{0:#,0.00}", item.Percentage)</label>
                                     <span id="percentageSign_Edit">%</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </div>
                               

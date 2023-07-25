@@ -104,6 +104,8 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult Create(string isAdd)
         {
+            //var lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Acq_Deal_Code, objDeal_Schema.Deal_Type_Code, "A").ToList();
+            //TempData["Title_Code"] = new MultiSelectList(lst, "Title_Code", "Title_Name");
             ViewBag.AcqDealPaymentCode = 0;
             if (isAdd == "1")
             {
@@ -114,6 +116,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.CommandName = "";
             }
 
+            BindTitle(0);
             BindPaymentTerm(0);
             BindCostType(0);
             return BindGridAcqPaymentTerms(PageSize, PageNo - 1);
@@ -179,7 +182,7 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public PartialViewResult SavePaymentTerms(int Acq_Deal_Payment_Terms_Code, int Payment_Term_Code, int Cost_Type_Code, decimal Percentage, decimal Amount, int Days_After, string Due_Date)
+        public PartialViewResult SavePaymentTerms(int Acq_Deal_Payment_Terms_Code, int Payment_Term_Code, int Cost_Type_Code, decimal Percentage, decimal Amount, int Days_After, string Due_Date, int Title_Code)
         {
             if (Acq_Deal_Payment_Terms_Code == 0)
             {
@@ -194,6 +197,21 @@ namespace RightsU_Plus.Controllers
                 objAcq_Deal_Payment_Terms.Percentage = Percentage;
                 objAcq_Deal_Payment_Terms.Amount = Amount;
                 objAcq_Deal_Payment_Terms.Days_After = Days_After;
+
+                //For Title code
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    Title_List objTitle_List = objDeal_Schema.Title_List.Where(x => x.Acq_Deal_Movie_Code == Title_Code).FirstOrDefault();
+                    objAcq_Deal_Payment_Terms.Title_Code = objTitle_List.Title_Code;
+                    objAcq_Deal_Payment_Terms.Episode_From = objTitle_List.Episode_From;
+                    objAcq_Deal_Payment_Terms.Episode_To = objTitle_List.Episode_To;
+                }
+                else
+                {
+                    objAcq_Deal_Payment_Terms.Title_Code = Title_Code;
+                    objAcq_Deal_Payment_Terms.Episode_From = 1;
+                    objAcq_Deal_Payment_Terms.Episode_To = 1;
+                }
 
                 if (Due_Date != "")
                 {
@@ -215,6 +233,20 @@ namespace RightsU_Plus.Controllers
                 Acq_Deal_Payment_Terms obj = objAcq_Deal_Payment_Terms_Service.GetById(Acq_Deal_Payment_Terms_Code);
                 if (obj != null)
                 {
+                    if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                    {
+                        Title_List objTitle_List = objDeal_Schema.Title_List.Where(x => x.Acq_Deal_Movie_Code == Title_Code).FirstOrDefault();
+                        obj.Title_Code = objTitle_List.Title_Code;
+                        obj.Episode_From = objTitle_List.Episode_From;
+                        obj.Episode_To = objTitle_List.Episode_To;
+                    }
+                    else
+                    {
+                        obj.Title_Code = Title_Code;
+                        obj.Episode_From = 1;
+                        obj.Episode_To = 1;
+                    }
+
                     obj.Payment_Term_Code = Payment_Term_Code;
                     obj.Cost_Type_Code = Cost_Type_Code;
                     obj.Percentage = Percentage;
@@ -312,6 +344,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.CommandName = "Edit";
             if (objAcq_Deal_Payment_Terms.Due_Date == DateTime.MinValue)
                 objAcq_Deal_Payment_Terms.Due_Date = null;
+            BindTitle(Convert.ToInt32(objAcq_Deal_Payment_Terms.Title_Code));
             BindPaymentTerm(Convert.ToInt32(objAcq_Deal_Payment_Terms.Payment_Term_Code));
             BindCostType(Convert.ToInt32(objAcq_Deal_Payment_Terms.Cost_Type_Code));
 
@@ -452,6 +485,54 @@ namespace RightsU_Plus.Controllers
                 objJson.Add("Message", "");
 
             return Json(objJson);
+        }
+        private void BindTitle(int Title_Code)
+        {
+            if (Title_Code == 0)
+            {
+                var lst = new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Acq_Deal_Code, objDeal_Schema.Deal_Type_Code, "A").ToList();
+                TempData["Title_Code"] = new MultiSelectList(lst, "Title_Code", "Title_Name");
+            }
+            else
+            {
+                List<SelectListItem> lst = new SelectList(new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(objDeal.Acq_Deal_Code, objDeal_Schema.Deal_Type_Code, "A").ToList(), "Title_Code", "Title_Name", Title_Code).ToList();
+                lst.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect });
+                ViewBag.lstTitle = lst;
+            }
+        }
+
+        public JsonResult BindCostTypeByTitleCode(int Title_Code)
+        {
+            Dictionary<string, object> objJson = new Dictionary<string, object>();
+            List<SelectListItem> lstCost_Type = new List<SelectListItem>();
+            if (Title_Code == 0)
+            {
+                List<int> lstCostTypeCode = new List<int>();
+                foreach (Acq_Deal_Cost costInstance in objDeal.Acq_Deal_Cost)
+                {
+                    if (costInstance.Acq_Deal_Cost_Title.Select(t => t.Title_Code).Contains(Title_Code))
+                    {
+                        lstCostTypeCode.AddRange(costInstance.Acq_Deal_Cost_Costtype.Select(c => c.Cost_Type_Code.Value).ToList());
+                    }
+                }
+                lstCost_Type = new SelectList(new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && lstCostTypeCode.Contains(x.Cost_Type_Code)), "Cost_Type_Code", "Cost_Type_Name").ToList();
+                lstCost_Type.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect });
+            }
+            else
+            {
+                List<int> lstCostTypeCode = new List<int>();
+                foreach (Acq_Deal_Cost costInstance in objDeal.Acq_Deal_Cost)
+                {
+                    if (costInstance.Acq_Deal_Cost_Title.Select(t => t.Title_Code).Contains(Title_Code))
+                    {
+                        lstCostTypeCode.AddRange(costInstance.Acq_Deal_Cost_Costtype.Select(c => c.Cost_Type_Code.Value).ToList());
+                    }
+                }
+                //lstCost_Type = new SelectList(new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && lstCostTypeCode.Contains(x.Cost_Type_Code)), "Cost_Type_Code", "Cost_Type_Name", Cost_Type_Code).ToList();
+                lstCost_Type = new SelectList(new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && lstCostTypeCode.Contains(x.Cost_Type_Code)), "Cost_Type_Code", "Cost_Type_Name").ToList();
+                lstCost_Type.Insert(0, new SelectListItem() { Value = "0", Text = objMessageKey.PleaseSelect });
+            }
+            return Json(new SelectList(lstCost_Type, "Value", "Text"), JsonRequestBehavior.AllowGet);
         }
         #endregion
     }

@@ -1325,6 +1325,7 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\Reports\SelfUtilizationReport.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

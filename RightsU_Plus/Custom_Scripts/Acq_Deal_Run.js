@@ -713,6 +713,7 @@ function showRunDifination2(daysobj2) {
                         ChannelCategoryChecked: channelchecked
                     }),
                     success: function (result) {
+                        debugger;
                         if (result == "true") {
                             redirectToLogin();
                         }
@@ -846,10 +847,15 @@ function showPrime(Primeobj) {
     hideLoading();
 }
 function checkvalue(obj, id) {
-    if (obj.checked)
+    debugger;
+    if (obj.checked) {
         $("#Acq_Deal_Run_Channel_" + id + "__Do_Not_Consume_Rights").val('Y');
-    else
+        $("#Acq_Deal_Run_Channel_" + id + "__Min_Runs").val("");
+        $("#Acq_Deal_Run_Channel_" + id + "__Min_Runs").val("0");
+    }
+    else {
         $("#Acq_Deal_Run_Channel_" + id + "__Do_Not_Consume_Rights").val('N');
+    }      
 }
 function ValidateSave() {
     debugger;

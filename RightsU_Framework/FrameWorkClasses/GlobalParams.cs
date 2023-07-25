@@ -536,6 +536,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int Deal_Type_WebSeries = 32; //i.e. deal_type_code from Deal_Type Table
         public const int Deal_Type_Featurette = 33; //i.e. deal_type_code from Deal_Type Table
         public const int Deal_Type_Cineplay = 34;
+        public const int Deal_Type_Funder = 42;
         public const int Deal_Type_Drama_Play = 1034;
         public const int Deal_Type_Tele_Film = 1035;
 
@@ -1878,6 +1879,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptDealStatusReport";
             else if (ReportName == "rptIPR_IntDom_Report")
                 ReportPath = ReportFolder + "/rptIPR_IntDom";
+            else if (ReportName == "SELF_UTILIZATION_REPORT")
+                ReportPath = ReportFolder + "/rpt_Acq_Self_Utilization";
 
             return ReportPath;
         }

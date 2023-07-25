@@ -15,6 +15,10 @@ namespace RightsU_InterimDb.Models
     {
         public int Acq_Deal_Payment_Terms_Code { get; set; }
         public Nullable<int> Acq_Deal_Code { get; set; }
+        public Nullable<int> Title_Code { get; set; }
+        public string Title_Name { get; set; }
+        public Nullable<int> Episode_From { get; set; }
+        public Nullable<int> Episode_To { get; set; }
         public Nullable<int> Cost_Type_Code { get; set; }
         public Nullable<int> Payment_Term_Code { get; set; }
         public Nullable<int> Days_After { get; set; }
