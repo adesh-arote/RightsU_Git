@@ -112,11 +112,13 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>3.68625in</Height>
+        <Height>4.08208in</Height>
         <Style />
       </Body>
-      <Width>7.73833in</Width>
+      <Width>7.94666in</Width>
       <Page>
+        <PageHeight>12in</PageHeight>
+        <PageWidth>9in</PageWidth>
         <LeftMargin>0.5in</LeftMargin>
         <RightMargin>0.5in</RightMargin>
         <TopMargin>0.5in</TopMargin>
