@@ -273,6 +273,7 @@ namespace RightsU_Plus.Controllers
 
         private void ShowTabData()
         {
+            objPoDetailsData_Service = null;
             System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
             List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
@@ -305,6 +306,7 @@ namespace RightsU_Plus.Controllers
             }
             else if (TabName == "SH")
             {
+                ShowTabData();
                 if (IncludeHoldover == "Y")
                 {
                     lstPOD = lstShowTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
