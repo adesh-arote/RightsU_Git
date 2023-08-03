@@ -45,7 +45,7 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>7.07166in</Width>
+                  <Width>7.84249in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -67,7 +67,7 @@
                                 </Parameter>
                               </Parameters>
                               <Height>3.25in</Height>
-                              <Width>7.07166in</Width>
+                              <Width>7.84249in</Width>
                               <Style>
                                 <Border>
                                   <Style>None</Style>
@@ -84,7 +84,6 @@
                             </Border>
                           </Style>
                         </Rectangle>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -107,7 +106,7 @@
             <Top>0.11333in</Top>
             <Left>0.10417in</Left>
             <Height>3.25in</Height>
-            <Width>7.07166in</Width>
+            <Width>7.84249in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -115,17 +114,43 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>4.08208in</Height>
+        <Height>3.56125in</Height>
         <Style />
       </Body>
-      <Width>7.94666in</Width>
+      <Width>8.22791in</Width>
       <Page>
-        <PageHeight>12in</PageHeight>
-        <PageWidth>9in</PageWidth>
-        <LeftMargin>0.5in</LeftMargin>
-        <RightMargin>0.5in</RightMargin>
-        <TopMargin>0.5in</TopMargin>
-        <BottomMargin>0.5in</BottomMargin>
+        <PageFooter>
+          <Height>0.77083in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Image Name="Image1">
+              <Source>Embedded</Source>
+              <Value>FooterContentImg</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.30208in</Top>
+              <Left>0.10417in</Left>
+              <Height>0.22917in</Height>
+              <Width>8.12374in</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>6.3in</PageHeight>
+        <PageWidth>8.7in</PageWidth>
+        <InteractiveHeight>6.3in</InteractiveHeight>
+        <InteractiveWidth>8.6in</InteractiveWidth>
+        <TopMargin>0.1in</TopMargin>
+        <BottomMargin>0.1in</BottomMargin>
         <Style />
       </Page>
     </ReportSection>
@@ -149,6 +174,14 @@
       </CellDefinitions>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="FooterContentImg">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>iVBORw0KGgoAAAANSUhEUgAAAv4AAAAXCAIAAAD809yNAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAaFSURBVHhe7drvU9NmAAfw/Rd7Jzfc4Ss9dMoxHIITUAsCAlLBTkCpCmjFVgQFFNj8sZNfG4oyxA3lhDEQpzjlxDlxOnSTMfEQRBRFS6GUYsv6w8tdlrYpTdKGwsmErd/PPS9Ikzx5wpt8L/m+RwIAAAC4DEQfAAAAcCGM6EP0N+VF+C5Z6ue9xG99/k0F/TMAAADA/4Yt+qjrRQsiiisyhcFr9xzLW+W5rUlL75k2uj/qGx4Y6A2YmKH7+rUOHb0BAAAA02M8+uhvyz7eWJrn7bn/TlvHs+HKSJ+cDnZKedNZJJgTc6afoLenbvCA27z8EXpjQqqKte5+myXbUwuuvORcT9d24cd2Pb3Bg+8Y9bmU1PNvm+gcTm5e8CZx2IrYkvaRSazQQlURJSh8YrlB7rSas9GhxwfpDQAAAJge49HH0JG7NKSoTDhncWxM8snmo8v9CvpYocNw74hk7+6wdccevyFJ46OqjLiNG8VHfxk27VPXyUTiJNH+S68end0ZGREdHl/0qynivG7M3ZGetT1u/daSu6+t0Uf7c+FmkTA4LOuasq/ui+KWMWrH5dKK+8ywwMwE6vN7k9KytkSHJp54YCR66+I+cF8t/fZ3Pd8alIxjbNcyJ66RM+KkH7SsCU0n7klMTY8PWSk+mJ8WGxwiu6Cwv8HxU45fqbFObtphZVmw7sGhQGHRWZ4V2rPdJvu+pNEx4iSBR1AJog8AAMD0sn3wMnaWrJ7rLz14+PMD2Vu9P4w63ctKPprm3N2VfU8rRILDfxq0DTFuK3O+K09cGHpKRe1UFni5Z7QbSW1dpFt8o8b4MHv+4qPPCHL4ZFhQcS+huyn1FNZoxt/6GFRP755Ys0TSounIF25vUD4uTcm+znoZ
+Q7/1SS24+opQFn/iLmvVjpQLVnw1RO0qF4qqRkmSbw3m0+ljKOPXMiUVywI4EyoLvd0z2rSPshctONSpbZUuS7g6Zjc545THtsltqAV7BIjF4RGZja+GeFZoj5nwxu/rYvz8xMZRUnkqLBjRBwAAZqnpLLG8244Ho+ZMPXW7firdL9sly/umuZfzwWbofFpU/K402a4430+zWgYqQzw2lFTXVNfe6DItVVmwLKBMTZLqioC50t/05ODXvvMyOwxU9Ilcf2aU1LfuWxRJPdbNyWOgZV9QsKww098z5YaeeFoWn5CTIT7MeufDzgTK4gBBuZrUnA4JKFLYIoKGZw0m1mP0zGtRv1ujD2tCZaFfYJma6M5dHl6tNdxLWxZ3ecxucsYpXY6jT1TQlw+15hXzrdCeo+gzWiHwzGoz4IMXAADMZtbXGdPB+sibll6KU6zow4t4Xrk7p1lj+lPTJF2183LPlXRBwGepqZKiZlMIsMYOQl6b6OUTuylo4Zriv4wkFX2C3QNTpJuD/JMbBgjLv+llY4KHl2jHNl83nyNtRlJRLXILKelhvWEyZQJL10eSXdXez04quqZUf0F6Tbt+yPEaTKzHqNjXmnz0IbmTM07psy7Aci0LZojhW+Fw2Sr3HeYIZsW8zRH6rLGe8oiPArfsTFrpHmh662N/FgAAwFviFEKYDQ1bgcT0u63H4rDEwprKrsfitFLC6XhYein2y7MwdlZJwkJFCVm13QRzYdQuhxfiM7no45BuqL9fZfnAxERo5HIV/QbM/NZnSKlQsw/TKORqwjCiGKT+PfLvJZJzcnrH5BCvB+QqSxbgWQPjGOa1psj55Hwms0J7trN0iv7Bd/biDwAAXBGzEMJqaDAKJKweS9sJhyUW5lTcHouzSskLTsfD0Zzjj1ttvdBtQ72lQMIt2Di6kPlAR94i+kyCsavl1pMJPwQSfa23u6aeSoDl/YvPMWbDIOXhGLNhaDMPYMySUdtzH2OWDPqB
+QeMUQlgNDcZXFFaP5dYx+xILFVNYU3F6LM4qJQpOx8PhnOaVUDSVwfNkdyyb3IKNww84fP7d6APvBucBjDFTg/MAxpipwXn6Yszg4Dx9MWZw0A8M2hinEMJsaDCiD6vHIndQYqFiCmcqVo/FWaVExel4OJxTbi1+DF2S+HitS07Oqun+m1OwQfQBAACAidkVQpz1WHhKLJSp91gY1+LpeDjuqxCagRcK+mhmwWZKEH0AAADAOeclFsp/oceC6AMAAAAuBNEHAAAAXAiiDwAAALgQRB8AAABwIYg+AAAA4EIQfQAAAMCFIPoAAACAC0H0AQAAABeC6AMAAAAugyT/AQvQHfs+p+hOAAAAAElFTkSuQmCC</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
   <Language>en-US</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>

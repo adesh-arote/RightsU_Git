@@ -266,6 +266,7 @@ namespace RightsU_Plus.Controllers
 
         private void MovieTabData()
         {
+            objPoDetailsData_Service = null;
             System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
             List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
             lstMovieDataSearched = lstMovieTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstMovieCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
@@ -287,6 +288,7 @@ namespace RightsU_Plus.Controllers
             int recordcount = 0;
             if (TabName == "MV")
             {
+                MovieTabData();
                 if (IncludeHoldover == "Y")
                 {           
                     lstPOD = lstMovieTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
