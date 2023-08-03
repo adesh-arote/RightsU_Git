@@ -5738,5 +5738,14 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter, includeHoldoverParameter);
         }
+    
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(Nullable<int> record_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
+        }
     }
 }

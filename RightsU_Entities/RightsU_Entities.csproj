@@ -477,6 +477,7 @@
     <Compile Include="StoreProcedure_Entities\USPAL_GetLoadsheetList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetPurchaseOrderList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPAL_GetReCommendationList_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USPAL_GetRevisionHistoryForLoadsheet_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPBindJobAndExecute_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPExportToExcelBulkImport_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USPGetAiredNotAiredDates_Result.cs" />

@@ -1839,5 +1839,11 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             objUSPDAL.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
         }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(int? loadsheetCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetRevisionHistoryForLoadsheet(loadsheetCode);
+        }
     }
 }

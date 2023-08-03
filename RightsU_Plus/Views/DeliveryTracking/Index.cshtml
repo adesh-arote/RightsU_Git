@@ -35,7 +35,7 @@
             debugger;
             if ($(this).prop("checked")) {
                 $('#txtPageSize_POD').val(10)
-                IncludeHoldover = "Y";       
+                IncludeHoldover = "Y";
                 //var Client = $('#ddlClient').val();
                 //var CycleDate = $('#CycleDate').val();
                 //var Lab = $('#ddlLab').val();
@@ -67,22 +67,22 @@
             $("[id*='tab']").removeClass('active');
             $("#tabShw").addClass('active');
             $("#Holdover").prop("checked", false);
-            TabName = NewTab; 
+            TabName = NewTab;
         }
-        IncludeHoldover = "N"; 
+        IncludeHoldover = "N";
         SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
     }
 
     function SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover) {
         debugger;
-        
+
         $.ajax({
             type: "POST",
             url: URL_SearchDeliveryTracking,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({    
+            data: JSON.stringify({
                 TabName: TabName,
                 Client: Client,
                 CycleDate: CycleDate,
@@ -98,7 +98,7 @@
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
-                
+
                 BindMoviesList(TabName, 0)
             }
         });
@@ -403,11 +403,11 @@
                             <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Cycle :
                             </td>
-                            <td style="width:20%;vertical-align: middle;">
+                            <td style="width:10%;vertical-align: middle;">
                                 <input type="month" id="CycleDate" name="start"
-                                       min="2001-01" value="" style="height:27px;width:50%">
+                                       min="2001-01" value="" style="height:27px;">
                             </td>
-                            <td style="width:10%;vertical-align: middle;text-align:center;"></td>
+                            <td style="width:15%;vertical-align: middle;text-align:center;"></td>
                         </tr>
                         <tr>
                             <td style="width:10%;vertical-align: middle;text-align:left;">
@@ -427,13 +427,13 @@
                                 }
                                 @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:100%;" })
                             </td>
-                            <td style="width:10%;vertical-align: middle;text-align:right;">
-                                <input type="checkbox" id="Holdover" class="checkbox-inline" style="width:20px;height:20px;" />&nbsp;                  
-                            </td>
-                            <td style="width:20%;vertical-align: middle;text-align:left;">
+                            <td colspan="2" style="width:20%;vertical-align: middle;">
+                                <input type="checkbox" id="Holdover" class="checkbox-inline" style="width:20px;height:20px;" />&nbsp;
+                                @*</td>
+                                    <td style="width:10%;vertical-align: middle;text-align:left;">*@
                                 Include Holdover
                             </td>
-                            <td style="width:10%;vertical-align: middle;">
+                            <td style="width:15%;vertical-align: middle;text-align:center;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
                                 <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
                             </td>
@@ -441,41 +441,41 @@
                     </table>
                 </div>
                 <div class="grid_area">
-                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
-                    <div class="paging_area clearfix">
-                        <span class="pull-left">Total Records: </span>
-                        <span class="pull-left" id="lblRecordCount"></span>
+                    @*<div style="border-bottom: 1px dotted #777; display:none;"></div>*@
+                    @*<div class="paging_area clearfix">*@
+                    <div class="pull-right">
+                        <span>Total Records: </span>
+                        <span style="padding-right:100px;" id="lblRecordCount"></span>
                         <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
                         <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
                         <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
                         <div id="Pagination" class="pagination">
                         </div>
-                        <span class="pull-right">
+                        <span>
                             Page Size:
                             <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="30" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                         </span>
                     </div>
-                    <div class="grid_area">
-                        <div class="navigation_tabs">
-                            <div class="tabbable" id="divAlternateConfig">
-                                @*<div class="pull-right" style="padding-right:100px;">
+                    <div class="navigation_tabs">
+                        <div class="tabbable" id="divAlternateConfig" style="padding-top:10px;">
+                            @*<div class="pull-right" style="padding-right:100px;">
                                     <input type="checkbox" id="Holdover" class="checkbox-inline" />
                                     <input type="hidden" id="HiddenPoCode" />
                                     <input type="hidden" id="HiddenPrCode" />
                                     <b>Include Holdover</b>
                                 </div>*@
-                                <input type="hidden" id="hdnTabName" value="TA" />
-                                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
-                                    <li class="active" id="tabMv">
-                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('M')">@objMessageKey.Movies</a>
-                                    </li>
-                                    <li id="tabShw">
-                                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('S')">@objMessageKey.TVShows</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            <input type="hidden" id="hdnTabName" value="TA" />
+                            <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                                <li class="active" id="tabMv">
+                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('M')">@objMessageKey.Movies</a>
+                                </li>
+                                <li id="tabShw">
+                                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('S')">@objMessageKey.TVShows</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
+
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block" style="max-height: 400px; overflow-y: auto;">
                             <input type="hidden" id="hdnAction" value="" />
@@ -490,7 +490,7 @@
                 <div class="form_links">
                     <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
                         <li>
-                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveDeliveryTracking()"/>
+                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveDeliveryTracking()" />
                         </li>
                     </ul>
                 </div>

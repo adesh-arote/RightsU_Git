@@ -12,40 +12,26 @@ namespace RightsU_Plus.Controllers
 {
     public class LoadSheetController : BaseController
     {
-        private List<RightsU_Entities.AL_Load_Sheet> lstAL_LoadSheet
+        private List<USPAL_GetLoadsheetList_Result> lstAL_LoadSheet
         {
             get
             {
                 if (Session["lstAL_Load_Sheet"] == null)
-                    Session["lstAL_Load_Sheet"] = new List<RightsU_Entities.AL_Load_Sheet>();
-                return (List<RightsU_Entities.AL_Load_Sheet>)Session["lstAL_Load_Sheet"];
+                    Session["lstAL_Load_Sheet"] = new List<USPAL_GetLoadsheetList_Result>();
+                return (List<USPAL_GetLoadsheetList_Result>)Session["lstAL_Load_Sheet"];
             }
             set { Session["lstAL_Load_Sheet"] = value; }
         }
 
-        private List<RightsU_Entities.AL_Load_Sheet> lstAL_Load_Sheet_Searched
+        private List<USPAL_GetLoadsheetList_Result> lstAL_Load_Sheet_Searched
         {
             get
             {
                 if (Session["lstAL_Load_Sheet_Searched"] == null)
-                    Session["lstAL_Load_Sheet_Searched"] = new List<RightsU_Entities.AL_Load_Sheet>();
-                return (List<RightsU_Entities.AL_Load_Sheet>)Session["lstAL_Load_Sheet_Searched"];
+                    Session["lstAL_Load_Sheet_Searched"] = new List<USPAL_GetLoadsheetList_Result>();
+                return (List<USPAL_GetLoadsheetList_Result>)Session["lstAL_Load_Sheet_Searched"];
             }
             set { Session["lstAL_Load_Sheet_Searched"] = value; }
-        }
-
-        List<USPAL_GetLoadsheetList_Result> lstLoadSheet_Searched
-        {
-            get
-            {
-                if (Session["lstLoadSheet_Searched"] == null)
-                    Session["lstLoadSheet_Searched"] = new List<USPAL_GetLoadsheetList_Result>();
-                return (List<USPAL_GetLoadsheetList_Result>)Session["lstLoadSheet_Searched"];
-            }
-            set
-            {
-                Session["lstLoadSheet_Searched"] = value;
-            }
         }
 
         List<USPAL_GetBookingsheetDataForLoadsheet_Result> lstBookingsheetDataForLoadsheet_Searched
@@ -84,6 +70,47 @@ namespace RightsU_Plus.Controllers
             set { Session["objCurrency_Service"] = value; }
         }
 
+        private LoadSheetData objLsData
+        {
+            get
+            {
+                if (Session["objLsData"] == null)
+                    Session["objLsData"] = new LoadSheetData();
+                return (LoadSheetData)Session["objLsData"];
+            }
+            set { Session["objLsData"] = value; }
+        }
+
+        List<USPAL_GetBookingsheetDataForLoadsheet_Result> lstUsedBookingsheet
+        {
+            get
+            {
+                if (Session["lstUsedBookingsheet"] == null)
+                    Session["lstUsedBookingsheet"] = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+                return (List<USPAL_GetBookingsheetDataForLoadsheet_Result>)Session["lstUsedBookingsheet"];
+            }
+            set
+            {
+                Session["lstUsedBookingsheet"] = value;
+            }
+        }
+
+        List<USPAL_GetRevisionHistoryForLoadsheet_Result> lstModuleHistory
+        {
+            get
+            {
+                if (Session["lstModuleHistory"] == null)
+                    Session["lstModuleHistory"] = new List<USPAL_GetRevisionHistoryForLoadsheet_Result>();
+                return (List<USPAL_GetRevisionHistoryForLoadsheet_Result>)Session["lstModuleHistory"];
+            }
+            set
+            {
+                Session["lstModuleHistory"] = value;
+            }
+        }
+
+        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
         // GET: LoadSheet
         public ActionResult Index()
         {
@@ -99,54 +126,75 @@ namespace RightsU_Plus.Controllers
             lstSort.Add(new SelectListItem { Text = objMessageKey.SortNameDesc, Value = "ND" });
             ViewBag.SortType = lstSort;
             ViewBag.UserModuleRights = GetUserModuleRights();
-            lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+            lstAL_Load_Sheet_Searched = lstAL_LoadSheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
             return View("~/Views/LoadSheet/Index.cshtml");
         }
-       
-        public JsonResult SearchBookingsheet(string loadsheetMonth = "", int loadsheetCode = 0, string CommandName = "")
+
+        public JsonResult SearchBookingsheet(string loadsheetMonth = "", int loadsheetCode = 0, string CommandName = "", string TabName = "", int Module_Code = 0)
         {
-            
-            if (!string.IsNullOrEmpty(loadsheetMonth) || (loadsheetCode > 0))
+            int recordcount = 0;
+            List<USPAL_GetBookingsheetDataForLoadsheet_Result> lstUnusedBookingsheet = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+            if (TabName == "BS")
             {
-                lstBookingsheetDataForLoadsheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode).ToList();
+                if (!string.IsNullOrEmpty(loadsheetMonth) && loadsheetCode == 0)
+                {   
+                    lstUnusedBookingsheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode).ToList();
+                }
+                else if (loadsheetMonth == "" && loadsheetCode > 0)
+                {
+                    lstUsedBookingsheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode).ToList();
+                }
+                else
+                {
+                    lstBookingsheetDataForLoadsheet_Searched = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+                }
+
+                lstBookingsheetDataForLoadsheet_Searched = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+                lstBookingsheetDataForLoadsheet_Searched.AddRange(lstUsedBookingsheet);
+                lstBookingsheetDataForLoadsheet_Searched.AddRange(lstUnusedBookingsheet);
+                recordcount = lstBookingsheetDataForLoadsheet_Searched.Count();
             }
             else
             {
-                lstBookingsheetDataForLoadsheet_Searched = null;
-                lstBookingsheetDataForLoadsheet_Searched = lstBookingsheetDataForLoadsheet_Searched;
+                lstModuleHistory = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetRevisionHistoryForLoadsheet(loadsheetCode).ToList();
+                recordcount = lstModuleHistory.Count();
             }
-            
+
             var obj = new
             {
-                Record_Count = lstBookingsheetDataForLoadsheet_Searched.Count
+                Record_Count = recordcount
             };
-
             return Json(obj);
         }
 
         public PartialViewResult OpenBookingsheetPopup(string CommandName, string LoadSheetMonth = "", int AL_Load_Sheet_Code = 0)
         {
-            List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
+            AL_Load_Sheet objLoadSheet = new AL_Load_Sheet();
+            objLsData = null;
 
-            ViewBag.CommandName = CommandName;
-            ViewBag.AL_Load_Sheet_Code = AL_Load_Sheet_Code;
-
-            if(CommandName == "VIEW")
+            if (CommandName == "VIEW" || CommandName == "Regenerate")
             {
-                AL_Load_Sheet objLoadSheet = objAL_Load_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Load_Sheet_Code == AL_Load_Sheet_Code).FirstOrDefault();
-                ViewBag.LoadsheetMonth = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("MMMM yyyy");
-                ViewBag.LSRemark = objLoadSheet.Remarks;
+                objLoadSheet = objAL_Load_Sheet_Service.SearchFor(s => true).Where(w => w.AL_Load_Sheet_Code == AL_Load_Sheet_Code).FirstOrDefault();
+                //ViewBag.LoadsheetMonthView = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("MMMM yyyy");
+                //ViewBag.LoadsheetMonth = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("yyyy-MM");
+                //ViewBag.LSRemark = objLoadSheet.Remarks;
+                objLsData.LoadsheetMonthView = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("MMMM yyyy");
+                objLsData.LoadsheetMonth = Convert.ToDateTime(objLoadSheet.Load_Sheet_Month).ToString("yyyy-MM");
+                objLsData.LSRemark = objLoadSheet.Remarks;
             }
-            
-            return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", lst);
+            ViewBag.CommandName = CommandName;
+            //ViewBag.AL_Load_Sheet_Code = AL_Load_Sheet_Code;
+            objLsData.LoadSheetCode = AL_Load_Sheet_Code;
+            //lstUnusedBookingsheet = null;
+            return PartialView("~/Views/LoadSheet/_AddLoadSheet.cshtml", objLoadSheet);
         }
 
         public PartialViewResult BindBookingsheet(int pageNo, int recordPerPage, string sortType, string CommandName = "")
         {
             List<USPAL_GetBookingsheetDataForLoadsheet_Result> lst = new List<USPAL_GetBookingsheetDataForLoadsheet_Result>();
-            
-            lst = lstBookingsheetDataForLoadsheet_Searched;          
-            
+
+            lst = lstBookingsheetDataForLoadsheet_Searched;
+
             int RecordCount = 0;
             RecordCount = lstBookingsheetDataForLoadsheet_Searched.Count;
 
@@ -155,7 +203,7 @@ namespace RightsU_Plus.Controllers
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstBookingsheetDataForLoadsheet_Searched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstBookingsheetDataForLoadsheet_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else if (sortType == "NA")
                     lst = lstBookingsheetDataForLoadsheet_Searched.OrderBy(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
@@ -170,20 +218,22 @@ namespace RightsU_Plus.Controllers
         {
             List<USPAL_GetLoadsheetList_Result> lst = new List<USPAL_GetLoadsheetList_Result>();
             int RecordCount = 0;
-            RecordCount = lstLoadSheet_Searched.Count;
+            RecordCount = lstAL_Load_Sheet_Searched.Count;
 
             if (RecordCount > 0)
             {
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstLoadSheet_Searched.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Load_Sheet_Searched.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else if (sortType == "NA")
-                    lst = lstLoadSheet_Searched.OrderBy(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Load_Sheet_Searched.OrderBy(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                 else
-                    lst = lstLoadSheet_Searched.OrderByDescending(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstAL_Load_Sheet_Searched.OrderByDescending(o => o.AL_Load_Sheet_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
             ViewBag.UserModuleRights = GetUserModuleRights();
+            lstUsedBookingsheet = null;
+            //lstUnusedBookingsheet = null;
             return PartialView("~/Views/LoadSheet/_LoadSheetList.cshtml", lst);
         }
 
@@ -191,15 +241,15 @@ namespace RightsU_Plus.Controllers
         {
             if (!string.IsNullOrEmpty(searchText))
             {
-                lstLoadSheet_Searched = lstLoadSheet_Searched.Where(w => w.Load_sheet_No.ToUpper().Contains(searchText.ToUpper())
-                || w.Status.ToUpper().Contains(searchText.ToUpper())).ToList();
+                lstAL_Load_Sheet_Searched = lstAL_LoadSheet.Where(w => w.Load_sheet_No.ToUpper().Contains(searchText.ToUpper())
+                || w.Status.ToUpper().Contains(searchText.ToUpper()) || w.Load_Sheet_Month == Convert.ToDateTime(searchText)).ToList();
             }
             else
-                lstLoadSheet_Searched = lstLoadSheet_Searched;
+                lstAL_Load_Sheet_Searched = lstAL_LoadSheet;
 
             var obj = new
             {
-                Record_Count = lstLoadSheet_Searched.Count
+                Record_Count = lstAL_Load_Sheet_Searched.Count
             };
 
             return Json(obj);
@@ -213,52 +263,75 @@ namespace RightsU_Plus.Controllers
 
             try
             {
-                if (!string.IsNullOrEmpty(bookingSheetCodes))
+                //loadsheet month validation
+                List<USPAL_GetLoadsheetList_Result> lstToValidateMonth = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().Where(w => w.Load_Sheet_Month == LoadSheetMonth).ToList();
+                if (lstToValidateMonth.Count > 0)
                 {
-                    foreach (var item in bookingSheetCodes.Split(','))
-                    {
-                        AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
-                        objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
-
-                        lst.Add(objloadSheetDetails);
-                    }
-                  
-                    objAL_Load_Sheet_Service = null;
-                    objAL_Load_Sheet.EntityState = State.Added;
-                    objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
-                    objAL_Load_Sheet.Load_Sheet_Month = LoadSheetMonth;
-                    objAL_Load_Sheet.Remarks = Remark;
-                    objAL_Load_Sheet.Status = "P";
-                    objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
-                    objAL_Load_Sheet.Inserted_On = DateTime.Now;
-                    objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
-                    objAL_Load_Sheet.Updated_On = DateTime.Now;
-                    objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
-
-                    dynamic resultSet;
-                    if (!objAL_Load_Sheet_Service.Save(objAL_Load_Sheet, out resultSet))
-                    {
-                        status = "E";
-                        message = objMessageKey.CouldNotsavedRecord;
-                    }
-                    else
-                    {
-                        message = objMessageKey.Recordsavedsuccessfully;
-
-                        objAL_Load_Sheet = null;
-                        objAL_Load_Sheet_Service = null;
-
-                        lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
-                        //FetchData();
-                    }
+                    status = "E";
+                    message = "You have already generated loadsheet for " + LoadSheetMonth.ToString("MMMM, yyyy") + ". Go to list page and search loadsheet for month and regenerate.";
+                    lstAL_Load_Sheet_Searched = lstAL_LoadSheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
                 }
                 else
                 {
-                    status = "E";
-                    message = "Please search loadsheet for month and Select atleast one booking sheet.";                
+                    if (!string.IsNullOrEmpty(bookingSheetCodes))
+                    {
+                        foreach (var item in bookingSheetCodes.Split(','))
+                        {
+                            AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
+                            objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
+
+                            lst.Add(objloadSheetDetails);
+                        }
+
+                        objAL_Load_Sheet_Service = null;
+                        objAL_Load_Sheet.EntityState = State.Added;
+                        objAL_Load_Sheet.Load_Sheet_No = "LS-" + GenerateId();
+                        objAL_Load_Sheet.Load_Sheet_Month = LoadSheetMonth;
+                        objAL_Load_Sheet.Remarks = Remark;
+                        objAL_Load_Sheet.Status = "P";
+                        objAL_Load_Sheet.Inserted_By = objLoginUser.Users_Code;
+                        objAL_Load_Sheet.Inserted_On = DateTime.Now;
+                        objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
+                        objAL_Load_Sheet.Updated_On = DateTime.Now;
+                        objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
+                        
+                        dynamic resultSet;
+                        if (!objAL_Load_Sheet_Service.Save(objAL_Load_Sheet, out resultSet))
+                        {
+                            status = "E";
+                            message = objMessageKey.CouldNotsavedRecord;
+                        }
+                        else
+                        {
+                            message = objMessageKey.Recordsavedsuccessfully;
+                            status = "S";
+                            int LoadSheetCode = objAL_Load_Sheet.AL_Load_Sheet_Code;
+                            objAL_Load_Sheet = null;
+                            objAL_Load_Sheet_Service = null;
+
+                            Module_Status_History_Type_Service objModule_Status_History_Services = new Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName);
+                            Module_Status_History objMSH = new Module_Status_History();
+                            objMSH.EntityState = State.Added;
+                            objMSH.Module_Code = 264;
+                            objMSH.Record_Code = LoadSheetCode;
+                            objMSH.Status_Changed_On = DateTime.Now;
+                            objMSH.Status_Changed_By = Convert.ToInt32(objLoginUser.Users_Code);
+                            objMSH.Remarks = Remark;
+
+                            objModule_Status_History_Services.Save(objMSH, out resultSet);
+
+                            lstAL_Load_Sheet_Searched = lstAL_LoadSheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+                            //FetchData();
+                        }
+                    }
+                    else
+                    {
+                        status = "E";
+                        message = "Please search loadsheet for month and Select atleast one booking sheet.";
+                    }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 status = "E";
                 message = ex.Message;
@@ -266,54 +339,118 @@ namespace RightsU_Plus.Controllers
 
             var obj = new
             {
-                RecordCount = lstLoadSheet_Searched.Count,
+                RecordCount = lstAL_Load_Sheet_Searched.Count,
                 Status = status,
                 Message = message
             };
             return Json(obj);
         }
 
-        public JsonResult RefreshLoadSheet(int AL_Load_Sheet_Code)
+        public JsonResult RefreshLoadSheet(int AL_Load_Sheet_Code = 0, string bookingSheetCodes = "", string Remark = "")
         {
             string status = "S", message = "";
             AL_Load_Sheet_Service objService = new AL_Load_Sheet_Service(objLoginEntity.ConnectionStringName);
             AL_Load_Sheet objToSave = new AL_Load_Sheet();
+            try
+            {
+                if (!string.IsNullOrEmpty(bookingSheetCodes))
+                {
+                    List<AL_Load_Sheet_Details> lst = new List<AL_Load_Sheet_Details>();
+                    foreach (var item in bookingSheetCodes.Split(','))
+                    {
+                        AL_Load_Sheet_Details objloadSheetDetails = new AL_Load_Sheet_Details();
+                        objloadSheetDetails.AL_Booking_Sheet_Code = Convert.ToInt32(item);
 
-            List<AL_Load_Sheet_Details> lst = new List<AL_Load_Sheet_Details>();
-            objToSave = objService.GetById(AL_Load_Sheet_Code);
+                        lst.Add(objloadSheetDetails);
+                    }
 
-            //objToSave.AL_Load_Sheet_Details = new AL_Load_Sheet_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code).ToList();
-            objToSave.EntityState = State.Modified;
-            objToSave.Status = "P";
-            objToSave.Download_File_Name = "";
+                    objAL_Load_Sheet = objService.GetById(AL_Load_Sheet_Code);
 
-            dynamic resultSet;
-            bool isValid = objService.Save(objToSave, out resultSet);
+                    //objToSave.AL_Load_Sheet_Details = new AL_Load_Sheet_Details_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.AL_Load_Sheet_Code == AL_Load_Sheet_Code).ToList();
+                    objAL_Load_Sheet.EntityState = State.Modified;
+                    objAL_Load_Sheet.Status = "P";
+                    objAL_Load_Sheet.Download_File_Name = "";
+                    objAL_Load_Sheet.Remarks = Remark;
+                    objAL_Load_Sheet.Updated_By = objLoginUser.Users_Code;
+                    objAL_Load_Sheet.Updated_On = DateTime.Now;
+                    lst.AddRange(objAL_Load_Sheet.AL_Load_Sheet_Details);
+                    objAL_Load_Sheet.AL_Load_Sheet_Details = lst;
 
-            if (!isValid)
+                    dynamic resultSet;
+                    bool isValid = objService.Save(objAL_Load_Sheet, out resultSet);
+
+                    if (!isValid)
+                    {
+                        status = "E";
+                        message = resultSet;
+                    }
+                    else
+                    {
+                        message = objMessageKey.Recordsavedsuccessfully;
+                        status = "S";
+                        objAL_Load_Sheet = null;
+                        objAL_Load_Sheet_Service = null;
+
+                        Module_Status_History_Type_Service objModule_Status_History_Services = new Module_Status_History_Type_Service(objLoginEntity.ConnectionStringName);
+                        Module_Status_History objMSH = new Module_Status_History();
+                        objMSH.EntityState = State.Added;
+                        objMSH.Module_Code = 264;
+                        objMSH.Record_Code = AL_Load_Sheet_Code;
+                        objMSH.Status_Changed_On = DateTime.Now;
+                        objMSH.Status_Changed_By = Convert.ToInt32(objLoginUser.Users_Code);
+                        objMSH.Remarks = Remark;
+
+                        objModule_Status_History_Services.Save(objMSH, out resultSet);
+
+                        lstAL_Load_Sheet_Searched = lstAL_LoadSheet = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
+                        //FetchData();
+                    }
+                }
+                else
+                {
+                    status = "E";
+                    message = "Please search loadsheet for month and Select atleast one booking sheet.";
+                }
+            }
+            catch (Exception ex)
             {
                 status = "E";
-                message = resultSet;
-            }
-            else
-            {
-                message = objMessageKey.Recordsavedsuccessfully;
-
-                objAL_Load_Sheet = null;
-                objAL_Load_Sheet_Service = null;
-
-                lstLoadSheet_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetLoadsheetList().ToList();
-                //FetchData();
+                message = ex.Message;
             }
 
             var obj = new
             {
-                RecordCount = lstLoadSheet_Searched.Count,
+                RecordCount = lstAL_Load_Sheet_Searched.Count,
                 Status = status,
                 Message = message
             };
             return Json(obj);
         }
+
+        public PartialViewResult BindRevisionHistory(int pageNo, int recordPerPage, string sortType)
+        {
+            List<USPAL_GetRevisionHistoryForLoadsheet_Result> lst = new List<USPAL_GetRevisionHistoryForLoadsheet_Result>();
+            lst = lstModuleHistory;
+
+            int RecordCount = 0;
+            RecordCount = lstModuleHistory.Count;
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstModuleHistory.OrderByDescending(o => o.Last_Action_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else if (sortType == "NA")
+                    lst = lstModuleHistory.OrderBy(o => o.Last_Action_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                else
+                    lst = lstModuleHistory.OrderByDescending(o => o.Module_Status_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            return PartialView("~/Views/LoadSheet/_RevisionHistoryList.cshtml", lst);
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
 
         private string GetUserModuleRights()
         {
@@ -422,17 +559,27 @@ namespace RightsU_Plus.Controllers
             string LS_No = objAL_Load_Sheet_Service.SearchFor(x => true).OrderByDescending(x => x.AL_Load_Sheet_Code).Select(s => s.Load_Sheet_No).FirstOrDefault();
             if (!string.IsNullOrEmpty(LS_No))
             {
-                int lastAddedId = Convert.ToInt32(LS_No.Split('-')[1]); 
+                int lastAddedId = Convert.ToInt32(LS_No.Split('-')[1]);
                 demo = Convert.ToString(lastAddedId + 1).PadLeft(4, '0');
             }
             else
             {
-                int lastAddedId = 0000; 
+                int lastAddedId = 0000;
                 demo = Convert.ToString(lastAddedId + 1).PadLeft(4, '0');
             }
-            
+
             return demo;
             // it will return 0009
-        }       
+        }
     }
+
+    #region
+    public class LoadSheetData
+    {
+        public int LoadSheetCode { get; set; }
+        public string LoadsheetMonthView { get; set; }
+        public string LoadsheetMonth { get; set; }
+        public string LSRemark { get; set; }
+    }
+    #endregion
 }

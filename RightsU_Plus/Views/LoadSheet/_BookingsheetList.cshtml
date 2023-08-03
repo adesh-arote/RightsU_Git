@@ -4,7 +4,8 @@
     $('#chkAll').on("change", function () {
         debugger;
         var IsCheck = $(this).prop("checked");
-        $('input[type="checkbox"]').prop('checked', IsCheck);
+        //$('input[type="checkbox"]').prop('checked', IsCheck);
+        $('input[type="checkbox"]:not([disabled])').prop('checked', IsCheck)
     });
 
     $('.checkbox').on("change", function () {
@@ -24,7 +25,10 @@
             <tr>
                 @if (ViewBag.CommandName != "VIEW")
                 {
-                    <th style="width:5%;"><input type="checkbox" id="chkAll" /></th>
+                    if (Model.Count > 0)
+                    {
+                        <th style="width:5%;"><input type="checkbox" id="chkAll" /></th>
+                    }
                 }
                 <th style="width:20%;">Client Name</th>
                 <th style="width:25%;">Booking Sheet No.</th>
@@ -35,7 +39,6 @@
         <tbody>
             @if (Model.Count > 0)
             {
-
                 foreach (var item in Model)
                 {
                     counter += 1;
@@ -43,9 +46,19 @@
                         @if (ViewBag.CommandName != "VIEW")
                         {
                             <td style="width:5%; text-align:center;">
-                                <input type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
+                                @if ((item.AL_Load_Sheet_Code != 0 || item.AL_Load_Sheet_Code != null) && ViewBag.CommandName == "ADD")
+                                {
+                                    <input type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
+                                }
+                                else if (item.AL_Load_Sheet_Code != 0 && item.AL_Load_Sheet_Code != null)
+                                {
+                                    <input disabled type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="chk_@item.AL_Booking_Sheet_Code" class="checkbox" />
+                                }
                                 @Html.Hidden("hdnCnt", item.AL_Booking_Sheet_Code, new { id = counter + "_hdnCnt" })
-
                             </td>
                         }
                         <td>@item.Vendor_Name</td>

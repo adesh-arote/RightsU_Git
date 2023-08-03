@@ -1857,5 +1857,11 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             objContext.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
         }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(int? loadSheetCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_GetRevisionHistoryForLoadsheet(loadSheetCode);
+        }
     }
 }

@@ -6022,5 +6022,14 @@ namespace RightsU_DAL
             proc.LstDeliveryTracking_UDT = LstDeliveryTracking_UDT;
             this.Database.ExecuteStoredProcedure<USPAL_SaveDeliveryTracking>(proc);
         }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(Nullable<int> record_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
+        }
     }
 }
