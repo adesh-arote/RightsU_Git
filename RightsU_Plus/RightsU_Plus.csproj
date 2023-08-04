@@ -790,6 +790,7 @@
     <Content Include="Images\Capture2.PNG" />
     <Content Include="Images\Capture3.PNG" />
     <Content Include="Images\Capture4.PNG" />
+    <Content Include="Images\ClientLogo\Logo_MH.jpg" />
     <Content Include="Images\Content.PNG" />
     <Content Include="Images\Criteria.jpg" />
     <Content Include="Images\criteria.png" />
