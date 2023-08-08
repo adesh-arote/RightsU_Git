@@ -862,8 +862,12 @@ namespace RightsU_Plus.Controllers
             }
             ViewBag.RecordCount = lstTitleBulkImport.Count - 1;
 
-            var firstItem = lstTitleBulkImport[0];
-            lstTitleBulkImport.RemoveAt(0);
+            //var firstItem = lstTitleBulkImport[0];
+            //lstTitleBulkImport.RemoveAt(0);
+            DM_Title_Import_Utility_Data firstItem = lstTitleBulkImport.Where(w => w.Col1.Contains("Exce")).FirstOrDefault();
+            lstTitleBulkImport.Remove(firstItem);
+            //lstTitleBulkImport = lstTitleBulkImport.OrderBy(o => Convert.ToInt32(o.Col1)).ToList();
+            lstTitleBulkImport = lstTitleBulkImport.OrderBy(o => (o.Col1 != null && o.Col1 != "" && o.Col1.All(char.IsDigit)) ? Convert.ToInt32(o.Col1) : 0).ToList();
 
             RecordCount = ViewBag.RecordCount;//Convert.ToInt32(objRecordCount.Value);
             if (RecordCount > 0)
