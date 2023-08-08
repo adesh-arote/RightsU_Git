@@ -1930,7 +1930,8 @@ namespace RightsU_Plus.Controllers
         public int PageSize_LA { get; set; }
         public int PageNo_VE { get; set; }
         public int PageSize_VE { get; set; }
-
+        public int PageNo_MP { get; set; }
+        public int PageSize_MP { get; set; }
         public object GetPropertyValue(string propertyName)
         {
             object value = this.GetType().GetProperty(propertyName).GetValue(this, null);

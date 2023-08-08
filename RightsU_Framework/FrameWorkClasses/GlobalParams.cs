@@ -186,6 +186,8 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForBookingSheet = 263;
         public const int ModuleCodeForLoadSheet = 264;
         public const int ModuleCodeForPurchaseOrder = 265;
+        public const int ModuleCodeForAeroplay = 266;
+        public const int ModuleCodeForDeliveryTracking = 267;
 
         #endregion
 

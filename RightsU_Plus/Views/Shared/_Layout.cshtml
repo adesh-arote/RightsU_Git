@@ -984,21 +984,36 @@
                             }
 
                             <li class="seperator"></li>
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAeroplay))
+                            {
                             <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-globe" href="#"></a>
                             </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForBookingSheet))
+                            {
                             <li title="Booking Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
                             </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPurchaseOrder))
+                            {
                             <li title="Purchase Order" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-usd" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "PurchaseOrder", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForPurchaseOrder })"></a>
-                            </li>                          
+                            </li>   
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLoadSheet))
+                            {
                             <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
                                 <a class="glyphicon glyphicon-bookmark" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "LoadSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
                             </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDeliveryTracking))
+                            {
                             <li title="Delivery Tracking" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-briefcase" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "DeliveryTracking", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
+                                <a class="glyphicon glyphicon-briefcase" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "DeliveryTracking", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForDeliveryTracking })"></a>
                             </li>
+                            }
                             @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
                     <a class="glyphicon glyphicon-calendar" href="#"></a>
                 </li>
