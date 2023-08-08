@@ -11,7 +11,7 @@
 
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code, TabName = "BS", Module_Code = 264; 
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code, TabName = "BS", Module_Code = 264;
     var URL_BindBookingsheet = '@Url.Action("BindBookingsheet", "LoadSheet")';
     var URL_BindLoadSheetList = '@Url.Action("BindLoadSheetList", "LoadSheet")';
     var URL_SearchBookingsheet = '@Url.Action("SearchBookingsheet", "LoadSheet")';
@@ -125,7 +125,7 @@
                     $('#pupupHtml').html(result);
                     Command_Name = CommandName;
                     if (CommandName == 'VIEW' || CommandName == 'Regenerate') {
-                        SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName, TabName, Module_Code) 
+                        SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName, TabName, Module_Code)
                     }
                 }
             },
@@ -134,7 +134,7 @@
                 hideLoading();
             }
         });
-        
+
     }
 
     function addNumeric() {
@@ -218,7 +218,7 @@
         $('#txtPageSize').attr('required', true)
         return false
     }
-   
+
     function GenerateLoadsheet() {
         debugger;
         var ReturnVal = true;
@@ -244,7 +244,7 @@
 
         var LoadSheetMonth = $("#searchCommon_BS_Month").val();
         var Remark = $("#tncRemark").val();
-      
+
         if (LoadSheetMonth == "") {
             $('#searchCommon_BS_Month').val('').attr('required', true)
             ReturnVal =  false;
@@ -256,7 +256,7 @@
         if (ReturnVal == false) {
             return false;
         }
-             
+
         $.ajax({
             type: "POST",
             url: URL_GenerateLoadSheet,
@@ -289,7 +289,7 @@
                         //}
                     }
                     else
-                        showAlert("E", result.Message, "");
+                        showAlert("E", result.Message);
                 }
             },
             error: function (result) {
@@ -391,11 +391,11 @@
                                 else {
                                     $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').empty();
                                     $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').append(status);
-                                    
+
                                 }
                                 initializeTooltip();
                             }
-                            
+
                         },
                         error: function (result) {
                         }
@@ -500,7 +500,7 @@
                         SearchLoadSheet('');
                     }
                     else
-                        showAlert("E", result.Message, "");
+                        showAlert("E", result.Message);
                 }
             },
             error: function (result) {
@@ -553,7 +553,7 @@
                         <ul>
                             <li id="btnUser">
                                 @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
-                        {*@
+                                    {*@
                                 <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0)" />
                                 @*}*@
                             </li>
