@@ -2,8 +2,11 @@
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -263,6 +266,7 @@ namespace RightsU_Plus.Controllers
 
         private void MovieTabData()
         {
+            objPoDetailsData_Service = null;
             System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
             List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
             lstMovieDataSearched = lstMovieTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstMovieCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
@@ -270,12 +274,13 @@ namespace RightsU_Plus.Controllers
 
         private void ShowTabData()
         {
+            objPoDetailsData_Service = null;
             System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
             List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
             lstShowDataSearched = lstShowTabData = objPoDetailsData_Service.SearchFor(x => true).Where(w => lstShowCode.Any(a => w.Title.Deal_Type_Code.ToString() == a)).ToList();
         }
 
-        public JsonResult SearchPoDetails(string searchText, string TabName, int Purchase_Order_Code, int Proposal_Code)
+        public JsonResult SearchPoDetails(string IncludeHoldover, string TabName, int Purchase_Order_Code, int Proposal_Code)
         {
             List<AL_Purchase_Order_Details> lstPOD = new List<AL_Purchase_Order_Details>();
             List<AL_Purchase_Order_Rel> lstPOR = new List<AL_Purchase_Order_Rel>();
@@ -283,7 +288,8 @@ namespace RightsU_Plus.Controllers
             int recordcount = 0;
             if (TabName == "MV")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                MovieTabData();
+                if (IncludeHoldover == "Y")
                 {           
                     lstPOD = lstMovieTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();
@@ -302,7 +308,8 @@ namespace RightsU_Plus.Controllers
             }
             else if (TabName == "SH")
             {
-                if (!string.IsNullOrEmpty(searchText))
+                ShowTabData();
+                if (IncludeHoldover == "Y")
                 {
                     lstPOD = lstShowTabData.Where(w => w.AL_Proposal_Code == Proposal_Code).ToList();
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && (w.Status == "H" || w.Status == "N")).ToList();
@@ -490,13 +497,55 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
 
-        public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        //public JsonResult GetFileName(int PurchaseOrderDetailCode)
+        //{
+        //    AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+        //
+        //    string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+        //
+        //    return Json(Filename);
+        //}
+
+        public JsonResult ValidateDownload(int PurchaseOrderDetailCode)
         {
             AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
-        
             string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
-        
-            return Json(Filename);
+            string FilePath = ConfigurationManager.AppSettings["DownloadReportPath"];
+            string path = HttpContext.Server.MapPath(FilePath + Filename);
+            FileInfo file = new FileInfo(path);
+            if (file.Exists)
+            {
+                var obj = new
+                {
+                    path = path
+                };
+                return Json(obj);
+            }
+            else
+            {
+                var obj = new
+                {
+                    path = ""
+                };
+                return Json(obj);
+            }
+        }
+
+        public void DownloadFile(int PurchaseOrderDetailCode)
+        {
+            string DownloadPath = ConfigurationManager.AppSettings["DownloadReportPath"];
+            AL_Purchase_Order_Details_Service objAPOD_Service = new AL_Purchase_Order_Details_Service(objLoginEntity.ConnectionStringName);
+            string Filename = objAPOD_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Details_Code == PurchaseOrderDetailCode).Select(s => s.PDF_File_Name).FirstOrDefault();
+            string filePath = HttpContext.Server.MapPath(DownloadPath + Filename);
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/pdf";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + Filename);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
         }
 
         //--------------------------------------------------------GenericMethods-----------------------------------------------------------------------------

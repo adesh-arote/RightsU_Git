@@ -31,6 +31,7 @@
     var URL_GetImportedSheetStatus = '@Url.Action("GetImportedSheetStatus", "BookingSheet")';
     var URL_RefreshImportedSheet = '@Url.Action("RefreshImportedSheet", "BookingSheet")';
     var URL_ImportSheetView = '@Url.Action("ImportedSheetView", "BookingSheet")';
+    var URL_ValidateDownload = '@Url.Action("ValidateDownload", "BookingSheet")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -307,27 +308,27 @@
         });
     }
 
-    function DownloadLink(BkSheetCode) {
-        debugger;
-        //var url = window.location.pathname;
-        //var url = window.location.href;
-        //var url = window.location.origin;
-        $.ajax({
-            type: "POST",
-            url: URL_GetFileName,
-            traditional: true,
-            enctype: 'multipart/form-data',
-            contentType: "application/json; charset=utf-8",
-            data: JSON.stringify({
-                BookingSheetCode: BkSheetCode
-            }),
-            success: function (Filename) {
-                debugger;
-                window.location.href = window.location.origin + "/" + DownloadPath + Filename;
-                SearchOnImportMasterList("");
-            }
-        })
-    }
+    //function DownloadLink(BkSheetCode) {
+    //    debugger;
+    //    //var url = window.location.pathname;
+    //    //var url = window.location.href;
+    //    //var url = window.location.origin;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_GetFileName,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            BookingSheetCode: BkSheetCode
+    //        }),
+    //        success: function (Filename) {
+    //            debugger;
+    //            window.location.href = window.location.origin + "/" + DownloadPath + Filename;
+    //            SearchOnImportMasterList("");
+    //        }
+    //    })
+    //}
 
     function CheckPendingStatus() {
         debugger;
@@ -476,6 +477,37 @@
         }
     }
 
+    function ValidateDownload(BookingSheetCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ValidateDownload,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                BookingSheetCode: BookingSheetCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.path == "")
+                    showAlert('E', "File Not Found");
+                else {
+                    debugger;
+                    Download(BookingSheetCode);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Download(BookingSheetCode) {
+        debugger;
+        window.location.href = '@Url.Action("DownloadSheet", "BookingSheet")?BookingSheetCode=' + BookingSheetCode;
+    }
+
 </script>
 
 <div class="main_section">
@@ -518,7 +550,7 @@
                                 <b>Download Booking Sheet:</b>
                             </td>
                             <td style="width:50%; vertical-align: middle;" colspan="5">
-                                <input type="button" id="btnSheetDownload" value="Download" class="btn btn-primary" onclick="DownloadLink('@objBKDetails.BookingSheetCode')" />
+                                <input type="button" id="btnSheetDownload" value="Download" class="btn btn-primary" onclick="ValidateDownload('@objBKDetails.BookingSheetCode')" />
                                 <span id="RefreshDate">(<b>Latest Refreshed On : </b> @objBKDetails.MaxDate)</span>
                             </td>
                         </tr>

@@ -790,6 +790,7 @@
     <Content Include="Images\Capture2.PNG" />
     <Content Include="Images\Capture3.PNG" />
     <Content Include="Images\Capture4.PNG" />
+    <Content Include="Images\ClientLogo\Logo_MH.jpg" />
     <Content Include="Images\Content.PNG" />
     <Content Include="Images\Criteria.jpg" />
     <Content Include="Images\criteria.png" />
@@ -1421,6 +1422,7 @@
     <Content Include="Views\DeliveryTracking\Index.cshtml" />
     <Content Include="Views\DeliveryTracking\_MoviesList.cshtml" />
     <Content Include="Views\DeliveryTracking\_ShowsList.cshtml" />
+    <Content Include="Views\LoadSheet\_RevisionHistoryList.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->

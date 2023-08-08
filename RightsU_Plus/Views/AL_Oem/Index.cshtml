@@ -11,7 +11,7 @@
 
 <script>
     confirmed = false;
-    var sort_Type = "T";
+    var sort_Type = "T", Module_Code_G = "260", SysLanguageCode_G = "1";
     var URL_BindOemList =  '@Url.Action("BindALOemList", "AL_Oem")';
     var URL_SearchOemList = '@Url.Action("SearchALOem", "AL_Oem")';
     var URL_SaveOem = '@Url.Action("SaveOEM", "AL_Oem")';
@@ -424,7 +424,16 @@
         });
     }
 
+    function ExportToExcel() {
+        debugger;
+        var type = "";
+        var Module_Name = "OEM";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
 
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+
+    }
 </script>
 
 <div class="main_section">

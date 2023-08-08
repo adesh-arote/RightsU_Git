@@ -5983,7 +5983,7 @@ namespace RightsU_DAL
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
         }
 
-        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName)
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
         {
             var clientParameter = client != null ?
                 new ObjectParameter("Client", client) :
@@ -6009,7 +6009,11 @@ namespace RightsU_DAL
                 new ObjectParameter("TabName", tabName) :
                 new ObjectParameter("TabName", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter);
+            var includeHoldoverParameter = includeHoldover != null ?
+                new ObjectParameter("IncludeHoldover", includeHoldover) :
+                new ObjectParameter("IncludeHoldover", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter, includeHoldoverParameter);
         }
 
         public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
@@ -6017,6 +6021,15 @@ namespace RightsU_DAL
             var proc = new USPAL_SaveDeliveryTracking();
             proc.LstDeliveryTracking_UDT = LstDeliveryTracking_UDT;
             this.Database.ExecuteStoredProcedure<USPAL_SaveDeliveryTracking>(proc);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(Nullable<int> record_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
         }
     }
 }

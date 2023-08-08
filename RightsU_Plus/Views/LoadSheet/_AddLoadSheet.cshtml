@@ -1,4 +1,4 @@
-﻿@model List<RightsU_Entities.USPAL_GetBookingsheetDataForLoadsheet_Result>
+﻿@model RightsU_Entities.AL_Load_Sheet
 @using UTOFrameWork.FrameworkClasses;
 @{
     MessageKey objMessageKey = new MessageKey();
@@ -6,17 +6,36 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+
+    RightsU_Plus.Controllers.LoadSheetData objLsData = new RightsU_Plus.Controllers.LoadSheetData();
+    if (Session["objLsData"] != null)
+    {
+        objLsData = (RightsU_Plus.Controllers.LoadSheetData)Session["objLsData"];
+    }
 }
 
-<script> 
-    var Command_Name = "", sortType = "T";
+<script>
+    var Command_Name = "", sortType = "T", AL_LoadSheet_Code = "", TabName = "BS", Module_Code = 264;
+
+    var URL_BindRevisionHistory = '@Url.Action("BindRevisionHistory", "LoadSheet")';
+    var LoadsheetMonthView = '@objLsData.LoadsheetMonthView';
+    var LoadSheetCode = '@objLsData.LoadSheetCode';
 
     $(document).ready(function () {
         debugger;
-        if (Command_Name == "ADD") {
-            SearchBookingsheet("", "", Command_Name);
-        }      
+        addNumeric();     
     });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
 
     function ClosePopup() {
         debugger;
@@ -27,7 +46,7 @@
         BindLoadSheetList();
     }
 
-    function btnSearch_OnClick() {
+    function btnSearch_OnClick_BS() {
         debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -35,18 +54,18 @@
         if (!ValidatePageSize_BS())
             return false;
 
-        var searchText = $.trim($('#searchCommon').val());
+        var LoadSheetMonth = $.trim($('#searchCommon_BS_Month').val());
         var CommandName = $('#hdnCommand').val();
 
-        if (searchText == '') {
-            $('#searchCommon').val('');
-            $('#searchCommon').attr('required', true)
+        if (LoadSheetMonth == '') {
+            $('#searchCommon_BS_Month').val('');
+            $('#searchCommon_BS_Month').attr('required', true)
             return false;
         }
-        SearchBookingsheet(searchText, "", CommandName);
+        SearchBookingsheet(LoadSheetMonth, "", CommandName, TabName, Module_Code);
     }
 
-    function btnClear_OnClick() {
+    function btnClear_OnClick_BS() {
         debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -54,15 +73,16 @@
         if (!ValidatePageSize_BS())
             return false;
 
-        var searchText = $('#searchCommon').val('');
         var CommandName = $('#hdnCommand').val();
-
-        SearchBookingsheet(searchText, "", CommandName);
+        if (CommandName == "ADD") {
+            $('#searchCommon_BS_Month').val('');
+        }
+        SearchBookingsheet("", LoadSheetCode, CommandName, TabName, Module_Code);
     }
 
-    function SearchBookingsheet(searchText, loadSheetCode, CommandName) {
+    function SearchBookingsheet(LoadSheetMonth, loadSheetCode, CommandName, TabName, Module_Code) {
         debugger;
-        $('#searchCommon').val(searchText);
+        $('#searchCommon_BS').val(LoadSheetMonth);
         showLoading();
         $.ajax({
             type: "POST",
@@ -71,9 +91,11 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                loadsheetMonth: searchText,
+                loadsheetMonth: LoadSheetMonth,
                 loadSheetCode: loadSheetCode,
-                CommandName: CommandName
+                CommandName: CommandName,
+                TabName: TabName,
+                Module_Code: Module_Code
             }),
             async: false,
             success: function (result) {
@@ -88,7 +110,12 @@
                     $("#hdnRecordCount_BS").val(result.Record_Count);
                     Command_Name = CommandName;
                     SetPaging_BS();
-                    BindBookingsheet(CommandName);
+                    if (TabName == "BS") {
+                        BindBookingsheet(CommandName);
+                    }
+                    if (TabName == "RS") {
+                        BindRevisionHistory();
+                    }
                     hideLoading();
                 }
             },
@@ -161,7 +188,8 @@
                     //$('#popup').modal();
                     $('#divBookingsheetList').empty();
                     $('#divBookingsheetList').html(result);
-                    SetPaging_BS();
+                    $('#divRevisionHistoryList').hide();
+                    $('#divBookingsheetList').show();
                 }
             },
             error: function (result) {
@@ -208,6 +236,66 @@
         SetPaging_BS();
     }
 
+    function OpenTab(NewTab) {
+        debugger;
+        if (NewTab == "BS") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabBklist").addClass('active');
+            TabName = NewTab;
+        }
+        if (NewTab == "RS") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabRevHistory").addClass('active');
+            TabName = NewTab;
+        }
+        $('#txtPageSize_BS').val(10);
+        SearchBookingsheet("", LoadSheetCode, Command_Name, TabName, Module_Code);
+    }
+
+    function BindRevisionHistory() {
+        debugger;
+        var pageNo = $('#hdnPageNo_BS').val();
+        var recordPerPage = $('#txtPageSize_BS').val();
+
+        $('#hdnAction').val("");
+        $.ajax({
+            type: "POST",
+            url: URL_BindRevisionHistory,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sortType
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divRevisionHistoryList').empty();
+                    $('#divRevisionHistoryList').html(result);
+                    $('#divBookingsheetList').hide();
+                    $('#divRevisionHistoryList').show();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    $('.expand_Remaks').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
 </script>
 
 <div class="modal_block modal_header">
@@ -219,28 +307,32 @@
     {
         <h2>View LoadSheet Details</h2>
     }
+    else if (ViewBag.CommandName == "Regenerate")
+    {
+        <h2>Regenerate LoadSheet</h2>
+    }
     else
     {
         <h2>Create New LoadSheet</h2>
     }
 </div>
 
-@if (ViewBag.CommandName != "VIEW")
+@if (ViewBag.CommandName == "ADD")
 {
     <div class="search_area" style="padding:5px;">
         <table class="table">
             <tr>
-                <th style="width:15%;padding-top:8px;">
+                <th style="width:17%;vertical-align:middle;">
                     Loadsheet for month :
                 </th>
-                <td style="width:20%;">
-                    <input type="month" id="searchCommon" name="start"
+                <td style="width:20%;vertical-align:middle;">
+                    <input type="month" id="searchCommon_BS_Month" name="start"
                            min="1950-03" value="" style="line-height:20px;width:85%">
                 </td>
-                <td>
+                <td style="vertical-align:middle;">
                     <input type="hidden" id="hdnCommand" value="@ViewBag.CommandName" />
-                    <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">
-                    <input type="button" id="btnClear" class="button" value="Clear" onclick="btnClear_OnClick()">
+                    <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick_BS()">
+                    <input type="button" id="btnClear" class="button" value="Clear" onclick="btnClear_OnClick_BS()">
                 </td>
             </tr>
         </table>
@@ -304,36 +396,54 @@
         </div>
     </div>
 }
-else
+else if (ViewBag.CommandName == "Regenerate")
 {
     <div class="search_area" style="padding:5px;">
         <table class="table">
             <tr>
-                <th style="width:15%;padding-top:8px;">
+                <th style="width:17%;vertical-align:middle;">
                     Loadsheet for month :
                 </th>
-                <td style="width:20%;padding-top:8px;">
-                    @ViewBag.LoadsheetMonth
+                <td style="width:20%;vertical-align:middle;">
+                    <input type="month" id="searchCommon_BS_Month" value="@objLsData.LoadsheetMonth" style="line-height:20px;width:85%;" readonly>
                 </td>
-                <td></td>
+                <td style="vertical-align:middle;">
+                    <input type="hidden" id="hdnCommand" value="@ViewBag.CommandName" />
+                    <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick_BS()">
+                    <input type="button" id="btnClear" class="button" value="Clear" onclick="btnClear_OnClick_BS()">
+                </td>
             </tr>
         </table>
     </div>
     <div class="grid_area" style="margin: 0 auto; width: 98%;">
-        <div class="paging_area clearfix">
-            <span class="pull-left">@objMessageKey.TotalRecords: </span>
-            <span class="pull-left" id="lblRecordCount_BS"></span>
+        <div class="pull-right">
+            <span >@objMessageKey.TotalRecords: </span>
+            <span style="padding-right:100px;" id="lblRecordCount_BS"></span>
             <input type="hidden" id="hdnPageNo_BS" name="hdnPageNo" value="1" />
             <input type="hidden" id="hdnPagePerBatch_BS" name="hdnPagePerBatch" value="5" />
             <input type="hidden" id="hdnRecordCount_BS" name="hdnRecordCount" value="0" />
 
             <div id="Pagination_BS" class="pagination">
             </div>
-            <span class="pull-right">
+            <span>
                 @objMessageKey.PageSize:
                 <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_BS_OnChange()" onblur="setDefaultPaging('txtPageSize')">
             </span>
         </div>
+        <div class="navigation_tabs">
+            <div class="tabbable" id="divAlternateConfig" style="padding-top:8px;">
+                <input type="hidden" id="hdnTabName" value="TA" />
+                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                    <li class="active" id="tabBklist">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('BS')">BookingSheet</a>
+                    </li>
+                    <li id="tabRevHistory">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('RS')">Revision History</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
             <div class="scale_table_block" id="divBookingsheetList" style="overflow:auto; max-height:500px">
                 <table class="table table-bordered table-hover" id="tblMusicLink">
@@ -354,16 +464,135 @@ else
                     </tbody>
                 </table>
             </div>
+            <div class="scale_table_block" id="divRevisionHistoryList" style="overflow:auto; max-height:500px; display:none;">
+                <table class="table table-bordered table-hover" id="tblMusicLink">
+                    <thead>
+                        <tr>
+                            <th style="width:20%;">Action Date</th>
+                            <th style="width:25%;">User Name</th>
+                            <th style="width:30%;">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7">No recordfound</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
         </div>
         <table class="table">
             <tr>
                 <th style="text-align:left;padding-top:8px;">
                     Remarks:
-                </th>                
+                </th>
+            </tr>
+        </table>
+        <textarea style="width:100%; margin: 10px 0px 10px 0px; max-height:100px;" id="tncRemark" maxlength="500" rows="3"></textarea>
+    </div>
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                <li>
+                    <input type="button" class="btn btn-primary" value="Regenerate Loadsheet" onclick="RefreshLoadSheet(LoadSheetCode)" />
+
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+                </li>
+            </ul>
+        </div>
+    </div>
+}
+else
+{
+    <div class="search_area" style="padding:5px;">
+        <table class="table">
+            <tr>
+                <th style="width:17%;vertical-align:middle;">
+                    Loadsheet for month :
+                </th>
+                <td style="width:20%;vertical-align:middle;">
+                    @objLsData.LoadsheetMonthView
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <div class="grid_area" style="margin: 0 auto; width: 98%;">
+        <div class="pull-right">
+            <span>@objMessageKey.TotalRecords: </span>
+            <span style="padding-right:100px;" id="lblRecordCount_BS"></span>
+            <input type="hidden" id="hdnPageNo_BS" name="hdnPageNo" value="1" />
+            <input type="hidden" id="hdnPagePerBatch_BS" name="hdnPagePerBatch" value="5" />
+            <input type="hidden" id="hdnRecordCount_BS" name="hdnRecordCount" value="0" />
+
+            <div id="Pagination_BS" class="pagination">
+            </div>
+            <span>
+                @objMessageKey.PageSize:
+                <input type="text" id="txtPageSize_BS" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_BS_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+            </span>
+        </div>
+        <div class="navigation_tabs">
+            <div class="tabbable" id="divAlternateConfig" style="padding-top:8px;">
+                <input type="hidden" id="hdnTabName" value="TA" />
+                <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                    <li class="active" id="tabBklist">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('BS')">BookingSheet</a>
+                    </li>
+                    <li id="tabRevHistory">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('RS')">Revision History</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
+            <div class="scale_table_block" id="divBookingsheetList" style="overflow:auto; max-height:500px">
+                <table class="table table-bordered table-hover" id="tblMusicLink">
+                    <thead>
+                        <tr>
+                            <th style="width:20%;">Client Name</th>
+                            <th style="width:25%;">Booking Sheet No.</th>
+                            <th style="width:30%;">Proposal Cycle</th>
+                            <th style="width:20%;">Cycle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7">No recordfound</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="scale_table_block" id="divRevisionHistoryList" style="overflow:auto; max-height:500px; display:none;">
+                <table class="table table-bordered table-hover" id="tblMusicLink">
+                    <thead>
+                        <tr>
+                            <th style="width:20%;">Action Date</th>
+                            <th style="width:25%;">User Name</th>
+                            <th style="width:30%;">Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td colspan="7">No recordfound</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <table class="table">
+            <tr>
+                <th style="text-align:left;padding-top:8px;">
+                    Remarks:
+                </th>
             </tr>
         </table>
         @*<span>Remarks:</span>*@
-        <textarea style="width:100%; margin: 10px 0px 10px 0px; max-height:100px;" id="tncRemark" maxlength="500" rows="3" readonly>@ViewBag.LSRemark</textarea>
+        <textarea style="width:100%; margin: 10px 0px 10px 0px; max-height:100px;" id="tncRemark" maxlength="500" rows="3" readonly>@objLsData.LSRemark</textarea>
     </div>
     <div class="modal_block_full" style="margin-top: 10px;">
         <div class="form_links">

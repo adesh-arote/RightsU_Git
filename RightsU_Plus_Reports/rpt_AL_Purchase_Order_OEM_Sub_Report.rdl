@@ -991,7 +991,7 @@ Phone: +65 (0) 31632622</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Embaded Sub : </Value>
+                                  <Value>Embedded Subs : </Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1754,7 +1754,6 @@ Phone: +65 (0) 31632622</Value>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>

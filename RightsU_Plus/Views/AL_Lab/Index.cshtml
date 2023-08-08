@@ -10,7 +10,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", Module_Code_G = "259", SysLanguageCode_G = "1";
 
     var URL_BindAL_LabList = '@Url.Action("BindAL_Lab_List", "AL_Lab")';
     var URL_SearchAL_Lab = '@Url.Action("SearchAL_Lab", "AL_Lab")';
@@ -397,6 +397,17 @@
             });
         }
     }
+
+    function ExportToExcel() {
+        debugger;
+        var type = "";
+        var Module_Name = "Lab";
+        type = $('#ddlSortType').val();
+        var StrSearchCriteria = $.trim($('#searchCommon').val());
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + type + '&StrSearchCriteria=' + StrSearchCriteria;
+    }
+
 </script>
 
 <style>
@@ -425,9 +436,9 @@
                             <li id="btnUser">
                                 <input autocomplete="off" type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditAL_Lab('ADD', 0)" />
                             </li>
-                            @*<li>
-                                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
-                                </li>*@
+                            <li>
+                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                            </li>
                         </ul>
                     </div>
                 </div>

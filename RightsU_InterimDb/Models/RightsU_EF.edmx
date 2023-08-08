@@ -15635,6 +15635,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Distributor" Type="varchar(max)" Mode="In" />
           <Parameter Name="Display" Type="varchar" Mode="In" />
           <Parameter Name="TabName" Type="char" Mode="In" />
+          <Parameter Name="IncludeHoldover" Type="char" Mode="In" />
         </Function>
         <Function Name="USPAL_GetDeliveryTrackingListMovies" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Client" Type="int" Mode="In" />
@@ -15646,6 +15647,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USPAL_GetLoadsheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetPurchaseOrderList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetRevisionHistoryForLoadsheet" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Record_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USPAL_Title_Content_Gen_From_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TitleCode" Type="int" Mode="In" />
         </Function>
@@ -23491,6 +23495,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Distributor" Mode="In" Type="String" />
             <Parameter Name="Display" Mode="In" Type="String" />
             <Parameter Name="TabName" Mode="In" Type="String" />
+            <Parameter Name="IncludeHoldover" Mode="In" Type="String" />
           </FunctionImport>
           <AssociationSet Name="FK_AL_Material_Tracking_AL_OEM" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM">
             <End Role="AL_OEM" EntitySet="AL_OEM" />
@@ -23518,6 +23523,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Purchase_Order_Details" EntitySet="AL_Purchase_Order_Details" />
             <End Role="AL_Purchase_Order_Rel" EntitySet="AL_Purchase_Order_Rel" />
           </AssociationSet>
+          <FunctionImport Name="USPAL_GetRevisionHistoryForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForLoadsheet_Result)">
+            <Parameter Name="Record_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -39995,6 +40003,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Proposal_Cycle" Nullable="false" MaxLength="22" />
           <Property Type="String" Name="Cycle" Nullable="false" MaxLength="11" />
           <Property Type="Int32" Name="AL_Booking_Sheet_Code" Nullable="false" />
+          <Property Type="Int32" Name="AL_Load_Sheet_Code" Nullable="false" />
         </ComplexType>
         <ComplexType Name="USPAL_GetLoadsheetList_Result">
           <Property Type="Int32" Name="AL_Load_Sheet_Code" Nullable="false" />
@@ -40308,6 +40317,12 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <ComplexType Name="USPAL_GetRevisionHistoryForLoadsheet_Result">
+          <Property Type="Int32" Name="Module_Status_Code" Nullable="false" />
+          <Property Type="DateTime" Name="Last_Action_On" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Last_Action_By" Nullable="true" MaxLength="600" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="4000" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -50636,6 +50651,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
                 <ScalarProperty Name="Proposal_Cycle" ColumnName="Proposal_Cycle" />
                 <ScalarProperty Name="Cycle" ColumnName="Cycle" />
+                <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
+                <ScalarProperty Name="AL_Load_Sheet_Code" ColumnName="AL_Load_Sheet_Code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -50798,6 +50815,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetRevisionHistoryForLoadsheet" FunctionName="RightsU_NeoModel.Store.USPAL_GetRevisionHistoryForLoadsheet">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetRevisionHistoryForLoadsheet_Result">
+                <ScalarProperty Name="Module_Status_Code" ColumnName="Module_Status_Code" />
+                <ScalarProperty Name="Last_Action_On" ColumnName="Last_Action_On" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -50812,7 +50839,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

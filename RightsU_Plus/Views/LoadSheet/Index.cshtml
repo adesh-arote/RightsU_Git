@@ -11,7 +11,7 @@
 
 
 <script>
-      var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code;
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T",Module_Code_G = @ViewBag.Code, TabName = "BS", Module_Code = 264;
     var URL_BindBookingsheet = '@Url.Action("BindBookingsheet", "LoadSheet")';
     var URL_BindLoadSheetList = '@Url.Action("BindLoadSheetList", "LoadSheet")';
     var URL_SearchBookingsheet = '@Url.Action("SearchBookingsheet", "LoadSheet")';
@@ -25,6 +25,7 @@
     $(document).ready(function () {
         debugger;
         //BindLoadSheetList();
+        addNumeric();
         SearchLoadSheet('');
     });
 
@@ -123,8 +124,8 @@
                     $('#pupupHtml').empty();
                     $('#pupupHtml').html(result);
                     Command_Name = CommandName;
-                    if (CommandName == 'VIEW') {
-                        SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName) 
+                    if (CommandName == 'VIEW' || CommandName == 'Regenerate') {
+                        SearchBookingsheet(LoadSheetMonth, AL_Load_Sheet_Code, CommandName, TabName, Module_Code)
                     }
                 }
             },
@@ -133,7 +134,7 @@
                 hideLoading();
             }
         });
-        
+
     }
 
     function addNumeric() {
@@ -143,14 +144,6 @@
             allowDecSep: false,
             max: 99,
             min: 1
-        });
-
-        $(".exchangeRate").numeric({
-            allowMinus: false,
-            allowThouSep: false,
-            allowDecSep: true,
-            max: 9999,
-            min: 0
         });
     }
 
@@ -225,13 +218,13 @@
         $('#txtPageSize').attr('required', true)
         return false
     }
-   
+
     function GenerateLoadsheet() {
         debugger;
         var ReturnVal = true;
         var bookingSheetCodes = [];
         $.each($("#tblBookingSheet tbody tr"), function (index, value) {
-
+            debugger;
             //var i = $(value).children().last();
             index = index + 1;
 
@@ -249,11 +242,11 @@
         //    ReturnVal = false;
         //}
 
-        var LoadSheetMonth = $("#searchCommon").val();
+        var LoadSheetMonth = $("#searchCommon_BS_Month").val();
         var Remark = $("#tncRemark").val();
-      
+
         if (LoadSheetMonth == "") {
-            $('#searchCommon').val('').attr('required', true)
+            $('#searchCommon_BS_Month').val('').attr('required', true)
             ReturnVal =  false;
         }
         if (Remark == "") {
@@ -263,7 +256,7 @@
         if (ReturnVal == false) {
             return false;
         }
-             
+
         $.ajax({
             type: "POST",
             url: URL_GenerateLoadSheet,
@@ -296,7 +289,7 @@
                         //}
                     }
                     else
-                        showAlert("E", result.Message, "");
+                        showAlert("E", result.Message);
                 }
             },
             error: function (result) {
@@ -337,14 +330,13 @@
     }
 
     function CheckPendingStatus() {
-        //debugger;
+        debugger;
         var pendingRecord = 0;
         $(".deal_action").each(function () {
             //debugger;
             var SiblingClass = $(this).attr('class').split(' ')[1];
             if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
                 var AL_Load_Sheet_Code = SiblingClass.slice(12, SiblingClass.length - 1);
-                //if (SiblingClass.substr(SiblingClass.length - 1) != 'E') {
 
                 if (SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'W') {
                     $.ajax({
@@ -387,7 +379,7 @@
                                 $('.' + SiblingClass).empty();
 
                                 var a = '<a title="Download" class="glyphicon glyphicon-save" onclick="ValidateDownload(' + AL_Load_Sheet_Code + ');" data-original-title="Can not edit this currency as it is deactivated"></a>' +
-                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshLoadSheet(' + AL_Load_Sheet_Code + ');"></a>';
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="OpenBookingsheetPopup("Regenerate",' + AL_Load_Sheet_Code + ',"");"></a>';
                                 $('.' + SiblingClass).append(a);
 
                                 var status = '<span>Success</span>'
@@ -399,11 +391,11 @@
                                 else {
                                     $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').empty();
                                     $('.clsTdStatus_' + AL_Load_Sheet_Code + 'P').append(status);
-                                    
+
                                 }
                                 initializeTooltip();
                             }
-                            
+
                         },
                         error: function (result) {
                         }
@@ -458,6 +450,32 @@
 
     function RefreshLoadSheet(AL_Load_Sheet_Code) {
         debugger;
+        var ReturnVal = true;
+        var bookingSheetCodes = [];
+        $.each($("#tblBookingSheet tbody tr"), function (index, value) {
+            debugger;
+            //var i = $(value).children().last();
+            index = index + 1;
+
+            //var codes = $(this).find('#hdnTitleCode').val();
+            var BookingSheetCode = $('#' + index + '_hdnCnt').val();
+            var codes = '';
+            if ($('#chk_' + BookingSheetCode).is(':checked') == true) {
+                codes = $('#' + index + '_hdnCnt').val();
+                bookingSheetCodes.push(codes);
+            }
+        })
+
+        var Remark = $("#tncRemark").val();
+
+        if (Remark == "") {
+            $('#tncRemark').val('').attr('required', true)
+            ReturnVal = false;
+        }
+        if (ReturnVal == false) {
+            return false;
+        }
+
         $.ajax({
             type: "POST",
             url: URL_RefreshLoadSheet,
@@ -465,16 +483,61 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                AL_Load_Sheet_Code: AL_Load_Sheet_Code
+                AL_Load_Sheet_Code: AL_Load_Sheet_Code,
+                bookingSheetCodes: bookingSheetCodes.join(','),
+                Remark: Remark
             }),
             success: function (result) {
-                
-                SearchLoadSheet('');
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#hdnRecodLockingCode').val(0);
+                        ClosePopup();
+                        showAlert("S", result.Message);
+                        SearchLoadSheet('');
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
             }
         });
+    }
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchLoadSheet(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').val('');
+        SearchLoadSheet('');
     }
 </script>
 
@@ -490,12 +553,29 @@
                         <ul>
                             <li id="btnUser">
                                 @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
-                                {*@
-                                    <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0)" />
+                                    {*@
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0)" />
                                 @*}*@
                             </li>
                         </ul>
                     </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:20%;text-align:center;padding-top:8px;">
+                                Search Loadsheet for month :
+                            </td>
+                            <td style="width:15%;">
+                                <input type="month" id="searchCommon" name="start"
+                                       min="1950-03" value="" style="line-height:20px;">
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="grid_area">
                     <div style="border-bottom: 1px dotted #777; display:none;"></div>

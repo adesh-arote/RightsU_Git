@@ -1846,16 +1846,22 @@ namespace RightsU_DAL
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USPAL_GetDeliveryTrackingListMovies(client, cycle, aL_Lab_Code, distributor, display);
         }
-        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName)
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName);
+            return objContext.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName, includeHoldover);
         }
 
         public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             objContext.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(int? loadSheetCode)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_GetRevisionHistoryForLoadsheet(loadSheetCode);
         }
     }
 }
