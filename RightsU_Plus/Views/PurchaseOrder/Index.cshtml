@@ -1,0 +1,474 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    RightsU_Plus.Controllers.PoDetails objPoDetails = new RightsU_Plus.Controllers.PoDetails();
+    if (Session["objPoD"] != null)
+    {
+        objPoDetails = (RightsU_Plus.Controllers.PoDetails)Session["objPoD"];
+    }
+
+    string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadReportPath"];
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", TabName = "MV";
+
+    var DownloadPath = '@DownloadPath';
+
+    var URL_SearchPOList = '@Url.Action("SearchPOList", "PurchaseOrder")';
+    var URL_BindPOList = '@Url.Action("BindPOList", "PurchaseOrder")';
+    var URL_BindPODetails = '@Url.Action("BindPODetails", "PurchaseOrder")';
+    var URL_BindTabData = '@Url.Action("BindTabData", "PurchaseOrder")';
+    var URL_BindMovieTabData = '@Url.Action("BindMovieTabData", "PurchaseOrder")';
+    var URL_BindShowTabData = '@Url.Action("BindShowTabData", "PurchaseOrder")';
+    var URL_GetFileName = '@Url.Action("GetFileName", "PurchaseOrder")';
+    var URL_GetPurchaseOrderStatus = '@Url.Action("GetPurchaseOrderStatus", "PurchaseOrder")';
+    var URL_RefreshPoList = '@Url.Action("RefreshPoList", "PurchaseOrder")';
+
+    $(document).ready(function () {
+        debugger;
+        if (LayoutDirection_G == "RTL") {
+            $('#btnUser').css("float", "right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+            $('#btnUser').css("float", "left");
+            $('#txtSort').css("text-align", "right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+
+        if ("@ViewBag.Message" != "") {
+           showAlert("S","@ViewBag.Message");
+        }
+
+        addNumeric();
+        SearchPOList("");
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchPOList(searchtext);
+        });
+    });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $('#searchCommon').val();
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchPOList(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        //$('#ddlSortType').val('0').trigger('chosen:updated');
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+
+        SearchPOList("");
+    }
+
+    function SearchPOList(searchText) {
+        debugger;
+        $('#searchCommon').val(searchText);
+        $.ajax({
+            type: "POST",
+            url: URL_SearchPOList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging()
+                BindPOList();
+            }
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y')
+            BindPOList();
+        else
+                IsCall = 'Y';
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindPOList();
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function BindPOList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPOList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                debugger;
+                //$('#PodList').hide();
+                //$('#PoList').show();
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+                CheckPendingStatus();
+                //initializeTooltip();
+                //addNumeric();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindPODetails(POC, PRCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindPODetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            //dataType: "html",
+            data: JSON.stringify({
+                Purchase_Order_Code: POC,
+                Proposal_Code: PRCode
+            }),
+            success: function (result) {
+                debugger;
+                $('#PoList').hide();
+                $('#PodList').show();
+                $('#divBindPoDetails').empty();
+                $('#divBindPoDetails').html(result);
+                //OpenTab(TabName, POC);
+                OpenTab(TabName, POC, PRCode);
+                //CheckPendingStatusForPod();
+
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    //function DownloadLink(PODCode) {
+    //    debugger;
+    //    $.ajax({
+    //        type: "POST",
+    //        url: URL_GetFileName,
+    //        traditional: true,
+    //        enctype: 'multipart/form-data',
+    //        contentType: "application/json; charset=utf-8",
+    //        data: JSON.stringify({
+    //            PurchaseOrderDetailCode: PODCode
+    //        }),
+    //        success: function (Filename) {
+    //            debugger;
+    //            var url = window.location.origin + "/" + DownloadPath + Filename;
+    //            var save = document.createElement('a');
+    //            save.href = url;
+    //            save.download = Filename;
+    //            //save.target = '_blank';
+    //            save.click();
+    //        }
+    //    })
+    //}
+
+    function CheckPendingStatus() {
+        debugger;
+        var pendingRecord = 0;
+        $(".deal_action").each(function () {
+            var Sibling = $(this).attr('class').split(' ')[2];
+            var Sibling1 = $(this).attr('class').split(' ')[3];
+
+            var SiblingClass = $(this).attr('class').split(' ')[1];
+            if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+                var PurchaseOrderCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+                if (isNaN(Sibling.substr(Sibling.length - 1)))
+                    var BookingSheetCode = Sibling.slice(13, Sibling.length - 1);
+
+                if (isNaN(Sibling1.substr(Sibling1.length - 1)))
+                    var ProposalCode = Sibling1.slice(13, Sibling1.length - 1);
+
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' ) {
+                    $.ajax({
+                        type: "POST",
+                        url: URL_GetPurchaseOrderStatus,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        contentType: "application/json; charset=utf-8",
+                        async: false,
+                        data: JSON.stringify({
+                            PurchaseOrderCode: PurchaseOrderCode
+                        }),
+                        success: function (result) {
+                            debugger
+                            if (result == "true") {
+                                redirectToLogin();
+                            }
+                            if (result.RecordStatus == "P" || result.RecordStatus == "I") {
+                                $("#imgLoadingPO_" + PurchaseOrderCode).css("display", '');
+                                //pendingRecord++;
+
+                                var status = '<span>In Progress</span>'
+
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                }                                                         
+                            }
+                            else if (result.RecordStatus == "C") {
+                                $("#imgLoadingPO_" + PurchaseOrderCode).css("display", 'none');
+                                $('.' + SiblingClass).empty();
+
+                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ');"</a>' +
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
+                                $('.' + SiblingClass).append(a);
+
+                                var status = '<span>Success</span>'
+
+                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                }
+                                else {
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
+                                }                               
+
+                                //initializeTooltip();
+                            }
+                        },
+                        error: function (result) {
+                        }
+                    });
+                }
+                initializeTooltip();
+            }
+        });
+
+        //if (pendingRecord > 0) {
+            setTimeout(CheckPendingStatus, 5000);
+        //}
+    }
+
+    function RefreshPoList(PoCode, BkCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_RefreshPoList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderCode: PoCode,
+                BookingSheetCode: BkCode
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    SearchPOList("");
+                }
+                else {
+                    showAlert('E', result.Message);
+                }     
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="PoList">
+                <div class="">
+                    <div class="title_block dotted_border clearfix">
+                        <h2 class="pull-left">
+                            Purchase Order
+                        </h2>
+                    </div>
+                    <div class="search_area" style="background-color: #eee; padding:5px;">
+                        <table class="table">
+                            <tr>
+                                <td style="width:3%;vertical-align: middle;text-align:center;">
+                                    Search :
+                                </td>
+                                <td style="width:10%;vertical-align: middle;" align="left">
+                                    <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Client Name, Booking Sheet No" autocomplete="off" />
+                                </td>
+                                <td style="width:10%;vertical-align: middle;">
+                                    <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                    <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                                </td>
+                                <td style="width:3%;vertical-align: middle;text-align:center;">
+                                    <div id="txtSort">@objMessageKey.SortBy:</div>
+                                </td>
+                                <td style="width:10%; text-align:left;">
+                                    <div id="ddlSort">
+                                        @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="grid_area">
+                        <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                        <div class="paging_area clearfix">
+                            <span class="pull-left">Total Records: </span>
+                            <span class="pull-left" id="lblRecordCount"></span>
+                            <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                            <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                            <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                            <div id="Pagination" class="pagination">
+                            </div>
+                            <span class="pull-right">
+                                Page Size:
+                                <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                            </span>
+                        </div>
+                        <div class="tab-content clearfix table-wrapper scale_table_container">
+                            <div class="scale_table_block">
+                                <input type="hidden" id="hdnAction" value="" />
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                                <div id="divBindList" class="deal clearfix">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="PodList" style="display:none;">
+                <div id="divBindPoDetails" class="deal clearfix">
+
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

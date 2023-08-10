@@ -1,0 +1,77 @@
+﻿@model List<RightsU_Entities.AL_Purchase_Order_Details>
+
+@using UTOFrameWork.FrameworkClasses
+@{    
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:15%">Studio</th>
+            <th style="width:15%">PO Number</th>
+            <th style="width:15%">Title</th>
+            <th style="width:15%">Status</th>
+            <th style="width:15%">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Vendor.Vendor_Name              
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PO_Number)
+                    </td>
+                    <td>
+                        @item.Title.Title_Name
+                    </td>
+                    <td style="text-align:center" class="clsTdStatusdtPOD_@item.AL_Purchase_Order_Details_Code@item.Status">
+                        @if (item.Status == "C")
+                        {
+                            <span>Success</span>
+                        }
+                        else if(item.Status == "P" || item.Status == "I")
+                        {
+                            <span>In Progress</span>
+                        }
+                        else
+                        {
+                            <span>Error</span>
+                        }
+                    </td>
+                    <td style="text-align:center" class="deal_actionDt clsTdActiondt_@item.AL_Purchase_Order_Details_Code@item.Status">
+                        @if (item.Status == "C")
+                        {
+                            <a title="Download" class="glyphicon glyphicon-save" style="cursor:pointer;" onclick="ValidateDownload('@item.AL_Purchase_Order_Details_Code')"></a>
+                        }
+                        else
+                        {
+                            <img id="imgLoadingPOD_" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*<div>
+    <div style="margin:20px; text-align:left">
+        @Html.ActionLink("Back To List", "Index", "PurchaseOrder", null, new { @class = "btn btn-primary" })
+    </div>
+</div>*@

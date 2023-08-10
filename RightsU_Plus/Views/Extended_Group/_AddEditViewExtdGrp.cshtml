@@ -1,0 +1,187 @@
+﻿@model RightsU_Entities.Extended_Group
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    var ExtGrpModCode = '@Model.Module_Code';
+
+    $(document).ready(function () {
+        debugger;
+        if ('@objMessageKey.LayoutDirection' == "RTL") {
+            $('.lblExtdGrp').css("padding-right", "2%");
+        }
+        else {
+            $('.lblExtdGrp').css("padding-left", "2%");
+        }
+        addNumeric();
+    });
+
+    function addNumeric() {
+        debugger;
+        $("#txtGroupOrder").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+</script>
+
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    @if (Model.Extended_Group_Code > 0)
+    {
+        if (ViewBag.CommandName == "VIEW")
+        {
+            <h2>View Extended Group</h2>
+        }
+        else
+        {
+            <h2>Edit Extended Group</h2>
+        }
+    }
+    else
+    {
+        <h2>Add Extended Group</h2>
+    }
+</div>
+
+<div class="modal_block">
+    <table class="add_title_popup">
+        <tr>
+            <td class="lblExtdGrp" style="width:15%"><b>Group Name</b></td>
+            <td style="width:20%">
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    <span>@Model.Group_Name</span>
+                }
+                else
+                {
+                    <input type="text" id="txtGroupName" value="@Model.Group_Name" placeholder="Enter Group Name" maxlength="100" class="form-control input-sm" style="width:95%" autocomplete="off" />
+                }
+            </td>
+
+            <td class="lblExtdGrp" style="width:15%"><b>Module</b></td>
+            <td style="width:20%">
+                @{
+                    string Module = "";
+                }
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    {
+                        List<SelectListItem> lstModule = new List<SelectListItem>();
+                        lstModule.Add(new SelectListItem { Text = "Title", Value = "27" });
+                        lstModule.Add(new SelectListItem { Text = "Party", Value = "10" });
+                        lstModule.Add(new SelectListItem { Text = "Booking Sheet", Value = "263" });
+                        lstModule.Add(new SelectListItem { Text = "OEM", Value = "260" });
+                        Module = lstModule.Where(w => w.Value == Model.Module_Code.ToString()).Select(s => s.Text).FirstOrDefault();
+                    }
+                    @Module
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.Module_Code, new List<SelectListItem>
+                    {new SelectListItem {Text = "Title", Value = "27"},
+                    new SelectListItem {Text = "Party", Value = "10" },
+                    new SelectListItem {Text = "Booking Sheet", Value = "263"},
+                    new SelectListItem {Text = "OEM", Value = "260"}},"Please Select", new { @id = "ddlModule", @class = "form_input chosen-select", style = "max-width:50% !important" })
+                    <input type="hidden" id="hdnEGCode" value="@Model.Extended_Group_Code" />
+                }
+            </td>
+        </tr>
+        <tr>
+            <td class="lblExtdGrp" style="width:15%"><b>Group Short Name</b></td>
+            <td style="width:20%">
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    <span>@Model.Short_Name</span>
+                }
+                else
+                {
+                    <input type="text" id="txtShortName" value="@Model.Short_Name" placeholder="Enter Short Name" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
+                }
+            </td>
+            
+            <td class="lblExtdGrp" style="width:15%"><b>Group Order</b></td>
+            <td style="width:20%">
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    <span>@Model.Group_Order</span>
+                }
+                else
+                {
+                    <input type="text" id="txtGroupOrder" value="@Model.Group_Order" placeholder="Enter Group Order" maxlength="10" class="form-control input-sm" style="width:95%" autocomplete="off" />
+                }
+            </td>         
+        </tr>
+        <tr>
+            <td class="lblExtdGrp" style="width:15%"><b>Group Type</b></td>
+            <td style="width:20%">
+                @if (ViewBag.CommandName == "VIEW")
+                {
+                    if (@Model.Add_Edit_Type == "grid")
+                    {
+                        <span>Grid</span>
+                    }
+                    else
+                    {
+                        <span>Row</span>
+                    }
+                }
+                else
+                {
+                    @Html.DropDownListFor(m => m.Add_Edit_Type, new List<SelectListItem>
+                    {new SelectListItem {Text = "Row", Value = "row"},
+                    new SelectListItem { Text = "Grid", Value = "grid" }}, "Please Select", new { @id ="ddlType", @class = "form_input chosen-select", @style ="width:70%"})
+                }
+            </td>
+            <td style="width:15%"></td>
+            <td style="width:20%"></td>
+        </tr>
+    </table>
+</div>
+<div class="grid_area" style="margin: 0 auto; width: 98%;">
+    <div class="paging_area clearfix" style="height:27px !important;">
+        <span class="pull-left bold" style="padding-left: 0.3%">Extended Group Config</span>
+    </div>
+
+    <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important;">
+        <span class="pull-left">Total Records: </span>
+        <span class="pull-left" id="lblRecordCountPopup"></span>
+        <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+            @if (ViewBag.CommandName != "VIEW")
+            {
+                <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditGroupDetail('0', 'ADD');" />
+            }
+        </span>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="divExtdGrpDtl" style="height:300px; overflow-y:auto;">
+
+        </div>
+    </div>
+</div>
+
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            <li>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="SaveMaster()" />
+                }
+                <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="ClosePopup()" />
+            </li>
+        </ul>
+    </div>
+</div>

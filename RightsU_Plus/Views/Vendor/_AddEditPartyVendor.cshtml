@@ -25,6 +25,7 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
+        //objMessageKey.ShortCode = "Short Name";
     }
     LoginEntity objLoginEntity = new LoginEntity();
     if (Session["objLoginEntity"] != null)
@@ -402,20 +403,20 @@
             $('#Vendor_Name').attr('required', true)
             returnVal = false;
         }
-        if ($.trim($('#Vendor_Addr').val()) == "") {
-            $('#Vendor_Addr').val('')
-            $('#Vendor_Addr').attr('required', true)
-            returnVal = false;
-        }
+        //if ($.trim($('#Vendor_Addr').val()) == "") {
+        //    $('#Vendor_Addr').val('')
+        //    $('#Vendor_Addr').attr('required', true)
+        //    returnVal = false;
+        //}
         //if ($.trim($('#Vendor_PhNo').val()) == "") {
         //    $('#Vendor_PhNo').val('')
         //    $('#Vendor_PhNo').attr('required', true)
         //    returnVal = false;
         //}
-        if ($('#ddlRoleList').val() == null) {
-            $('#divddlRoleList').addClass("required");
-            returnVal = false;
-        }
+        //if ($('#ddlRoleList').val() == null) {
+        //    $('#divddlRoleList').addClass("required");
+        //    returnVal = false;
+        //}
         if (document.getElementById("ProductionHouseUser").checked)
         {
             if ($.trim($('#txtShortCode').val()) == "" && '@ViewBag.AllowShortCode' == "Y") {
@@ -451,11 +452,20 @@
         //    returnVal = false;
         //}
 
-        if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "")) {
-            $('#Email_Edit,#Email').val('')
-            $('#Email_Edit,#Email').attr('required', true)
-            $('#Phone_No_Edit,#Phone_No').val('')
-            $('#Phone_No_Edit,#Phone_No').attr('required', true)
+        //if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "")) {
+        //    $('#Email_Edit,#Email').val('')
+        //    $('#Email_Edit,#Email').attr('required', true)
+        //    $('#Phone_No_Edit,#Phone_No').val('')
+        //    $('#Phone_No_Edit,#Phone_No').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "") && ($.trim($('#Contact_Name_Edit,#Contact_Name').val()) == "") && ($.trim($('#Department_Edit,#Department').val()) == "")) {
+            //$('#Email_Edit,#Email').val('')
+            //$('#Email_Edit,#Email').attr('required', true)
+            //$('#Phone_No_Edit,#Phone_No').val('')
+            //$('#Phone_No_Edit,#Phone_No').attr('required', true)
+            showAlert("E", "Please fill at least one field");
             returnVal = false;
         }
 
@@ -622,7 +632,7 @@
                                 }
                             </td>
                             <td>
-                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.FaxNo.
+                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.ShortCode
 
                             </td>
                             <td>
@@ -638,11 +648,11 @@
                                 <hr style="visibility:hidden" />
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    <span>@objVendor.Fax_No</span>
+                                    <span>@objVendor.Short_Code</span>
                                 }
                                 else
                                 {
-                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" class="numeric" maxlength="20" value="@objVendor.Fax_No" style="width: 100%;" />
+                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo"  value="@objVendor.Short_Code" style="width: 100%;" maxlength="10" />
                                 }
                             </td>
                         </tr>
@@ -856,6 +866,15 @@
                 </td>
 
                 <td class="right_nav pull-right" style="margin-right:10px">
+                    @if (ViewBag.Mode == "V")
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('VIEW', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('ADD', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                    }
+
                     @if (ViewBag.Mode != "V")
                     {
                         <input type="button" value="@objMessageKey.Add" onclick="AddEditVendorContact('0','ADD')" id="btnAdd" class="btn btn-primary">

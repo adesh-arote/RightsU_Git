@@ -621,7 +621,7 @@ namespace RightsU_Plus.Controllers
             DM_Master_Log lstDMLog = new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.DM_Master_Import_Code.Contains(lstDMCodes)).FirstOrDefault();
             ViewBag.FileStatus = new DM_Master_Import_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.DM_Master_Import_Code == DM_Import_Master_Code).Select(s => s.Status).FirstOrDefault();
 
-            ViewBag.ShortName = String.Join(",",new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code.ToString()).Select(x => x.Master_Type).Distinct().ToList());
+            ViewBag.ShortName = String.Join(",", new DM_Master_Log_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.DM_Master_Import_Code == DM_Import_Master_Code.ToString()).Select(x => x.Master_Type).Distinct().ToList());
             ViewBag.DM_Title_RC_Lst = new DM_Title_Resolve_Conflict_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderBy(x => x.Order_No).ToList();
 
             return PartialView("~/Views/DM_Title_Master_Import/_DM_Master_Log_List.cshtml", lstDMLog);
@@ -818,8 +818,8 @@ namespace RightsU_Plus.Controllers
             string Status = "";
             if (IsShowAll == "Y")
                 ClearAllAdvanceSearchT();
-           
-  
+
+
             objPage_Properties.TitleName_Search = objPage_Properties.TitleName_Search.Replace('﹐', ',');
             ObjectParameter objRecordCount = new ObjectParameter("RecordCount", RecordCount);
             if (Error == "Y" && objPage_Properties.Status_Search == "")
@@ -862,8 +862,12 @@ namespace RightsU_Plus.Controllers
             }
             ViewBag.RecordCount = lstTitleBulkImport.Count - 1;
 
-            var firstItem = lstTitleBulkImport[0];
-            lstTitleBulkImport.RemoveAt(0);
+            //var firstItem = lstTitleBulkImport[0];
+            //lstTitleBulkImport.RemoveAt(0);
+            DM_Title_Import_Utility_Data firstItem = lstTitleBulkImport.Where(w => w.Col1.Contains("Exce")).FirstOrDefault();
+            lstTitleBulkImport.Remove(firstItem);
+            //lstTitleBulkImport = lstTitleBulkImport.OrderBy(o => Convert.ToInt32(o.Col1)).ToList();
+            lstTitleBulkImport = lstTitleBulkImport.OrderBy(o => (o.Col1 != null && o.Col1 != "" && o.Col1.All(char.IsDigit)) ? Convert.ToInt32(o.Col1) : 0).ToList();
 
             RecordCount = ViewBag.RecordCount;//Convert.ToInt32(objRecordCount.Value);
             if (RecordCount > 0)
@@ -900,9 +904,9 @@ namespace RightsU_Plus.Controllers
             string searchString = terms.LastOrDefault().ToString().Trim();
 
             List<USP_Get_Title_Import_Utility_AdvSearch_Result> lstTIUAdvSrc = new USP_Service(objLoginEntity.ConnectionStringName)
-                .USP_Get_Title_Import_Utility_AdvSearch(DM_Import_Master_Code, "").Where(x=>x.CallFor == "TN").ToList();
+                .USP_Get_Title_Import_Utility_AdvSearch(DM_Import_Master_Code, "").Where(x => x.CallFor == "TN").ToList();
 
-            var result = lstTIUAdvSrc.Where(x=> x.DisplayText.ToUpper().Contains(searchString.ToUpper()))
+            var result = lstTIUAdvSrc.Where(x => x.DisplayText.ToUpper().Contains(searchString.ToUpper()))
                         .Select(R => new { Mapping_Name = R.DisplayText, Mapping_Code = R.DisplayText })
                         .Distinct().ToList();
 
@@ -1012,7 +1016,7 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    noOfRecordSkip = recordPerPage * (pageNo) ;
+                    noOfRecordSkip = recordPerPage * (pageNo);
                 }
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
@@ -1462,7 +1466,7 @@ namespace RightsU_Plus.Controllers
         }
         */
 
-        public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy)
+        public PartialViewResult UploadTitles(HttpPostedFileBase InputFile, string txtpageSize, string FilterBy, string SelectedTitleType)
         {
             string Is_allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             string Modified_Data = "N";
@@ -1519,7 +1523,7 @@ namespace RightsU_Plus.Controllers
                             cmdExcel.Connection = cn;
                             sheetName = "Sheet1$";
 
-                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "]", cn);
+                            OleDbDataAdapter da = new OleDbDataAdapter("Select * From [" + sheetName + "] WHERE [F1] <> '' OR [F1] IS NOT NULL", cn);
                             da.Fill(ds);
                         }
                         catch (Exception ex)
@@ -1573,7 +1577,7 @@ namespace RightsU_Plus.Controllers
                                     }
                                     lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
 
-                                    Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code, 0).FirstOrDefault().Result;
+                                    Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "HV", objLoginUser.Users_Code, 0, SelectedTitleType).FirstOrDefault().Result;
 
                                     string _Status = Result.Split('~')[0];
                                     string _Message = Result.Split('~')[1];
@@ -1591,6 +1595,7 @@ namespace RightsU_Plus.Controllers
                                         obj_DM_Master_Import.Action_On = DateTime.Now;
                                         obj_DM_Master_Import.Status = "N";
                                         obj_DM_Master_Import.File_Type = "T";
+                                        obj_DM_Master_Import.Import_Type = SelectedTitleType;
                                         obj_DM_Master_Import.EntityState = State.Added;
                                         lst_DM_Master_Import.Add(obj_DM_Master_Import);
                                         objDMService.Save(obj_DM_Master_Import, out resultSet);
@@ -1612,7 +1617,7 @@ namespace RightsU_Plus.Controllers
                                             }
                                             lst_Title_Import_Utility_UDT.Add(obj_Title_Import_Utility_UDT);
                                         }
-                                        Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "INS", objLoginUser.Users_Code, obj_DM_Master_Import.DM_Master_Import_Code).FirstOrDefault().Result;
+                                        Result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_Utility_PI(lst_Title_Import_Utility_UDT, "INS", objLoginUser.Users_Code, obj_DM_Master_Import.DM_Master_Import_Code, SelectedTitleType).FirstOrDefault().Result;
 
                                         _Status = Result.Split('~')[0];
                                         _Message = Result.Split('~')[1];
@@ -1706,12 +1711,12 @@ namespace RightsU_Plus.Controllers
 
             List<DM_Title_Import_Utility_Data> lstTIU = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName)
                                     .SearchFor(x => x.DM_Master_Import_Code == dealCode && x.Col1 != "Excel Sr. No").ToList();
-            
+
             double TotalCount = lstTIU.Count();
-            double SuccessCount =   lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
-            double ConflictCount =  lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "N" && (x.Record_Status == "R")).Count();
-            double IgnoreCount =    lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "Y").Count();
-            double WaitingCount =   lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Record_Status ?? "") == "" && (x.Is_Ignore ?? "") != "Y").Count();
+            double SuccessCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "C").Count();
+            double ConflictCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "N" && (x.Record_Status == "R")).Count();
+            double IgnoreCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Is_Ignore ?? "") == "Y").Count();
+            double WaitingCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && (x.Record_Status ?? "") == "" && (x.Is_Ignore ?? "") != "Y").Count();
             double ErrorCount = lstTIU.Where(x => x.DM_Master_Import_Code == dealCode && x.Record_Status == "E").Count();
 
             //double div = @MessageCount / @totalMessageCount;
@@ -1796,7 +1801,7 @@ namespace RightsU_Plus.Controllers
 
             List<USP_Get_Title_Import_Utility_AdvSearch_Result> lstTIUAdvSrc = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Title_Import_Utility_AdvSearch(DM_Import_Master_Code, "").ToList();
 
-            List<SelectListItem> lstDealType = new SelectList(lstTIUAdvSrc.Where(x=> x.CallFor == "TT").Select(i => new { Display_Value = i.DisplayText, Display_Text = i.DisplayText }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
+            List<SelectListItem> lstDealType = new SelectList(lstTIUAdvSrc.Where(x => x.CallFor == "TT").Select(i => new { Display_Value = i.DisplayText, Display_Text = i.DisplayText }).Distinct().ToList(), "Display_Value", "Display_Text").ToList();
             lstDealType.Insert(0, new SelectListItem() { Value = "", Text = "Please Select" });
 
             MultiSelectList lstLanguage = new MultiSelectList(lstTIUAdvSrc.Where(x => x.CallFor == "TL").Select(i => new { Display_Value = i.DisplayText, Display_Text = i.DisplayText }).Distinct().ToList(), "Display_Value", "Display_Text");
@@ -1824,7 +1829,7 @@ namespace RightsU_Plus.Controllers
             ErrorMsg = ErrorMsg.Replace(',', '~');
             string[] lstErrMsg = ErrorMsg.Split(new char[] { '~' }, StringSplitOptions.RemoveEmptyEntries);
 
-            MultiSelectList lstErrorMsg = new MultiSelectList(lstErrMsg.Select(i => new { Display_Value = i, Display_Text = i }).Distinct(),"Display_Value", "Display_Text");
+            MultiSelectList lstErrorMsg = new MultiSelectList(lstErrMsg.Select(i => new { Display_Value = i, Display_Text = i }).Distinct(), "Display_Value", "Display_Text");
 
             List<SelectListItem> lstStatus = new List<SelectListItem>();
             lstStatus.Add(new SelectListItem { Text = "Ignore", Value = "Y" });
@@ -2087,7 +2092,7 @@ namespace RightsU_Plus.Controllers
                     sql += " AND  [Music_Label] IN (" + "'" + searchMLString + "')";
 
             }
-           
+
             parm[0] = new ReportParameter("DM_Master_Import_Code", Convert.ToString(DM_Import_Master_Code));
             parm[1] = new ReportParameter("SearchCriteria", SearchCriteria);
             parm[2] = new ReportParameter("File_Type", FileType);
@@ -2135,6 +2140,15 @@ namespace RightsU_Plus.Controllers
             {
                 ReportViewer1.ServerReport.ReportServerUrl = new Uri(ReportingServer);
             }
-        }  
+        }
+
+        public JsonResult TitleImportError(int DM_Title_Import_Utility_Data_Code)
+        {
+            string ErrorTbl = "<table class=\"table table-bordered table-hover\"><tbody><tr><td>";
+            string ErrorMsg = new DM_Title_Import_Utility_Data_Service(objLoginEntity.ConnectionStringName).GetById(DM_Title_Import_Utility_Data_Code).Error_Message.Trim('~');
+            string ErrorTblEnd = "</td></tr></tbody></table>";
+            string ErrorHtml = ErrorTbl + ErrorMsg.Replace("~", "</td></tr><tr><td>") + ErrorTblEnd;
+            return Json(ErrorHtml);
+        }
     }
 }

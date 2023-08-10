@@ -223,10 +223,10 @@ namespace RightsU_Plus.Controllers
             if (isAdvAncillary == "Y")
             {
                 ViewBag.PlatFormCodes = "";
-                return View("~/Views/Syn_Deal/_Syn_Ancillary_Adv.cshtml", new Syn_Deal_Ancillary());
+                return PartialView("~/Views/Syn_Deal/_Syn_Ancillary_Adv.cshtml", new Syn_Deal_Ancillary());
             }
             else
-                return View("~/Views/Syn_Deal/_Syn_Ancillary.cshtml", new Syn_Deal_Ancillary());
+                return PartialView("~/Views/Syn_Deal/_Syn_Ancillary.cshtml", new Syn_Deal_Ancillary());
         }
         public ActionResult Edit_Ancillary(int selected_Syn_Deal_Ancillary_Code, string Mode = "EDIT")
         {
@@ -250,10 +250,10 @@ namespace RightsU_Plus.Controllers
             if (isAdvAncillary == "Y")
             {
                 ViewBag.PlatFormCodes = string.Join(",", obj.Syn_Deal_Ancillary_Platform.Select(x => x.Ancillary_Platform_code).ToArray());
-                return View("~/Views/Syn_Deal/_Syn_Ancillary_Adv.cshtml", obj);
+                return PartialView("~/Views/Syn_Deal/_Syn_Ancillary_Adv.cshtml", obj);
             }
             else
-                return View("~/Views/Syn_Deal/_Syn_Ancillary.cshtml", obj);
+                return PartialView("~/Views/Syn_Deal/_Syn_Ancillary.cshtml", obj);
         }
         public JsonResult Delete_Ancillary(int? Syn_Deal_Ancillary_Code)
         {

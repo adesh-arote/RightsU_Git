@@ -81,7 +81,8 @@
     , URL_Deal_For_Approval_Music = '@Url.Action("Deal_For_Approval", "Global", new {
                                     DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForMusicDeal, Record_Locking_Code = "RecordLockingCode" })'
     , URL_Syn_Approve_Reject = '@Url.Action("Syn_Approve_Reject_Deal", "Global")'
-    , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")';
+            , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")',
+    URL_BindAeroplay = '@Url.Action("BindAeroplay", "Global")';
 
         $(document).ready(function () {
             //  $("#triangle").css({ "top": "-13px" });
@@ -819,6 +820,12 @@
         }
     </style>
 
+    <style>
+        .glyphicon-usd:before {
+            content: "\e148";
+        }
+    </style>
+
     <script>
         $(document).ready(function () {
             $('.modal').modal({
@@ -855,6 +862,59 @@
             window.open('http://localhost:52844/Login/Login', '_blank', strWindowFeatures);
         }
 
+        function LoadAeroplay() {
+            window.location.href = '@Url.Action("BindAeroplay", "Global")';
+        }
+        function LoadBookingSheet() {
+            debugger;
+            window.location.href = '@Url.Action("Index", "BookingSheet")';
+        }
+
+        function LoadAeroplayAjax(UsersCode) {
+            debugger;
+           
+            //var pageNo = $('#hdnPageNo').val();
+            //var recordPerPage = $('#txtPageSize').val();
+           // window.location.href = '@Url.Action("BindAeroplay", "Global")';
+
+            $.ajax({
+                type: "POST",
+                url: URL_BindAeroplay,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    UsersCode: UsersCode
+                    //recordPerPage: recordPerPage,
+                    //Language_Code: Language_Code,
+                    //commandName: commandName,
+                    //sortType: sort_Type
+
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        
+                        $('#Aeroplaypopup').modal();
+                        $('#AeroplaypupupHtml').empty();
+                        $('#AeroplaypupupHtml').html(result);
+                        //initializeTooltip();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+
+        function ClosePopup() {
+            debugger;
+            $('#Aeroplaypopup').modal('hide');
+            $('#AeroplaypupupHtml').empty();
+        }
     </script>
 </head>
 
@@ -864,9 +924,9 @@
             <div class="navigation" onclick="RightmenuHide()">
                 <ul>
                     @*<li class="home_button" title="Home" data-placement="right">
-                            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
-                        </li>
-                        <li class="seperator"></li>*@
+            <a class="glyphicon glyphicon-home" href="@Url.Action("Main", "Base")"></a>
+        </li>
+        <li class="seperator"></li>*@
                     @{ if (Menulist != null)
                         {
                             string dataPlacement = "right";
@@ -923,19 +983,49 @@
 
                             }
 
-                            @*<li class="seperator"></li>
-                                <li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-calendar" href="#"></a>
-                                </li>
-                                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-phone" href="#"></a>
-                                </li>
-                                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
-                                    <a class="glyphicon glyphicon-tent" href="#"></a>
-                                </li>*@
+                            <li class="seperator"></li>
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAeroplay))
+                            {
+                            <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-globe" href="#"></a>
+                            </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForBookingSheet))
+                            {
+                            <li title="Booking Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
+                            </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPurchaseOrder))
+                            {
+                            <li title="Purchase Order" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-usd" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "PurchaseOrder", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForPurchaseOrder })"></a>
+                            </li>   
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLoadSheet))
+                            {
+                            <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-bookmark" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "LoadSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
+                            </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDeliveryTracking))
+                            {
+                            <li title="Delivery Tracking" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                <a class="glyphicon glyphicon-briefcase" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "DeliveryTracking", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForDeliveryTracking })"></a>
+                            </li>
+                            }
+                            @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-calendar" href="#"></a>
+                </li>
+                <li title="Digital Interim" class="showhidetooltip menu_margin" onclick="DigitalInterim()" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-phone" href="#"></a>
+                </li>
+                <li class="showhidetooltip menu_margin" onclick="javascript: loadNavMenu('N', 'pnlAmort');" title="Amort" data-placement="@dataPlacement">
+                    <a class="glyphicon glyphicon-tent" href="#"></a>
+                </li>*@
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMusic_Title) ||
-                              Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForContent))
                             {
                                 <li class="seperator "></li>
                             }
@@ -959,17 +1049,17 @@
                                 </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForMasters) ||
-                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
-                               Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports) ||
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="seperator "></li>
                             }
 
                             @*{
-                                    <li title="Digital" data-placement="right">
-                                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
-                                    </li>
-                                }*@
+                    <li title="Digital" data-placement="right">
+                        <a class="glyphicon glyphicon-facetime-video" onclick="location.href='@Url.Action("Digital", "Digital_Rights")'"></a>
+                    </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAvail))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('G','pnlAvail');" title="@objMessageKey.Availability" data-placement="@dataPlacement">
@@ -984,11 +1074,11 @@
                                 </li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGlossary))
-                                {
-                                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
-                                       <a class="glyphicon glyphicon-tasks" href="#"></a>
-                                   </li>
-                                }*@
+                {
+                   <li onclick="javascript: loadNavMenu('H','pnlGlossary');" title="Glossary" data-placement="right">
+                       <a class="glyphicon glyphicon-tasks" href="#"></a>
+                   </li>
+                }*@
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForReports))
                             {
                                 <li class="showhidetooltip menu_margin" onclick="javascript:  loadNavMenu('E','pnlReports');" title="@objMessageKey.Reports" data-placement="@dataPlacement">
@@ -997,16 +1087,16 @@
                             }
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application) ||
-                                Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
                             {
                                 <li class="seperator"></li>
                             }
                             @*if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForUploads))
-                                {
-                                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
-                                        <a class="glyphicon glyphicon-open" href="#"></a>
-                                    </li>
-                                }*@
+                {
+                    <li class="check_button" onclick="javascript:  loadNavMenu('F','pnlUploads');" title="Upload" data-placement="right">
+                        <a class="glyphicon glyphicon-open" href="#"></a>
+                    </li>
+                }*@
 
 
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeFor_IPR_Application))
@@ -1024,8 +1114,8 @@
                         }
                     }
                     @*<li title="Log Out" data-placement="right">
-                            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
-                        </li>*@
+            <a class="glyphicon glyphicon-off" href="@Url.Action("Index", "Login", new { isReset = "Y" })"></a>
+        </li>*@
                 </ul>
             </div>
             <div class="header-nav ">
@@ -1377,6 +1467,15 @@
             <span class="glyphicon glyphicon-chevron-right"></span>
         </div>
     </div>
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="Aeroplaypopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:100%;padding-right:0px !important;margin-left:4px !important;position:absolute;top:0;width: 100%!important;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <div class="form_fields acq" id="AeroplaypupupHtml">
+
+                </div>
+            </div>
+        </div>
+    </div>
     <input type="hidden" id="hdnSelectedEmail" />
     <input type="hidden" id="hdnSeenCount" />
     <input type="hidden" id="hdnCurrNoti" />
@@ -1452,7 +1551,7 @@
 
     function showPrevious() {
         debugger;
-     
+
         $('#btnNext').attr('disabled', false);
         var unseenCount = parseInt(document.getElementById('unseenCount').innerHTML);
         var oldDiv = $('#hdnDiv').val();

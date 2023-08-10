@@ -14,7 +14,6 @@ using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
 
-
 namespace RightsU_Plus.Controllers
 {
     public class GlobalController : BaseController
@@ -795,6 +794,13 @@ namespace RightsU_Plus.Controllers
             Response.OutputStream.Write(buffer, 0, buffer.Length);
             Response.End();
             return RedirectToAction("Index", new { Message = "Attachment File downloaded successfully" });
+        }
+        
+        public PartialViewResult BindAeroplay(int UsersCode)
+        {
+            //Currency objCurrency = new Currency();
+            ViewBag.UsersCode = UsersCode;
+            return PartialView("~/Views/Shared/_Aeroplay.cshtml");
         }
     }
 }
