@@ -18,6 +18,9 @@ namespace RightsU_InterimDb.Models
         {
             this.Extended_Columns_Value = new HashSet<Extended_Columns_Value>();
             this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();
+            this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
+            this.AL_Vendor_Rule_Criteria = new HashSet<AL_Vendor_Rule_Criteria>();
+            this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
         }
     
     	public State EntityState { get; set; }    public int Columns_Code { get; set; }
@@ -34,5 +37,8 @@ namespace RightsU_InterimDb.Models
     
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
+        public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
+        public virtual ICollection<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
+        public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
     }
 }

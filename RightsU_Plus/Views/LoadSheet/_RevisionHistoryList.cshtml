@@ -1,0 +1,45 @@
+﻿@model List<RightsU_Entities.USPAL_GetRevisionHistoryForLoadsheet_Result>
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%">Last Action By</th>
+            <th style="width:20%">Last Action On</th>
+            <th style="width:20%">Remark</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Last_Action_By)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Last_Action_On)
+                    </td>
+                    <td style="text-align:center" class="expand_Remaks">
+                        @Html.DisplayFor(modelItem => item.Remark)
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

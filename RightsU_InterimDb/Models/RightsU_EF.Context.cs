@@ -452,6 +452,30 @@ namespace RightsU_InterimDb.Models
         public DbSet<Digital_Config> Digital_Config { get; set; }
         public DbSet<Digital_Data> Digital_Data { get; set; }
         public DbSet<Digital_Tab> Digital_Tab { get; set; }
+        public DbSet<Banner> Banners { get; set; }
+        public DbSet<Extended_Group> Extended_Group { get; set; }
+        public DbSet<Extended_Group_Config> Extended_Group_Config { get; set; }
+        public DbSet<Title_Episode_Details> Title_Episode_Details { get; set; }
+        public DbSet<Title_Episode_Details_TC> Title_Episode_Details_TC { get; set; }
+        public DbSet<AL_OEM> AL_OEM { get; set; }
+        public DbSet<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public DbSet<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        public DbSet<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
+        public DbSet<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
+        public DbSet<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
+        public DbSet<AL_Lab> AL_Lab { get; set; }
+        public DbSet<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
+        public DbSet<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
+        public DbSet<AL_Recommendation> AL_Recommendation { get; set; }
+        public DbSet<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
+        public DbSet<DM_Booking_Sheet_Data> DM_Booking_Sheet_Data { get; set; }
+        public DbSet<AL_Load_Sheet> AL_Load_Sheet { get; set; }
+        public DbSet<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }
+        public DbSet<AL_Purchase_Order> AL_Purchase_Order { get; set; }
+        public DbSet<AL_Material_Tracking> AL_Material_Tracking { get; set; }
+        public DbSet<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
+        public DbSet<AL_Purchase_Order_Rel> AL_Purchase_Order_Rel { get; set; }
+        public DbSet<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
@@ -5591,6 +5615,154 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Tab_SM", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Digital_Edit_Result>("USP_Get_Acq_Deal_Digital_Edit", acq_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingSheetList_Result>("USPAL_GetBookingSheetList");
+        }
+    
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetReCommendationList_Result>("USPAL_GetReCommendationList");
+        }
+    
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(Nullable<int> titleCode)
+        {
+            var titleCodeParameter = titleCode.HasValue ?
+                new ObjectParameter("TitleCode", titleCode) :
+                new ObjectParameter("TitleCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPAL_Title_Content_Gen_From_Title", titleCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(Nullable<int> extendedColumnsCode)
+        {
+            var extendedColumnsCodeParameter = extendedColumnsCode.HasValue ?
+                new ObjectParameter("ExtendedColumnsCode", extendedColumnsCode) :
+                new ObjectParameter("ExtendedColumnsCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGet_DDLValues_For_ExtendedColumns_Result>("USPGet_DDLValues_For_ExtendedColumns", extendedColumnsCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, Nullable<int> loadSheetCode)
+        {
+            var loadsheetMonthParameter = loadsheetMonth != null ?
+                new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
+                new ObjectParameter("LoadsheetMonth", typeof(string));
+    
+            var loadSheetCodeParameter = loadSheetCode.HasValue ?
+                new ObjectParameter("LoadSheetCode", loadSheetCode) :
+                new ObjectParameter("LoadSheetCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet", loadsheetMonthParameter, loadSheetCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
+        {
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetLoadsheetList_Result>("USPAL_GetLoadsheetList");
+        }
+    
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet1(string loadsheetMonth, Nullable<int> loadSheetCode)
+        {
+            var loadsheetMonthParameter = loadsheetMonth != null ?
+                new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
+                new ObjectParameter("LoadsheetMonth", typeof(string));
+    
+            var loadSheetCodeParameter = loadSheetCode.HasValue ?
+                new ObjectParameter("LoadSheetCode", loadSheetCode) :
+                new ObjectParameter("LoadSheetCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet1", loadsheetMonthParameter, loadSheetCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
+        {
+            var usersCodeParameter = usersCode.HasValue ?
+                new ObjectParameter("UsersCode", usersCode) :
+                new ObjectParameter("UsersCode", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList", usersCodeParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
+        {
+            var clientParameter = client.HasValue ?
+                new ObjectParameter("Client", client) :
+                new ObjectParameter("Client", typeof(int));
+    
+            var cycleParameter = cycle != null ?
+                new ObjectParameter("Cycle", cycle) :
+                new ObjectParameter("Cycle", typeof(string));
+    
+            var aL_Lab_CodeParameter = aL_Lab_Code.HasValue ?
+                new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
+                new ObjectParameter("AL_Lab_Code", typeof(int));
+    
+            var distributorParameter = distributor.HasValue ?
+                new ObjectParameter("Distributor", distributor) :
+                new ObjectParameter("Distributor", typeof(int));
+    
+            var displayParameter = display != null ?
+                new ObjectParameter("Display", display) :
+                new ObjectParameter("Display", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
+        {
+            var clientParameter = client != null ?
+                new ObjectParameter("Client", client) :
+                new ObjectParameter("Client", typeof(string));
+    
+            var cycleParameter = cycle != null ?
+                new ObjectParameter("Cycle", cycle) :
+                new ObjectParameter("Cycle", typeof(string));
+    
+            var aL_Lab_CodeParameter = aL_Lab_Code != null ?
+                new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
+                new ObjectParameter("AL_Lab_Code", typeof(string));
+    
+            var distributorParameter = distributor != null ?
+                new ObjectParameter("Distributor", distributor) :
+                new ObjectParameter("Distributor", typeof(string));
+    
+            var displayParameter = display != null ?
+                new ObjectParameter("Display", display) :
+                new ObjectParameter("Display", typeof(string));
+    
+            var tabNameParameter = tabName != null ?
+                new ObjectParameter("TabName", tabName) :
+                new ObjectParameter("TabName", typeof(string));
+    
+            var includeHoldoverParameter = includeHoldover != null ?
+                new ObjectParameter("IncludeHoldover", includeHoldover) :
+                new ObjectParameter("IncludeHoldover", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter, includeHoldoverParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(Nullable<int> record_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
+        }
+    
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(Nullable<int> record_Code, Nullable<int> module_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+    
+            var module_CodeParameter = module_Code.HasValue ?
+                new ObjectParameter("Module_Code", module_Code) :
+                new ObjectParameter("Module_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForModule_Result>("USPAL_GetRevisionHistoryForModule", record_CodeParameter, module_CodeParameter);
         }
     }
 }

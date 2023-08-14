@@ -1,0 +1,195 @@
+﻿@model List<RightsU_Entities.AL_Vendor_OEM>
+
+<style>
+    select option:disabled {
+        display: none;
+    }
+</style>
+
+<script>
+    function checkCurrentActionOEM() {
+        debugger;
+        var action = $("#hdnActionOEM").val();
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+
+    function AddEditOEM(TabName, commandName, OEMCode) {
+        debugger;
+        if (checkCurrentActionOEM()) {
+            AdditionalInfoTab(TabName, commandName, OEMCode);
+            $("#hdnActionOEM").val(commandName);
+        }
+    }
+
+    function SaveOEM() {
+        debugger;
+        var returnVal = true;
+        var ddlOEM = $("#ddlOEM").val();
+        var hdnVendorOEM = $("#hdnOEMCode").val();
+        var OEMtxt = $("#ddlOEM option:selected").text();
+
+        if (ddlOEM == "") {
+            $("#ddlOEM").val('').attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveOEM,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AL_Vendor_OEM_Code: hdnVendorOEM,
+                    AL_OEM_Code: ddlOEM,
+                    SelectedOEMName: OEMtxt
+                }),
+                success: function (result) {
+                    debugger;
+                    AdditionalInfoTab('OEM', '', 0);
+                    $('#hdnActionOEM').val("");
+                }
+            });
+        }
+    }
+
+    function CancelOEM() {
+        $('#hdnActionOEM').val("");
+        AdditionalInfoTab('OEM', '', 0);
+    }
+
+    function DeleteOEM(VendorOEMCode, Action) {
+        if (checkCurrentActionOEM()) {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteOEM,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    VendorOEMCode: VendorOEMCode,
+                    Action: Action
+                }),
+                success: function (result) {
+                    debugger;
+                    AdditionalInfoTab('OEM', '', 0);
+                }
+            });
+        }
+    }
+</script>
+
+@{
+    int iOEM = 0;
+}
+
+<div style="padding:1%">
+    <span style="font-size:18px"> OEM </span>
+    @if (ViewBag.CommandNameOEM != "VIEW")
+    {
+        <button class="btn btn-primary pull-right" onclick="AddEditOEM('OEM', 'ADD', 0)"> Add </button>
+    }
+</div>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:20%">
+                Sr. No.
+            </th>
+            <th style="width:60%">
+                OEM
+            </th>
+            @if (ViewBag.CommandNameOEM != "VIEW")
+            {
+                <th style="width:20%">
+                    Action
+                </th>
+            }
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            iOEM++;
+            <tr>
+                @if (ViewBag.CommandNameOEM == "EDIT" && ViewBag.OEMCode == item.AL_Vendor_OEM_Code)
+                {
+                    <td>
+                        @iOEM
+                    </td>
+                    <td>
+                        @Html.DropDownList("VendorOEM", (IEnumerable<SelectListItem>)ViewBag.OEMDDl, "Select an OEM", new { @id = "ddlOEM", style = "width:100%" })
+                        <input type="hidden" id="hdnOEMCode" value="@item.AL_Vendor_OEM_Code" />
+                    </td>
+                    <td>
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveOEM()"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelOEM()"></a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        @iOEM
+                    </td>
+                    <td>
+                        @item.SelectedOEMName
+                    </td>
+                    if (ViewBag.CommandNameOEM != "VIEW")
+                    {
+                        <td>
+                            @if (item.Is_Active == "Y")
+                            {
+                                <a title="Edit" class="glyphicon glyphicon-pencil" onclick="AddEditOEM('OEM', 'EDIT', '@item.AL_Vendor_OEM_Code')"></a>
+                            }
+                            else
+                            {
+                                <a title="Edit" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            @if (item.Is_Active == "Y" && item.AL_Vendor_OEM_Code > 0)
+                            {
+                                <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="DeleteOEM('@item.AL_Vendor_OEM_Code', 'DEACTIVATE')"></a>
+                            }
+                            else if (item.Is_Active == "N" && item.AL_Vendor_OEM_Code > 0)
+                            {
+                                <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="DeleteOEM('@item.AL_Vendor_OEM_Code', 'ACTIVATE')"></a>
+                            }
+                            else if (item.AL_Vendor_OEM_Code < 0)
+                            {
+                                <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteOEM('@item.AL_Vendor_OEM_Code', 'DELETE')"></a>
+                            }
+                            @*<a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteOEM('@item.AL_Vendor_OEM_Code')"></a>*@
+                        </td>
+                    }
+                }
+            </tr>
+        }
+        @if (ViewBag.CommandNameOEM == "ADD")
+        {
+            <tr>
+                <td>
+                    New
+                </td>
+                <td>
+                    @Html.DropDownList("VendorOEM", (IEnumerable<SelectListItem>)ViewBag.OEMDDl, "Select an OEM", new { @id = "ddlOEM", style = "width:100%" })
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveOEM()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelOEM()"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

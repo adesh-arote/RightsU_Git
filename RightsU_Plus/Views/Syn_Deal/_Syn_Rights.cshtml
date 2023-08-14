@@ -153,6 +153,7 @@
         "MsgPlaceSearch": '@objMessageKey.Search'
     }
 </script>
+
 <link rel="stylesheet" href="~/Custom_Scripts/Custom_CSS/Syn_Deal_Rights.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Custom_Scripts/Syn_Deal_Rights.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
@@ -359,11 +360,11 @@
                                                             @if (IsTitleLanguageForBuyback == "disabled")
                                                             {
                                                                 @*<input type="checkbox" name="name" value="" checked />*@
-                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" , @disabled = "disabled"})
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);", @disabled = "disabled" })
                                                             }
                                                             else
                                                             {
-                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);"})
+                                                                @Html.CheckBox("Is_Title_Language_Right", (Model.Is_Title_Language_Right == "Y" ? true : false), new { @onclick = "return chkHoldback_TitleLanguage(this);" })
                                                             }
 
                                                             @objMessageKey.TitleLanguage:
@@ -524,7 +525,7 @@
                                                             <li style="text-decoration: none;display: inline;padding-left: 4%" id="li_Perpetuity">
                                                                 End Date :&nbsp;&nbsp;
                                                                 @{ string PerDate =
-                                                                           Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
+                                                                             Model.Actual_Right_End_Date != null ? ((DateTime)Model.Actual_Right_End_Date).ToString("dd/MM/yyyy") : ""; }
                                                                 <input type="text" id="txtPer_Date_Logic_EndDate" placeholder="DD/MM/YYYY" readonly="readonly" style="width:95px;" value="@PerDate" />
                                                                 @if (ViewBag.Deal_Workflow_Flag == "AM")
                                                                 {

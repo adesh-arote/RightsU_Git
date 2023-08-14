@@ -1,0 +1,220 @@
+﻿@model RightsU_Entities.AL_Vendor_Rule
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    function SaveContentRule() {
+        debugger;
+        var returnVal = true;
+        var RuleName = $.trim($("#CRName").val());
+        var ShortRuleName = $.trim($("#CRShortName").val());
+        var VendorRuleCode = $("#hdnRuleCode").val();
+        var Criteria = $("#hdnCriteria").val();
+        var VendorCode = $("#hdnVendorCodeCR").val();
+        var RuleType = $("#Rule_Type:checked").val();
+
+        if (RuleName == "") {
+            $("#CRName").val('').attr('required', true);
+            returnVal = false;
+        }
+        if (ShortRuleName == "") {
+            $("#CRShortName").val('').attr('required', true);
+            returnVal = false;
+        }
+
+        if (checkCurrentActionCRGrid()) {
+            if (returnVal) {
+                $.ajax({
+                    type: "POST",
+                    url: URL_SaveContentRule,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        Rule_Name: RuleName,
+                        Rule_Short_Name: ShortRuleName,
+                        Rule_Type: RuleType,
+                        AL_Vendor_Rule_Code: VendorRuleCode,
+                        Vendor_Code: VendorCode,
+                        Criteria: Criteria
+                    }),
+                    success: function (result) {
+                        debugger;
+                        if (result.status == 'S') {
+                            $("#ContentPopup").empty();
+                            $('#ContentRuleModalPopup').modal('hide');
+                            AdditionalInfoTab("CR", "", 0);
+                            $("#SaveAdditionalInfoBtn").prop("disabled", false);
+                            $("#CloseAdditionalInfoBtn").prop("disabled", false);
+                            $("#AddEditContentRuleBtn").prop("disabled", false);
+                            $("#ContentRuleTable tbody tr td a").prop("disabled", false);
+                        }
+                        else {
+                            showAlert(result.status, result.message);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function CloseContentRulePopup() {
+        if (checkCurrentActionCRGrid()) {
+            $('#hdnActionCRGrid').val("");
+            $('#ContentPopup').empty();
+            $('#ContentRuleModalPopup').modal('hide');
+            $("#SaveAdditionalInfoBtn").prop("disabled", false);
+            $("#CloseAdditionalInfoBtn").prop("disabled", false);
+            $("#AddEditContentRuleBtn").prop("disabled", false);
+            $("#ContentRuleTable tbody tr td a").css("pointer-events", "auto");
+        }
+    }
+</script>
+
+@*<div style="padding:1%">
+        <span style="font-size:18px"> Content Rule </span>
+    </div>*@
+
+@*<div class="modal_block modal_header">
+        <a class="close" onclick="CloseContentRulePopup()">
+            <span>×</span>
+            <span class="sr-only">Close</span>
+        </a>
+
+        <h2> Content Rule </h2>
+    </div>*@
+<style>
+    #ContentRulePopUpTable {
+        table-layout: fixed;
+    }
+
+        #ContentRulePopUpTable tr td {
+            width: 20%;
+            text-align: center;
+            word-wrap: break-word;
+        }
+</style>
+
+<div class="grid_area">
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <table id="ContentRulePopUpTable" class="table">
+                <tr>
+                    <td>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Rule_Name</b>
+                        }
+                        else
+                        {
+                            <input type="text" id="CRName" style="width:100%" value="@Model.Rule_Name" maxlength="100" />
+                        }
+
+                        <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+                        <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+                        <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+                    </td>
+                    <td>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Rule_Short_Name</b>
+                        }
+                        else
+                        {
+                            <input type="text" id="CRShortName" style="width:100%" value="@Model.Rule_Short_Name" maxlength="50" />
+                        }
+                    </td>
+                    <td>
+                        @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>@objMessageKey.Movies</span>
+                        @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>@objMessageKey.TVShows</span>
+                    </td>
+                    <td>
+                        <span id="SelectedCriteriaTd"></span>
+                        @if (ViewBag.CommandNameCR == "VIEW")
+                        {
+                            <b>@Model.Criteria</b>
+                        }
+                    </td>
+                    <td>
+
+                    </td>
+                </tr>
+                @*<tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Name</b>
+                </td>
+                <td>
+                    @if (ViewBag.CommandNameCR == "VIEW")
+                    {
+                        @Model.Rule_Name
+                    }
+                    else
+                    {
+                        <input type="text" id="CRName" style="width:80%" value="@Model.Rule_Name" />
+                    }
+
+                    <input type="hidden" id="hdnRuleCode" value="@Model.AL_Vendor_Rule_Code" />
+                    <input type="hidden" id="hdnCriteria" value="@Model.Criteria" />
+                    <input type="hidden" id="hdnVendorCodeCR" value="@Model.Vendor_Code" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Short Name</b>
+                </td>
+                <td>
+                    @if (ViewBag.CommandNameCR == "VIEW")
+                    {
+                        @Model.Rule_Short_Name
+                    }
+                    else
+                    {
+                        <input type="text" id="CRShortName" style="width:80%" value="@Model.Rule_Short_Name" maxlength="5" />
+                    }
+
+                </td>
+            </tr>
+            <tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Content Type</b>
+                </td>
+                <td>
+                    @Html.RadioButtonFor(m => m.Rule_Type, "M") <span>Movies</span>
+                    @Html.RadioButtonFor(m => m.Rule_Type, "S") <span>Show</span>
+                </td>
+            </tr>*@
+            </table>
+
+            <div id="ContentRuleGrid">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<div>
+        <button onclick="SaveContentRule()"> Save Content </button>
+        <button onclick="CloseContentRulePopup()"> Close </button>
+    </div>*@
+
+
+
+<div class="modal_block_full">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px;">
+            <li>
+                @if (ViewBag.CommandNameCR != "VIEW")
+                {
+                    <button class="btn btn-primary" onclick="SaveContentRule()"> Save Rule </button>
+                }
+                <button class="btn btn-primary" onclick="CloseContentRulePopup()"> Close </button>
+            </li>
+        </ul>
+    </div>
+</div>

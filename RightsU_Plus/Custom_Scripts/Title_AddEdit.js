@@ -108,6 +108,23 @@ function fileCheck(obj) {
 //    //window.location.href = URL;
 //}
 function BindExtended(vmode) {
+
+    if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
+        var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+        $("#hdnTabCode").val(hdnActiveTabValue);
+        var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+        $("#hdnTabAddEditType").val(hdnTabAddEditType);
+        var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+        $("#hdnTabwiseName").val(hdnTabwiseName);        
+        if ($("#hdnTabAddEditType").val() == 'row') {
+            $('.divgvAdditionalFieldGrid').hide();
+            $('.divgvAdditionalField').show();
+        }
+        else if ($("#hdnTabAddEditType").val() == 'grid') {
+            $('.divgvAdditionalField').hide();
+            $('.divgvAdditionalFieldGrid').show();
+        }
+    }    
     showLoading();
     var TitleCode = title_Code;
     $.ajax({
@@ -123,6 +140,28 @@ function BindExtended(vmode) {
         success: function (result) {
             //ddl_first_col = result;
             $('.divgvAdditionalField').html(result);
+            initializeChosen();
+            initializeTooltip();
+            hideLoading();
+        },
+        error: function (result) {
+            //alert('Error: '+ result.responseText);
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: URL_BindFieldGrid,
+        traditional: true,
+        enctype: 'multipart/form-data',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            TitleCode: TitleCode,
+            mode: vmode
+        }),
+        success: function (result) {
+            //ddl_first_col = result;
+            $('.divgvAdditionalFieldGrid').html(result);
             initializeChosen();
             initializeTooltip();
             hideLoading();
@@ -349,16 +388,22 @@ function SaveExtendedMetadata(IsValidate) {
             }),
             success: function (result) {
                 debugger;
-                $("#popAddExtendedMetadata").modal('hide');
+                //$("#popAddExtendedMetadata").modal('hide');
                 if (typeof result.ExtendedColumnError !== "undefined" && result.ExtendedColumnError != "") {
                     showAlert('E', result.ExtendedColumnError);
-                    $("#popAddExtendedMetadata").modal();
+                    //$("#popAddExtendedMetadata").modal();
                 }
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
-                $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+                else {
+                    $("#popAddExtendedMetadata").modal('hide');
+                    $("#" + $("#hdnRowNum").val() + '_ddlControlType').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $("#" + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+                }
                 
                 //AppendExtendedMetadata(selMulti, result);
-                
+                //Do check and verify previous code if issue arrises with current one. 
+                //1. Previous code hid the modal popup on error and then binded it again which left semi - transparent black screen when the popup was closed / canceled.
+                //2. As the Dropdown append code was also outside error block and did not check if result was success or error, it binded any receiving value to dropdown i.e. on error dropdown would
+                //have an option "undefined" as one of the selected option. 
             }
         });
 }

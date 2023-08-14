@@ -316,6 +316,60 @@
     <Compile Include="Models\Alternate_Config.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\AL_Booking_Sheet.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Booking_Sheet_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Lab.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Load_Sheet.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Load_Sheet_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Material_Tracking.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Material_Tracking_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Purchase_Order.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Purchase_Order_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Purchase_Order_Rel.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Recommendation.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Recommendation_Content.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_OEM.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Rule.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_Rule_Criteria.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\AL_Vendor_TnC.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Amort_Rule.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -359,6 +413,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Avail_Acq_Language.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Banner.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\BMS_All_Masters.cs">
@@ -502,6 +559,9 @@
     <Compile Include="Models\DM_AQDeal.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\DM_Booking_Sheet_Data.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\DM_Content_Music.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -578,6 +638,12 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Extended_Columns_Value.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Extended_Group.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Extended_Group_Config.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Format_Show_Data.cs">
@@ -1228,6 +1294,12 @@
     <Compile Include="Models\Title_Country.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Title_Episode_Details.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Title_Episode_Details_TC.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Title_Geners.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1300,6 +1372,33 @@
     <Compile Include="Models\Users_Password_Detail.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USPAL_GetBookingsheetDataForLoadsheet_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetBookingSheetList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetDeliveryTrackingListMovies_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetDeliveryTrackingList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetLoadsheetList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetPurchaseOrderList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetReCommendationList_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetRevisionHistoryForLoadsheet_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPAL_GetRevisionHistoryForModule_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USPBindJobAndExecute_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
@@ -1313,6 +1412,9 @@
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USPGetTitleEpisodes_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\USPGet_DDLValues_For_ExtendedColumns_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\USPListResolveConflict_Result.cs">

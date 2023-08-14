@@ -30,5 +30,6 @@ namespace RightsU_Entities
         public string validation { get; set; }
         public string Is_Allowed_For_Resolve_Conflict { get; set; }
         public string ShortName { get; set; }
+        public string Import_Type { get; set; }
     }
 }

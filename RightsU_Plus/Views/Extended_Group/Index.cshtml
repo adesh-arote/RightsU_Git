@@ -1,0 +1,767 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var URL_CheckRecordLock = '@Url.Action("CheckRecordLock", "Extended_Group")';
+    var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
+    var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
+
+    function CheckRecordLock(Id, CommandName, ModuleCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_CheckRecordLock,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Extended_Group_Code: Id,
+                CommandName: CommandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Is_Locked == "Y") {
+                        AddEditViewExtdGrp(Id, CommandName, ModuleCode)
+                        $('#hdnRecodLockingCode').val(result.Record_Locking_Code); // This syntax must be after AddEditViewExtdGrp()
+                        Call_RefreshRecordReleaseTime(result.Record_Locking_Code, URL_Refresh_Lock);
+                    }
+                    else
+                        showAlert("E", result.Message);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+</script>
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+
+    var URL_BindExtndGrpLst = '@Url.Action("BindExtendedGroupList", "Extended_Group")';
+    var URL_SearchExtndedGroup = '@Url.Action("SearchExtendedGroup", "Extended_Group")';
+    var URL_AddEditViewExtdGrp = '@Url.Action("AddEditViewExtdGrp", "Extended_Group")';
+    var URL_AddEditViewDetail = '@Url.Action("BindExtdGrpDetail", "Extended_Group")';
+    var URL_DeleteGrpDetail = '@Url.Action("DeleteGrpDetail", "Extended_Group")';
+    var URL_SaveGrpDetail = '@Url.Action("SaveGrpDetail", "Extended_Group")';
+    var URL_DeleteDetail = '@Url.Action("DeleteGrpDetail", "Extended_Group")';
+    var URL_ActivateDeactivateGrpDtl = '@Url.Action("ActivateDeactivateGrpDtl", "Extended_Group")';
+    var URL_SaveMaster = '@Url.Action("SaveMaster", "Extended_Group")';
+    var URL_Index = '@Url.Action("Index", "Extended_Group")';
+
+    $(document).ready(function () {
+        if (LayoutDirection_G == "RTL") {
+            $('#btnUser').css("float", "right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+            $('#btnUser').css("float", "left");
+            $('#txtSort').css("text-align", "right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+
+        if ("@ViewBag.Message" != "") {
+           showAlert("S","@ViewBag.Message");
+        }
+
+        addNumeric();
+        SearchExtendedGroup("","");
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchExtendedGroup(searchtext);
+        });
+    });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function btnSearch_OnClick() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        debugger;
+        var searchText = $('#searchCommon').val();
+        var ModuleCode = $('#ddlSearchModule').val();
+
+        //if (searchText == '') {
+        //    $('#searchCommon').val('');
+        //    $('#searchCommon').attr('required', true)
+        //    return false;
+        //}
+        SearchExtendedGroup(searchText, ModuleCode);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('#ddlSearchModule').val('0').trigger('chosen:updated');
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+
+        SearchExtendedGroup("","");
+    }
+
+    function SearchExtendedGroup(searchText, ModuleCode) {
+        debugger;
+        $('#searchCommon').val(searchText);
+        $('#ddlSearchModule').val(ModuleCode);
+        $.ajax({
+            type: "POST",
+            url: URL_SearchExtndedGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                ModuleCode: ModuleCode
+            }),
+            async: false,
+            success: function (result) {
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging()
+                BindExtendedGroupList();
+            }
+        });
+    }
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindExtendedGroupList();
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindExtendedGroupList();
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function pageBinding() {
+        BindExtendedGroupList();
+        SetPaging();
+    }
+
+    function BindExtendedGroupList() {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindExtndGrpLst,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+
+                addNumeric();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditViewExtdGrp(Id, CommandName, ModuleCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditViewExtdGrp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                ExtendedGroupCode: Id,
+                CommandName: CommandName
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#pupupHtml').empty();
+                $('#pupupHtml').html(result);
+                initializeChosen();
+                if (CommandName != "VIEW")
+                    CommandName = "";
+                if (ModuleCode != 0) {
+                    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                }
+                BindExtdGrpDetail(0, CommandName, ModuleCode);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        debugger;
+        var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+        if (recordLockingCode > 0)
+            ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+        if (!checkCurrentAction())
+            return false;
+
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#pupupHtml').empty();
+
+        BindExtendedGroupList();
+    }
+
+    function AddEditGroupDetail(Id, CommandName) {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        if (ModuleCode == "") {
+            showAlert("E", "Please Select Module");
+            return false;
+        }
+        if (!checkCurrentAction()) {
+            return false;
+        }
+        $('#hdnAction').val(CommandName);
+        BindExtdGrpDetail(Id, CommandName, ModuleCode);
+    }
+
+    function BindExtdGrpDetail(Id, CommandName, ModuleCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditViewDetail,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            async: false,
+            data: JSON.stringify({
+                Id: Id,
+                CommandName: CommandName,
+            }),
+            success: function (result) {
+                debugger;
+                $('#divExtdGrpDtl').empty();
+                $('#divExtdGrpDtl').html(result);
+                HideShowTD(ModuleCode);
+                var length = $("table tr[id*='trBookDetail_']").length
+                if (length == 0) {
+                    $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
+                }
+                else {
+                    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                }
+                $('#lblRecordCountPopup').text(length);
+                initializeTooltip();
+                initializeChosen();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function Cancel() {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        $('#hdnAction').val("");
+        checkCurrentAction();
+        BindExtdGrpDetail(0, "", ModuleCode);
+    }
+
+    function SaveDetail(DetailId, rowNumber) {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        var returnVal = true;
+        var Metadata = $('#ddlMetadata_' + rowNumber).val();
+        var OrdrerInGroup = $('#txtOdrInGrp_' + rowNumber).val();
+        var Validations = $('#ddlValidations_' + rowNumber).val();
+        var AdtnlCntn = $('#txtAddCon_' + rowNumber).val();
+        var IntGrpNme = $('#txtIntGrpName_' + rowNumber).val();
+        var DispName = $('#txtDisplayName_' + rowNumber).val();
+        var ImpType = $('#ddlImportType_' + rowNumber).val();
+
+        if (Metadata == "") {
+            $('#ddlMetadata_' + rowNumber).val('').attr('required', true)
+            returnVal = false;
+        }
+        if (OrdrerInGroup == "") {
+            $('#txtOdrInGrp_' + rowNumber).val('').attr('required', true)
+            returnVal = false;
+        }
+        //if (Validations == "") {
+        //    $('#ddlValidations_' + rowNumber).val('').attr('required', true)
+        //    $('#ddlValidations_' + rowNumber).val('').attr("style", "border-color: red;");
+        //    returnVal = false;
+        //}
+        //if (ImpType == "") {
+        //    $('#ddlImportType_' + rowNumber).val('').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (returnVal) {
+            if (Validations != null) {
+                var Validations = $('#ddlValidations_' + rowNumber).val().join(',');
+            }
+            $.ajax({
+                type: "POST",
+                url: URL_SaveGrpDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Id: DetailId,
+                    Columns_Code: Metadata,
+                    Group_Control_Order: OrdrerInGroup,
+                    Validations: Validations,
+                    Additional_Condition: AdtnlCntn,
+                    Inter_Group_Name: IntGrpNme,
+                    Display_Name: DispName,
+                    Allow_Import: ImpType
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                        BindExtdGrpDetail(DetailId, "", ModuleCode);
+                    }
+                    if (result.Error == "1") {
+                        showAlert("E", "You have entered duplicate data");
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function handleOk() {
+        debugger;
+        if (Command_Name == "DELETE_GROUP_DETAIL") {
+            $('#popup').css('z-index', '1050');
+            DeleteGroupDetail(dummyGuid_G, true);
+        }
+    }
+
+    function handleCancel() {
+        debugger;
+        $('#popup').css('z-index', '1050');
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+
+    function DeleteGroupDetail(DetailId, confirmed) {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        if (!checkCurrentAction())
+            return false;
+
+        if (confirmed) {
+            Command_Name = "";
+            dummyGuid_G = "";
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteDetail,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    DetailId: DetailId
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        debugger;
+                        //var length = $("table tr[id*='trBookDetail_']").length;
+                        //if (length == 0) {
+                        //  $("#ddlModule").prop("disabled", false).trigger("chosen:updated");
+                        //}
+                        //else {
+                        //    $("#ddlModule").prop("disabled", true).trigger("chosen:updated");
+                        //}
+
+                        BindExtdGrpDetail(0, "", ModuleCode);
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+        else {
+            Command_Name = "DELETE_GROUP_DETAIL";
+            dummyGuid_G = DetailId;
+
+            $('#popup').css('z-index','1040');
+            showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+        }
+    }
+
+    function ActivateDeactivateGrpDtl(ActiveAction, GrpDtlCode) {
+        debugger;
+        var ModuleCode = $("#ddlModule").val();
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActivateDeactivateGrpDtl,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    GrpDtlCode: GrpDtlCode,
+                    ActiveAction: ActiveAction
+                }),
+                success: function (result) {
+                    if (result.Status == "S") {
+                        showAlert("S", result.Message);
+                        BindExtdGrpDetail(0, "", ModuleCode);
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            })
+        }
+    }
+
+    function SaveMaster() {
+        debugger;
+        var returnVal = true;
+        if (!checkCurrentAction())
+            return false;
+        var ExtdGrpId = $("#hdnEGCode").val();
+        var Module = $("#ddlModule").val();
+        var GrpName = $.trim($("#txtGroupName").val());
+        var ShortName = $.trim($("#txtShortName").val());
+        var GrpOrder = $("#txtGroupOrder").val();
+        var GrpType = $("#ddlType").val();
+
+        if (Module == "") {
+            $('#ddlModule').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (GrpName == "") {
+            $('#txtGroupName').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (ShortName == "") {
+            $('#txtShortName').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (GrpOrder == "") {
+            $('#txtGroupOrder').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (GrpType == "") {
+            $('#ddlType').val('').attr('required', true)
+            returnVal = false;
+        }
+
+        var length = $("table tr[id*='trBookDetail_']").length
+        if (length == 0) {
+
+            showAlert("E", "Please add Config Details", "OK");
+            returnVal = false;
+        }
+        if (returnVal) {
+
+            $.ajax({
+                type: "POST",
+                url: URL_SaveMaster,
+                traditional: true,
+                dataType: "json",
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                data: JSON.stringify({
+                    ExtdGrpId: ExtdGrpId,
+                    Module_Code: Module,
+                    Group_Name: GrpName,
+                    Short_Name: ShortName,
+                    Group_Order: GrpOrder,
+                    Add_Edit_Type: GrpType
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result.Status == "S") {
+                        ClosePopup();
+                        window.location.href = URL_Index;
+                    }
+                    else
+                        showAlert("E", result.Message, "");
+                }
+            });
+        }
+    }
+
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First");
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First");
+            return false;
+        }
+        return true;
+    }
+
+    function HideShowTD(ModuleCode) {
+        debugger;
+        if (ModuleCode == "27" || ModuleCode == "260") {
+            $(".AddConth").attr("style", "display:none");
+            $(".AddContd").attr("style", "display:none");
+
+            $(".IntrGrpth").attr("style", "display:none");
+            $(".IntGrptd").attr("style", "display:none");
+
+            $(".DispForth").attr("style", "display:none");
+            $(".DispFortd").attr("style", "display:none");
+
+            $(".AllImpth").attr("style", "display:none");
+            $(".AllImpTptd").attr("style", "display:none");
+        }
+        else if (ModuleCode == "10") {
+            $(".Validationth").attr("style", "display:none");
+            $(".Validationtd").attr("style", "display:none");
+
+            $(".IntrGrpth").attr("style", "display:none");
+            $(".IntGrptd").attr("style", "display:none");
+
+            $(".DispForth").attr("style", "display:none");
+            $(".DispFortd").attr("style", "display:none");
+
+            $(".AllImpth").attr("style", "display:none");
+            $(".AllImpTptd").attr("style", "display:none");
+        }
+        else if (ModuleCode == "263") {
+            $(".AddConth").attr("style", "display:none");
+            $(".AddContd").attr("style", "display:none");
+        }
+    }
+
+</script>
+
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+
+    #ddlSortType_chosen {
+        max-width: 56%;
+        text-align: left;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Extended Group
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditViewExtdGrp(0, 'ADD', 0)" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area" style="background-color: #eee; padding:5px;">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%;vertical-align: middle;text-align:center;">
+                                @objMessageKey.SearchText :
+                            </td>
+                            <td style="width:20%;vertical-align: middle;" align="left">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Group Name" autocomplete="off" />
+                            </td>
+                            <td style="width:10%;vertical-align: middle; text-align:center;">
+                                Module :
+                            </td>
+                            <td style="width:15%;">
+                                @{
+                                    var listitems = new List<SelectListItem>();
+                                    listitems.Add(new SelectListItem() { Text = "--Please Select--", Value = "0" });
+                                    listitems.Add(new SelectListItem() { Text = "Title", Value = "27" });
+                                    listitems.Add(new SelectListItem() { Text = "Party", Value = "10" });
+                                    listitems.Add(new SelectListItem() { Text = "OEM", Value = "260" });
+                                    listitems.Add(new SelectListItem() { Text = "Booking Sheet", Value = "263" });
+                                }
+
+                                @Html.DropDownList("DropDownListValue", listitems, new { @id = "ddlSearchModule", @class = "form_input chosen-select", @Style = "width:100%;" })
+                            </td>
+                            <td style="width:13%;vertical-align: middle; text-align:center;">
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td id="txtSort" style="width:32%;">
+                                @objMessageKey.SortBy:
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select", @Style = "width:100%;" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            Page Size:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divBindList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none; max-width:80%;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
