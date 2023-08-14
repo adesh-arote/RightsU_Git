@@ -205,7 +205,7 @@ namespace RightsU_Plus.Controllers
             }
             ViewBag.Language = new SelectList(lstSystemLanguage, "System_Language_Code", "Language_Name", systemLanguageCode);
 
-            List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).OrderBy(o => o.Business_Unit_Name).ToList();
+            List<Business_Unit> lstBusinessUnit = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x=>x.Is_Active == "Y").OrderBy(o => o.Business_Unit_Name).ToList();
             var businessUnitCodes = objUser.Users_Business_Unit.Select(s => s.Business_Unit_Code).ToArray();
             ViewBag.BusinessUnitList = new MultiSelectList(lstBusinessUnit, "Business_Unit_Code", "Business_Unit_Name", businessUnitCodes);
 
