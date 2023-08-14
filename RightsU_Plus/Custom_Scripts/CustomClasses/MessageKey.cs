@@ -1135,6 +1135,7 @@ public class MessageKey
     public string CannotuncheckregionasithasreferenceinTitleRelease { get; set; }
     public string CannotremoveReleasePlatformasithasreferenceinTitleRelease { get; set; }
     public string Holdbackaddedsuccessfully { get; set; }
+    public string Holdbackupdatedsuccessfully { get; set; }
     public string CombinationconflictswithotherHoldback { get; set; }
     public string Pleaseselecttitlelanguagerightfirst { get; set; }
     public string AddEditHoldback { get; set; }

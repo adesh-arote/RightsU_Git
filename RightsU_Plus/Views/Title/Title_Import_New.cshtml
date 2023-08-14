@@ -1,4 +1,6 @@
 ﻿@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,6 +10,13 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New Movies_Shows_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Import_Movies_Shows").FirstOrDefault();
+    var Allow_Import_Movies_Shows = Movies_Shows_system_Parameter.Parameter_Value;
 }
 <!DOCTYPE html>
 <html>
@@ -16,24 +25,24 @@
     <meta charset="utf-8" />
     <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
     <style>
-                #ddlFilterBy_chosen {
-                    width: 100%;
-                    /*text-align: left;*/
-                }
+        #ddlFilterBy_chosen {
+            width: 100%;
+            /*text-align: left;*/
+        }
 
-                .search_area {
-                    border-bottom: 1px dotted #777;
-                    margin-bottom: 5px;
-                }
+        .search_area {
+            border-bottom: 1px dotted #777;
+            margin-bottom: 5px;
+        }
 
-                #divSearch {
-                    padding: 6px 10px;
-                    margin-bottom: 5px;
-                    border: 1px solid #ddd;
-                    background-color: #eee;
-                }
+        #divSearch {
+            padding: 6px 10px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            background-color: #eee;
+        }
 
-                    /*#divSearch > ul > li {
+            /*#divSearch > ul > li {
                         float: left;
                         min-height: 32px;
                         list-style-type: none;
@@ -45,33 +54,33 @@
                         margin: 0;
                     }*/
 
-                    #divSearch .checkbox-inline {
-                        margin-bottom: 7px;
-                    }
+            #divSearch .checkbox-inline {
+                margin-bottom: 7px;
+            }
 
-                .top_filter {
-                    margin-top: 22px;
-                }
-                /*.pull-left-Head {
+        .top_filter {
+            margin-top: 22px;
+        }
+        /*.pull-left-Head {
                 float: right !important;
                 padding-right:1%;
             }*/
 
-                /*.pull-right-Head {
+        /*.pull-right-Head {
                 float: left !important;
             }*/
-                /*.pagination-Head {
+        /*.pagination-Head {
             float: left !important;
             margin-top: 4px;
              display: flex;
         }*/
-                .right_nav li {
-                    float: left;
-                    list-style-type: none;
-                    margin: 0 7px;
-                }
+        .right_nav li {
+            float: left;
+            list-style-type: none;
+            margin: 0 7px;
+        }
 
-                /*.right_nav_Head li {
+        /*.right_nav_Head li {
                     float: right;
                     list-style-type: none;
                     margin: 0 7px;
@@ -110,10 +119,15 @@
         }
         function UploadTitle() {
             debugger;
-            var SelectedTitleType = $("#TitleType:checked").val();
-            if (SelectedTitleType == undefined) {
-                showAlert("E", "Please select type of title");
-                return false;
+            if ("@Allow_Import_Movies_Shows" == "Y") {
+                var SelectedTitleType = $("#TitleType:checked").val();
+                if (SelectedTitleType == undefined) {
+                    showAlert("E", "Please select type of title");
+                    return false;
+                }
+            }
+            else {
+                SelectedTitleType = "M";
             }
             showLoading();
             var txtpageSize = $('#txtPageSize').val();
@@ -410,10 +424,15 @@
 
         function SampleDownloadMovieShowExl() {
             debugger;
-            var SelectedTitleType = $("#TitleType:checked").val();
-            if (SelectedTitleType == undefined) {
-                showAlert("E", "Please select type of title");
-                return false;
+            if ("@Allow_Import_Movies_Shows" == "Y") {
+                var SelectedTitleType = $("#TitleType:checked").val();
+                if (SelectedTitleType == undefined) {
+                    showAlert("E", "Please select type of title");
+                    return false;
+                }
+            }
+            else {
+                var SelectedTitleType = "M"
             }
             window.location.href = URL_SampleExcelDownload + "?TitleType=" + SelectedTitleType;
             //$.ajax({
@@ -471,10 +490,12 @@
                                     <td style="width:25%;">
                                         <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
                                     </td>
+                                    @if(Allow_Import_Movies_Shows == "Y") { 
                                     <td style="width:15%;">
                                         <input type="radio" value="M" id="TitleType" name="TitleTypeName" /> @objMessageKey.Movies
                                         <input type="radio" value="S" id="TitleType" name="TitleTypeName" /> @objMessageKey.TVShows
                                     </td>
+                                    }
                                     <td style="width:20%;">
                                         <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
                                         <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary" onclick="SampleDownloadMovieShowExl()" />

@@ -908,7 +908,9 @@ namespace RightsU_Plus.Controllers
                 }
             }
             #endregion
-
+            #region ========= Insert Episode  =========
+            System_Parameter_New Content_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Generate_Content_From_Title_Import").FirstOrDefault();
+            if(Content_system_Parameter.Parameter_Value == "Y") { 
             System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
             List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
             int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
@@ -943,6 +945,8 @@ namespace RightsU_Plus.Controllers
             }
 
             objTitle = DBSaveEpisodeDetails(objTitle);
+            }
+            #endregion
 
             dynamic resultset;
             bool isValid = objTitleS.Save(objTitle, out resultset);
@@ -1091,10 +1095,13 @@ namespace RightsU_Plus.Controllers
                 TabNAme = hdnAlternateTabName,
                 ConfigCode = hdnAlternateConfigCode
             };
-
-            int SentTitleCodeToProc = TitleCode;
-            var SentTitleObj = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_Title_Content_Gen_From_Title(SentTitleCodeToProc);
-
+            #region ========= Insert Content  =========
+            if (Content_system_Parameter.Parameter_Value == "Y")
+            {
+                int SentTitleCodeToProc = TitleCode;
+                var SentTitleObj = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_Title_Content_Gen_From_Title(SentTitleCodeToProc);
+            }
+            #endregion
             return Json(objs);
         }
 
