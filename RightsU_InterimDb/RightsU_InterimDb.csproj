@@ -1396,6 +1396,9 @@
     <Compile Include="Models\USPAL_GetRevisionHistoryForLoadsheet_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\USPAL_GetRevisionHistoryForModule_Result.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\USPBindJobAndExecute_Result.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

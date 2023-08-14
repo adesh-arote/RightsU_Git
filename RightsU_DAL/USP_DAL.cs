@@ -1835,10 +1835,10 @@ namespace RightsU_DAL
             return objContext.USPAL_GetLoadsheetList();
         }
 
-        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList()
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USPAL_GetPurchaseOrderList();
+            return objContext.USPAL_GetPurchaseOrderList(usersCode);
         }
 
         public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
@@ -1862,6 +1862,12 @@ namespace RightsU_DAL
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USPAL_GetRevisionHistoryForLoadsheet(loadSheetCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(int? record_Code, int? module_Code)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USPAL_GetRevisionHistoryForModule(record_Code, module_Code);
         }
     }
 }

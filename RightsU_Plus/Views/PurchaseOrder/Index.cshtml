@@ -239,7 +239,7 @@
         });
     }
 
-    function BindPODetails(POC, PRCode) {
+    function BindPODetails(POC, PRCode,View) {
         debugger;
         $.ajax({
             type: "POST",
@@ -250,7 +250,8 @@
             //dataType: "html",
             data: JSON.stringify({
                 Purchase_Order_Code: POC,
-                Proposal_Code: PRCode
+                Proposal_Code: PRCode,
+                View: View
             }),
             success: function (result) {
                 debugger;
@@ -293,7 +294,7 @@
     //}
 
     function CheckPendingStatus() {
-        debugger;
+        //debugger;
         var pendingRecord = 0;
         $(".deal_action").each(function () {
             var Sibling = $(this).attr('class').split(' ')[2];
@@ -472,3 +473,67 @@
         </div>
     </section>
 </div>
+
+<script>
+    var URL_ResendForApproval = '@Url.Action("ResendForApproval", "PurchaseOrder")';
+    var URL_PurchaseOrderView = '@Url.Action("Index", "PurchaseOrder")';
+
+    function ResendForApprovePopup(PoCode) {
+        debugger;
+        $("#ResendPopup").modal();
+        var row = `<tr>
+                        <td style=\"text-align:center\">
+                            <b>Remark : </b>
+                        </td>
+                        <td>
+                            <textarea id=\"ResendRemark\" rows=\"4\" cols=\"50\" style=\"width:90%;max-height:10px;margin-top:2%;\"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan=\"2\">
+                            <input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Resend For PO Approval\" class=\"btn btn-primary\" onclick=\"ResendForApproval(` + PoCode + `)\">
+                        </td>
+                    </tr>`
+        $("#ResendPopupTbl").append(row);
+    }
+
+    function CloseResendPopup() {
+        debugger;
+        $('#ResendPopup').modal('hide');
+    }
+
+    function ResendForApproval(PoCode) {
+        debugger;
+
+        var Remark = $("#ResendRemark").val();
+        if (Remark == "") {
+            $('#ResendRemark').val('').attr('required', true)
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_ResendForApproval,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderCode: PoCode,
+                Remark: Remark
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    CloseResendPopup();
+                    //SearchPOList("");
+                    window.location.href = URL_PurchaseOrderView
+                }
+                else {
+                    showAlert("E", result.Message);
+                }
+            }
+        });
+    }
+
+</script>

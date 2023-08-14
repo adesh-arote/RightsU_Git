@@ -5954,9 +5954,13 @@ namespace RightsU_DAL
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetLoadsheetList_Result>("USPAL_GetLoadsheetList");
         }
 
-        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList()
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
         {
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList");
+            var usersCodeParameter = usersCode.HasValue ?
+                new ObjectParameter("UsersCode", usersCode) :
+                new ObjectParameter("UsersCode", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList", usersCodeParameter);
         }
         public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
         {
@@ -6030,6 +6034,19 @@ namespace RightsU_DAL
                 new ObjectParameter("Record_Code", typeof(int));
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(Nullable<int> record_Code, Nullable<int> module_Code)
+        {
+            var record_CodeParameter = record_Code.HasValue ?
+                new ObjectParameter("Record_Code", record_Code) :
+                new ObjectParameter("Record_Code", typeof(int));
+
+            var module_CodeParameter = module_Code.HasValue ?
+                new ObjectParameter("Module_Code", module_Code) :
+                new ObjectParameter("Module_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForModule_Result>("USPAL_GetRevisionHistoryForModule", record_CodeParameter, module_CodeParameter);
         }
     }
 }

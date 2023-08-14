@@ -27,6 +27,8 @@ namespace RightsU_Entities
         public Nullable<int> Updated_By { get; set; }
         public Nullable<System.DateTime> Updated_On { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        public string Workflow_Status { get; set; }
+        public Nullable<int> Workflow_Code { get; set; }
 
         public virtual AL_Booking_Sheet AL_Booking_Sheet { get; set; }
         public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }

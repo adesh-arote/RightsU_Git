@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using UTOFrameWork.FrameworkClasses;
 
 namespace RightsU_Plus.Controllers
 {
@@ -141,6 +142,46 @@ namespace RightsU_Plus.Controllers
             set { Session["objPoD"] = value; }
         }
 
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private List<USPAL_GetRevisionHistoryForModule_Result> lstStatusHistory
+        {
+            get
+            {
+                if (Session["lstStatusHistory"] == null)
+                    Session["lstStatusHistory"] = new List<USPAL_GetRevisionHistoryForModule_Result>();
+                return (List<USPAL_GetRevisionHistoryForModule_Result>)Session["lstStatusHistory"];
+            }
+            set { Session["lstStatusHistory"] = value; }
+        }
+
+        List<USPAL_GetRevisionHistoryForModule_Result> lstStatusHistorySearched
+        {
+            get
+            {
+                if (Session["lstStatusHistorySearched"] == null)
+                    Session["lstStatusHistorySearched"] = new List<USPAL_GetRevisionHistoryForModule_Result>();
+                return (List<USPAL_GetRevisionHistoryForModule_Result>)Session["lstStatusHistorySearched"];
+            }
+            set
+            {
+                Session["lstStatusHistorySearched"] = value;
+            }
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        private ApprovalDetails objApDetails
+        {
+            get
+            {
+                if (Session["objApDetails"] == null)
+                    Session["objApDetails"] = new ApprovalDetails();
+                return (ApprovalDetails)Session["objApDetails"];
+            }
+            set { Session["objobjApDetailsPoD"] = value; }
+        }
+
         #endregion
 
         //-----------------------------------------------------Purchase Order--------------------------------------------------------------------------------
@@ -155,7 +196,7 @@ namespace RightsU_Plus.Controllers
             }
 
             if (Session["BookingSheetCode"] != null)
-            {                                            //-----To show success messages
+            {                                            
                 BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
                 //Session["BookingSheetCode"] = null;
             }
@@ -185,19 +226,17 @@ namespace RightsU_Plus.Controllers
         {
             if (BookingSheetCode > 0)
             {
-                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
+                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList(objLoginUser.Users_Code).Where(w => w.AL_Booking_Sheet_Code == BookingSheetCode).ToList();
             }
             else
             {
-                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList().ToList();
+                lstPOSearched = lstPO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList(objLoginUser.Users_Code).ToList();
             }
         }
 
         public ActionResult BindPOList(int pageNo, int recordPerPage, string sortType)
         {
             List<USPAL_GetPurchaseOrderList_Result> lst = new List<USPAL_GetPurchaseOrderList_Result>();
-                      
-            User_Service objUser_Service = new User_Service(objLoginEntity.ConnectionStringName);
 
             int RecordCount = 0;
             RecordCount = lstPOSearched.Count;
@@ -213,9 +252,6 @@ namespace RightsU_Plus.Controllers
                 if (sortType == "ND")
                     lst = lstPOSearched.OrderByDescending(o => o.Booking_Sheet_No).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
-           
-            List<RightsU_Entities.User> lstUsers = objUser_Service.SearchFor(s => true).ToList();
-            ViewBag.UserCode = lstUsers;
 
             if (Session["config"] != null)
             {
@@ -246,7 +282,7 @@ namespace RightsU_Plus.Controllers
 
         //-----------------------------------------------------Purchase Order Details------------------------------------------------------------------------
 
-        public ActionResult BindPODetails(int Purchase_Order_Code, int Proposal_Code)
+        public ActionResult BindPODetails(int Purchase_Order_Code, int Proposal_Code, string View)
         {
             USPAL_GetPurchaseOrderList_Result objPO = new USPAL_GetPurchaseOrderList_Result();
             objPO = lstPO.Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code).FirstOrDefault();
@@ -258,8 +294,13 @@ namespace RightsU_Plus.Controllers
             objPoD.Purchase_Order_Code = objPO.AL_Purchase_Order_Code;
             objPoD.Proposal_Code = objPO.AL_Proposal_Code;
 
+            objApDetails = null;
+            objApDetails.IsApproved = objPO.Workflow_Status;
+
             MovieTabData();
             ShowTabData();
+
+            ViewBag.ViewName = View; 
 
             return PartialView("_PoDetailsView");
         }
@@ -298,9 +339,6 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    //MovieTabData();
-                    //lstMovieDataSearched = null;// to be changed by Sandip//lstMovieTabData.Where(m => m.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "N").ToList();
                     lstMovieDataSearched = lstMovieTabData.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code) && w.AL_Proposal_Code == Proposal_Code).ToList();
                     recordcount = lstMovieDataSearched.Count();
@@ -318,9 +356,6 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    //ShowTabData();
-                    //lstShowDataSearched = null;// to be changed by Sandip //lstShowTabData.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
-
                     lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == Purchase_Order_Code && w.Status == "N").ToList();
                     lstShowDataSearched = lstShowTabData.Where(w => lstPOR.Any(a => (w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code) && w.AL_Proposal_Code == Proposal_Code)).GroupBy(g => g.PO_Number).Select(s => s.FirstOrDefault()).ToList();
                     recordcount = lstShowDataSearched.Count();
@@ -334,17 +369,15 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public ActionResult BindMovieTabData(/*int Purchase_Order_Code, int Propsal_Code,*/ int pageNo, int recordPerPage, string sortType)
+        public ActionResult BindMovieTabData(int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
-            List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
+            List<AL_Purchase_Order_Details> lst = new List<AL_Purchase_Order_Details>();
 
             try
             {              
                 RecordCount = lstMovieDataSearched.Count;
-                //lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-                //RecordCount = lstTabData.Count();
 
                 if (RecordCount > 0)
                 {
@@ -352,15 +385,12 @@ namespace RightsU_Plus.Controllers
                     pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                     if (sortType == "T")
                         lst = lstMovieDataSearched.OrderByDescending(o => o.Generated_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                                     
-                    //lst = lstMovieDataSearched.OrderByDescending(o => o.Generated_On).ToList();
-                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {
-                    //lst = lstMovieDataSearched;
-                    //DataTable dt = ToDataTable(lst);
+                    lst = lstMovieDataSearched;
                 }
+                //DataTable dt = ToDataTable(lst);
             }
             catch (Exception ex)
             {
@@ -369,17 +399,15 @@ namespace RightsU_Plus.Controllers
             return PartialView("_MovieTabDataView", lst);
         }
 
-        public ActionResult BindShowTabData(/*int Purchase_Order_Code, int Propsal_Code,*/ int pageNo, int recordPerPage, string sortType)
+        public ActionResult BindShowTabData(int pageNo, int recordPerPage, string sortType)
         {
             string message = "";
             int RecordCount = 0;
-            List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
+            List<AL_Purchase_Order_Details> lst = new List<AL_Purchase_Order_Details>();
           
             try
             {
                 RecordCount = lstShowDataSearched.Count;
-                //lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).GroupBy(g => g.Vendor_Code).Select(s => s.FirstOrDefault()).ToList();
-                //RecordCount = lstTabData.Count();
               
                 if (RecordCount > 0)
                 {
@@ -387,15 +415,12 @@ namespace RightsU_Plus.Controllers
                     pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                     if (sortType == "T")
                         lst = lstShowDataSearched.OrderByDescending(o => o.Generated_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-
-                    //lst = lstTabData.OrderByDescending(o => o.Generated_On).ToList();
-                    //DataTable dt = ToDataTable(lst);
                 }
                 else
                 {
-                    //lst = lstTabData;
-                    //DataTable dt = ToDataTable(lst);
+                    lst = lstShowDataSearched;
                 }
+                //DataTable dt = ToDataTable(lst);
             }
             catch (Exception ex)
             {
@@ -408,14 +433,6 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
         {
-            //int BookingSheetCode = 0;
-            //if (Session["BookingSheetCode"] != null)
-            //{                                            
-            //    BookingSheetCode = Convert.ToInt32(Session["BookingSheetCode"]);
-            //    //Session["BookingSheetCode"] = null;
-            //}
-            //POData(BookingSheetCode);
-
             string recordStatus = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).Select(s => s.Status).FirstOrDefault();
 
             var obj = new
@@ -548,6 +565,111 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public ActionResult ResendForApproval(int PurchaseOrderCode, string Remark)
+        {
+            string status = "";
+            string message = "";
+            string ModuleCode = GlobalParams.ModuleCodeForPurchaseOrder.ToString();
+
+            try
+            {
+                new USP_Service(objLoginEntity.ConnectionStringName).USP_Assign_Workflow(PurchaseOrderCode, Convert.ToInt32(ModuleCode), Convert.ToInt32(objLoginUser.Users_Code), Remark);
+                status = "S";
+                message = "Purchase Order sent for approval successfully.";
+            }
+            catch (Exception ex)
+            {
+
+                status = "E";
+                message = ex.Message;
+            }
+
+            var Obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(Obj);
+        }
+
+        public ActionResult ApproveOrReject(int PurchaseOrderCode, string User_Action, string Remark)
+        {
+            string status = "";
+            string message = "";
+            string ModuleCode = GlobalParams.ModuleCodeForPurchaseOrder.ToString();
+
+            try
+            {
+                new USP_Service(objLoginEntity.ConnectionStringName).USP_Process_Workflow(PurchaseOrderCode, Convert.ToInt32(ModuleCode), Convert.ToInt32(objLoginUser.Users_Code), User_Action, Remark);
+                status = "S";
+                if(User_Action == "A")
+                {
+                    message = "You approved Purchase Order.";
+                }
+                else
+                {
+                    message = "You rejected Purchase Order.";
+                }
+            }
+            catch (Exception ex)
+            {
+
+                status = "E";
+                message = ex.Message;
+            }
+
+            var Obj = new
+            {
+                Status = status,
+                Message = message
+            };
+            return Json(Obj);
+        }
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        public PartialViewResult OpenStatusHistoryPopup(int PurchaseOrderCode = 0)
+        {
+            USPAL_GetRevisionHistoryForModule_Result objMSHistory = new USPAL_GetRevisionHistoryForModule_Result();
+            string ModuleCode = GlobalParams.ModuleCodeForPurchaseOrder.ToString();
+
+            lstStatusHistorySearched = lstStatusHistory = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetRevisionHistoryForModule(PurchaseOrderCode, Convert.ToInt32(ModuleCode)).ToList();
+
+            return PartialView("~/Views/PurchaseOrder/_StatusHistoryPopup.cshtml", objMSHistory);
+        }
+
+        public JsonResult SearchStatusHistory(int PurchaseOrderCode = 0)
+        {
+            lstStatusHistorySearched = lstStatusHistory;
+
+            var obj = new
+            {
+                Record_Count = lstStatusHistorySearched.Count
+            };
+
+            return Json(obj);
+        }
+
+        public ActionResult BindStatusHistoryList(int pageNo, int recordPerPage, string sortType)
+        {
+            List<USPAL_GetRevisionHistoryForModule_Result> lst = new List<USPAL_GetRevisionHistoryForModule_Result>();
+
+            int RecordCount = 0;
+            RecordCount = lstStatusHistorySearched.Count;
+
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                if (sortType == "T")
+                    lst = lstStatusHistorySearched.OrderByDescending(o => o.Last_Action_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+            }
+
+            return PartialView("_StatusHistoryList", lst);
+        }
+
         //--------------------------------------------------------GenericMethods-----------------------------------------------------------------------------
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -599,6 +721,7 @@ namespace RightsU_Plus.Controllers
             //put a breakpoint here and check datatable
             return dataTable;
         }
+
     }
 
     public class PoDetails
@@ -610,72 +733,9 @@ namespace RightsU_Plus.Controllers
         public int Purchase_Order_Code { get; set; }
         public int? Proposal_Code { get; set; }
     }
+
+    public class ApprovalDetails
+    {
+        public string IsApproved { get; set; }
+    }
 }
-
-#region
-//public ActionResult BindTabData(string TabName, int Purchase_Order_Code)
-//{
-//    string message = "";
-//    int RecordCount = 0;
-//    List<AL_Purchase_Order_Details> lstTabData, lst = new List<AL_Purchase_Order_Details>();
-
-//    if (TabName == "MV")
-//    {
-//        try
-//        {
-//            lstTabData = lstMovieDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-//            int Rcount = lstTabData.Count();
-
-//            RecordCount = Rcount;
-//            if (RecordCount > 0)
-//            {
-//                lst = lstTabData;
-//                DataTable dt = ToDataTable(lst);
-//            }
-//            else
-//            {
-//                lst = lstMovieDataSearched;
-//                DataTable dt = ToDataTable(lst);
-//            }
-//        }
-//        catch (Exception ex)
-//        {
-//            message = ex.Message;
-//        }
-//        return PartialView("_MovieTabDataView", lst);
-//    }
-//    else if (TabName == "SH")
-//    {
-//        try
-//        {
-//            lstTabData = lstShowDataSearched.Where(x => x.AL_Purchase_Order_Code == Purchase_Order_Code).ToList();
-//            int Rcount = lstTabData.Count();
-
-//            RecordCount = Rcount;
-//            if (RecordCount > 0)
-//            {
-//                lst = lstTabData;
-
-//                DataTable dt = ToDataTable(lst);
-//            }
-//            else
-//            {
-//                lst = lstShowDataSearched;
-//                DataTable dt = ToDataTable(lst);
-//            }
-//        }
-//        catch (Exception ex)
-//        {
-//            message = ex.Message;
-//        }
-//        return PartialView("_ShowTabDataView", lst);
-//    }
-
-//    var obj = new
-//    {
-//        Status = "E",
-//        message
-//    };
-//    return Json(obj);
-//}
-#endregion

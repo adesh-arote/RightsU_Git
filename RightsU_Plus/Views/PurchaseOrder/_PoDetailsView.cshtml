@@ -299,7 +299,7 @@
     }
 
     function CheckPendingStatusForPod() {
-        debugger;
+        //debugger;
         var pendingRecord = 0;
         $(".deal_actionDt").each(function () {
             debugger;
@@ -374,6 +374,161 @@
 
 </script>
 
+<script>
+    var URL_ApproveOrReject = '@Url.Action("ApproveOrReject", "PurchaseOrder")';
+    var URL_PurchaseOrderList = '@Url.Action("Index", "PurchaseOrder")';
+
+    function ApproveReject(UserAction,PoCode) {
+        debugger;
+
+        var Remark = $("#txtRemark").val();
+        if (Remark == "") {
+            $('#txtRemark').val('').attr('required', true)
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_ApproveOrReject,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderCode: PoCode,
+                Remark: Remark,
+                User_Action: UserAction
+            }),
+            success: function (result) {
+                debugger;
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    //SearchPOList("");
+                    window.location.href = URL_PurchaseOrderList
+                }
+                else {
+                    showAlert("E", result.Message);
+                }
+            }
+        });
+    }
+
+</script>
+
+<script>
+    var sort_Type = "T";
+
+    var URL_OpenStatusHistoryPopup = '@Url.Action("OpenStatusHistoryPopup", "PurchaseOrder")';
+    var URL_SearchStatusHistory = '@Url.Action("SearchStatusHistory", "PurchaseOrder")';
+    var URL_BindStatusHistoryList = '@Url.Action("BindStatusHistoryList", "PurchaseOrder")';
+
+    function OpenStatusHistoryPopup(PurchaseOrderCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_OpenStatusHistoryPopup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderCode: PurchaseOrderCode
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#StatusHistoryPopup').modal();
+                    $('#StatusHistoryPopupHtml').empty();
+                    $('#StatusHistoryPopupHtml').html(result);
+                    SearchStatusHistory(PurchaseOrderCode);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SearchStatusHistory(PurchaseOrderCode) {
+        debugger;
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchStatusHistory,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                PurchaseOrderCode: PurchaseOrderCode
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo_MSH').text(1);
+                    $('#hdnPageNo_MSH').val(1);
+                    $('#lblRecordCount_MSH').text(result.Record_Count);
+                    $("#hdnRecordCount_MSH").val(result.Record_Count);
+                    SetPaging_MSH()
+                    BindStatusHistoryList();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function BindStatusHistoryList() {
+        debugger;
+        var pageNo = $('#hdnPageNo_MSH').val();
+        var recordPerPage = $('#txtPageSize_MSH').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindStatusHistoryList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divStatusHistoryList').empty();
+                    $('#divStatusHistoryList').html(result);
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function ClosePopup() {
+        debugger;
+        $('#StatusHistoryPopup').modal('hide');
+        $('#StatusHistoryPopupHtml').empty();
+    }
+
+</script>
+
 <div>
     <div class="acq main_col">
         <div class="top_area">
@@ -386,30 +541,33 @@
         <div class="search_area" style="background-color: #eee; padding:5px;">
             <table class="table">
                 <tr>
-                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                    <td style="width:5%; vertical-align: middle; text-align:right;">
                         <b>Client Name :</b>
                     </td>
-                    <td style="width:10%; text-align:left;">
+                    <td style="width:10%; vertical-align:middle; text-align:left;">
                         <span>@objPoDetails.Client_Name</span>
                     </td>
-                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                    <td style="width:10%; vertical-align: middle; text-align:right;">
                         <b>Booking Sheet No :</b>
                     </td>
-                    <td style="width:10%; text-align:left;">
+                    <td style="width:10%; vertical-align: middle; text-align:left;">
                         <span>@objPoDetails.Booking_sheet_No</span>
+                    </td>
+                    <td style="width:10%; text-align:center;" rowspan="2">
+                        <input type="button" class="btn btn-primary" style="vertical-align:middle; margin-top:3%;" value="Status History" onclick="OpenStatusHistoryPopup(@objPoDetails.Purchase_Order_Code);" />
                     </td>
                 </tr>
                 <tr>
-                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                    <td style="width:5%; vertical-align: middle; text-align:right;">
                         <b>Proposal - CY :</b>
                     </td>
-                    <td style="width:10%; text-align:left;">
+                    <td style="width:10%; vertical-align:middle; text-align:left;">
                         <span>@objPoDetails.Proposal_Cy</span>
                     </td>
-                    <td style="width:3%;vertical-align: middle;text-align:center;">
+                    <td style="width:10%; vertical-align: middle; text-align:right;">
                         <b>Created On :</b>
                     </td>
-                    <td style="width:10%; text-align:left;">
+                    <td style="width:10%; vertical-align: middle; text-align:left;">
                         <span>@objPoDetails.Created_On</span>
                     </td>
                 </tr>
@@ -461,8 +619,34 @@
                     </div>
                 </div>
             </div>
+            @if (ViewBag.ViewName == "ARView")
+            {
+                <div class="scale_table_block" style="padding-top:10px;">
+                    <div class="divBlock">
+                        <div class="bold" style="padding-right: 87%;">Remarks:</div>
+                        <div class="charNum">0/4000</div>
+                    </div>
+                    <textarea class="textarea" cols="20" id="txtRemark" style="max-height:100px;" name="Remarks" onkeyup="countChar(this)" row="2"></textarea>
+                </div>
+            }
+
             <div style="margin:20px; text-align:left">
+                @if (ViewBag.ViewName == "ARView")
+                {
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Approve" onclick="ApproveReject('A', @objPoDetails.Purchase_Order_Code);" />
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Reject" onclick="ApproveReject('R', @objPoDetails.Purchase_Order_Code);" />
+                }
                 @Html.ActionLink("Back To List", "Index", "PurchaseOrder", null, new { @class = "btn btn-primary" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="StatusHistoryPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;max-width:80%">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="StatusHistoryPopupHtml">
+
             </div>
         </div>
     </div>

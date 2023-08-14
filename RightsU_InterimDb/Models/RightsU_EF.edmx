@@ -1274,6 +1274,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="AL_Proposal_Code" Type="int" />
           <Property Name="Remarks" Type="varchar" MaxLength="4000" />
           <Property Name="Status" Type="char" MaxLength="1" />
+          <Property Name="Workflow_Status" Type="varchar" MaxLength="5" />
+          <Property Name="Workflow_Code" Type="int" />
           <Property Name="Inserted_By" Type="int" />
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Updated_By" Type="int" />
@@ -15645,10 +15647,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Display" Type="varchar" Mode="In" />
         </Function>
         <Function Name="USPAL_GetLoadsheetList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-        <Function Name="USPAL_GetPurchaseOrderList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="USPAL_GetPurchaseOrderList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="UsersCode" Type="int" Mode="In" />
+        </Function>
         <Function Name="USPAL_GetReCommendationList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="USPAL_GetRevisionHistoryForLoadsheet" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Record_Code" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USPAL_GetRevisionHistoryForModule" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Record_Code" Type="int" Mode="In" />
+          <Parameter Name="Module_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USPAL_Title_Content_Gen_From_Title" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TitleCode" Type="int" Mode="In" />
@@ -23446,7 +23454,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="LoadsheetMonth" Mode="In" Type="String" />
             <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
-          <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" />
+          <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" >
+          <Parameter Name="UsersCode" Mode="In" Type="Int32" />
+          </FunctionImport>
           <EntitySet Name="AL_Material_Tracking" EntityType="RightsU_NeoModel.AL_Material_Tracking" />
           <EntitySet Name="AL_Material_Tracking_OEM" EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" />
           <AssociationSet Name="FK_AL_Material_Tracking_AL_Booking_Sheet" Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet">
@@ -23524,7 +23534,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Purchase_Order_Rel" EntitySet="AL_Purchase_Order_Rel" />
           </AssociationSet>
           <FunctionImport Name="USPAL_GetRevisionHistoryForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForLoadsheet_Result)">
+          <Parameter Name="Record_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USPAL_GetRevisionHistoryForModule" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForModule_Result)">
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Module_Code" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -39960,6 +39974,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Lock_Time" Type="DateTime" Precision="3" />
           <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" FromRole="AL_Purchase_Order" ToRole="AL_Booking_Sheet" />
           <NavigationProperty Name="AL_Purchase_Order_Rel" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order" FromRole="AL_Purchase_Order" ToRole="AL_Purchase_Order_Rel" />
+          <Property Name="Workflow_Status" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Workflow_Code" Type="Int32" />
         </EntityType>
         <Association Name="FK_AL_Load_Sheet_Details_AL_Booking_Sheet">
           <End Type="RightsU_NeoModel.AL_Booking_Sheet" Role="AL_Booking_Sheet" Multiplicity="0..1" />
@@ -40015,17 +40031,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="DateTime" Name="Inserted_On" Nullable="false" Precision="23" />
         </ComplexType>
         <ComplexType Name="USPAL_GetPurchaseOrderList_Result">
-          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="86" />
           <Property Type="String" Name="Booking_Sheet_No" Nullable="true" MaxLength="50" />
           <Property Type="DateTime" Name="Inserted_On" Nullable="true" Precision="23" />
-          <Property Type="Int32" Name="Inserted_By" Nullable="true" />
           <Property Type="String" Name="Status" Nullable="true" MaxLength="1" />
           <Property Type="Int32" Name="AL_Purchase_Order_Code" Nullable="false" />
           <Property Type="Int32" Name="AL_Booking_Sheet_Code" Nullable="true" />
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Workflow_Status" Nullable="true" MaxLength="5" />
+          <Property Type="String" Name="ShowHideButtons" Nullable="false" MaxLength="20" />
+          <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
+          <Property Type="String" Name="InsertedBy" Nullable="true" MaxLength="601" />
         </ComplexType>
         <EntityType Name="AL_Material_Tracking">
           <Key>
@@ -40322,6 +40340,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="DateTime" Name="Last_Action_On" Nullable="true" Precision="23" />
           <Property Type="String" Name="Last_Action_By" Nullable="true" MaxLength="600" />
           <Property Type="String" Name="Remark" Nullable="true" MaxLength="4000" />
+        </ComplexType>
+        <ComplexType Name="USPAL_GetRevisionHistoryForModule_Result">
+          <Property Type="Int32" Name="Module_Status_Code" Nullable="false" />
+          <Property Type="DateTime" Name="Last_Action_On" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Last_Action_By" Nullable="true" MaxLength="601" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="4000" />
+          <Property Type="String" Name="Workflow_Status" Nullable="false" MaxLength="17" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -50631,6 +50656,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="AL_Purchase_Order">
             <EntityTypeMapping TypeName="RightsU_NeoModel.AL_Purchase_Order">
               <MappingFragment StoreEntitySet="AL_Purchase_Order">
+                <ScalarProperty Name="Workflow_Code" ColumnName="Workflow_Code" />
+                <ScalarProperty Name="Workflow_Status" ColumnName="Workflow_Status" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Updated_On" ColumnName="Updated_On" />
                 <ScalarProperty Name="Updated_By" ColumnName="Updated_By" />
@@ -50683,17 +50710,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImportMapping FunctionImportName="USPAL_GetPurchaseOrderList" FunctionName="RightsU_NeoModel.Store.USPAL_GetPurchaseOrderList">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result">
-                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
                 <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
                 <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
                 <ScalarProperty Name="Booking_Sheet_No" ColumnName="Booking_Sheet_No" />
                 <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
-                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="AL_Purchase_Order_Code" ColumnName="AL_Purchase_Order_Code" />
                 <ScalarProperty Name="AL_Booking_Sheet_Code" ColumnName="AL_Booking_Sheet_Code" />
                 <ScalarProperty Name="AL_Proposal_Code" ColumnName="AL_Proposal_Code" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Workflow_Status" ColumnName="Workflow_Status" />
+                <ScalarProperty Name="ShowHideButtons" ColumnName="ShowHideButtons" />
+                <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
+                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
@@ -50822,6 +50851,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Last_Action_On" ColumnName="Last_Action_On" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Remark" ColumnName="Remark" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USPAL_GetRevisionHistoryForModule" FunctionName="RightsU_NeoModel.Store.USPAL_GetRevisionHistoryForModule">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USPAL_GetRevisionHistoryForModule_Result">
+                <ScalarProperty Name="Module_Status_Code" ColumnName="Module_Status_Code" />
+                <ScalarProperty Name="Last_Action_On" ColumnName="Last_Action_On" />
+                <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="Workflow_Status" ColumnName="Workflow Status" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

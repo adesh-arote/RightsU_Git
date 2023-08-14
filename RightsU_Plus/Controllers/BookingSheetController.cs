@@ -791,12 +791,12 @@ namespace RightsU_Plus.Controllers
                     if (ext == ".xlsx" || ext == ".xls")
                     {
                         #region EXCEL File Upload 
-                        string strActualFileNameWithDate;
+                        //string strActualFileNameWithDate;
                         string fileExtension = "";
                         string strFileName = System.IO.Path.GetFileName(PostedFile.FileName);
                         fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
-                        strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
-                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strActualFileNameWithDate);
+                        //strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
+                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strFileName);
                         PostedFile.SaveAs(fullpathname);
                         #endregion
 
@@ -806,7 +806,7 @@ namespace RightsU_Plus.Controllers
                         {
                             objMasterImport_Service = null;
                             obj_DM_Master_Import.File_Name = PostedFile.FileName;
-                            obj_DM_Master_Import.System_File_Name = strActualFileNameWithDate;
+                            obj_DM_Master_Import.System_File_Name = strFileName;
                             obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
                             obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
                             obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
@@ -1195,7 +1195,7 @@ namespace RightsU_Plus.Controllers
                 if (ValidationFlag == "Y")
                 {
                     inputArea = "<tr><td style=\"text-align:center\"><b>Remark : </b></td><td><textarea id=\"Remark\" rows=\"4\" cols=\"50\" style=\"width:90%;margin-top:2%;\"></textarea></td></tr>" +
-                        "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Generate\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
+                        "<tr><td colspan=\"2\" ><input type=\"button\" id=\"btnSave\" style=\"width:20%;margin:1% 40% 2% 40%;background-color: #2b64a5;\" value=\"Send For PO Approval\" class=\"btn btn-primary\" onclick=\"GeneratePO(" + Booking_Sheet_Code + "," + Proposal_Code + ")\"></td></tr>";
 
                     popup = "Remark";
                 }
@@ -1233,6 +1233,7 @@ namespace RightsU_Plus.Controllers
         {
             string status = "";
             string message = "";
+            string ModuleCode = GlobalParams.ModuleCodeForPurchaseOrder.ToString();
             Dictionary<string, object> obj = new Dictionary<string, object>();
             AL_Purchase_Order objAPO = new AL_Purchase_Order();
 
@@ -1257,8 +1258,11 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    int PoCode = objAPO.AL_Purchase_Order_Code;
+                    new USP_Service(objLoginEntity.ConnectionStringName).USP_Assign_Workflow(PoCode, Convert.ToInt32(ModuleCode), Convert.ToInt32(objLoginUser.Users_Code), Remark);
+
                     status = "S";
-                    message = "Purchase Order Generated Succesfully";
+                    message = "Purchase Order Generated and Sent for Approval Succesfully";
                 }
             }
             catch(Exception ex)
