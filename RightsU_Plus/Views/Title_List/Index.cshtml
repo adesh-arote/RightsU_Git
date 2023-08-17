@@ -65,6 +65,7 @@
 
     var LeftpanelHideCsss = '0px';
     var LeftpanelShowCsss = '350px';
+    var ValidateSeason = "";
 
     function BindSearch() {
         BindAdvanced_Search_Controls('BTC');
@@ -1342,6 +1343,24 @@
 
         }
 
+         var SeasonValue = 0;
+         if (ValidateSeason == "Y") {
+             SeasonValue = $.trim($("#intExtSeason").val());
+             if (SeasonValue == 0 || SeasonValue == null || SeasonValue == undefined) {
+                 Error = "E";
+             }
+             if (SeasonValue != 0 && SeasonValue != null && SeasonValue != undefined && SeasonValue != "") {
+                 $("#intExtSeason").removeClass("required");
+             }
+             else {
+                 $("#intExtSeason").addClass("required");
+                 Error = "E";
+             }
+             if (!isNumber(SeasonValue)) {
+                 Error = "E";
+             }
+         }
+
         if (Error == "" && ISDuplicate == "") {
 
             $.ajax({
@@ -1357,7 +1376,8 @@
                     hdnProgramCategory:hdnProgramCategory,
                     hdnTxtDuration:hdnTxtDuration,
                     hdnMusicLabel: hdnMusicLabel,
-                    Type: Type
+                    Type: Type,
+                    SeasonForProgram: SeasonValue
                 }),
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
@@ -1381,8 +1401,8 @@
                     else {
                         general(TitleCode);
                     }
-                    
-                    
+
+
                     $('#popAddTitle').modal('hide');
                     showAlert("S", result.Message);
                 },

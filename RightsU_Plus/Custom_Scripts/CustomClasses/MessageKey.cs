@@ -868,6 +868,7 @@ public class MessageKey
     public string EditPartyDetails { get; set; }
     public string ViewPartyDetails { get; set; }
     public string FaxNo { get; set; }
+    public string ShortCode { get; set; }
     public string GSTNo { get; set; }
     public string STNo { get; set; }
     public string VATNo { get; set; }
@@ -1134,6 +1135,7 @@ public class MessageKey
     public string CannotuncheckregionasithasreferenceinTitleRelease { get; set; }
     public string CannotremoveReleasePlatformasithasreferenceinTitleRelease { get; set; }
     public string Holdbackaddedsuccessfully { get; set; }
+    public string Holdbackupdatedsuccessfully { get; set; }
     public string CombinationconflictswithotherHoldback { get; set; }
     public string Pleaseselecttitlelanguagerightfirst { get; set; }
     public string AddEditHoldback { get; set; }
@@ -1662,6 +1664,11 @@ public class MessageKey
     public string DealStatusReport { get; set; }
 
     #endregion
+    #endregion
+
+    #region AL_Modules
+    public string Movies { get; set; }
+    public string TVShows { get; set; }
     #endregion
 
     public string FPLinkExpire { get; set; }

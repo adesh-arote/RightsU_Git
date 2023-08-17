@@ -253,7 +253,7 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "syn_Rights";
             ViewBag.TreeId = "Rights_Platform";
             ViewBag.RMODE = objPage_Properties.RMODE;
-            return View("~/Views/Syn_Deal/_Syn_Rights.cshtml", objSyn_Deal_Rights);
+            return PartialView("~/Views/Syn_Deal/_Syn_Rights.cshtml", objSyn_Deal_Rights);
         }
 
         public ActionResult View()

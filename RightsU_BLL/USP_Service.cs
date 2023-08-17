@@ -789,11 +789,11 @@ namespace RightsU_BLL
             return objUSPDAL.USP_DM_Title_PI(LstTitle_Import_UDT, User_Code);
         }
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code, string TitleType
           )
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code);
+            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code, TitleType);
         }
         public IEnumerable<USP_Validate_Title_Objection_Dup> USP_Validate_Title_Objection_Dup(List<Title_Objection_UDT> LstTitle_Objection_UDT, int User_Code)
         {
@@ -1778,6 +1778,78 @@ namespace RightsU_BLL
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Delete_Acq_Digital_Result(DigitalCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingSheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetReCommendationList();
+        }
+
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(int? TitleCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_Title_Content_Gen_From_Title(TitleCode);
+        }
+
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(int? extendedColumnsCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, int? loadsheetCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetLoadsheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetPurchaseOrderList(usersCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingListMovies(client, cycle, aL_Lab_Code, distributor, display);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName, includeHoldover);
+        }
+
+        public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            objUSPDAL.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(int? loadsheetCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetRevisionHistoryForLoadsheet(loadsheetCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(int? record_Code, int? module_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetRevisionHistoryForModule(record_Code, module_Code);
         }
     }
 }

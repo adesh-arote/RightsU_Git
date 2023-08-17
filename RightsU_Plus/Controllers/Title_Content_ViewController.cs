@@ -180,6 +180,10 @@ namespace RightsU_Plus.Controllers
         public ActionResult Cancel()
         {
             ClearSession();
+            if (TempData["BackToListTitle"] != null)
+            {
+                TempData["IsSearchFromTitle"] = "Y";
+            }
             return RedirectToAction("Index", "Title_Content", new { IsMenu = "N" });
         }
         private void ClearSession()
@@ -345,47 +349,59 @@ namespace RightsU_Plus.Controllers
             RightsU_Entities.Title_Content objTitleContent = new Title_Content_Service(objLoginEntity.ConnectionStringName).GetById(contentCodeForEdit);
             return PartialView("~/Views/Title_Content_View/_Title_Metadata_List.cshtml", objTitleContent);
         }
-        public JsonResult SaveTitleContent(int titleContentCode, string EpisodeName, string duration, string synopsis)
+        public JsonResult SaveTitleContent(int titleContentCode, string EpisodeName, string duration, string synopsis, int EpisodeNum)
         {
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (titleContentCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
-
-            Title_Content_Service objService = new Title_Content_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Title_Content objTitleContent = null;
-
-            if (titleContentCode > 0)
-            {
-                objTitleContent = objService.GetById(titleContentCode);
-                objTitleContent.EntityState = State.Modified;
-            }
-            else
-            {
-                objTitleContent = new RightsU_Entities.Title_Content();
-                objTitleContent.EntityState = State.Added;
-                objTitleContent.Inserted_On = DateTime.Now;
-                objTitleContent.Inserted_By = objLoginUser.Users_Code;
-            }
-
-            objTitleContent.Last_Updated_Time = DateTime.Now;
-            objTitleContent.Last_Action_By = objLoginUser.Users_Code;
-            objTitleContent.Episode_Title = EpisodeName;
-            if (duration != "")
-                objTitleContent.Duration = Convert.ToDecimal(duration);
-            else
-                objTitleContent.Duration = null;
-            objTitleContent.Synopsis = synopsis;
-            dynamic resultSet;
-            bool isValid = objService.Save(objTitleContent, out resultSet);
-
-            if (isValid)
-            {
-                objTitleContent = objService.GetById(titleContentCode);
-            }
-            else
+            if (CheckDuplicateEpisodeNumber(titleContentCode, EpisodeNum))
             {
                 status = "E";
-                message = resultSet;
+                message = "Episode number " + EpisodeNum + " already exists for Title";
+            }
+            else
+            {
+                Title_Content_Service objService = new Title_Content_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Entities.Title_Content objTitleContent = null;
+
+                if (titleContentCode > 0)
+                {
+                    objTitleContent = objService.GetById(titleContentCode);
+                    objTitleContent.EntityState = State.Modified;
+                }
+                else
+                {
+                    objTitleContent = new RightsU_Entities.Title_Content();
+                    objTitleContent.EntityState = State.Added;
+                    objTitleContent.Inserted_On = DateTime.Now;
+                    objTitleContent.Inserted_By = objLoginUser.Users_Code;
+                }
+
+                objTitleContent.Last_Updated_Time = DateTime.Now;
+                objTitleContent.Last_Action_By = objLoginUser.Users_Code;
+                objTitleContent.Episode_Title = EpisodeName;
+                string IsEpisodeNoUpdateAllowed = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AllowEpisodeNoUpdate").FirstOrDefault().Parameter_Value;
+                if (IsEpisodeNoUpdateAllowed == "Y")
+                {
+                    objTitleContent.Episode_No = EpisodeNum;
+                }                
+                if (duration != "")
+                    objTitleContent.Duration = Convert.ToDecimal(duration);
+                else
+                    objTitleContent.Duration = null;
+                objTitleContent.Synopsis = synopsis;
+                dynamic resultSet;
+                bool isValid = objService.Save(objTitleContent, out resultSet);
+
+                if (isValid)
+                {
+                    objTitleContent = objService.GetById(titleContentCode);
+                }
+                else
+                {
+                    status = "E";
+                    message = resultSet;
+                }
             }
             var obj = new
             {
@@ -1082,9 +1098,17 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
+        public bool CheckDuplicateEpisodeNumber(int titleContentCode, int EpisodeNum)
+        {
+            RightsU_Entities.Title_Content objTitleContent = new Title_Content_Service(objLoginEntity.ConnectionStringName).GetById(titleContentCode);
+            List<int?> EpisodeNumbers = new Title_Content_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Title_Code == objTitleContent.Title_Code && w.Title_Content_Code != objTitleContent.Title_Content_Code).Select(s => s.Episode_No).ToList();
+            bool EpisodeExists = EpisodeNumbers.Contains(EpisodeNum);
+            return EpisodeExists;
+        }
         #endregion
 
-     
+
     }
 
     internal class Title_Content_View_Search

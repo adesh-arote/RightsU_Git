@@ -1,4 +1,6 @@
 ﻿@model List<RightsU_Entities.Vendor>
+@using RightsU_BLL;
+
 @{
     //  Layout = "~/Views/Shared/_Layout.cshtml";
     RightsU_Entities.Vendor objVendor = new RightsU_Entities.Vendor();
@@ -25,12 +27,16 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
+        //objMessageKey.ShortCode = "Short Name";
     }
     LoginEntity objLoginEntity = new LoginEntity();
     if (Session["objLoginEntity"] != null)
     {
         objLoginEntity = (LoginEntity)Session["objLoginEntity"];
     }
+
+    RightsU_Entities.System_Parameter_New Movies_Shows_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Party_Details").FirstOrDefault();
+    var Allow_Party_Details = Movies_Shows_system_Parameter.Parameter_Value;
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
@@ -402,19 +408,21 @@
             $('#Vendor_Name').attr('required', true)
             returnVal = false;
         }
+        if ("@Allow_Party_Details" != "Y") {
         if ($.trim($('#Vendor_Addr').val()) == "") {
             $('#Vendor_Addr').val('')
             $('#Vendor_Addr').attr('required', true)
             returnVal = false;
         }
-        //if ($.trim($('#Vendor_PhNo').val()) == "") {
-        //    $('#Vendor_PhNo').val('')
-        //    $('#Vendor_PhNo').attr('required', true)
-        //    returnVal = false;
-        //}
+        if ($.trim($('#Vendor_PhNo').val()) == "") {
+            $('#Vendor_PhNo').val('')
+            $('#Vendor_PhNo').attr('required', true)
+            returnVal = false;
+        }
         if ($('#ddlRoleList').val() == null) {
             $('#divddlRoleList').addClass("required");
             returnVal = false;
+            }
         }
         if (document.getElementById("ProductionHouseUser").checked)
         {
@@ -430,32 +438,44 @@
     function Validate_Save_VendorContact() {
         var returnVal = true;
         var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
-        //if ($.trim($('#Department_Edit,#Department').val()) == "") {
-        //    $('#Department_Edit,#Department').val('')
-        //    $('#Department_Edit,#Department').attr('required', true)
-        //    returnVal = false;
-        //}
-        //if ($.trim($('#Email_Edit,#Email').val()) == "") {
-        //    $('#Email_Edit,#Email').val('')
-        //    $('#Email_Edit,#Email').attr('required', true)
-        //    returnVal = false;
-        //}
-        //if ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "") {
-        //    $('#Phone_No_Edit,#Phone_No').val('')
-        //    $('#Phone_No_Edit,#Phone_No').attr('required', true)
-        //    returnVal = false;
-        //}
-        //if ($.trim($('#Contact_Name_Edit,#Contact_Name').val()) == "") {
-        //    $('#Contact_Name_Edit,#Contact_Name').val('')
-        //    $('#Contact_Name_Edit,#Contact_Name').attr('required', true)
-        //    returnVal = false;
-        //}
+        if ("@Allow_Party_Details" != "Y") {
+            if ($.trim($('#Department_Edit,#Department').val()) == "") {
+                $('#Department_Edit,#Department').val('')
+                $('#Department_Edit,#Department').attr('required', true)
+                returnVal = false;
+            }
+            if ($.trim($('#Email_Edit,#Email').val()) == "") {
+                $('#Email_Edit,#Email').val('')
+                $('#Email_Edit,#Email').attr('required', true)
+                returnVal = false;
+            }
+            if ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "") {
+                $('#Phone_No_Edit,#Phone_No').val('')
+                $('#Phone_No_Edit,#Phone_No').attr('required', true)
+                returnVal = false;
+            }
+            if ($.trim($('#Contact_Name_Edit,#Contact_Name').val()) == "") {
+                $('#Contact_Name_Edit,#Contact_Name').val('')
+                $('#Contact_Name_Edit,#Contact_Name').attr('required', true)
+                returnVal = false;
+            }
 
-        if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "")) {
-            $('#Email_Edit,#Email').val('')
-            $('#Email_Edit,#Email').attr('required', true)
-            $('#Phone_No_Edit,#Phone_No').val('')
-            $('#Phone_No_Edit,#Phone_No').attr('required', true)
+            if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "")) {
+                $('#Email_Edit,#Email').val('')
+                $('#Email_Edit,#Email').attr('required', true)
+                $('#Phone_No_Edit,#Phone_No').val('')
+                $('#Phone_No_Edit,#Phone_No').attr('required', true)
+                returnVal = false;
+            }
+        }
+        if (($.trim($('#Email_Edit,#Email').val()) == "") && ($.trim($('#Phone_No_Edit,#Phone_No').val()) == "") && ($.trim($('#Contact_Name_Edit,#Contact_Name').val()) == "") && ($.trim($('#Department_Edit,#Department').val()) == "")) {
+            if ("@Allow_Party_Details" != "Y") {
+                $('#Email_Edit,#Email').val('')
+                $('#Email_Edit,#Email').attr('required', true)
+                $('#Phone_No_Edit,#Phone_No').val('')
+                $('#Phone_No_Edit,#Phone_No').attr('required', true)
+            }
+            showAlert("E", "Please fill at least one field");
             returnVal = false;
         }
 
@@ -622,7 +642,15 @@
                                 }
                             </td>
                             <td>
-                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" /> @objMessageKey.FaxNo.
+                                @objMessageKey.PhoneNo.<br /><hr style="visibility:hidden" />
+                                @if (Allow_Party_Details == "Y")
+                                {
+                                    @objMessageKey.ShortCode
+                                }
+                                else
+                                {
+                                    @objMessageKey.FaxNo
+                                }
 
                             </td>
                             <td>
@@ -638,11 +666,25 @@
                                 <hr style="visibility:hidden" />
                                 @if (ViewBag.Mode == "V")
                                 {
-                                    <span>@objVendor.Fax_No</span>
+                                    if (Allow_Party_Details == "Y")
+                                    {
+                                        <span>@objVendor.Short_Code</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@objVendor.Fax_No</span>
+                                    }
                                 }
                                 else
                                 {
-                                    <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" class="numeric" maxlength="20" value="@objVendor.Fax_No" style="width: 100%;" />
+                                    if (Allow_Party_Details == "Y")
+                                    {
+                                        <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" value="@objVendor.Short_Code" style="width: 100%;" maxlength="10" />
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="Vendor_FaxNo" name="Vendor_FaxNo" class="numeric" value="@objVendor.Fax_No" style="width: 100%;" maxlength="10" />
+                                    }
                                 }
                             </td>
                         </tr>
@@ -856,6 +898,16 @@
                 </td>
 
                 <td class="right_nav pull-right" style="margin-right:10px">
+                    @if(Allow_Party_Details == "Y") { 
+                    if (ViewBag.Mode == "V")
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('VIEW', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('ADD', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                        }
+                    }
                     @if (ViewBag.Mode != "V")
                     {
                         <input type="button" value="@objMessageKey.Add" onclick="AddEditVendorContact('0','ADD')" id="btnAdd" class="btn btn-primary">

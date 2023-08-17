@@ -882,50 +882,182 @@ namespace RightsU_Plus.Controllers
             string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
             int[] dtextval;
 
-            foreach (string str in columnValueList)
+
+            int CountNoOfDDL = 0;
+            foreach (var str in columnValueList)
             {
-                //string[] vals = str.Split('~');
                 string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
                 config_Code = Convert.ToInt32(vals[1]);
-                string tempVal = "";
+                string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                if (ControlType == "TXTDDL")
+                {
+                    CountNoOfDDL++;
+                }
+
+            }
+
+
+            List<CurrentValues> lstCurrentValues = new List<CurrentValues>();
+            List<SavedValues> lstSavedValues = new List<SavedValues>();
+
+            List<string> lstSavedString = new List<string>();
+            
+            foreach (var str in columnValueList)
+            {
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                config_Code = Convert.ToInt32(vals[1]);
 
                 string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
                 if (ControlType == "TXTDDL")
                 {
-                    if (vals[0] != "")
-                    {
-                        dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
-
-                        List<string> selectedDrp = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
+                    dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+                    var DetailsCode = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
                                                                            S.Supplementary_Config_Code == config_Code &&
                                                                            S.Row_Num.Value != Row_No &&
-                                                                           S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
+                                                                           S.EntityState != State.Deleted).Select(K => new { K.Supplementary_Data_Code, K.Row_Num }).ToList();
 
-                        tempVal = string.Join(",", selectedDrp);
+                    foreach (var values in dtextval)
+                    {
+                        CurrentValues objCurrentValues = new CurrentValues();
+                        objCurrentValues.configColNum = Convert.ToString(config_Code);//Convert.ToString(values);
+                        objCurrentValues.configCode = Convert.ToString(values); //Convert.ToString(config_Code);
+                        lstCurrentValues.Add(objCurrentValues);
+                    }
 
-                        int i = 1;
-                        //if (Operation != "E")
-                        //{
-                        foreach (int dt in dtextval)
+                    if (DetailsCode.Count() > 0)
+                    {
+
+                        foreach (var item in DetailsCode)
                         {
-                            if (tempVal.IndexOf(dt.ToString(), 0) > -1)
+                            string[] SavedCodes = item.Supplementary_Data_Code.Split(',');
+                            string RowNum = item.Row_Num.ToString();
+
+                            foreach (var savedCode in SavedCodes)
                             {
-                                return true;
-
+                                SavedValues objSavedValues = new SavedValues();
+                                objSavedValues.configColNum = Convert.ToString(config_Code);//savedCode;
+                                objSavedValues.configCode = savedCode;//Convert.ToString(config_Code);
+                                objSavedValues.RowNo = Convert.ToInt32(RowNum);
+                                lstSavedValues.Add(objSavedValues);
                             }
-                            i++;
-                        }
-                        //}
-                        //else
-                        //{
-                        //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
 
-                        //}
+                        }
+                    }
+
+                }
+
+
+            }
+
+
+            string currentString = "";
+            List<string> strValidationList_Current = new List<string>();
+
+            var lstUniqueRowNumbers = lstSavedValues.Select(x => x.RowNo).Distinct().ToList();
+
+            List<string> strValidationList = new List<string>();
+
+            foreach (var uniqueRowNumber in lstUniqueRowNumbers)
+            {
+                string savedString = "";
+                var lstSavedValues_uniqueRowNumber = lstSavedValues.Where(x => x.RowNo == uniqueRowNumber).ToList();
+
+                for (int i = 0; i < lstSavedValues_uniqueRowNumber.Count(); i++)
+                {
+                    if (CountNoOfDDL == 1)
+                    {
+                        savedString = lstSavedValues_uniqueRowNumber[i].configCode + "~" + lstSavedValues_uniqueRowNumber[i].configColNum;
+                        lstSavedString.Add(savedString);
+                    }
+                    else
+                    {
+                        if (savedString == "")
+                        {
+                            savedString = lstSavedValues_uniqueRowNumber[i].configCode;
+                        }
+                        else
+                        {
+                            savedString = savedString + "~" + lstSavedValues_uniqueRowNumber[i].configCode;
+                        }
+                    }
+                }
+                lstSavedString.Add(savedString);
+            }
+
+            foreach (var currentValue in lstCurrentValues)
+            {
+                if (CountNoOfDDL == 1)
+                {
+                    currentString = currentValue.configCode + "~" + currentValue.configColNum;
+                    
+                    if (lstSavedString.Contains(currentString))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    if (currentString == "")
+                    {
+                        currentString = currentValue.configCode;
+                    }
+                    else
+                    {
+                        currentString = currentString + "~" + currentValue.configCode;
                     }
                 }
             }
-            //obj.Add("ErrorCode", ErrorCode);
-            //obj.Add("ErrorMsg", "Duplicate Value Not allowed");
+
+            if (lstSavedString.Contains(currentString))
+            {
+                return true;
+            }
+
+            
+            //foreach (string str in columnValueList)
+            //{
+            //    //string[] vals = str.Split('~');
+            //    string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+            //    config_Code = Convert.ToInt32(vals[1]);
+            //    string tempVal = "";
+
+            //    string ControlType = objConfigService.SearchFor(a => a.Supplementary_Config_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+            //    if (ControlType == "TXTDDL")
+            //    {
+            //        if (vals[0] != "")
+            //        {
+            //            dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+
+            //            List<string> selectedDrp = null;//lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode &&
+            //                                            //S.Supplementary_Config_Code == config_Code &&
+            //                                            //S.Row_Num.Value != Row_No &&
+            //                                            //S.EntityState != State.Deleted).Select(K => K.Supplementary_Data_Code).ToList();
+
+            //            tempVal = string.Join(",", selectedDrp);
+
+            //            //int i = 1;
+            //            //if (Operation != "E")
+            //            //{
+            //            foreach (int dt in dtextval)
+            //            {
+            //                if (tempVal.IndexOf(dt.ToString(), 0) > -1)
+            //                {
+            //                    return true;
+
+            //                }
+            //                //i++;
+            //            }
+            //            //}
+            //            //else
+            //            //{
+            //            //    List<string> selectedDrponRoIdx = lstDetailObj.Where(S => S.Supplementary_Tab_Code == TabCode && S.Supplementary_Config_Code == config_Code && S.Row_Num == Row_No).Select(K => K.Supplementary_Data_Code).ToList();
+
+            //            //}
+            //        }
+            //    }
+            //}
+            ////obj.Add("ErrorCode", ErrorCode);
+            ////obj.Add("ErrorMsg", "Duplicate Value Not allowed");
             return false;
         }
         public string supplementarySave(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex)
@@ -1145,5 +1277,20 @@ namespace RightsU_Plus.Controllers
             obj.Add("detailsCnt", count);
             return Json(obj);
         }
+
+        public class CurrentValues
+        {
+            public string configColNum { get; set; }
+            public string configCode { get; set; }
+            public int RowNo { get; set; }
+        }
+
+        public class SavedValues
+        {
+            public string configColNum { get; set; }
+            public string configCode { get; set; }
+            public int RowNo { get; set; }
+        }
+
     }
 }
