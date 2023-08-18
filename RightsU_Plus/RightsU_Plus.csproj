@@ -220,7 +220,9 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\DigitalConfigController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\SupplimentaryConfigController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -1325,6 +1327,23 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\Index.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplimentaryConfigList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplimentaryConfig.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_AddEditSupplimentaryConfig.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_TabConfigList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryMasterList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryDataMasterList.cshtml" />
+    <Content Include="Views\SupplimentaryConfig\_SupplementaryTabListViewConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\Index.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalConfigList.cshtml" />
+    <Content Include="Views\DigitalConfig\_AddEditDigitalConfig.cshtml" />
+    <Content Include="Views\DigitalConfig\_TabConfigList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalMasterList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalDataMasterList.cshtml" />
+    <Content Include="Views\DigitalConfig\_DigitalTabListViewConfig.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

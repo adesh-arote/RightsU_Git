@@ -1786,6 +1786,22 @@ namespace RightsU_DAL
             updatedList = new Save_Entitiy_Lists_Generic<ProjectMilestoneTitle>().SetListFlagsCUD(updatedList, dbContext);
             return updatedList;
         }
+
+        public ICollection<Supplementary_Config> SaveSupplementaryConfig(ICollection<Supplementary_Config> entityList, DbContext dbContext)
+        {
+            ICollection<Supplementary_Config> updatedList = entityList;
+
+            updatedList = new Save_Entitiy_Lists_Generic<Supplementary_Config>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
+
+        public ICollection<Digital_Config> SaveDigitalConfig(ICollection<Digital_Config> entityList, DbContext dbContext)
+        {
+            ICollection<Digital_Config> updatedList = entityList;
+
+            updatedList = new Save_Entitiy_Lists_Generic<Digital_Config>().SetListFlagsCUD(updatedList, dbContext);
+            return updatedList;
+        }
     }
 
     public class Music_Album_Talent_Repository : RightsU_Repository<Music_Album_Talent>
@@ -3038,22 +3054,94 @@ namespace RightsU_DAL
 
     public class Supplementary_Repository : RightsU_Repository<Supplementary>
     {
-        public Supplementary_Repository(string constr) : base(constr) { }
+        public Supplementary_Repository(string constr) : base(constr) {}
+
+        public override void Save(Supplementary objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();            
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Supplementary_Data_Repository : RightsU_Repository<Supplementary_Data>
     {
         public Supplementary_Data_Repository(string constr) : base(constr) { }
+
+        public override void Save(Supplementary_Data objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Supplementary_Tab_Repository : RightsU_Repository<Supplementary_Tab>
     {
         public Supplementary_Tab_Repository(string constr) : base(constr) { }
+
+        public override void Save(Supplementary_Tab objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+            if (objToSave.Supplementary_Config != null) objToSave.Supplementary_Config = objSaveEntities.SaveSupplementaryConfig(objToSave.Supplementary_Config, base.DataContext);            
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Supplementary_Config_Repository : RightsU_Repository<Supplementary_Config>
     {
         public Supplementary_Config_Repository(string constr) : base(constr) { }
+        public override void Save(Supplementary_Config objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     #region Added for File uplaod in demo setup 
@@ -3085,20 +3173,93 @@ namespace RightsU_DAL
     public class Digital_Repository : RightsU_Repository<Digital>
     {
         public Digital_Repository(string constr) : base(constr) { }
+
+        public override void Save(Digital objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Digital_Data_Repository : RightsU_Repository<Digital_Data>
     {
         public Digital_Data_Repository(string constr) : base(constr) { }
+
+        public override void Save(Digital_Data objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Digital_Tab_Repository : RightsU_Repository<Digital_Tab>
     {
         public Digital_Tab_Repository(string constr) : base(constr) { }
+
+        public override void Save(Digital_Tab objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+            if (objToSave.Digital_Config != null) objToSave.Digital_Config = objSaveEntities.SaveDigitalConfig(objToSave.Digital_Config, base.DataContext);
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Digital_Config_Repository : RightsU_Repository<Digital_Config>
     {
         public Digital_Config_Repository(string constr) : base(constr) { }
+
+        public override void Save(Digital_Config objToSave)
+        {
+            Save_Master_Entities_Generic objSaveEntities = new Save_Master_Entities_Generic();
+
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 }

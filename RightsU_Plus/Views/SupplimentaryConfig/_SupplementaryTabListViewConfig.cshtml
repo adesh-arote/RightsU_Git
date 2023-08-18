@@ -1,0 +1,157 @@
+﻿@model RightsU_Entities.Supplementary_Tab
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+
+    var URL_FillSupplementaryData = '@Url.Action("FillSupplementaryData", "SupplimentaryConfig")';
+
+    $(document).ready(function () {
+        initializeChosen();
+        SwitchDisplay();
+
+        $('#ddlKeyConfig').change(function () {
+            var selectValue = $(this).val();
+            FillSupplementaryData(selectValue);
+        });
+
+    });
+
+    function FillSupplementaryData(keyConfigCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_FillSupplementaryData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                keyConfigCode: keyConfigCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    debugger;
+                    $("#ddlSupplementaryData").html('');
+                    var s = '';
+                    for (var i = 0; i < result.Data.length; i++) {
+                        s += '<option value="' + result.Data[i].Supplementary_Data_Code + '">' + result.Data[i].Data_Description + '</option>';
+                    }
+                    $("#ddlSupplementaryData").html(s);
+                    $('#ddlSupplementaryData').val(result.selectedValues);
+                    $('#ddlSupplementaryData')[0].sumo.reload();
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+</script>
+<style>
+    .SumoSelect, #divddlSupplementaryData {
+        width: 100% !important;
+    }
+
+        #divddlSupplementaryData > div {
+            width: 100% !important;
+        }
+
+    .SumoSelect, #divddlSupplementaryValueConfig {
+        width: 100% !important;
+    }
+
+        #divddlSupplementaryValueConfig > div {
+            width: 100% !important;
+        }
+
+    #ddlKeyConfig_chosen {
+        width: 100% !important;
+    }
+</style>
+<div class="form_fields" dir="@objMessageKey.LayoutDirection">
+    <div class="modal_block modal_header">
+        <a class="close" data-dismiss="modal" href="#">
+            <span>×</span>
+            <span class="sr-only">Close</span>
+        </a>
+        <h2>Supplementary Tab ListView Config</h2>
+    </div>
+    <div class="modal_block">
+        <table style="width:100%;table-layout:fixed">
+            <tr>
+                <td class="lblExchangeRate" style="width:20%"><b>Tab Name</b></td>
+                <td>
+                    <span>@Model.Supplementary_Tab_Description</span>
+                    <input type="hidden" id="hdnTabCode" value="@Model.Supplementary_Tab_Code" name="Supplementary_Tab_Code" />
+                </td>
+            </tr>
+            <tr>
+                <td class="lblExchangeRate"><b>Display</b></td>
+                <td>
+                    <table>
+                        <tr>
+                            <td>
+                                @Html.RadioButton("DisplayLevel", "TL", new { @onclick = "SwitchDisplay()" })
+                                <span><b>Tab Level</b></span>
+                            </td>
+                            <td>
+
+                                @Html.RadioButton("DisplayLevel", "DL", new { @onclick = "SwitchDisplay()" })
+                                <span><b>Detail Level</b></span>
+
+                            </td>
+                            <td>
+
+                                @Html.RadioButton("DisplayLevel", "NS", new { @onclick = "SwitchDisplay()" })
+                                <span><b>No show</b></span>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="trKeyConfig">
+                <td class="lblExchangeRate" style="width:20%"><b>Key Config</b></td>
+                <td>
+                    @Html.DropDownList("ddlKeyConfig", TempData["KeyConfigDDL"] as SelectList, "Select", new { @id = "ddlKeyConfig", @class = "form_input chosen-select" })
+                </td>
+            </tr>
+            <tr id="trSupplementaryData">
+                <td class="lblExchangeRate" style="width:20%"><b>Supplementary Data</b></td>
+                <td>
+                    <div id="divddlSupplementaryData">
+                        @Html.DropDownList("ddlSupplementaryData", TempData["SupplementaryDataDDL"] as IEnumerable<SelectListItem>, new { @id = "ddlSupplementaryData", multiple = "multiple" })
+                    </div>
+                </td>
+            </tr>
+            <tr id="trSupplementaryValueConfig">
+                <td class="lblExchangeRate" style="width:20%"><b>Supplementary Value Config</b></td>
+                <td>
+                    <div id="divddlSupplementaryValueConfig">
+                        @Html.DropDownList("ddlSupplementaryValueConfig", TempData["SupplementaryValueConfigDDL"] as IEnumerable<SelectListItem>, new { @id = "ddlSupplementaryValueConfig", multiple = "multiple" })
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                <li>
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Save" onclick="UpdateTabListViewConfig(@Model.Supplementary_Tab_Code)" />
+
+                    <input type="button" class="btn btn-primary" value="@objMessageKey.Cancel" data-dismiss="modal" />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
