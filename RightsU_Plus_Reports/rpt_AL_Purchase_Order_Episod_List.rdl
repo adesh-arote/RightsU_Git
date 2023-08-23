@@ -43,11 +43,19 @@
         </Field>
         <Field Name="Total_Purchase_Order_Value">
           <DataField>Total Purchase Order Value</DataField>
-          <rd:TypeName>System.Int32</rd:TypeName>
+          <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
         <Field Name="Title_Content_Code">
           <DataField>Title_Content_Code</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="MPM_Code">
+          <DataField>MPM_Code</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Master_InHouse">
+          <DataField>Master_InHouse</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
     </DataSet>
@@ -202,22 +210,25 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.9542cm</Width>
+                  <Width>4.67323cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.9542cm</Width>
+                  <Width>4.32928cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.84837cm</Width>
+                  <Width>1.57761cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>3.32589cm</Width>
+                  <Width>3.2007cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.9542cm</Width>
+                  <Width>1.65826cm</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>2.9542cm</Width>
+                  <Width>1.69403cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.0749cm</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -236,6 +247,7 @@
                                   <Value>Title</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -271,6 +283,7 @@
                                   <Value>Episode</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -306,6 +319,7 @@
                                   <Value>Episode #</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -315,6 +329,42 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Navy</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Remarks</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -341,6 +391,7 @@
                                   <Value>Screening/Cycle</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -376,6 +427,7 @@
                                   <Value>Cost/Flight (USD)</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -411,6 +463,7 @@
                                   <Value>TOTAL (USD)</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <Color>White</Color>
                                   </Style>
@@ -451,6 +504,7 @@
                                   <Value>=Fields!TitleName.Value</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -483,6 +537,7 @@
                                   <Value>=Fields!EpisodeTitle.Value</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -515,6 +570,7 @@
                                   <Value>=Fields!EpisodeNo.Value</Value>
                                   <Style>
                                     <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -522,6 +578,38 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox6</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox100">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>="MPM Code - "&amp;Fields!MPM_Code.Value &amp; vbcrlf &amp; IIF((Fields!Master_InHouse.Value="" OR UCase(Fields!Master_InHouse.Value)="NO"),"Files required","Master in-house. Files not required")</Value>
+                                  <Style>
+                                    <FontFamily>Segoe UI</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -545,7 +633,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>1</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -575,7 +665,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Estimated_Screening_Cost_per_flight_USD.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -605,7 +697,9 @@
                               <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!Estimated_Screening_Total_USD.Value</Value>
-                                  <Style />
+                                  <Style>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
                                 </TextRun>
                               </TextRuns>
                               <Style />
@@ -637,6 +731,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -652,9 +747,9 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <Top>0.26141cm</Top>
-            <Left>0.26141cm</Left>
+            <Left>0.13441cm</Left>
             <Height>1.30584cm</Height>
-            <Width>17.99106cm</Width>
+            <Width>18.20801cm</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -669,7 +764,7 @@
           </Border>
         </Style>
       </Body>
-      <Width>7.2485in</Width>
+      <Width>18.43767cm</Width>
       <Page>
         <PageHeight>29.7cm</PageHeight>
         <PageWidth>21cm</PageWidth>
