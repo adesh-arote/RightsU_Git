@@ -95,13 +95,13 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-        List<USPAL_GetRevisionHistoryForLoadsheet_Result> lstModuleHistory
+        List<USPAL_GetRevisionHistoryForModule_Result> lstModuleHistory
         {
             get
             {
                 if (Session["lstModuleHistory"] == null)
-                    Session["lstModuleHistory"] = new List<USPAL_GetRevisionHistoryForLoadsheet_Result>();
-                return (List<USPAL_GetRevisionHistoryForLoadsheet_Result>)Session["lstModuleHistory"];
+                    Session["lstModuleHistory"] = new List<USPAL_GetRevisionHistoryForModule_Result>();
+                return (List<USPAL_GetRevisionHistoryForModule_Result>)Session["lstModuleHistory"];
             }
             set
             {
@@ -156,7 +156,8 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                lstModuleHistory = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetRevisionHistoryForLoadsheet(loadsheetCode).ToList();
+                string ModuleCode = GlobalParams.ModuleCodeForLoadSheet.ToString();
+                lstModuleHistory = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetRevisionHistoryForModule(loadsheetCode, Convert.ToInt32(ModuleCode)).ToList();
                 recordcount = lstModuleHistory.Count();
             }
 
@@ -429,7 +430,7 @@ namespace RightsU_Plus.Controllers
 
         public PartialViewResult BindRevisionHistory(int pageNo, int recordPerPage, string sortType)
         {
-            List<USPAL_GetRevisionHistoryForLoadsheet_Result> lst = new List<USPAL_GetRevisionHistoryForLoadsheet_Result>();
+            List<USPAL_GetRevisionHistoryForModule_Result> lst = new List<USPAL_GetRevisionHistoryForModule_Result>();
             lst = lstModuleHistory;
 
             int RecordCount = 0;

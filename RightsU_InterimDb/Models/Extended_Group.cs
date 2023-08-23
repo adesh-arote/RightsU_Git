@@ -32,6 +32,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public Nullable<int> Last_Action_By { get; set; }
     	    public Nullable<System.DateTime> Lock_Time { get; set; }
+    	    public string IsActive { get; set; }
     
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }

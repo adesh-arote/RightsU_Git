@@ -1237,10 +1237,10 @@ namespace RightsU_DAL
             return objContext.USP_Multi_Music_Schedule_Process(LstMusic_Content_Assignment_UDT);
         }
 
-        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type)
+        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type, int Users_Code)
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Validate_Rollback(deal_Code, type);
+            return objContext.USP_Validate_Rollback(deal_Code, type, Users_Code);
         }
 
         public virtual void USP_BV_Title_Mapping_Shows(string BV_HouseId_Data_Code)

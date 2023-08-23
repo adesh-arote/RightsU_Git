@@ -3392,6 +3392,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_Updated_Time" Type="datetime" />
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
+          <Property Name="IsActive" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="Extended_Group_Config">
           <Key>
@@ -15548,6 +15549,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Validate_Rollback" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Type" Type="char" Mode="In" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Validate_Run" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TITLE_CODE" Type="varchar(max)" Mode="In" />
@@ -21940,6 +21942,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Validate_Rollback" ReturnType="Collection(String)">
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
             <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_BV_Title_Mapping_Shows">
           <Parameter Name="BV_HouseID_Data_Code" Mode="In" Type="String" />
@@ -39169,6 +39172,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" FromRole="Extended_Group" ToRole="Extended_Group_Config" />
           <NavigationProperty Name="AL_Vendor_Details" Relationship="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" FromRole="Extended_Group" ToRole="AL_Vendor_Details" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" FromRole="Extended_Group" ToRole="AL_Booking_Sheet_Details" />
+          <Property Name="IsActive" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
         </EntityType>
         <EntityType Name="Extended_Group_Config">
           <Key>
@@ -50150,6 +50154,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Group">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Group">
               <MappingFragment StoreEntitySet="Extended_Group">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="Lock_Time" ColumnName="Lock_Time" />
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
@@ -50879,7 +50884,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
