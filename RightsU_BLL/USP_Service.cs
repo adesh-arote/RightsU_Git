@@ -1233,10 +1233,10 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Multi_Music_Schedule_Process(LstMusic_Content_Assignment_UDT);
         }
 
-        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type)
+        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type, int Users_Code)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Validate_Rollback(deal_Code, type);
+            return objUSPDAL.USP_Validate_Rollback(deal_Code, type, Users_Code);
         }
         public virtual void USP_BV_Title_Mapping_Shows(string BV_HouseId_Data_Code)
         {

@@ -62,7 +62,10 @@ namespace RightsU_Plus.Controllers
           
             List<AL_Lab> lstLab = objAL_Lab_Service.SearchFor(s => true).ToList();
             ViewBag.ddlLab = new SelectList(lstLab, "AL_Lab_Code", "AL_Lab_Name");
-         
+
+            string SysLanguageCode = objLoginUser.System_Language_Code.ToString();
+            ViewBag.LangCode = SysLanguageCode;
+
             return View();
         }
 

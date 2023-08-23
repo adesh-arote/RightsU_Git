@@ -474,8 +474,12 @@
                 $('#Email_Edit,#Email').attr('required', true)
                 $('#Phone_No_Edit,#Phone_No').val('')
                 $('#Phone_No_Edit,#Phone_No').attr('required', true)
+
+                showAlert("E", "Please fill All mandatory  field");
             }
-            showAlert("E", "Please fill at least one field");
+            else {
+                showAlert("E", "Please fill at least one field");
+            }
             returnVal = false;
         }
 

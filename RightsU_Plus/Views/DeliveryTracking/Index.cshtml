@@ -12,6 +12,7 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 
 <script>
+    var Module_Code = @GlobalParams.ModuleCodeForDeliveryTracking, SysLanguageCode = @ViewBag.LangCode ;
     var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "M", IncludeHoldover = "N";
     arr = [];
     var URL_SearchDeliveryTracking = '@Url.Action("SearchDeliveryTracking", "DeliveryTracking")';
@@ -242,6 +243,19 @@
         })
     }
 
+    function ExportToExcel() {
+        debugger;
+        var StrSearchCriteria = "";
+        var Module_Name = "Delivery Tracking";
+        var ClientCode = $('#ddlClient').val();
+        var CycleDate = $('#CycleDate').val();
+        var LabCode = $('#ddlLab').val();
+        var DistributorCode = $('#Distributor').val();
+        var Display = $('#ddlDisplayItem').val();
+
+        window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code=' + Module_Code + '&SysLanguageCode=' + SysLanguageCode + '&Module_Name=' + Module_Name + '&sortColumnOrder=' + sort_Type + '&StrSearchCriteria=' + StrSearchCriteria + '&TabName=' + TabName + '&IncludeHoldover=' + IncludeHoldover + '&ClientCode=' + ClientCode + '&CycleDate=' + CycleDate + '&LabCode=' + LabCode + '&DistributorCode=' + DistributorCode + '&Display=' + Display;
+    }
+
 </script>
 
 <script>
@@ -380,7 +394,7 @@
                     <div class="right_nav pull-right">
                         <ul>
                             <li>
-                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick=""></a>
+                                <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
                             </li>
                         </ul>
                     </div>

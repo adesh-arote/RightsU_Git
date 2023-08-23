@@ -3176,7 +3176,7 @@ namespace RightsU_Plus.Controllers
         public ActionResult BindTitleMetadataHeader()
         {
             List<Extended_Group> objExt_Grp = new List<Extended_Group>();
-            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle).OrderBy(x => x.Group_Order).ToList();
+            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.IsActive == "Y").OrderBy(x => x.Group_Order).ToList();
             ViewBag.ExtendedGroup = objExt_Grp;
             return PartialView("~/Views/Title/_Title_Metadata_Header.cshtml", objExt_Grp);
         }

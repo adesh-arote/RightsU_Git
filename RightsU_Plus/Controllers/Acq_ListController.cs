@@ -831,7 +831,7 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
                 USP_Service objUSP_Service = new USP_Service(objLoginEntity.ConnectionStringName);
-                string errorMessage = objUSP_Service.USP_Validate_Rollback(Acq_Deal_Code, "A").ElementAt(0).ToString();
+                string errorMessage = objUSP_Service.USP_Validate_Rollback(Acq_Deal_Code, "A", objLoginUser.Users_Code).ElementAt(0).ToString();
                 if (errorMessage.Trim().Equals(""))
                 {
                     //ObjectResult<USP_RollBack_Acq_Deal_Result> objObjectResult = objUSP_Service.USP_RollBack_Acq_Deal(Acq_Deal_Code, objLoginUser.Users_Code);

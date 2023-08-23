@@ -74,6 +74,7 @@
     }
 
     function validate() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -366,15 +367,17 @@
             returnVal = false;
         }
 
-        if(returnVal)
-        {
+        if (returnVal) {
             if (NewRow == 1) {
                 validatePercent($("#txtPercentageSR_" + i), $("#txtAmountSR_" + i), $("#ddl_Cost_Type_Code_" + i), $("#ddl_Payment_Term_Code"), 1);
             }
             else {
-                validatePercent($("#txtPercentageSR_0"), $("#txtAmountSR_0"), $("#ddl_Cost_Type_Code_0"),  $("#ddl_Payment_Term_Code"),0);
+                validatePercent($("#txtPercentageSR_0"), $("#txtAmountSR_0"), $("#ddl_Cost_Type_Code_0"), $("#ddl_Payment_Term_Code"), 0);
             }
-            
+
+        }
+        else {
+            return false;
         }
          returnVal = ChkDuplicatePaymentTerm();
         if(canSave==0)

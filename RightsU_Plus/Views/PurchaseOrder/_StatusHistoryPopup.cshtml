@@ -11,6 +11,10 @@
 <script>
     var IsCall = 'Y';
 
+    $(document).ready(function () {
+        addNumeric();
+    });
+
     function SetPaging_MSH() {
         debugger;
         IsCall = 'N';
@@ -83,6 +87,17 @@
         return false
     }
 
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
 </script>
 
 <div class="modal_block modal_header">
@@ -105,7 +120,7 @@
         </div>
         <span class="pull-right">
             @objMessageKey.PageSize:
-            <input type="text" id="txtPageSize_MSH" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_MSH_OnChange()" onblur="setDefaultPaging('txtPageSize_MSH')">
+            <input type="text" id="txtPageSize_MSH" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_MSH_OnChange()" onblur="setDefaultPaging('txtPageSize_MSH')">
         </span>
     </div>
     <div class="tab-content clearfix table-wrapper scale_table_container" style="margin-bottom: 10px;">
@@ -123,7 +138,6 @@
                     <tr>
                         <td colspan="4">No recordfound</td>
                     </tr>
-
                 </tbody>
             </table>
         </div>
