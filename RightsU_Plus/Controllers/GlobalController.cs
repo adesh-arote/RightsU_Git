@@ -19,7 +19,9 @@ namespace RightsU_Plus.Controllers
     public class GlobalController : BaseController
     {
         #region Properties
+
         ReportViewer ReportViewer2;
+
         public Deal_Schema objDeal_Schema
         {
             get
@@ -30,6 +32,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session[RightsU_Session.ACQ_DEAL_SCHEMA] = value; }
         }
+
         public Deal_Schema objSynDeal_Schema
         {
             get
@@ -40,6 +43,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session[RightsU_Session.Syn_DEAL_SCHEMA] = value; }
         }
+
         public LoginEntity objLoginEntity
         {
             get
@@ -49,11 +53,14 @@ namespace RightsU_Plus.Controllers
                 return (LoginEntity)System.Web.HttpContext.Current.Session[RightsU_Session.CurrentLoginEntity];
             }
         }
+
         #endregion
+
         public ActionResult Index()
         {
             return View();
         }
+
         public MultiSelectList BindTitle_List(int? Deal_Code, int? Deal_Type_Code, string Selected_Title_Code = "", string deal_Type = "A")
         {
             MultiSelectList arr_Title_List = new MultiSelectList(new USP_Service(objLoginEntity.ConnectionStringName).USP_Bind_Title(Deal_Code, Deal_Type_Code, deal_Type).ToList(), "Title_Code", "Title_Name", Selected_Title_Code.Split(','));
@@ -85,11 +92,13 @@ namespace RightsU_Plus.Controllers
             MultiSelectList multiList = new MultiSelectList(list, "Title_Code", "Title_Name", selectedCodes.Split(','));
             return multiList;
         }
+
         public MultiSelectList BindCountry_List(string Is_Thetrical = "N", string Selected_Country_Code = "")
         {
             MultiSelectList arr_Title_List = new MultiSelectList(new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y" && i.Is_Theatrical_Territory == Is_Thetrical).Select(i => new { Country_Code = i.Country_Code, Country_Name = i.Country_Name }).OrderBy(x => x.Country_Name).ToList(), "Country_Code", "Country_Name", Selected_Country_Code.Split(','));
             return arr_Title_List;
         }
+
         public MultiSelectList BindChannel_List(string Selected_Channel_Code = "")
         {
             MultiSelectList arr_Title_List = new MultiSelectList(new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y").Select(i => new { Channel_Code = i.Channel_Code, Channel_Name = i.Channel_Name }).OrderBy(x => x.Channel_Name).ToList(), "Channel_Code", "Channel_Name", Selected_Channel_Code.Split(','));
@@ -101,21 +110,25 @@ namespace RightsU_Plus.Controllers
             MultiSelectList arr_Title_List = new MultiSelectList(new Territory_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y" && i.Is_Thetrical == Is_Thetrical).Select(i => new { Territory_Code = i.Territory_Code, Territory_Name = i.Territory_Name }).OrderBy(x => x.Territory_Name).ToList(), "Territory_Code", "Territory_Name", Selected_Territory_Code.Split(','));
             return arr_Title_List;
         }
+
         public MultiSelectList BindLanguage_List(string Selected_Language_Code = "")
         {
             MultiSelectList arr_Title_List = new MultiSelectList(new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y").Select(i => new { Language_Code = i.Language_Code, Language_Name = i.Language_Name }).OrderBy(x => x.Language_Name).ToList(), "Language_Code", "Language_Name", Selected_Language_Code.Split(','));
             return arr_Title_List;
         }
+
         public MultiSelectList BindLanguage_Group_List(string Selected_Language_Group_Code = "")
         {
             MultiSelectList arr_Title_List = new MultiSelectList(new Language_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y").Select(i => new { Language_Group_Code = i.Language_Group_Code, Language_Group_Name = i.Language_Group_Name }).OrderBy(x => x.Language_Group_Name).ToList(), "Language_Group_Code", "Language_Group_Name", Selected_Language_Group_Code.Split(','));
             return arr_Title_List;
         }
+
         public SelectList BindMilestone_List(int Selected_Milestone_Code = 0)
         {
             SelectList arr_Title_List = new SelectList(new Milestone_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Is_Active == "Y").Select(i => new { Milestone_Type_Code = i.Milestone_Type_Code, Milestone_Type_Name = i.Milestone_Type_Name }).ToList(), "Milestone_Type_Code", "Milestone_Type_Name", Selected_Milestone_Code);
             return arr_Title_List;
         }
+
         public SelectList BindMilestone_Unit_List(int selected_Milestone_Unit)
         {
             return new SelectList(new[]
@@ -127,6 +140,7 @@ namespace RightsU_Plus.Controllers
                 },
             "ID", "Name", selected_Milestone_Unit);
         }
+
         public string Archive(string user_Action, int Acq_Deal_Code, string remarks_Approval = "",int moduleCode = 30)//add user action
         {
             string strMsgType = "";
@@ -165,6 +179,7 @@ namespace RightsU_Plus.Controllers
             }
             return strMsgType;
         }
+
         public JsonResult Approve_Reject_Deal(string user_Action, string approvalremarks, string WorkFlowStatus = "")
         {
             try
@@ -745,7 +760,8 @@ namespace RightsU_Plus.Controllers
                 ReportViewer2.ServerReport.ReportServerUrl = new Uri(ReportingServer);
             }
         }
-        public ActionResult ExportToExcel(int Module_Code, int SysLanguageCode, string Module_Name, string sortColumnOrder, string StrSearchCriteria)
+
+        public ActionResult ExportToExcel(int Module_Code = 0, int SysLanguageCode = 0, string Module_Name = "", string sortColumnOrder = "", string StrSearchCriteria = "", string TabName = "", string IncludeHoldover = "", string ClientCode = "", string CycleDate = "", string LabCode = "", string DistributorCode = "", string Display = "")
         {
             ReportViewer2 = new ReportViewer();
             //int RecordCount = 0;
@@ -754,7 +770,7 @@ namespace RightsU_Plus.Controllers
             string mimeType;
             string[] streams;
             Warning[] warnings;
-            ReportParameter[] parm = new ReportParameter[6];
+            ReportParameter[] parm = new ReportParameter[13];
 
             string sortcolumn = "", sortorder = "";
             if (sortColumnOrder == "NA")
@@ -778,6 +794,15 @@ namespace RightsU_Plus.Controllers
             parm[3] = new ReportParameter("Sort_Column", sortcolumn);
             parm[4] = new ReportParameter("Sort_Order", sortorder);
             parm[5] = new ReportParameter("StrSearchCriteria", string.IsNullOrEmpty(StrSearchCriteria) ? " " : StrSearchCriteria);
+            //--------------------------------------Added by Sachin S Shelar-------------------------------------------------------------
+            parm[6] = new ReportParameter("Tab_Name", string.IsNullOrEmpty(TabName) ? " " : TabName);
+            parm[7] = new ReportParameter("IncludeHoldover", string.IsNullOrEmpty(IncludeHoldover) ? " " : IncludeHoldover);
+            parm[8] = new ReportParameter("Client_Code", string.IsNullOrEmpty(ClientCode) ? " " : ClientCode);
+            parm[9] = new ReportParameter("CycleDate", string.IsNullOrEmpty(CycleDate) ? " " : CycleDate);
+            parm[10] = new ReportParameter("Lab_Code", string.IsNullOrEmpty(LabCode) ? " " : LabCode);
+            parm[11] = new ReportParameter("Distributor_Code", string.IsNullOrEmpty(DistributorCode) ? " " : DistributorCode);
+            parm[12] = new ReportParameter("Display", string.IsNullOrEmpty(Display) ? " " : Display);
+            //-------------------------------------------------------------------------------------------------------------------------
 
             ReportCredential();
             ReportViewer2.ServerReport.ReportPath = string.Empty;
@@ -795,7 +820,7 @@ namespace RightsU_Plus.Controllers
             Response.End();
             return RedirectToAction("Index", new { Message = "Attachment File downloaded successfully" });
         }
-        
+
         public PartialViewResult BindAeroplay(int UsersCode)
         {
             //Currency objCurrency = new Currency();
