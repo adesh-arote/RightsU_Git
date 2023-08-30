@@ -29,7 +29,7 @@
 
             $('#ddlSortType_chosen').css("text-align", "left");
         }
-
+        addNumeric();
         SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover)
 
         $('.checkbox-inline').on("click", function () {
@@ -55,6 +55,16 @@
             //SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
         });
     });
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
 
     function OpenTab(NewTab) {
         debugger;

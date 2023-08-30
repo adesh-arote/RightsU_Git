@@ -1257,7 +1257,23 @@ namespace RightsU_Plus.Controllers
                         obj.IsDelete = "N";
                     }
                 }
-                int? TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
+
+                string isAeroplay = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Import_Movies_Shows").Select(x => x.Parameter_Value).FirstOrDefault();
+
+                int Extended_Group_Code;
+                int? TabCode;
+
+                if (isAeroplay == "N")
+                {
+                    Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && x.Extended_Group_Code == Extended_Group_Code).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+                else
+                {
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+
+
                 int? Row_No = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Map_Extended_Columns_Code == obj.Map_Extended_Columns_Code).Select(x => x.Row_No).FirstOrDefault();
                 obj.Extended_Group_Code = TabCode;
                 obj.Row_No = Row_No;
@@ -1330,7 +1346,7 @@ namespace RightsU_Plus.Controllers
             // Commented for mapping etended_group and Extended_Group_Config table
             //var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
-            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code && x.Is_Active == "Y").ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
 
             if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
