@@ -15549,6 +15549,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Validate_Rollback" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Type" Type="char" Mode="In" />
+          <Parameter Name="User_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_Validate_Run" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="TITLE_CODE" Type="varchar(max)" Mode="In" />
@@ -21941,6 +21942,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USP_Validate_Rollback" ReturnType="Collection(String)">
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
             <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="User_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_BV_Title_Mapping_Shows">
           <Parameter Name="BV_HouseID_Data_Code" Mode="In" Type="String" />

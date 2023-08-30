@@ -31,6 +31,27 @@
           <QueryParameter Name="@StrSearchCriteria">
             <Value>=Parameters!StrSearchCriteria.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@Client_Code">
+            <Value>=Parameters!Client_Code.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@CycleDate">
+            <Value>=Parameters!CycleDate.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Lab_Code">
+            <Value>=Parameters!Lab_Code.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Distributor_Code">
+            <Value>=Parameters!Distributor_Code.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Display">
+            <Value>=Parameters!Display.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Tab_Name">
+            <Value>=Parameters!Tab_Name.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@IncludeHoldover">
+            <Value>=Parameters!IncludeHoldover.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_Export_Table_To_Excel</CommandText>
@@ -5066,11 +5087,81 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
       <AllowBlank>true</AllowBlank>
       <Prompt>Str Search Criteria</Prompt>
     </ReportParameter>
+    <ReportParameter Name="Client_Code">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Client_Code</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="CycleDate">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>CycleDate</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Lab_Code">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Lab_Code</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Distributor_Code">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Distributor_Code</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Display">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Display</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Tab_Name">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Tab_Name</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="IncludeHoldover">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>IncludeHoldover</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>2</NumberOfColumns>
-      <NumberOfRows>3</NumberOfRows>
+      <NumberOfRows>7</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -5101,6 +5192,41 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>2</RowIndex>
           <ParameterName>StrSearchCriteria</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>Client_Code</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>CycleDate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>Lab_Code</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>Distributor_Code</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>Display</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>Tab_Name</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>6</RowIndex>
+          <ParameterName>IncludeHoldover</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

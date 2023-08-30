@@ -3493,7 +3493,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Security_Group_Tree_Hierarchy_Result>("USP_Get_Security_Group_Tree_Hierarchy", moduleCodesParameter, search_Module_NameParameter);
         }
     
-        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type)
+        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type, Nullable<int> user_Code)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
@@ -3503,7 +3503,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Rollback", deal_CodeParameter, typeParameter);
+            var user_CodeParameter = user_Code.HasValue ?
+                new ObjectParameter("User_Code", user_Code) :
+                new ObjectParameter("User_Code", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Rollback", deal_CodeParameter, typeParameter, user_CodeParameter);
         }
     
         public virtual int USP_BV_Title_Mapping_Shows(string bV_HouseID_Data_Code)

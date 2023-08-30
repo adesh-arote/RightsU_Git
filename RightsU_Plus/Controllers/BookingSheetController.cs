@@ -791,12 +791,12 @@ namespace RightsU_Plus.Controllers
                     if (ext == ".xlsx" || ext == ".xls")
                     {
                         #region EXCEL File Upload 
-                        //string strActualFileNameWithDate;
+                        string strActualFileNameWithDate;
                         string fileExtension = "";
                         string strFileName = System.IO.Path.GetFileName(PostedFile.FileName);
                         fileExtension = System.IO.Path.GetExtension(PostedFile.FileName);
-                        //strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
-                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strFileName);
+                        strActualFileNameWithDate = System.DateTime.Now.Ticks + "~" + strFileName;
+                        string fullpathname = (Server.MapPath("~") + "\\" + System.Configuration.ConfigurationManager.AppSettings["UploadSheetPath"] + strActualFileNameWithDate);
                         PostedFile.SaveAs(fullpathname);
                         #endregion
 
@@ -806,7 +806,7 @@ namespace RightsU_Plus.Controllers
                         {
                             objMasterImport_Service = null;
                             obj_DM_Master_Import.File_Name = PostedFile.FileName;
-                            obj_DM_Master_Import.System_File_Name = strFileName;
+                            obj_DM_Master_Import.System_File_Name = strActualFileNameWithDate;
                             obj_DM_Master_Import.Upoaded_By = objLoginUser.Users_Code;
                             obj_DM_Master_Import.Uploaded_Date = DateTime.Now;
                             obj_DM_Master_Import.Action_By = objLoginUser.Users_Code;
