@@ -473,20 +473,7 @@
                                   <Style />
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!Vendor_Address.Value</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>
-M: +</Value>
-                                  <Style>
-                                    <FontSize>11pt</FontSize>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=Fields!Vendor_Phone_No.Value</Value>
+                                  <Value>=IIF(Fields!Vendor_Address.Value="","",Fields!Vendor_Address.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -499,7 +486,20 @@ M: +</Value>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>=Fields!Vendor_Email.Value</Value>
+                                  <Value>=IIF(Fields!Vendor_Phone_No.Value="","","M: +"&amp;Fields!Vendor_Phone_No.Value)</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve">
+</Value>
+                                  <Style>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=IIF(Fields!Vendor_Email.Value="","",Fields!Vendor_Email.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>

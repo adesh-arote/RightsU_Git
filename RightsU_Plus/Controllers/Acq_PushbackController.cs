@@ -1356,6 +1356,7 @@ namespace RightsU_WebApp.Controllers
             //List<USP_List_Rights_Result> lst = BindGrid(Title_Code_Search, View_Type);
             int a = selected_Country_Territory_Code.Split(',').Count();
             ViewBag.RCount = a;
+            ViewBag.perpetuity_years = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
             return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
         }
 
