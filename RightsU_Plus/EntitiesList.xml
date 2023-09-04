@@ -2,9 +2,9 @@
   <Entity>
     <ShortName>VMP</ShortName>
     <FullName>VMP</FullName>
-    <DatabaseName>RightsU_BlueAnt_11Jul2023</DatabaseName>
+    <DatabaseName>RightsU_Sales</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
-    <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
+    <ReportingServerFolder>/RightsU_Sales</ReportingServerFolder>
   </Entity>
   <Entity>
     <ShortName>VIACOM18 Network</ShortName>

@@ -788,7 +788,7 @@ namespace RightsU_WebApp.Reports
                 strFilter = " AND Avail_Report_Schedule_Code=" + intCode + "";
                 //List<USP_Get_Title_Avail_Language_Data_Result> list = new List<USP_Get_Title_Avail_Language_Data_Result>();
                 dynamic list;
-                list= objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "F",strFilter, PageNo, "", "N", 0).ToList();
+                list = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "F", strFilter, PageNo, "", "N", 0).ToList();
                 if (list.Count > 0)
                 {
                     ddlBusinessUnit.SelectedValue = list[0].BU_Code.ToString();
@@ -994,23 +994,31 @@ namespace RightsU_WebApp.Reports
                 parm[38] = new ReportParameter("Territory_Level", "Y");
                 parm[39] = new ReportParameter("TabName", "IF");
 
-                parm[40] = new ReportParameter("OthersRemark", "");
+                parm[40] = new ReportParameter("OthersRemark", "false");
                 parm[41] = new ReportParameter("Language_Code", "0");
                 parm[42] = new ReportParameter("CallFrom", "3");
                 parm[43] = new ReportParameter("Include_Ancillary", "N");
 
-                ReportViewer1.ServerReport.ReportPath = string.Empty;
-
-                ReportCredential();
-                ReportViewer1.ServerReport.ReportPath = string.Empty;
-                if (ReportViewer1.ServerReport.ReportPath == "")
+                try
                 {
-                    ReportSetting objRS = new ReportSetting();
-                    ReportViewer1.ServerReport.ReportPath = objRS.GetReport("Title_Availability_Languagewise_V18_Demo");
+                    ReportViewer1.ServerReport.ReportPath = string.Empty;
+
+                    ReportCredential();
+                    ReportViewer1.ServerReport.ReportPath = string.Empty;
+                    if (ReportViewer1.ServerReport.ReportPath == "")
+                    {
+                        ReportSetting objRS = new ReportSetting();
+                        ReportViewer1.ServerReport.ReportPath = objRS.GetReport("Title_Availability_Languagewise_V18_Demo");
+                    }
+
+                    ReportViewer1.ServerReport.SetParameters(parm);
+                    ReportViewer1.ServerReport.Refresh();
+                    hdnIsCriteriaChange.Value = "N";
                 }
-                ReportViewer1.ServerReport.SetParameters(parm);
-                ReportViewer1.ServerReport.Refresh();
-                hdnIsCriteriaChange.Value = "N";
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
         }
 
@@ -1467,7 +1475,7 @@ namespace RightsU_WebApp.Reports
 
 
             gvSchedule.DataSource = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "F", strFilter, PageNo, "", isPaging, pageSize).ToList();
-           // RecordCount = Convert.ToInt32(objRecordCount.Value);
+            // RecordCount = Convert.ToInt32(objRecordCount.Value);
             objAvailResult = objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "F", strFilter, PageNo, "", isPaging, pageSize).ToList();
             RecordCount = objAvailResult.Select(s => s.Recordcount).FirstOrDefault();
 
@@ -1853,10 +1861,10 @@ namespace RightsU_WebApp.Reports
                     objAvail_Report_Schedule_UDT.MustHave_Promoter = "";
                     objAvail_Report_Schedule_UDT.Module_Code = Convert.ToInt32("205");
                     objAvail_Report_Schedule_UDT.Episode_From = Convert.ToInt32("0");
-                    objAvail_Report_Schedule_UDT.Episode_To = Convert.ToInt32("0");                   
+                    objAvail_Report_Schedule_UDT.Episode_To = Convert.ToInt32("0");
                     objAvail_Report_Schedule_UDT.ReportName = txtReportName.Text.Trim();
                     lst_Avail_Report_Schedule_UDT.Add(objAvail_Report_Schedule_UDT);
-                    objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "T",  hdnstrCriteria.Value, 0, "", "", 0);
+                    objUSP.USP_Get_Title_Avail_Language_Data(lst_Avail_Report_Schedule_UDT, objLoginedUser.Users_Code, "T", hdnstrCriteria.Value, 0, "", "", 0);
 
                 }
                 catch (Exception) { }
