@@ -55,6 +55,8 @@ namespace RightsU_BLL
             {
                 USP_Service objValidateService = new USP_Service(_Connection_Str);
 
+
+
                 //Commented by akshay rane temporary (need to Recheck by aayush)
                 /*
                 List<USP_Validate_Rev_HB_Duplication_UDT_Acq> objResult = new List<USP_Validate_Rev_HB_Duplication_UDT_Acq>();
@@ -62,6 +64,8 @@ namespace RightsU_BLL
                 {
                     if (objADP.LstDeal_Pushback_UDT.Count > 0)
                     {
+
+ 
 
                         objResult.AddRange(objValidateService.USP_Validate_Rev_HB_Duplication_UDT(
                            objADP.LstDeal_Pushback_UDT,
@@ -75,6 +79,8 @@ namespace RightsU_BLL
                     }
                 }
                 */
+
+
 
                 List<USP_Validate_Rights_Duplication_UDT> objResult = new List<USP_Validate_Rights_Duplication_UDT>();
                 foreach (Acq_Deal_Rights objADP in objToValidate.Acq_Deal_Rights)
@@ -92,11 +98,48 @@ namespace RightsU_BLL
                            "AR"
                            ).ToList());
 
+
+
                         resultSet = objResult;
                     }
                 }
                 resultSet = objResult;
-                return !(objResult.Count() > 0);
+
+
+
+                if (objResult.Count() > 0)
+                {
+                    return false;
+                }
+                //Modified by Jaydeep for Reverse Pushback Duplication Validation -23-08-2023
+                if (objResult.Count() == 0)
+                {
+                    List<USP_Validate_Rev_HB_Duplication_UDT_Acq> objResultRH = new List<USP_Validate_Rev_HB_Duplication_UDT_Acq>();
+                    foreach (Acq_Deal_Pushback objADP in objToValidate.Acq_Deal_Pushback)
+                    {
+                        if (objADP.LstDeal_Pushback_UDT.Count > 0)
+                        {
+                            objResultRH = objValidateService.USP_Validate_Rev_HB_Duplication_UDT(
+                           objADP.LstDeal_Pushback_UDT,
+                           objADP.LstDeal_Pushback_Title_UDT,
+                           objADP.LstDeal_Pushback_Platform_UDT,
+                           objADP.LstDeal_Pushback_Territory_UDT,
+                           objADP.LstDeal_Pushback_Subtitling_UDT,
+                           objADP.LstDeal_Pushback_Dubbing_UDT
+                           //"AP"
+                           ).ToList();
+                        }
+                    }
+                    resultSet = objResultRH;
+
+
+
+                    return !(objResultRH.Count() > 0);
+                }
+                //Modified by Jaydeep for Reverse Pushback Duplication Validation -23-08-2023
+
+
+
             }
             return true;
         }
