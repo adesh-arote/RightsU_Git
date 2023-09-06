@@ -95,12 +95,16 @@ namespace RightsU_Plus.Controllers
 
         public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListMovies_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display, string IncludeHoldover)
         {
+            lstGetDeliveryTrackingListMovies_Result = null;
+            lstGetDeliveryTrackingList_Result_Searched = null;
             lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListMovies_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "M", IncludeHoldover).ToList();
             return lstGetDeliveryTrackingListMovies_Result;
         }
 
         public List<USPAL_GetDeliveryTrackingList_Result> GetDeliveryTrackingListShows_Result(string TabName, string Client, string CycleDate, string Lab, string Distributor, string Display, string IncludeHoldover)
         {
+            lstGetDeliveryTrackingListShows_Result = null;
+            lstGetDeliveryTrackingList_Result_Searched = null;
             lstGetDeliveryTrackingList_Result_Searched = lstGetDeliveryTrackingListShows_Result = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetDeliveryTrackingList(Client, CycleDate, Lab, Distributor, Display, "S", IncludeHoldover).ToList();
             return lstGetDeliveryTrackingListShows_Result;
         }
@@ -199,21 +203,29 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveDelivery(List<DeliveryTracking_UDT> lst)
         {
             string status = "", message = "";
-            if(lst != null)
+            try
             {
-                new USP_Service(objLoginEntity.ConnectionStringName).SaveDeliveryTrackingUDT(lst);
-                status = "S";
-                message = "Material Delivery Updates successfully";
+                if (lst != null)
+                {
+                    new USP_Service(objLoginEntity.ConnectionStringName).SaveDeliveryTrackingUDT(lst);
+                    status = "S";
+                    message = "Material Delivery Updated successfully";
+                }
+                else
+                {
+                    status = "E";
+                    message = "Material Delivery Not Updated";
+                }
             }
-            else
+            catch (Exception ex)
             {
                 status = "E";
-                message = "Please select atleast one record.";
+                message = ex.Message;
             }
             
             var obj = new
             {
-                RecordCount = 0,// lstCurrency.Count,
+                RecordCount = 0,
                 Status = status,
                 Message = message
             };
