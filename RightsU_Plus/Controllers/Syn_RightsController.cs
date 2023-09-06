@@ -312,7 +312,7 @@ namespace RightsU_Plus.Controllers
 
             ViewBag.TreeId = "Rights_Platform";
             ViewBag.PromoterTab = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Promoter_Tab").Select(x => x.Parameter_Value).FirstOrDefault();
-            return View("~/Views/Syn_Deal/_Syn_Rights_View.cshtml", objSyn_Deal_Rights);
+            return PartialView("~/Views/Syn_Deal/_Syn_Rights_View.cshtml", objSyn_Deal_Rights);
         }
         private DateTime CalculateEndDate()
         {
