@@ -649,8 +649,9 @@ namespace RightsU_Plus.Controllers
             System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
             List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
             int DealShowType = lstShowCode.Where(w => w == Deal_Type_Code).Count();
+            string AllowSeasonAddition = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "AddSeasonForTitleTypeProgram" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
 
-            if (DealShowType == 1)
+            if (AllowSeasonAddition == "Y" && DealShowType == 1)
             {
                 bool IsSeasonAdded = true;
                 List<Map_Extended_Columns> CheckSeasonList = new List<Map_Extended_Columns>();
@@ -681,7 +682,7 @@ namespace RightsU_Plus.Controllers
                     }
                 }
 
-                if (lstAddedExtendedColumns.Count == 0 && lstDBExtendedColumns.Count == 0)
+                if (lstAddedExtendedColumns.Count == 0 && lstDBExtendedColumns.Where(w => w.EntityState != State.Deleted).ToList().Count == 0)
                 {
                     IsSeasonAdded = false;
                 }
@@ -1257,7 +1258,23 @@ namespace RightsU_Plus.Controllers
                         obj.IsDelete = "N";
                     }
                 }
-                int? TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
+
+                string isAeroplay = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Import_Movies_Shows").Select(x => x.Parameter_Value).FirstOrDefault();
+
+                int Extended_Group_Code;
+                int? TabCode;
+
+                if (isAeroplay == "N")
+                {
+                    Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && x.Extended_Group_Code == Extended_Group_Code).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+                else
+                {
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+
+
                 int? Row_No = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Map_Extended_Columns_Code == obj.Map_Extended_Columns_Code).Select(x => x.Row_No).FirstOrDefault();
                 obj.Extended_Group_Code = TabCode;
                 obj.Row_No = Row_No;

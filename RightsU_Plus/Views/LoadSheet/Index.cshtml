@@ -378,8 +378,8 @@
                                 $("#imgLoading_" + AL_Load_Sheet_Code).css("display", 'none');
                                 $('.' + SiblingClass).empty();
 
-                                var a = '<a title="Download" class="glyphicon glyphicon-save" onclick="ValidateDownload(' + AL_Load_Sheet_Code + ');" data-original-title="Can not edit this currency as it is deactivated"></a>' +
-                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="OpenBookingsheetPopup("Regenerate",' + AL_Load_Sheet_Code + ',"");"></a>';
+                                var a = '<a title="Download" class="glyphicon glyphicon-save" onclick="ValidateDownload(' + AL_Load_Sheet_Code + ');"></a>' +
+                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" onclick="OpenBookingsheetPopup(\'Regenerate\',' + AL_Load_Sheet_Code + ',\'\');"></a>';
                                 $('.' + SiblingClass).append(a);
 
                                 var status = '<span>Success</span>'
@@ -554,7 +554,7 @@
                             <li id="btnUser">
                                 @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForAdd + "~"))
                                     {*@
-                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0)" />
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="OpenBookingsheetPopup('ADD',0,'')" />
                                 @*}*@
                             </li>
                         </ul>
