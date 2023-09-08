@@ -270,7 +270,8 @@
             }
         });
     }
-    function PopulateAutoCompleteData(masterLogCode, tabName) {
+    function PopulateAutoCompleteData(masterLogCode, tabName, Music_Album) {
+       
         var keyword = $("#txtMappedName_" + masterLogCode).val();
         $("#txtMappedName_" + masterLogCode).autocomplete({
             focus: function () {
@@ -283,7 +284,8 @@
                 $("#hdnMappedCode_" + masterLogCode).val('');
                 var param = {
                     keyword: keyword,
-                    tabName: tabName
+                    tabName: tabName,
+                    Music_Album: Music_Album
                 };
                 $.ajax({
                     url: URL_PopulateAutoCompleteData,
@@ -358,11 +360,12 @@
             var isIgnoreChecked = $(value).find('input[id*="chkIsIgnore_"]').prop('checked');
             var mappedName = $(value).find('input[name="MappedName"]').val();
             var mappedCode = $(value).find('input[name="MappedCode"]').val();
+            var _Music_Album = $(value).find('input[id*="Music_Album_"]').val();
             if (isChecked || isIgnoreChecked)
                 var mappedCode = 0;
 
             lstDM_MasterLog.push({
-                Mapped_Name: mappedName, Mapped_Code: mappedCode, Is_Create_New: isChecked, DM_Master_Log_Code: masterLogCode, IsIgnore: isIgnoreChecked
+                Mapped_Name: mappedName, Mapped_Code: mappedCode, Is_Create_New: isChecked, DM_Master_Log_Code: masterLogCode, IsIgnore: isIgnoreChecked, Music_Album: _Music_Album
             });
         });
         $.each($(tblSystemMappedDta), function (index, value) {
