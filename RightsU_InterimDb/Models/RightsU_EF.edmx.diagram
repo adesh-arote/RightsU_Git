@@ -1103,6 +1103,12 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" />
         <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order_Details" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital" Width="1.5" PointX="37.875" PointY="77.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital_Detail" Width="1.5" PointX="40.125" PointY="77.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

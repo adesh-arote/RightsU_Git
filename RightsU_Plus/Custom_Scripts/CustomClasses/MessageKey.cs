@@ -1495,6 +1495,7 @@ public class MessageKey
     public string DubbingLanguagenotacquired { get; set; }
     public string CombinationalreadySyndicated { get; set; }
     public string Pushback { get; set; }
+    public string MusicDetailsSavedSuccessfully { get; set; }
     #endregion
 
     #region Reports

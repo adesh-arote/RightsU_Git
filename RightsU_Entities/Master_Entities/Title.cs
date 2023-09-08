@@ -60,6 +60,8 @@ namespace RightsU_Entities
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
             this.AL_Recommendation_Content = new HashSet<AL_Recommendation_Content>();
             this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
+            this.Music_Title = new HashSet<Music_Title>();
+            this.Syn_Deal_Digital = new HashSet<Syn_Deal_Digital>();
         }
 
         public State EntityState { get; set; }
@@ -137,5 +139,7 @@ namespace RightsU_Entities
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
         public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
         public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
+        public virtual ICollection<Music_Title> Music_Title { get; set; }
+        public virtual ICollection<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
     }
 }

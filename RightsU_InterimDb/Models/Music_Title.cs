@@ -46,6 +46,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Music_Album_Code { get; set; }
     	    public string Music_Tag { get; set; }
     	    public string Public_Domain { get; set; }
+    	    public Nullable<int> Title_Code { get; set; }
+    	    public string Movie_Album_Type { get; set; }
     
         public virtual ICollection<Acq_Deal_Movie_Music> Acq_Deal_Movie_Music { get; set; }
         public virtual ICollection<Content_Music_Link> Content_Music_Link { get; set; }
@@ -60,5 +62,6 @@ namespace RightsU_InterimDb.Models
         public virtual Music_Type Music_Type1 { get; set; }
         public virtual ICollection<Music_Title_Talent> Music_Title_Talent { get; set; }
         public virtual ICollection<Music_Title_Theme> Music_Title_Theme { get; set; }
+        public virtual Title Title { get; set; }
     }
 }

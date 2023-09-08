@@ -73,6 +73,9 @@
           <QueryParameter Name="@ExactMatch">
             <Value>=Parameters!ExactMatch.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@MovieAlbumType">
+            <Value>=Parameters!MovieAlbumType.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USP_List_Music_Title</CommandText>
@@ -3254,11 +3257,15 @@ WHERE        (Parameter_Name = 'SPN_Music_Version')</CommandText>
       <AllowBlank>true</AllowBlank>
       <Prompt>Public Domain</Prompt>
     </ReportParameter>
+    <ReportParameter Name="MovieAlbumType">
+      <DataType>String</DataType>
+      <Prompt>Movie Album Type</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
       <NumberOfColumns>2</NumberOfColumns>
-      <NumberOfRows>10</NumberOfRows>
+      <NumberOfRows>11</NumberOfRows>
       <CellDefinitions>
         <CellDefinition>
           <ColumnIndex>0</ColumnIndex>
@@ -3359,6 +3366,11 @@ WHERE        (Parameter_Name = 'SPN_Music_Version')</CommandText>
           <ColumnIndex>1</ColumnIndex>
           <RowIndex>9</RowIndex>
           <ParameterName>PublicDomain</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>10</RowIndex>
+          <ParameterName>MovieAlbumType</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

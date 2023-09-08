@@ -1,5 +1,5 @@
 ﻿@using UTOFrameWork.FrameworkClasses
-@model  RightsU_Entities.Supplementary_Tab
+@model  RightsU_Entities.Digital_Tab
 @{
     RightsU_Entities.Deal_Schema objSchema = new RightsU_Entities.Deal_Schema();
 
@@ -14,16 +14,18 @@
     }
 }
 <script type="text/javascript">
-    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Syn_Supplementary")';
-    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Syn_Supplementary")';
-    var URL_BindAllPreReq_Edit = '@Url.Action("supplementaryEdit", "Syn_Supplementary")';
-    var URL_BindAllPreReq_Delete = '@Url.Action("supplementaryDelete", "Syn_Supplementary")';
-    var URL_BindAllPreReq_Dilog = '@Url.Action("supplementaryDialogue", "Syn_Supplementary")';
-    var URL_SaveInSession = '@Url.Action("supplementarySave", "Syn_Supplementary")';
-    var URL_SaveInDB = '@Url.Action("supplementarySaveDB", "Syn_Supplementary")';
-    var URL_supplementaryValidation = '@Url.Action("supplementaryValidation", "Syn_Supplementary")';
-    var URL_BindSupplementary = '@Url.Action("BindSupplementary", "Syn_Supplementary")';
-    var URL_DuplicateValidation = '@Url.Action("supplementaryDupliValidation", "Syn_Supplementary")';
+    var URL_BindAllPreReq_Async = '@Url.Action("BindAllPreReq_Async", "Syn_Digital")';
+    var URL_BindAllPreReq_ChangeTab = '@Url.Action("ChangeTab", "Syn_Digital")';
+    var URL_BindAllPreReq_Edit = '@Url.Action("digitalEdit", "Syn_Digital")';
+    var URL_BindAllPreReq_Delete = '@Url.Action("digitalDelete", "Syn_Digital")';
+    var URL_BindAllPreReq_Dilog = '@Url.Action("digitalDialogue", "Syn_Digital")';
+    var URL_SaveInSession = '@Url.Action("digitalSave", "Syn_Digital")';
+    var URL_SaveInDB = '@Url.Action("digitalSaveDB", "Syn_Digital")';
+    var URL_digitalValidation = '@Url.Action("digitalValidation", "Syn_Digital")';
+    var URL_BindDigital = '@Url.Action("BindDigital", "Syn_Digital")';
+    var URL_DuplicateValidation = '@Url.Action("digitalDupliValidation", "Syn_Digital")';
+    var URL_BindMusicTrack = '@Url.Action("BindMusicTrack", "Syn_Digital")';
+    var URL_BindAllPreReq_inLine = '@Url.Action("digitalinLine", "Syn_Digital")';
 
 </script>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=no" name="viewport">
@@ -37,13 +39,22 @@
         debugger;
         showLoading();
         BindAllPreReq_Async();
-        $('#ddSuppTitle').SumoSelect({ selectAll: true });
+        $('#ddDigiTitle').SumoSelect({ selectAll: true });
         var element = document.getElementById("TabValues");
         element.style.display = "none";
+
+        //$('#ddDigiTitle').change(function () {
+        //    var shortName = $('#TabName').val();
+        //    var wtName = $('#hdnwt' + shortName).val();
+
+        //    if (wtName == "inLine") {
+        //        BindAllPreReq_Async();
+        //    }
+        //})
     });
 
     function initializeReadmore() {
-        $('.SuppRemarks').expander({
+        $('.DigiRemarks').expander({
             slicePoint: 200,
             expandPrefix: '',
             expandText: '...@objMessageKey.readmore',
@@ -62,19 +73,19 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                supplementary_Code: 0,
+                digital_Code: 0,
                 title_code: 0
             }),
             success: function (result) {
                 debugger;
                 $.each(result.Title_List, function () {
                     if (this.Value == result.SelectedTitle) {
-                        $("#ddSuppTitle").append($("<option selected/>").val(this.Value).text(this.Text));
+                        $("#ddDigiTitle").append($("<option selected/>").val(this.Value).text(this.Text));
                     } else {
-                        $("#ddSuppTitle").append($("<option />").val(this.Value).text(this.Text));
+                        $("#ddDigiTitle").append($("<option />").val(this.Value).text(this.Text));
                     }
                 });
-                $("#ddSuppTitle")[0].sumo.reload();
+
                 $('#tabValidity').append(result.Tabs);
                 $('#TabValues').val(result.tabNames);
                 $('#tabTable').append(result.Divs);
@@ -90,9 +101,31 @@
                 if ($('#ViewOperation').val() == "VIEW") {
                     document.getElementById("HideForView").style.display = "none";
                     document.getElementById("btnSaveDeal").style.display = "none";
-                    $('#ddSuppTitle').attr('disabled', true);
+                    $('#ddDigiTitle').attr('disabled', true);
                     $('#txtSynRemarks').attr('disabled', true);
                 }
+
+                $('#hdnSyn_Deal_Digital_Title_Multiselect').val(result.Syn_Deal_Digital_Title_Multiselect);
+                if (result.Syn_Deal_Digital_Title_Multiselect == "Y") {
+                    $("#ddDigiTitle").attr("multiple", "multiple");
+                } else {
+                    $("#ddDigiTitle").removeAttr("multiple")
+                    //$("#ddDigiTitle").prepend($("<option />").val('').text('Select Title'));
+                }
+
+                var wtName = $('#hdnwt' + result.TabName).val();
+                if (wtName == "PopUp") {
+                    if ($('#tbl' + result.TabName + ' >tbody >tr').length > 1) {
+                        $('#ddDigiTitle').attr('disabled', true);
+                    }
+                } else {
+                    if ($('#tbl' + result.TabName + ' >tbody >tr').length > 2) {
+                        $('#ddDigiTitle').attr('disabled', true);
+                    }
+                }
+
+
+                $("#ddDigiTitle")[0].sumo.reload();
 
                 initializeReadmore();
                 hideLoading();
@@ -133,8 +166,16 @@
         hideLoading();
     }
 
-    function SuppButtonEvents() {
-        //debugger;
+    function DigiButtonEvents() {
+        debugger;
+        var ddlTitle_Code = $('#ddDigiTitle').val();
+
+        if (ddlTitle_Code=="0") {
+            showAlert('I', 'Please select Title');
+            hideLoading();
+            return;
+        }
+
         $('#inputValidation').val("true");
         var shortName = $('#TabName').val();
         var wtName = $('#hdnwt' + shortName).val();
@@ -148,7 +189,8 @@
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    supplementary_Code: 0,
+                    title_Code: ddlTitle_Code,
+                    digital_Code: 0,
                     rowno: 0,
                     Short_Name: shortName,
                     num: 0,
@@ -166,7 +208,7 @@
 
                     let drCount2 = parseInt(drCount)
                     for (let i = 1; i <= drCount2; i++) {
-                        var dropdown = "#CMPopup #A" + shortName + "ddSupp" + i;
+                        var dropdown = "#CMPopup #A" + shortName + "ddDigi" + i;
                         $(dropdown).SumoSelect({ selectAll: true });
                     }
 
@@ -175,7 +217,8 @@
         }
         else
         {
-            //debugger;
+            debugger;
+
             var tabValues = $('#TabValues').val();
             var div = document.getElementById('tabValidity').innerHTML;
             let tabArray = tabValues.split(',');
@@ -197,14 +240,25 @@
             let drCount2 = parseInt(drCount)
             for (let i = 1; i <= drCount2; i++) {
                 var div = document.getElementById('tabValidity').innerHTML;
-                var dropdown = "#A" + shortName +"ddSupp" + i;
-                $(dropdown).SumoSelect({ selectAll: true });
+                var dropdown = "#A" + shortName + "ddDigi" + i;
+                if ($(dropdown + ' option').length == 0) {
+                    BindMusicTrackByTitle(ddlTitle_Code, dropdown);
+                } else {
+                    $(dropdown).SumoSelect({ selectAll: true });
+                    $(dropdown)[0].sumo.reload();
+                }
             }
+
+            $('#ddDigiTitle')[0].sumo.disable();
+            //if ($('#tbl' + result.TabName + ' >tbody >tr').length > 2) {
+            //    $('#ddDigiTitle').attr('disabled', true);
+            //}
         }
     }
 
-    function SuppEdit(x, supplementary_Code, rowno, num) {
+    function DigiEdit(x, digital_Code, rowno, num) {
         debugger;
+        var title_Code = $('#ddDigiTitle').val();
         var shortName = $('#TabName').val();
         //var wtName = $('#hdnwt' + shortName).val();
         //if (wtName == "PopUp") {
@@ -243,7 +297,8 @@
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    supplementary_Code: supplementary_Code,
+                    title_Code: title_Code,
+                    digital_Code: digital_Code,
                     rowno: row_no,
                     Short_Name: shortName,
                     num: num,
@@ -261,7 +316,7 @@
 
                     let drCount2 = parseInt(drCount)
                     for (let i = 1; i <= drCount2; i++) {
-                        var dropdown = "#CMPopup #E" + shortName + "ddSupp" + i;
+                        var dropdown = "#CMPopup #E" + shortName + "ddDigi" + i;
                         $(dropdown).SumoSelect({ selectAll: true });
                     }
                 }
@@ -277,7 +332,8 @@
                 enctype: 'multipart/form-data',
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify({
-                    supplementary_Code: supplementary_Code,
+                    title_Code: title_Code,
+                    digital_Code: digital_Code,
                     rowno: row_no,
                     Short_Name: shortName,
                     num: num,
@@ -300,7 +356,7 @@
         let drCount2 = parseInt(drCount)
 
         for (let i = 1; i <= drCount2; i++) {
-            var dropdown = "#E"+ shortName + "ddSupp" + i;
+            var dropdown = "#E"+ shortName + "ddDigi" + i;
             $(dropdown).SumoSelect({ selectAll: true });
         }
 
@@ -327,16 +383,23 @@
         var Table = document.getElementById('tabTable').innerHTML;
         let drCount2 = parseInt(drCount)
         for (let i = 1; i <= drCount2; i++) {
-            var dropdown = "#ddSupp" + shortName + i;
+            var dropdown = "#ddDigi" + shortName + i;
             $(dropdown).SumoSelect({ selectAll: true });
         }
     }
 
-    function SuppDelete(x,supplementary_Code, rowno, i, TabCode, shortName) {
+    function DigiDelete(x,digital_Code, rowno, i, TabCode, shortName) {
         debugger;
         var rwIndex = x.parentNode.parentNode.rowIndex;
         var DShortName = shortName + rwIndex;
         tblName = "#tbl" + shortName;
+        var wtName = $('#hdnwt' + shortName).val();
+
+        if ($('#inputValidation').val() == "true") {
+            showAlert('I', "Please Complete Add Edit Opration");
+            hideLoading();
+            return;
+        }
 
         $(tblName + ' tr').eq(rwIndex).remove();
         //$(tblName + ' tr#' + DShortName).remove();
@@ -347,7 +410,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                supplementary_Code: supplementary_Code,
+                digital_Code: digital_Code,
                 rowno: rowno,
                 TabCode: TabCode
             }),
@@ -355,6 +418,23 @@
             success: function (result) {
                 debugger;
                 //showAlert('I', result.ErrorMsg);
+                if (wtName == "PopUp") {
+                    if ($(tblName + ' >tbody >tr').length > 1) {
+                        //$('#ddDigiTitle').attr('disabled', true);
+                        $('#ddDigiTitle')[0].sumo.disable();
+                    } else {
+                        //$('#ddDigiTitle').attr('disabled', false);
+                        $('#ddDigiTitle')[0].sumo.enable();
+                    }
+                } else {
+                    if ($(tblName + ' >tbody >tr').length > 2) {
+                        //$('#ddDigiTitle').attr('disabled', true);
+                        $('#ddDigiTitle')[0].sumo.disable();
+                    } else {
+                        //$('#ddDigiTitle').attr('disabled', false);
+                        $('#ddDigiTitle')[0].sumo.enable();
+                    }
+                }
 
             }
         });
@@ -362,7 +442,7 @@
     function handleOk() {
         var tabName = $('#hdnTabName').val()
         if ($('#hdnTabName').val() == '')
-            tabName = pageSupplementary;
+            tabName = pageDigital;
 
         BindPartialTabs(tabName);
     }
@@ -372,12 +452,14 @@
         var dvalue = x;
     }
 
-    function hideaddsupp() {
+    function hideadddigi() {
         debugger;
         $('#inputValidation').val("false");
         var shortName = $('#TabName').val();
         var tabValues = $('#TabValues').val();
         let tabArray = tabValues.split(',');
+        var wtName = $('#hdnwt' + shortName).val();
+
         for (let i = 0; i < tabArray.length; i++) {
             var IS_Input_Name = "#add" + tabArray[i];
 
@@ -388,6 +470,24 @@
             else {
                 $(IS_Input_Name).removeClass("active");
                 $(IS_Input_Name).hide();
+            }
+        }
+
+        tblName = "#tbl" + shortName;
+
+        if (wtName == "PopUp") {
+            if ($(tblName + ' >tbody >tr').length > 1) {
+                //$('#ddDigiTitle').attr('disabled', true);
+                $('#ddDigiTitle')[0].sumo.disable();
+            } else {
+                $('#ddDigiTitle')[0].sumo.enable();
+            }
+        } else {
+            if ($(tblName + ' >tbody >tr').length > 2) {
+                //$('#ddDigiTitle').attr('disabled', true);
+                $('#ddDigiTitle')[0].sumo.disable();
+            } else {
+                $('#ddDigiTitle')[0].sumo.enable();
             }
         }
     }
@@ -418,7 +518,7 @@
     //    return success;
     //}
 
-    function SaveSupp(x,rownum)
+    function SaveDigi(x,rownum)
     {
         debugger;
         var rwIndex = x.parentNode.parentNode.rowIndex;
@@ -437,30 +537,60 @@
         FieldList = $('#FieldList').val();
         let FldArray = FieldList.split(',');
         for (let i = 0; i < FldArray.length; i++) {
-            if (FldArray[i].substring(0, 2) == shortName){
+            if (FldArray[i].substring(0, 2) == shortName) {
                 fld = FldArray[i].split("~");
                 var a = "";
                 if (wtName == "PopUp") {
                     a = '#CMPopup #' + operation + fld[0];
+                    if ($(a).is(":radio")) {
+                        a = '#CMPopup input[name="' + operation + fld[0]+'"]:checked';
+                    }
                 } else {
                     a = '#' + operation + fld[0];
+                    if ($(a).is(":radio")) {
+                        a = 'input[name="' + operation + fld[0] + '"]:checked';
+                    }
                 }
 
                 debugger;
-                if ($(a).val() == null || $(a).val() =="''") {
+                if ($(a).val() == null || $(a).val() == "''") {
                     showAlert('I', 'Please enter details');
                     hideLoading();
                     return;
+                } else {
+                    let v = $(a).val().toString();
+                    if ($(a).is("select")) {
+                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                        if ($(a).prop('multiple')) {
+                            $(a)[0].sumo.unSelectAll();
+                        }
+                    }
+                    else
+                        if ($(a).is(":checkbox")) {
+                            if ($(a).is(':checked')) {
+                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                            else {
+                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                        } else if ($(a).is(":radio")) {
+                            if ($(a).val()=='Yes') {
+                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                                //$(a).val('');
+                            }
+                            else {
+                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                                //$(a).val('');
+                            }
+                        }
+                        else {
+                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
                 }
-                let v = $(a).val().toString();
-                if ($(a).is("select")) {
-                    vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
-                    $(a)[0].sumo.unSelectAll();
-                }
-                else {
-                    vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
-                    $(a).val('');
-                }
+
             }
         }
         //if (duplicateValidation(vallist, shortName) ) {
@@ -492,7 +622,7 @@
                     var row = $(result);
                     if (operation == "A") {
                         $(tblName).append(row);
-                        hideaddsupp();
+                        hideadddigi();
                     }
                     if (operation == "E") {
                         row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
@@ -507,6 +637,22 @@
                 else {
                     showAlert('I', 'Duplicate Value Not allowed');
                 }
+
+                if (wtName == "PopUp") {
+                    if ($(tblName + ' >tbody >tr').length > 1) {
+                        //$('#ddDigiTitle').attr('disabled', true);
+                        $('#ddDigiTitle')[0].sumo.disable();
+                    } else {
+                        $('#ddDigiTitle')[0].sumo.enable();
+                    }
+                } else {
+                    if ($(tblName + ' >tbody >tr').length > 2) {
+                        //$('#ddDigiTitle').attr('disabled', true);
+                        $('#ddDigiTitle')[0].sumo.disable();
+                    } else {
+                        $('#ddDigiTitle')[0].sumo.enable();
+                    }
+                }
             }
         });
 
@@ -515,23 +661,23 @@
             hideLoading();
     }
 
-    function Cancel_Supplementary() {
+    function Cancel_Digital() {
         debugger;
         if (document.getElementById("btnSaveDeal").style.display != "none")
             showAlert('I', '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead', 'OKCANCEL');
         else {
             var tabName = $('#hdnTabName').val()
             if ($('#hdnTabName').val() == '')
-                tabName = pageSupplementary;
+                tabName = pageDigital;
 
             BindPartialTabs(tabName);
         }
     }
 
-    function Cancel_SupplementaryView() {
-        BindPartialTabs("SUPP");
+    function Cancel_DigitalView() {
+        BindPartialTabs("DIGI");
     }
-    function SuppSave()
+    function DigiSave()
     {
         showLoading();
         debugger;
@@ -546,13 +692,13 @@
             hideLoading();
             return;
         }
-        if ($('#ddSuppTitle').val == "")
+        if ($('#ddDigiTitle').val() == "0")
         {
-            showAlert('I', '@objMessageKey.Selecttitletosearch');
+            showAlert('I', 'Title not selected');
             return;
         }
-        if ($('#ddSuppTitle').val() != null) {
-            var title = $('#ddSuppTitle').val().toString();
+        if ($('#ddDigiTitle').val() != null) {
+            var title = $('#ddDigiTitle').val().toString();
         }
 
         else {
@@ -565,7 +711,7 @@
         $.ajax({
             type: "POST",
             async: false,
-            url: URL_supplementaryValidation,
+            url: URL_digitalValidation,
             traditional: true,
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
@@ -575,7 +721,7 @@
         });
 
         if (detailsCnt < 1) {
-            showAlert('I', "Please add supplementary details to save.");
+            showAlert('I', "Please add Music details to save.");
             hideLoading();
             return;
         }
@@ -602,7 +748,7 @@
             success: function (result) {
                 debugger;
                 if(result.ErrorCode == "100")
-                    showAlert('I', '@objMessageKey.SupplementaryDetailssavedsuccesfully','OK');
+                    showAlert('I', '@objMessageKey.MusicDetailsSavedSuccessfully','OK');
                 else
                     showAlert('I', '@objMessageKey.CouldNotsavedRecord', 'OK');
 
@@ -623,6 +769,40 @@
     //    $('.charNum').text(val.value.length.toString() + '/' + max.toString());
     //}
 
+    function BindMusicTrackByTitle(title_Code,dropdown) {
+        debugger;
+
+        var shortName = $('#TabName').val();
+        var isMultiple = $(dropdown).prop('multiple');
+            $.ajax({
+                type: "POST",
+                url: URL_BindMusicTrack,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    title_Code: title_Code,
+                    multiple: isMultiple
+                }),
+                success: function (result) {
+                    debugger;
+                    $.each(result.Music_Title_List, function () {
+                        //if
+                        //(this.Value == result.SelectedMusic) {
+                        //    $(dropdown).append($("<option selected/>").val(this.Value).text(this.Text));
+                        //} else
+                        //{
+                        //    $(dropdown).append($("<option />").val(this.Value).text(this.Text));
+                        //}
+                        $(dropdown).append($("<option />").val(this.Value).text(this.Text));
+                    });
+
+                    $(dropdown).SumoSelect({ selectAll: true });
+                    $(dropdown)[0].sumo.reload();
+                }
+            });
+    }
+
 </script>
 <style type="text/css">
     .SumoSelect, #divlbTitles, #divCountry, #lbTitles, #lbTerritory {
@@ -641,6 +821,7 @@
 <input type="hidden" id="hdnTabName" name="hdnTabName" />
 <input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
 <input type="hidden" id="hdnPageSize" name="hdnPageSize" />
+<input type="hidden" id="hdnSyn_Deal_Digital_Title_Multiselect" name="hdnSyn_Deal_Digital_Title_Multiselect" />
 @*<input type="hidden" id="Operation" />*@
 <div class="grid_area">
     <div class="navigation_tabs">
@@ -651,14 +832,14 @@
                         <div class="dotted_border">
                             <label class="bold">@objMessageKey.Titles</label>
                             <div id="divddlPTitle">
-                                <select id="ddSuppTitle" name="ddSuppTitle" multiple="multiple"></select>
+                                <select id="ddDigiTitle" name="ddDigiTitle" multiple="multiple"></select>
                             </div>
                             <br>
                         </div>
                         <br>
                         <label class="bold">@objMessageKey.SpecialDetails</label>
 
-                        <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="SuppButtonEvents()"></a>
+                        <a class="glyphicon glyphicon-plus pull-right" id="HideForView" style="margin-top: 20px;" onclick="DigiButtonEvents()"></a>
 
                         <div class="scale_table_block">
                             <div id="tabValidity" class="tabbable">
@@ -686,10 +867,10 @@
                 <div class="bottom_action">
                     <ul class="form_link_nav clearfix">
                         <li>
-                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return SuppSave();">
+                            <input type="submit" id="btnSaveDeal" class="btn btn-primary" value="@objMessageKey.Save" onclick="ClearHidden(); return DigiSave();">
                         </li>
                         <li>
-                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Supplementary();" />
+                            <input type="button" id="btnCancelDeal" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="return Cancel_Digital();" />
                         </li>
                     </ul>
                 </div>
@@ -707,7 +888,7 @@
                         <span>×</span>
                         <span class="sr-only">Close</span>
                     </a>
-                    <h2>@objMessageKey.AddCommitments</h2>
+                    <h2>@objMessageKey.Add @objMessageKey.MusicTrack @objMessageKey.Detail</h2>
                 </div>
                 <div class="modal_block" style="padding: 17px;">
                     <div id="CMPopup"></div>

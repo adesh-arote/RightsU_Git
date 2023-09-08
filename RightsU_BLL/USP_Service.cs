@@ -821,10 +821,10 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Syn_Termination_UDT(lstTermination_Deals_UDT, loginUserCode);
         }
-        public virtual ObjectResult<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string ExactMatch = "")
+        public virtual ObjectResult<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string ExactMatch = "", string movieAlbumType = "")
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_List_Music_Title(musicTitleName, sysLanguageCode, pageNo, recordCount, isPaging, pageSize, starCastCode, languageCode, albumCode, genresCode, musicLabelCode, yearOfRelease, singerCode, composerCode, lyricistCode, musicNameText, themeCode, musicTag, publicDomain, ExactMatch);
+            return objUSPDAL.USP_List_Music_Title(musicTitleName, sysLanguageCode, pageNo, recordCount, isPaging, pageSize, starCastCode, languageCode, albumCode, genresCode, musicLabelCode, yearOfRelease, singerCode, composerCode, lyricistCode, musicNameText, themeCode, musicTag, publicDomain, ExactMatch, movieAlbumType);
         }
         //public virtual ObjectResult<USP_Get_Title_Avail_Language_Data_Result> USP_Get_Title_Avail_Language_Data(string mode, Nullable<int> userCode, string strCriteria, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, string visibility, string Report_Name, string Right_Level)
         //{
@@ -1850,6 +1850,32 @@ namespace RightsU_BLL
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USPAL_GetRevisionHistoryForModule(record_Code, module_Code);
+        }
+
+        public virtual ObjectResult<USP_Syn_Deal_Digital_List_Result> USP_Syn_Deal_Digital_List(Nullable<int> syn_Deal_Code, string title_Code, int pageNo, int pagesize, ObjectParameter recordCount)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Syn_Deal_Digital_List(syn_Deal_Code, title_Code, pageNo, pagesize, recordCount);
+        }
+        public virtual ObjectResult<USP_Get_Title_For_Syn_Digital_Result> USP_Get_Title_For_Syn_Digital(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Get_Title_For_Syn_Digital(syn_Deal_Code, title_Code);
+        }
+        public virtual ObjectResult<USP_Syn_Deal_Digital_Details_Data_Result> USP_Syn_Deal_Digital_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Digital_Code, string view)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Syn_Deal_Digital_Details_Data(tabCode, syn_Deal_Digital_Code, view);
+        }
+        public virtual ObjectResult<USP_Get_Digital_Config_Result> USP_Get_Digital_Config(Nullable<int> digital_Tab_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Get_Digital_Config(digital_Tab_Code);
+        }
+        public virtual int USP_Delete_Syn_Digital(Nullable<int> digital_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Delete_Syn_Digital(digital_Code);
         }
     }
 }
