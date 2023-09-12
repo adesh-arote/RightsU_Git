@@ -111,6 +111,7 @@
     <Report Include="rptSyndication_Deal_List.rdl" />
     <Report Include="rptSyndication_Query.rdl" />
     <Report Include="rptSyndication_Sales.rdl" />
+    <Report Include="rptSynDigitalAvailExcel.rdl" />
     <Report Include="rptTheatrical_Availability.rdl" />
     <Report Include="rptTitleDetailsReport.rdl" />
     <Report Include="rptTitleList.rdl" />
