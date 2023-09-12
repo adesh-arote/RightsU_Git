@@ -231,7 +231,7 @@
     function AutoCompleteMovieAlbum(keyword) {
         debugger;
         var keyword = $("#txtmusicAlbum").val();
-        var MovieAlbumType = $("input[name='Movie_Album_Type']:checked").val();
+        var MovieAlbumType = $("input[name='Create_Movie_Album_Type']:checked").val();
         $("#txtmusicAlbum").autocomplete({
             focus: function () {
                 return false;
@@ -295,7 +295,7 @@
 
     function SwitchMovieAlbumType() {
         debugger;
-        var MovieAlbumTypeVal = $('input[name="Movie_Album_Type"]:checked').val();
+        var MovieAlbumTypeVal = $('input[name="Create_Movie_Album_Type"]:checked').val();
         $('#txtmusicAlbum').val('');
         $('#hdnMovieAlbumCode').val('');
 
@@ -348,12 +348,12 @@
                             <li>
                                 <label>@objMessageKey.Movie/@objMessageKey.Album Type</label>
                                 <br />
-                                <input type="radio" name="Movie_Album_Type" id="rdbMovie" value="M" style="width:20px" checked onclick="SwitchMovieAlbumType();" />
-                                <label for="rdbMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
-                                <input type="radio" name="Movie_Album_Type" id="rdbShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType();" />
-                                <label for="rdbShow" style="vertical-align:2px">@objMessageKey.Show</label>
-                                <input type="radio" name="Movie_Album_Type" id="rdbAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType();" />
-                                <label for="rdbAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddMovie" value="M" style="width:20px" checked onclick="SwitchMovieAlbumType();" />
+                                <label for="rdbAddMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
+                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType();" />
+                                <label for="rdbAddShow" style="vertical-align:2px">@objMessageKey.Show</label>
+                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType();" />
+                                <label for="rdbAddAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
                             </li>
                             <li>
                                 <label> Music Movie / Album </label>

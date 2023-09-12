@@ -116,7 +116,14 @@
             }
         });
     }
-
+    function handleOk() {
+        debugger;
+        if ($('#hdn_Command_Name').val() != undefined && $('#hdn_Command_Name').val() != '' && $('#hdn_Command_Name').val() == "DELETE") {
+            showLoading();
+            var obj = $('#hdnDigital_Code').val();
+            Delete(obj);
+        }
+    }
     function Edit(Digital_code, title_code,View) {
         debugger;
         var page_index = $('#hdnCurrentPageNo').val();
@@ -151,8 +158,14 @@
             }
         });
     }
+    function ValidateDelete(Digitalcode) {
+        $('#hdnDigital_Code').val(Digitalcode);
+        $('#hdn_Command_Name').val('DELETE');
+        showAlert('I', '@objMessageKey.Areyousurewanttodeletethismusic', 'OKCANCEL');
+    }
     function Delete(Digitalcode) {
         debugger;
+        
         var page_index = $('#hdnCurrentPageNo').val();
         var page_size = $('#txtPageSize').val();
 
@@ -288,6 +301,8 @@
 <input type="hidden" id="hdnTabName" name="hdnTabName" />
 <input type="hidden" id="hdnCurrentPageNo" name="hdnCurrentPageNo" />
 <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" />
+<input type="hidden" id="hdnDigital_Code" name="hdnDigital_Code" />
+<input type="hidden" id="hdn_Command_Name" name="hdn_Command_Name" />
 
 <div class="grid_area">
     <div class="navigation_tabs">

@@ -79,6 +79,13 @@ namespace RightsU_BLL
             set { this._RunPlatformCodes_Reference = value; }
         }
 
+        private string[] _MusicPlatformCodes_Reference;
+        public string[] MusicPlatformCodes_Reference
+        {
+            get { return this._MusicPlatformCodes_Reference; }
+            set { this._MusicPlatformCodes_Reference = value; }
+        }
+
         private string[] _BudgetPlatformCodes_Reference;
         public string[] BudgetPlatformCodes_Reference
         {
@@ -212,6 +219,11 @@ namespace RightsU_BLL
                             {
                                 referenceIn.Add("Run");
                             }
+                        //if (MusicPlatformCodes_Reference != null)
+                        //    if (MusicPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
+                        //    {
+                        //        referenceIn.Add("Music");
+                        //    }
 
                         if (BudgetPlatformCodes_Reference != null)
                             if (BudgetPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
@@ -398,6 +410,11 @@ namespace RightsU_BLL
                         {
                             referenceIn.Add("Run");
                         }
+                    //if (MusicPlatformCodes_Reference != null)
+                    //    if (MusicPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
+                    //    {
+                    //        referenceIn.Add("Music");
+                    //    }
                     if (BudgetPlatformCodes_Reference != null)
                         if (BudgetPlatformCodes_Reference.Where(x => x == Convert.ToString(objPlatform.Platform_Code)).Count() > 0)
                         {

@@ -1395,7 +1395,7 @@ WHERE        (Parameter_Name = 'SPN_Music_Version')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Movie_Album_Type.Value = "M","Movie","Album")</Value>
+                                  <Value>=Fields!Movie_Album_Type.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -2839,7 +2839,7 @@ WHERE        (Parameter_Name = 'SPN_Music_Version')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Fields!Movie_Album_Type.Value = "M","Movie","Album")</Value>
+                                  <Value>=Fields!Movie_Album_Type.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -3259,6 +3259,7 @@ WHERE        (Parameter_Name = 'SPN_Music_Version')</CommandText>
     </ReportParameter>
     <ReportParameter Name="MovieAlbumType">
       <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
       <Prompt>Movie Album Type</Prompt>
     </ReportParameter>
   </ReportParameters>

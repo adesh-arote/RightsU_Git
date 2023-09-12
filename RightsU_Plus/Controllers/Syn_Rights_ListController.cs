@@ -433,6 +433,45 @@ namespace RightsU_Plus.Controllers
             }
             return "";
         }
+        private string Validate_Right_For_Music(int RCode, int TCode, int EP_From, int EP_To, int PCode)
+        {
+            Syn_Deal_Rights objR = objSyn_Deal.Syn_Deal_Rights.Where(w => w.Syn_Deal_Rights_Code == RCode).FirstOrDefault();
+            if (objR != null)
+            {
+                int count = 0;
+                EP_From = EP_From == 0 ? 1 : EP_From;
+                EP_To = EP_To == 0 ? 1 : EP_To;
+
+                string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Syn_Deal_RightsInSongs_Codes").Select(x => x.Parameter_Value).FirstOrDefault();
+                var arrMusic = strMusicPlatform.Split(',');
+
+                List<string> lstPlatformCode = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => arrMusic.Contains(p.Platform_Code.ToString())).Where(w => (w.Platform_Code == PCode) || (PCode == 0)).Select(p => p.Platform_Code.ToString()).ToList();
+                int platformcount = objR.Syn_Deal_Rights_Platform.Where(w => lstPlatformCode.Contains(w.Platform_Code.ToString()) && w.EntityState != State.Deleted).Count();
+                if (platformcount > 0)
+                {
+                    if (TCode > 0 || PCode > 0)
+                    {
+                        List<int> lstTitlecode = (from objMusic in objSyn_Deal.Syn_Deal_Digital
+                                                  where objMusic.Syn_Deal_Code == objDeal_Schema.Deal_Code && ((objMusic.Title_code == TCode && objMusic.Episode_From == EP_From && objMusic.Episode_To == EP_To) || (TCode == 0))
+                                                  select objMusic.Title_code.Value).ToList();
+                        count = objR.Syn_Deal_Rights_Title.Where(t => lstTitlecode.Contains(t.Title_Code.Value)).Count();
+                        if (count > 0)
+                            return objMessageKey.Youcannotdeletethisrightasthisrighthasmusicassociatedwithit;
+                    }
+                    else
+                    {
+                        List<int> lstTitlecode = (from objMusic in objSyn_Deal.Syn_Deal_Digital
+                                                  from objRightTitle in objR.Syn_Deal_Rights_Title
+                                                  where objMusic.Syn_Deal_Code == objDeal_Schema.Deal_Code && ((objMusic.Title_code == objRightTitle.Title_Code && objMusic.Episode_From == objRightTitle.Episode_From && objMusic.Episode_To == objRightTitle.Episode_To))
+                                                  select objMusic.Title_code.Value).ToList();
+                        count = objR.Syn_Deal_Rights_Title.Where(t => lstTitlecode.Contains(t.Title_Code.Value)).Count();
+                        if (count > 0)
+                            return objMessageKey.Youcannotdeletethisrightasthisrighthasmusicassociatedwithit;
+                    }
+                }
+            }
+            return "";
+        }
         public JsonResult DeleteRight(string RightCode, string DealCode, string TitleCode, string PlatformCode, string EpisodeFrom, string EpisodeTo, string ViewType)
         {
             DPlatformCode = "D";
@@ -461,11 +500,12 @@ namespace RightsU_Plus.Controllers
                 int Episode_To = Convert.ToInt32(EpisodeTo);
                 int Platform_Code = 0;
                 IS_Syn_Autopush = new USP_Service(objLoginEntity.ConnectionStringName).USP_Syn_Rights_Autopush_Delete_Validation(Right_Code).FirstOrDefault();
-                string Validate_Msg = "";
+                string Validate_Msg = "", Validate_Music_Msg = "";
                 if (ViewType == "D")
                     Platform_Code = Convert.ToInt32(PlatformCode);
                 Validate_Msg = Validate_Right_For_Run_Def(Right_Code, Title_Code, Episode_From, Episode_To, Platform_Code);
-                if (Validate_Msg == "")
+                Validate_Music_Msg = Validate_Right_For_Music(Right_Code, Title_Code, Episode_From, Episode_To, Platform_Code);
+                if (Validate_Msg == "" && Validate_Music_Msg == "")
                 {
 
                     bool IsSameAsGroup = false;
@@ -542,7 +582,14 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    Result = Validate_Msg;
+                    if (!string.IsNullOrEmpty(Validate_Msg))
+                    {
+                        Result = Validate_Msg;
+                    }
+                    else if (!string.IsNullOrEmpty(Validate_Music_Msg))
+                    {
+                        Result = Validate_Music_Msg;
+                    }
                     ShowErrorFlag = "E";
                 }
             }

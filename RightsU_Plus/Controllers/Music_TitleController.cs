@@ -1207,7 +1207,7 @@ namespace RightsU_Plus.Controllers
             string mimeType;
             string[] streams;
             Warning[] warnings;
-            ReportParameter[] parm = new ReportParameter[20];
+            ReportParameter[] parm = new ReportParameter[21];
             int pageSize = 10;
             USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
@@ -1221,7 +1221,7 @@ namespace RightsU_Plus.Controllers
             if (objPage_Properties.StarCastCodes_Search == null && objPage_Properties.LanguagesCodes_Search == null
                 && objPage_Properties.AlbumsCodes_Search == null && objPage_Properties.GenresCodes_Search == null && objPage_Properties.MusicLabelCodes_Search == null &&
                objPage_Properties.YearOfRelease == null && objPage_Properties.SingerCodes_Search == null && objPage_Properties.ComposerCodes_Search == null &&
-                objPage_Properties.LyricistCodes_Search == null && objPage_Properties.MusicTitleName_Search == null && objPage_Properties.ThemeCodes_Search == null && objPage_Properties.Public_Domain == null)
+                objPage_Properties.LyricistCodes_Search == null && objPage_Properties.MusicTitleName_Search == null && objPage_Properties.ThemeCodes_Search == null && objPage_Properties.Public_Domain == null && objPage_Properties.Movie_Album_Type == null)
             {
                 objPage_Properties.StarCastCodes_Search = "";
                 objPage_Properties.LanguagesCodes_Search = "";
@@ -1235,6 +1235,7 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.MusicTitleName_Search = "";
                 objPage_Properties.ThemeCodes_Search = "";
                 objPage_Properties.Public_Domain = "";
+                objPage_Properties.Movie_Album_Type = "";
             }
             if (objPage_Properties.Music_Tag_Search == null)
                 objPage_Properties.Music_Tag_Search = "";
@@ -1280,6 +1281,7 @@ namespace RightsU_Plus.Controllers
             parm[17] = new ReportParameter("MusicTag", objPage_Properties.Music_Tag_Search);
             parm[18] = new ReportParameter("ExactMatch", ExactMatchStr);
             parm[19] = new ReportParameter("PublicDomain", objPage_Properties.Public_Domain);
+            parm[20] = new ReportParameter("MovieAlbumType", objPage_Properties.Movie_Album_Type);
             ReportCredential();
             ReportViewer1.ServerReport.ReportPath = string.Empty;
             if (ReportViewer1.ServerReport.ReportPath == "")

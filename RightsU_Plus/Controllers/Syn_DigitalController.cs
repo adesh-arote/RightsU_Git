@@ -135,7 +135,7 @@ namespace RightsU_Plus.Controllers
                 }
                 if (objDeal_Schema.Mode != "V" && objDeal_Schema.Mode != "APRV")
                 {
-                    strList = strList + "<TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(Syn_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'');\" ></a><a title=\"VIEW\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(Syn_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"Delete(" + Convert.ToString(Syn_Deal_Digital_Code) + ',' + Convert.ToString(Title_Code) + ");\"></a></TD></Tr>";
+                    strList = strList + "<TD><a title=\"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"Edit(" + Convert.ToString(Syn_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'');\" ></a><a title=\"VIEW\" class=\"glyphicon glyphicon-eye-open\" onclick=\"Edit(" + Convert.ToString(Syn_Deal_Digital_Code) + "," + Convert.ToString(Title_Code) + ",'VIEW');\" ></a><a title=\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"ValidateDelete(" + Convert.ToString(Syn_Deal_Digital_Code) + ',' + Convert.ToString(Title_Code) + ");\"></a></TD></Tr>";
                 }
                 else
                 {
