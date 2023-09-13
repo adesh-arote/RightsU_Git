@@ -91,6 +91,7 @@
     <Report Include="rptMovie_Availability_V18_Demo.rdl" />
     <Report Include="rptMovie_Availability_V18_Indiacast.rdl" />
     <Report Include="rptMusicAiring.rdl" />
+    <Report Include="rptMusicAvailability.rdl" />
     <Report Include="rptMusicDealList.rdl" />
     <Report Include="rptMusicLabelConsumption.rdl" />
     <Report Include="rptMusicTrackAudit.rdl" />
@@ -111,7 +112,6 @@
     <Report Include="rptSyndication_Deal_List.rdl" />
     <Report Include="rptSyndication_Query.rdl" />
     <Report Include="rptSyndication_Sales.rdl" />
-    <Report Include="rptSynDigitalAvailExcel.rdl" />
     <Report Include="rptTheatrical_Availability.rdl" />
     <Report Include="rptTitleDetailsReport.rdl" />
     <Report Include="rptTitleList.rdl" />

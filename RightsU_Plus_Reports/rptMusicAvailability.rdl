@@ -25,7 +25,7 @@
           </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
-        <CommandText>USP_Syn_Digital_Avail_Excel_Report</CommandText>
+        <CommandText>USP_Music_Availability_Report</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
