@@ -25,28 +25,28 @@
           </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
-        <CommandText>usp_syn_digital_Avail_Excel_Report</CommandText>
+        <CommandText>USP_Syn_Digital_Avail_Excel_Report</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
-        <Field Name="AgreementNo">
-          <DataField>AgreementNo</DataField>
+        <Field Name="Agreement_No">
+          <DataField>Agreement_No</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Title">
           <DataField>Title</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="MusicLabel">
-          <DataField>MusicLabel</DataField>
+        <Field Name="Music_Label">
+          <DataField>Music_Label</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="MusicTrack">
-          <DataField>MusicTrack</DataField>
+        <Field Name="Music_Track">
+          <DataField>Music_Track</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="AvailableForExcel">
-          <DataField>AvailableForExcel</DataField>
+        <Field Name="Available_For_Excel">
+          <DataField>Available_For_Excel</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="Remark">
@@ -405,14 +405,14 @@ No</Value>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="AgreementNo">
+                        <Textbox Name="Agreement_No">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AgreementNo.Value</Value>
+                                  <Value>=Fields!Agreement_No.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -422,7 +422,7 @@ No</Value>
                               <Style />
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>AgreementNo</rd:DefaultName>
+                          <rd:DefaultName>Agreement_No</rd:DefaultName>
                           <Style>
                             <Border>
                               <Color>LightGrey</Color>
@@ -482,7 +482,7 @@ No</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!MusicLabel.Value</Value>
+                                  <Value>=Fields!Music_Label.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -517,7 +517,7 @@ No</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!MusicTrack.Value</Value>
+                                  <Value>=Fields!Music_Track.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -552,7 +552,7 @@ No</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!AvailableForExcel.Value</Value>
+                                  <Value>=Fields!Available_For_Excel.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -720,7 +720,7 @@ No</Value>
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
-            <Height>0.58917in</Height>
+            <Height>0.58916in</Height>
             <Width>8in</Width>
             <Style />
           </Tablix>
