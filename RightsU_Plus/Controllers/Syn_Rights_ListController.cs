@@ -442,7 +442,7 @@ namespace RightsU_Plus.Controllers
                 EP_From = EP_From == 0 ? 1 : EP_From;
                 EP_To = EP_To == 0 ? 1 : EP_To;
 
-                string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Syn_Deal_RightsInSongs_Codes").Select(x => x.Parameter_Value).FirstOrDefault();
+                string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Platform_RightsInSongs_Codes").Select(x => x.Parameter_Value).FirstOrDefault();
                 var arrMusic = strMusicPlatform.Split(',');
 
                 List<string> lstPlatformCode = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => arrMusic.Contains(p.Platform_Code.ToString())).Where(w => (w.Platform_Code == PCode) || (PCode == 0)).Select(p => p.Platform_Code.ToString()).ToList();

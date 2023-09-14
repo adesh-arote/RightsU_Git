@@ -1026,7 +1026,7 @@ namespace RightsU_Plus.Controllers
                     {
                         int[] selectedCodes = Array.ConvertAll(strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries), s => int.Parse(s));
 
-                        string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Syn_Deal_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
+                        string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Platform_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
                         int[] platformCodes = Array.ConvertAll(strMusicPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries), s => int.Parse(s));
 
                         objPTV.MusicPlatformCodes_Reference = platformCodes.Intersect(selectedCodes).ToArray().Select(x => x.ToString()).ToArray();
@@ -1418,7 +1418,7 @@ namespace RightsU_Plus.Controllers
 
             #region Music
 
-            string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Syn_Deal_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
+            string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Platform_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
             List<string> MusicplatformCodes = strMusicPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             int platMusicformcount = (from s in MusicplatformCodes
