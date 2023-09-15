@@ -1,13 +1,13 @@
 ﻿@model List<RightsU_Entities.USP_Bind_Extend_Column_Grid_Result>
 @using UTOFrameWork.FrameworkClasses;
-           @{
-               MessageKey objMessageKey = new MessageKey();
-               if (Session["objMessageKey"] != null)
-               {
-                   objMessageKey = (MessageKey)Session["objMessageKey"];
-               }     
-           }
-               <script type="text/javascript">
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<script type="text/javascript">
     var ExtendedColumnCode = "";
     var isDefinedValue = "";
     //function Cancel(Type,RowNum)
@@ -44,7 +44,7 @@
             confirmed = true;
             DeleteExtended(dummyobj);
         }
-        if ($('#hdnMainConfirmationtype').val() == 'talent') {
+        else if ($('#hdnMainConfirmationtype').val() == 'talent') {
             if ($("#hdnConfirmationtype").val() == 'talent') {
                 ValidateSave('validate');
             }
@@ -53,6 +53,43 @@
                 URL = URL.replace("amp;", "");
                 URL = URL.replace("amp;", "");
                 window.location.href = URL;
+            }
+        }
+        else if ($('#hdnMainConfirmationtype').val() == ''){
+            if (Command_Name == "TITLE_RELEASE_DELETE") {
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("DeleteTitleRelease", "Title")',
+                    data: { Title_Release_Code: TitleReleaseCode },
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                showAlert('I', result.Message);
+                                var pageNo = $('#hdnPageNo').val();
+                                BindTitleList(pageNo);
+                                calculatePublicDomain();
+                            }
+                            else {
+                                showAlert('E', result.Message);
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                    }
+                });
+            }
+            else if ($("#hdnConfirmationtype").val() == 'talent') {
+                ValidateSave('validate');
+            }
+            else {
+                var obj = $('#hdnCurrentID').val();
+                var imgDelete = document.getElementById("imgDelete_" + obj);
+                SaveExtended(imgDelete);
             }
         }
     }
@@ -1024,6 +1061,7 @@
                     $("#hdnRowNum").val('');
                     $("#hdnIsRowEdit").val('');
                     $("#hdnName").val('');
+                    $('#hdnMainConfirmationtype').val('');
                 }
                 //$('table#tbl_Additional_Fileds tr').each(function(){
                 //    if($(this).children('td:empty').length === $(this).children('td').length){
@@ -1492,7 +1530,7 @@
         //collapseTimer: 0,  // re-collapses after 5 seconds; default is 0, so no re-collapsing
     });
 
-               </script>
+</script>
 <style>
     .title_custom_fields {
         border-bottom: 1px dotted;
@@ -1523,7 +1561,7 @@
         bottom: 40px;
     }*/
 </style>
-@{ 
+@{
     string textalignlast = "";
     if (objMessageKey.LayoutDirection == "RTL")
     {
@@ -1569,54 +1607,54 @@
                     foreach (var item in Model)
                     {
                         counter += 1;
-            <tr id="@("trGrid_"+counter)" data-configitem = "@item.Extended_Group_Code">
-                @*<td id="@counter"+"_tdFirst">*@
-                <td id="@("tdFirst_"+counter)">
+                        <tr id="@("trGrid_"+counter)" data-configitem="@item.Extended_Group_Code">
+                            @*<td id="@counter"+"_tdFirst">*@
+                            <td id="@("tdFirst_"+counter)">
 
-                    @Html.Hidden("hdnExtendedColumnName", item.Columns_Name, new { id = counter + "_hdnExtendedColumnName" })
-                    @Html.Hidden("hdnExtendedColumnsCode", item.Columns_Code, new { id = counter + "_hdnExtendedColumnsCode" })
-                    @Html.Hidden("hdnControlType", item.Control_Type, new { id = counter + "_hdnControlType" })
-                    @Html.Hidden("hdnIsRef", item.Is_Ref, new { id = counter + "_hdnIsRef" })
-                    @Html.Hidden("hdnIsDefined_Values", item.Is_Defined_Values, new { id = counter + "_hdnIsDefined_Values" })
-                    @Html.Hidden("hdnIsMultipleSelect", item.Is_Multiple_Select, new { id = counter + "_hdnIsMultipleSelect" })
-                    @Html.Hidden("hdnRefTable", item.Ref_Table, new { id = counter + "_hdnRefTable" })
-                    @Html.Hidden("hdnRefDisplayField", item.Ref_Display_Field, new { id = counter + "_hdnRefDisplayField" })
-                    @Html.Hidden("hdnRefValueField", item.Ref_Value_Field, new { id = counter + "_hdnRefValueField" })
-                    @Html.Hidden("hdnMECColumnsValueCode", item.Columns_Value_Code, new { id = counter + "_hdnMECColumnsValueCode" })
-                    @Html.Hidden("hdnMECDColumnsValueCode", item.Columns_Value_Code1, new { id = counter + "_hdnMECDColumnsValueCode" })
-                    @Html.Hidden("hdnMEColumnCode", item.Map_Extended_Columns_Code, new { id = counter + "_hdnMEColumnCode" })
-                    @Html.Hidden("_hdnColumnValueCode", new { id = counter + "_hdnColumnValueCode" })
-                    @Html.Hidden("hdnExtendedColumnValue", item.Column_Value, new { id = counter + "_hdnExtendedColumnValue" })
-                    @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
-                    @*@Html.Hidden("hdnIsOnScreen", item., new { id = counter + "_hdnIsDelete" })
-                    hdnIsOnScreen*@
+                                @Html.Hidden("hdnExtendedColumnName", item.Columns_Name, new { id = counter + "_hdnExtendedColumnName" })
+                                @Html.Hidden("hdnExtendedColumnsCode", item.Columns_Code, new { id = counter + "_hdnExtendedColumnsCode" })
+                                @Html.Hidden("hdnControlType", item.Control_Type, new { id = counter + "_hdnControlType" })
+                                @Html.Hidden("hdnIsRef", item.Is_Ref, new { id = counter + "_hdnIsRef" })
+                                @Html.Hidden("hdnIsDefined_Values", item.Is_Defined_Values, new { id = counter + "_hdnIsDefined_Values" })
+                                @Html.Hidden("hdnIsMultipleSelect", item.Is_Multiple_Select, new { id = counter + "_hdnIsMultipleSelect" })
+                                @Html.Hidden("hdnRefTable", item.Ref_Table, new { id = counter + "_hdnRefTable" })
+                                @Html.Hidden("hdnRefDisplayField", item.Ref_Display_Field, new { id = counter + "_hdnRefDisplayField" })
+                                @Html.Hidden("hdnRefValueField", item.Ref_Value_Field, new { id = counter + "_hdnRefValueField" })
+                                @Html.Hidden("hdnMECColumnsValueCode", item.Columns_Value_Code, new { id = counter + "_hdnMECColumnsValueCode" })
+                                @Html.Hidden("hdnMECDColumnsValueCode", item.Columns_Value_Code1, new { id = counter + "_hdnMECDColumnsValueCode" })
+                                @Html.Hidden("hdnMEColumnCode", item.Map_Extended_Columns_Code, new { id = counter + "_hdnMEColumnCode" })
+                                @Html.Hidden("_hdnColumnValueCode", new { id = counter + "_hdnColumnValueCode" })
+                                @Html.Hidden("hdnExtendedColumnValue", item.Column_Value, new { id = counter + "_hdnExtendedColumnValue" })
+                                @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
+                                @*@Html.Hidden("hdnIsOnScreen", item., new { id = counter + "_hdnIsDelete" })
+                                    hdnIsOnScreen*@
 
 
-                    @* @Html.DropDownList("FieldNameList", (List<SelectListItem>)ViewBag.FieldNameList, new { @id = "ddlFieldNameList", @class = "form_input chosen-select", @onchange="ControlType()" })*@
-                    @Html.Label("Columns_Name", item.Columns_Name, new { id = counter + "_lblColumnName" })
-                </td>
-                <td id="@("tdSecond_"+counter)">
-                    @Html.Label("Name", item.Name, new { id = counter + "_lblName",@class= "expandable" })
-                    @*<a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' />*@
-                    <a  title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
-                     <div id="ddlControlTypeValue">
-                    </div>
-                    @*@Html.TextBox("txtControlType","",new {@id= counter + "_txtControlType"})*@
-                </td>
-                <td>
-                    <a title="Update" class='glyphicon glyphicon-ok-circle' id="@("btnSave_gvExtended_"+counter)" onclick="SaveExtended(this);" style="display:none" />
-                    <a title="Cancel" class='glyphicon glyphicon-remove-circle' id="@("btnCancel_gvExtended_"+counter)" onclick="return handleECancel('E',@counter);" style="display:none" />
-                    <a title="Edit" href="#" class="glyphicon glyphicon-pencil" id="@("imgEdit_"+counter)" onclick="EditClick(@counter);"></a>
-                    @if (item.IsDelete == "Y" && item.Columns_Name != "Program Category")
-                    {<a title="Delete" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_"+counter)" onclick="DeleteExtended(this);"> </a>}
-                    else if (item.Columns_Name == "Program Category")
-                    {<a title="Cannot delete program category because it is mandatory field" href="#" class="glyphicon glyphicon-trash disabled" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
-                    else
-                    {<a title="Can not delete talent as already referenced in deal" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
-                    @*<input type="button" value="Delete"    id="@("imgDelete_"+counter)"  onclick="SaveExtended(this);" />*@
-                </td>
-            </tr>
-        }
+                                @* @Html.DropDownList("FieldNameList", (List<SelectListItem>)ViewBag.FieldNameList, new { @id = "ddlFieldNameList", @class = "form_input chosen-select", @onchange="ControlType()" })*@
+                                @Html.Label("Columns_Name", item.Columns_Name, new { id = counter + "_lblColumnName" })
+                            </td>
+                            <td id="@("tdSecond_"+counter)">
+                                @Html.Label("Name", item.Name, new { id = counter + "_lblName", @class = "expandable" })
+                                @*<a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' />*@
+                                <a title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
+                                <div id="ddlControlTypeValue">
+                                </div>
+                                @*@Html.TextBox("txtControlType","",new {@id= counter + "_txtControlType"})*@
+                            </td>
+                            <td>
+                                <a title="Update" class='glyphicon glyphicon-ok-circle' id="@("btnSave_gvExtended_"+counter)" onclick="SaveExtended(this);" style="display:none" />
+                                <a title="Cancel" class='glyphicon glyphicon-remove-circle' id="@("btnCancel_gvExtended_"+counter)" onclick="return handleECancel('E',@counter);" style="display:none" />
+                                <a title="Edit" href="#" class="glyphicon glyphicon-pencil" id="@("imgEdit_"+counter)" onclick="EditClick(@counter);"></a>
+                                @if (item.IsDelete == "Y" && item.Columns_Name != "Program Category")
+                                {<a title="Delete" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_"+counter)" onclick="DeleteExtended(this);"> </a>}
+                                else if (item.Columns_Name == "Program Category")
+                                {<a title="Cannot delete program category because it is mandatory field" href="#" class="glyphicon glyphicon-trash disabled" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
+                                else
+                                {<a title="Can not delete talent as already referenced in deal" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
+                                @*<input type="button" value="Delete"    id="@("imgDelete_"+counter)"  onclick="SaveExtended(this);" />*@
+                            </td>
+                        </tr>
+                    }
 
                 }
             </tbody>

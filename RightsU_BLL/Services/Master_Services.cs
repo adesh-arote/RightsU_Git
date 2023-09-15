@@ -3167,6 +3167,48 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Title_Talent_Service : BusinessLogic<Title_Talent>
+    {
+        private readonly Title_Talent_Repository objRepository;
+
+        public Title_Talent_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Talent_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Talent> SearchFor(Expression<Func<Title_Talent, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Talent GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public void Save(Title_Talent objD)
+        {
+            objRepository.Save(objD);
+        }
+
+        public override bool Validate(Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
     public class Music_Type_Service : BusinessLogic<Music_Type>
     {
         private readonly Music_Type_Repository objRepository;

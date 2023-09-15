@@ -77,7 +77,6 @@
     var recordLockingCode = @ViewBag.Record_Locking_Code;
 
 
-
     var parentCode = 0
     @if (Model.Deal_Type != null)
         {
@@ -163,6 +162,7 @@
                                             <td>@objMessageKey.DealFor</td>
                                             <td>
                                                 <input type="hidden" id="Syn_Deal_Code" name="Syn_Deal_Code" value="@Model.Syn_Deal_Code" />
+                                                <input type="hidden" id="hdnIsBuyBackRightsExist" name="Syn_Deal_Code" value="@ViewBag.IsBuyBackRightsExist" />
                                                 @foreach (var item in ViewBag.Deal_For_List)
                                                 {
                                                     <label class="radio-inline">

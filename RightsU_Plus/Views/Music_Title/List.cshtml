@@ -226,6 +226,12 @@
 
     }
 
+    function SwitchMovieAlbumType_Advance() {   
+        
+        $('#txtmusicAlbumName').val('');
+        $('#hdnMovieAlbum').val('');
+    }
+
 </script>
 <style>
     .tinyADSearch {
@@ -324,6 +330,7 @@
         overflow-y: auto;
         height: 100%;
     }
+
     .pagination_popup .current.prev, .pagination .current.next {
         z-index: -1 !important;
     }
@@ -339,16 +346,17 @@
         color: #fff;
         background-color: #dbdbdb;
         padding: 10px;
-        z-index:99;
+        z-index: 99;
     }
+
     .ulRightSearch {
-    /*overflow: hidden !important;*/
-    position: relative;
-    /*position: fixed;*/
-    height : 100%;
-    z-index:99;
-    max-height:700px;
-}
+        /*overflow: hidden !important;*/
+        position: relative;
+        /*position: fixed;*/
+        height: 100%;
+        z-index: 99;
+        max-height: 700px;
+    }
 
     .SumoSelect {
         width: 250px !important;
@@ -365,34 +373,35 @@
         margin-top: 6px;
         color: black;
     }
-    
-  .RightPanel {
-    bottom:45px;
-    padding-left:10px;
-    background-color: #dbdbdb;
-    width:350px;
-	height:850px;
-    top: 0px;
-    position: absolute;
-    z-index: 98;
-    right: 0px;
-    box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
-    -moz-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
-    -webkit-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
-    transition: all 0.3s;
-    -o-transition: all 0.3s;
-    -moz-transition: all 0.3s;
-    -webkit-transition: all 0.3s;
-}
-  .slimScrollDiv {
-        border: 0px !important;
-           max-height: 700px !important;
-           height:738px !important;
-      }
 
-  .container {
-    min-height: 738px;
-}
+    .RightPanel {
+        bottom: 45px;
+        padding-left: 10px;
+        background-color: #dbdbdb;
+        width: 350px;
+        height: 850px;
+        top: 0px;
+        position: absolute;
+        z-index: 98;
+        right: 0px;
+        box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -moz-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        -webkit-box-shadow: 6px -9px 10px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        -o-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+    }
+
+    .slimScrollDiv {
+        border: 0px !important;
+        max-height: 700px !important;
+        height: 738px !important;
+    }
+
+    .container {
+        min-height: 738px;
+    }
 </style>
 
 
@@ -415,6 +424,16 @@
                     <li class="AdSearch">
                         <label>@objMessageKey.MusicLanguage:</label><br />
                         <select id="ddlLanguage" multiple="multiple"></select>
+                    </li>
+                    <li class="AdSearch">
+                        <label>@objMessageKey.Movie/@objMessageKey.Album Type:</label><br />
+
+                        <input type="radio" name="Movie_Album_Type" id="rdbMovie" value="M" style="width:20px" checked onclick="SwitchMovieAlbumType_Advance();" />
+                        <label for="rdbMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
+                        <input type="radio" name="Movie_Album_Type" id="rdbShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
+                        <label for="rdbShow" style="vertical-align:2px">@objMessageKey.Show</label>
+                        <input type="radio" name="Movie_Album_Type" id="rdbAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
+                        <label for="rdbAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Movie/@objMessageKey.Album:</label><br />
@@ -456,12 +475,12 @@
                     </li>
                 </ul>
 
-                    <a style="margin-left:80px;" class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
-                    <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
-                    <input type="hidden" id="hdnClearAll" />
+                <a style="margin-left:80px;" class="btn-primary" href="#" onclick="validateSearch();">@objMessageKey.Search</a>
+                <a class="btn-primary" href="#" onclick="ClearAll();">@objMessageKey.ClearAll</a>
+                <input type="hidden" id="hdnClearAll" />
                 @*<div class="btnRightSearch1">
-                    
-                </div>*@
+
+                    </div>*@
             </div>
         </div>
 
@@ -515,14 +534,14 @@
                         <input type="text" placeholder="@objMessageKey.Tag" id="txtTag" maxlength="400" style="width:250px" />
                     </li>
                     @*<li class="AdSearch"></li>
-                    <li>
-                            <br />
-                            <div>
-                                <a class="btn-primary" href="#" onclick="validateSearch();">Search</a>
-                                <a class="btn-primary" href="#" onclick="ClearAll();">Clear All</a>
-                                <input type="hidden" id="hdnClearAll" />
-                            </div>
-                        </li>*@
+                        <li>
+                                <br />
+                                <div>
+                                    <a class="btn-primary" href="#" onclick="validateSearch();">Search</a>
+                                    <a class="btn-primary" href="#" onclick="ClearAll();">Clear All</a>
+                                    <input type="hidden" id="hdnClearAll" />
+                                </div>
+                            </li>*@
 
 
                 </ul>
@@ -888,7 +907,7 @@
         tmp_IsAdvanced = 'Y';
         tmp_IsSearch = 'N';
         $('#hdnClearAll').val('N');
-        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpMusicAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '', tmptxtTag = '', tmppublic_Domain = '';
+        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpMusicAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '', tmptxtTag = '', tmppublic_Domain = '', tmpmovie_Album_Type = '';
 
         if ($('#ddlStarCast').val())
             tmpStarCast = $('#ddlStarCast').val().join(',');
@@ -926,6 +945,8 @@
 
         var tmptxtTag = $('#txtTag').val();
 
+        tmpmovie_Album_Type = $('input[name="Movie_Album_Type"]:checked').val();
+
         //var tmppublic_Domain = $('#chkPublicDomain').prop('checked');
         //if (tmppublic_Domain == true)
         //    tmppublic_Domain = "Y";
@@ -944,7 +965,7 @@
         {
             tmppublic_Domain = "";
         }
-       
+
 
         if (tmpStarCast == '' && tmpLanguage == '' && tmpMusicAlbumName == '' && tmpGenres == '' && tmpMusicLabel == '' && txtYearOfRelease == '' && tmpSinger == '' && tmpComposer == '' && tmpLyricist == '' && tmptxtTitleSearch == '' && tmpTheme == '' && tmptxtTag == '') {
 
@@ -966,6 +987,7 @@
     }
 
     function ClearAll() {
+        $('#hdnClearAll').val('');
         Clear();
         AdvanceSearch();
     }
@@ -1013,6 +1035,7 @@
         $("#txtTag").val('');
         $('#chkPublicDomain').attr('checked', false);
         $(".radio-inline").hide();
+        $('input:radio[name=Movie_Album_Type]')[0].checked = true;
     }
 
     $(function () {
@@ -1102,7 +1125,7 @@
                 }
                 else {
 
-                    
+
                     $("#TitleListGrid").empty();
                     $("#TitleListGrid").html(result);
 
@@ -1136,7 +1159,7 @@
     }
 
     function AdvanceSearch() {
-        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '';
+        var tmpStarCast = '', tmpLanguage = '', tmpAlbum = '', tmpAlbumName = '', tmpGenres = '', tmpMusicLabel = '', tmpSinger = '', tmpComposer = '', tmpLyricist = '', tmptxtTitleSearch = '', tmpTheme = '',tmpmovie_Album_Type='';
         if ($('#ddlStarCast').val())
             tmpStarCast = $('#ddlStarCast').val().join(',');
 
@@ -1178,7 +1201,7 @@
 
         var txtYearOfRelease = $('#txtYearOfRelease').val();
         var txtTag = $('#txtTag').val();
-       
+
         //var tmppublic_Domain = $('#chkPublicDomain').prop('checked');
         //if (tmppublic_Domain == true)
         //    tmppublic_Domain = "Y";
@@ -1197,6 +1220,12 @@
         }
 
         $("#lbTitle_Code").val('');
+        debugger;
+        if ($('#hdnClearAll').val()=='') {
+            tmpmovie_Album_Type = '';
+        } else {
+            tmpmovie_Album_Type=$('input[name="Movie_Album_Type"]:checked').val();
+        }
 
         $.ajax({
             type: "POST",
@@ -1219,7 +1248,8 @@
                 SrchTheme: tmpTheme,
                 SrchMusicTag: txtTag,
                 SrchMusicAlbumName: tmpAlbumName,
-                SrchPublicDomain: tmppublic_Domain
+                SrchPublicDomain: tmppublic_Domain,
+                SrchMovieAlbumType:tmpmovie_Album_Type
             }),
             success: function (result) {
 
@@ -1764,6 +1794,7 @@
     function AutoMovieAlbum(keyword) {
 
         var selectedtxt = $('#txtmusicAlbumName').val()
+        var Movie_Album_Type = $('input[name="Movie_Album_Type"]:checked').val();
         var txt = selectedtxt.split('﹐');
         var iscomplete = true;
         if (txt[txt.length - 1].trim() == "")
@@ -1778,7 +1809,8 @@
                 },
                 source: function (request, response) {
                     var param = {
-                        keyword: $('#txtmusicAlbumName').val()
+                        keyword: $('#txtmusicAlbumName').val(),
+                        Movie_Album_Type: Movie_Album_Type
                     };
                     $.ajax({
                         url: URL_AutoCompleteMovieAlbum,
@@ -1849,7 +1881,7 @@
 <script>
 
     (function ($) {
-  
+
         $.fn.extend({
             slimScroll: function (options) {
                 if (LayoutDirection_G == "RTL") {
@@ -2000,10 +2032,10 @@
                 this.each(function () {
 
                     var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
-                      barHeight, percentScroll, lastScroll,
-                      divS = '<div></div>',
-                      minBarHeight = 30,
-                      releaseScroll = false;
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
 
                     // used in event handlers and for better minification
                     var me = $(this);
@@ -2067,13 +2099,13 @@
 
                     // wrap content
                     var wrapper = $(divS)
-                      .addClass(o.wrapperClass)
-                      .css({
-                          position: 'relative',
-                          //overflow: 'hidden',
-                          width: o.width,
-                          height: o.height
-                      });
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            //overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
 
                     // update style for the div
                     me.css({
@@ -2084,35 +2116,35 @@
 
                     // create scrollbar rail
                     var rail = $(divS)
-                      .addClass(o.railClass)
-                      .css({
-                          width: o.size,
-                          height: '100%',
-                          position: 'absolute',
-                          top: 0,
-                          display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
-                          'border-radius': o.railBorderRadius,
-                          background: o.railColor,
-                          opacity: o.railOpacity,
-                          zIndex: 90
-                      });
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
 
                     // create scrollbar
                     var bar = $(divS)
-                      .addClass(o.barClass)
-                      .css({
-                          background: o.color,
-                          width: o.size,
-                          position: 'absolute',
-                          top: 0,
-                          opacity: o.opacity,
-                          display: o.alwaysVisible ? 'block' : 'none',
-                          'border-radius': o.borderRadius,
-                          BorderRadius: o.borderRadius,
-                          MozBorderRadius: o.borderRadius,
-                          WebkitBorderRadius: o.borderRadius,
-                          zIndex: 99
-                      });
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
 
                     // set position
                     var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };

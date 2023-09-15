@@ -234,6 +234,7 @@
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
     <Compile Include="Controllers\PurchaseOrderController.cs" />
     <Compile Include="Controllers\LoadSheetController.cs" />
+    <Compile Include="Controllers\Syn_DigitalController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -1425,6 +1426,11 @@
     <Content Include="Views\LoadSheet\_RevisionHistoryList.cshtml" />
     <Content Include="Views\PurchaseOrder\_StatusHistoryList.cshtml" />
     <Content Include="Views\PurchaseOrder\_StatusHistoryPopup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital_Add.cshtml" />
+    <Content Include="Views\Reports\MusicAvailabilityReport.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\BulkPosterUploadList.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_PosterTitleList.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->

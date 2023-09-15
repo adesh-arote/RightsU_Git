@@ -639,6 +639,19 @@ namespace RightsU_DAL
 
             return UpdatedSupplementary;
         }
+        public ICollection<Syn_Deal_Digital> SaveDigital(ICollection<Syn_Deal_Digital> entitySaveDigital, DbContext dbContext)
+        {
+            ICollection<Syn_Deal_Digital> UpdatedDigital = entitySaveDigital;
+
+            foreach (Syn_Deal_Digital objADR in UpdatedDigital)
+            {
+                objADR.Syn_Deal_Digital_Detail = (objADR.Syn_Deal_Digital_Detail != null) ? new Save_Entitiy_Lists_Generic<Syn_Deal_Digital_Detail>().SetListFlagsCUD(objADR.Syn_Deal_Digital_Detail, dbContext) : null;
+            }
+
+            UpdatedDigital = new Save_Entitiy_Lists_Generic<Syn_Deal_Digital>().SetListFlagsCUD(UpdatedDigital, dbContext);
+
+            return UpdatedDigital;
+        }
     }
 
     public class Syn_Deal_Supplementary_Repository : RightsU_Repository<Syn_Deal_Supplementary>
@@ -652,6 +665,32 @@ namespace RightsU_DAL
 
             Save_Syn_Deal_Entities_Generic objSaveEntities = new Save_Syn_Deal_Entities_Generic();
             obj = objSaveEntities.SaveSupplementary(list, base.DataContext).FirstOrDefault();
+
+            if (obj.EntityState == State.Added)
+            {
+                base.Save(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Modified)
+            {
+                base.Update(list.FirstOrDefault());
+            }
+            else if (obj.EntityState == State.Deleted)
+            {
+                base.Delete(list.FirstOrDefault());
+            }
+        }
+    }
+    public class Syn_Deal_Digital_Repository : RightsU_Repository<Syn_Deal_Digital>
+    {
+        public Syn_Deal_Digital_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Syn_Deal_Digital obj)
+        {
+            ICollection<Syn_Deal_Digital> list = new HashSet<Syn_Deal_Digital>();
+            list.Add(obj);
+
+            Save_Syn_Deal_Entities_Generic objSaveEntities = new Save_Syn_Deal_Entities_Generic();
+            obj = objSaveEntities.SaveDigital(list, base.DataContext).FirstOrDefault();
 
             if (obj.EntityState == State.Added)
             {

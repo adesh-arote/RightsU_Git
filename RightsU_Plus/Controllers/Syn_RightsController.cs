@@ -1015,6 +1015,23 @@ namespace RightsU_Plus.Controllers
                         List<string> lstPlatformCodes_isnoofrun = new Platform_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Is_No_Of_Run == "Y").Select(p => p.Platform_Code.ToString()).ToList();
                         objPTV.RunPlatformCodes_Reference = strPlatform.Split(',').ToList().Where(x => lstPlatformCodes_isnoofrun.Contains(x)).ToArray();
                     }
+
+                    List<Syn_Deal_Digital> lstMusic = new Syn_Deal_Digital_Service(objLoginEntity.ConnectionStringName).SearchFor(r => r.Syn_Deal_Code == objDeal_Schema.Deal_Code).ToList();
+
+                    var lstMusicTitle = (from music in lstMusic
+                                         where lstTitle.Any(t => t.Title_Code == music.Title_code && t.Episode_From == music.Episode_From && t.Episode_To == music.Episode_To)
+                                         select music).Distinct();
+
+                    if (lstMusicTitle.Count() > 0)
+                    {
+                        int[] selectedCodes = Array.ConvertAll(strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries), s => int.Parse(s));
+
+                        string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Platform_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
+                        int[] platformCodes = Array.ConvertAll(strMusicPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries), s => int.Parse(s));
+
+                        objPTV.MusicPlatformCodes_Reference = platformCodes.Intersect(selectedCodes).ToArray().Select(x => x.ToString()).ToArray();
+
+                    }
                 }
 
 
@@ -1286,6 +1303,7 @@ namespace RightsU_Plus.Controllers
             int platformcount = (from s in lstPlatformCode
                                  where hdnPlatform.Contains(s)
                                  select s).Count();
+            #region Run Defination
 
             if (platformcount > 0)
             {
@@ -1395,6 +1413,150 @@ namespace RightsU_Plus.Controllers
                     return objMessageKey.PleaseselectatleastonecablerightasRunDefinitionisalreadyaddedTodeselectcablerightsdeleteRunDefinitionfirst;
                 }
             }
+
+            #endregion
+
+            #region Music
+
+            string strMusicPlatform = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(z => z.Parameter_Name == "Platform_RightsInSongs_Codes").Select(z => z.Parameter_Value).FirstOrDefault();
+            List<string> MusicplatformCodes = strMusicPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            int platMusicformcount = (from s in MusicplatformCodes
+                                      where hdnPlatform.Contains(s)
+                                      select s).Count();
+            List<Title_List> lstDealMovie1 = new List<Title_List>();
+            if (platMusicformcount > 0)
+            {
+                List<int> lstTitlecode = (from objMusic in objDeal.Syn_Deal_Digital
+                                          where objMusic.Syn_Deal_Code == objDeal_Schema.Deal_Code
+                                          select objMusic.Title_code.Value).ToList();
+
+                int count = objSyn_Deal_Rights.Syn_Deal_Rights_Title.Where(t => lstTitlecode.Contains(t.Title_Code.Value)).Count();
+
+                List<int> arrTitleCode = new List<int>();
+
+                lstDealMovie1 = objDeal.Syn_Deal_Movie.Where(m => hdnMMovies.Split(',').Contains(
+                    (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program ||
+                    objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music) ? m.Syn_Deal_Movie_Code.ToString() : m.Title_Code.ToString())
+                ).Select(m => new Title_List
+                {
+                    Title_Code = m.Title_Code.Value,
+                    Episode_From = m.Episode_From.Value,
+                    Episode_To = m.Episode_End_To.Value,
+                    Acq_Deal_Movie_Code = m.Syn_Deal_Movie_Code
+                }).ToList();
+
+                string[] str1 = new string[2] { "S", "D" };
+                if (objDeal_Schema.Rights_View == "G" || (objDeal_Schema.Deal_Type_Condition.ToUpper() != "DEAL_MOVIE" && str1.Contains(objDeal_Schema.Rights_View)))
+                {
+                    var h = (from music in objDeal.Syn_Deal_Digital
+                             where !lstDealMovie1.Any(m => m.Title_Code == music.Title_code && m.Episode_From == music.Episode_From && m.Episode_To == music.Episode_To)
+                             select music).ToList();
+
+                    if (h.Count() > 0)
+                    {
+                        var r = from rights in objDeal.Syn_Deal_Rights
+                                from rightsTitle in rights.Syn_Deal_Rights_Title
+                                where (rights.Syn_Deal_Rights_Code != objSyn_Deal_Rights.Syn_Deal_Rights_Code || (
+                                objPage_Properties.TCODE > 0 && lstDealMovie1.Where(l => l.Title_Code == objPage_Properties.TCODE &&
+                                    (l.Episode_From == objPage_Properties.Episode_From || objPage_Properties.Episode_From == 0) &&
+                                    (l.Episode_To == objPage_Properties.Episode_From || objPage_Properties.Episode_To == 0)).Count() > 0
+                                )) &&
+                                 h.Any(t => t.Title_code == rightsTitle.Title_Code && t.Episode_From == rightsTitle.Episode_From && t.Episode_To == rightsTitle.Episode_To) &&
+                                rights.Syn_Deal_Rights_Platform.Any(p => MusicplatformCodes.Contains(p.Platform_Code.ToString()))
+                                select rightsTitle;
+
+                        if (r.Count() == 0)
+                            return objMessageKey.CannotchangerightstitleasMusicisalreadyaddedTochangerightsperioddeleteMusicfirst;
+                    }
+                }
+                else
+                {
+                    var q = (from music in objDeal.Syn_Deal_Digital                             
+                             where lstDealMovie1.Any(m => m.Title_Code == music.Title_code && m.Episode_From == music.Episode_From && m.Episode_To == music.Episode_To)
+                             select music).ToList();
+
+                    #region added by akshay
+
+                    List<Syn_Deal_Rights_Title> RemovedTitle_List = new List<Syn_Deal_Rights_Title>();
+                    List<Title_List> AddTitle_List = new List<Title_List>();
+
+                    foreach (Title_List objTL in lstDealMovie1)
+                    {
+                        if (q.Where(x => x.Episode_From == objTL.Episode_From && x.Episode_To == objTL.Episode_To && x.Title_code == objTL.Title_Code).Count() == 0)
+                            AddTitle_List.Add(objTL);
+                    }
+
+                    if (lstDealMovie1.Count() < objSyn_Deal_Rights.Syn_Deal_Rights_Title.Count())
+                    {
+                        foreach (Syn_Deal_Rights_Title objTL in objSyn_Deal_Rights.Syn_Deal_Rights_Title)
+                        {
+
+                            if (q.Where(x => x.Episode_From == objTL.Episode_From && x.Episode_To == objTL.Episode_To && x.Title_code == objTL.Title_Code).Count() == 0)
+                                RemovedTitle_List.Add(objTL);
+                        }
+                    }
+                    #endregion added by akshay
+
+                    if (q.Count() > 0)
+                    {
+                        var r = from rights in objDeal.Syn_Deal_Rights
+                                from rightsTitle in rights.Syn_Deal_Rights_Title
+                                where (rights.Syn_Deal_Rights_Code != objSyn_Deal_Rights.Syn_Deal_Rights_Code || (
+                                objPage_Properties.TCODE > 0 && lstDealMovie1.Where(l => l.Title_Code == objPage_Properties.TCODE &&
+                                    (l.Episode_From == objPage_Properties.Episode_From || objPage_Properties.Episode_From == 0) &&
+                                    (l.Episode_To == objPage_Properties.Episode_From || objPage_Properties.Episode_To == 0)).Count() > 0
+                                )) &&
+                                q.Any(t => t.Title_code == rightsTitle.Title_Code && t.Episode_From == rightsTitle.Episode_From && t.Episode_To == rightsTitle.Episode_To) &&
+                                rights.Syn_Deal_Rights_Platform.Any(p => MusicplatformCodes.Contains(p.Platform_Code.ToString()))
+                                select rightsTitle;
+
+                        if (r.Count() == 0 && AddTitle_List.Count == 0 && RemovedTitle_List.Count() == 0)
+                            return objMessageKey.CannotchangerightstitleasMusicisalreadyaddedTochangerightsperioddeleteMusicfirst;
+                    }
+                }
+            }
+            else
+            {
+                List<int> lstTitlecodeWithoutYearWise = (from objMusic in objDeal.Syn_Deal_Digital
+                                                         where objMusic.Syn_Deal_Code == objDeal_Schema.Deal_Code
+                                                         select objMusic.Title_code.Value).ToList();
+
+                int count = objSyn_Deal_Rights.Syn_Deal_Rights_Title.Where(t => lstTitlecodeWithoutYearWise.Contains(t.Title_Code.Value)).Count();
+
+                //List<int> lstTitleCodeOfCurrentRight = objAcq_Deal_Rights.Acq_Deal_Rights_Title.Select(t => t.Title_Code.Value).ToList();
+                var lstTitleCodeOfCurrentRight = objSyn_Deal_Rights.Syn_Deal_Rights_Title.Select(t => new { t.Title_Code, t.Episode_From, t.Episode_To }).ToList();
+                List<Current_Deal_Right1> lstDealRights = new List<Current_Deal_Right1>();
+                foreach (var item in lstTitleCodeOfCurrentRight)
+                {
+                    Current_Deal_Right1 obj = new Current_Deal_Right1();
+                    obj.EpsFrom = item.Episode_From;
+                    obj.EpsTo = item.Episode_To;
+                    obj.TitleCode = item.Title_Code;
+                    lstDealRights.Add(obj);
+                }
+
+
+                bool IsRightsinSongsExistInOtherRightWithSameTitle = false;
+                if (objPage_Properties.PCODE > 0)
+                {
+                    IsRightsinSongsExistInOtherRightWithSameTitle = objDeal.Syn_Deal_Rights.Where(w => w.Syn_Deal_Rights_Code == objSyn_Deal_Rights.Syn_Deal_Rights_Code).
+                        SelectMany(s => s.Syn_Deal_Rights_Platform).Any(w => w.Platform_Code != objPage_Properties.PCODE && MusicplatformCodes.Contains(w.Platform_Code.ToString()));
+                }
+                if (!IsRightsinSongsExistInOtherRightWithSameTitle)
+                {
+                    IsRightsinSongsExistInOtherRightWithSameTitle = objDeal.Syn_Deal_Rights.Any(r =>
+                         r.Syn_Deal_Rights_Code != objSyn_Deal_Rights.Syn_Deal_Rights_Code &&
+                         r.Syn_Deal_Rights_Title.Any(t => lstDealRights.Where(l => l.TitleCode == t.Title_Code && l.EpsFrom == t.Episode_From && l.EpsTo == t.Episode_To).Count() > 0)
+                         && r.Syn_Deal_Rights_Platform.Any(p => MusicplatformCodes.Contains(p.Platform_Code.ToString()))
+                         );
+                }
+                if (count > 0 && !IsRightsinSongsExistInOtherRightWithSameTitle)
+                    return objMessageKey.PleaseselectatleastoneRightsInSongsrightasMusicisalreadyaddedTodeselectRightsInSongsrightsdeleteMusicfirst;
+
+            }
+
+            #endregion
 
             return Message;
         }

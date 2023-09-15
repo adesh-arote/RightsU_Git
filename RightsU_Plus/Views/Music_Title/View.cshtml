@@ -67,8 +67,8 @@
             @{
                 RightsU_BLL.Language_Service objLS = new RightsU_BLL.Language_Service(objLoginEntity.ConnectionStringName);
                 RightsU_BLL.Music_Type_Service objMTS = new RightsU_BLL.Music_Type_Service(objLoginEntity.ConnectionStringName);
-    //RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
-    //var lstTalent = new RightsU_BLL.USP_Service().USP_Get_Talent_Name().ToList();
+                //RightsU_BLL.Talent_Service objT = new RightsU_BLL.Talent_Service(objLoginEntity.ConnectionStringName);
+                //var lstTalent = new RightsU_BLL.USP_Service().USP_Get_Talent_Name().ToList();
             }
             @using (Html.BeginForm("Save", "Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
             {
@@ -100,7 +100,7 @@
                                     <td class="intro_pic">
                                         <div>
                                             @if (Model.Image_Path != null)
-                                            {   <img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Image_Path)" alt="Image" style="height:225px!important" />}
+                                            {<img src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model.Image_Path)" alt="Image" style="height:225px!important" />}
                                             else
                                             {
                                                 <a href="javascript:void(0)">
@@ -123,20 +123,42 @@
                                                 </td>
                                             </tr>
                                             <tr>
+                                                <td>@objMessageKey.Movie / @objMessageKey.Album Type </td>
+                                                <td>
+                                                    @if (string.IsNullOrEmpty(Model.Movie_Album_Type) || Model.Movie_Album_Type == "A")
+                                                    {
+                                                        @objMessageKey.Album
+                                                    }
+                                                    else if (Model.Movie_Album_Type == "M")
+                                                    {
+                                                        @objMessageKey.Movie
+                                                    }
+                                                    else if (Model.Movie_Album_Type == "S")
+                                                    {
+                                                        @objMessageKey.Show
+                                                    }
+                                                </td>
                                                 <td>@objMessageKey.Movie / @objMessageKey.Album </td>
                                                 <td>
-                                                    @if (@Model.Music_Album != null)
+                                                    @if (Model.Movie_Album_Type == "A" || string.IsNullOrEmpty(@Model.Movie_Album_Type))
                                                     {
-                                                        @Model.Music_Album.Music_Album_Name
+                                                        if (@Model.Music_Album != null)
+                                                        {
+                                                            @Model.Music_Album.Music_Album_Name
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        @Model.Title.Title_Name
                                                     }
 
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 <td>@objMessageKey.YearOfRelease</td>
                                                 <td>
                                                     @Model.Release_Year
                                                 </td>
-                                            </tr>
-                                            <tr>
                                                 <td>@objMessageKey.MusicVersion</td>
                                                 <td>
                                                     @if (ViewBag.version_Name != null)
@@ -144,44 +166,47 @@
                                                         @ViewBag.version_Name
                                                     }
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 <td>@objMessageKey.MusicLanguage</td>
                                                 <td>
 
                                                     @ViewBag.LanguageName
                                                 </td>
-                                            </tr>
-                                            <tr>
                                                 <td>@objMessageKey.Singer</td>
                                                 <td class="expandable">
                                                     @ViewBag.SingerList
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 <td>@objMessageKey.MusicComposer</td>
                                                 <td class="expandable">
                                                     @ViewBag.ComposerList
                                                 </td>
-                                            </tr>
-                                            <tr>
                                                 <td>@objMessageKey.Lyricist</td>
                                                 <td class="expandable">
                                                     @ViewBag.LyricistList
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 <td>@objMessageKey.MusicLabel</td>
                                                 <td class="expandable">
                                                     @ViewBag.MusicLabelList
                                                 </td>
-                                            </tr>
-                                            <tr>
                                                 <td>@objMessageKey.MusicType</td>
                                                 <td>
                                                     @{
-                                                    string TitleType = "";
-                                                    if (@Model.Music_Type_Code > 0)
-                                                    {
-                                                        TitleType = objMTS.GetById(Model.Music_Type_Code ?? 0).Music_Type_Name;
-                                                    }
+                                                        string TitleType = "";
+                                                        if (@Model.Music_Type_Code > 0)
+                                                        {
+                                                            TitleType = objMTS.GetById(Model.Music_Type_Code ?? 0).Music_Type_Name;
+                                                        }
                                                     }
                                                     @Html.Label("MusicType", TitleType)
                                                 </td>
+                                            </tr>
+
+                                            <tr>
                                                 @if (ViewBag.MusicThemeVisibility == "G" || ViewBag.MusicThemeVisibility == "GT")
                                                 {
                                                     <td>@objMessageKey.Genres</td>
@@ -194,13 +219,12 @@
                                                     <td></td>
                                                     <td></td>
                                                 }
-                                            </tr>
-
-                                            <tr>
                                                 <td>@objMessageKey.SongStarCast</td>
                                                 <td class="expandable">
                                                     @ViewBag.StarCastList
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 @if (ViewBag.MusicThemeVisibility == "T" || ViewBag.MusicThemeVisibility == "GT")
                                                 {
                                                     <td>@objMessageKey.MusicTheme</td>
@@ -213,31 +237,30 @@
                                                     <td></td>
                                                     <td></td>
                                                 }
-                                            </tr>
-                                            <tr>
                                                 <td style="width: 13%">@objMessageKey.MovieStarCast</td>
                                                 <td style="width: 40%">
                                                     @Html.Label("lblStarcast", new { id = "lblStarcast" })
 
                                                 </td>
+                                            </tr>
+                                            <tr>
                                                 <td>@objMessageKey.Tag</td>
                                                 <td class="expandable">@Model.Music_Tag</td>
-                                            </tr>
-                                            @if (ViewBag.IsMuciVersionSPN == "Y")
-                                            {
-                                            <tr>
-                                                @{ 
-                                                    string lblPublicDomain = Model.Public_Domain.Trim() == "Y" ? objMessageKey.Yes : objMessageKey.NO;
+
+                                                @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                {
+                                                    <td>
+                                                        @objMessageKey.PublicDomain
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            string lblPublicDomain = Model.Public_Domain.Trim() == "Y" ? objMessageKey.Yes : objMessageKey.NO;
+                                                        }
+                                                        @lblPublicDomain
+                                                    </td>
                                                 }
-                                                <td>
-                                                    @objMessageKey.PublicDomain
-                                                </td>
-                                               <td>@lblPublicDomain</td>
-                                                
-                                                <td></td>
-                                                <td></td>
                                             </tr>
-                                            }
+
                                         </table>
                                     </td>
                                 </tr>

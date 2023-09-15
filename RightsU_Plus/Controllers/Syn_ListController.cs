@@ -1128,7 +1128,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Button_Visibility = Button_Visibility;
             ViewBag.Deal_Type_Code = Syn_Deal_obj.Deal_Type_Code;
             ViewBag.Agreement_No = Syn_Deal_obj.Agreement_No;
-            ViewBag.Type = "S";
+            ViewBag.Type = "Syn_List";
             return PartialView("~/Views/Shared/_ActionButton.cshtml");
         }
 
