@@ -1,0 +1,634 @@
+
+Log Entry : 11:54:17 02 May 2023
+  :
+  :The column 'Studio' was specified multiple times for 'p'.
+The column 'Studio' was specified multiple times for 'p'.
+The column 'Lab' was specified multiple times for 'p'.
+The column 'Rating' was specified multiple times for 'p'.
+The column 'Director' was specified multiple times for 'p'.
+The column 'Cast' was specified multiple times for 'p'.
+The column 'Year' was specified multiple times for 'p'.
+The column 'Synopsis' was specified multiple times for 'p'.
+The column 'Synopsis Character Length' was specified multiple times for 'p'.
+The column 'Genre' was specified multiple times for 'p'.
+The column 'Lang 1' was specified multiple times for 'p'.
+The column 'Lang 2' was specified multiple times for 'p'.
+The column 'Lang 3' was specified multiple times for 'p'.
+The column 'Lang 4' was specified multiple times for 'p'.
+The column 'PO Number' was specified multiple times for 'p'.
+The column 'Trailer In-House' was specified multiple times for 'p'.
+The column 'Master In-House' was specified multiple times for 'p'.
+The column 'Images Receive Status' was specified multiple times for 'p'.
+The column 'Version' was specified multiple times for 'p'.
+The column 'Embedded Subs' was specified multiple times for 'p'.
+The column 'Warning Slate' was specified multiple times for 'p'.
+The column 'Remarks' was specified multiple times for 'p'.
+The column 'License Fees' was specified multiple times for 'p'.
+The column 'Delivery Fees' was specified multiple times for 'p'.
+The column 'Category 1 - PAC' was specified multiple times for 'p'.
+The column 'Additional  Category - PAC' was specified multiple times for 'p'.
+The column 'PAC MPEG' was specified multiple times for 'p'.
+The column 'PAC Aspect Ratio' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC ex 1' was specified multiple times for 'p'.
+The column 'PAC ex 2' was specified multiple times for 'p'.
+The column 'PAC ex 3' was specified multiple times for 'p'.
+The column 'Category - Thales' was specified multiple times for 'p'.
+The column 'Additional Category - Thales' was specified multiple times for 'p'.
+The column 'Thales MPEG' was specified multiple times for 'p'.
+The column 'Thales Aspect Ratio' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Main Genre - Thales' was specified multiple times for 'p'.
+The column 'Thales Subtitle filename' was specified multiple times for 'p'.
+The column 'Display Order' was specified multiple times for 'p'.
+The column 'Kids Content Thales' was specified multiple times for 'p'.
+The column 'Thales Island Mode' was specified multiple times for 'p'.
+The column 'Category- Avant' was specified multiple times for 'p'.
+The column 'Thales Avant' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Parental Control Avant' was specified multiple times for 'p'.
+The column 'Avant Island Mode' was specified multiple times for 'p'.
+The column 'Rating Avant' was specified multiple times for 'p'.
+The column 'Thales i4000' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i4000)' was specified multiple times for 'p'.
+The column 'Parental Control  i4000' was specified multiple times for 'p'.
+The column 'Rating i4000' was specified multiple times for 'p'.
+The column 'Thales i5000' was specified multiple times for 'p'.
+The column 'Display Order (i5000)' was specified multiple times for 'p'.
+The column 'Thales i8000' was specified multiple times for 'p'.
+The column 'Main Genre - i8000' was specified multiple times for 'p'.
+The column 'i8000 Sub Genre' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i8000)' was specified multiple times for 'p'.
+The column 'Parental Control  i8000' was specified multiple times for 'p'.
+The column 'Kids Content  i8000' was specified multiple times for 'p'.
+The column 'Rating i8000' was specified multiple times for 'p'.
+The column 'DMPES' was specified multiple times for 'p'.
+The column 'IMDB Rating' was specified multiple times for 'p'.
+The column 'Genre MMA' was specified multiple times for 'p'.
+The column 'Short Synopsis' was specified multiple times for 'p'.
+The column 'Dynamic Subs' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames (For our reference)' was specified multiple times for 'p'.
+-------------------------------
+
+Log Entry : 11:54:39 02 May 2023
+  :
+  :The column 'Studio' was specified multiple times for 'p'.
+The column 'Studio' was specified multiple times for 'p'.
+The column 'Lab' was specified multiple times for 'p'.
+The column 'Rating' was specified multiple times for 'p'.
+The column 'Director' was specified multiple times for 'p'.
+The column 'Cast' was specified multiple times for 'p'.
+The column 'Year' was specified multiple times for 'p'.
+The column 'Synopsis' was specified multiple times for 'p'.
+The column 'Synopsis Character Length' was specified multiple times for 'p'.
+The column 'Genre' was specified multiple times for 'p'.
+The column 'Lang 1' was specified multiple times for 'p'.
+The column 'Lang 2' was specified multiple times for 'p'.
+The column 'Lang 3' was specified multiple times for 'p'.
+The column 'Lang 4' was specified multiple times for 'p'.
+The column 'PO Number' was specified multiple times for 'p'.
+The column 'Trailer In-House' was specified multiple times for 'p'.
+The column 'Master In-House' was specified multiple times for 'p'.
+The column 'Images Receive Status' was specified multiple times for 'p'.
+The column 'Version' was specified multiple times for 'p'.
+The column 'Embedded Subs' was specified multiple times for 'p'.
+The column 'Warning Slate' was specified multiple times for 'p'.
+The column 'Remarks' was specified multiple times for 'p'.
+The column 'License Fees' was specified multiple times for 'p'.
+The column 'Delivery Fees' was specified multiple times for 'p'.
+The column 'Category 1 - PAC' was specified multiple times for 'p'.
+The column 'Additional  Category - PAC' was specified multiple times for 'p'.
+The column 'PAC MPEG' was specified multiple times for 'p'.
+The column 'PAC Aspect Ratio' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC ex 1' was specified multiple times for 'p'.
+The column 'PAC ex 2' was specified multiple times for 'p'.
+The column 'PAC ex 3' was specified multiple times for 'p'.
+The column 'Category - Thales' was specified multiple times for 'p'.
+The column 'Additional Category - Thales' was specified multiple times for 'p'.
+The column 'Thales MPEG' was specified multiple times for 'p'.
+The column 'Thales Aspect Ratio' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Main Genre - Thales' was specified multiple times for 'p'.
+The column 'Thales Subtitle filename' was specified multiple times for 'p'.
+The column 'Display Order' was specified multiple times for 'p'.
+The column 'Kids Content Thales' was specified multiple times for 'p'.
+The column 'Thales Island Mode' was specified multiple times for 'p'.
+The column 'Category- Avant' was specified multiple times for 'p'.
+The column 'Thales Avant' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Parental Control Avant' was specified multiple times for 'p'.
+The column 'Avant Island Mode' was specified multiple times for 'p'.
+The column 'Rating Avant' was specified multiple times for 'p'.
+The column 'Thales i4000' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i4000)' was specified multiple times for 'p'.
+The column 'Parental Control  i4000' was specified multiple times for 'p'.
+The column 'Rating i4000' was specified multiple times for 'p'.
+The column 'Thales i5000' was specified multiple times for 'p'.
+The column 'Display Order (i5000)' was specified multiple times for 'p'.
+The column 'Thales i8000' was specified multiple times for 'p'.
+The column 'Main Genre - i8000' was specified multiple times for 'p'.
+The column 'i8000 Sub Genre' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i8000)' was specified multiple times for 'p'.
+The column 'Parental Control  i8000' was specified multiple times for 'p'.
+The column 'Kids Content  i8000' was specified multiple times for 'p'.
+The column 'Rating i8000' was specified multiple times for 'p'.
+The column 'DMPES' was specified multiple times for 'p'.
+The column 'IMDB Rating' was specified multiple times for 'p'.
+The column 'Genre MMA' was specified multiple times for 'p'.
+The column 'Short Synopsis' was specified multiple times for 'p'.
+The column 'Dynamic Subs' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames (For our reference)' was specified multiple times for 'p'.
+-------------------------------
+
+Log Entry : 11:58:11 02 May 2023
+  :
+  :The column 'Studio' was specified multiple times for 'p'.
+The column 'Studio' was specified multiple times for 'p'.
+The column 'Lab' was specified multiple times for 'p'.
+The column 'Rating' was specified multiple times for 'p'.
+The column 'Director' was specified multiple times for 'p'.
+The column 'Cast' was specified multiple times for 'p'.
+The column 'Year' was specified multiple times for 'p'.
+The column 'Synopsis' was specified multiple times for 'p'.
+The column 'Synopsis Character Length' was specified multiple times for 'p'.
+The column 'Genre' was specified multiple times for 'p'.
+The column 'Lang 1' was specified multiple times for 'p'.
+The column 'Lang 2' was specified multiple times for 'p'.
+The column 'Lang 3' was specified multiple times for 'p'.
+The column 'Lang 4' was specified multiple times for 'p'.
+The column 'PO Number' was specified multiple times for 'p'.
+The column 'Trailer In-House' was specified multiple times for 'p'.
+The column 'Master In-House' was specified multiple times for 'p'.
+The column 'Images Receive Status' was specified multiple times for 'p'.
+The column 'Version' was specified multiple times for 'p'.
+The column 'Embedded Subs' was specified multiple times for 'p'.
+The column 'Warning Slate' was specified multiple times for 'p'.
+The column 'Remarks' was specified multiple times for 'p'.
+The column 'License Fees' was specified multiple times for 'p'.
+The column 'Delivery Fees' was specified multiple times for 'p'.
+The column 'Category 1 - PAC' was specified multiple times for 'p'.
+The column 'Additional  Category - PAC' was specified multiple times for 'p'.
+The column 'PAC MPEG' was specified multiple times for 'p'.
+The column 'PAC Aspect Ratio' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC ex 1' was specified multiple times for 'p'.
+The column 'PAC ex 2' was specified multiple times for 'p'.
+The column 'PAC ex 3' was specified multiple times for 'p'.
+The column 'Category - Thales' was specified multiple times for 'p'.
+The column 'Additional Category - Thales' was specified multiple times for 'p'.
+The column 'Thales MPEG' was specified multiple times for 'p'.
+The column 'Thales Aspect Ratio' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Main Genre - Thales' was specified multiple times for 'p'.
+The column 'Thales Subtitle filename' was specified multiple times for 'p'.
+The column 'Display Order' was specified multiple times for 'p'.
+The column 'Kids Content Thales' was specified multiple times for 'p'.
+The column 'Thales Island Mode' was specified multiple times for 'p'.
+The column 'Category- Avant' was specified multiple times for 'p'.
+The column 'Thales Avant' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Parental Control Avant' was specified multiple times for 'p'.
+The column 'Avant Island Mode' was specified multiple times for 'p'.
+The column 'Rating Avant' was specified multiple times for 'p'.
+The column 'Thales i4000' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i4000)' was specified multiple times for 'p'.
+The column 'Parental Control  i4000' was specified multiple times for 'p'.
+The column 'Rating i4000' was specified multiple times for 'p'.
+The column 'Thales i5000' was specified multiple times for 'p'.
+The column 'Display Order (i5000)' was specified multiple times for 'p'.
+The column 'Thales i8000' was specified multiple times for 'p'.
+The column 'Main Genre - i8000' was specified multiple times for 'p'.
+The column 'i8000 Sub Genre' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i8000)' was specified multiple times for 'p'.
+The column 'Parental Control  i8000' was specified multiple times for 'p'.
+The column 'Kids Content  i8000' was specified multiple times for 'p'.
+The column 'Rating i8000' was specified multiple times for 'p'.
+The column 'DMPES' was specified multiple times for 'p'.
+The column 'IMDB Rating' was specified multiple times for 'p'.
+The column 'Genre MMA' was specified multiple times for 'p'.
+The column 'Short Synopsis' was specified multiple times for 'p'.
+The column 'Dynamic Subs' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames (For our reference)' was specified multiple times for 'p'.
+-------------------------------
+
+Log Entry : 11:59:05 02 May 2023
+  :
+  :The column 'Studio' was specified multiple times for 'p'.
+The column 'Studio' was specified multiple times for 'p'.
+The column 'Lab' was specified multiple times for 'p'.
+The column 'Rating' was specified multiple times for 'p'.
+The column 'Director' was specified multiple times for 'p'.
+The column 'Cast' was specified multiple times for 'p'.
+The column 'Year' was specified multiple times for 'p'.
+The column 'Synopsis' was specified multiple times for 'p'.
+The column 'Synopsis Character Length' was specified multiple times for 'p'.
+The column 'Genre' was specified multiple times for 'p'.
+The column 'Lang 1' was specified multiple times for 'p'.
+The column 'Lang 2' was specified multiple times for 'p'.
+The column 'Lang 3' was specified multiple times for 'p'.
+The column 'Lang 4' was specified multiple times for 'p'.
+The column 'PO Number' was specified multiple times for 'p'.
+The column 'Trailer In-House' was specified multiple times for 'p'.
+The column 'Master In-House' was specified multiple times for 'p'.
+The column 'Images Receive Status' was specified multiple times for 'p'.
+The column 'Version' was specified multiple times for 'p'.
+The column 'Embedded Subs' was specified multiple times for 'p'.
+The column 'Warning Slate' was specified multiple times for 'p'.
+The column 'Remarks' was specified multiple times for 'p'.
+The column 'License Fees' was specified multiple times for 'p'.
+The column 'Delivery Fees' was specified multiple times for 'p'.
+The column 'Category 1 - PAC' was specified multiple times for 'p'.
+The column 'Additional  Category - PAC' was specified multiple times for 'p'.
+The column 'PAC MPEG' was specified multiple times for 'p'.
+The column 'PAC Aspect Ratio' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC Filename' was specified multiple times for 'p'.
+The column 'PAC ex 1' was specified multiple times for 'p'.
+The column 'PAC ex 2' was specified multiple times for 'p'.
+The column 'PAC ex 3' was specified multiple times for 'p'.
+The column 'Category - Thales' was specified multiple times for 'p'.
+The column 'Additional Category - Thales' was specified multiple times for 'p'.
+The column 'Thales MPEG' was specified multiple times for 'p'.
+The column 'Thales Aspect Ratio' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Thales Filename' was specified multiple times for 'p'.
+The column 'Main Genre - Thales' was specified multiple times for 'p'.
+The column 'Thales Subtitle filename' was specified multiple times for 'p'.
+The column 'Display Order' was specified multiple times for 'p'.
+The column 'Kids Content Thales' was specified multiple times for 'p'.
+The column 'Thales Island Mode' was specified multiple times for 'p'.
+The column 'Category- Avant' was specified multiple times for 'p'.
+The column 'Thales Avant' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'Avant Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Parental Control Avant' was specified multiple times for 'p'.
+The column 'Avant Island Mode' was specified multiple times for 'p'.
+The column 'Rating Avant' was specified multiple times for 'p'.
+The column 'Thales i4000' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i4000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i4000)' was specified multiple times for 'p'.
+The column 'Parental Control  i4000' was specified multiple times for 'p'.
+The column 'Rating i4000' was specified multiple times for 'p'.
+The column 'Thales i5000' was specified multiple times for 'p'.
+The column 'Display Order (i5000)' was specified multiple times for 'p'.
+The column 'Thales i8000' was specified multiple times for 'p'.
+The column 'Main Genre - i8000' was specified multiple times for 'p'.
+The column 'i8000 Sub Genre' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Long hual)' was specified multiple times for 'p'.
+The column 'i8000 Route based Programming (Short hual)' was specified multiple times for 'p'.
+The column 'Display Order (i8000)' was specified multiple times for 'p'.
+The column 'Parental Control  i8000' was specified multiple times for 'p'.
+The column 'Kids Content  i8000' was specified multiple times for 'p'.
+The column 'Rating i8000' was specified multiple times for 'p'.
+The column 'DMPES' was specified multiple times for 'p'.
+The column 'IMDB Rating' was specified multiple times for 'p'.
+The column 'Genre MMA' was specified multiple times for 'p'.
+The column 'Short Synopsis' was specified multiple times for 'p'.
+The column 'Dynamic Subs' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames' was specified multiple times for 'p'.
+The column 'AEROHUB Filenames (For our reference)' was specified multiple times for 'p'.
+-------------------------------
+
+Log Entry : 13:13:00 02 May 2023
+  :
+  :Column out of range
+-------------------------------
+
+Log Entry : 13:19:33 02 May 2023
+  :
+  :Column out of range
+-------------------------------
+
+Log Entry : 13:19:42 02 May 2023
+  :
+  :Column out of range
+-------------------------------
+
+Log Entry : 13:19:48 02 May 2023
+  :
+  :Column out of range
+-------------------------------
+
+Log Entry : 10:41:43 03 May 2023
+  :
+  :The Microsoft Office Access database engine could not find the object 'C:\UTO Project\Development\RightsU_Plus\RightsU_Plus\UploadFolder\BookingSheet\638187071091207100~Result_BS_No_24.xlsx'.  Make sure the object exists and that you spell its name and the path name correctly.
+-------------------------------
+
+Log Entry : 18:53:59 03 May 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 19:02:37 03 May 2023
+  :
+  :The Microsoft Office Access database engine could not find the object 'C:\UTO Project\Development\RightsU_Plus\RightsU_Plus\UploadFolder\BookingSheet\638187349009909827~Result_BS_No_74 (1).xlsx'.  Make sure the object exists and that you spell its name and the path name correctly.
+-------------------------------
+
+Log Entry : 19:43:39 08 May 2023
+  :
+  :Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+-------------------------------
+
+Log Entry : 21:08:40 08 May 2023
+  :
+  :Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+-------------------------------
+
+Log Entry : 21:08:41 08 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 22:20:17 08 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 22:20:53 08 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 22:25:11 08 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 22:53:11 08 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 12:13:51 23 May 2023
+  :
+  :The 'Microsoft.ACE.OLEDB.12.0' provider is not registered on the local machine.
+-------------------------------
+
+Log Entry : 00:21:32 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:22:52 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:22:52 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:24:21 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:24:21 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:25:58 27 May 2023
+  :
+  :Value cannot be null.
+Parameter name: dataSet
+-------------------------------
+
+Log Entry : 00:25:58 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:26:45 27 May 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 00:26:45 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:29:07 27 May 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 00:29:07 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:30:29 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:30:31 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:33:33 27 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 00:33:33 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 00:36:23 27 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 00:36:23 27 May 2023
+  :
+  :Object reference not set to an instance of an object.
+-------------------------------
+
+Log Entry : 13:26:17 29 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 14:59:37 29 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 15:01:36 29 May 2023
+  :
+  :The conversion of a varchar data type to a datetime data type resulted in an out-of-range value.
+The statement has been terminated.
+-------------------------------
+
+Log Entry : 15:01:36 29 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 15:02:36 29 May 2023
+  :
+  :The conversion of a varchar data type to a datetime data type resulted in an out-of-range value.
+The statement has been terminated.
+-------------------------------
+
+Log Entry : 15:04:05 29 May 2023
+  :
+  :Object of type 'System.Double' cannot be converted to type 'System.String'.
+-------------------------------
+
+Log Entry : 12:55:28 05 June 2023
+  :
+  :Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+-------------------------------
+
+Log Entry : 16:14:39 12 June 2023
+  :
+  :Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+-------------------------------
+
+Log Entry : 16:23:32 12 June 2023
+  :
+  :Execution Timeout Expired.  The timeout period elapsed prior to completion of the operation or the server is not responding.
+-------------------------------
+
+Log Entry : 15:18:15 16 June 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 15:45:37 20 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 16:10:11 20 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:12:27 21 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:16:56 21 June 2023
+  :
+  :Row out of range
+-------------------------------
+
+Log Entry : 18:36:36 21 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:37:16 21 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:41:09 21 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3150.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:48:52 21 June 2023
+  :
+  :Cannot find column 71.
+-------------------------------
+
+Log Entry : 18:50:46 21 June 2023
+  :
+  :Cannot find column 71.
+-------------------------------
+
+Log Entry : 14:39:02 30 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3158.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 14:39:28 30 June 2023
+  :
+  :The process cannot access the file 'E:\UTO_Projects\RightsU_Plus\RightsU_Plus\Download\BookingSheet\Result_BS_No_3158.xlsx' because it is being used by another process.
+-------------------------------
+
+Log Entry : 18:14:49 23 August 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 18:41:12 23 August 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 15:20:36 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 16:56:40 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 16:57:01 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 18:29:16 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 18:29:17 31 August 2023
+  :
+  :IErrorInfo.GetDescription failed with E_FAIL(0x80004005).
+-------------------------------
+
+Log Entry : 18:40:04 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 18:40:32 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
+
+Log Entry : 18:40:43 31 August 2023
+  :
+  :A DataTable named 'Movies' already belongs to this DataSet.
+-------------------------------
