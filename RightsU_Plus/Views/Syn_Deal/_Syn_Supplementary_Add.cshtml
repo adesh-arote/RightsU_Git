@@ -574,11 +574,11 @@
             }
         });
 
-        //if (detailsCnt < 1) {
-        //    showAlert('I', "Please add supplementary details to save.");
-        //    hideLoading();
-        //    return;
-        //}
+        if (detailsCnt < 1) {
+            showAlert('I', "Please add supplementary details to save.");
+            hideLoading();
+            return;
+        }
 
         if ($('#txtSynRemarks').val() != null) {
             var Remarks = $('#txtSynRemarks').val();

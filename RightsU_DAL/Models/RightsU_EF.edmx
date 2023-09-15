@@ -4317,6 +4317,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Genres_Code" Type="int" />
+          <Property Name="Movie_Album_Type" Type="char" MaxLength="1" />
+          <Property Name="Title_Code" Type="int" />
           <Property Name="Music_Album_Code" Type="int" />
           <Property Name="Music_Tag" Type="nvarchar" MaxLength="200" />
           <Property Name="Public_Domain" Type="char" MaxLength="1" />
@@ -5227,6 +5229,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Document_Type_Code" Type="int" />
           <Property Name="Episode_From" Type="int" />
           <Property Name="Episode_To" Type="int" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Digital">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Digital_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Digital_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Syn_Deal_Code" Type="int" />
+          <Property Name="Title_code" Type="int" />
+          <Property Name="Episode_From" Type="int" />
+          <Property Name="Episode_To" Type="int" />
+          <Property Name="Remarks" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Digital_Detail">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Digital_Detail_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Syn_Deal_Digital_Code" Type="int" />
+          <Property Name="Digital_Tab_Code" Type="int" />
+          <Property Name="Digital_Config_Code" Type="int" />
+          <Property Name="Digital_Data_Code" Type="varchar" MaxLength="1000" />
+          <Property Name="User_Value" Type="varchar(max)" />
+          <Property Name="Row_Num" Type="int" />
         </EntityType>
         <EntityType Name="Syn_Deal_Material">
           <Key>
@@ -10935,6 +10960,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Music_Title_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Music_Title" Type="Self.Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Platform_Avail_Acq">
           <End Role="Platform" Type="Self.Platform" Multiplicity="0..1" />
           <End Role="Avail_Acq" Type="Self.Avail_Acq" Multiplicity="*" />
@@ -11544,6 +11581,42 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Syn_Deal">
               <PropertyRef Name="Deal_Type_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital">
+          <End Role="Syn_Deal_Digital" Type="Self.Syn_Deal_Digital" Multiplicity="0..1" />
+          <End Role="Syn_Deal_Digital_Detail" Type="Self.Syn_Deal_Digital_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal_Digital">
+              <PropertyRef Name="Syn_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital_Detail">
+              <PropertyRef Name="Syn_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Digital_Syn_Deal">
+          <End Role="Syn_Deal" Type="Self.Syn_Deal" Multiplicity="0..1" />
+          <End Role="Syn_Deal_Digital" Type="Self.Syn_Deal_Digital" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Digital_Title">
+          <End Role="Title" Type="Self.Title" Multiplicity="0..1" />
+          <End Role="Syn_Deal_Digital" Type="Self.Syn_Deal_Digital" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital">
+              <PropertyRef Name="Title_code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -13932,6 +14005,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Debug" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Delete_Syn_Digital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Digital_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Delete_Syn_Supplementary" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Supplementary_Code" Type="int" Mode="In" />
         </Function>
@@ -14072,6 +14148,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="User_Code" Type="int" Mode="In" />
           <Parameter Name="Deal_Type" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Digital_Config" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Digital_Tab_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Get_ExcelSrNo" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="DM_Master_Import_Code" Type="int" Mode="In" />
           <Parameter Name="Keyword" Type="varchar(max)" Mode="In" />
@@ -14152,6 +14231,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         <Function Name="USP_Get_Supplementary_Config" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Supplementary_Tab_Code" Type="int" Mode="In" />
         </Function>
+        <Function Name="USP_Get_Syn_Deal_Digital_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Digital_Code" Type="int" Mode="In" />
+          <Parameter Name="Row_Num" Type="int" Mode="In" />
+          <Parameter Name="Tab_SM" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="USP_Get_Syn_Deal_Supplementary_Edit" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Syn_Deal_Supplementary_Code" Type="int" Mode="In" />
           <Parameter Name="Row_Num" Type="int" Mode="In" />
@@ -14226,6 +14310,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
         </Function>
         <Function Name="USP_GET_TITLE_FOR_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_Get_Title_For_Syn_Digital" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="int" Mode="In" />
         </Function>
         <Function Name="USP_GET_TITLE_FOR_SYN_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="SYN_DEAL_CODE" Type="int" Mode="In" />
@@ -14804,6 +14892,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="MusicTag" Type="nvarchar" Mode="In" />
           <Parameter Name="PublicDomain" Type="char" Mode="In" />
           <Parameter Name="ExactMatch" Type="varchar" Mode="In" />
+          <Parameter Name="MovieAlbumType" Type="char" Mode="In" />
         </Function>
         <Function Name="USP_List_MusicTrack" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="searchText" Type="nvarchar" Mode="In" />
@@ -15165,6 +15254,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Type" Type="char" Mode="In" />
           <Parameter Name="ChangeFor" Type="char" Mode="In" />
         </Function>
+        <Function Name="USP_Syn_Deal_Digital_Details_Data" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="TabCode" Type="int" Mode="In" />
+          <Parameter Name="Syn_Deal_Digital_Code" Type="int" Mode="In" />
+          <Parameter Name="View" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="USP_Syn_Deal_Digital_List" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Syn_Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="pageNo" Type="int" Mode="In" />
+          <Parameter Name="pagesize" Type="int" Mode="In" />
+          <Parameter Name="RecordCount" Type="int" Mode="InOut" />
+        </Function>
         <Function Name="USP_Syn_Deal_Right_Clone" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="New_Syn_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Syn_Deal_Rights_Code" Type="int" Mode="In" />
@@ -15256,6 +15357,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Record_Code" Type="int" Mode="In" />
           <Parameter Name="Record_Type" Type="char" Mode="In" />
           <Parameter Name="PCodes" Type="nvarchar(max)" Mode="In" />
+        </Function>
+        <Function Name="USP_Title_PosterList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_language_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Star_Cast" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Genre_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Type" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Poster_Status" Type="varchar(max)" Mode="In" />
         </Function>
         <Function Name="USP_UPDATE_ACQ_DEAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
@@ -16109,6 +16218,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Syn_Deal_Ancillary_Platform_Medium" EntityType="Self.Syn_Deal_Ancillary_Platform_Medium" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Ancillary_Title" EntityType="Self.Syn_Deal_Ancillary_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Attachment" EntityType="Self.Syn_Deal_Attachment" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Syn_Deal_Digital" EntityType="Self.Syn_Deal_Digital" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Syn_Deal_Digital_Detail" EntityType="Self.Syn_Deal_Digital_Detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Material" EntityType="Self.Syn_Deal_Material" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Movie" EntityType="Self.Syn_Deal_Movie" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Syn_Deal_Payment_Terms" EntityType="Self.Syn_Deal_Payment_Terms" Schema="dbo" store:Type="Tables" />
@@ -18243,6 +18354,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Music_Title" EntitySet="Music_Title" />
             <End Role="Music_Title_Theme" EntitySet="Music_Title_Theme" />
           </AssociationSet>
+          <AssociationSet Name="FK_Music_Title_Title" Association="Self.FK_Music_Title_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
           <AssociationSet Name="FK_Platform_Avail_Acq" Association="Self.FK_Platform_Avail_Acq">
             <End Role="Platform" EntitySet="Platform" />
             <End Role="Avail_Acq" EntitySet="Avail_Acq" />
@@ -18446,6 +18561,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Syn_Deal_Deal_Type" Association="Self.FK_Syn_Deal_Deal_Type">
             <End Role="Deal_Type" EntitySet="Deal_Type" />
             <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" Association="Self.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital">
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
+            <End Role="Syn_Deal_Digital_Detail" EntitySet="Syn_Deal_Digital_Detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Digital_Syn_Deal" Association="Self.FK_Syn_Deal_Digital_Syn_Deal">
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Digital_Title" Association="Self.FK_Syn_Deal_Digital_Title">
+            <End Role="Title" EntitySet="Title" />
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
           </AssociationSet>
           <AssociationSet Name="FK_Syn_Deal_Entity" Association="Self.FK_Syn_Deal_Entity">
             <End Role="Entity" EntitySet="Entity" />
@@ -21460,6 +21587,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="MusicTag" Mode="In" Type="String" />
             <Parameter Name="PublicDomain" Mode="In" Type="String" />
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
+            <Parameter Name="MovieAlbumType" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_List_Amort_Rule" ReturnType="Collection(RightsU_NeoModel.USP_List_Amort_Rule_Result)">
             <Parameter Name="StrSearch" Mode="In" Type="String" />
@@ -23542,6 +23670,59 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USPAL_GetRevisionHistoryForModule" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForModule_Result)">
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
             <Parameter Name="Module_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <AssociationSet Name="FK_Music_Title_Title" Association="RightsU_NeoModel.FK_Music_Title_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Music_Title" EntitySet="Music_Title" />
+          </AssociationSet>
+          <EntitySet Name="Syn_Deal_Digital" EntityType="RightsU_NeoModel.Syn_Deal_Digital" />
+          <EntitySet Name="Syn_Deal_Digital_Detail" EntityType="RightsU_NeoModel.Syn_Deal_Digital_Detail" />
+          <AssociationSet Name="FK_Syn_Deal_Digital_Syn_Deal" Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal">
+            <End Role="Syn_Deal" EntitySet="Syn_Deal" />
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital">
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
+            <End Role="Syn_Deal_Digital_Detail" EntitySet="Syn_Deal_Digital_Detail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Syn_Deal_Digital_Title" Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title">
+            <End Role="Title" EntitySet="Titles" />
+            <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Delete_Syn_Digital">
+          <Parameter Name="Digital_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Digital_Config" ReturnType="Collection(RightsU_NeoModel.USP_Get_Digital_Config_Result)">
+          <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Title_For_Syn_Digital" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Syn_Digital_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Syn_Deal_Digital_List" ReturnType="Collection(RightsU_NeoModel.USP_Syn_Deal_Digital_List_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="pageNo" Mode="In" Type="Int32" />
+            <Parameter Name="pagesize" Mode="In" Type="Int32" />
+            <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Syn_Deal_Digital_Details_Data" ReturnType="Collection(RightsU_NeoModel.USP_Syn_Deal_Digital_Details_Data_Result)">
+            <Parameter Name="TabCode" Mode="In" Type="Int32" />
+            <Parameter Name="Syn_Deal_Digital_Code" Mode="In" Type="Int32" />
+            <Parameter Name="View" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Get_Syn_Deal_Digital_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Syn_Deal_Digital_Edit_Result)">
+            <Parameter Name="Syn_Deal_Digital_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Row_Num" Mode="In" Type="Int32" />
+            <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Title_PosterList" ReturnType="Collection(RightsU_NeoModel.USP_Title_PosterList_Result)">
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_language_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_Star_Cast" Mode="In" Type="String" />
+            <Parameter Name="Title_Genre_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_Type" Mode="In" Type="String" />
+            <Parameter Name="Poster_Status" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -25880,6 +26061,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Revenue_Vertical" Relationship="RightsU_NeoModel.FK_Syn_Deal_Revenue_Vertical" FromRole="Syn_Deal" ToRole="Revenue_Vertical" />
           <NavigationProperty Name="Syn_Deal_Supplementary" Relationship="RightsU_NeoModel.FK_Syn_Deal_Supplementary_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Supplementary" />
           <Property Name="Material_Remarks" Type="String" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Syn_Deal_Digital" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal" FromRole="Syn_Deal" ToRole="Syn_Deal_Digital" />
         </EntityType>
         <EntityType Name="Syn_Deal_Ancillary">
           <Key>
@@ -26410,6 +26592,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Recommendation_Content" Relationship="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" FromRole="Title" ToRole="AL_Recommendation_Content" />
           <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Title" FromRole="Title" ToRole="AL_Material_Tracking" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" FromRole="Title" ToRole="AL_Purchase_Order_Details" />
+          <NavigationProperty Name="Music_Title" Relationship="RightsU_NeoModel.FK_Music_Title_Title" FromRole="Title" ToRole="Music_Title" />
+          <NavigationProperty Name="Syn_Deal_Digital" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" FromRole="Title" ToRole="Syn_Deal_Digital" />
         </EntityType>
         <EntityType Name="Title_Audio_Details">
           <Key>
@@ -38197,6 +38381,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Music_Type1" Relationship="RightsU_NeoModel.FK_Music_Title_Music_Type1" FromRole="Music_Title" ToRole="Music_Type" />
           <NavigationProperty Name="Music_Title_Talent" Relationship="RightsU_NeoModel.FK_Music_Title_Talent_Music_Title_Talent" FromRole="Music_Title" ToRole="Music_Title_Talent" />
           <NavigationProperty Name="Music_Title_Theme" Relationship="RightsU_NeoModel.FK_Music_Title_Theme_Music_Title" FromRole="Music_Title" ToRole="Music_Title_Theme" />
+          <Property Name="Title_Code" Type="Int32" />
+          <Property Name="Movie_Album_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Music_Title_Title" FromRole="Music_Title" ToRole="Title" />
         </EntityType>
         <Association Name="FK_Acq_Deal_Movie_Music_Music_Title">
           <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="0..1" />
@@ -40351,6 +40538,137 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Last_Action_By" Nullable="true" MaxLength="601" />
           <Property Type="String" Name="Remark" Nullable="true" MaxLength="4000" />
           <Property Type="String" Name="Workflow_Status" Nullable="false" MaxLength="17" />
+        </ComplexType>
+        <Association Name="FK_Music_Title_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Music_Title" Role="Music_Title" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Music_Title">
+              <PropertyRef Name="Title_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Syn_Deal_Digital">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Digital_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Digital_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Syn_Deal_Code" Type="Int32" />
+          <Property Name="Title_code" Type="Int32" />
+          <Property Name="Episode_From" Type="Int32" />
+          <Property Name="Episode_To" Type="Int32" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Syn_Deal" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal" FromRole="Syn_Deal_Digital" ToRole="Syn_Deal" />
+          <NavigationProperty Name="Syn_Deal_Digital_Detail" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" FromRole="Syn_Deal_Digital" ToRole="Syn_Deal_Digital_Detail" />
+          <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" FromRole="Syn_Deal_Digital" ToRole="Title" />
+        </EntityType>
+        <EntityType Name="Syn_Deal_Digital_Detail">
+          <Key>
+            <PropertyRef Name="Syn_Deal_Digital_Detail_Code" />
+          </Key>
+          <Property Name="Syn_Deal_Digital_Detail_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Syn_Deal_Digital_Code" Type="Int32" />
+          <Property Name="Digital_Tab_Code" Type="Int32" />
+          <Property Name="Digital_Config_Code" Type="Int32" />
+          <Property Name="Digital_Data_Code" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="User_Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Row_Num" Type="Int32" />
+          <NavigationProperty Name="Syn_Deal_Digital" Relationship="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" FromRole="Syn_Deal_Digital_Detail" ToRole="Syn_Deal_Digital" />
+        </EntityType>
+        <Association Name="FK_Syn_Deal_Digital_Syn_Deal">
+          <End Type="RightsU_NeoModel.Syn_Deal" Role="Syn_Deal" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Digital" Role="Syn_Deal_Digital" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital">
+              <PropertyRef Name="Syn_Deal_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital">
+          <End Type="RightsU_NeoModel.Syn_Deal_Digital" Role="Syn_Deal_Digital" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Digital_Detail" Role="Syn_Deal_Digital_Detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Syn_Deal_Digital">
+              <PropertyRef Name="Syn_Deal_Digital_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital_Detail">
+              <PropertyRef Name="Syn_Deal_Digital_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Syn_Deal_Digital_Title">
+          <End Type="RightsU_NeoModel.Title" Role="Title" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Syn_Deal_Digital" Role="Syn_Deal_Digital" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Title">
+              <PropertyRef Name="Title_Code" />
+            </Principal>
+            <Dependent Role="Syn_Deal_Digital">
+              <PropertyRef Name="Title_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_Get_Digital_Config_Result">
+          <Property Type="String" Name="Digital_Name" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Page_Control_Order" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Config_Code" Nullable="false" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Text_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Value_Field" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Default_Values" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Title_For_Syn_Digital_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+        </ComplexType>
+        <ComplexType Name="USP_Syn_Deal_Digital_List_Result">
+          <Property Type="String" Name="title_name" Nullable="true" MaxLength="500" />
+          <Property Type="Int32" Name="Digital_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Digital_Tab_Description" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
+          <Property Type="Int32" Name="Title_Code" Nullable="true" />
+          <Property Type="Int32" Name="Syn_Deal_Digital_Code" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Syn_Deal_Digital_Details_Data_Result">
+          <Property Type="String" Name="Tab" Nullable="true" />
+        </ComplexType>
+        <ComplexType Name="USP_Get_Syn_Deal_Digital_Edit_Result">
+          <Property Type="String" Name="Digital_Data_Code" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="User_Value" Nullable="true" />
+          <Property Type="Int32" Name="Row_Num" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Config_Code" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Code" Nullable="true" />
+          <Property Type="Int32" Name="Digital_Tab_Code" Nullable="true" />
+          <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Is_Mandatory" Nullable="true" MaxLength="1" />
+          <Property Type="String" Name="Is_Multiselect" Nullable="true" MaxLength="1" />
+          <Property Type="Int32" Name="Max_Length" Nullable="true" />
+          <Property Type="Int32" Name="Control_Field_Order" Nullable="true" />
+          <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Default_Values" Nullable="true" MaxLength="1000" />
+        </ComplexType>
+        <ComplexType Name="USP_Title_PosterList_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Title_Image" Nullable="true" MaxLength="2000" />
+          <Property Type="String" Name="Deal_Type_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Language_Name" Nullable="false" MaxLength="1000" />
+          <Property Type="String" Name="Genres_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Title_Poster" Nullable="false" MaxLength="1" />
+          <Property Type="Int32" Name="Deal_Type_Code" Nullable="false" />
         </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
@@ -49396,6 +49714,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Music_Title">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Title">
               <MappingFragment StoreEntitySet="Music_Title">
+                <ScalarProperty Name="Movie_Album_Type" ColumnName="Movie_Album_Type" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
                 <ScalarProperty Name="Public_Domain" ColumnName="Public_Domain" />
                 <ScalarProperty Name="Music_Tag" ColumnName="Music_Tag" />
                 <ScalarProperty Name="Music_Album_Code" ColumnName="Music_Album_Code" />
@@ -50867,6 +51187,112 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Last_Action_By" ColumnName="Last_Action_By" />
                 <ScalarProperty Name="Remark" ColumnName="Remark" />
                 <ScalarProperty Name="Workflow_Status" ColumnName="Workflow Status" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <EntitySetMapping Name="Syn_Deal_Digital">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Digital">
+              <MappingFragment StoreEntitySet="Syn_Deal_Digital">
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Episode_To" ColumnName="Episode_To" />
+                <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
+                <ScalarProperty Name="Title_code" ColumnName="Title_code" />
+                <ScalarProperty Name="Syn_Deal_Code" ColumnName="Syn_Deal_Code" />
+                <ScalarProperty Name="Syn_Deal_Digital_Code" ColumnName="Syn_Deal_Digital_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Syn_Deal_Digital_Detail">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Digital_Detail">
+              <MappingFragment StoreEntitySet="Syn_Deal_Digital_Detail">
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Syn_Deal_Digital_Code" ColumnName="Syn_Deal_Digital_Code" />
+                <ScalarProperty Name="Syn_Deal_Digital_Detail_Code" ColumnName="Syn_Deal_Digital_Detail_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Delete_Syn_Digital" FunctionName="RightsU_NeoModel.Store.USP_Delete_Syn_Digital" />
+          <FunctionImportMapping FunctionImportName="USP_Get_Digital_Config" FunctionName="RightsU_NeoModel.Store.USP_Get_Digital_Config">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Digital_Config_Result">
+                <ScalarProperty Name="Digital_Name" ColumnName="Digital_Name" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Title_For_Syn_Digital" FunctionName="RightsU_NeoModel.Store.USP_Get_Title_For_Syn_Digital">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Title_For_Syn_Digital_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Syn_Deal_Digital_List" FunctionName="RightsU_NeoModel.Store.USP_Syn_Deal_Digital_List">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Digital_List_Result">
+                <ScalarProperty Name="title_name" ColumnName="title_name" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Digital_Tab_Description" ColumnName="Digital_Tab_Description" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Syn_Deal_Digital_Code" ColumnName="Syn_Deal_Digital_Code" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Syn_Deal_Digital_Details_Data" FunctionName="RightsU_NeoModel.Store.USP_Syn_Deal_Digital_Details_Data">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Syn_Deal_Digital_Details_Data_Result">
+                <ScalarProperty Name="Tab" ColumnName="Tab" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Get_Syn_Deal_Digital_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Syn_Deal_Digital_Edit">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Get_Syn_Deal_Digital_Edit_Result">
+                <ScalarProperty Name="Digital_Data_Code" ColumnName="Digital_Data_Code" />
+                <ScalarProperty Name="User_Value" ColumnName="User_Value" />
+                <ScalarProperty Name="Row_Num" ColumnName="Row_Num" />
+                <ScalarProperty Name="Digital_Config_Code" ColumnName="Digital_Config_Code" />
+                <ScalarProperty Name="Digital_Code" ColumnName="Digital_Code" />
+                <ScalarProperty Name="Digital_Tab_Code" ColumnName="Digital_Tab_Code" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_PosterList" FunctionName="RightsU_NeoModel.Store.USP_Title_PosterList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_PosterList_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+                <ScalarProperty Name="Title_Image" ColumnName="Title_Image" />
+                <ScalarProperty Name="Deal_Type_Name" ColumnName="Deal_Type_Name" />
+                <ScalarProperty Name="Language_Name" ColumnName="Language_Name" />
+                <ScalarProperty Name="Genres_Name" ColumnName="Genres_Name" />
+                <ScalarProperty Name="Title_Poster" ColumnName="Title_Poster" />
+                <ScalarProperty Name="Deal_Type_Code" ColumnName="Deal_Type_Code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

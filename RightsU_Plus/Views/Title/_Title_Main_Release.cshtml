@@ -24,6 +24,7 @@
     var URL_BindFieldGrid = '@Url.Action("BindFieldGrid", "Title")';
     var URL_SaveInSession = '@Url.Action("PopupSaveInSession", "Title")';
     var VarTitleCodeModel = '@Model.Title_Code';
+    var TitleTypeCode = "";
 
     var chosenTerritory = [];
     var chosenCountry = [];
@@ -315,45 +316,48 @@
         });
     }
 
-      var Command_Name = "";
-    var TitleReleaseCode = 0;
-    function handleOk() {
-        if (Command_Name == "TITLE_RELEASE_DELETE") {
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DeleteTitleRelease", "Title")',
-                data: { Title_Release_Code: TitleReleaseCode },
-                async: false,
-                success: function (result) {
-                    if (result == "true") {
-                        redirectToLogin();
-                    }
-                    else {
-                        if (result.Status == "S") {
-                            showAlert('I', result.Message);
-                            var pageNo = $('#hdnPageNo').val();
-                            BindTitleList(pageNo);
-                            calculatePublicDomain();
-                        }
-                        else {
-                            showAlert('E', result.Message);
-                        }
-                    }
-                },
-                error: function (result) {
-                    alert('Error: ' + result.responseText);
-                }
-            });
-        }
-        else if ($("#hdnConfirmationtype").val() == 'talent') {
-            ValidateSave('validate');
-        }
-        else {
-            var obj = $('#hdnCurrentID').val();
-            var imgDelete = document.getElementById("imgDelete_" + obj);
-            SaveExtended(imgDelete);
-        }
-    }
+    //Commented beacause same function used in Title/_Extended_Coulmns where delete is working in one function for deleting Extended columns and deleting title release 
+    //var Command_Name = "";
+    //var TitleReleaseCode = 0;
+    //function handleOk() {
+    //    debugger;
+    //    if (Command_Name == "TITLE_RELEASE_DELETE") {
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: '@Url.Action("DeleteTitleRelease", "Title")',
+    //            data: { Title_Release_Code: TitleReleaseCode },
+    //            async: false,
+    //            success: function (result) {
+    //                debugger;
+    //                if (result == "true") {
+    //                    redirectToLogin();
+    //                }
+    //                else {
+    //                    if (result.Status == "S") {
+    //                        showAlert('I', result.Message);
+    //                        var pageNo = $('#hdnPageNo').val();
+    //                        BindTitleList(pageNo);
+    //                        calculatePublicDomain();
+    //                    }
+    //                    else {
+    //                        showAlert('E', result.Message);
+    //                    }
+    //                }
+    //            },
+    //            error: function (result) {
+    //                alert('Error: ' + result.responseText);
+    //            }
+    //        });
+    //    }
+    //    else if ($("#hdnConfirmationtype").val() == 'talent') {
+    //        ValidateSave('validate');
+    //    }
+    //    else {
+    //        var obj = $('#hdnCurrentID').val();
+    //        var imgDelete = document.getElementById("imgDelete_" + obj);
+    //        SaveExtended(imgDelete);
+    //    }
+    //}
     function handleCancel() {
         Command_Name = "";
         TitleReleaseCode = 0;

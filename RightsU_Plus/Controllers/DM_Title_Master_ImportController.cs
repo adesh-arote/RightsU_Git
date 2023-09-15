@@ -15,6 +15,7 @@ using System.Globalization;
 using UTOFrameWork.FrameworkClasses;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace RightsU_Plus.Controllers
 {
@@ -268,6 +269,19 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["MusicTitleBulkImportSearch_Page_Properties"] = value; }
         }
+
+        private List<USP_Title_PosterList_Result> USP_Title_PosterList_Result_Searched
+        {
+            get
+            {
+                if (Session["USP_Title_PosterList_Result_Searched"] == null)
+                    Session["USP_Title_PosterList_Result_Searched"] = new List<USP_Title_PosterList_Result>();
+                return (List<USP_Title_PosterList_Result>)Session["USP_Title_PosterList_Result_Searched"];
+            }
+            set { Session["USP_Title_PosterList_Result_Searched"] = value; }
+        }
+
+
         private List<RightsU_Entities.USPListResolveConflict_Result> lstResolveConflict
         {
             get
@@ -1009,15 +1023,7 @@ namespace RightsU_Plus.Controllers
                     else
                         pageNo = v1 + 1;
                 }
-                if (IsFromResolveConflict)
-                {
-                    noOfRecordSkip = recordPerPage * (pageNo - 1);
-                    //IsFromResolveConflict = false;
-                }
-                else
-                {
-                    noOfRecordSkip = recordPerPage * (pageNo);
-                }
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
                 else
@@ -2149,6 +2155,174 @@ namespace RightsU_Plus.Controllers
             string ErrorTblEnd = "</td></tr></tbody></table>";
             string ErrorHtml = ErrorTbl + ErrorMsg.Replace("~", "</td></tr><tr><td>") + ErrorTblEnd;
             return Json(ErrorHtml);
+        }
+
+        public ActionResult BulkPosterUploadList()
+        {
+            List<RightsU_Entities.Language> lstLanguage = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Is_Active == "Y").OrderBy(o => o.Language_Name).ToList();
+            ViewBag.LanguageList = new MultiSelectList(lstLanguage, "Language_Code", "Language_Name");
+
+            var lstTalent = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().ToList();
+            var lstStarCast = lstTalent.Where(x => x.Role_Code == GlobalParams.Role_code_StarCast).ToList();
+            ViewBag.StarCastList = new MultiSelectList(lstStarCast, "Talent_code", "Talent_Name");
+
+            List<RightsU_Entities.Genre> LstGenre = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+            ViewBag.GenreList = new MultiSelectList(LstGenre, "Genres_Code", "Genres_Name");
+
+            //List<MultiSelectList> lstTitleType = new List<MultiSelectList>();
+            //var lstTitleType = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Role_Type == "T").OrderBy(o => o.Role_Name).ToList();
+           // ViewBag.TitleTypeList = new MultiSelectList(lstTitleType, "Role_Code", "Role_Name");
+
+            var lstTitleType = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Is_Active == "Y").OrderBy(x => x.Deal_Type_Name).ToList();
+            ViewBag.TitleTypeList = new MultiSelectList(lstTitleType, "Deal_Type_Code", "Deal_Type_Name");
+
+            ViewBag.FileSize = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Poster_File_Size").ToList().FirstOrDefault().Parameter_Value;
+            return View();
+        }
+
+        public JsonResult PopulateContent(string searchPrefix = "")
+        {
+      List<string> terms = searchPrefix.Split('﹐').ToList();
+            terms = terms.Select(s => s.Trim()).ToList();
+            string searchString = terms.LastOrDefault().ToString().Trim();
+
+            dynamic result = "";
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+                result = objTitle_Service.SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())).Distinct()
+                .Select(R => new { Title_Name = R.Title_Name, Title_Code = R.Title_Code }).Take(100).ToList();
+                //new USP_Service(objLoginEntity.ConnectionStringName).USP_PopulateTit(searchString).ToList();
+            }
+            return Json(result);
+        }
+
+        public JsonResult SearchTitles(string Title = "", string Title_language_Code = "", string Title_Star_Cast = "", string Title_Genre_Code = "", string Title_Type = "", string Poster_Status = "")
+        {
+            string title_names = TitleAutosuggest(Title);
+            USP_Title_PosterList_Result_Searched = null;
+            USP_Title_PosterList_Result_Searched = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_PosterList(title_names, Title_language_Code, Title_Star_Cast, Title_Genre_Code, Title_Type, Poster_Status).ToList();
+
+            int recordcount = 0;
+            recordcount = USP_Title_PosterList_Result_Searched.Count;
+
+            var obj = new
+            {
+                Record_Count = recordcount
+            };
+            return Json(obj);
+        }
+
+        public ActionResult BindTitlesList(int pageNo, int recordPerPage)
+        {
+            List<USP_Title_PosterList_Result> TitleList = new List<USP_Title_PosterList_Result>();
+            int RecordCount = 0;
+            RecordCount = USP_Title_PosterList_Result_Searched.Count;
+            if (RecordCount > 0)
+            {
+                int noOfRecordSkip, noOfRecordTake;
+                pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
+                TitleList = USP_Title_PosterList_Result_Searched.Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+
+            }
+            return PartialView("~/Views/DM_Title_Master_Import/_PosterTitleList.cshtml", TitleList);
+        }
+
+        //public ActionResult BindTitleList(int pageNo, int recordPerPage,int id)
+        //{
+        //    int RecordCount = 0;
+        //    List<USP_Title_List_Result> PosterTitleList = new List<USP_Title_List_Result>();
+        //    PosterTitleList = TitleList.
+        //}
+
+        public string TitleAutosuggest(string Title)
+        {
+            Title = Title.Trim().Trim('﹐').Trim();
+            string title_names = "";
+            if (Title != "")
+            {
+                string[] terms = Title.Split('﹐');
+                string[] Title_Codes = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => terms.Contains(x.Title_Name)).Select(s => s.Title_Code.ToString()).ToArray();
+                title_names = string.Join(", ", Title_Codes);
+                if (title_names == "")
+                    title_names = "-1";
+            }
+            return title_names;
+        }
+
+        public JsonResult SaveTitlePoster(List<Title_Service> lst)
+        {
+            string status = "", message = "";
+            try
+            {
+                //if(lst.Count > 0)List<Title_Service> lst
+                //{
+                //    string ReturnMessage = "Y";
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                status = "E";
+                message = ex.Message;
+            }
+            var obj = new
+            {
+                RecordCount = 0,
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
+
+        public string SaveFile()
+        {
+            string ReturnMessage = "Y";
+            Title_Service objTitle_Service = new Title_Service(objLoginEntity.ConnectionStringName);
+
+            RightsU_Entities.Title ObjTitle = new RightsU_Entities.Title();
+
+            if (System.Web.HttpContext.Current.Request.Files.AllKeys.Any())
+            {
+                for (int i = 0; i< System.Web.HttpContext.Current.Request.Files.Count; i++)
+                {
+                    var file = System.Web.HttpContext.Current.Request.Files["InputFile["+ i + "]"];
+                    string filename = DateTime.Now.Ticks.ToString() + "_";
+
+                    //file = Regex.Replace(file, @"[^0-9a-zA-Z]+", "_");
+                    filename += file.FileName.Replace(" ", "_");
+                    filename = Regex.Replace(filename, @"[~#'%&*:<>?/\{|}\n]", "_");
+                    if (filename != "" && file.FileName != "")
+                    {
+                        file.SaveAs(Server.MapPath(ConfigurationManager.AppSettings["TitleImagePath"] + filename));
+                        TempData["Title_Image[" + i + "]"] = filename.Replace(" ", "_");
+                        var Title_Image = filename.Replace(" ", "_");
+                        
+                        var TitleCode = System.Web.HttpContext.Current.Request.Files["Title_Code[" + i + "]"];
+                    
+                        TempData["Title_Code[" + i + "]"] = System.Web.HttpContext.Current.Request.Form["Title_Code[" + i + "]"];
+                        var Title_Code = Convert.ToInt32(System.Web.HttpContext.Current.Request.Form["Title_Code[" + i + "]"]);
+
+                        ObjTitle = objTitle_Service.SearchFor(t => t.Title_Code == Title_Code).FirstOrDefault();
+
+                        ObjTitle.Title_Image = Title_Image;
+
+                        ObjTitle.EntityState = State.Modified;
+
+                        dynamic resultset;
+                        objTitle_Service.Save(ObjTitle, out resultset);
+                    }
+                    
+                }
+               // new Title_Service(objLoginEntity.ConnectionStringName).Update(TitleList);
+                
+                return ReturnMessage = "Y";
+            }
+            else
+                return ReturnMessage = "N";
         }
     }
 }

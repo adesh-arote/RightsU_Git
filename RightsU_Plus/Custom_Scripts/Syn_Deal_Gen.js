@@ -36,6 +36,11 @@
     var txtRemark = document.getElementById('txtRemark');
     countChar(txtRemark);
     BindAllPreReq_Async();
+
+    var IsBuyBackRightsExist = $('#hdnIsBuyBackRightsExist').val();
+    if (IsBuyBackRightsExist == "Y") {
+        $("select[ID='ddlLicensee']").attr('disabled', true);
+    }
 });
 //$(window).load(function () {
 //    BindAllPreReq_Async();
@@ -615,6 +620,7 @@ function GetDealTypeCode() {
 }
 function Enable_DisableControl(isDisable) {
     debugger;
+   
     $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', isDisable);
     var dealTypeCode = $("input[name='Deal_Type_Code']:radio:checked").val();
     if (dealTypeCode == Deal_Type_Other) {

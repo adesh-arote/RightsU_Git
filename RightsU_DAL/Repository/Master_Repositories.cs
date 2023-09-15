@@ -1308,6 +1308,11 @@ namespace RightsU_DAL
         public Music_Title_Talent_Repository(string conStr) : base(conStr) { }
     }
 
+    public class Title_Talent_Repository : RightsU_Repository<Title_Talent>
+    {
+        public Title_Talent_Repository(string conStr) : base(conStr) { }
+    }
+
     public class Music_Type_Repository : RightsU_Repository<Music_Type>
     {
         public Music_Type_Repository(string conStr) : base(conStr) { }

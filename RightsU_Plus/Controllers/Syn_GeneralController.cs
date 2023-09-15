@@ -214,6 +214,24 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "";
             Session["FileName"] = "syn_General";
             SearchTitle(objDeal_Schema.General_Search_Title_Codes);
+
+            var SynDealRightsCode =  objSD_Session.Syn_Deal_Rights.Distinct().Select(x => x.Syn_Deal_Rights_Code).ToList();
+            string IsBuyBackRightsExist = "N";
+
+            foreach (var item in SynDealRightsCode)
+            {
+                string BuybackSynRightsCode = Convert.ToString(item);
+                var lstBuyBackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == BuybackSynRightsCode).ToList();
+                if(lstBuyBackRights.Count() > 0)
+                {
+                    IsBuyBackRightsExist = "Y";
+                    break;
+                }
+                
+            }
+
+            ViewBag.IsBuyBackRightsExist = IsBuyBackRightsExist;
+
             return PartialView(viewName, objSD_Session);
         }
         public ActionResult Cancel()

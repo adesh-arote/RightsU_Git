@@ -188,6 +188,7 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForPurchaseOrder = 265;
         public const int ModuleCodeForAeroplay = 266;
         public const int ModuleCodeForDeliveryTracking = 267;
+        public const int ModuleCodeForAvailableForExcelReport = 268;
 
         #endregion
 
@@ -1883,6 +1884,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptDealStatusReport";
             else if (ReportName == "rptIPR_IntDom_Report")
                 ReportPath = ReportFolder + "/rptIPR_IntDom";
+            else if (ReportName == "rptMusicAvailabilty")
+                ReportPath = ReportFolder + "/rptMusicAvailabilty";
 
             return ReportPath;
         }
