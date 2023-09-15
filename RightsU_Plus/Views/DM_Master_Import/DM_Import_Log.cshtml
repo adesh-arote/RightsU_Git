@@ -1,5 +1,7 @@
 ﻿@model List<RightsU_Entities.DM_Master_Log>
-
+@{
+    RightsU_Entities.DM_Title_Resolve_Conflict objDTRC = ViewBag.DM_Title_RC;
+}
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
 <script>
@@ -16,18 +18,14 @@
     <table class="table table-bordered table-hover" id="tblMasterLogData">
         <thead>
             <tr>
-                @if (ViewBag.TabName == "MA")
-                {
-                    <th style="width:10%;">Album Type</th>
-                }
                 <th style="width:25%;">Name </th>
-                @if (ViewBag.TabName == "TA")
+                @if (objDTRC.Roles == "Y")
                 {
-                    <th style="width:15%;">Roles</th>
+                    <th style="width:20%;">Roles</th>
                 }
-                @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
+                @if (objDTRC.Create_New == "Y")
                 {
-                    <th style="width:15%;"><input type="checkbox" id="chkAll" /> Create New </th>
+                    <th style="width:20%;"><input type="checkbox" id="chkAll" /> Create New </th>
                 }
                 <th style="width:20%;">Map Data</th>
                 <th style="width:15%;"><input type="checkbox" id="IgnoreAll" /> Exclude</th>
@@ -39,21 +37,15 @@
                 foreach (var item in Model)
                 {
                     <tr>
-                        @if (ViewBag.TabName == "MA")
-                        {
-                            <td>@item.Music_Album
-                              <input type="hidden" id="Music_Album_@item.DM_Master_Log_Code" name="Music_Album" value="@item.Music_Album" />
-                            </td>
-                        }
                         <td>@item.Name</td>
-                        @if (ViewBag.TabName == "TA")
+                        @if (objDTRC.Roles == "Y")
                         {
                             <td align="center">@item.Roles</td>
                         }
-                        @if (ViewBag.TabName != "TL" && ViewBag.TabName != "TT" && ViewBag.TabName != "PC" && ViewBag.TabName != "OL")
+                        @if (objDTRC.Create_New == "Y")
                         {
                             <td align="center">
-                                @if (item.IsIgnore || item.Music_Album == "Movie" || item.Music_Album == "Show")
+                                @if (item.IsIgnore)
                                 {
                                     <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" disabled="disabled" />
                                 }
@@ -72,16 +64,16 @@
                         <td align="center">
                             @if (item.IsIgnore)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Music_Album')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
 
                             }
                             else if (item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Music_Album')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" disabled="disabled" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
                             }
-                            else if(!item.Is_Create_New)
+                            else if (!item.Is_Create_New)
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Music_Album')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName')" value="@item.Mapped_Name" />
+                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
                             }
 
 

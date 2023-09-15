@@ -458,6 +458,10 @@
             <div class="container acq main_col">
                 <div class="top_area">
                     <h2 class="pull-left">@objMessageKey.TitleImport</h2>
+                    <div class="pull-right" style="padding-top:17px">
+                        <input type="button" id="btnSampleDownload" value="BULK POSTER UPLOAD" class="btn btn-primary" onclick="@(" window.location.href='"+ @Url.Action("BulkPosterUploadList", "DM_Title_Master_Import") + "' ")" />
+
+                    </div>
                 </div>
                 <div class="">
                     <div id="divSearch" class="search_area clearfix">

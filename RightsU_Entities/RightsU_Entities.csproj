@@ -661,6 +661,7 @@
     <Compile Include="StoreProcedure_Entities\USP_Syn_List_Runs_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_Deal_Info_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Title_List_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Title_PosterList_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_Detail_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_Error_List_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Uploaded_File_List_Result.cs" />

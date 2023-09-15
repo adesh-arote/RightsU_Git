@@ -5860,5 +5860,34 @@ namespace RightsU_InterimDb.Models
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Deal_Digital_Edit_Result>("USP_Get_Syn_Deal_Digital_Edit", syn_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
         }
+    
+        public virtual ObjectResult<USP_Title_PosterList_Result> USP_Title_PosterList(string title_Code, string title_language_Code, string title_Star_Cast, string title_Genre_Code, string title_Type, string poster_Status)
+        {
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+    
+            var title_language_CodeParameter = title_language_Code != null ?
+                new ObjectParameter("Title_language_Code", title_language_Code) :
+                new ObjectParameter("Title_language_Code", typeof(string));
+    
+            var title_Star_CastParameter = title_Star_Cast != null ?
+                new ObjectParameter("Title_Star_Cast", title_Star_Cast) :
+                new ObjectParameter("Title_Star_Cast", typeof(string));
+    
+            var title_Genre_CodeParameter = title_Genre_Code != null ?
+                new ObjectParameter("Title_Genre_Code", title_Genre_Code) :
+                new ObjectParameter("Title_Genre_Code", typeof(string));
+    
+            var title_TypeParameter = title_Type != null ?
+                new ObjectParameter("Title_Type", title_Type) :
+                new ObjectParameter("Title_Type", typeof(string));
+    
+            var poster_StatusParameter = poster_Status != null ?
+                new ObjectParameter("Poster_Status", poster_Status) :
+                new ObjectParameter("Poster_Status", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_PosterList_Result>("USP_Title_PosterList", title_CodeParameter, title_language_CodeParameter, title_Star_CastParameter, title_Genre_CodeParameter, title_TypeParameter, poster_StatusParameter);
+        }
     }
 }

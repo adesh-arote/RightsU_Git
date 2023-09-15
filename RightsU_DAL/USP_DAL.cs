@@ -7,7 +7,6 @@ using RightsU_Entities;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 
-
 namespace RightsU_DAL
 {
     /// <summary>
@@ -1894,6 +1893,11 @@ namespace RightsU_DAL
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
             return objContext.USP_Delete_Syn_Digital(digital_Code);
+        }
+        public virtual ObjectResult<USP_Title_PosterList_Result> USP_Title_PosterList(string Title_Code, string Title_language_Code, string Title_Star_Cast, string Title_Genre_Code, string Title_Type, string Poster_Status)
+        {
+            RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
+            return objContext.USP_Title_PosterList(Title_Code, Title_language_Code, Title_Star_Cast, Title_Genre_Code, Title_Type, Poster_Status);
         }
     }
 }

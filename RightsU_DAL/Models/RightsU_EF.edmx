@@ -15358,6 +15358,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Record_Type" Type="char" Mode="In" />
           <Parameter Name="PCodes" Type="nvarchar(max)" Mode="In" />
         </Function>
+        <Function Name="USP_Title_PosterList" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_language_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Star_Cast" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Genre_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Title_Type" Type="varchar(max)" Mode="In" />
+          <Parameter Name="Poster_Status" Type="varchar(max)" Mode="In" />
+        </Function>
         <Function Name="USP_UPDATE_ACQ_DEAL" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Version" Type="varchar" Mode="In" />
@@ -23707,6 +23715,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Syn_Deal_Digital_Code" Mode="In" Type="Int32" />
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
+          </FunctionImport>
+          <FunctionImport Name="USP_Title_PosterList" ReturnType="Collection(RightsU_NeoModel.USP_Title_PosterList_Result)">
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_language_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_Star_Cast" Mode="In" Type="String" />
+            <Parameter Name="Title_Genre_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_Type" Mode="In" Type="String" />
+            <Parameter Name="Poster_Status" Mode="In" Type="String" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
@@ -40644,6 +40660,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Default_Values" Nullable="true" MaxLength="1000" />
         </ComplexType>
+        <ComplexType Name="USP_Title_PosterList_Result">
+          <Property Type="Int32" Name="Title_Code" Nullable="false" />
+          <Property Type="String" Name="Title_Name" Nullable="true" MaxLength="500" />
+          <Property Type="String" Name="Title_Image" Nullable="true" MaxLength="2000" />
+          <Property Type="String" Name="Deal_Type_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Language_Name" Nullable="false" MaxLength="1000" />
+          <Property Type="String" Name="Genres_Name" Nullable="true" MaxLength="100" />
+          <Property Type="String" Name="Title_Poster" Nullable="false" MaxLength="1" />
+          <Property Type="Int32" Name="Deal_Type_Code" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -51253,6 +51279,20 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
                 <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_Title_PosterList" FunctionName="RightsU_NeoModel.Store.USP_Title_PosterList">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Title_PosterList_Result">
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Title_Name" ColumnName="Title_Name" />
+                <ScalarProperty Name="Title_Image" ColumnName="Title_Image" />
+                <ScalarProperty Name="Deal_Type_Name" ColumnName="Deal_Type_Name" />
+                <ScalarProperty Name="Language_Name" ColumnName="Language_Name" />
+                <ScalarProperty Name="Genres_Name" ColumnName="Genres_Name" />
+                <ScalarProperty Name="Title_Poster" ColumnName="Title_Poster" />
+                <ScalarProperty Name="Deal_Type_Code" ColumnName="Deal_Type_Code" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

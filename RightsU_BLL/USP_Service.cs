@@ -1877,5 +1877,10 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Delete_Syn_Digital(digital_Code);
         }
+        public virtual ObjectResult<USP_Title_PosterList_Result> USP_Title_PosterList(string Title_Code, string Title_language_Code, string Title_Star_Cast, string Title_Genre_Code, string Title_Type, string Poster_Status)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Title_PosterList(Title_Code, Title_language_Code, Title_Star_Cast, Title_Genre_Code, Title_Type, Poster_Status);
+        }
     }
 }
