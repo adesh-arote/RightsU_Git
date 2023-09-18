@@ -261,7 +261,8 @@ namespace RightsU_Plus.Controllers
                 objDeal_Schema.Cost_PageSize = 50;
                 pageSize = 50;
             }
-            PageNo = page_No + 1;
+            //PageNo = page_No + 1;
+            PageNo = page_No <= 0 ? 1 : page_No + 1;
             ICollection<Syn_Deal_Attachment> lst_Syn_Deal_Attachment;
             Syn_Deal_Attachment_Service objSyn_Deal_Attachment_Service = new Syn_Deal_Attachment_Service(objLoginEntity.ConnectionStringName);
             if (PageNo == 1)
