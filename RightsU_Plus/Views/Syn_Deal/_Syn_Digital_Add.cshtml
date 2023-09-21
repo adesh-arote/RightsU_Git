@@ -170,7 +170,7 @@
         debugger;
         var ddlTitle_Code = $('#ddDigiTitle').val();
 
-        if (ddlTitle_Code=="0") {
+        if (ddlTitle_Code == "0" || ddlTitle_Code!= null) {
             showAlert('I', 'Please select Title');
             hideLoading();
             return;
