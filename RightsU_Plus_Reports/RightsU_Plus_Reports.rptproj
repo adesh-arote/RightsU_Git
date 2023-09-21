@@ -91,7 +91,7 @@
     <Report Include="rptMovie_Availability_V18_Demo.rdl" />
     <Report Include="rptMovie_Availability_V18_Indiacast.rdl" />
     <Report Include="rptMusicAiring.rdl" />
-    <Report Include="rptMusicAvailability.rdl" />
+    <Report Include="rptMusicAvailabilty.rdl" />
     <Report Include="rptMusicDealList.rdl" />
     <Report Include="rptMusicLabelConsumption.rdl" />
     <Report Include="rptMusicTrackAudit.rdl" />
