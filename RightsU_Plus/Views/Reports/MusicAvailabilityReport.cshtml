@@ -26,11 +26,13 @@
                 $('#changeLabel').html("Movie Title :");
                 TitleType = "M";
                 $('#txtTitle').val('');
+                Clear();
             }
             else if ($(".TitleTypeCls:checked").val() == "S") {
                 $('#changeLabel').html("Show Title :");
                 TitleType = "S";
                 $('#txtTitle').val('');
+                Clear();
             }
             //else if ($(".TitleTypeCls:checked").val() == "A") {
             //    $('#changeLabel').html("Album Title :");
@@ -196,7 +198,7 @@
                                     $('#txtMusicTitle').removeClass('loader');
                                     return {
                                         label: v.Text,
-                                        val: v.value
+                                        val: v.Value
                                     }
                                 }))
                             }
@@ -296,7 +298,7 @@
 
     function Clear() {
         debugger;
-        $('#ddlMusicLabel').val('');
+        $('#ddlMusicLabel').val('').trigger('chosen:updated');
         $('#txtTitle').val('');
         $('#hdnTitleCode').val(0)
         $('#txtMusicTitle').val('');
