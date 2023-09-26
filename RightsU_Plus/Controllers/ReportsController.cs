@@ -3235,12 +3235,14 @@ namespace RightsU_Plus.Controllers
             return Json(result);
         }
 
-        public PartialViewResult BindMusicAvailExcelReport(string MusicLabelCode = "", string selectedTitleCodes = "", string selectedMusicTitleCodes = "")
+        public PartialViewResult BindMusicAvailExcelReport(string MusicLabelCode = "", string selectedTitleCodes = "", string selectedMusicTitleCodes = "", string TitleType = "")
         {
-            ReportParameter[] parm = new ReportParameter[3];
+            ReportParameter[] parm = new ReportParameter[5];
             parm[0] = new ReportParameter("Music_Label_Code", MusicLabelCode);
             parm[1] = new ReportParameter("Title_Code", selectedTitleCodes);
             parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
+            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
+            parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             ReportViewer rptViewer = BindReport(parm, "rptMusicAvailabilty");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
