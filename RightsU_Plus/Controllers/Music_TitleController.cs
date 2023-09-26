@@ -856,6 +856,9 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PageNo = PageNo;
             ViewBag.PageSize = (objPage_Properties.Page_Size == 0) ? 10 : objPage_Properties.Page_Size;
 
+            var MusicAlbumVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "MusicTrack_Album_Visibility").Select(w => w.Parameter_Value).SingleOrDefault();
+            ViewBag.MusicAlbumVisibility = MusicAlbumVisibility;
+
             ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string c = addRights.FirstOrDefault();
             ViewBag.VisibilityforAdd = c;
