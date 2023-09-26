@@ -155,7 +155,7 @@
                     MusicAlbumName: MusicAlbumName,
                     Movie_Album_Type: Movie_Album_Type,
                     mode: "Add"
-                    
+
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -352,8 +352,12 @@
                                 <label for="rdbAddMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
                                 <input type="radio" name="Create_Movie_Album_Type" id="rdbAddShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType();" />
                                 <label for="rdbAddShow" style="vertical-align:2px">@objMessageKey.Show</label>
-                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType();" />
-                                <label for="rdbAddAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                                @if (ViewBag.MusicAlbumVisibility == "Y")
+                                {
+                                    <input type="radio" name="Create_Movie_Album_Type" id="rdbAddAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType();" />
+                                    <label for="rdbAddAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                                }
+
                             </li>
                             <li>
                                 <label> Music Movie / Album </label>

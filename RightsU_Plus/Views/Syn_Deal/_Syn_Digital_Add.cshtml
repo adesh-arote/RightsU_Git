@@ -170,7 +170,7 @@
         debugger;
         var ddlTitle_Code = $('#ddDigiTitle').val();
 
-        if (ddlTitle_Code == "0" || ddlTitle_Code!= null) {
+        if (ddlTitle_Code == "0" || ddlTitle_Code== null) {
             showAlert('I', 'Please select Title');
             hideLoading();
             return;
@@ -692,9 +692,10 @@
             hideLoading();
             return;
         }
-        if ($('#ddDigiTitle').val() == "0")
+        if ($('#ddDigiTitle').val() == "0" || $('#ddDigiTitle').val() == null)
         {
             showAlert('I', 'Title not selected');
+            hideLoading();
             return;
         }
         if ($('#ddDigiTitle').val() != null) {
