@@ -3138,7 +3138,7 @@ namespace RightsU_Plus.Controllers
             return new SelectList(list, "Value", "Text");
         }
 
-        public JsonResult BindTitleForMusicAvailReport(string keyword = "", string TitleType = "")
+        public JsonResult BindTitleForMusicAvailReport(string keyword = "", string TitleType = "", string selectedMusicLabelCode = "")
         {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
@@ -3148,6 +3148,7 @@ namespace RightsU_Plus.Controllers
                 string searchString = terms.LastOrDefault().ToString().Trim();
 
                 List<string> lstTitleTypeCode = new List<string>();
+                int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
 
                 if (TitleType == "M")
                 {
@@ -3160,7 +3161,7 @@ namespace RightsU_Plus.Controllers
                     lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
                 }
 
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
                 && lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
                     .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
             }
@@ -3243,7 +3244,7 @@ namespace RightsU_Plus.Controllers
             parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
             parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
             parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-            ReportViewer rptViewer = BindReport(parm, "rptMusicAvailabilty");
+            ReportViewer rptViewer = BindReport(parm, "rptMusicAvailability");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }
