@@ -3161,9 +3161,21 @@ namespace RightsU_Plus.Controllers
                     lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
                 }
 
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
-                && lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
-                    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+                //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
+                //&& lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
+                //    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+
+                result =
+                    new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                    join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(y => true).ToList()
+                                    on x.Title_Code equals y.Title_Code
+                                    join z in new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                    on y.Music_Title_Code equals z.Music_Title_Code
+                                    select new
+                                    {
+                                        x.Title_Name,
+                                        x.Title_Code
+                                    }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
             }
             return Json(result);
         }

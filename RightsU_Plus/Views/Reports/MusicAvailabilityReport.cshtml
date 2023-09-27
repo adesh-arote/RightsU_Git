@@ -98,8 +98,8 @@
                                     debugger;
                                     $('#txtTitle').removeClass('loader');
                                     return {
-                                        label: v.Title_Name,
-                                        val: v.Title_Code
+                                        label: v.Text,
+                                        val: v.Value
                                     }
                                 }))
                             }
@@ -361,7 +361,7 @@
                             <b>Music Track :</b>
                         </td>
                         <td style="width:20%;vertical-align: middle;">
-                            <input type="text" id="txtMusicTitle" class="search" maxlength="100" style="width:95%;height: 28px;" placeholder="Music Title" onkeyup="PopulateMusicTitle(event)" autocomplete="on" />
+                            <input type="text" id="txtMusicTitle" class="search" maxlength="100" style="width:95%;height: 28px;" placeholder="Music Track" onkeyup="PopulateMusicTitle(event)" autocomplete="on" />
                             <input type="hidden" id="hdnMusicTitleCode" value="0" />
                         </td>
 
