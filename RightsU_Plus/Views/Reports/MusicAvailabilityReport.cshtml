@@ -20,7 +20,6 @@
     var URL_BindMusicAvailExcelReport = '@Url.Action("BindMusicAvailExcelReport", "Reports")';
 
     $(document).ready(function () {
-        $('.TitleTypeCls').trigger("change");
         $('.TitleTypeCls').on("change", function () {
             debugger;
             if ($(".TitleTypeCls:checked").val() == "M") {
@@ -43,6 +42,18 @@
             //    $('#txtTitle').val('');
             //    $('#txtTitle').attr('placeholder', 'Album Title');
             //}
+        });
+        $('#ddlMusicLabel').on("change", function () {
+            debugger;
+            $('#txtTitle').val('');
+            $('#hdnTitleCode').val(0);
+            $('#txtTitle').removeClass('loader');
+            if (TitleType == "M") {
+                $('#txtTitle').attr('placeholder', 'Movie Title');
+            }
+            else {
+                $('#txtTitle').attr('placeholder', 'Show Title');
+            }
         });
     });
 
