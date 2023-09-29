@@ -911,41 +911,49 @@ namespace RightsU_Plus.Controllers
             #endregion
             #region ========= Insert Episode  =========
             System_Parameter_New Content_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Generate_Content_From_Title_Import").FirstOrDefault();
-            if(Content_system_Parameter.Parameter_Value == "Y") { 
-            System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
-            List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
-            int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
-
-            if (DealTypeIncluded == 1)
+            if (Content_system_Parameter.Parameter_Value == "Y")
             {
-                if (objTitle.Title_Episode_Details.Count() < 1)
+                System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
+
+                if (DealTypeIncluded == 1)
                 {
-                    Title_Episode_Details objNewTED = new Title_Episode_Details();
-                    objNewTED.EntityState = State.Added;
-                    objNewTED.Episode_Nos = 1;
-                    objNewTED.Remarks = objTitle.Title_Name;
-                    objNewTED.Status = "P";
-                    objNewTED.Inserted_On = DateTime.Now;
-                    objNewTED.Inserted_By = objLoginUser.Users_Code;
-                    objTitle.Title_Episode_Details.Add(objNewTED);
+                    if (objTitle.Title_Episode_Details.Count() < 1)
+                    {
+                        Title_Episode_Details objNewTED = new Title_Episode_Details();
+                        objNewTED.EntityState = State.Added;
+                        objNewTED.Episode_Nos = 1;
+                        objNewTED.Remarks = objTitle.Title_Name;
+                        objNewTED.Status = "P";
+                        objNewTED.Inserted_On = DateTime.Now;
+                        objNewTED.Inserted_By = objLoginUser.Users_Code;
+                        objTitle.Title_Episode_Details.Add(objNewTED);
+                    }
                 }
+
+                //if (objTitle.Title_Code > 0)
+                //    objTitle.EntityState = State.Modified;
+                //else
+                //    objTitle.EntityState = State.Added;
+
+                objTitle.Title_Code = TitleCode;
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                {
+                    objTitle.EntityState = State.Added;
+                    objTitle.Is_Active = "Y";
+                }
+
+                objTitle = DBSaveEpisodeDetails(objTitle);
             }
-
-            //if (objTitle.Title_Code > 0)
-            //    objTitle.EntityState = State.Modified;
-            //else
-            //    objTitle.EntityState = State.Added;
-
-            objTitle.Title_Code = TitleCode;
-            if (objTitle.Title_Code > 0)
-                objTitle.EntityState = State.Modified;
             else
             {
-                objTitle.EntityState = State.Added;
-                objTitle.Is_Active = "Y";
-            }
-
-            objTitle = DBSaveEpisodeDetails(objTitle);
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                    objTitle.EntityState = State.Added;
             }
             #endregion
 
