@@ -706,4 +706,30 @@ namespace RightsU_DAL
             }
         }
     }
+    public class Syn_Deal_Digital_Detail_Repository : RightsU_Repository<Syn_Deal_Digital_Detail>
+    {
+        public Syn_Deal_Digital_Detail_Repository(string conStr) : base(conStr) { }
+
+        //public override void Save(Syn_Deal_Digital_Detail obj)
+        //{
+        //    ICollection<Syn_Deal_Digital_Detail> list = new HashSet<Syn_Deal_Digital_Detail>();
+        //    list.Add(obj);
+
+        //    Save_Syn_Deal_Entities_Generic objSaveEntities = new Save_Syn_Deal_Entities_Generic();
+        //    obj = objSaveEntities.SaveDigital(list, base.DataContext).FirstOrDefault();
+
+        //    if (obj.EntityState == State.Added)
+        //    {
+        //        base.Save(list.FirstOrDefault());
+        //    }
+        //    else if (obj.EntityState == State.Modified)
+        //    {
+        //        base.Update(list.FirstOrDefault());
+        //    }
+        //    else if (obj.EntityState == State.Deleted)
+        //    {
+        //        base.Delete(list.FirstOrDefault());
+        //    }
+        //}
+    }
 }
