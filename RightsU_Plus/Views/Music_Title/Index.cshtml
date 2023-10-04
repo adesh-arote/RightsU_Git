@@ -374,7 +374,10 @@
                                                     <td style="width: 40%">
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        }
                                                     </td>
 
                                                     <td style="width: 14%">@objMessageKey.Movie / @objMessageKey.Album</td>
