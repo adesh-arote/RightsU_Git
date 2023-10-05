@@ -338,6 +338,8 @@ namespace RightsU_Plus.Controllers
                     BindStarcast(Title_Code, objTitle.Movie_Album_Type);
                 }
 
+                ViewBag.isSyndicated = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count() > 0 ? "Y" : "N";
+
                 //ViewBag.MovieAlbum = BindMovieAlbum(Music_Album_Code);
                 ViewBag.Record_Locking_Code = RLCode;
                 Record_Locking_Code = RLCode;
@@ -793,7 +795,7 @@ namespace RightsU_Plus.Controllers
                 //if (Type == "N")
                 //    Count = (from Acq_Deal_Movie obj in objTitle.Acq_Deal_Movie where obj.Title_Code == Title_Code && (obj.Is_Closed != "X" || obj.Is_Closed != "Y") select obj).ToList().Distinct().Count();
 
-
+                Count = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count();
                 if (Count > 0)
                     objJson.Add("Error", objMessageKey.CannotdeactivatethisMusictitleasTitleisusedindeal);
                 else

@@ -142,18 +142,38 @@
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.Movie / @objMessageKey.Album Type</td>
                                                     <td style="width: 40%">
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
-                                                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                                                        @if (ViewBag.isSyndicated == "Y")
                                                         {
-                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Movie</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Show</label>
+                                                            if (ViewBag.MusicAlbumVisibility == "Y")
+                                                            {
+                                                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Album</label>
+                                                            }
                                                         }
+                                                        else
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
+                                                            if (ViewBag.MusicAlbumVisibility == "Y")
+                                                            {
+                                                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                            }
+                                                        }
+
 
                                                     </td>
 
                                                     <td style="width: 14%">@objMessageKey.Movie / @objMessageKey.Album</td>
                                                     <td style="width: 40%">
-                                                        <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                        @if (ViewBag.isSyndicated == "Y")
+                                                        {
+                                                            <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" disabled="disabled" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                        }
                                                         <input type="hidden" id="hdnMovieAlbum" value="@ViewBag.MovieAlbumCode" />
                                                         @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
                                                         @{
@@ -374,7 +394,10 @@
                                                     <td style="width: 40%">
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        }
                                                     </td>
 
                                                     <td style="width: 14%">@objMessageKey.Movie / @objMessageKey.Album</td>
