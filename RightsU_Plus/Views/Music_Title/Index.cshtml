@@ -1015,7 +1015,7 @@
 
             if ($.trim(Music_Album_Code) == '' || $.trim(Music_Album_Code) == '0') {                
                 $("#txtmusicAlbumName").addClass("required");
-                $("#txtmusicAlbumName").attr("required", true);
+                //$("#txtmusicAlbumName").attr("required", true);
                 isFieldValid = false;
                 //hideLoading();
                 //return false;
@@ -1370,6 +1370,7 @@
             debugger;
             var keyword = $("#txtmusicAlbumName").val();
             var MovieAlbumType = $("input[name='Movie_Album_Type']:checked").val();
+            $('#hdnMovieAlbum').val('');
             $("#txtmusicAlbumName").autocomplete({
                 focus: function () {
                     return false;
