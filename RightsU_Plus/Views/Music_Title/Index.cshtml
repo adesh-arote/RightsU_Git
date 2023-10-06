@@ -170,10 +170,12 @@
                                                         @if (ViewBag.isSyndicated == "Y")
                                                         {
                                                             <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="off" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" disabled="disabled" />
+                                                            <input type="hidden" id="hdnMusic_Album_Name" name="Music_Album_Name" value="@ViewBag.MovieAlbum" />
                                                         }
                                                         else
                                                         {
                                                             <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="off" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                            <input type="hidden" id="hdnMusic_Album_Name" name="Music_Album_Name" value="@ViewBag.MovieAlbum" />
                                                         }
                                                         <input type="hidden" id="hdnMovieAlbum" value="@ViewBag.MovieAlbumCode" />
                                                         @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
