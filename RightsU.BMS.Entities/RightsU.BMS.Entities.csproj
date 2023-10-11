@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\RightsU.BMS.Entities.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,7 +49,9 @@
       <HintPath>bin\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,10 +68,14 @@
     <Compile Include="FrameworkClasses\Logging.cs" />
     <Compile Include="FrameworkClasses\LoginDetails.cs" />
     <Compile Include="FrameworkClasses\Return.cs" />
+    <Compile Include="Master_Entities\AssetsResult.cs" />
+    <Compile Include="Master_Entities\BMS_Log.cs" />
+    <Compile Include="Master_Entities\DealContentResult.cs" />
+    <Compile Include="Master_Entities\DealContentRightsResult.cs" />
+    <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Master_Entities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
