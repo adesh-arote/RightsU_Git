@@ -226,8 +226,8 @@
 
     }
 
-    function SwitchMovieAlbumType_Advance() {   
-        
+    function SwitchMovieAlbumType_Advance() {
+
         $('#txtmusicAlbumName').val('');
         $('#hdnMovieAlbum').val('');
     }
@@ -432,8 +432,12 @@
                         <label for="rdbMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
                         <input type="radio" name="Movie_Album_Type" id="rdbShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
                         <label for="rdbShow" style="vertical-align:2px">@objMessageKey.Show</label>
-                        <input type="radio" name="Movie_Album_Type" id="rdbAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
-                        <label for="rdbAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                        {
+                            <input type="radio" name="Movie_Album_Type" id="rdbAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType_Advance();" />
+                            <label for="rdbAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                        }
+
                     </li>
                     <li class="AdSearch">
                         <label>@objMessageKey.Movie/@objMessageKey.Album:</label><br />
@@ -1619,7 +1623,7 @@
 
     function MakeDateFormate(dateInString) {
         if (dateInString != null || dateInString != "") {
-            var array = dateInString.split(' ');
+            var array = dateInString.split('/');
             var month = parseFloat(array[1]);
             switch (month) {
                 case 1:

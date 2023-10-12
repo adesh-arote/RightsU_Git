@@ -338,6 +338,9 @@ namespace RightsU_Plus.Controllers
                     BindStarcast(Title_Code, objTitle.Movie_Album_Type);
                 }
 
+                ViewBag.isSyndicated = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code.Contains("," + objTitle.Music_Title_Code.ToString() + ",") ||
+                                            x.Digital_Data_Code.StartsWith(objTitle.Music_Title_Code.ToString() + ",") || x.Digital_Data_Code.EndsWith("," + objTitle.Music_Title_Code.ToString()) || x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count() > 0 ? "Y" : "N";
+
                 //ViewBag.MovieAlbum = BindMovieAlbum(Music_Album_Code);
                 ViewBag.Record_Locking_Code = RLCode;
                 Record_Locking_Code = RLCode;
@@ -793,7 +796,8 @@ namespace RightsU_Plus.Controllers
                 //if (Type == "N")
                 //    Count = (from Acq_Deal_Movie obj in objTitle.Acq_Deal_Movie where obj.Title_Code == Title_Code && (obj.Is_Closed != "X" || obj.Is_Closed != "Y") select obj).ToList().Distinct().Count();
 
-
+                Count = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code.Contains("," + objTitle.Music_Title_Code.ToString() + ",") ||
+                                            x.Digital_Data_Code.StartsWith(objTitle.Music_Title_Code.ToString() + ",") || x.Digital_Data_Code.EndsWith("," + objTitle.Music_Title_Code.ToString()) || x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count();
                 if (Count > 0)
                     objJson.Add("Error", objMessageKey.CannotdeactivatethisMusictitleasTitleisusedindeal);
                 else
@@ -855,6 +859,9 @@ namespace RightsU_Plus.Controllers
             if (PageNo != 0)
                 ViewBag.PageNo = PageNo;
             ViewBag.PageSize = (objPage_Properties.Page_Size == 0) ? 10 : objPage_Properties.Page_Size;
+
+            var MusicAlbumVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "MusicTrack_Album_Visibility").Select(w => w.Parameter_Value).SingleOrDefault();
+            ViewBag.MusicAlbumVisibility = MusicAlbumVisibility;
 
             ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string c = addRights.FirstOrDefault();
@@ -1444,12 +1451,12 @@ namespace RightsU_Plus.Controllers
 
         [HttpPost]
         public ActionResult Save(RightsU_Entities.Music_Title objTitleModel, string Language_Code, string Music_Type_Code, string hdnLanguage, string hdnTheme
-            , string hdnSinger, string hdnComposer, string hdnLyricist, string Music_Label_Code, string Music_Version_Code, string Genres_Code, string hdnStarCast, string Music_Album_Name, string hdnmode, string Public_Domain, int? hdnMusicTitleCode)
+            , string hdnSinger, string hdnComposer, string hdnLyricist, string Music_Label_Code, string Music_Version_Code, string Genres_Code, string hdnStarCast, string Music_Album_Name, string hdnmode, string Public_Domain, string hdnMovie_Album_Type, int? hdnMusicTitleCode)
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
             HttpPostedFileBase file = Request.Files["uploadFile"];
             int Music_Album_Code = 0;
-
+            objTitleModel.Movie_Album_Type = hdnMovie_Album_Type;
             if (objTitleModel.Movie_Album_Type == "M")
             {
                 string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();

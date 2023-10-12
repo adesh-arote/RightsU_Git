@@ -84,12 +84,12 @@
 
 <body>
     <div class="main_section">
-        <section class="rightsU_container clearfix">
+        <section class="rightsU_container clearfix">            
             @if (ViewBag.commandName == "")
             {
                 @*using (Ajax.BeginForm("Save", "Title", new AjaxOptions { HttpMethod = "POST", OnBegin = "Save", OnSuccess = "OnSuccess"}, new { enctype = "multipart/form-data" }))*@
-            using (Html.BeginForm("Save", "Music_Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-            {
+                using (Html.BeginForm("Save", "Music_Title", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "frmSave" }))
+                {
                     <div class="container acq main_col title_edit" onclick="$('.leftPanel').css('right', panelHideCss);">
                         <div class="top_area">
                             <div class="title_block dotted_border clearfix">
@@ -111,15 +111,15 @@
                                                     <img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />
 
                                                     @*if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
-                                                        else
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}*@
+                                                {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
+                                                else
+                                                {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}*@
 
                                                 }
                                                 <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this);" />
@@ -142,14 +142,41 @@
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.Movie / @objMessageKey.Album Type</td>
                                                     <td style="width: 40%">
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        <input type="hidden" id="hdnMovie_Album_Type" name="hdnMovie_Album_Type" value="@Model.Movie_Album_Type" />
+                                                        @if (ViewBag.isSyndicated == "Y")
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Movie</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Show</label>
+                                                            if (ViewBag.MusicAlbumVisibility == "Y")
+                                                            {
+                                                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();", disabled = "disabled" })@objMessageKey.Album</label>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
+                                                            if (ViewBag.MusicAlbumVisibility == "Y")
+                                                            {
+                                                                <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                            }
+                                                        }
+
+
                                                     </td>
 
                                                     <td style="width: 14%">@objMessageKey.Movie / @objMessageKey.Album</td>
                                                     <td style="width: 40%">
-                                                        <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                        @if (ViewBag.isSyndicated == "Y")
+                                                        {
+                                                            <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="off" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" disabled="disabled" />
+                                                            <input type="hidden" id="hdnMusic_Album_Name" name="Music_Album_Name" value="@ViewBag.MovieAlbum" />
+                                                        }
+                                                        else
+                                                        {
+                                                            <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="off" style="width:320px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                            <input type="hidden" id="hdnMusic_Album_Name" name="Music_Album_Name" value="@ViewBag.MovieAlbum" />
+                                                        }
                                                         <input type="hidden" id="hdnMovieAlbum" value="@ViewBag.MovieAlbumCode" />
                                                         @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
                                                         @{
@@ -211,11 +238,11 @@
                                                     <td style="width: 13%">@objMessageKey.MusicLabel</td>
                                                     <td style="width: 40%">
                                                         @*@Html.ListBox(
-                                                                             "ddlMusicLabel",
-                                                                             ViewBag.MusicLabelList as MultiSelectList,
-                                                                             new { @class = "form_input chosen-select" }
-                                                                )
-                                                            @Html.Hidden("hdnMusicLabel")*@
+                                                                     "ddlMusicLabel",
+                                                                     ViewBag.MusicLabelList as MultiSelectList,
+                                                                     new { @class = "form_input chosen-select" }
+                                                        )
+                                                    @Html.Hidden("hdnMusicLabel")*@
 
                                                         @Html.DropDownList("Music_Label_Code", (List<SelectListItem>)ViewBag.MusicLabelList, new { @id = "Music_Label_Code", @class = "form_input chosen-select" })
                                                         @Html.Hidden("hdnMusicLabel")
@@ -283,7 +310,7 @@
                                                             <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "N", new { @id = "PublicDomainN" })@objMessageKey.NO</label>
                                                         </td>
                                                         @*<td style="width: 13%"></td>
-                                                            <td style="width: 40%"></td>*@
+                                                    <td style="width: 40%"></td>*@
                                                     }
                                                 </tr>
 
@@ -311,7 +338,7 @@
             }
             @if (ViewBag.commandName == "C")
             {
-                using (Html.BeginForm("Save", "Music_Title", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+                using (Html.BeginForm("Save", "Music_Title", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "frmSave" }))
                 {
                     <div class="container acq main_col title_edit" onclick="$('.leftPanel').css('left', panelHideCss);">
                         <div class="top_area">
@@ -334,15 +361,15 @@
                                                     <img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />
 
                                                     @*if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Music)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
-                                                        else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
-                                                        else
-                                                        {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}*@
+                                                {<img id="imgTitle" alt="Image" src="~/Images/musicIcon.png" />}
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/program.png" /> }
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Format_Program)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/formatShow.png" /> }
+                                                else if (Model.Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                                {<img id="imgTitle" alt="Image" src="~/Images/Event.png" /> }
+                                                else
+                                                {<img id="imgTitle" alt="Image" src="~/Images/movieIcon.png" />}*@
 
                                                 }
                                                 <input type="file" id="uploadFile" name="uploadFile" onchange="fileCheck(this);" />
@@ -368,14 +395,18 @@
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.Movie / @objMessageKey.Album Type</td>
                                                     <td style="width: 40%">
+                                                        <input type="hidden" id="hdnMovie_Album_Type" name="hdnMovie_Album_Type" value="@Model.Movie_Album_Type" />
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "M", new { @id = "rdbMovie", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Movie</label>
                                                         <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "S", new { @id = "rdbShow", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Show</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        @if (ViewBag.MusicAlbumVisibility == "Y")
+                                                        {
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Movie_Album_Type, "A", new { @id = "rdbAlbum", @onClick = "SwitchMovieAlbumType();" })@objMessageKey.Album</label>
+                                                        }
                                                     </td>
 
                                                     <td style="width: 14%">@objMessageKey.Movie / @objMessageKey.Album</td>
                                                     <td style="width: 40%">
-                                                        <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
+                                                        <input type="text" placeholder="@objMessageKey.Movie / @objMessageKey.Album" name="Music_Album_Name" id="txtmusicAlbumName" value="@ViewBag.MovieAlbum" autocomplete="off" style="width:250px" onkeyup="PopulateAutoCompleteMovieAlbum(this)" />
                                                         <input type="hidden" id="hdnMovieAlbum" value="@ViewBag.MovieAlbumCode" />
                                                         @*@Html.TextBoxFor(m => Model.Movie_Album, new { @id = "txtMovie_Album", onkeypress = "return isAlphaNumeric(event);", maxlength = "200", @style = "width:89%" })*@
                                                         @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
@@ -383,7 +414,7 @@
                                                             var linkdisplay = Model.Movie_Album_Type == "A" ? "inline block" : "none";
                                                         }
                                                         <a id="lnkAddMovieAlbum" class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddMovieAlbum" onclick="AddMovieAlbum();" style="display:@linkdisplay" />
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.YearOfRelease</td>
@@ -394,7 +425,7 @@
                                                     <td style="width: 14%">@objMessageKey.MusicVersion</td>
                                                     <td style="width: 40%">
                                                         @Html.DropDownList("Music_Version_Code", (List<SelectListItem>)ViewBag.TitleVersion, new { @id = "Music_Version_Code", @class = "form_input chosen-select" })
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.MusicLanguage</td>
@@ -411,7 +442,7 @@
                                                         @Html.ListBox("ddlSinger", ViewBag.SingerList as MultiSelectList, new { @multiple = "multiple" })
                                                         @Html.Hidden("hdnSinger")
                                                         <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddSinger" onclick="AddTalent(@GlobalParams.Role_Code_Singer);" />
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 13%">@objMessageKey.MusicComposer</td>
@@ -435,10 +466,10 @@
                                                     <td style="width: 13%">@objMessageKey.MusicLabel</td>
                                                     <td style="width: 40%">
                                                         @*@Html.ListBox(
-                         "ddlMusicLabel",
-                         ViewBag.MusicLabelList as MultiSelectList,
-                         new { @class = "form_input chosen-select" }
-            )*@
+                                                                 "ddlMusicLabel",
+                                                                 ViewBag.MusicLabelList as MultiSelectList,
+                                                                 new { @class = "form_input chosen-select" }
+                                                    )*@
                                                         @Html.Hidden("hdnMusicLabel")
 
                                                         @Html.DropDownList("Music_Label_Code", (List<SelectListItem>)ViewBag.MusicLabelList, new { @id = "Music_Label_Code_Clone", @class = "form_input chosen-select", })
@@ -448,7 +479,7 @@
                                                     <td style="width: 14%">@objMessageKey.MusicType</td>
                                                     <td style="width: 40%">
                                                         @Html.DropDownList("Music_Type_Code", (List<SelectListItem>)ViewBag.TitleType, new { @id = "Music_Type_Code", @class = "form_input chosen-select" })
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     @if (ViewBag.MusicThemeVisibility == "G" || ViewBag.MusicThemeVisibility == "GT")
@@ -469,7 +500,7 @@
                                                         @Html.ListBox("ddlStarCast", ViewBag.StarCastList as MultiSelectList, new { @multiple = "multiple" })
                                                         @Html.Hidden("hdnStarCast")
                                                         <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddSongStarCast" onclick="AddTalent(@GlobalParams.CodeForStarCast);" />
-                                                    </td>                                                    
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     @if (ViewBag.MusicThemeVisibility == "T" || ViewBag.MusicThemeVisibility == "GT")
@@ -498,13 +529,16 @@
 
                                                     <td style="width: 40%">@Html.TextBoxFor(m => Model.Music_Tag, new { @MaxLength = "200" })</td>
 
-                                                    <td style="width: 14%">Public Domain</td>
-                                                    <td style="width: 40%">
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "Y", new { @id = "PublicDomainY" })@objMessageKey.Yes</label>
-                                                        <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "N", new { @id = "PublicDomainN" })@objMessageKey.NO</label>
-                                                    </td>
-                                                    @*<td style="width: 13%"></td>
+                                                    @if (ViewBag.IsMuciVersionSPN == "Y")
+                                                    {
+                                                        <td style="width: 14%">Public Domain</td>
+                                                        <td style="width: 40%">
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "Y", new { @id = "PublicDomainY" })@objMessageKey.Yes</label>
+                                                            <label class="radio-inline">@Html.RadioButtonFor(m => Model.Public_Domain, "N", new { @id = "PublicDomainN" })@objMessageKey.NO</label>
+                                                        </td>
+                                                        @*<td style="width: 13%"></td>
                                                     <td style="width: 40%"></td>*@
+                                                    }
                                                 </tr>
                                                 <tr></tr>
                                             </table>
@@ -671,6 +705,7 @@
         var URL_PopulateAutoCompleteMovieAlbum = '@Url.Action("PopulateAutoCompleteMovieAlbum", "Music_Title")';
         var URL_ValidateIsDuplicate = '@Url.Action("ValidateIsDuplicate", "Music_Title")';
         var URL_BindRoles = '@Url.Action("BindRoles", "Title")';
+        var isFieldValid = true;
         $(document).ready(function () {
             debugger;
             $('#Music_Label_Code_chosen,#Genres_Code_chosen,#Duration_In_Min,#Release_Year,#Music_Tag').css('width','88%');
@@ -731,6 +766,32 @@
             $('#txtmusicAlbumName').click(function(){
                 $('#txtmusicAlbumName').removeClass('required');
             })
+
+            $('#frmSave').submit(function (e) {
+                debugger;
+                if (!isFieldValid) {
+                    e.preventDefault();
+                }
+                if ($.trim($("#Duration_In_Min").val()) != '') {
+                    if (!isValidTime($("#Duration_In_Min").val())) {
+                        hideLoading();
+                        e.preventDefault();
+                        $("#Duration_In_Min").addClass("required");
+                        showAlert("E", "@objMessageKey.InvalidDurationMin", "");
+                    }
+                }
+                if ($.trim($('#Release_Year').val()) != '') {
+                    var YOP = parseInt($.trim($('#Release_Year').val()));
+                    if (YOP < 1900) {
+                        hideLoading();
+                        e.preventDefault();
+                        $("#Release_Year").addClass("required");
+                        showAlert("E", "@objMessageKey.YearofReleaseshouldbegreaterthan1900", "");
+                    }
+                }
+
+                $('#hdnMovie_Album_Type').val($('input[name="Movie_Album_Type"]:checked').val());
+            });
 
         });
         function BindRoles() {
@@ -844,7 +905,9 @@
             var hdnTheme = "";
             var Music_Label_Code = ($('#Music_Label_Code_Clone').val());
             var Isvalid = true;
-            var hdnmode ="@ViewBag.commandName";
+            var hdnmode = "@ViewBag.commandName";
+            isFieldValid = true;
+
             $('.required').removeClass('required');
             if(hdnmode == "C")
             {
@@ -857,32 +920,19 @@
             if ($.trim($("#txtMusic_Title_Name").val()) == '') {
                 //showAlert("e", "Please enter title name", "");
                 $("#txtMusic_Title_Name").addClass("required");
-                hideLoading();
-                return false;
+                //hideLoading();
+                //return false;
+                isFieldValid = false;
             }
 
-            if ($("#Music_Album_Name").val() == "0"){
+            if ($.trim($("#txtmusicAlbumName").val()) == ''){
                 //showAlert("e", "Please enter title name", "");
-                $("#Music_Album_Name").addClass("required");
-                hideLoading();
-                return false;
+                $("#txtmusicAlbumName").addClass("required");
+                //hideLoading();
+                //return false;
+                isFieldValid = false;
             }
 
-            if ($.trim($("#Duration_In_Min").val()) != '') {
-                if (!isValidTime($("#Duration_In_Min").val())) {
-                    hideLoading();
-                    showAlert("E", "@objMessageKey.InvalidDurationMin", "");
-                    return false;
-                }
-            }
-            if ($.trim($('#Release_Year').val()) != '') {
-                var YOP = parseInt($.trim($('#Release_Year').val()))
-                if (YOP < 1900) {
-                    showAlert("E", "@objMessageKey.YearofReleaseshouldbegreaterthan1900", "");
-                    hideLoading();
-                    return false;
-                }
-            }
             if ($("#ddlSinger").val() != null)
                 hdnSinger = $("#ddlSinger").val().join(',');
             if ($("#ddlComposer").val() != null)
@@ -903,10 +953,27 @@
             //    hdnCountry = "";
             if ($.trim(hdnLanguage) == '') {
                 //showAlert("e", "Please select atleast one language", "");
-                $("#ddlLanguage").addClass("required");
-                hideLoading();
-                return false;
+                $(".sumo_ddlLanguage").addClass("required");
+                $(".sumo_ddlLanguage").attr("required", true);
+                isFieldValid = false;
+                //hideLoading();
+                //return false;
             }
+
+            if ($.trim($("#Duration_In_Min").val()) != '') {
+                if (!isValidTime($("#Duration_In_Min").val())) {
+                    $("#Duration_In_Min").addClass("required");
+                    //$('#frmSave').submit();
+                }
+            }
+            if ($.trim($('#Release_Year').val()) != '') {
+                var YOP = parseInt($.trim($('#Release_Year').val()))
+                if (YOP < 1900) {
+                    $("#Release_Year").addClass("required");
+                    //$('#frmSave').submit();
+                }
+            }
+
             $("#hdnSinger").val(hdnSinger);
             $("#hdnComposer").val(hdnComposer);
             $("#hdnLyricist").val(hdnLyricist);
@@ -944,49 +1011,76 @@
 
             var ISDuplicate = ""
             var NewTitleName = $("#txtMusic_Title_Name").val();
-            var Music_Album_Code = $('#hdnMovieAlbum').val();
+            var Music_Album_Code = $('#hdnMovieAlbum').val() == '' ? '0' : $('#hdnMovieAlbum').val();
             var Music_Album_Name = $('#txtmusicAlbumName').val();
             var Movie_Album_Type = $('input[name="Movie_Album_Type"]:checked').val();
+
+            if ($.trim(Music_Album_Code) == '' || $.trim(Music_Album_Code) == '0') {                
+                $("#txtmusicAlbumName").addClass("required");
+                //$("#txtmusicAlbumName").attr("required", true);
+                isFieldValid = false;
+                //hideLoading();
+                //return false;
+            }
 
             var mode = "Edit";
             if(hdnmode == "C")
                 mode = "Clone";
             if (NewTitleName != "") {
                 debugger;
-                $.ajax({
-                    type: "POST",
-                    url: URL_ValidateIsDuplicate,
-                    traditional: true,
-                    enctype: 'multipart/form-data',
-                    async: false,
-                    contentType: "application/json; charset=utf-8",
-                    data: JSON.stringify({
-                        MusicTitleName: NewTitleName,
-                        MusicAlbumCode: Music_Album_Code,
-                        MusicAlbumName: Music_Album_Name,
-                        Movie_Album_Type: Movie_Album_Type,
-                        mode: mode
-                    }),
-                    success: function (result) {
-                        if (result.Message != "") {
-                            ISDuplicate = result.Message;
-                            showAlert("E", ISDuplicate);
-                            Isvalid = false;
+
+                    $.ajax({
+                        type: "POST",
+                        url: URL_ValidateIsDuplicate,
+                        traditional: true,
+                        enctype: 'multipart/form-data',
+                        async: false,
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            MusicTitleName: NewTitleName,
+                            MusicAlbumCode: Music_Album_Code,
+                            MusicAlbumName: Music_Album_Name,
+                            Movie_Album_Type: Movie_Album_Type,
+                            mode: mode
+                        }),
+                        success: function (result) {
+                            if (result.Message != "") {
+                                ISDuplicate = result.Message;
+                                showAlert("E", ISDuplicate);
+                                //Isvalid = false;
+                                return false;
+                            }
+                            if (result.ErrorMessage != "") {
+                                $('#txtmusicAlbumName').addClass('required');
+                                $('#txtmusicAlbumName').val('');
+                                //Isvalid = false;
+                                return false;
+                            }
+
+                            //if (IsValid) {
+                            //    if ($.trim($("#Duration_In_Min").val()) != '') {
+                            //        if (!isValidTime($("#Duration_In_Min").val())) {
+                            //            //$("#Duration_In_Min").addClass("required");
+                            //            $('#frmSave').submit();
+                            //        }
+                            //    }
+                            //    if ($.trim($('#Release_Year').val()) != '') {
+                            //        var YOP = parseInt($.trim($('#Release_Year').val()))
+                            //        if (YOP < 1900) {
+                            //            //$("#Release_Year").addClass("required");
+                            //            $('#frmSave').submit();
+                            //        }
+                            //    }
+                            //}
+                        },
+                        error: function (result) {
                         }
-                        if(result.ErrorMessage!= "")
-                        {
-                            $('#txtmusicAlbumName').addClass('required');
-                            $('#txtmusicAlbumName').val('');
-                            Isvalid = false;
-                        }
-                    },
-                    error: function (result) {
-                    }
-                });
+                    });
+
             }
 
             hideLoading();
-            return Isvalid;
+            return true;
         }
 
         function AddTalent(Type) {
@@ -1278,6 +1372,7 @@
             debugger;
             var keyword = $("#txtmusicAlbumName").val();
             var MovieAlbumType = $("input[name='Movie_Album_Type']:checked").val();
+            $('#hdnMovieAlbum').val('');
             $("#txtmusicAlbumName").autocomplete({
                 focus: function () {
                     return false;

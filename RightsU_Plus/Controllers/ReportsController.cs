@@ -3138,7 +3138,7 @@ namespace RightsU_Plus.Controllers
             return new SelectList(list, "Value", "Text");
         }
 
-        public JsonResult BindTitleForMusicAvailReport(string keyword = "", string TitleType = "")
+        public JsonResult BindTitleForMusicAvailReport(string keyword = "", string TitleType = "", string selectedMusicLabelCode = "")
         {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
@@ -3159,10 +3159,39 @@ namespace RightsU_Plus.Controllers
                     System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
                     lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
                 }
+                
+                //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
+                //&& lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
+                //    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
 
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())
-                && lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
-                    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+                if (!string.IsNullOrEmpty(selectedMusicLabelCode))
+                {
+                    int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
+                
+                    result =
+                        new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                        join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                        on x.Title_Code equals y.Title_Code
+                                        join z in new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Music_Label_Code == MusicLabelCode).ToList()
+                                        on y.Music_Title_Code equals z.Music_Title_Code
+                                        select new
+                                        {
+                                            x.Title_Name,
+                                            x.Title_Code
+                                        }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
+                }
+                else
+                {
+                    result =
+                        new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                        join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(y => true).ToList()
+                                        on x.Title_Code equals y.Title_Code
+                                        select new
+                                        {
+                                            x.Title_Name,
+                                            x.Title_Code
+                                        }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
+                }
             }
             return Json(result);
         }
@@ -3235,13 +3264,15 @@ namespace RightsU_Plus.Controllers
             return Json(result);
         }
 
-        public PartialViewResult BindMusicAvailExcelReport(string MusicLabelCode = "", string selectedTitleCodes = "", string selectedMusicTitleCodes = "")
+        public PartialViewResult BindMusicAvailExcelReport(string MusicLabelCode = "", string selectedTitleCodes = "", string selectedMusicTitleCodes = "", string TitleType = "")
         {
-            ReportParameter[] parm = new ReportParameter[3];
+            ReportParameter[] parm = new ReportParameter[5];
             parm[0] = new ReportParameter("Music_Label_Code", MusicLabelCode);
             parm[1] = new ReportParameter("Title_Code", selectedTitleCodes);
             parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
-            ReportViewer rptViewer = BindReport(parm, "rptMusicAvailabilty");
+            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
+            parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+            ReportViewer rptViewer = BindReport(parm, "rptMusicAvailability");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }

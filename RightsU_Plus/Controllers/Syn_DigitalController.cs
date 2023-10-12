@@ -1363,6 +1363,13 @@ namespace RightsU_Plus.Controllers
             List<RightsU_Entities.Music_Title> objMusic_Title = new List<Music_Title>();
             if (title_Code > 0)
             {
+                if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    Title_List objTL = null;
+                    objTL = objDeal_Schema.Title_List.Where(x => x.Acq_Deal_Movie_Code == title_Code).FirstOrDefault();
+                    title_Code = objTL.Title_Code;
+                }
+                
                 objMusic_Title = objMusicTitleService.SearchFor(a => a.Title_Code == title_Code).ToList();
             }
 

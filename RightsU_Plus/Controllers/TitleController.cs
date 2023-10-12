@@ -911,41 +911,49 @@ namespace RightsU_Plus.Controllers
             #endregion
             #region ========= Insert Episode  =========
             System_Parameter_New Content_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Generate_Content_From_Title_Import").FirstOrDefault();
-            if(Content_system_Parameter.Parameter_Value == "Y") { 
-            System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
-            List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
-            int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
-
-            if (DealTypeIncluded == 1)
+            if (Content_system_Parameter.Parameter_Value == "Y")
             {
-                if (objTitle.Title_Episode_Details.Count() < 1)
+                System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
+
+                if (DealTypeIncluded == 1)
                 {
-                    Title_Episode_Details objNewTED = new Title_Episode_Details();
-                    objNewTED.EntityState = State.Added;
-                    objNewTED.Episode_Nos = 1;
-                    objNewTED.Remarks = objTitle.Title_Name;
-                    objNewTED.Status = "P";
-                    objNewTED.Inserted_On = DateTime.Now;
-                    objNewTED.Inserted_By = objLoginUser.Users_Code;
-                    objTitle.Title_Episode_Details.Add(objNewTED);
+                    if (objTitle.Title_Episode_Details.Count() < 1)
+                    {
+                        Title_Episode_Details objNewTED = new Title_Episode_Details();
+                        objNewTED.EntityState = State.Added;
+                        objNewTED.Episode_Nos = 1;
+                        objNewTED.Remarks = objTitle.Title_Name;
+                        objNewTED.Status = "P";
+                        objNewTED.Inserted_On = DateTime.Now;
+                        objNewTED.Inserted_By = objLoginUser.Users_Code;
+                        objTitle.Title_Episode_Details.Add(objNewTED);
+                    }
                 }
+
+                //if (objTitle.Title_Code > 0)
+                //    objTitle.EntityState = State.Modified;
+                //else
+                //    objTitle.EntityState = State.Added;
+
+                objTitle.Title_Code = TitleCode;
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                {
+                    objTitle.EntityState = State.Added;
+                    objTitle.Is_Active = "Y";
+                }
+
+                objTitle = DBSaveEpisodeDetails(objTitle);
             }
-
-            //if (objTitle.Title_Code > 0)
-            //    objTitle.EntityState = State.Modified;
-            //else
-            //    objTitle.EntityState = State.Added;
-
-            objTitle.Title_Code = TitleCode;
-            if (objTitle.Title_Code > 0)
-                objTitle.EntityState = State.Modified;
             else
             {
-                objTitle.EntityState = State.Added;
-                objTitle.Is_Active = "Y";
-            }
-
-            objTitle = DBSaveEpisodeDetails(objTitle);
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                    objTitle.EntityState = State.Added;
             }
             #endregion
 
@@ -1261,19 +1269,20 @@ namespace RightsU_Plus.Controllers
 
                 string isAeroplay = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Import_Movies_Shows").Select(x => x.Parameter_Value).FirstOrDefault();
 
-                int Extended_Group_Code;
-                int? TabCode;
+                //int Extended_Group_Code;
+                int? TabCode = 0;
 
                 if (isAeroplay == "N")
                 {
-                    Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
-                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && x.Extended_Group_Code == Extended_Group_Code).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                    int[] arrExtendedGroupCodes = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Extended_Group_Code).ToArray();
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && arrExtendedGroupCodes.Any(a=> x.Extended_Group_Code == a)).Select(x => x.Extended_Group_Code).FirstOrDefault();
+
+                    //Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
                 }
                 else
                 {
                     TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
                 }
-
 
                 int? Row_No = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Map_Extended_Columns_Code == obj.Map_Extended_Columns_Code).Select(x => x.Row_No).FirstOrDefault();
                 obj.Extended_Group_Code = TabCode;
@@ -3373,41 +3382,41 @@ namespace RightsU_Plus.Controllers
             lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
             lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
 
-            Dictionary<string, object> obj = new Dictionary<string, object>();
-            foreach (Extended_Group EG in objExt_Grp)
-            {
-                tabNames = tabNames + EG.Short_Name + ",";
-                if (i != 1)
+            Dictionary<string, object> obj = new Dictionary<string, object>();           
+                foreach (Extended_Group EG in objExt_Grp)
                 {
-                    tabTable = tabTable + "<div class=\"tab - pane active\" style=\"display:none;\" id=\"tblMain" + EG.Short_Name + "\">";
+                    tabNames = tabNames + EG.Short_Name + ",";
+                    if (i != 1)
+                    {
+                        tabTable = tabTable + "<div class=\"tab - pane active\" style=\"display:none;\" id=\"tblMain" + EG.Short_Name + "\">";
+                    }
+                    else
+                    {
+                        tabTable = tabTable + "<div class=\"tab - pane active\" id=\"tblMain" + EG.Short_Name + "\">";
+                        obj.Add("TabName", EG.Short_Name);
+                    }
+
+                    var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == EG.Extended_Group_Code).Select(x => x.Columns_Code).ToList();
+                    var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
+
+                    strtableHeader = GetTableHeader(EG.Extended_Group_Code, EG.Short_Name, extColLst, "grid", operation);
+                    //List<USP_SUPP_Create_Table_Result> rowList = objUspService.USP_SUPP_Create_Table_Result(ST.Supplementary_Tab_Code, objDeal_Schema.Deal_Code, supplementary_Code.ToString(), ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
+                    string str = BindPopupGridResult(extColLst, EG.Short_Name, operation, title_code, EG.Extended_Group_Code);
+
+                    arrStr = strtableHeader.Split('~');
+
+                    tabTable = tabTable + "<div class=\"scale_table_block\">";
+                    tabTable = tabTable + "<table class=\"table table-bordered table-hover tblGridBind\"  id=\"tbl" + EG.Short_Name + "\">" + arrStr[0] + str + "</table>";
+
+                    tabTable = tabTable + "<input type=\"hidden\" name=\"hdn" + EG.Short_Name + "\" id=\"hdn" + EG.Short_Name + "\" Value='" + arrStr[1] + "'/>";
+                    tabTable = tabTable + "<input type=\"hidden\" name=\"hdnwt" + EG.Short_Name + "\" id=\"hdnwt" + EG.Short_Name + "\" Value='" + EG.Add_Edit_Type + "'/>";
+
+                    tabTable = tabTable + "</div></div>";
+                    i++;
                 }
-                else
-                {
-                    tabTable = tabTable + "<div class=\"tab - pane active\" id=\"tblMain" + EG.Short_Name + "\">";
-                    obj.Add("TabName", EG.Short_Name);
-                }
 
-                var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == EG.Extended_Group_Code).Select(x => x.Columns_Code).ToList();
-                var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
-
-                strtableHeader = GetTableHeader(EG.Extended_Group_Code, EG.Short_Name, extColLst, "grid", operation);
-                //List<USP_SUPP_Create_Table_Result> rowList = objUspService.USP_SUPP_Create_Table_Result(ST.Supplementary_Tab_Code, objDeal_Schema.Deal_Code, supplementary_Code.ToString(), ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
-                string str = BindPopupGridResult(extColLst, EG.Short_Name, operation, title_code, EG.Extended_Group_Code);
-
-                arrStr = strtableHeader.Split('~');
-
-                tabTable = tabTable + "<div class=\"scale_table_block\">";
-                tabTable = tabTable + "<table class=\"table table-bordered table-hover tblGridBind\"  id=\"tbl" + EG.Short_Name + "\">" + arrStr[0] + str + "</table>";
-
-                tabTable = tabTable + "<input type=\"hidden\" name=\"hdn" + EG.Short_Name + "\" id=\"hdn" + EG.Short_Name + "\" Value='" + arrStr[1] + "'/>";
-                tabTable = tabTable + "<input type=\"hidden\" name=\"hdnwt" + EG.Short_Name + "\" id=\"hdnwt" + EG.Short_Name + "\" Value='" + EG.Add_Edit_Type + "'/>";
-
-                tabTable = tabTable + "</div></div>";
-                i++;
-            }
-
-            tabNames = tabNames.Substring(0, tabNames.Length - 1);
-
+                tabNames = tabNames.Substring(0, tabNames.Length - 1);
+                    
             obj.Add("FieldList", _fieldList.TrimEnd(','));
             obj.Add("tabNames", tabNames);
             obj.Add("Divs", tabTable);
