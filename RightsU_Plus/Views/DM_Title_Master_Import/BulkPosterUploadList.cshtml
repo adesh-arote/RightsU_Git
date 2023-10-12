@@ -427,6 +427,8 @@
             });
         }
     }
+
+  
 </script>
 <input type="hidden" id="fileSize" />
 <div class="main_section">
@@ -528,7 +530,8 @@
                 <div class="form_links">
                     <ul class="modal_block clearfix" style="padding-left:10px;">
                         <li>
-                            <input type="button" style="width: 100px;" class="btn btn-primary" value="Save" onclick="SaveTitlePoster()" />
+                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveTitlePoster()" />
+                            <input type="button" value="@objMessageKey.Back" id="btnBack" onclick="@("window.location.href='" + @Url.Action("titleImport", "Title") + "'");" class="btn btn-primary"/>
                         </li>
                     </ul>
                 </div>
