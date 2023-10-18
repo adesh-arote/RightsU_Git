@@ -70,6 +70,8 @@
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
+    <Compile Include="Master_Entities\BMS_Schedule_Import_Config.cs" />
+    <Compile Include="Master_Entities\Channel.cs" />
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />

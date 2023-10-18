@@ -70,6 +70,7 @@
     <Compile Include="Repository\BMSDealContentRepositories.cs" />
     <Compile Include="Repository\BMSDealContentRightsRepositories.cs" />
     <Compile Include="Repository\BMSDealRepositories.cs" />
+    <Compile Include="Repository\BMSScheduleImportRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
   </ItemGroup>
   <ItemGroup>

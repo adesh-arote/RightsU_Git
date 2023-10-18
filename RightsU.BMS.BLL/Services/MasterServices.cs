@@ -45,4 +45,38 @@ namespace RightsU.BMS.BLL.Services
             return objBMSLogRepositories.InsertBMSLog(param);
         }
     }
+
+    public class Channel_Service
+    {
+        private readonly Channel_Repositories objChannelRepositories;
+        public Channel_Service()
+        {
+            this.objChannelRepositories = new Channel_Repositories();
+        }
+        public IEnumerable<Channel> GetChannelList()
+        {
+            return objChannelRepositories.GetAll();
+        }
+        public IEnumerable<Channel> SearchFor(object param)
+        {
+            return objChannelRepositories.SearchFor(param);
+        }
+    }
+
+    public class BMS_Schedule_Import_Config_Service
+    {
+        private readonly BMS_Schedule_Import_Config_Repositories objBMSScheduleImportConfigRepositories;
+        public BMS_Schedule_Import_Config_Service()
+        {
+            this.objBMSScheduleImportConfigRepositories = new BMS_Schedule_Import_Config_Repositories();
+        }
+        public IEnumerable<BMS_Schedule_Import_Config> GetChannelList()
+        {
+            return objBMSScheduleImportConfigRepositories.GetAll();
+        }
+        public IEnumerable<BMS_Schedule_Import_Config> SearchFor(object param)
+        {
+            return objBMSScheduleImportConfigRepositories.SearchFor(param);
+        }
+    }
 }
