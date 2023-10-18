@@ -48,4 +48,12 @@ namespace RightsU.BMS.DAL
         }
     }
 
+    public class Upload_Files_Repositories : MainRepository<Upload_Files>
+    {
+        public void Add(Upload_Files entity)
+        {
+            base.AddEntity(entity);
+        }
+    }
+
 }

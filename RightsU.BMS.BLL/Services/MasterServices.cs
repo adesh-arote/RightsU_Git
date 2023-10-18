@@ -79,4 +79,17 @@ namespace RightsU.BMS.BLL.Services
             return objBMSScheduleImportConfigRepositories.SearchFor(param);
         }
     }
+
+    public class Upload_Files_Service
+    {
+        private readonly Upload_Files_Repositories objUploadFilesRepositories;
+        public Upload_Files_Service()
+        {
+            this.objUploadFilesRepositories = new Upload_Files_Repositories();
+        }
+        public void Upload_Files_Save(Upload_Files objUploadFiles)
+        {
+            this.objUploadFilesRepositories.Add(objUploadFiles);
+        }
+    }   
 }

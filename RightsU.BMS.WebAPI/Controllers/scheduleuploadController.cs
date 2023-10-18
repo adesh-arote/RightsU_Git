@@ -25,6 +25,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly BMS_Schedule_Import_Config_Service objBMSScheduleImportConfigServices = new BMS_Schedule_Import_Config_Service();
         private readonly BMSServices objBMSServices = new BMSServices();
         private readonly BMS_Log_Service objBMSLogServices = new BMS_Log_Service();
+        private readonly Upload_Files_Service objUploadFilesService = new Upload_Files_Service();
 
         /// <summary>
         /// Text File Process Detail
@@ -119,6 +120,16 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                             if (datatable.Rows.Count > 0)
                             {
+                                Upload_Files objUploadFiles = new Upload_Files();
+
+                                objUploadFiles.File_Name = fileWithTimeStamp;
+                                objUploadFiles.Upload_Date = System.DateTime.Now;
+                                objUploadFiles.Uploaded_By = 0;
+                                objUploadFiles.Upload_Type = "S";
+
+                                objUploadFilesService.Upload_Files_Save(objUploadFiles);
+                                int? FileCode = objUploadFiles.File_Code;
+
                                 List<BMS_Schedule_Import_Config> objBMSScheduleImportConfig = new List<BMS_Schedule_Import_Config>();
                                 objBMSScheduleImportConfig = objBMSScheduleImportConfigServices.SearchFor(new { File_Format = "txt" }).ToList();
 
@@ -174,6 +185,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                                                 //    ScheduleData.Deal_Type = "";  
                                             }
                                         }
+
+                                        ScheduleData.File_Code = Convert.ToString(FileCode);
                                         ScheduleDataUDT.Add(ScheduleData);
                                     }
 
@@ -350,6 +363,16 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                             if (datatable.Rows.Count > 0)
                             {
+                                Upload_Files objUploadFiles = new Upload_Files();
+
+                                objUploadFiles.File_Name = fileWithTimeStamp;
+                                objUploadFiles.Upload_Date = System.DateTime.Now;
+                                objUploadFiles.Uploaded_By = 0;
+                                objUploadFiles.Upload_Type = "S";
+
+                                objUploadFilesService.Upload_Files_Save(objUploadFiles);
+                                int? FileCode = objUploadFiles.File_Code;
+
                                 List<BMS_Schedule_Import_Config> objBMSScheduleImportConfig = new List<BMS_Schedule_Import_Config>();
                                 objBMSScheduleImportConfig = objBMSScheduleImportConfigServices.SearchFor(new { File_Format = "csv" }).ToList();
 
@@ -405,6 +428,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                                                 //    ScheduleData.Deal_Type = "";  
                                             }
                                         }
+
+                                        ScheduleData.File_Code = Convert.ToString(FileCode);
                                         ScheduleDataUDT.Add(ScheduleData);
                                     }
 
