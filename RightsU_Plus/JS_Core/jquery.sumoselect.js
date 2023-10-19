@@ -21,7 +21,6 @@
 })(function ($) {
     'namespace sumo';
     $.fn.SumoSelect = function (options) {
- 
         var selectAll_dummy = false;
         if (this[0] != undefined) {
             var j = 0;
@@ -287,7 +286,7 @@
                     O.selAll.on('click', function () {
                         O.selAll.toggleClass('selected');
                         O.toggSelAll(O.selAll.hasClass('selected'), 1);
-                        // O.selAllState();
+                         //O.selAllState();
                     });
 
                     O.optDiv.prepend(O.selAll);
@@ -295,7 +294,6 @@
 
                 // search module (can be removed if not required.)
                 Search: function () {
-               
                     var O = this,
                         cc = O.CaptionCont.addClass('search'),
                         P = $('<p class="no-match">');
@@ -341,7 +339,6 @@
                 },
 
                 selAllState: function () {
-             
                     var O = this;
                     if (settings.selectAll && O.is_multi) {
                         var sc = 0, vc = 0;
@@ -372,13 +369,16 @@
                         }
                         else {
                             O.selAll.addClass('partial')
-                        }//.removeClass('selected');
-                        //if (vc == 0) {
-                        //    $('.select-all').css('display', 'none');
-                        //}
-                        //else if (vc > 0) {
-                        //    $('.select-all').css('display', 'block');
-                        //}
+                        }
+                        //.removeClass('selected'); 
+                        if (vc == 0) {
+                            $('.select-all').css('display', 'none');
+                        }
+                        else if (vc > 1) {
+                            $('.select-all').remove()
+                            O.SelAll();
+                            $('.select-all').css('display', 'block');
+                        }
                     }
 
                 },
@@ -412,6 +412,10 @@
                     }
 
                     O.setPstate();
+                    $('.select-all').remove()
+                    O.SelAll();
+                    //O.optDiv.prepend(O.selAll);
+                    //$('.select-all').css('display', 'block');
                 },
 
                 //maintain state when ok/cancel buttons are available storing the indexes.
@@ -544,7 +548,6 @@
                 },
 
                 itemClicked: function (li, refresh, unselect) {
-                    
                     var O = this;
                     if (li.hasClass('disabled')) return;
                     txt = "";
@@ -570,7 +573,6 @@
                 },
 
                 onOptClick: function (li) {
-                   
                     var O = this;
                     li.click(function (event) {
                         var li = $(this);
