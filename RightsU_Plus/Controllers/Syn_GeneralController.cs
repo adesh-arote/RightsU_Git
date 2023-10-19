@@ -1041,7 +1041,40 @@ namespace RightsU_Plus.Controllers
                         objSD_Session.Syn_Deal_Movie.Where(w => w.Syn_Deal_Movie_Code <= 0).ToList().ForEach(o => o.Title = null);
                         returnVal = objSDS.Save(objSD_Session, out resultSet);
                         if (returnVal)
+                        {
+                            foreach (Syn_Deal_Movie objADM in objSD_Session.Syn_Deal_Movie)
+                            {
+                                if (objADM.Is_Closed != "Y" && objADM.Is_Closed != "X")
+                                {
+                                    Syn_Deal_Digital_Service objTransactionService = new Syn_Deal_Digital_Service(objLoginEntity.ConnectionStringName);
+                                    Syn_Deal_Digital objDigital = new Syn_Deal_Digital();
+
+                                    int Syn_Deal_Digital_Code = objTransactionService.SearchFor(a => a.Syn_Deal_Code == objADM.Syn_Deal_Code && a.Title_code == objADM.Title_Code).Select(b => b.Syn_Deal_Digital_Code).FirstOrDefault();
+
+                                    objDigital = objTransactionService.GetById(Syn_Deal_Digital_Code);
+                                    if (objDigital == null)
+                                    {
+                                        objDigital = new Syn_Deal_Digital();
+                                    }
+
+                                    if (Syn_Deal_Digital_Code != 0)
+                                    {
+                                        if (objADM.Episode_From != null)
+                                            objDigital.Episode_From = (int)objADM.Episode_From;
+                                        if (objADM.Episode_End_To != null)
+                                            objDigital.Episode_To = (int)objADM.Episode_End_To;
+                                        objDigital.EntityState = State.Modified;
+                                        objTransactionService.Save(objDigital, out resultSet);
+                                    }
+
+                                    objTransactionService = null;
+                                    objDigital = null;
+                                }
+                            }
+
                             objSD_Session.Deal_Complete_Flag = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objSD_Session.Syn_Deal_Code).Deal_Complete_Flag;
+                        }
+                            
                         else
                             strMessage = "Error while saving data, " + resultSet;
 

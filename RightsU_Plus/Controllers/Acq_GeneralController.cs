@@ -1416,6 +1416,37 @@ namespace RightsU_Plus.Controllers
                     returnVal = objADS.Save(objAD_Session, out resultSet);
                     if (returnVal)
                     {
+
+                        foreach (Acq_Deal_Movie objADM in objAD_Session.Acq_Deal_Movie)
+                        {                            
+                            if (objADM.Is_Closed != "Y" && objADM.Is_Closed != "X")
+                            {
+                                Acq_Deal_Digital_Service objTransactionService = new Acq_Deal_Digital_Service(objLoginEntity.ConnectionStringName);
+                                Acq_Deal_Digital objDigital = new Acq_Deal_Digital(); 
+
+                                int Acq_Deal_Digital_Code = objTransactionService.SearchFor(a => a.Acq_Deal_Code == objADM.Acq_Deal_Code && a.Title_code == objADM.Title_Code).Select(b => b.Acq_Deal_Digital_Code).FirstOrDefault();
+
+                                objDigital = objTransactionService.GetById(Acq_Deal_Digital_Code);
+                                if (objDigital == null)
+                                {
+                                    objDigital = new Acq_Deal_Digital();
+                                }
+
+                                if (Acq_Deal_Digital_Code != 0)
+                                {
+                                    if (objADM.Episode_Starts_From != null)
+                                        objDigital.Episode_From = (int)objADM.Episode_Starts_From;
+                                    if (objADM.Episode_End_To != null)
+                                        objDigital.Episode_To = (int)objADM.Episode_End_To;
+                                    objDigital.EntityState = State.Modified;
+                                    objTransactionService.Save(objDigital, out resultSet);
+                                }                               
+
+                                objTransactionService = null;
+                                objDigital = null;
+                            }
+                        }
+
                         new USP_Service(objLoginEntity.ConnectionStringName).USP_DeleteContentMapping(objAD_Session.Acq_Deal_Code, "A");
                         objAD_Session.Deal_Complete_Flag = new Acq_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objAD_Session.Acq_Deal_Code).Deal_Complete_Flag;
                         if (objAD_Session.Is_Master_Deal == "Y")

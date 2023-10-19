@@ -8,8 +8,8 @@
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
-
     }
+    
 }
 <script>
     $(document).ready(function () {
@@ -17,6 +17,7 @@
             debugger;
             var trid = $(this).closest('tr').attr('id');
             $("#uploadFile_" + trid).click();
+            
         });
 
 
@@ -37,6 +38,11 @@
 
         $('.checkbox').on("click", function () {
             debugger;
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $('#chkAll').prop('checked', true);
+            } else {
+                $('#chkAll').prop('checked', false);
+            }
             var closestTr = $(':checkbox:checked').closest('tr').attr('id');
             //alert(closestTr);
         });
@@ -64,13 +70,15 @@
         $("#uploadFile_" + TitleCode).click();
     }
 
+
     function fileCheck(obj, Title_code) {
         debugger;
-
         const fsize = obj.files[0].size;
         const file = Math.round((fsize / 1024));
-        if (file >= Number($("#fileSize").val())){
-            showAlert("E", "File too Big, please select a file less than 2mb.");
+        if (file >= Number($("#fileSize").val())) {
+            showAlert("E", "Please upload poster of size less than 2 MB.");
+            delete obj.files[0];
+            $("#uploadFile_" + Title_code).val("");
             return false;
         }
 
@@ -81,10 +89,10 @@
             return false;
         }
 
-       
+
         if (obj.files && obj.files[0]) {
             var reader = new FileReader();
-         
+
             reader.onload = function (e) {
                 $('#imgTitle_' + Title_code).attr('src', e.target.result);
             }
@@ -144,9 +152,9 @@
                                 else
                                 {
                                     @*<div>
-                                        <img id="imgTitle_@Model[item].Title_Code" src="~/Images/movieIcon.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
-                                        <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
-                                    </div>*@
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/movieIcon.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>*@
                                     if (@Model[item].Deal_Type_Code == GlobalParams.Deal_Type_Music)
                                     {
                                         <div>

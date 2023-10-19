@@ -22,12 +22,26 @@
     .uploadFile {
         display: none !important;
     }
+
+    .chosen-container {
+        position: relative;
+        display: inline-block;
+        vertical-align: middle;
+        font-size: 13px;
+        zoom: 1;
+        width: 74% !important;
+        *display: inline;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
+
+    
 </style>
 <script>
     $(document).ready(function () {
         debugger;
         $('.ddlSumo').SumoSelect();
-        //$('.ddlSumo')[0].sumo.reload();
         addNumeric();
         SearchTitles("", "", "", "", "", "");
 
@@ -175,6 +189,15 @@
         $('#ddlTitleType').val('').trigger('chosen:updated');
         $('#ddlDisplayItem').val('').trigger('chosen:updated');
 
+        $('#ddlTitleType').SumoSelect();
+        $('#ddlTitleType')[0].sumo.reload();
+        $('#ddlGenre').SumoSelect();
+        $('#ddlGenre')[0].sumo.reload();
+        $('#ddlStarCast').SumoSelect();
+        $('#ddlStarCast')[0].sumo.reload();
+        $('#ddlLanguage').SumoSelect();
+        $('#ddlLanguage')[0].sumo.reload();
+
 
         SearchTitles("", "", "", "", "", "");
     }
@@ -273,10 +296,15 @@
         $("#Pagination").pagination(recordCount, opt);
     }
 
+    
+    
     function pageselectCallback(page_index, jq) {
         debugger;
-        if ($('.checkboxLst:checked').length > 0 && page_index != 0) {
+        var Pagevalidation = $('#PageValidation').val();
+        if ($('.checkboxLst:checked').length > 0 && Pagevalidation == "1") {
             showAlert("E", "You cannot change page, Please deselect titles and try again.");
+            $('#PageValidation').val("2")
+            SetPaging();
            // SearchTitles("", "", "", "", "", "");
             return false;
         }
@@ -286,6 +314,7 @@
         if (!ValidatePageSize())
             return false;
 
+        $('#PageValidation').val("1")
         var pageNo = page_index + 1
         $('#hdnPageNo').val(pageNo);
         if (IsCall == 'Y') {
@@ -319,23 +348,26 @@
         return false
     }
 
+    
+
     function SaveTitlePoster() {
         debugger;
         showLoading();
         var TitlePosterList = new Array();
         var ISNullFile = false;
         $.each($("#tblPosterList tbody tr"), function (index, value) {
+            const fileNo = index;
             index = index + 1;
+             
             var TitleCode = $('#' + index + '_hdnCnt').val();
             var Title_Image = $('#imgTitle_' + TitleCode)
            
             if ($('#chk_' + TitleCode).is(':checked') == true) {
                 if ($("#uploadFile_" + TitleCode).get(0).files.length == 0) {
                     ISNullFile = true;
-                    //hideLoading();
-                    //showAlert('E', "Upload files for checked checkboxes.")
-                    //return false;
+                  
                 }
+               
                 TitlePosterList.push({
                     Title_Code : TitleCode,
                     Title_Image : ""
@@ -356,39 +388,7 @@
             SaveFile(TitlePosterList);
         }
 
-        //$.ajax({
-        //    type: "POST",
-        //    url: URL_SaveTitlePoster,
-        //    traditional: true,
-        //    enctype: 'multipart/form-data',
-        //    contentType: "application/json; charset=utf-8",
-        //    //async: false,
-        //    data: JSON.stringify({
-        //        lst: TitlePosterList
-        //    }),
-        //    success: function (result) {
-        //        debugger;
-        //        hideLoading();
-        //        if (result == "true") {
-        //            redirectToLogin();
-        //        }
-        //        else {
-        //            if (result.Status == "S") {
-        //                showAlert("S", result.Message);
-        //                //$('#lblRecordCount').text(result.RecordCount);
-        //                //$('#hdnRecodLockingCode').val(0);
-
-        //                SearchTitles("", "", "", "", "", "");
-        //            }
-        //            else
-        //                showAlert("E", result.Message);
-        //        }
-        //    },
-        //    error: function (result) {
-        //        alert('Error: ' + result.responseText);
-        //    }
-             
-        //})
+       
       
     }
 
@@ -427,6 +427,7 @@
             });
         }
     }
+  
 </script>
 <input type="hidden" id="fileSize" />
 <div class="main_section">
@@ -445,7 +446,7 @@
                                 Title :
                             </td>
                             <td style="width:20%;vertical-align: middle;">
-                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Please Select" onkeyup="populateContent(this)" />
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:74%" placeholder="Please Select" onkeyup="populateContent(this)" />
 
                                 @*@Html.DropDownList("lstTitle", (IEnumerable<SelectListItem>)ViewBag.LanguageList as MultiSelectList, "Please Select", htmlAttributes: new { @id = "lstTitle", @multiple = "multiple", @class = "ddlSumo" })*@
                             </td>
@@ -461,8 +462,11 @@
                                 Star Cast :
                             </td>
                             <td style="width:20%;vertical-align: middle;">
+                                @Html.DropDownList("ddlStarCast", ViewBag.StarCastList as MultiSelectList, new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })
+                                @*@Html.Hidden("hdnStarCast")*@
                                 @*@Html.DropDownList("lstStarCast", (IEnumerable<SelectListItem>)ViewBag.StarCastList as MultiSelectList, htmlAttributes: new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })*@
-                                @Html.DropDownList("lstStarCast", ViewBag.StarCastList as MultiSelectList, new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })
+                                @*@Html.DropDownList("ddlStarCast", ViewBag.StarCastList as MultiSelectList, new { @id = "ddlStarCast", @multiple = "multiple", @class = "ddlSumo" })*@
+                                @*@Html.DropDownList("ddlGenre", (IEnumerable<SelectListItem>)ViewBag.StarCastList as MultiSelectList, new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })*@
 
                             </td>
                             <td style="width:20%;"></td>
@@ -473,7 +477,7 @@
                             </td>
                             <td style="width:20%;vertical-align: middle;">
                                 @*@Html.DropDownList("lstGenre", (IEnumerable<SelectListItem>)ViewBag.GenreList as MultiSelectList, htmlAttributes: new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })*@
-                                @Html.DropDownList("lstGenre", ViewBag.GenreList as MultiSelectList, new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })
+                                @Html.DropDownList("ddlGenre", ViewBag.GenreList as MultiSelectList, new { @id = "ddlGenre", @multiple = "multiple", @class = "ddlSumo" })
                             </td>
                             <td style="width:10%;vertical-align: middle;text-align:left;">
                                 Title Type :
@@ -491,7 +495,7 @@
                                     Displayitems.Add(new SelectListItem() { Text = "Yes", Value = "Y" });
                                     Displayitems.Add(new SelectListItem() { Text = "No", Value = "N" });
                                 }
-                                @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:100%;" })
+                                @Html.DropDownList("DropDownListValue", Displayitems, "Please Select", htmlAttributes: new { @id = "ddlDisplayItem", @class = "form_input chosen-select", @Style = "width:74%;" })
                             </td>
                             <td style="width:15%;vertical-align: middle;text-align:center;">
                                 <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
@@ -506,6 +510,7 @@
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
                         <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="PageValidation" name="PageValidation" value="1" />
                         <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
                         <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
                         <div id="Pagination" class="pagination">
@@ -528,7 +533,8 @@
                 <div class="form_links">
                     <ul class="modal_block clearfix" style="padding-left:10px;">
                         <li>
-                            <input type="button" style="width: 100px;" class="btn btn-primary" value="Save" onclick="SaveTitlePoster()" />
+                            <input type="button" class="btn btn-primary" value="Save" onclick="SaveTitlePoster()" />
+                            <input type="button" value="@objMessageKey.Back" id="btnBack" onclick="@("window.location.href='" + @Url.Action("titleImport", "Title") + "'");" class="btn btn-primary"/>
                         </li>
                     </ul>
                 </div>
