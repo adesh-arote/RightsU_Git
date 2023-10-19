@@ -1,7 +1,9 @@
-﻿using RightsU.BMS.DAL.Repository;
+﻿using RightsU.BMS.DAL;
+using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,7 @@ namespace RightsU.BMS.BLL.Services
         private readonly BMSDealRepositories objBMSDealRepositories = new BMSDealRepositories();
         private readonly BMSDealContentRepositories objBMSDealContentRepositories = new BMSDealContentRepositories();
         private readonly BMSDealContentRightsRepositories objBMSDealContentRightsRepositories = new BMSDealContentRightsRepositories();
+        private readonly BMSUploadData_Repositories objBMSUploadDataRepositories = new BMSUploadData_Repositories();
 
         /// <summary>
         /// Get Assets
@@ -65,6 +68,10 @@ namespace RightsU.BMS.BLL.Services
             List<DealContentRightsResult> lstUSPGetBMSDealContentRights = new List<DealContentRightsResult>();
             lstUSPGetBMSDealContentRights = objBMSDealContentRightsRepositories.GetDealContentRights(since, AssetId, DealId).ToList();
             return lstUSPGetBMSDealContentRights;
+        }
+        public int BMSUploadData(DataTable dt, string FileType, int ChannelCode)
+        {
+            return objBMSUploadDataRepositories.BMSUploadData(dt, FileType, ChannelCode);
         }
     }
 }

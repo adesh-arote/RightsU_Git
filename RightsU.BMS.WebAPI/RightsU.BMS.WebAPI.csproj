@@ -166,6 +166,8 @@
     <Compile Include="Consumes.cs" />
     <Compile Include="Controllers\bmsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\scheduleuploadController.cs" />
+    <Compile Include="FileOperationFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -228,6 +230,8 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Uploads\CSVFile\" />
+    <Folder Include="Uploads\TextFile\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
