@@ -51,15 +51,22 @@
         BindProgramList('');
     }
     function SaveTitleContent(titleContentCode) {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         var EpisodeName = $.trim($('#txtEpisodeName_' + titleContentCode).val());
         var duration = $('#txtDuration_' + titleContentCode).val();
         var synopsis = $('#txtSynopsis_' + titleContentCode).val();
+        var EpisodeNum = $('#txtEpisodeNum_' + titleContentCode).val();
        
         if (EpisodeName == '') {
             $('#txtEpisodeName_' + titleContentCode).val('')
             $('#txtEpisodeName_' + titleContentCode).attr('required', true)
+            return false;
+        }
+        if (EpisodeNum == '') {
+            $('#txtEpisodeNum_' + titleContentCode).val('')
+            $('#txtEpisodeNum_' + titleContentCode).attr('required', true)
             return false;
         }
 
@@ -74,7 +81,8 @@
                 titleContentCode: titleContentCode,
                 EpisodeName: EpisodeName,
                 duration: duration,
-                synopsis: synopsis
+                synopsis: synopsis,
+                EpisodeNum: EpisodeNum
             }),
             async: false,
             success: function (result) {

@@ -1,0 +1,342 @@
+﻿@model List<RightsU_Entities.AL_Vendor_Rule_Criteria>
+
+
+<style>
+    select option:disabled {
+        display: none;
+    }
+</style>
+
+<script>
+    //var SelectedCriteria = "";
+    $(document).ready(function () {
+        debugger;
+        initializeChosen();
+        AddSpaceAfterComma();
+        InitializeNumberAndDate();
+    });
+
+    function SaveContentRuleCriteria() {
+        debugger;
+        var returnVal = true;
+        var Field = $("#CrCField").val();
+        var FieldText = $("#CrCField option:selected").text();
+        var Data = $("#CrCData").val();
+        var DataText = $("#CrCData option:selected").text();
+        if ($("#CrCDataMSddl").prop('type') == 'select-multiple') {
+            var Data = $("#CrCDataMSddl").val();
+            if (Data == "" || Data == null) {
+                showAlert("E", "Please select Data fields");
+                returnVal = false;
+            }
+            if (Data != "" && Data != null && Data != undefined) {
+                Data = Data.join(',');
+                //var DataText = $("#CrCDataMSddl option:selected").text();
+                var DataText = $("#CrCDataMSddl option:selected").map(function () {
+                    return $(this).text();
+                }).get().join();
+            }
+        }
+        var hdnCRCode = $("#hdnContentRuleCode").val();
+        var CRCCode = $("#hdnCRCriteria").val();
+
+        if (Field == "") {
+            $("#CrCField").val('').attr('required', true);
+            returnVal = false;
+        }
+        if (Data == "") {
+            $("#CrCData").val().attr('required', true);
+            returnVal = false;
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveContentRuleCriteria,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    AL_Vendor_Rule_Criteria_Code: CRCCode,
+                    AL_Vendor_Rule_Code: hdnCRCode,
+                    Columns_Code: Field,
+                    Columns_Value: Data,
+                    ExtendedColumnNames: FieldText,
+                    DataFieldNames: DataText
+                }),
+                success: function (result) {
+                    debugger;
+                    //showAlert(result.status, result.message);
+                    $('#hdnActionCRGrid').val("");
+                    BindContentRuleGrid('', 0, '@ViewBag.CrCodeOnAdd');
+                }
+            });
+        }
+    }
+
+    function CancelCRC() {
+        //var ReplaceTxt = $("#CrCField option:selected").text() + ",";
+        //SelectedCriteria = SelectedCriteria.replace(ReplaceTxt, '');
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
+        $('#hdnActionCRGrid').val("");
+        BindContentRuleGrid('', 0, 0);
+    }
+
+    function DeleteContentRuleCriteria(crcCode) {
+        if (checkCurrentActionCRGrid()) {
+            $.ajax({
+                type: "POST",
+                url: URL_DeleteContentRuleCriteria,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    CRCCode: crcCode
+                }),
+                success: function (result) {
+                    debugger;
+                    BindContentRuleGrid('', 0, '@ViewBag.CrCodeOnAdd');
+                }
+            });
+        }
+    }
+
+    function ChangeDataInputType() {
+        debugger;
+        //alert("Called Change Data Input function");
+        var FieldType = $("#CrCField").val();
+        //SelectedCriteria = $("#SelectedCriteriaTd").html() + $("#CrCField option:selected").text() + ",";
+        //$("#SelectedCriteriaTd").html(SelectedCriteria);
+        $.ajax({
+            type: "POST",
+            url: URL_ChangeDataInputType,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                SelectedFieldType: FieldType
+            }),
+            success: function (result) {
+                debugger;
+                if (result.ControlType == "DDL") {
+                    if (result.IsMultiSelect == "N") {
+                        $("#DataInputs").html('<select id="CrCData" class="chosen-select"> </select>');
+                        $.each(result.SelectListItem, function () {
+                            debugger;
+                            $("#CrCData").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                    }
+                    else if (result.IsMultiSelect == "Y") {
+                        $("#DataInputs").html('<select id="CrCDataMSddl" class="chosen-select" multiple="multiple"> </select>');
+                        $.each(result.SelectListItem, function () {
+                            debugger;
+                            $("#CrCDataMSddl").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                    }
+                }
+                else if (result.ControlType == "TXT") {
+                    $("#DataInputs").html(result.TextBox);
+                }
+                else if (result.ControlType == "DATE") {
+                    $("#DataInputs").html(result.Date);
+                    //Creates HTML TextBox. Add class to add datepicker for textbox
+                    //$("#CrCData").addClass("isDatepicker");
+                    //$(".isDatepicker").datepicker();
+                    InitializeNumberAndDate();
+                }
+                else if (result.ControlType == "INT") {
+                    $("#DataInputs").html(result.Number);
+                    InitializeNumberAndDate();
+                }
+                else if (result.ControlType == "CB") {
+                    $("#DataInputs").html(result.CheckBox);
+                }
+                else if (result.ControlType == "RB") {
+                    $("#DataInputs").html(result.RadioButton);
+                }
+                else if (result.ControlType == "SDTED") {
+                    $("#DataInputs").html(result.StartDateEndDate);
+                }
+                else {
+                    $("#DataInputs").html("");
+                }
+                initializeChosen();
+            }
+        });
+    }
+
+    function AddSpaceAfterComma() {
+        debugger;
+        var trCount = $("#ContentRuleGrid tbody tr").length;
+        var i = 0;
+        for (i; i <= trCount; i++) {
+            if ($("#SpnValue_" + i).html() != undefined && $("#SpnValue_" + i).html() != null && $("#SpnValue_" + i).html() != "") {
+                var HtmlInsert = $("#SpnValue_" + i).html();
+                $("#SpnValue_" + i).html(HtmlInsert.replace(/,/g, ', '));
+            }
+        }
+    }
+
+    function InitializeNumberAndDate() {
+        $(".isDatepicker").datepicker();
+        $(".isNumeric").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 999,
+            min: 1
+        });
+    }
+</script>
+
+@{
+    int iCrC = 0;
+}
+
+<input type="hidden" id="hdnContentRuleCode" />
+
+<div style="padding:1%">
+    <span style="font-size:18px"> Criteria </span>
+    @if (ViewBag.CommandNameCrC != "VIEW")
+    {
+        <button class="btn btn-primary pull-right" onclick="BindContentRuleGrid('ADD', 0, '@ViewBag.CrCodeOnAdd')"> Add </button>
+    }
+</div>
+
+<style>
+    #ContentRuleGrid {
+        table-layout: fixed;
+    }
+
+        #ContentRuleGrid tr td {
+            word-wrap: break-word;
+        }
+
+    .textAlignCenter {
+        text-align: center;
+    }
+</style>
+
+<table id="ContentRuleGrid" class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:10%">
+                Sr. No.
+            </th>
+            <th style="width:30%">
+                Fields
+            </th>
+            <th style="width:50%">
+                Data
+            </th>
+            @if (ViewBag.CommandNameCrC != "VIEW")
+            {
+                <th style="width:10%">
+                    Actions
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            iCrC++;
+            <tr>
+                @if (ViewBag.CommandNameCrC == "EDIT" && ViewBag.CrCCode == item.AL_Vendor_Rule_Criteria_Code)
+                {
+                    <td class="textAlignCenter">
+                        @iCrC
+                        <input type="hidden" id="hdnCRCriteria" value="@item.AL_Vendor_Rule_Criteria_Code" />
+                        <input type="hidden" id="hdnCR" value="@item.AL_Vendor_Rule_Code" />
+                    </td>
+                    <td>
+                        @Html.DropDownList("Extended_Columns", (IEnumerable<SelectListItem>)ViewBag.ExtendedColumnDDl, "Select a Field", new { @id = "CrCField", style = "width:100%", @class = "chosen-select", disabled = true })
+                    </td>
+                    <td>
+                        @if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "N")
+                        {
+                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>
+                                )ViewBag.DDlSelectList, new { @id = "CrCData", @class = "chosen-select", style = "width:100%" })
+                        }
+                        else if (ViewBag.Controltype == "DDL" && ViewBag.IsMultiSelect == "Y")
+                        {
+                            @Html.DropDownList("Columns_Value", (IEnumerable<SelectListItem>
+                                )ViewBag.DDlSelectList as MultiSelectList, new { @id = "CrCDataMSddl", style = "width:100%", @class = "chosen-select", multiple = "multiple" })
+                        }
+                        else if (ViewBag.Controltype == "TXT")
+                        {
+                            <input type="text" id="CrCData" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "DATE")
+                        {
+                            <input type="text" id="CrCData" class="isDatepicker" value="@item.Columns_Value" />
+                        }
+                        else if (ViewBag.Controltype == "INT")
+                        {
+                            <input type="text" id="CrCData" class="isNumeric" value="@item.Columns_Value" />
+                        }
+                    </td>
+                    <td class="textAlignCenter">
+                        <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveContentRuleCriteria()"></a>
+                        <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelCRC()"></a>
+                    </td>
+                }
+                else
+                {
+                    <td class="textAlignCenter">
+                        @iCrC
+                    </td>
+                    <td>
+                        @item.ExtendedColumnNames
+                    </td>
+                    <td>
+                        <span id="SpnValue_@iCrC">
+                            @if (@item.DataFieldNames != null && @item.DataFieldNames != "")
+                            {
+                                @item.DataFieldNames
+                            }
+                            else
+                            {
+                                @item.Columns_Value
+                            }
+                        </span>
+                    </td>
+                    if (ViewBag.CommandNameCrC != "VIEW")
+                    {
+                        <td class="textAlignCenter">
+
+                            <a title="Edit" class="glyphicon glyphicon-pencil" onclick="BindContentRuleGrid('EDIT', '@item.AL_Vendor_Rule_Criteria_Code', '@ViewBag.CrCodeOnAdd')"></a>
+                            @*@if (item.AL_Vendor_Rule_Criteria_Code < 0)
+                                {*@
+                            <a title="Delete" class="glyphicon glyphicon-trash" onclick="DeleteContentRuleCriteria('@item.AL_Vendor_Rule_Criteria_Code')"></a>
+                            @*}*@
+
+                        </td>
+                    }
+                }
+            </tr>
+        }
+        @if (ViewBag.CommandNameCrC == "ADD")
+        {
+            <tr>
+                <td>
+                    New
+                </td>
+                <td>
+                    @Html.DropDownList("Extended_Columns", (IEnumerable<SelectListItem>)ViewBag.ExtendedColumnDDl, "Select a Field", new { @id = "CrCField", style = "width:100%", onchange = "ChangeDataInputType()" })
+                </td>
+                <td>
+                    <div id="DataInputs">
+
+                    </div>
+                </td>
+                <td class="textAlignCenter">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveContentRuleCriteria()"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="CancelCRC()"></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

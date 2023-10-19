@@ -21,9 +21,15 @@
     var URL_TitleList_Cancel = '@Url.Action("Cancel", "Title_List", new { Page_No = "Code", Record_Locking_Code ="RL_Code"})';
     var URL_Bind_Title_List = '@Url.Action("Bind_Title_List", "Title_List")';
     var URL_OnChangeBindTitle = '@Url.Action("OnChangeBindTitle", "Title_List")';
+    var URL_BindFieldGrid = '@Url.Action("BindFieldGrid", "Title")';
+    var URL_SaveInSession = '@Url.Action("PopupSaveInSession", "Title")';
+    var VarTitleCodeModel = '@Model.Title_Code';
+    var TitleTypeCode = "";
+
     var chosenTerritory = [];
     var chosenCountry = [];
     $(document).ready(function () {
+        BindTitleMetadataHeader();
         $('#rdWorld').parents('li').next().hide();
         $("#_hdnRecordLockingCode").val(recordLockingCode);
         initializeChosen();
@@ -97,6 +103,7 @@
                 $('#btnAddRelease').prop('disabled', false);
             }
         });
+
     });
 
     $('#ddlTerritory_TitleRel').chosen().change(function () {
@@ -164,6 +171,15 @@
         $('#txtTitleSearch').val('');
 
         var DealTypeCode = $('#Deal_Type_Code').val();
+
+        var DealExistsInArray = jQuery.inArray(DealTypeCode, lstProgramShow);
+        if (DealExistsInArray != -1) {
+            $("#liExtGrp_100").show();
+        } else {
+            $("#liExtGrp_100").hide();
+            $("#EpisodeTabAdditionalField").hide();
+        }
+
         $.ajax({
             type: "POST",
             url: URL_OnChangeBindTitle,
@@ -300,45 +316,48 @@
         });
     }
 
-      var Command_Name = "";
-    var TitleReleaseCode = 0;
-    function handleOk() {
-        if (Command_Name == "TITLE_RELEASE_DELETE") {
-            $.ajax({
-                type: 'POST',
-                url: '@Url.Action("DeleteTitleRelease", "Title")',
-                data: { Title_Release_Code: TitleReleaseCode },
-                async: false,
-                success: function (result) {
-                    if (result == "true") {
-                        redirectToLogin();
-                    }
-                    else {
-                        if (result.Status == "S") {
-                            showAlert('I', result.Message);
-                            var pageNo = $('#hdnPageNo').val();
-                            BindTitleList(pageNo);
-                            calculatePublicDomain();
-                        }
-                        else {
-                            showAlert('E', result.Message);
-                        }
-                    }
-                },
-                error: function (result) {
-                    alert('Error: ' + result.responseText);
-                }
-            });
-        }
-        else if ($("#hdnConfirmationtype").val() == 'talent') {
-            ValidateSave('validate');
-        }
-        else {
-            var obj = $('#hdnCurrentID').val();
-            var imgDelete = document.getElementById("imgDelete_" + obj);
-            SaveExtended(imgDelete);
-        }
-    }
+    //Commented beacause same function used in Title/_Extended_Coulmns where delete is working in one function for deleting Extended columns and deleting title release 
+    //var Command_Name = "";
+    //var TitleReleaseCode = 0;
+    //function handleOk() {
+    //    debugger;
+    //    if (Command_Name == "TITLE_RELEASE_DELETE") {
+    //        $.ajax({
+    //            type: 'POST',
+    //            url: '@Url.Action("DeleteTitleRelease", "Title")',
+    //            data: { Title_Release_Code: TitleReleaseCode },
+    //            async: false,
+    //            success: function (result) {
+    //                debugger;
+    //                if (result == "true") {
+    //                    redirectToLogin();
+    //                }
+    //                else {
+    //                    if (result.Status == "S") {
+    //                        showAlert('I', result.Message);
+    //                        var pageNo = $('#hdnPageNo').val();
+    //                        BindTitleList(pageNo);
+    //                        calculatePublicDomain();
+    //                    }
+    //                    else {
+    //                        showAlert('E', result.Message);
+    //                    }
+    //                }
+    //            },
+    //            error: function (result) {
+    //                alert('Error: ' + result.responseText);
+    //            }
+    //        });
+    //    }
+    //    else if ($("#hdnConfirmationtype").val() == 'talent') {
+    //        ValidateSave('validate');
+    //    }
+    //    else {
+    //        var obj = $('#hdnCurrentID').val();
+    //        var imgDelete = document.getElementById("imgDelete_" + obj);
+    //        SaveExtended(imgDelete);
+    //    }
+    //}
     function handleCancel() {
         Command_Name = "";
         TitleReleaseCode = 0;
@@ -434,6 +453,296 @@
         URL = URL.replace(/amp;/g, "");
         window.location.href = URL;
     }
+
+    function BindTitleMetadataHeader() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitleMetadataHeader", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMetadataHeader').empty();
+                    $('#divTitleMetadataHeader').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindTabwisePopup() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTabwisePopup", "Title")',
+            traditional: true,
+            data: JSON.stringify({
+                Ext_Grp_Code: $("#hdnTabCode").val()
+            }),
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $("#TabwisePopup").empty();
+                    $("#TabwisePopup").append(result);
+                    $("#AddTabwisePopup").modal();
+                    $("#TabwiseName").text($("#hdnTabwiseName").val());
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function closeEdit(rowNumber) {
+        debugger;
+        $("#AddTabwisePopup").modal('toggle');
+        $('#inputValidation').val("false");
+        $("#Operation").val('A');
+    }
+
+    function SavePopup(x, rownum) {
+        debugger;
+        var MandatoryVal = true;
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        showLoading();
+        var rownum = rownum;
+        var shortName = $('#hdnTabShortName').val();
+        var operation = $('#Operation').val();
+        var wtName = $('#hdnwt' + shortName).val();
+        if (operation == "E" && wtName.toUpperCase() == "GRID") {
+            rwIndex = parseInt($('#popupindex').val());
+        }
+
+        var fld = "";
+        var vallist = "";
+        FieldList = $('#FieldList').val();
+        let FldArray = FieldList.split(',');
+
+        for (let i = 0; i < FldArray.length; i++) {
+            if (FldArray[i].substring(0, 2) == shortName) {
+                fld = FldArray[i].split("~");
+                var a = "";
+                if (wtName.toUpperCase() == "GRID") {
+                    a = '#TabwisePopup #' + operation + fld[0];
+                } else {
+                    a = '#' + operation + fld[0];
+                }
+
+                debugger;
+                var ValID = fld[0];
+                if ($(a).val() == null) {
+                    //showAlert('I', 'Please enter details');
+                    //hideLoading();
+                    //return;
+                    let v = $(a).val();
+                    if ($(a).prop('required')) {
+                        if (v == "" || v == undefined || v == null) {
+                            $(a).addClass("required");
+                            MandatoryVal = false;
+                        }
+                    }
+                }
+                else {
+                    let v = $(a).val().toString();
+                    if ($(a).prop('required')) {
+                        if (v == "") {
+                            $(a).addClass("RequiredClass");
+                            $(a).addClass("required");
+                            MandatoryVal = false;
+                        }
+                    }
+                    if ($(a).is("select")) {
+                        vallist = vallist + v.replace(/,/g, "-") + 'ï¿' + fld[1] + '¿ï';
+                        //if ($(a).prop('multiple')) {
+                        //    $(a)[0].sumo.unSelectAll();
+                        //}
+                    }
+                    else
+                        if ($(a).is(":checkbox")) {
+                            if ($(a).is(':checked')) {
+                                vallist = vallist + 'Yes' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                            else {
+                                vallist = vallist + 'No' + 'ï¿' + fld[1] + '¿ï';
+                                $(a).val('');
+                            }
+                        }
+                        else {
+                            vallist = vallist + v + 'ï¿' + fld[1] + '¿ï';
+                            $(a).val('');
+                        }
+                }
+            }
+        }
+
+        if (MandatoryVal == false) {
+            showAlert("E", "Please fill out the required fields");
+            hideLoading();
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveInSession,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Value_list: vallist,
+                Short_Name: shortName,
+                Operation: operation,
+                Row_No: rownum,
+                rwIndex: rwIndex,
+                Title_Code: '@Model.Title_Code'
+            }),
+            success: function (result) {
+                debugger;
+                $('#inputValidation').val("false");
+                var shortName = $('#hdnTabShortName').val();
+                tblName = "#tbl" + shortName;
+
+                if (result != "Duplicate") {
+                    var row = $(result);
+                    if (operation == "A") {
+                        $(tblName).append(row);
+                        hideaddPopup();
+                    }
+                    if (operation == "E") {
+                        row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        $(tblName + ' tr').eq(rwIndex + 1).remove();
+                        // $('#' + shortName + rownum).remove();
+
+                        //row.insertBefore($(tblName + ' tbody tr:nth(' + rwIndex + ')'));
+                        //$(tblName + ' tr').eq(rwIndex + 1).remove();
+                    }
+                }
+                else {
+                    showAlert('I', 'Duplicate Value Not allowed');
+                }
+            }
+        });
+
+
+        if (wtName.toUpperCase() == "GRID") $("#AddTabwisePopup").modal('toggle');
+        hideLoading();
+    }
+
+    function PopupEdit(x, Ext_Grp_Code, rowno, num) {
+        debugger;
+        //if ($('#inputValidation').val() == "true") {
+        //    showAlert('I', "Please Complete Add Edit Opration");
+        //    hideLoading();
+        //    return;
+        //}
+
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        var shortName = $('#hdnTabShortName').val();
+        var wtName = $('#hdnwt' + shortName).val();
+
+        var tab = $('#tbl' + shortName + ' tbody tr')[rwIndex].outerHTML;
+        var row_no = parseInt(rowno, 10);
+        var num = parseInt(num, 10);
+        $('#RowEdit').val(tab);
+        $('#Operation').val("E");
+
+        if (wtName.toUpperCase() == "GRID") {
+            $('#popupindex').val(rwIndex);
+        }
+
+        if (wtName.toUpperCase() == "GRID") {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindTabwisePopup", "Title")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Ext_Grp_Code: $("#hdnTabCode").val(),
+                    rowno: row_no,
+                    Short_Name: shortName,
+                    num: num,
+                    Title_Code: '@Model.Title_Code'
+                }),
+                success: function (result) {
+                    debugger;
+                    $("#TabwisePopup").empty();
+                    $("#TabwisePopup").append(result);
+                    $("#AddTabwisePopup").modal();
+                    $("#TabwiseName").text($("#hdnTabwiseName").val());
+                    initializeChosen();
+                }
+            });
+
+        }
+    }
+
+    function PopupDelete(x, supplementary_Code, rowno, i, TabCode, shortName) {
+        debugger;
+        var rwIndex = x.parentNode.parentNode.rowIndex;
+        var operation = "D";
+        tblName = "#tbl" + shortName;
+
+        $(tblName + ' tr').eq(rwIndex).remove();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveInSession,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                @*TitleCode: '@Model.Title_Code',
+                rowno: rowno,
+                TabCode: TabCode*@
+                Value_list: "",
+                Short_Name: shortName,
+                Operation: operation,
+                Row_No: rowno,
+                rwIndex: rwIndex,
+                Title_Code: '@Model.Title_Code'
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+
+            }
+        });
+    }
+
+    function hideaddPopup() {
+        debugger;
+        //$('#inputValidation').val("false");
+        var shortName = $('#hdnTabShortName').val();
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Input_Name = "#tblMain" + tabArray[i];
+            if (tabArray[i] == shortName) {
+                $(IS_Input_Name).addClass("active");
+                $(IS_Input_Name).show();
+            }
+            else {
+                $(IS_Input_Name).removeClass("active");
+                $(IS_Input_Name).hide();
+            }
+        }
+    }
+
     function populateTitle(evt) {
         debugger;
         var DealTypeCode = $('#Deal_Type_Code').val();
@@ -810,11 +1119,18 @@
             </div>
         </div>
 
-        <div class="padding">
+        <div class="padding pull-right">
             <a class="glyphicon glyphicon-plus pull-right" title="@objMessageKey.Add" id="btnAddAdditional" onclick="btnAddExtendedData();"></a>
-            <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>
+            <a class="glyphicon glyphicon-plus pull-right" title="@objMessageKey.Add" id="btnAddEpisode" onclick="EditEpisodeDetails('', 'ADD')" style="display:none"></a>
+            @*<div class="divgvAdditionalField" style="text-align-last:@(textalignlast);"></div>*@
         </div>
-        <div class="bottom_action">
+
+        <div class="navigation_tabs" style="padding: 10px; background-color: white;">
+            <div id="divTitleMetadataHeader">
+            </div>
+        </div>
+
+        <div class="bottom_action" style="padding-top:15px">
             <ul class="form_link_nav clearfix">
                 <li class="poptalent">
                     <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return Save();" />
@@ -826,3 +1142,23 @@
         </div>
     </div>
 }
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in big_popup" id="AddTabwisePopup" role="dialog" tabindex="-1" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="form_fields">
+                <div class="modal-content clearfix">
+                    <div class="modal_block modal_header">
+                        <a class="close" data-dismiss="modal" href="#">
+                            <span>×</span>
+                            <span class="sr-only">Close</span>
+                        </a>
+                        <h2><label id="TabwiseName"></label></h2>
+                    </div>
+                    <div class="modal_block" style="padding: 17px; overflow:unset">
+                        <div id="TabwisePopup">                        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

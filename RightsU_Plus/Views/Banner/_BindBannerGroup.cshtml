@@ -1,0 +1,84 @@
+﻿@model IEnumerable<RightsU_Entities.Banner>
+
+<style>
+    td {
+        text-align: center;
+    }
+</style>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width: 45%">
+                Banner Name
+            </th>
+            <th>
+                Banner Short Name
+            </th>
+            <th style="width: 10%">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    @{
+        if (ViewBag.CommandName == "ADD")
+        {
+            <tr>
+                <td>
+                    <input autocomplete="off" type="text" id="Banner_Name" style="width:75%" />
+                </td>
+                <td>
+                    <input autocomplete="off" type="text" id="Banner_Short_Name" style="width:75%" />
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveBanner(0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="BannerCancel()"></a>
+                </td>
+            </tr>
+        }
+    }
+
+    @foreach (var item in Model)
+    {
+
+        <tr>
+            @if (ViewBag.CommandName == "EDIT" && ViewBag.BannerCode == item.Banner_Code)
+            {
+                <td style="display: none">
+                    <input autocomplete="off" type="text" id="Banner_Code" value="@item.Banner_Code" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="Banner_Name" value="@item.Banner_Name" style="width:75%" />
+                </td>
+
+                <td>
+                    <input autocomplete="off" type="text" id="Banner_Short_Name" value="@item.Banner_Short_Name" style="width:75%" />
+                </td>
+                <td>
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveBanner(@item.Banner_Code)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="BannerCancel()"></a>
+                </td>
+            }
+            else
+            {
+                <td>
+                    @Html.DisplayFor(modelItem => item.Banner_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Banner_Short_Name)
+                </td>
+                <td style="display: none">
+                    @Html.DisplayFor(modelItem => item.Lock_Time)
+                </td>
+                <td>
+                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.Banner_Code')"></a>
+                    <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="DeleteBanner('@item.Banner_Code')"></a>
+                </td>
+
+            }
+        </tr>
+    }
+
+</table>
+

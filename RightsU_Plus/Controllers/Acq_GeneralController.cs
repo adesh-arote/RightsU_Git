@@ -1142,64 +1142,105 @@ namespace RightsU_Plus.Controllers
             int pageSize = Convert.ToInt32(objFormCollection["txtPageSize"]);
             if (returnVal)
             {
-                UpdateTitleCollection(objAD_MVC.Acq_Deal_Movie.ToList(), true);
-                string[] arrErrorGuid = objAD_Session.Acq_Deal_Movie.Where(w => w.EntityState != State.Deleted &&
-                               (w.Episode_Starts_From == null ||
-                                   (
-                                       (Deal_Type_Condition == GlobalParams.Deal_Program || Deal_Type_Condition == GlobalParams.Deal_Music)
-                                       && w.Episode_End_To == null
-                                   ) ||
-                                   (Deal_Type_Condition == GlobalParams.Sub_Deal_Talent && masterDeal_dealTypeCode != GlobalParams.Deal_Type_Movie && w.No_Of_Episodes == null)
-                              )).Select(s => s.Dummy_Guid).Distinct().ToArray();
+                //-------------------Check syndicated Titles and Episodes start-----------------------------
 
-                if (arrErrorGuid.Length > 0)
+
+                if (Deal_Type_Condition == GlobalParams.Deal_Program)
                 {
-                    lstAcq_Deal_movie = objAD_Session.Acq_Deal_Movie.Where(w => w.EntityState != State.Deleted).OrderBy(o => o.Title.Title_Name).ToList();
-                    int[] arrNullTitles = lstAcq_Deal_movie.Where(w => w.EntityState != State.Deleted &&
-                        arrErrorGuid.Contains(w.Dummy_Guid)).Select(s => (int)s.Title_Code).Distinct().ToArray();
-                    int Object_Index = lstAcq_Deal_movie.FindIndex(w => w.EntityState != State.Deleted &&
-                        arrErrorGuid.Contains(w.Dummy_Guid));
-                    Object_Index++;
+                    List<int> lstSynDealCode = new List<int>();
+                    lstSynDealCode = new Syn_Acq_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objAD_Session.Acq_Deal_Code).Select(x => x.Syn_Deal_Code).ToList();
 
-                    errorPageIndex = (Object_Index / pageSize);
-                    if ((Object_Index % pageSize) > 0)
-                        errorPageIndex++;
 
-                    string strTitleNames = string.Join(", ", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrNullTitles.Contains(s.Title_Code)).Select(s => s.Title_Name).ToArray());
-                    strMessage = "Please enter Episode no. for " + strTitleNames;
-                    if (Deal_Type_Code == GlobalParams.Deal_Type_Sports)
-                        strMessage = "Please enter No. of Matches for " + strTitleNames;
-                    else if (Deal_Type_Code == GlobalParams.Deal_Type_Music || Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
-                        strMessage = "Please enter No. of Songs for " + strTitleNames;
-                    else if (Deal_Type_Condition == GlobalParams.Sub_Deal_Talent)
-                        strMessage = "Please enter No. of Appearances for " + strTitleNames;
-                    returnVal = false;
+                    if (lstSynDealCode.Count() > 0)
+                    {
+                        foreach (var SynDealCode in lstSynDealCode)
+                        {
+                            if (SynDealCode > 0)
+                            {
+                                List<Syn_Deal_Movie> lstSyn_Deal_Movie = new List<Syn_Deal_Movie>();
+                                lstSyn_Deal_Movie = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == SynDealCode).ToList();
+
+                                foreach (var item in lstSyn_Deal_Movie)
+                                {
+                                    List<Acq_Deal_Movie> objAcq_Deal_Movie = new List<Acq_Deal_Movie>();
+                                    bool isStartErr = true;
+                                    bool isEndErr = true;
+
+                                    var minMaxEpisodes = objAD_MVC.Acq_Deal_Movie.Where(x => x.Title_Code == item.Title_Code).GroupBy(y => y.Title_Code).Select(
+                                        g => new { minEps = g.Min(p => p.Episode_Starts_From), maxEps = g.Max(p => p.Episode_End_To) }).FirstOrDefault();
+
+                                    var lst = objAD_MVC.Acq_Deal_Movie.Where(x => x.Title_Code == item.Title_Code).Select(x => new { x.Episode_Starts_From, x.Episode_End_To }).ToList();
+
+                                    List<int> lstIntegers = new List<int>();
+                                    if (lst.Count() > 0)
+                                    {
+
+
+                                        foreach (var range in lst)
+                                        {
+
+                                            lstIntegers.AddRange(Enumerable.Range(Convert.ToInt32(range.Episode_Starts_From), Convert.ToInt32(range.Episode_End_To)).ToList());
+                                        }
+
+
+                                        int First = lstIntegers.OrderBy(x => x).First();
+                                        int Last = lstIntegers.OrderBy(x => x).Last();
+
+                                        List<int> myList2 = Enumerable.Range(First, Last - First + 1).ToList();
+                                        List<int> remaining = myList2.Except(lstIntegers).ToList();
+
+                                        if (remaining.Count() > 0)
+                                        {
+                                            strMessage = "Can not reduce episodes as title is already syndicated";
+                                            returnVal = false;
+                                        }
+                                        else if (objAcq_Deal_Movie != null)
+                                        {
+                                            //if (!(Convert.ToInt32(item.Episode_From) >= Convert.ToInt32(objAcq_Deal_Movie.Episode_Starts_From) && Convert.ToInt32(objAcq_Deal_Movie.Episode_Starts_From) <= Convert.ToInt32(item.Episode_End_To)))
+                                            if (!(Convert.ToInt32(item.Episode_From) >= Convert.ToInt32(minMaxEpisodes.minEps) && Convert.ToInt32(minMaxEpisodes.minEps) <= Convert.ToInt32(item.Episode_End_To)))
+                                            {
+                                                isStartErr = false;
+                                            }
+
+                                            //if (!(Convert.ToInt32(item.Episode_From) <= Convert.ToInt32(objAcq_Deal_Movie.Episode_End_To) && Convert.ToInt32(objAcq_Deal_Movie.Episode_End_To) >= Convert.ToInt32(item.Episode_End_To)))
+                                            if (!(Convert.ToInt32(item.Episode_From) <= Convert.ToInt32(minMaxEpisodes.maxEps) && Convert.ToInt32(minMaxEpisodes.maxEps) >= Convert.ToInt32(item.Episode_End_To)))
+                                            {
+                                                isEndErr = false;
+
+                                            }
+
+                                            if (isStartErr == false || isEndErr == false)
+                                            {
+                                                strMessage = "Can not reduce episodes as title is already syndicated";
+                                                returnVal = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
                 }
 
-
+                //-------------------Check syndicated Titles and Episodes end-------------------------------
                 if (returnVal)
                 {
-                    arrErrorGuid = (from Acq_Deal_Movie objF in objAD_Session.Acq_Deal_Movie.Where(x => x.EntityState != State.Deleted).ToList()
-                                    from Acq_Deal_Movie objS in objAD_Session.Acq_Deal_Movie.Where(x => x.EntityState != State.Deleted).ToList()
-                                    where objF.Title_Code == objS.Title_Code &&
-                                    objF.Episode_Starts_From != null && objS.Episode_Starts_From != null
-                                    && objF.Episode_End_To != null && objS.Episode_End_To != null
-                                    && objF.Dummy_Guid != objS.Dummy_Guid &&
-                                    ((
-                                        Deal_Type_Condition == GlobalParams.Deal_Program &&
-                                        (
-                                            (objF.Episode_Starts_From >= objS.Episode_Starts_From && objF.Episode_Starts_From <= objS.Episode_End_To) ||
-                                            (objS.Episode_Starts_From >= objF.Episode_Starts_From && objS.Episode_Starts_From <= objF.Episode_End_To)
-                                        )
-                                    ) ||
-                                    (Deal_Type_Condition == GlobalParams.Deal_Music && (objF.Episode_End_To == objS.Episode_End_To)))
-                                    select objF.Dummy_Guid
-                     ).Distinct().ToArray();
+                    UpdateTitleCollection(objAD_MVC.Acq_Deal_Movie.ToList(), true);
+                    string[] arrErrorGuid = objAD_Session.Acq_Deal_Movie.Where(w => w.EntityState != State.Deleted &&
+                                   (w.Episode_Starts_From == null ||
+                                       (
+                                           (Deal_Type_Condition == GlobalParams.Deal_Program || Deal_Type_Condition == GlobalParams.Deal_Music)
+                                           && w.Episode_End_To == null
+                                       ) ||
+                                       (Deal_Type_Condition == GlobalParams.Sub_Deal_Talent && masterDeal_dealTypeCode != GlobalParams.Deal_Type_Movie && w.No_Of_Episodes == null)
+                                  )).Select(s => s.Dummy_Guid).Distinct().ToArray();
 
                     if (arrErrorGuid.Length > 0)
                     {
                         lstAcq_Deal_movie = objAD_Session.Acq_Deal_Movie.Where(w => w.EntityState != State.Deleted).OrderBy(o => o.Title.Title_Name).ToList();
-                        int[] arrOverLap = lstAcq_Deal_movie.Where(w => w.EntityState != State.Deleted &&
+                        int[] arrNullTitles = lstAcq_Deal_movie.Where(w => w.EntityState != State.Deleted &&
                             arrErrorGuid.Contains(w.Dummy_Guid)).Select(s => (int)s.Title_Code).Distinct().ToArray();
                         int Object_Index = lstAcq_Deal_movie.FindIndex(w => w.EntityState != State.Deleted &&
                             arrErrorGuid.Contains(w.Dummy_Guid));
@@ -1209,14 +1250,134 @@ namespace RightsU_Plus.Controllers
                         if ((Object_Index % pageSize) > 0)
                             errorPageIndex++;
 
-                        string strTitleNames = string.Join(", ", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrOverLap.Contains(s.Title_Code)).Select(s => s.Title_Name).ToArray());
-                        strMessage = "Overlapping Episode no. for " + strTitleNames;
-                        if (Deal_Type_Code == GlobalParams.Deal_Type_Music || Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
-                            strMessage = "Duplicate No. of Songs for " + strTitleNames;
-
+                        string strTitleNames = string.Join(", ", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrNullTitles.Contains(s.Title_Code)).Select(s => s.Title_Name).ToArray());
+                        strMessage = "Please enter Episode no. for " + strTitleNames;
+                        if (Deal_Type_Code == GlobalParams.Deal_Type_Sports)
+                            strMessage = "Please enter No. of Matches for " + strTitleNames;
+                        else if (Deal_Type_Code == GlobalParams.Deal_Type_Music || Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
+                            strMessage = "Please enter No. of Songs for " + strTitleNames;
+                        else if (Deal_Type_Condition == GlobalParams.Sub_Deal_Talent)
+                            strMessage = "Please enter No. of Appearances for " + strTitleNames;
                         returnVal = false;
                     }
+
+
+                    if (returnVal)
+                    {
+                        arrErrorGuid = (from Acq_Deal_Movie objF in objAD_Session.Acq_Deal_Movie.Where(x => x.EntityState != State.Deleted).ToList()
+                                        from Acq_Deal_Movie objS in objAD_Session.Acq_Deal_Movie.Where(x => x.EntityState != State.Deleted).ToList()
+                                        where objF.Title_Code == objS.Title_Code &&
+                                        objF.Episode_Starts_From != null && objS.Episode_Starts_From != null
+                                        && objF.Episode_End_To != null && objS.Episode_End_To != null
+                                        && objF.Dummy_Guid != objS.Dummy_Guid &&
+                                        ((
+                                            Deal_Type_Condition == GlobalParams.Deal_Program &&
+                                            (
+                                                (objF.Episode_Starts_From >= objS.Episode_Starts_From && objF.Episode_Starts_From <= objS.Episode_End_To) ||
+                                                (objS.Episode_Starts_From >= objF.Episode_Starts_From && objS.Episode_Starts_From <= objF.Episode_End_To)
+                                            )
+                                        ) ||
+                                        (Deal_Type_Condition == GlobalParams.Deal_Music && (objF.Episode_End_To == objS.Episode_End_To)))
+                                        select objF.Dummy_Guid
+                         ).Distinct().ToArray();
+
+                        if (arrErrorGuid.Length > 0)
+                        {
+                            lstAcq_Deal_movie = objAD_Session.Acq_Deal_Movie.Where(w => w.EntityState != State.Deleted).OrderBy(o => o.Title.Title_Name).ToList();
+                            int[] arrOverLap = lstAcq_Deal_movie.Where(w => w.EntityState != State.Deleted &&
+                                arrErrorGuid.Contains(w.Dummy_Guid)).Select(s => (int)s.Title_Code).Distinct().ToArray();
+                            int Object_Index = lstAcq_Deal_movie.FindIndex(w => w.EntityState != State.Deleted &&
+                                arrErrorGuid.Contains(w.Dummy_Guid));
+                            Object_Index++;
+
+                            errorPageIndex = (Object_Index / pageSize);
+                            if ((Object_Index % pageSize) > 0)
+                                errorPageIndex++;
+
+                            string strTitleNames = string.Join(", ", new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => arrOverLap.Contains(s.Title_Code)).Select(s => s.Title_Name).ToArray());
+                            strMessage = "Overlapping Episode no. for " + strTitleNames;
+                            if (Deal_Type_Code == GlobalParams.Deal_Type_Music || Deal_Type_Code == GlobalParams.Deal_Type_ContentMusic)
+                                strMessage = "Duplicate No. of Songs for " + strTitleNames;
+
+                            returnVal = false;
+                        }
+                    }
                 }
+                //if (Deal_Type_Condition == GlobalParams.Deal_Program)
+                //{
+                //    List<int> lstSynDealCode = new List<int>();
+                //    lstSynDealCode = new Syn_Acq_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objAD_Session.Acq_Deal_Code).Select(x => x.Syn_Deal_Code).ToList();
+
+
+                //    if(lstSynDealCode.Count() > 0)
+                //    {
+                //        foreach (var SynDealCode in lstSynDealCode)
+                //        {
+                //            if (SynDealCode > 0)
+                //            {
+                //                List<Syn_Deal_Movie> lstSyn_Deal_Movie = new List<Syn_Deal_Movie>();
+                //                lstSyn_Deal_Movie = new Syn_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Syn_Deal_Code == SynDealCode).ToList();
+
+                //                foreach (var item in lstSyn_Deal_Movie)
+                //                {
+                //                    List<Acq_Deal_Movie> objAcq_Deal_Movie = new List<Acq_Deal_Movie>();
+                //                    bool isStartErr = true;
+                //                    bool isEndErr = true;
+
+                //                    var minMaxEpisodes = objAD_MVC.Acq_Deal_Movie.Where(x => x.Title_Code == item.Title_Code).GroupBy(y => y.Title_Code).Select(
+                //                        g => new { minEps = g.Min(p => p.Episode_Starts_From), maxEps = g.Max(p => p.Episode_End_To) }).FirstOrDefault();
+
+                //                    var lst = objAD_MVC.Acq_Deal_Movie.Where(x => x.Title_Code == item.Title_Code).Select(x => new { x.Episode_Starts_From, x.Episode_End_To }).ToList();
+
+                //                    List<int> lstIntegers = new List<int>(); 
+
+                //                    foreach (var range in lst)
+                //                    {
+
+                //                        lstIntegers.AddRange(Enumerable.Range(Convert.ToInt32(range.Episode_Starts_From), Convert.ToInt32(range.Episode_End_To)).ToList());
+                //                    }
+
+
+                //                    int First = lstIntegers.OrderBy(x => x).First();
+                //                    int Last = lstIntegers.OrderBy(x => x).Last();
+
+                //                    List<int> myList2 = Enumerable.Range(First, Last - First + 1).ToList();
+                //                    List<int> remaining = myList2.Except(lstIntegers).ToList();
+
+                //                    if(remaining.Count() > 0)
+                //                    {
+                //                        strMessage = "Can not reduce episodes as title is already syndicated";
+                //                        returnVal = false;
+                //                    }
+                //                    else  if (objAcq_Deal_Movie != null)
+                //                    {
+                //                        //if (!(Convert.ToInt32(item.Episode_From) >= Convert.ToInt32(objAcq_Deal_Movie.Episode_Starts_From) && Convert.ToInt32(objAcq_Deal_Movie.Episode_Starts_From) <= Convert.ToInt32(item.Episode_End_To)))
+                //                        if (!(Convert.ToInt32(item.Episode_From) >= Convert.ToInt32(minMaxEpisodes.minEps) && Convert.ToInt32(minMaxEpisodes.minEps) <= Convert.ToInt32(item.Episode_End_To)))
+                //                        {
+                //                            isStartErr = false;
+                //                        }
+
+                //                        //if (!(Convert.ToInt32(item.Episode_From) <= Convert.ToInt32(objAcq_Deal_Movie.Episode_End_To) && Convert.ToInt32(objAcq_Deal_Movie.Episode_End_To) >= Convert.ToInt32(item.Episode_End_To)))
+                //                        if (!(Convert.ToInt32(item.Episode_From) <= Convert.ToInt32(minMaxEpisodes.maxEps) && Convert.ToInt32(minMaxEpisodes.maxEps) >= Convert.ToInt32(item.Episode_End_To)))
+                //                        {
+                //                            isEndErr = false;
+
+                //                        }
+
+                //                        if (isStartErr == false || isEndErr == false)
+                //                        {
+                //                            strMessage = "Can not reduce episodes as title is already syndicated";
+                //                            returnVal = false;
+                //                        }
+                //                    }
+
+                //                }
+                //            }
+                //        }
+                //    }
+
+
+                //}
 
                 if (returnVal)
                 {
@@ -2093,6 +2254,17 @@ namespace RightsU_Plus.Controllers
             obj.Add("DealWorkflowStatus", objDeal_Schema.Deal_Workflow_Status);
             return Json(obj);
         }
+
+        public int FindOverlapping(int start1, int end1, int start2, int end2)
+        {
+            return Math.Max(0, Math.Min(end1, end2) - Math.Max(start1, start2) + 1);
+        }
+
+        //public bool Between(this int num, int lower, int upper)
+        //{
+        //    bool inclusive = false;
+        //    return inclusive ? lower <= num && num <= upper : lower < num && num < upper;
+        //}
 
         #region================Buy Back==================
         public PartialViewResult AddBuyBackRights(int licensorCode, int DealTypeCode)

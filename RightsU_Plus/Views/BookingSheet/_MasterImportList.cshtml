@@ -1,0 +1,102 @@
+﻿@model List<RightsU_Entities.DM_Master_Import>
+
+@using UTOFrameWork.FrameworkClasses
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    //var ButtonShowOrHide = "@ViewBag.isButtonShow";
+    
+    $(document).ready(function () {
+        debugger;
+        //if (ButtonShowOrHide == "N") {
+        //    $('#btnSheetDownload').hide();
+        //    $('#RefreshDate').hide();
+        //}
+        //else{                  
+        //    $('#btnSheetDownload').show();
+        //    $('#RefreshDate').show();
+        //}
+    });
+</script>
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:35%">File Name</th>
+            <th style="width:20%">Uploaded By</th>
+            <th style="width:20%">Uploaded On</th>
+            <th style="width:15%">Status</th>
+            @*<th style="width:25%">Status Bar</th>*@         
+            <th>Action</th>
+        </tr>      
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            DateTime maxUploadedFileDate = new DateTime();
+            maxUploadedFileDate = Model.Select(s => s.Uploaded_Date).FirstOrDefault().Value;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.System_File_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @*@Html.DisplayFor(modelItem => item.Upoaded_By)*@
+                        <span>
+                            @{
+                                string Uploaded_By = "";
+                                if (item.Upoaded_By > 0 && item.Upoaded_By != null)
+                                {
+                                    Uploaded_By = ((IEnumerable<RightsU_Entities.User>)ViewBag.UserCodes).Where(a => a.Users_Code == item.Upoaded_By).Select(b => b.First_Name + " " + b.Last_Name).FirstOrDefault();
+                                }
+                                @Uploaded_By
+                            }
+                        </span>
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Uploaded_Date)
+                    </td>
+                    <td style="text-align:center" class="clsTdStatus_@item.DM_Master_Import_Code@item.Status">
+                        @if (item.Status == "P" || item.Status == "N" || item.Status == "I")
+                        {
+                            <span>In Process</span>
+                        }
+                        @if (item.Status == "S")
+                        {
+                            <span>Success</span>
+                        }
+                        @if (item.Status == "E")
+                        {
+                            <span>Error</span>
+                        }
+                    </td>                            
+                    <td style="text-align:center" class="deal_action clsTdAction_@item.DM_Master_Import_Code@item.Status clsTdAction1_@item.File_Type@item.Status">
+                        @*@if (maxUploadedFileDate == item.Uploaded_Date)*@
+                        @if (item.Status == "S" || item.Status == "E")
+                        {
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor:pointer;" onclick="@(" window.location.href='" + @Url.Action("ImportedSheetView", "BookingSheet", new { DM_Master_Import_Code = item.DM_Master_Import_Code, fileType = item.File_Type })+"'");"></a>
+                            <a title="Refresh" class="glyphicon glyphicon-refresh" onclick="RefreshImportedSheet('@item.DM_Master_Import_Code')"></a>
+                        }
+                        else
+                        {
+                            <img id="imgLoading_" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

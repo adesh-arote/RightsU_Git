@@ -1,0 +1,68 @@
+﻿@model IEnumerable<RightsU_Entities.AL_OEM>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                Company Name
+            </th>
+            <th>
+                Company Short Name
+            </th>
+            <th>
+                Action
+            </th>
+        </tr>
+    </thead>
+   
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr style="text-align:center">
+                <td style="text-align:left !important">
+                    @Html.DisplayFor(modelItem => item.Company_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company_Short_Name)
+                </td>
+                <td>
+                    <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer" onclick="CheckRecordLock('EDIT', '@item.AL_OEM_Code')"></a>
+                    <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer" onclick="AddEditALOem('VIEW', @item.AL_OEM_Code)"></a>
+                    @{
+                        bool canDeactivate = true;
+                        string strMsg = "";
+                        if (item.AL_Vendor_OEM.Count > 0)
+                        {
+                            canDeactivate = false;
+                            strMsg = "Can not Delete this recorde as it is used in AL Vendor OEM";
+                        }
+                        if (canDeactivate)
+                        {
+                            <a title="@objMessageKey.Delete" class="glyphicon glyphicon-trash" style="cursor: pointer" onclick="AddEditALOem('DELETE', @item.AL_OEM_Code)"></a>
+                        }
+                        else
+                        {
+                            <a title="@strMsg" class="glyphicon glyphicon-trash disabled" style="cursor: pointer" onclick="return false"></a>
+                        }
+                    }
+
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">@objMessageKey.Norecordfound</td>
+        </tr>
+    }
+</table>

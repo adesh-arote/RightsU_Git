@@ -25,6 +25,7 @@ namespace RightsU_Entities
             this.Syn_Deal_Material = new HashSet<Syn_Deal_Material>();
             this.Syn_Deal_Run = new HashSet<Syn_Deal_Run>();
             this.Syn_Deal_Supplementary = new HashSet<Syn_Deal_Supplementary>();
+            this.Syn_Deal_Digital = new HashSet<Syn_Deal_Digital>();
         }
     
     	public State EntityState { get; set; }
@@ -99,5 +100,6 @@ namespace RightsU_Entities
         public virtual Deal_Segment Deal_Segment { get; set; }
         public virtual Revenue_Vertical Revenue_Vertical { get; set; }
         public virtual ICollection<Syn_Deal_Supplementary> Syn_Deal_Supplementary { get; set; }
+        public virtual ICollection<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
     }
 }

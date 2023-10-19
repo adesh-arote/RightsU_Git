@@ -183,6 +183,12 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForTitleObjection = 251;
         public const int ModuleCodeForDealDescription = 252;
         public const int ModuleCodeForTitleObjectionType = 253;
+        public const int ModuleCodeForBookingSheet = 263;
+        public const int ModuleCodeForLoadSheet = 264;
+        public const int ModuleCodeForPurchaseOrder = 265;
+        public const int ModuleCodeForAeroplay = 266;
+        public const int ModuleCodeForDeliveryTracking = 267;
+        public const int ModuleCodeForAvailableForExcelReport = 268;
 
         #endregion
 
@@ -1878,6 +1884,8 @@ namespace UTOFrameWork.FrameworkClasses
                 ReportPath = ReportFolder + "/rptDealStatusReport";
             else if (ReportName == "rptIPR_IntDom_Report")
                 ReportPath = ReportFolder + "/rptIPR_IntDom";
+            else if (ReportName == "rptMusicAvailability")
+                ReportPath = ReportFolder + "/rptMusicAvailability";
 
             return ReportPath;
         }

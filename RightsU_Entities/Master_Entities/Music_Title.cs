@@ -46,7 +46,9 @@ namespace RightsU_Entities
         public Nullable<int> Music_Album_Code { get; set; }
         public string Music_Tag { get; set; }
         public string Public_Domain { get; set; }
-      
+        public Nullable<int> Title_Code { get; set; }
+        public string Movie_Album_Type { get; set; }
+
         public virtual Language Language { get; set; }
         public virtual ICollection<Music_Title_Label> Music_Title_Label { get; set; }
         public virtual Music_Type Music_Type { get; set; }
@@ -60,5 +62,6 @@ namespace RightsU_Entities
         public virtual ICollection<MHPlayListSong> MHPlayListSongs { get; set; }
         public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
         public virtual ICollection<MHCueSheetSong> MHCueSheetSongs { get; set; }
+        public virtual Title Title { get; set; }
     }
 }

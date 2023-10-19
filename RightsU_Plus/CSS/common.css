@@ -2632,8 +2632,19 @@ td.title_logo {width: 8%;}
 td.title_descriptn {width: 35%;padding-left: 10px;}
 td.title_credits {width: 48%;}
 td.title_action {width: 9%;min-width: 28px;}
-
+td.title_Posterlogo {
+    width: 8%;
+}
 .title_logo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 3px;
+    margin: 3px;
+    transition-duration: 0.1s;
+    background-color: #efefef;
+}
+
+.title_Posterlogo img {
     width: 50px;
     height: 50px;
     border-radius: 3px;

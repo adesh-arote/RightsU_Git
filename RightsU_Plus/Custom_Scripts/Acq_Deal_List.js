@@ -384,7 +384,7 @@ function SetMinDt() {
     setMinMaxDates('txtto', $('#txtfrom').val(), '');
 }
 
-function ClearAll() {
+function ClearAll(BUCode) {
     debugger;
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
@@ -406,8 +406,12 @@ function ClearAll() {
     $("#ddlSrchLicensor")[0].sumo.unSelectAll();
 
     if (Is_AllowMultiBUacqdeal == 'Y') {
-        $("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
-        $("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
+        //$("#ddlGenBUMultiSelect")[0].sumo.unSelectAll();
+        //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
+        $('#ddlGenBUMultiSelect').val(BUCode);
+        $("#ddlGenBUMultiSelect")[0].sumo.reload();
+        $('#ddlSrchBUMultiSelect').val(BUCode);
+        $("#ddlSrchBUMultiSelect")[0].sumo.reload();
     }
 
     showLD = 'Y';
@@ -628,16 +632,18 @@ function ButtonEvents() {
                             LoadDeals(tmp_pageNo, tmp_IsAdvanced, 'N');
                             if (result.strMsgType != null && result.strMsgType != '' && result.strMsgType == 'S') {
                                 if (result.Message != '')
-                                    showAlert("S", result.Message);
+                                    showAlert('S', result.Message);
                                 $('#pop_setRemark').modal('hide');
+                                $('.modal-backdrop').remove();
                                 //$('#pop_setRemark').dialog("close")
                                 CloseApprovalRemark();
                             }
                             else {
                                 if (result.Message != '')
-                                    showAlert("E", result.Message);
+                                    showAlert('E', result.Message);
                                 $('#pop_setRemark').modal('hide');
                                 //$('#pop_setRemark').dialog("close")
+                                $('.modal-backdrop').remove();
                                 CloseApprovalRemark();
                             }
 

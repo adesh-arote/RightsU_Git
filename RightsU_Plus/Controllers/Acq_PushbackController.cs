@@ -504,6 +504,11 @@ namespace RightsU_WebApp.Controllers
                     objFirstRight.Remarks = obj.Remarks;
                     objFirstRight = CreatePushbackObject(objFirstRight, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0, Day ?? 0,
                         hdnTerritory_Type, hdn_Dubbing_Type, hdn_SubTitling_Type, hdnTerritoryList, hdn_Dubb_LanguageList, hdn_Sub_LanguageList, hdnRight_Start_Date, hdnRight_End_Date, ref objADPS);
+
+                    //CreateRightObject function Called by Jaydeep to Set Reverse Pushback UDT objects for Duplication Check - 23-08-2023
+                    objFirstRight = CreateRightObject(objFirstRight, obj, TCODE ?? 0, PCODE ?? 0);
+                    //CreateRightObject function Called by Jaydeep to Set Reverse Pushback UDT objects for Duplication Check - 23-08-2023
+
                     objFirstRight.EntityState = State.Added;
                     objDeal.Acq_Deal_Pushback.Add(objFirstRight);
                     objExistingRight.EntityState = State.Modified;
@@ -519,6 +524,7 @@ namespace RightsU_WebApp.Controllers
                         else if (objExistingRight.Acq_Deal_Pushback_Platform.Count > 1)
                         {
                             Acq_Deal_Pushback objSecondRight = SetNewAcqDealRight(objExistingRight, TCODE, Episode_From, Episode_To, PCODE);
+                            objSecondRight = CreateRightObject(objSecondRight, obj, TCODE ?? 0, PCODE ?? 0);
                             objDeal.Acq_Deal_Pushback.Add(objSecondRight);
                         }
                     objDeal.SaveGeneralOnly = false;
@@ -526,6 +532,7 @@ namespace RightsU_WebApp.Controllers
                     dynamic resultSet;
                     
                     objADS.Save(objDeal, out resultSet);
+                    lstDupRecords = resultSet;
                 }
             }
             else
@@ -541,7 +548,7 @@ namespace RightsU_WebApp.Controllers
                 Acq_Deal_Pushback_Service objADPS = new Acq_Deal_Pushback_Service(objLoginEntity.ConnectionStringName);
                 Acq_Deal_Pushback objAcq_Deal_Pushback = CreatePushbackObject(obj, hdnTitleList, hdnRights_Platform_Code, Year ?? 0, Month ?? 0, Day ?? 0,
                     hdnTerritory_Type, hdn_Dubbing_Type, hdn_SubTitling_Type, hdnTerritoryList, hdn_Dubb_LanguageList, hdn_Sub_LanguageList, hdnRight_Start_Date, hdnRight_End_Date, ref objADPS);
-                objAcq_Deal_Pushback = CreateRightObject(objAcq_Deal_Pushback, obj);
+                objAcq_Deal_Pushback = CreateRightObject(objAcq_Deal_Pushback, obj, TCODE??0, PCODE??0);
                 objADPS.Save(objAcq_Deal_Pushback, out resultSet);
                 lstDupRecords = resultSet;
                 //if (lstDupRecords.Count() > 0)
@@ -590,13 +597,13 @@ namespace RightsU_WebApp.Controllers
 
             return PartialView("_Acq_Rev_HB_Validation_Popup", lstDuplicates);
         }
-        private Acq_Deal_Pushback CreateRightObject(Acq_Deal_Pushback objExistingRights, Acq_Deal_Pushback objMVCRights)
+        private Acq_Deal_Pushback CreateRightObject(Acq_Deal_Pushback objExistingRights, Acq_Deal_Pushback objMVCRights, int TCODE, int PCODE)
         {
            
             Deal_Rights_UDT objDRUDT = new Deal_Rights_UDT();
 
-            objDRUDT.Title_Code = objExistingRights.Acq_Deal_Pushback_Title.Select(x=>x.Title_Code).First();
-            objDRUDT.Platform_Code = objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First();
+            objDRUDT.Title_Code = TCODE; //objExistingRights.Acq_Deal_Pushback_Title.Select(x=>x.Title_Code).First();
+            objDRUDT.Platform_Code = PCODE; //objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First();
             //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
             objDRUDT.Deal_Rights_Code = objExistingRights.Acq_Deal_Pushback_Code;
             objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
@@ -1356,6 +1363,7 @@ namespace RightsU_WebApp.Controllers
             //List<USP_List_Rights_Result> lst = BindGrid(Title_Code_Search, View_Type);
             int a = selected_Country_Territory_Code.Split(',').Count();
             ViewBag.RCount = a;
+            ViewBag.perpetuity_years = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Perpertuity_Term_In_Year").First().Parameter_Value;
             return PartialView("~/Views/Acq_Deal/_Acq_Pushback.cshtml", objAcq_Deal_Pushback);
         }
 

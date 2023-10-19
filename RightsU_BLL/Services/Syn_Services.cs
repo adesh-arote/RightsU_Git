@@ -685,4 +685,94 @@ namespace RightsU_BLL
             return true;
         }
     }
+
+    public class Syn_Deal_Digital_Service : BusinessLogic<Syn_Deal_Digital>
+    {
+        private readonly Syn_Deal_Digital_Repository objRepository;
+
+        public Syn_Deal_Digital_Service(string Connection_Str)
+        {
+            this.objRepository = new Syn_Deal_Digital_Repository(Connection_Str);
+        }
+        public IQueryable<Syn_Deal_Digital> SearchFor(Expression<Func<Syn_Deal_Digital, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Syn_Deal_Digital GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Syn_Deal_Digital obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Syn_Deal_Digital obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Syn_Deal_Digital objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Syn_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Syn_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Syn_Deal_Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Syn_Deal_Digital_Detail_Service : BusinessLogic<Syn_Deal_Digital_Detail>
+    {
+        private readonly Syn_Deal_Digital_Detail_Repository objRepository;
+
+        public Syn_Deal_Digital_Detail_Service(string Connection_Str)
+        {
+            this.objRepository = new Syn_Deal_Digital_Detail_Repository(Connection_Str);
+        }
+        public IQueryable<Syn_Deal_Digital_Detail> SearchFor(Expression<Func<Syn_Deal_Digital_Detail, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+        public Syn_Deal_Digital_Detail GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Syn_Deal_Digital_Detail obj, out dynamic resultSet)
+        {
+            return base.Save(obj, objRepository, out resultSet);
+        }
+        public bool Update(Syn_Deal_Digital_Detail obj, out dynamic resultSet)
+        {
+            return base.Update(obj, objRepository, out resultSet);
+        }
+        public bool Delete(Syn_Deal_Digital_Detail objADM, out dynamic resultSet)
+        {
+            return base.Delete(objADM, objRepository, out resultSet);
+        }
+        public override bool Validate(Syn_Deal_Digital_Detail objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateUpdate(Syn_Deal_Digital_Detail objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        public override bool ValidateDelete(Syn_Deal_Digital_Detail objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
 }

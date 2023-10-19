@@ -319,7 +319,7 @@
     {
         debugger;
         var type = "";
-        var Module_Name = '@ViewBag.ModuleName';
+        var Module_Name = "Party";
         type = $('#ddlSortType').val();
         var StrSearchCriteria = $.trim($('#searchCommon').val());
         window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code='+Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name='+Module_Name+ '&sortColumnOrder='+type + '&StrSearchCriteria=' + StrSearchCriteria;

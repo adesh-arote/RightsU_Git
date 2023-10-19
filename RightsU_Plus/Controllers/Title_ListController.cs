@@ -566,7 +566,7 @@ namespace RightsU_Plus.Controllers
             return Json(arr_Title_List);
         }
 
-        public JsonResult SaveTitle(string hdnTxtTitleName, string hdnddlLanguage, string hdnddlDealType, string hdnProgramCategory, string hdnTxtDuration, string Type, string hdnMusicLabel)
+        public JsonResult SaveTitle(string hdnTxtTitleName, string hdnddlLanguage, string hdnddlDealType, string hdnProgramCategory, string hdnTxtDuration, string Type, string hdnMusicLabel, string SeasonForProgram)
         {
             dynamic resultSet;
             objTitle.Title_Name = hdnTxtTitleName;
@@ -622,6 +622,25 @@ namespace RightsU_Plus.Controllers
                 dynamic resultSet1;
                 new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).Save(objMapExtendedColumns, out resultSet1);
             }
+
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            int TitleType = lstShowCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
+            
+            string AllowSeasonAddition = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "AddSeasonForTitleTypeProgram" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+            if (AllowSeasonAddition == "Y" && TitleType == 1)
+            {
+                Map_Extended_Columns SeasonMapExtendedColumn = new Map_Extended_Columns();
+                SeasonMapExtendedColumn.Columns_Code = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Columns_Name == "Season").Select(s => s.Columns_Code).FirstOrDefault();
+                SeasonMapExtendedColumn.Table_Name = "TITLE";
+                SeasonMapExtendedColumn.Record_Code = objTitle.Title_Code;
+                SeasonMapExtendedColumn.Is_Multiple_Select = "N";
+                SeasonMapExtendedColumn.Column_Value = SeasonForProgram;
+                SeasonMapExtendedColumn.EntityState = State.Added;
+                dynamic resultSet1;
+                new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).Save(SeasonMapExtendedColumn, out resultSet1);
+            }
+
             string Message = "";
             Message = objMessageKey.RecordAddedSuccessfully;
             Dictionary<string, object> objJson = new Dictionary<string, object>();

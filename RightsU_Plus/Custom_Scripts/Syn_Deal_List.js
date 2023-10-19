@@ -365,7 +365,7 @@ function ShowAll() {
     LoadDeals(0, 'N', 'Y');
 }
 
-function ClearAll() {
+function ClearAll(BUCode) {
     $('#hdnClearAll').val('Y');
     $('#txtSrchDealNo').val('');
     $('#txtfrom').val('');
@@ -386,9 +386,9 @@ function ClearAll() {
     //$("#ddlSrchBUMultiSelect")[0].sumo.unSelectAll();
 
     OnChangeBindTitle('ShowAll');
-    $('#ddlGenBUMultiSelect').val('1');
+    $('#ddlGenBUMultiSelect').val(BUCode);
     $("#ddlGenBUMultiSelect")[0].sumo.reload();
-    $('#ddlSrchBUMultiSelect').val('1');
+    $('#ddlSrchBUMultiSelect').val(BUCode);
     $("#ddlSrchBUMultiSelect")[0].sumo.reload();
 
     $("#ddlSrchDirector").find("option").attr("selected", false);
@@ -608,16 +608,18 @@ function ButtonEvents() {
                             LoadDeals(tmp_pageNo, tmp_IsAdvanced, 'N');
                             if (result.strMsgType != null && result.strMsgType != '' && result.strMsgType == 'S') {
                                 if (result.Message != '')
-                                    showAlert("S", result.Message);
+                                    showAlert('S', result.Message);
                                 $('#pop_setRemark').modal('hide');
                                 $('#pop_setRemark').dialog("close");
+                                $('.modal-backdrop').remove();
                                 CloseApprovalRemark();
                             }
                             else {
                                 if (result.Message != '')
-                                    showAlert("E", result.Message);
+                                    showAlert('E', result.Message);
                                 $('#pop_setRemark').modal('hide');
                                 $('#pop_setRemark').dialog("close");
+                                $('.modal-backdrop').remove();
                                 CloseApprovalRemark();
                             }
                         }

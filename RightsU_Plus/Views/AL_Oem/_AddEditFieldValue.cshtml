@@ -1,0 +1,1387 @@
+﻿@model List<RightsU_Entities.USP_Bind_Extend_Column_Grid_Result>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script type="text/javascript">
+    var ExtendedColumnCode = "";
+
+    function ValidateDelete(obj) {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+
+        //if ($("#hdnRowNum").val() != "") {
+        //    showAlert("e", "Please complete add/edit operation.", "");
+        //    return false;
+        //}
+        dummyobj = obj;
+        showAlert('I', "Are you sure you want to delete this right?", 'OKCANCEL');
+    }
+
+
+
+    function handleOk() {
+        debugger;
+            confirmed = true;
+            DeleteExtended(dummyobj);
+    }
+
+    function handleECancel(Type, RowNum) {
+        debugger;
+
+        $("input[id][name$='_ddlControlType']").removeClass('required');
+        $("input[id][name$='_ddlFieldNameList']").removeClass('required');
+
+        $("input[id][name$='_ddlControlType']").trigger("chosen:updated");
+        $("input[id][name$='_ddlFieldNameList']").trigger("chosen:updated");
+
+        var trId = "trGrid_" + RowNum;
+        //$('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", false)
+        $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+        if (Type == "A")
+            $("#" + trId).remove();
+        else {
+            if ($("#" + parseInt(RowNum) + "_ddlFieldNameList").length > 0)
+                $("#" + parseInt(RowNum) + "_ddlFieldNameList").hide();
+            if ($("#" + parseInt(RowNum) + "_ddlFieldNameList_chosen").length > 0)
+                $("#" + parseInt(RowNum) + "_ddlFieldNameList_chosen").hide();
+            if ($("#" + parseInt(RowNum) + "_txtControlType").length > 0)
+                $("#" + parseInt(RowNum) + "_txtControlType").hide();
+            if ($("#" + parseInt(RowNum) + "_ddlControlType").length > 0)
+                $("#" + parseInt(RowNum) + "_ddlControlType").hide();
+            if ($("#" + parseInt(RowNum) + "_ddlControlType_chosen").length > 0)
+                $("#" + parseInt(RowNum) + "_ddlControlType_chosen").hide();
+            if ($("#btnSave_gvExtended_" + parseInt(RowNum)).length > 0)
+                $("#btnSave_gvExtended_" + parseInt(RowNum)).hide();
+            if ($("#btnCancel_gvExtended_" + parseInt(RowNum)).length > 0)
+                $("#btnCancel_gvExtended_" + parseInt(RowNum)).hide();
+            if ($("#imgEdit_" + parseInt(RowNum)).length > 0)
+                $("#imgEdit_" + parseInt(RowNum)).show();
+            if ($("#imgDelete_" + parseInt(RowNum)).length > 0)
+                $("#imgDelete_" + parseInt(RowNum)).show();
+
+            var table = document.getElementById('tbl_Additional_Fileds');
+            debugger;
+            var rowLength = table.rows.length;
+            for (var i = 0; i < rowLength; i += 1) {
+
+                if ($("#" + i + "_ddlControlType").length > 0)
+                    $("#" + i + "_ddlControlType").remove();
+                if ($("#" + i + "_ddlFieldNameList_chosen").length > 0)
+                    $("#" + i + "_ddlFieldNameList_chosen").remove();
+                if ($("#" + i + "_ddlFieldNameList").length > 0)
+                    $("#" + i + "_ddlFieldNameList").remove();
+            }
+
+            $("#" + $("#hdnRowNum").val() + "_lblColumnName").show();
+            $("#" + $("#hdnRowNum").val() + "_lblName").show();
+        }
+        $("#hdnRowNum").val('');
+        $('#hdnAction').val("");
+    }
+
+
+    function EditClick(obj, CommandName) {
+        debugger;
+        //if (!checkCurrentAction())
+        //    return false;
+
+        $("input[id][name$='_ddlControlType']").removeClass('required');
+        $("input[id][name$='_ddlFieldNameList']").removeClass('required');
+        $("input[id][name$='_txtControlType']").removeClass('required');
+        $("input[id][name$='_ddlControlType']").trigger("chosen:updated");
+        $("input[id][name$='_ddlFieldNameList']").trigger("chosen:updated");
+
+        var ColumnCode = $("#" + obj + "_hdnExtendedColumnsCode").val();
+
+        if (!checkCurrentAction())
+            return false;
+        else {
+            $("#hdnRowNum").val(obj);
+            var ddl_first_col = "";
+            $("#hdnIsRowEdit").val(ColumnCode);
+
+
+            $("#btnSave_gvExtended_" + obj).show();
+            $("#btnCancel_gvExtended_" + obj).show();
+            $('#btnCancel_gvExtended_' + obj).removeAttr('onclick').click(function () {
+            });
+            document.getElementById("btnCancel_gvExtended_" + obj).onclick = function () { handleECancel('E', obj); };
+
+            document.getElementById("imgEdit_" + obj).style.display = "none";
+            if ($("#imgDelete_" + obj).length > 0)
+                document.getElementById("imgDelete_" + obj).style.display = "none";
+            document.getElementById(obj + "_lblColumnName").style.display = "none";
+
+            var IsExists = '';
+            if ($('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").length > 0) {
+                IsExists = 'Y';
+                $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").remove();
+            }
+            IsExists = "E";
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindNewRowDdl", "AL_Oem")',
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    ColumnCode: ColumnCode,
+                    RowNum: obj,
+                    IsExists: IsExists,
+                    Ext_Grp_Code: 260
+                }),
+                async: false,
+                success: function (result) {
+                    debugger;
+                    //$('#' + $("#hdnRowNum").val() + "_btnExtendedColumn").show();
+                    //$('#btnExtendedColumn_' + $("#hdnRowNum").val()).show();
+                  //  $('#btnExtendedColumn_' + $("#hdnRowNum").val()).css("visibility", "")
+                    ddl_first_col = result;
+                    var trId = "trGrid_" + obj;
+
+                    if ($('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").length > 0)
+                        $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").remove();
+                    if ($('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").length > 0)
+                        $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").remove();
+
+
+                    if ($('#' + $("#hdnRowNum").val() + "_txtControlType").length > 0) {
+                        $('#' + $("#hdnRowNum").val() + "_txtControlType").remove();
+                    }
+                    if ($('#' + $("#hdnRowNum").val() + "_ddlControlType").length > 0) {
+                        $('#' + $("#hdnRowNum").val() + "_ddlControlType").remove();
+                    }
+                    if ($('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").length > 0) {
+                        $('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").remove();
+                    }
+
+
+                    $("#" + trId + " td:nth-child(1)").first().append(ddl_first_col);
+                    var test = "";
+                    test = "<input type='text' id=" + obj + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + obj + "_ddlControlType style='display:none'></select>";
+                    $("#" + trId + " td:nth-child(2)").first().append(test);
+
+                    $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").show();
+                },
+                error: function (result) {
+                }
+            });
+            var columnValueCode = $("#" + obj + "_hdnMECColumnsValueCode").val();
+            var columnValueCode_Details = $("#" + obj + "_hdnMECDColumnsValueCode").val();
+
+            var columnValueCode_new = $("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").val();
+            if (columnValueCode == "")
+                columnValueCode = columnValueCode_Details;
+            if (columnValueCode_new != "") {
+                if (columnValueCode == "" || columnValueCode == null)
+                    columnValueCode = columnValueCode_new;
+            }
+            if (columnValueCode == null && columnValueCode == "")
+                columnValueCode = 0;
+
+            ControlType(columnValueCode, $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").val());
+            if ($("#" + obj + "_hdnIsDelete").val() == "N") {
+                $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").attr('disabled', true);
+            }
+            $('select#' + $("#hdnRowNum").val() + '_ddlFieldNameList.form_input.chosen-select').trigger("chosen:updated");
+            $('#hdnAction').val(CommandName);
+        }
+    }
+
+    function ValidateGridRow(Control) {
+        debugger;
+        if (Control != "imgDelete_") {
+            var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
+            var values = ddlFieldNameList.split("~");
+
+            var Control_Type = values[0];
+
+            if (Control_Type == "TXT") {
+                if ($("#" + $("#hdnRowNum").val() + "_txtControlType").length > 0) {
+                    if ($("#" + $("#hdnRowNum").val() + "_txtControlType").val() == "") {
+                        //showAlert("E","Please Enter text");
+                        $("#" + $("#hdnRowNum").val() + "_txtControlType").addClass("required");
+                        return false;
+                    }
+                }
+            }
+            else {
+                if ($("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val() == "" || $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val() == null || $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val() == "0") {
+                    //showAlert("E", "Please select field");
+                    $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").addClass("required");
+                    return false;
+                }
+                if ($("#" + $("#hdnRowNum").val() + "_ddlControlType").val() == "" || $("#" + $("#hdnRowNum").val() + "_ddlControlType").val() == null || $("#" + $("#hdnRowNum").val() + "_ddlControlType").val() == "0") {
+                    //showAlert("E","Please select value");
+                    $("#" + $("#hdnRowNum").val() + "_ddlControlType").addClass("required");
+                    return false;
+                }
+
+            }
+        }
+        return true;
+    }
+    function SaveExtended(obj) {
+        debugger;
+        var id = obj.id;
+        var value = id.substring(id.length - 1);
+        var Control = id.substring(id.length - 1, 0);
+        var test = id.substring(id.length - 2, id.length);
+        var validate = "";
+        if (!test.indexOf("_") > 0)
+            value = id.substring(id.length - 1);
+        else
+            value = test;
+
+        if ($("#hdnRowNum").val() != "") {
+            if ($("#hdnRowNum").val() != value) {
+                showAlert("e", "Please complete add/edit operation.", "");
+                return false;
+            }
+        }
+
+        if (ValidateGridRow(Control)) {
+
+            $("#hdnRowNum").val(value);
+
+            var hdnExtendedColumnName = "";
+            var hdnExtendedColumnsCode = "";
+            var hdnControlType = "";
+            var hdnIsRef = "";
+            var hdnIsDefined_Values = "";
+            var hdnIsMultipleSelect = "";
+            var hdnRefTable = "";
+            var hdnRefDisplayField = "";
+            var hdnRefValueField = "";
+            var hdnMECColumnsValueCode = "";
+            var hdnMECDColumnsValueCode = "";
+            var hdnMEColumnCode = "";
+            var hdnName = "";
+            var hdnType = "";
+            var hdnRowNum = "";
+            var Additional_Condition = ""
+            var hdnColumnValueCode = "";
+            var code;
+            if (Control == "imgDelete_") {
+
+                if ($("#" + parseInt(value) + "_hdnExtendedColumnName").val() != null)
+                    hdnExtendedColumnName = $("#" + parseInt(value) + "_hdnExtendedColumnName").val();
+                if ($("#" + parseInt(value) + "_hdnExtendedColumnsCode").val() != null)
+                    hdnExtendedColumnsCode = $("#" + parseInt(value) + "_hdnExtendedColumnsCode").val();
+                if ($("#" + parseInt(value) + "_hdnExtendedColumnsCode").val() != null)
+                    hdnExtendedColumnsCode = $("#" + parseInt(value) + "_hdnExtendedColumnsCode").val();
+
+                if ($("#" + parseInt(value) + "_hdnIsRef").val() != null)
+                    hdnIsRef = $("#" + parseInt(value) + "_hdnIsRef ").val();
+
+                if ($("#" + parseInt(value) + "_hdnName").val() != null)
+                    hdnName = $("#" + parseInt(value) + "_hdnName ").val();
+
+                if ($("#" + parseInt(value) + "_hdnIsDefined_Values").val() != null)
+                    hdnIsDefined_Values = $("#" + parseInt(value) + "_hdnIsDefined_Values ").val();
+                if ($("#" + parseInt(value) + "_hdnIsMultipleSelect").val() != null)
+                    hdnIsMultipleSelect = $("#" + parseInt(value) + "_hdnIsMultipleSelect").val();
+                if ($("#" + parseInt(value) + "_hdnRefTable").val() != null)
+                    hdnRefTable = $("#" + parseInt(value) + "_hdnRefTable").val();
+                if ($("#" + parseInt(value) + "_hdnRefDisplayField").val() != null)
+                    hdnRefDisplayField = $("#" + parseInt(value) + "_hdnRefDisplayField").val();
+                if ($("#" + parseInt(value) + "_hdnRefValueField").val() != null)
+                    hdnRefValueField = $("#" + parseInt(value) + "_hdnRefValueField").val();
+                if ($("#" + parseInt(value) + "_hdnMECColumnsValueCode").val() != null)
+                    hdnMECColumnsValueCode = $("#" + parseInt(value) + "_hdnMECColumnsValueCode ").val();
+                if ($("#" + parseInt(value) + "_hdnMECDColumnsValueCode").val() != null)
+                    hdnMECDColumnsValueCode = $("#" + parseInt(value) + "_hdnMECDColumnsValueCode").val();
+
+                if ($("#" + parseInt(value) + "_hdnMEColumnCode").val() != null)
+                    hdnMEColumnCode = $("#" + parseInt(value) + "_hdnMEColumnCode").val();
+
+                if ($("#" + parseInt(value) + "_hdn ").val() != null)
+                    hdnControlType = $("#" + parseInt(value) + "_hdnControlType").val();
+
+                if (hdnMECColumnsValueCode == "")
+                    hdnMECColumnsValueCode = hdnMECDColumnsValueCode;
+
+                $("#hdnColumnValueCode").val(hdnMECColumnsValueCode);
+                $("#hdnType").val("D");
+
+                hdnRowNum = $("#hdnRowNum").val();
+
+                if (hdnMECColumnsValueCode != "")
+                    hdnColumnValueCode = hdnMECColumnsValueCode;
+                if (hdnMECDColumnsValueCode != "")
+                    hdnColumnValueCode = hdnMECDColumnsValueCode;
+
+                hdnType = $("#hdnType").val();
+                hdnRowNum = $("#hdnRowNum").val();
+            }
+            else {
+
+
+                var txtControlType = "";
+                var ddlControlType = "";
+
+                var Control_Type = "";
+                var ColumnCode = "";
+                var ColumnValueCode = "";
+                var Is_Ref = "";
+                var Is_Defined_Values = "";
+                var Is_Multiple_Select = "";
+                var ddlFieldNameList = "";
+
+
+                txtControlType = $("#" + parseInt(value) + "_txtControlType");
+                ddlControlType = $("#" + parseInt(value) + "_ddlControlType");
+
+
+                if ($("#hdnRowNum").val() != "") {
+                    //ddlFieldNameList = $("#" + $("#" + $("#hdnRowNum").val() + "_hdnExtendedColumnsCode").val() + "_ddlFieldNameList").val();
+                    if ($("#hdnIsRowEdit").val() != "")
+                        ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
+                    else
+                        ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
+
+                }
+                else {
+                    ddlFieldNameList = $("#1_ddlFieldNameList").val();
+                    value = 1;
+                }
+
+                var values = ddlFieldNameList.split("~");
+
+                Control_Type = values[0];
+                ColumnCode = values[1];
+                Is_Ref = values[2];
+                Is_Defined_Values = values[3];
+                Is_Multiple_Select = values[4];
+                Ref_Table = values[5];
+                Ref_Display_Field = values[6];
+                Ref_Value_Field = values[7];
+                Additional_Condition = values[8];
+
+                if ($("#hdnIsRowEdit").val() != "")
+                    value = $("#hdnRowNum").val();
+
+
+                if ($("#" + parseInt(value) + "_ddlControlType") != null) {
+                    if (Is_Multiple_Select == "N")
+                        ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val();
+                    else {
+                        if ($("#" + parseInt(value) + "_ddlControlType").val().length > 1)
+                            ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val().join(',');
+                        else
+                            ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val();
+                    }
+                }
+
+                if (Control_Type == "TXT") {
+                    $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                    $("#hdnName").val($("#" + value + "_txtControlType").val());
+
+
+                }
+
+
+                if (ColumnValueCode != null) {
+                    if (ColumnValueCode.length == 1)
+                        code = ColumnValueCode[0];
+                    else
+                        code = ColumnValueCode;
+                }
+                else
+                    ColumnValueCode = "";
+                $("#hdnExtendedColumnName").val($("#" + value + "_ddlFieldNameList option:selected").text());
+                $("#hdnColumnValueCode").val(code);
+                $("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").val(code);
+                $("#hdnExtendedColumnsCode").val(ColumnCode);
+                $("#hdnControlType").val(Control_Type);
+                $("#hdnIsRef").val(Is_Ref);
+                $("#hdnIsDefined_Values").val(Is_Defined_Values);
+                $("#hdnIsMultipleSelect").val(Is_Multiple_Select);
+                $("#hdnRefTable").val(Ref_Table);
+                $("#hdnRefDisplayField").val(Ref_Display_Field);
+                $("#hdnRefValueField").val(Ref_Value_Field);
+                if ($("#" + parseInt(value) + "_hdnMEColumnCode").val() != null)
+                    hdnMEColumnCode = $("#" + parseInt(value) + "_hdnMEColumnCode").val();
+
+                var ddlControlTypeId = "#" + parseInt(value) + "_ddlControlType";
+
+                if (Control_Type != "TXT") {
+
+                    if ($(ddlControlTypeId).length > 0) {
+                        var option_all = $(ddlControlTypeId + " option:selected").map(function () {
+                            return $(this).text() + ' ';
+                        }).get().join();
+                        $("#hdnName").val(option_all);
+                    }
+                }
+                else {
+                    hdnName = $("#hdnName").val();
+                }
+
+                if ($("#hdnIsRowEdit").val() != "")
+                    $("#hdnType").val("E");
+                else
+                    $("#hdnType").val("A");
+                $("#hdnMECColumnsValueCode").val(ColumnCode);
+
+                if ($("#hdnRowNum").val() == "")
+                    $("#hdnRowNum").val("0");
+
+
+                hdnExtendedColumnsCode = ColumnCode;
+                hdnColumnValueCode = code;
+                hdnControlType = Control_Type;
+                hdnRefTable = Ref_Table;
+                hdnIsDefined_Values = Is_Defined_Values;
+                hdnIsMultipleSelect = Is_Multiple_Select;
+                hdnRefDisplayField = Ref_Display_Field;
+                hdnRefValueField = Ref_Value_Field;
+                hdnExtendedColumnName = $("#" + value + "_ddlFieldNameList option:selected").text();
+                //hdnName = $(ddlControlTypeId + " option:selected").text();
+                hdnType = $("#hdnType").val();
+                hdnRowNum = $("#hdnRowNum").val();
+            }
+
+
+            $("#" + parseInt(value) + "_hdnControlType").val(hdnControlType);
+            debugger;
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("SaveExtendedRecord", "AL_Oem")',
+                traditional: true,
+                data: JSON.stringify({
+                    hdnExtendedColumnsCode: hdnExtendedColumnsCode,
+                    hdnColumnValueCode: hdnColumnValueCode,//(hdnExtendedColumnsCode == "5" && hdnColumnValueCode.length <= 1) ? hdnColumnValueCode : hdnExtendedColumnsCode == "5" ? hdnColumnValueCode.join() : hdnColumnValueCode,
+                    hdnControlType: hdnControlType,
+                    hdnIsRef: hdnIsRef,
+                    hdnIsDefined_Values: hdnIsDefined_Values,
+                    hdnIsMultipleSelect: hdnIsMultipleSelect,
+                    //hdnRefTable: hdnExtendedColumnsCode == "5" ? "CBFC" : hdnRefTable,
+                    hdnRefTable: hdnRefTable,
+                    hdnRefDisplayField: hdnRefDisplayField,
+                    hdnRefValueField: hdnRefValueField,
+                    AdditionalCondition: Additional_Condition,
+                    hdnExtendedColumnName: "",
+                    hdnName: hdnName,
+                    hdnType: hdnType,
+                    hdnRowNum: hdnRowNum,
+                    hdnMEColumnCode: hdnMEColumnCode,
+                    hdnExtendedColumnValue: $("#" + value + "_hdnExtendedColumnValue").val()
+                }),
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (result) {
+                    debugger;
+                    $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+                    if (result.Error == "") {
+                        var id = $("#hdnRowNum").val();
+                        var trId = "trGrid_" + id;
+                        if (hdnType != "D") {
+                            debugger;
+                            if (hdnColumnValueCode != "" && hdnColumnValueCode != null) {
+                                if ($('#' + $("#hdnRowNum").val() + "_hdnMECDColumnsValueCode").length > 0)
+                                    $('#' + $("#hdnRowNum").val() + "_hdnMECDColumnsValueCode").val(hdnColumnValueCode);
+                            }
+
+                            var LastTD = "";
+                            $('#' + $("#hdnRowNum").val() + "_txtControlType").hide();
+                            $('#btnSave_gvExtended_' + $("#hdnRowNum").val()).hide();
+                            $('#btnCancel_gvExtended_' + $("#hdnRowNum").val()).hide();
+
+                            if ($('#' + $("#hdnRowNum").val() + "_ddlControlType").length > 0)
+                                $('#' + $("#hdnRowNum").val() + "_ddlControlType").hide();
+                            if ($('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").length > 0)
+                                $('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").hide();
+                            $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").hide();
+
+                            if ($('#imgEdit_' + $("#hdnRowNum").val()).length > 0) {
+                                $('#imgEdit_' + $("#hdnRowNum").val()).hide();
+                                LastTD = "N";
+                            }
+                            if ($('#imgDelete_' + $("#hdnRowNum").val()).length > 0) {
+                                $('#imgDelete_' + $("#hdnRowNum").val()).hide();
+                                LastTD = "N";
+                            }
+
+
+                            if ($("#" + id + "_hdnExtendedColumnsCode").length > 0)
+                                $("#" + id + "_hdnExtendedColumnsCode").remove();
+
+                            var newHtml = "<input type='hidden' id='" + id + "_hdnExtendedColumnsCode' value=" + $("#hdnExtendedColumnsCode").val() + " >"
+                            if (LastTD != "") {
+                                $('#imgEdit_' + $("#hdnRowNum").val()).show();
+                                $('#imgDelete_' + $("#hdnRowNum").val()).show();
+                                LastTD = "";
+                            }
+                            else {
+
+                                var newhidden = "";
+                                if ($("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").length == 0)
+                                    newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
+                                LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick('" + id + "','EDIT'); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(this);' class='glyphicon glyphicon-trash'></a> " + newhidden;
+                            }
+
+                            $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
+                            $("#" + $("#hdnRowNum").val() + "_lblName").remove();
+
+                            $("#" + trId + " td:nth-child(1)").first().append("<label for='ColumnsName' id=" + id + "_lblColumnName>" + $("#hdnExtendedColumnName").val() + "</label>" + newHtml);
+                            $("#" + trId + " td:nth-child(2)").first().append("<label for='Name' id=" + id + "_lblName>" + $("#hdnName").val() + "</label>");
+                            $("#" + trId + " td:nth-child(3)").first().append(LastTD);
+                            initializeTooltip();
+                        }
+                        else {
+                            $("#" + trId).remove();
+                        }
+
+                        //alert(result.Message);
+                        var table = document.getElementById('tbl_Additional_Fileds');
+
+                        var rowLength = table.rows.length;
+                        for (var i = 0; i < rowLength; i += 1) {
+                            //your code goes here, looping over every row.
+                            //cells are accessed as easy
+                            if (i != $("#hdnRowNum").val()) {
+                                if ($("#" + i + "_ddlControlType").length > 0)
+                                    $("#" + i + "_ddlControlType").remove();
+                                if ($("#" + i + "_ddlFieldNameList_chosen").length > 0)
+                                    $("#" + i + "_ddlFieldNameList_chosen").remove();
+                                if ($("#" + i + "_ddlFieldNameList").length > 0)
+                                    $("#" + i + "_ddlFieldNameList").remove();
+                            }
+                        }
+                        showAlert("S", result.Message);
+                        $("#spnRecordCount").html(result.RecordCount);
+                        $('#hdnAction').val("");
+                    }
+                    else {
+                        showAlert("E", result.Error);
+                        validate = "E";
+                    }
+                    if (result.Status == "D") {
+                        showAlert("E", "You have Selected Duplication Field Name");
+                        return false;
+                    }
+                },
+                error: function (result) {
+                }
+            });
+            if (validate == "") {
+                $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").remove();
+                $("#" + $("#hdnRowNum").val() + "_txtControlType").remove();
+                $("#" + $("#hdnRowNum").val() + "_ddlControlType").remove();
+                $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").remove();
+
+                $("#hdnRowNum").val('');
+                $("#hdnIsRowEdit").val('');
+                $("#hdnName").val('');
+            }
+        }
+        else
+            return false;
+    }
+
+    function DeleteExtended(obj) {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+        if (confirmed) {
+            dummyobj = "";
+            confirmed = false;
+            var id = obj.id;
+            //var value = id.substring(id.length - 1);
+            //var Control = id.substring(id.length - 1, 0);
+            //var test = id.substring(id.length - 2, id.length);
+            //var validate = "";
+            //if (!test.indexOf("_") > 0)
+            //    value = id.substring(id.length - 1);
+            //else
+            //    value = test;
+
+            var DataArray = id.split("_");
+            var value = DataArray[1];
+            var Control = DataArray[0] + '_';
+            var validate = "";
+
+            if ($("#hdnRowNum").val() != "") {
+                if ($("#hdnRowNum").val() != value) {
+                    showAlert("e", "Please complete add/edit operation.", "");
+                    return false;
+                }
+            }
+
+            if (ValidateGridRow(Control)) {
+
+                $("#hdnRowNum").val(value);
+
+                var hdnExtendedColumnName = "";
+                var hdnExtendedColumnsCode = "";
+                var hdnControlType = "";
+                var hdnIsRef = "";
+                var hdnIsDefined_Values = "";
+                var hdnIsMultipleSelect = "";
+                var hdnRefTable = "";
+                var hdnRefDisplayField = "";
+                var hdnRefValueField = "";
+                var hdnMECColumnsValueCode = "";
+                var hdnMECDColumnsValueCode = "";
+                var hdnMEColumnCode = "";
+                var hdnName = "";
+                var hdnType = "";
+                var hdnRowNum = "";
+                var Additional_Condition = ""
+                var hdnColumnValueCode = "";
+                var code;
+                if (Control == "imgDelete_") {
+
+                    if ($("#" + parseInt(value) + "_hdnExtendedColumnName").val() != null)
+                        hdnExtendedColumnName = $("#" + parseInt(value) + "_hdnExtendedColumnName").val();
+                    if ($("#" + parseInt(value) + "_hdnExtendedColumnsCode").val() != null)
+                        hdnExtendedColumnsCode = $("#" + parseInt(value) + "_hdnExtendedColumnsCode").val();
+                    if ($("#" + parseInt(value) + "_hdnExtendedColumnsCode").val() != null)
+                        hdnExtendedColumnsCode = $("#" + parseInt(value) + "_hdnExtendedColumnsCode").val();
+
+                    if ($("#" + parseInt(value) + "_hdnIsRef").val() != null)
+                        hdnIsRef = $("#" + parseInt(value) + "_hdnIsRef ").val();
+
+                    if ($("#" + parseInt(value) + "_hdnName").val() != null)
+                        hdnName = $("#" + parseInt(value) + "_hdnName ").val();
+
+                    if ($("#" + parseInt(value) + "_hdnIsDefined_Values").val() != null)
+                        hdnIsDefined_Values = $("#" + parseInt(value) + "_hdnIsDefined_Values ").val();
+                    if ($("#" + parseInt(value) + "_hdnIsMultipleSelect").val() != null)
+                        hdnIsMultipleSelect = $("#" + parseInt(value) + "_hdnIsMultipleSelect").val();
+                    if ($("#" + parseInt(value) + "_hdnRefTable").val() != null)
+                        hdnRefTable = $("#" + parseInt(value) + "_hdnRefTable").val();
+                    if ($("#" + parseInt(value) + "_hdnRefDisplayField").val() != null)
+                        hdnRefDisplayField = $("#" + parseInt(value) + "_hdnRefDisplayField").val();
+                    if ($("#" + parseInt(value) + "_hdnRefValueField").val() != null)
+                        hdnRefValueField = $("#" + parseInt(value) + "_hdnRefValueField").val();
+                    if ($("#" + parseInt(value) + "_hdnMECColumnsValueCode").val() != null)
+                        hdnMECColumnsValueCode = $("#" + parseInt(value) + "_hdnMECColumnsValueCode ").val();
+                    if ($("#" + parseInt(value) + "_hdnMECDColumnsValueCode").val() != null)
+                        hdnMECDColumnsValueCode = $("#" + parseInt(value) + "_hdnMECDColumnsValueCode").val();
+
+                    if ($("#" + parseInt(value) + "_hdnMEColumnCode").val() != null)
+                        hdnMEColumnCode = $("#" + parseInt(value) + "_hdnMEColumnCode").val();
+
+                    if ($("#" + parseInt(value) + "_hdn ").val() != null)
+                        hdnControlType = $("#" + parseInt(value) + "_hdnControlType").val();
+
+                    if (hdnMECColumnsValueCode == "")
+                        hdnMECColumnsValueCode = hdnMECDColumnsValueCode;
+
+                    $("#hdnColumnValueCode").val(hdnMECColumnsValueCode);
+                    $("#hdnType").val("D");
+
+                    hdnRowNum = $("#hdnRowNum").val();
+
+                    if (hdnMECColumnsValueCode != "")
+                        hdnColumnValueCode = hdnMECColumnsValueCode;
+                    if (hdnMECDColumnsValueCode != "")
+                        hdnColumnValueCode = hdnMECDColumnsValueCode;
+
+                    hdnType = $("#hdnType").val();
+                    hdnRowNum = $("#hdnRowNum").val();
+                }
+                else {
+
+
+                    var txtControlType = "";
+                    var ddlControlType = "";
+
+                    var Control_Type = "";
+                    var ColumnCode = "";
+                    var ColumnValueCode = "";
+                    var Is_Ref = "";
+                    var Is_Defined_Values = "";
+                    var Is_Multiple_Select = "";
+                    var ddlFieldNameList = "";
+
+
+                    txtControlType = $("#" + parseInt(value) + "_txtControlType");
+                    ddlControlType = $("#" + parseInt(value) + "_ddlControlType");
+
+
+                    if ($("#hdnRowNum").val() != "") {
+                        //ddlFieldNameList = $("#" + $("#" + $("#hdnRowNum").val() + "_hdnExtendedColumnsCode").val() + "_ddlFieldNameList").val();
+                        if ($("#hdnIsRowEdit").val() != "")
+                            ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
+                        else
+                            ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").val();
+
+                    }
+                    else {
+                        ddlFieldNameList = $("#1_ddlFieldNameList").val();
+                        value = 1;
+                    }
+
+                    var values = ddlFieldNameList.split("~");
+
+                    Control_Type = values[0];
+                    ColumnCode = values[1];
+                    Is_Ref = values[2];
+                    Is_Defined_Values = values[3];
+                    Is_Multiple_Select = values[4];
+                    Ref_Table = values[5];
+                    Ref_Display_Field = values[6];
+                    Ref_Value_Field = values[7];
+                    Additional_Condition = values[8];
+
+                    if ($("#hdnIsRowEdit").val() != "")
+                        value = $("#hdnRowNum").val();
+
+
+                    if ($("#" + parseInt(value) + "_ddlControlType") != null) {
+                        if (Is_Multiple_Select == "N")
+                            ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val();
+                        else {
+                            if ($("#" + parseInt(value) + "_ddlControlType").val().length > 1)
+                                ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val().join(',');
+                            else
+                                ColumnValueCode = $("#" + parseInt(value) + "_ddlControlType").val();
+                        }
+                    }
+
+                    if (Control_Type == "TXT") {
+                        $("#" + value + "_hdnExtendedColumnValue").val($("#" + value + "_txtControlType").val());
+                        $("#hdnName").val($("#" + value + "_txtControlType").val());
+
+
+                    }
+
+
+                    if (ColumnValueCode != null) {
+                        if (ColumnValueCode.length == 1)
+                            code = ColumnValueCode[0];
+                        else
+                            code = ColumnValueCode;
+                    }
+                    else
+                        ColumnValueCode = "";
+                    $("#hdnExtendedColumnName").val($("#" + value + "_ddlFieldNameList option:selected").text());
+                    $("#hdnColumnValueCode").val(code);
+                    $("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").val(code);
+                    $("#hdnExtendedColumnsCode").val(ColumnCode);
+                    $("#hdnControlType").val(Control_Type);
+                    $("#hdnIsRef").val(Is_Ref);
+                    $("#hdnIsDefined_Values").val(Is_Defined_Values);
+                    $("#hdnIsMultipleSelect").val(Is_Multiple_Select);
+                    $("#hdnRefTable").val(Ref_Table);
+                    $("#hdnRefDisplayField").val(Ref_Display_Field);
+                    $("#hdnRefValueField").val(Ref_Value_Field);
+                    if ($("#" + parseInt(value) + "_hdnMEColumnCode").val() != null)
+                        hdnMEColumnCode = $("#" + parseInt(value) + "_hdnMEColumnCode").val();
+
+                    var ddlControlTypeId = "#" + parseInt(value) + "_ddlControlType";
+
+                    if (Control_Type != "TXT") {
+
+                        if ($(ddlControlTypeId).length > 0) {
+                            var option_all = $(ddlControlTypeId + " option:selected").map(function () {
+                                return $(this).text() + ' ';
+                            }).get().join();
+                            $("#hdnName").val(option_all);
+                        }
+                    }
+                    else {
+                        hdnName = $("#hdnName").val();
+                    }
+
+                    if ($("#hdnIsRowEdit").val() != "")
+                        $("#hdnType").val("E");
+                    else
+                        $("#hdnType").val("A");
+                    $("#hdnMECColumnsValueCode").val(ColumnCode);
+
+                    if ($("#hdnRowNum").val() == "")
+                        $("#hdnRowNum").val("0");
+
+
+                    hdnExtendedColumnsCode = ColumnCode;
+                    hdnColumnValueCode = code;
+                    hdnControlType = Control_Type;
+                    hdnRefTable = Ref_Table;
+                    hdnIsDefined_Values = Is_Defined_Values;
+                    hdnIsMultipleSelect = Is_Multiple_Select;
+                    hdnRefDisplayField = Ref_Display_Field;
+                    hdnRefValueField = Ref_Value_Field;
+                    hdnExtendedColumnName = $("#" + value + "_ddlFieldNameList option:selected").text();
+                    //hdnName = $(ddlControlTypeId + " option:selected").text();
+                    hdnType = $("#hdnType").val();
+                    hdnRowNum = $("#hdnRowNum").val();
+                }
+
+
+                $("#" + parseInt(value) + "_hdnControlType").val(hdnControlType);
+                debugger;
+                $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("SaveExtendedRecord", "AL_Oem")',
+                    traditional: true,
+                    data: JSON.stringify({
+                        hdnExtendedColumnsCode: hdnExtendedColumnsCode,
+                        hdnColumnValueCode: hdnColumnValueCode,
+                        hdnControlType: hdnControlType,
+                        hdnIsRef: hdnIsRef,
+                        hdnIsDefined_Values: hdnIsDefined_Values,
+                        hdnIsMultipleSelect: hdnIsMultipleSelect,
+                        hdnRefTable: hdnRefTable,
+                        hdnRefDisplayField: hdnRefDisplayField,
+                        hdnRefValueField: hdnRefValueField,
+                        AdditionalCondition: Additional_Condition,
+                        hdnExtendedColumnName: "",
+                        hdnName: hdnName,
+                        hdnType: hdnType,
+                        hdnRowNum: hdnRowNum,
+                        hdnMEColumnCode: hdnMEColumnCode,
+                        hdnExtendedColumnValue: $("#" + value + "_hdnExtendedColumnValue").val()
+                    }),
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    success: function (result) {
+                        debugger;
+                        if (result.Error == "") {
+                            var id = $("#hdnRowNum").val();
+                            var trId = "trGrid_" + id;
+                            if (hdnType != "D") {
+                                debugger;
+                                if (hdnColumnValueCode != "" && hdnColumnValueCode != null) {
+                                    if ($('#' + $("#hdnRowNum").val() + "_hdnMECDColumnsValueCode").length > 0)
+                                        $('#' + $("#hdnRowNum").val() + "_hdnMECDColumnsValueCode").val(hdnColumnValueCode);
+                                }
+
+                                var LastTD = "";
+                                $('#' + $("#hdnRowNum").val() + "_txtControlType").hide();
+                                $('#btnSave_gvExtended_' + $("#hdnRowNum").val()).hide();
+                                $('#btnCancel_gvExtended_' + $("#hdnRowNum").val()).hide();
+
+                                if ($('#' + $("#hdnRowNum").val() + "_ddlControlType").length > 0)
+                                    $('#' + $("#hdnRowNum").val() + "_ddlControlType").hide();
+                                if ($('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").length > 0)
+                                    $('#' + $("#hdnRowNum").val() + "_ddlControlType_chosen").hide();
+                                $('#' + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").hide();
+
+                                if ($('#imgEdit_' + $("#hdnRowNum").val()).length > 0) {
+                                    $('#imgEdit_' + $("#hdnRowNum").val()).hide();
+                                    LastTD = "N";
+                                }
+                                if ($('#imgDelete_' + $("#hdnRowNum").val()).length > 0) {
+                                    $('#imgDelete_' + $("#hdnRowNum").val()).hide();
+                                    LastTD = "N";
+                                }
+
+                                if ($("#" + id + "_hdnExtendedColumnsCode").length > 0)
+                                    $("#" + id + "_hdnExtendedColumnsCode").remove();
+
+                                var newHtml = "<input type='hidden' id='" + id + "_hdnExtendedColumnsCode' value=" + $("#hdnExtendedColumnsCode").val() + " >"
+
+                                if (LastTD != "") {
+                                    $('#imgEdit_' + $("#hdnRowNum").val()).show();
+                                    $('#imgDelete_' + $("#hdnRowNum").val()).show();
+                                    LastTD = "";
+                                }
+                                else {
+
+                                    var newhidden = "";
+                                    if ($("#" + $("#hdnRowNum").val() + "_hdnColumnValueCode").length == 0)
+                                        newhidden = "<input type='hidden' id='" + $("#hdnRowNum").val() + "_hdnColumnValueCode' name='' value =" + hdnColumnValueCode + ">";
+                                    LastTD = "<a title='Edit' href='#' class='glyphicon glyphicon-pencil' id='imgEdit_" + id + "'  + onclick=EditClick('" + id + "','EDIT'); ></a> <a title='Delete' href='#' id='imgDelete_" + id + "'  onclick='ValidateDelete(" + id + ");' class='glyphicon glyphicon-trash'></a> " + newhidden;
+                                }
+
+                                $("#" + $("#hdnRowNum").val() + "_lblColumnName").remove();
+                                $("#" + $("#hdnRowNum").val() + "_lblName").remove();
+
+                                $("#" + trId + " td:nth-child(1)").first().append("<label for='ColumnsName' id=" + id + "_lblColumnName>" + $("#hdnExtendedColumnName").val() + "</label>" + newHtml);
+                                $("#" + trId + " td:nth-child(2)").first().append("<label for='Name' id=" + id + "_lblName>" + $("#hdnName").val() + "</label>");
+                                $("#" + trId + " td:nth-child(3)").first().append(LastTD);
+                                initializeTooltip();
+                            }
+                            else {
+                                $("#" + trId).remove();
+                            }
+
+                            //alert(result.Message);
+                            var table = document.getElementById('tbl_Additional_Fileds');
+
+                            var rowLength = table.rows.length;
+                            for (var i = 0; i < rowLength; i += 1) {
+                                if (i != $("#hdnRowNum").val()) {
+                                    if ($("#" + i + "_ddlControlType").length > 0)
+                                        $("#" + i + "_ddlControlType").remove();
+                                    if ($("#" + i + "_ddlFieldNameList_chosen").length > 0)
+                                        $("#" + i + "_ddlFieldNameList_chosen").remove();
+                                    if ($("#" + i + "_ddlFieldNameList").length > 0)
+                                        $("#" + i + "_ddlFieldNameList").remove();
+                                }
+                            }
+                            showAlert("S", result.Message);
+                            $("#spnRecordCount").html(result.RecordCount);
+                        }
+                        else {
+                            showAlert("E", result.Error);
+                            validate = "E";
+                        }
+                    },
+                    error: function (result) {
+                    }
+                });
+                if (validate == "") {
+                    $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList").remove();
+                    $("#" + $("#hdnRowNum").val() + "_txtControlType").remove();
+                    $("#" + $("#hdnRowNum").val() + "_ddlControlType").remove();
+                    $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList_chosen").remove();
+
+                    $("#hdnRowNum").val('');
+                    $("#hdnIsRowEdit").val('');
+                    $("#hdnName").val('');
+                }
+            }
+            else
+                return false;
+        }
+        else {
+            dummyobj = obj;
+            showAlert('I', "Are you sure you want to delete this right?", 'OKCANCEL');
+        }
+    }
+
+    function AddAction() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (ExtendedColumnCode == "TALENT") {
+        AddTalent(SelectedColumnName);
+    }
+        else if (ExtendedColumnCode == "Extended_Columns_Value") {
+        AddExtendedColumn();
+       // ExtendedColumnCode = "";
+    }
+    else if (ExtendedColumnCode == "") {
+        showAlert("E", "Please Select Field Name");
+    }
+    }
+
+    function ControlType(columnValueCode, ddlFieldNameValue) {
+        debugger;
+        var count = ($('#tbl_Additional_Fileds tr').length - 1);
+        if (($('#tbl_Additional_Fileds tr').length - 1) > 1)
+            count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7));
+        var ddlFieldNameList = count + "_ddlFieldNameList";
+        var select;
+        var labelName = "";
+
+        if (ddlFieldNameValue != "0") {
+            if (document.getElementById($("#hdnRowNum").val() + "_lblName") != null) {
+                labelName = $("#" + $("#hdnRowNum").val() + "_lblName").text();
+                document.getElementById($("#hdnRowNum").val() + "_lblName").style.display = "none";
+            }
+
+
+            if ($("#hdnIsRowEdit").val() != "") {
+                ddlFieldNameList = $("#hdnRowNum").val() + "_ddlFieldNameList";
+                count = $("#hdnRowNum").val();
+                select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
+            }
+            else {
+                select = $("#" + count + "_ddlControlType");
+            }
+
+            var lstFieldProp = document.getElementById(ddlFieldNameList).value.split('~');
+
+            var CallFor = "T";
+            var Control_Type = lstFieldProp[0];
+            var Columns_Code = lstFieldProp[1];
+            var Is_Ref = lstFieldProp[2];
+            var Is_Defined_Values = lstFieldProp[3];
+            var Is_Multiple_Select = lstFieldProp[4];
+            var Ref_Table = lstFieldProp[5];
+            ExtendedColumnCode = Ref_Table;
+            var Ref_Display_Field = lstFieldProp[6];
+            var Ref_Value_Field = lstFieldProp[7];
+            var Additional_Condition = lstFieldProp[8];
+            Additional_Conditions = Additional_Condition;
+            var Is_Add_OnScreen = lstFieldProp[9];
+            var ColumnName = lstFieldProp[10];
+            SelectedColumnName = Additional_Condition;
+            var MethodName = "";
+            var isCBFC = "";
+
+            if (Control_Type == "TXT") {
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "";
+
+
+                $("#" + count + '_txtControlType').val(labelName);
+
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+            }
+            else {
+
+                if (document.getElementById(count + '_txtControlType') != null)
+                    document.getElementById(count + '_txtControlType').style.display = "none";
+                if (document.getElementById(count + '_ddlControlType') != null)
+                    document.getElementById(count + '_ddlControlType').style.display = "";
+                if (document.getElementById(count + '_ddlControlType_chosen') != null)
+                    $("#" + count + '_ddlControlType_chosen').remove();
+
+
+                if (Is_Ref == "Y" && Is_Defined_Values == "Y") {
+                    CallFor = "N";
+                    isCBFC = "N"
+                    MethodName = '@Url.Action("BinddlColumnsValue", "AL_Oem")';
+                }
+                else if (Is_Ref == "Y" && Is_Defined_Values == "N" && Ref_Table == "TALENT") {
+                    CallFor = "T";
+                    MethodName = '@Url.Action("BindddlExtendedTalent", "AL_Oem")';
+                    isCBFC = "N";
+                }
+
+                @*if (Columns_Code == "5") {
+                    CallFor = "T";
+                    MethodName = '@Url.Action("BinddlColumnsValue", "Title")';
+                    isCBFC = "Y";
+                }*@
+            }
+            //Additional_Condition = columnValueCode;
+            if (MethodName != "") {
+                $.ajax({
+
+                    type: "POST",
+                    url: MethodName,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        ColumnsCode: Columns_Code,
+                        AdditionalCondition: Additional_Condition
+                    }),
+                    async: false,
+                    success: function (result) {
+                        debugger;
+
+                        if ($("#hdnIsRowEdit").val() != "") {
+                            select = $("#" + $("#hdnRowNum").val() + '_ddlControlType');
+                        }
+                        else {
+                            select = $("#" + count + "_ddlControlType");
+                        }
+                        select.children().remove();
+                        //select.append("<option value='0'>-select-</option>");
+                        if (result) {
+                            debugger;
+                            //initializeChosen();
+                            if (Is_Multiple_Select == "N") {
+                                $(result).each(function (index, item) {
+                                    select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
+                                });
+                                select.removeAttr("multiple", "");
+                                //$('.chosen-select').chosen();
+                                //select.trigger("chosen:updated");
+                            }
+                            else if (Is_Multiple_Select == "Y") {
+                                $("#" + select.attr("id")).attr("multiple", "multiple");
+                                $(result).each(function (index, item) {
+                                    select.append($("<option>").val(item.Columns_Value_Code).text(item.ColumnsValue));
+                                });
+                            }
+
+                            var clone = select.prop('outerHTML');
+                            select.remove();
+                            $('#' + select.attr('id') + '_chosen').remove();
+                            //.append(clone);
+                            var trGrid = "trGrid_" + $("#hdnRowNum").val();
+                            $("#" + trGrid + " td:nth-child(2)").first().append(clone);
+
+                            initializeChosen();
+
+                            var employeeArray = columnValueCode.toString().split(',');
+                            for (var x = 0; x < employeeArray.length; x++) {
+                                //alert('' + employeeArray[x]);
+                                //$('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').val(employeeArray[x]).trigger("chosen:updated");
+                                if (employeeArray[x] != "" && employeeArray[x] != " ")
+                                    //$('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').val(employeeArray[x]).trigger('chosen:updated');
+                                    $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select option[value=' + employeeArray[x] + ']').attr('selected', 'selected');
+
+
+                            }
+                            $('select#' + $("#hdnRowNum").val() + '_ddlControlType.form_input.chosen-select').trigger("chosen:updated");
+
+                            var table = document.getElementById('tbl_Additional_Fileds');
+
+                            var rowLength = table.rows.length;
+
+                            for (var i = 0; i < rowLength; i += 1) {
+                                //your code goes here, looping over every row.
+                                //cells are accessed as easy
+                                if (i != $("#hdnRowNum").val()) {
+                                    if ($("#" + i + "_ddlControlType").length > 0)
+                                        $("#" + i + "_ddlControlType").remove();
+                                    if ($("#" + i + "_ddlControlType_chosen").length > 0)
+                                        $("#" + i + "_ddlControlType_chosen").remove();
+                                    if ($("#" + i + "_ddlFieldNameList_chosen").length > 0)
+                                        $("#" + i + "_ddlFieldNameList_chosen").remove();
+                                    if ($("#" + i + "_ddlFieldNameList").length > 0)
+                                        $("#" + i + "_ddlFieldNameList").remove();
+                                }
+                            }
+                            initializeChosen();
+                        }
+                        // initializeChosen();
+                    },
+                    error: function (result) {
+                    }
+                });
+            }
+            else {
+                debugger;
+                $("#btnExtendedColumn_" + $("#hdnRowNum").val()).hide();
+               // document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+                $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
+                //$('select#' + $("#hdnRowNum").val() + '_ddlControlType_chosen.form_input.chosen-select').trigger("chosen:updated");
+                $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+
+                $('#' + $("#hdnRowNum").val() + '_ddlFieldNameList').trigger("chosen:updated");
+
+                initializeChosen();
+                $('#' + $("#hdnRowNum").val() + '_ddlControlType_chosen').hide();
+            }
+        }
+        else {
+            $('select#' + $("#hdnRowNum").val() + '_ddlControlType option').remove();
+            //$('select#' + $("#hdnRowNum").val() + '_ddlControlType_chosen.form_input.chosen-select').trigger("chosen:updated");
+            $('#' + $("#hdnRowNum").val() + '_ddlControlType').trigger("chosen:updated");
+        }
+        //initializeChosen();
+    }
+
+    $(document).ready(function () {
+
+    });
+
+    function btnAddExtendedData(CommandName) {
+         debugger;
+         if (!checkCurrentAction())
+             return false;
+
+      if ($("#hdnRowNum").val() != "") {
+            showAlert("e", "Please complete add/edit operation.", "");
+            return false;
+        }
+
+        //else if ($("#hdnTabAddEditType").val() == "row") {
+            var ddl_first_col = "";
+            var count = ($('#tbl_Additional_Fileds tr').length - 1) + 1;
+            if (($('#tbl_Additional_Fileds tr').length - 1) > 0)
+                count = parseInt($('#tbl_Additional_Fileds tr:last').attr('id').slice(7)) + 1;
+            $("#hdnIsRowEdit").val('');
+            $("#hdnRowNum").val(count);
+            var html = "<tr id=trGrid_" + count + " data-configitem = " + $("#hdnTabCode").val() + ">";
+
+            var IsExists = '';
+            if ($('#' + $("#hdnRowNum").val() + "_ddlFieldNameList").length > 0)
+                IsExists = 'Y';
+            IsExists = "A";
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("BindNewRowDdl", "AL_Oem")',
+                traditional: true,
+                data: JSON.stringify({
+                    ColumnCode: 0,
+                    RowNum: count,
+                    IsExists: IsExists,
+                    Ext_Grp_Code: 260
+                }),
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                async: false,
+                success: function (result) {
+                    debugger;
+                    $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+                    ddl_first_col = result;
+                    var ddlFieldNameList = $("#" + $("#hdnRowNum").val() + "_ddlFieldNameList");
+                    $('#your-input').val(result.Columns_Value_Code);
+                    //$('.chosen-select').chosen();
+                    $('#hdnAction').val(CommandName);
+
+                },
+                error: function (result) {
+                }
+            });
+            $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+            html += "<td>" + ddl_first_col + " </td>";
+            @*html += "<td><input type='text' id=" + count + "_txtControlType style='display:none' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' class='red_icon glyphicon glyphicon-plus' onclick='AddTalent(@GlobalParams.Role_code_Producer);' /></td> />";*@
+            html += "<td><input type='text' id=" + count + "_txtControlType style='display:none;' maxlength='100'> <select class='form_input chosen-select' id=" + count + "_ddlControlType style='display:none'></select><a type='button' title='Add' id='btnExtendedColumn_" + count + "' class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' /></td> />";
+
+            html += "<td><a type='button' title='Save' class='glyphicon glyphicon-ok-circle'   id='btnSave_gvExtended_" + count + "' onclick='SaveExtended(this);' /><a type='button' class='glyphicon glyphicon-remove-circle' title='Cancel' id='btnCancel_gvExtended_" + count + "'  onclick='handleECancel(\"A\"," + count + ")' />   </td>";
+            html += "</tr>"
+            //document.getElementById("btnExtendedColumn").style.visibility = "hidden";
+            $('#btnExtendedColumn_' + $("#hdnRowNum").val()).hide();
+         $("#tbl_Additional_Fileds").append(html)
+
+            initializeChosen();
+            initializeTooltip();
+
+
+        //else {
+        //    return false;
+        //}
+    }
+
+
+    //function ShowHideTabwiseData() {
+    //    $('#tbl_Additional_Fileds tr').each(function () {
+    //        var hdnActiveTabValue = $(this).data('configitem');
+    //        if (hdnActiveTabValue != $("#hdnTabCode").val() && hdnActiveTabValue !== undefined) {
+    //            $(this).hide();
+    //        } else {
+    //            $(this).show();
+    //        }
+    //    });
+    //}
+
+
+</script>
+<style>
+    .title_custom_fields {
+        /*border-bottom: 1px dotted;*/
+        margin-bottom: 10px;
+    }
+
+        .title_custom_fields th {
+            text-align: left;
+        }
+
+        .title_custom_fields td {
+            border-top: 1px solid #ddd;
+        }
+
+            .title_custom_fields td:nth-child(3) {
+                width: 18%;
+            }
+
+        .title_custom_fields .glyphicon {
+            padding: 1px 1px;
+            min-width: 23px;
+        }
+</style>
+@{
+    string textalignlast = "";
+    if (objMessageKey.LayoutDirection == "RTL")
+    {
+        textalignlast = "right";
+    }
+}
+<div style="margin-top:30px" id="Title_Additional" class="title_custom_fields">
+    <h4 style="font-weight:500">OEM Field Values</h4>
+    <p style="font-size:14px">Total Records : <span id="spnRecordCount">@Model.Count()</span></p>
+    <input type="hidden" id="hdnCurrentID">
+    @using (Html.BeginForm("SaveExtendedRecord", "AL_Oem", FormMethod.Post))
+    {
+        <table class="table table-bordered table-hover" id="tbl_Additional_Fileds" style="margin-top:20px; text-align-last:@(textalignlast);">
+            <thead>
+                <tr>
+                    <th class="custom_col_name">FieldName</th>
+                    <th class="custom_col_key">Value</th>
+                    @if (ViewBag.HideButtons != "ButtonHide")
+                    {
+                        <th class="custom_col_action">Action</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    @Html.Hidden("hdnExtendedColumnName")
+                    @Html.Hidden("hdnColumnValueCode")
+                    @Html.Hidden("hdnExtendedColumnsCode")
+                    @Html.Hidden("hdnControlType")
+                    @Html.Hidden("hdnIsRef")
+                    @Html.Hidden("hdnIsDefined_Values")
+                    @Html.Hidden("hdnIsMultipleSelect")
+                    @Html.Hidden("hdnRefTable")
+                    @Html.Hidden("hdnRefDisplayField")
+                    @Html.Hidden("hdnRefValueField")
+                    @Html.Hidden("hdnMECColumnsValueCode")
+                    @Html.Hidden("hdnMECDColumnsValueCode")
+                    @Html.Hidden("hdnName")
+                    @Html.Hidden("hdnIsRowEdit")
+                    @Html.Hidden("hdnType")
+                    @Html.Hidden("hdnColumnCode")
+                    @Html.Hidden("hdnRowNum")
+                    @Html.Hidden("hdnIsOnScreen")
+
+
+                    int counter = 0;
+
+                    foreach (var item in Model)
+                    {
+                        counter += 1;
+                        <tr id="@("trGrid_" + counter)" data-configitem="@item.Extended_Group_Code">
+                            @*<td id="@counter"+"_tdFirst">*@
+                            <td id="@("tdFirst_" + counter)">
+
+                                @Html.Hidden("hdnExtendedColumnName", item.Columns_Name, new { id = counter + "_hdnExtendedColumnName" })
+                                @Html.Hidden("hdnExtendedColumnsCode", item.Columns_Code, new { id = counter + "_hdnExtendedColumnsCode" })
+                                @Html.Hidden("hdnControlType", item.Control_Type, new { id = counter + "_hdnControlType" })
+                                @Html.Hidden("hdnIsRef", item.Is_Ref, new { id = counter + "_hdnIsRef" })
+                                @Html.Hidden("hdnIsDefined_Values", item.Is_Defined_Values, new { id = counter + "_hdnIsDefined_Values" })
+                                @Html.Hidden("hdnIsMultipleSelect", item.Is_Multiple_Select, new { id = counter + "_hdnIsMultipleSelect" })
+                                @Html.Hidden("hdnRefTable", item.Ref_Table, new { id = counter + "_hdnRefTable" })
+                                @Html.Hidden("hdnRefDisplayField", item.Ref_Display_Field, new { id = counter + "_hdnRefDisplayField" })
+                                @Html.Hidden("hdnRefValueField", item.Ref_Value_Field, new { id = counter + "_hdnRefValueField" })
+                                @Html.Hidden("hdnMECColumnsValueCode", item.Columns_Value_Code, new { id = counter + "_hdnMECColumnsValueCode" })
+                                @Html.Hidden("hdnMECDColumnsValueCode", item.Columns_Value_Code1, new { id = counter + "_hdnMECDColumnsValueCode" })
+                                @Html.Hidden("hdnMEColumnCode", item.Map_Extended_Columns_Code, new { id = counter + "_hdnMEColumnCode" })
+                                @Html.Hidden("_hdnColumnValueCode", new { id = counter + "_hdnColumnValueCode" })
+                                @Html.Hidden("hdnExtendedColumnValue", item.Column_Value, new { id = counter + "_hdnExtendedColumnValue" })
+                                @Html.Hidden("hdnIsDelete", item.IsDelete, new { id = counter + "_hdnIsDelete" })
+                                @*@Html.Hidden("hdnIsOnScreen", item., new { id = counter + "_hdnIsDelete" })
+                                    hdnIsOnScreen*@
+
+
+                                @* @Html.DropDownList("FieldNameList", (List<SelectListItem>)ViewBag.FieldNameList, new { @id = "ddlFieldNameList", @class = "form_input chosen-select", @onchange="ControlType()" })*@
+                                @Html.Label("Columns_Name", item.Columns_Name, new { id = counter + "_lblColumnName" })
+                            </td>
+                            <td id="@("tdSecond_" + counter)">
+                                @Html.Label("Name", item.Name, new { id = counter + "_lblName", @class = "expandable" })
+                                @*<a type='button' title='Add' id='btnExtendedColumn' class='red_icon glyphicon glyphicon-plus' style='margin-left:2%;float:right;visibility: hidden;' onclick='AddAction();' />*@
+                                <a title='Add' id="@("btnExtendedColumn_" + counter)" class='red_icon glyphicon glyphicon-plus' style='margin-left:1%;float:right;margin-top: 5px;visibility:hidden;' onclick='AddAction();' />
+                                <div id="ddlControlTypeValue">
+                                </div>
+                                @*@Html.TextBox("txtControlType","",new {@id= counter + "_txtControlType"})*@
+                            </td>
+                            @if (ViewBag.HideButtons != "ButtonHide")
+                            {
+                                <td>
+                                    <a title="Update" class='glyphicon glyphicon-ok-circle' id="@("btnSave_gvExtended_" + counter)" onclick="SaveExtended(this);" style="display:none" />
+                                    <a title="Cancel" class='glyphicon glyphicon-remove-circle' id="@("btnCancel_gvExtended_" + counter)" onclick="return handleECancel('E',@counter);" style="display:none" />
+                                    <a title="Edit" href="#" class="glyphicon glyphicon-pencil" id="@("imgEdit_" + counter)" onclick="EditClick(@counter,'EDIT');"></a>
+                                    @if (item.IsDelete == "Y" && item.Columns_Name != "Program Category")
+                                    {<a title="Delete" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_" + counter)" onclick="DeleteExtended(this);"> </a>}
+                                    else if (item.Columns_Name == "Program Category")
+                                    {<a title="Cannot delete program category because it is mandatory field" href="#" class="glyphicon glyphicon-trash disabled" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
+                                    else
+                                    {<a title="Can not delete talent as already referenced in deal" href="#" class="glyphicon glyphicon-trash" id="@("imgDelete_" + counter)" onclick="return false;"> </a>}
+
+                                </td>
+                            }
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    }
+</div>

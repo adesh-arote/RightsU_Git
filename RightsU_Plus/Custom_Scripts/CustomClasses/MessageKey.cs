@@ -868,6 +868,7 @@ public class MessageKey
     public string EditPartyDetails { get; set; }
     public string ViewPartyDetails { get; set; }
     public string FaxNo { get; set; }
+    public string ShortCode { get; set; }
     public string GSTNo { get; set; }
     public string STNo { get; set; }
     public string VATNo { get; set; }
@@ -1115,6 +1116,7 @@ public class MessageKey
     public string Blackoutperiodcannotbeoverlap { get; set; }
     public string Titlereleasedateisalreadysetforthiscombination { get; set; }
     public string Areyousurewanttodeletethisholdback { get; set; }
+    public string Areyousurewanttodeletethismusic { get; set; }
     public string HoldbackOn { get; set; }
     public string MoreRegions { get; set; }
     public string Before { get; set; }
@@ -1134,6 +1136,7 @@ public class MessageKey
     public string CannotuncheckregionasithasreferenceinTitleRelease { get; set; }
     public string CannotremoveReleasePlatformasithasreferenceinTitleRelease { get; set; }
     public string Holdbackaddedsuccessfully { get; set; }
+    public string Holdbackupdatedsuccessfully { get; set; }
     public string CombinationconflictswithotherHoldback { get; set; }
     public string Pleaseselecttitlelanguagerightfirst { get; set; }
     public string AddEditHoldback { get; set; }
@@ -1493,6 +1496,11 @@ public class MessageKey
     public string DubbingLanguagenotacquired { get; set; }
     public string CombinationalreadySyndicated { get; set; }
     public string Pushback { get; set; }
+    public string MusicDetailsSavedSuccessfully { get; set; }
+    public string Youcannotdeletethisrightasthisrighthasmusicassociatedwithit { get; set; }
+    public string CannotchangerightstitleasMusicisalreadyaddedTochangerightsperioddeleteMusicfirst { get; set; }
+    public string PleaseselectatleastoneRightsInSongsrightasMusicisalreadyaddedTodeselectRightsInSongsrightsdeleteMusicfirst { get; set; }
+
     #endregion
 
     #region Reports
@@ -1662,6 +1670,11 @@ public class MessageKey
     public string DealStatusReport { get; set; }
 
     #endregion
+    #endregion
+
+    #region AL_Modules
+    public string Movies { get; set; }
+    public string TVShows { get; set; }
     #endregion
 
     public string FPLinkExpire { get; set; }

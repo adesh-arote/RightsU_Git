@@ -1,0 +1,263 @@
+﻿@model List<RightsU_Entities.Extended_Group_Config>
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        debugger;
+        $('.ddlSumo').SumoSelect();
+        //$('.ddlSumo')[0].sumo.reload();
+        addNumericDetail();
+    });
+
+    function addNumericDetail() {
+        debugger;
+        $(".onlyNumber").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    $('.expand_AdditionalCondition').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+
+</script>
+
+<table class="table table-bordered table-hover" id="tblMusicLink" style="width:100%; border-collapse:collapse;">
+    <thead style="position:sticky;">
+        <tr>
+            <th style="width:6%;">Sr. No.</th>
+            <th style="width:20%;">Metadata</th>
+            <th style="width:10%;">Order In Group</th>
+            <th style="width:15%;" class="Validationth">Validations</th>
+            <th style="width:35%;" class="AddConth">Additional Condition</th>
+            <th style="" class="IntrGrpth">Internal Group</th>
+            <th style="" class="DispForth">Display For</th>
+            <th style="" class="AllImpth">Allow Import</th>
+            @if (ViewBag.CommandName != "VIEW")
+            {
+                <th style="width:6%;">Actions</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int rowZero = 0;
+            int rowNumber = 1;
+        }
+        @if (ViewBag.CommandName == "ADD")
+        {
+            <tr id="trBookDetail_">
+                <td style="text-align:center;">
+                    <p>New</p>
+                </td>
+                <td>
+                    @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowZero, @class = "form_input chosen-select" })
+                </td>
+                <td>
+                    <input type="text" id="txtOdrInGrp_@rowZero" value="" class="form-control input-sm onlyNumber" maxlength="100" autocomplete="off" />
+                </td>
+                <td class="Validationtd">
+                    @Html.DropDownList("ddlValidation", ViewBag.ddlValidation as MultiSelectList, new { @id = "ddlValidations_" + rowZero, @multiple = "multiple", @class = "ddlSumo" })
+                </td>
+                <td class="AddContd">
+                    <textarea id="txtAddCon_@rowZero" class="textarea" @*style="resize:horizontal; min-width:100%"*@ maxlength="4500"></textarea>
+                </td>
+                <td class="IntGrptd">
+                    <input type="text" id="txtIntGrpName_@rowZero" value="" class="form_input input-sm" autocomplete="off" />
+                </td>
+                <td class="DispFortd">
+                    @Html.DropDownList("ddlDisplayFor", (IEnumerable<SelectListItem>)ViewBag.ddlDisplayFor, "Please Select", htmlAttributes: new { @id = "txtDisplayName_" + rowZero, @class = "form_input chosen-select" })          
+                </td>
+                <td class="AllImpTptd">
+                    @Html.DropDownList("ddlImportType", (IEnumerable<SelectListItem>)ViewBag.ddlImportType, "Please Select", htmlAttributes: new { @id = "ddlImportType_" + rowZero, @class = "form_input chosen-select" })
+                </td>
+                <td style="text-align:center">
+                    <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDetail(0,0)"></a>
+                    <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                </td>
+            </tr>
+        }
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model.OrderBy(o => o.Group_Control_Order))
+            {
+                <tr id="trBookDetail_@rowNumber">
+                    <td style="text-align:center; display:none;">
+                        <input type="hidden" id="rowNumber" value="@rowNumber" />
+                        <input type="hidden" id="hdnBookDetailId_@rowNumber" value="@item.Extended_Group_Config_Code" />
+                    </td>
+
+                    @if (ViewBag.CommandName == "EDIT" && ViewBag.DetailId == item.Extended_Group_Config_Code)
+                    {
+                        <td>
+                            <p>@rowNumber</p>
+                        </td>
+                        <td>
+                            @Html.DropDownList("lstExtdClmns", (IEnumerable<SelectListItem>)ViewBag.ddlMetadata, "Please Select", htmlAttributes: new { @id = "ddlMetadata_" + rowNumber, @class = "form_input chosen-select" })
+                        </td>
+                        <td>
+                            <input type="text" id="txtOdrInGrp_@rowNumber" value="@item.Group_Control_Order" class="form_input input-sm" maxlength="100" autocomplete="off" />
+                        </td>
+                        <td class="Validationtd">
+                            @Html.DropDownList("lstValidation", (IEnumerable<SelectListItem>)ViewBag.SelectedValidation as MultiSelectList, new { @id = "ddlValidations_" + rowNumber, @multiple = "multiple", @class = "ddlSumo" })
+                        </td>
+                        <td class="AddContd">
+                            @Html.TextAreaFor(model => item.Additional_Condition, new { @id = "txtAddCon_" + rowNumber, @maxlength = "4500" })
+                        </td>
+                        <td class="IntGrptd">
+                            <input type="text" id="txtIntGrpName_@rowNumber" value="@item.Inter_Group_Name" class="form_input input-sm" autocomplete="off" />
+                        </td>
+                        <td class="DispFortd">
+                            @Html.DropDownList("lstDisplayFor", (IEnumerable<SelectListItem>)ViewBag.SelectedDisplay, "Please Select", htmlAttributes: new { @id = "txtDisplayName_" + rowNumber, @class = "form_input chosen-select" })
+                        </td>
+                        <td class="AllImpTptd">
+                            @Html.DropDownList("lstImportType", (IEnumerable<SelectListItem>)ViewBag.SelectedImportType, "Please Select", htmlAttributes:  new { @id = "ddlImportType_" + rowNumber, @class = "form_input chosen-select" })
+                        </td>
+                        <td style="text-align:center">
+                            <a title="Save" class="glyphicon glyphicon-ok-circle" onclick="SaveDetail(@item.Extended_Group_Config_Code, @rowNumber)"></a>
+                            <a title="Cancel" class="glyphicon glyphicon-remove-circle" onclick="Cancel()"></a>
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="text-align:center;">
+                            <span>@rowNumber</span>
+                        </td>
+                        <td @*style="text-align:center;"*@>
+                            <span>
+                                @{
+                                    string Metadata = "";
+                                    if (item.Columns_Code > 0 && item.Columns_Code != null)
+                                    {
+                                        Metadata = ((IEnumerable<RightsU_Entities.Extended_Columns>)ViewBag.ddlMetaData2).Where(a => a.Columns_Code == item.Columns_Code).Select(b => b.Columns_Name).FirstOrDefault();
+                                    }
+                                    @Metadata
+                                }
+                            </span>
+                        </td>
+                        <td style="text-align:center;">
+                            <span>@item.Group_Control_Order</span>
+                        </td>
+                        <td style="text-align:center;" class="Validationtd">
+                            @{
+                                string SelectedValue = "";
+                            }
+                            @if (item.Validations == null)
+                            {
+                                <span></span>
+                            }
+                            else
+                            {
+                                {
+                                    List<SelectListItem> lstValidation = new List<SelectListItem>();
+                                    lstValidation.Add(new SelectListItem { Text = "Mandatory", Value = "man" });
+                                    lstValidation.Add(new SelectListItem { Text = "Duplicate", Value = "dup" });
+                                    lstValidation.Add(new SelectListItem { Text = "Reference", Value = "ref" });
+                                    lstValidation.Add(new SelectListItem { Text = "0 or 1", Value = "0 & 1" });
+                                    lstValidation.Add(new SelectListItem { Text = "Date", Value = "Date" });
+                                    lstValidation.Add(new SelectListItem { Text = "Purchase Order", Value = "PO" });
+
+                                    List<string> SelectedValues = lstValidation.Where(w => item.Validations.Split(',').ToList().Any(a => w.Value == a)).Select(s => s.Text).ToList();
+                                    SelectedValue = string.Join(", ", SelectedValues);
+                                }
+                                @SelectedValue
+                            }
+                        </td>
+                        <td style="text-align:center;" class="expand_AdditionalCondition AddContd">
+                            <span>@item.Additional_Condition</span>
+                        </td>
+                        <td class="IntGrptd">
+                            <span>@item.Inter_Group_Name</span>
+                        </td>
+                        <td class="DispFortd">                          
+                            @if (item.Display_Name == null)
+                            {
+                                <span></span>
+                            }
+                            else
+                            {
+                                string SelectedDisplayFor = "";
+                                {
+                                    List<SelectListItem> lstDisplayFor2 = (List<SelectListItem>)ViewBag.ddlDisplayFor;
+
+                                    SelectedDisplayFor = lstDisplayFor2.Where(w => w.Value == item.Display_Name).Select(s => s.Text).FirstOrDefault();
+                                }
+                                @SelectedDisplayFor
+                            }
+
+                        </td>
+                        <td class="AllImpTptd">                       
+                            @if (item.Allow_Import == null)
+                            {
+                                <span></span>
+                            }
+                            else
+                            {
+                                string AllowedImportType = "";
+                                {
+                                    List<SelectListItem> lstImportType1 = (List<SelectListItem>)ViewBag.ddlImportType;
+
+                                    AllowedImportType = lstImportType1.Where(w => w.Value == item.Allow_Import).Select(s => s.Text).FirstOrDefault();
+                                }
+                                @AllowedImportType
+                            }
+                        </td>
+                        if (ViewBag.CommandName != "VIEW")
+                        {
+                            <td style="text-align:center">
+                                @if (item.Is_Active != "N")
+                                {
+                                    <a title="Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="AddEditGroupDetail('@item.Extended_Group_Config_Code', 'EDIT')"></a>
+
+                                    <a title="Delete" class="glyphicon glyphicon-trash" style="cursor: pointer;" onclick="DeleteGroupDetail('@item.Extended_Group_Config_Code', false)"></a>
+                                }
+                                @if (item.Is_Active == "Y")
+                                {
+                                    <a title="Deactivate" class="glyphicon glyphicon-thumbs-down" onclick="ActivateDeactivateGrpDtl('N', '@item.Extended_Group_Config_Code')"></a>
+                                }
+                                @if (item.Is_Active == "N")
+                                {
+                                    <a title="Activate" class="glyphicon glyphicon-thumbs-up" onclick="ActivateDeactivateGrpDtl('Y', '@item.Extended_Group_Config_Code')"></a>
+                                }
+                            </td>
+                        }
+                    }
+                </tr>
+                rowNumber++;
+            }
+        }
+        else if (ViewBag.CommandName != "ADD")
+        {
+            <tr>
+                @if (ViewBag.CommandName != "VIEW")
+                {
+                    <td colspan="9">No Record Found</td>
+                }
+                else
+                {
+                    <td colspan="9">No Record Found</td>
+                }
+            </tr>
+        }
+    </tbody>
+</table>

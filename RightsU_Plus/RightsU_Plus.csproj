@@ -146,6 +146,10 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\System.Web.Cors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -214,7 +218,17 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="Controllers\Acq_DigitalController.cs" />
+    <Compile Include="Controllers\AL_LabController.cs" />
+    <Compile Include="Controllers\AL_OemController.cs" />
+    <Compile Include="Controllers\BookingSheetController.cs" />
+    <Compile Include="Controllers\DeliveryTrackingController.cs" />
+    <Compile Include="Controllers\Extended_GroupController.cs" />
+    <Compile Include="Controllers\BannerController.cs" />
+    <Compile Include="Controllers\ExtendedColumn_MetadataController.cs" />
     <Compile Include="Controllers\ForgetPasswordLinkController.cs" />
+    <Compile Include="Controllers\PurchaseOrderController.cs" />
+    <Compile Include="Controllers\LoadSheetController.cs" />
+    <Compile Include="Controllers\Syn_DigitalController.cs" />
     <Compile Include="Controllers\Syn_SupplementaryController.cs" />
     <Compile Include="Controllers\Acq_SupplementaryController.cs" />
     <Compile Include="Controllers\NotificationController.cs" />
@@ -771,11 +785,14 @@
     <Content Include="Images\Capture2.PNG" />
     <Content Include="Images\Capture3.PNG" />
     <Content Include="Images\Capture4.PNG" />
+    <Content Include="Images\ClientLogo\Logo_MH.jpg" />
     <Content Include="Images\Content.PNG" />
     <Content Include="Images\Criteria.jpg" />
     <Content Include="Images\criteria.png" />
+    <Content Include="Images\dollar.png" />
     <Content Include="Images\icon-search.png" />
     <Content Include="Images\NoImageFound.jpg" />
+    <Content Include="Images\PoMenu.png" />
     <Content Include="Images\Result.png" />
     <Content Include="Images\Results.jpg" />
     <Content Include="Images\r_Columns.jpg" />
@@ -1023,8 +1040,28 @@
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-bootstrap-n\ui.fancytree.less" />
     <Content Include="Content\jquery.fancytree-css\skin-awesome\ui.fancytree.less" />
-    <Content Include="Download\Title_Import_Utility_Sample.xlsx" />
+    <!-- <Content Include="Download\Title_Import_Utility_Sample.xlsx" /> -->
     <Content Include="passwordRequirements.jquery.json" />
+    <!-- <Content Include="Download\Adv_Ancillary_Report_Sheet_1.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="Download\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="Download\Sample.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="Download\BookingSheet\Sample.xlsx" /> -->
+    <!-- <Content Include="Download\PurchaseOrder\rpt_AL_Purchase_Order.pdf" /> -->
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\RightsU_Publish.pubxml" />
     <None Include="Properties\PublishProfiles\RU_Publish.pubxml" />
@@ -1041,7 +1078,7 @@
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Download\ContractDraft.docx" />
-    <Content Include="Download\Title_Import.xlsx" />
+    <!-- <Content Include="Download\Title_Import.xlsx" /> -->
     <Content Include="Download\Rights_Usage_Report_Sample.xlsx" />
     <Content Include="Download\SPN_Music_Title_Import_Sample.xlsx" />
     <Content Include="Scripts\loader.js" />
@@ -1319,6 +1356,88 @@
     <Content Include="Views\ForgetPasswordLink\index.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital.cshtml" />
     <Content Include="Views\Acq_Deal\_Acq_Digital_Add.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Extended_Group\Index.cshtml" />
+    <Content Include="Views\Extended_Group\_ExtendedGroupList.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewExtdGrp.cshtml" />
+    <Content Include="Views\Extended_Group\_AddEditViewDetail.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Create.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\Index.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnList.cshtml" />
+    <Content Include="Views\ExtendedColumn_Metadata\_ExtendedColumnValueList.cshtml" />
+    <Content Include="Views\Title\_Title_Metadata_Header.cshtml" />
+    <Content Include="Views\Title\_Title_Tabwise_Popup.cshtml" />
+    <Content Include="Views\Banner\Index.cshtml" />
+    <Content Include="Views\Banner\_BindBannerGroup.cshtml" />
+    <Content Include="Views\AL_Oem\Index.cshtml" />
+    <Content Include="Views\AL_Oem\_BindALOemList.cshtml" />
+    <Content Include="Views\Title\_Title_Popup_Grid_Result.cshtml" />
+    <Content Include="Views\Vendor\_AdditionalInfo.cshtml" />
+    <Content Include="Views\Vendor\_ContentRule.cshtml" />
+    <Content Include="Views\Vendor\_ContentRuleGrid.cshtml" />
+    <Content Include="Views\Vendor\_ContentRulePopUp.cshtml" />
+    <Content Include="Views\Vendor\_OEM.cshtml" />
+    <Content Include="Views\Vendor\_TnC.cshtml" />
+    <Content Include="Views\AL_Lab\Index.cshtml" />
+    <Content Include="Views\AL_Lab\_BindAL_LabGroup.cshtml" />
+    <Content Include="Views\BookingSheet\Index.cshtml" />
+    <Content Include="Views\BookingSheet\_BookingSheetList.cshtml" />
+    <Content Include="Views\BookingSheet\_PendingRecommendationsList.cshtml" />
+    <Content Include="Views\AL_Oem\_AddEditALOem.cshtml" />
+    <Content Include="Views\AL_Oem\_AddEditFieldValue.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Aeroplay.cshtml" />
+    <Content Include="Views\BookingSheet\ImportMasterView.cshtml" />
+    <Content Include="Views\BookingSheet\_MasterImportList.cshtml" />
+    <Content Include="Views\BookingSheet\ImportedSheetView.cshtml" />
+    <Content Include="Views\BookingSheet\_MovieSheetData.cshtml" />
+    <Content Include="Views\BookingSheet\_ShowSheetData.cshtml" />
+    <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Sample.xlsx" /> -->
+    <Content Include="Views\PurchaseOrder\Index.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PurchaseOrderList.cshtml" />
+    <Content Include="Views\LoadSheet\Index.cshtml" />
+    <Content Include="Views\LoadSheet\_AddLoadSheet.cshtml" />
+    <Content Include="Views\LoadSheet\_LoadSheetList.cshtml" />
+    <Content Include="Views\LoadSheet\_BookingsheetList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_MovieTabDataView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_PoDetailsView.cshtml" />
+    <Content Include="Views\PurchaseOrder\_ShowTabDataView.cshtml" />
+    <Content Include="Views\DeliveryTracking\Index.cshtml" />
+    <Content Include="Views\DeliveryTracking\_MoviesList.cshtml" />
+    <Content Include="Views\DeliveryTracking\_ShowsList.cshtml" />
+    <Content Include="Views\LoadSheet\_RevisionHistoryList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_StatusHistoryList.cshtml" />
+    <Content Include="Views\PurchaseOrder\_StatusHistoryPopup.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital.cshtml" />
+    <Content Include="Views\Syn_Deal\_Syn_Digital_Add.cshtml" />
+    <Content Include="Views\Reports\MusicAvailabilityReport.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\BulkPosterUploadList.cshtml" />
+    <Content Include="Views\DM_Title_Master_Import\_PosterTitleList.cshtml" />
+    <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638169405795347137~Result_BS_No_27.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\638170103212917632~Result_BS_No_28.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_14.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_21.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_22.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_23.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_24.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_25.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Result_BS_No_26.xlsx" /> -->
+    <!-- <Content Include="UploadFolder\BookingSheet\Sample.xlsx" /> -->
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1395,8 +1514,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Home.Master" />
-    <Content Include="Download\Title_Import_Sample.xlsx" />
-    <Content Include="Download\EpisodeTitle_Import.xlsx" />
+    <!-- <Content Include="Download\Title_Import_Sample.xlsx" /> -->
+    <!-- <Content Include="Download\EpisodeTitle_Import.xlsx" /> -->
     <Content Include="JS_Core\Acq_Deal_Gen.min.js.map">
       <DependentUpon>Acq_Deal_Gen.js</DependentUpon>
     </Content>
@@ -1445,8 +1564,8 @@
     <Content Include="Custom_Scripts\Syn_Deal_Runs.min.js.map">
       <DependentUpon>Syn_Deal_Runs.js</DependentUpon>
     </Content>
-    <Content Include="Download\Music_Title_Import_Sample.xlsx" />
-    <Content Include="Download\Music_Content_Sample.xlsx" />
+    <!-- <Content Include="Download\Music_Title_Import_Sample.xlsx" /> -->
+    <!-- <Content Include="Download\Music_Content_Sample.xlsx" /> -->
     <Content Include="Views\Shared\_List_Pushback.cshtml" />
     <Content Include="Views\Syn_Deal\_List_Rights.cshtml" />
     <Content Include="Views\Shared\_List_Deal.cshtml" />

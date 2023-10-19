@@ -1,4 +1,6 @@
 ﻿@using UTOFrameWork.FrameworkClasses
+@using RightsU_BLL;
+
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,6 +10,13 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New Movies_Shows_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Import_Movies_Shows").FirstOrDefault();
+    var Allow_Import_Movies_Shows = Movies_Shows_system_Parameter.Parameter_Value;
 }
 <!DOCTYPE html>
 <html>
@@ -20,11 +29,10 @@
             width: 100%;
             /*text-align: left;*/
         }
-    
+
         .search_area {
             border-bottom: 1px dotted #777;
             margin-bottom: 5px;
-
         }
 
         #divSearch {
@@ -35,16 +43,16 @@
         }
 
             /*#divSearch > ul > li {
-                float: left;
-                min-height: 32px;
-                list-style-type: none;
-                padding: 0 3px;
-            }
+                        float: left;
+                        min-height: 32px;
+                        list-style-type: none;
+                        padding: 0 3px;
+                    }
 
 
-            #divSearch .chosen-container {
-                margin: 0;
-            }*/
+                    #divSearch .chosen-container {
+                        margin: 0;
+                    }*/
 
             #divSearch .checkbox-inline {
                 margin-bottom: 7px;
@@ -53,32 +61,33 @@
         .top_filter {
             margin-top: 22px;
         }
-           /*.pull-left-Head {
-        float: right !important;
-        padding-right:1%;
-    }*/
+        /*.pull-left-Head {
+                float: right !important;
+                padding-right:1%;
+            }*/
 
-    /*.pull-right-Head {
-        float: left !important;
-    }*/
-     /*.pagination-Head {
-    float: left !important;
-    margin-top: 4px;
-     display: flex;
-}*/
-      .right_nav li {
+        /*.pull-right-Head {
+                float: left !important;
+            }*/
+        /*.pagination-Head {
+            float: left !important;
+            margin-top: 4px;
+             display: flex;
+        }*/
+        .right_nav li {
             float: left;
             list-style-type: none;
             margin: 0 7px;
         }
-        
+
         /*.right_nav_Head li {
-            float: right;
-            list-style-type: none;
-            margin: 0 7px;
-        }*/
+                    float: right;
+                    list-style-type: none;
+                    margin: 0 7px;
+                }*/
     </style>
     <script>
+        var URL_SampleExcelDownload = '@Url.Action("DummySampleDownload", "Title")';
         URL_Reload_Current_Page = '@Url.Action("titleImport", "Title")';
         var URL_GetTitleFileImportStatus = '@Url.Action("GetTitleFileImportStatus", "DM_Title_Master_Import")';
         $(document).ready(function () {
@@ -109,6 +118,17 @@
             });
         }
         function UploadTitle() {
+            debugger;
+            if ("@Allow_Import_Movies_Shows" == "Y") {
+                var SelectedTitleType = $("#TitleType:checked").val();
+                if (SelectedTitleType == undefined) {
+                    showAlert("E", "Please select type of title");
+                    return false;
+                }
+            }
+            else {
+                SelectedTitleType = "M";
+            }
             showLoading();
             var txtpageSize = $('#txtPageSize').val();
             $('#ddlFilterBy').val('A').trigger('chosen:updated');
@@ -119,13 +139,14 @@
                 formdata.append("InputFile", files[0]);
                 formdata.append("FilterBy", FilterBy);
                 formdata.append("txtpageSize", txtpageSize);
+                formdata.append("SelectedTitleType", SelectedTitleType);
             }
             else {
                 showAlert("a", "Please select File");
                 hideLoading();
                 return false;
             }
-            
+
             $.ajax({
 
                 type: "POST",
@@ -138,6 +159,7 @@
                 processData: false,
                 data: formdata,
                 success: function (result) {
+                    debugger;
                     $('#gvArea').html(result);
                     SetTitlePaging();
                     CheckPendingStatus();
@@ -147,7 +169,7 @@
                     alert('Error: ' + result.responseText);
                 }
             });
-           
+
         }
         function PopulateTitleGrid(PageNo) {
             debugger
@@ -388,7 +410,7 @@
             window.location.href = URL;
         }
         function BindViewData(masterImportCode) {
-            debugger
+            debugger;
             var URL = '@Url.Action("BindView", "DM_Title_Master_Import", new
                   {
                       DM_Master_Import_Code = "_DM_Import_Master_Code_",
@@ -399,6 +421,35 @@
             URL = URL.replace(/amp;/g, "");
             window.location.href = URL;
         }
+
+        function SampleDownloadMovieShowExl() {
+            debugger;
+            if ("@Allow_Import_Movies_Shows" == "Y") {
+                var SelectedTitleType = $("#TitleType:checked").val();
+                if (SelectedTitleType == undefined) {
+                    showAlert("E", "Please select type of title");
+                    return false;
+                }
+            }
+            else {
+                var SelectedTitleType = "M"
+            }
+            window.location.href = URL_SampleExcelDownload + "?TitleType=" + SelectedTitleType;
+            //$.ajax({
+            //    type: "POST",
+            //    url: URL_SampleExcelDownload,
+            //    traditional: true,
+            //    enctype: 'multipart/form-data',
+            //    contentType: "application/json; charset=utf-8",
+            //    data: JSON.stringify({
+            //        TitleType: SelectedTitleType
+            //    }),
+            //    success: function (result) {
+            //        debugger;
+
+            //    }
+            //});
+        }
     </script>
 </head>
 <body>
@@ -407,11 +458,35 @@
             <div class="container acq main_col">
                 <div class="top_area">
                     <h2 class="pull-left">@objMessageKey.TitleImport</h2>
+                    <div class="pull-right" style="padding-top:17px">
+                        <input type="button" id="btnSampleDownload" value="BULK POSTER UPLOAD" class="btn btn-primary" onclick="@(" window.location.href='"+ @Url.Action("BulkPosterUploadList", "DM_Title_Master_Import") + "' ")" />
+
+                    </div>
                 </div>
                 <div class="">
                     <div id="divSearch" class="search_area clearfix">
                         <div class="">
                             <table>
+                                @*<tr id="FirstUl">
+                                        <td style="width:10%;">
+                                            @objMessageKey.UploadFile:
+                                        </td>
+                                        <td style="width:25%;">
+                                            <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
+                                        </td>
+                                        <td style="width:8%;">
+                                            <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
+                                        </td>
+                                        <td style="width:12%;">
+                                            <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary"
+                                                   onclick="@(" window.location.href='" + @Url.Action("SampleDownload", "Title") + "' ")    ;" />
+                                        </td>
+                                        <td style="width:20%; text-align:right">Filter By Status : </td>
+                                        <td style="width:15%">
+                                            @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
+                                        </td>
+
+                                    </tr>*@
                                 <tr id="FirstUl">
                                     <td style="width:10%;">
                                         @objMessageKey.UploadFile:
@@ -419,19 +494,22 @@
                                     <td style="width:25%;">
                                         <input id="fileUpload" type="file" style="background-color: white" name="" runat="server" accept=".xls,.xlsx" />
                                     </td>
-                                    <td style="width:8%;">
+                                    @if(Allow_Import_Movies_Shows == "Y") { 
+                                    <td style="width:15%;">
+                                        <input type="radio" value="M" id="TitleType" name="TitleTypeName" /> @objMessageKey.Movies
+                                        <input type="radio" value="S" id="TitleType" name="TitleTypeName" /> @objMessageKey.TVShows
+                                    </td>
+                                    }
+                                    <td style="width:20%;">
                                         <input type="button" onclick="return UploadTitle();" class="btn btn-primary" value="Upload" />
+                                        <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary" onclick="SampleDownloadMovieShowExl()" />
                                     </td>
-                                    <td style="width:12%;">
-                                        <input type="button" id="btnSampleDownload" value="Sample Download" class="btn btn-primary"
-                                               onclick="@(" window.location.href='" + @Url.Action("SampleDownload", "Title") + "' ")    ;" />
-                                    </td>
-                                    <td style="width:20%; text-align:right">Filter By Status : </td>
+                                    <td style="width:15%; text-align:right">Filter By Status : </td>
                                     <td style="width:15%">
                                         @Html.DropDownList("ddlFilterBy", (List<SelectListItem>)ViewBag.FilterBy, new { @id = "ddlFilterBy", @class = "form_input chosen-select" })
                                     </td>
-
                                 </tr>
+                                <tr></tr>
                             </table>
                         </div>
                     </div>
@@ -446,11 +524,11 @@
                         </div>
                         <span class="pull-right">
                             @objMessageKey.PageSize:
-                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return Page_OnChange();" 
+                            <input type="text" id="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="return Page_OnChange();"
                                    onkeypress="return isNumber(event);" maxlength="2" onblur="setDefaultPaging('txtPageSize')" />
                         </span>
                     </div>
-                  
+
                     <div class="tab-content clearfix table-wrapper scale_table_container">
                         <div class="scale_table_block">
                             <div id="gvArea" class="deal clearfix">

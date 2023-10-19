@@ -50,6 +50,8 @@
     var pageAncillary = '@GlobalParams.Page_From_Ancillary';
     var pageSupplementary = '@GlobalParams.Page_From_Supplementary';
     var pageSupplementaryAddEdit = '@GlobalParams.Page_From_Supplementary_AddEdit';
+    var pageDigital = '@GlobalParams.Page_From_Digital';
+    var pageDigitalAddEdit = '@GlobalParams.Page_From_Digital_AddEdit';
 
 
     $(document).ready(function () {
@@ -138,6 +140,9 @@
             else if ('@ViewBag.currentTab' == "SUPP") {
                 BindPartialTabs(pageSupplementary);
             }
+            else if ('@ViewBag.currentTab' == "DIGI") {
+                BindPartialTabs(pageDigital);
+            }
         }
         else
             BindPartialTabs(pageGeneral);
@@ -210,8 +215,8 @@
         debugger;
         CurrentTab = $.trim(tabName);
         var URL_PartialView = "";
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").removeAttr("disabled", "disabled").removeClass("active");
-        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").find("input:button").removeAttr("disabled", "disabled");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liDigital,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").removeAttr("disabled", "disabled").removeClass("active");
+        $("#liGeneral,#liRights,#liPushback,#liRun,#liAncillary,#liSupplementary,#liDigital,#liRevenue,#liPaymentTerm,#liMaterial,#liAttachment,#liStatusHistory").find("input:button").removeAttr("disabled", "disabled");
         if (tabName == pageGeneral) {
             // $("#ancFileName").attr('href', 'Help/index.html?IntCode=syn_General');
            // $("#ancFileName").attr('href', 'Help/Masters/Layout.html?syn_General');
@@ -266,6 +271,16 @@
             URL_PartialView = '@Url.Action("AddEditSupp", "Syn_Supplementary")';
             $("#liSupplementary").attr('disabled', 'disabled').addClass("active");
             $("#liSupplementary input:button").attr('disabled', 'disabled');
+        }
+            else if (tabName == pageDigital) {
+            URL_PartialView = '@Url.Action("Index", "Syn_Digital")';
+            $("#liDigital").attr('disabled', 'disabled').addClass("active");
+            $("#liDigital input:button").attr('disabled', 'disabled');
+        }
+        else if (tabName == pageDigitalAddEdit) {
+            URL_PartialView = '@Url.Action("AddEditDigi", "Syn_Digital")';
+            $("#liDigital").attr('disabled', 'disabled').addClass("active");
+            $("#liDigital input:button").attr('disabled', 'disabled');
         }
         else if (tabName == pageRun) {
             debugger;

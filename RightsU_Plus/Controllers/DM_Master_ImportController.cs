@@ -938,7 +938,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
-        public ActionResult PopulateAutoCompleteData(string keyword, string tabName)
+        public ActionResult PopulateAutoCompleteData(string keyword, string tabName, string Music_Album = "")
         {
             string Is_Allow_Program_Category = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Program_Category").ToList().FirstOrDefault().Parameter_Value;
             int Deal_type_Code_Other = Convert.ToInt32(new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Deal_Type_Other").FirstOrDefault().Parameter_Value);
@@ -960,8 +960,25 @@ namespace RightsU_Plus.Controllers
             }
             if (tabName == "MA")
             {
-                result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
-                            .Select(R => new { Mapping_Name = R.Music_Album_Name, Mapping_Code = R.Music_Album_Code }).Take(100).ToList();
+                if(Music_Album == "Movie")
+                {
+                    string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                    var strArrdealType = dealType.Split(',');
+                    result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                    .Select(x => new { Mapping_Name = x.Title_Name, Mapping_Code = x.Title_Code }).ToList();
+                }
+                else if (Music_Album == "Show")
+                {
+                    string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                    var strArrdealType = dealType.Split(',');
+                    result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                    .Select(x => new { Mapping_Name = x.Title_Name, Mapping_Code = x.Title_Code }).ToList();
+                }
+                else
+                {
+                    result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper())).Distinct()
+                           .Select(R => new { Mapping_Name = R.Music_Album_Name, Mapping_Code = R.Music_Album_Code }).Take(100).ToList();
+                }
             }
             if (tabName == "ML")
             {
@@ -1113,7 +1130,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objDMUDT.Key = objDMTemp.DM_Master_Log_Code.ToString();
                         objDMUDT.DM_Master_Type = objDMLogT.Master_Type;
-                        objDMUDT.value = objDMTemp.Mapped_Code > 0 ? objDMTemp.Mapped_Code.ToString() : objDMTemp.System_Mapped_Code.ToString();
+                        objDMUDT.value = objDMTemp.Mapped_Code > 0 ? objDMTemp.Mapped_Code.ToString() : objDMTemp.System_Mapped_Code.ToString();                 
                     }
                     else
                     {
@@ -1922,7 +1939,16 @@ namespace RightsU_Plus.Controllers
         public int PageSize_PC { get; set; }
         public int PageNo_OL { get; set; }
         public int PageSize_OL { get; set; }
-
+        public int PageNo_PG { get; set; }
+        public int PageSize_PG { get; set; }
+        public int PageNo_BA { get; set; }
+        public int PageSize_BA { get; set; }
+        public int PageNo_LA { get; set; }
+        public int PageSize_LA { get; set; }
+        public int PageNo_VE { get; set; }
+        public int PageSize_VE { get; set; }
+        public int PageNo_MP { get; set; }
+        public int PageSize_MP { get; set; }
         public object GetPropertyValue(string propertyName)
         {
             object value = this.GetType().GetProperty(propertyName).GetValue(this, null);
