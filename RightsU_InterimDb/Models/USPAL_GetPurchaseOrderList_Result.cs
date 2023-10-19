@@ -25,6 +25,8 @@ namespace RightsU_InterimDb.Models
         public string Workflow_Status { get; set; }
         public string ShowHideButtons { get; set; }
         public int Vendor_Code { get; set; }
-        public string InsertedBy { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<int> Inserted_By { get; set; }
+        public string Final_PO_Workflow_Status { get; set; }
     }
 }
