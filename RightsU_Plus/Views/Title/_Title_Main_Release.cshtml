@@ -8,6 +8,13 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    RightsU_Entities.System_Parameter_New Bulk_Title_Poster_Size = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Is_Poster_File_Size").FirstOrDefault();
+    var Title_Poster_Size = Bulk_Title_Poster_Size.Parameter_Value;
 }
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
@@ -428,6 +435,17 @@
     }
 
     function fileCheck(obj) {
+        debugger;
+
+        
+        const fsize = obj.files[0].size;
+        const file = Math.round((fsize / 1024));
+        if (file >= Number(@Title_Poster_Size)) {
+            showAlert("E", "Please upload poster of size less than 2 MB.");
+            delete obj.files[0];
+            $("#uploadFile").val("");
+            return false;
+        }
         var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
 
         if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
