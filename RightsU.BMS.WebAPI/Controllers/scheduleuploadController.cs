@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities;
+using RightsU.BMS.Entities.LogClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -61,8 +62,12 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             try
             {
+                Error.WriteLog("Text File Uploading Process Started", includeTime: true, addSeperater: true);
+
                 ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
                 ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
+
+                Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
 
                 if (!string.IsNullOrEmpty(Convert.ToString(ChannelCode)) && ChannelCode != 0)
                 {
@@ -83,12 +88,16 @@ namespace RightsU.BMS.WebAPI.Controllers
                     objLog.Error_Description = _objRet.Message;
                 }
 
+                Error.WriteLog_Conditional("STEP 2 : Channel Validation completed ");
+
                 var httpRequest = HttpContext.Current.Request;
                 var fileWithTimeStamp = "";
                 DataTable datatable = new DataTable();
 
                 if (httpRequest.Files.Count > 0 && _objRet.IsSuccess)
                 {
+                    Error.WriteLog_Conditional("STEP 3 : File uploading process started ");
+
                     foreach (string file in httpRequest.Files)
                     {
                         var postedFile = httpRequest.Files[file];
@@ -100,7 +109,11 @@ namespace RightsU.BMS.WebAPI.Controllers
                             var filePath = HttpContext.Current.Server.MapPath("~/Uploads/TextFile/" + fileWithTimeStamp);
                             postedFile.SaveAs(filePath);
 
+                            Error.WriteLog_Conditional("STEP 4 : Text file uploaded : " + Convert.ToString(fileWithTimeStamp));
+
                             UploadFileName = Convert.ToString(fileWithTimeStamp);
+
+                            Error.WriteLog_Conditional("STEP 5 : File reading process start.");
 
                             StreamReader streamreader = new StreamReader(filePath);
                             char[] delimiter = new char[] { '\t' };
@@ -110,16 +123,19 @@ namespace RightsU.BMS.WebAPI.Controllers
                                 datatable.Columns.Add(columnheader);
                             }
 
+                            Error.WriteLog_Conditional("STEP 6 : Column headers are filled into datatable.");
+
                             while (streamreader.Peek() > 0)
                             {
-                                int i = 0;
                                 DataRow datarow = datatable.NewRow();
                                 datarow.ItemArray = streamreader.ReadLine().Split(delimiter);
                                 datatable.Rows.Add(datarow);
-                            }
+                            }                            
 
                             if (datatable.Rows.Count > 0)
                             {
+                                Error.WriteLog_Conditional("STEP 7 : Data rows are filled into datatable.");
+
                                 Upload_Files objUploadFiles = new Upload_Files();
 
                                 objUploadFiles.File_Name = fileWithTimeStamp;
@@ -130,8 +146,12 @@ namespace RightsU.BMS.WebAPI.Controllers
                                 objUploadFilesService.Upload_Files_Save(objUploadFiles);
                                 int? FileCode = objUploadFiles.File_Code;
 
+                                Error.WriteLog_Conditional("STEP 8 : File detail added into file upload table : File_Code = " + Convert.ToString(FileCode));
+
                                 List<BMS_Schedule_Import_Config> objBMSScheduleImportConfig = new List<BMS_Schedule_Import_Config>();
                                 objBMSScheduleImportConfig = objBMSScheduleImportConfigServices.SearchFor(new { File_Format = "txt" }).ToList();
+
+                                Error.WriteLog_Conditional("STEP 9 : Checked columns detail into schedule config. ");
 
                                 if (objBMSScheduleImportConfig.Count > 0)
                                 {
@@ -192,6 +212,8 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                                     if (ScheduleDataUDT.Count > 0)
                                     {
+                                        Error.WriteLog_Conditional("STEP 10 : Schedule UDT filled.");
+
                                         ListtoDataTable lstToDataTable = new ListtoDataTable();
                                         DataTable dt = lstToDataTable.ToDataTable(ScheduleDataUDT);
                                         if (dt.Rows.Count > 0)
@@ -203,7 +225,7 @@ namespace RightsU.BMS.WebAPI.Controllers
                                                 //{
                                                 //    System.IO.File.Delete(filePath);
                                                 //}
-
+                                                Error.WriteLog_Conditional("STEP 11 : File detail uploaded into Temp_BV_Scheduler table with ID : " + Convert.ToString(id));
                                                 _objRet.Message = "File Uploaded Successfully";
                                                 _objRet.IsSuccess = true;
                                             }
@@ -229,13 +251,20 @@ namespace RightsU.BMS.WebAPI.Controllers
                     }
                 }
 
+                Error.WriteLog_Conditional("STEP 12 : Start inserting log detail");
+
                 ScheduleInput.FileName = UploadFileName;
                 objLog.Request_Xml = JsonConvert.SerializeObject(ScheduleInput);
                 objLog.Response_Time = DateTime.Now;
                 _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+
+                Error.WriteLog_Conditional("STEP 13 : Log detail inserted into table BMS_Log");
+
             }
             catch(Exception ex)
             {
+                Error.WriteLog_Conditional("STEP 14 : Exception accured into file uploading process, Please check file BMS_Log table");
+
                 objLog.Request_Xml = JsonConvert.SerializeObject(ScheduleInput);
                 objLog.Record_Status = "E";
                 objLog.Error_Description = _objRet.Message;
@@ -255,6 +284,8 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             if (_objRet.IsSuccess)
             {
+                Error.WriteLog_Conditional("STEP 15 : File uploading process successfully done");
+
                 var response = Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("LogId", _objRet.LogId.ToString());
                 response.Headers.Add("Message", _objRet.Message);
@@ -263,12 +294,14 @@ namespace RightsU.BMS.WebAPI.Controllers
             }
             else
             {
+                Error.WriteLog_Conditional("STEP 16 : File uploading process failed.");
+
                 var response = Request.CreateResponse(HttpStatusCode.BadRequest, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("LogId", _objRet.LogId.ToString());
                 response.Headers.Add("Message", _objRet.Message);
                 response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
                 return response;
-            }
+            }            
         }
 
         /// <summary>
@@ -305,8 +338,12 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             try
             {
+                Error.WriteLog("CSV File Uploading Process Started", includeTime: true, addSeperater: true);
+
                 ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
                 ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
+
+                Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
 
                 if (!string.IsNullOrEmpty(Convert.ToString(ChannelCode)) && ChannelCode != 0)
                 {
@@ -327,12 +364,16 @@ namespace RightsU.BMS.WebAPI.Controllers
                     objLog.Error_Description = _objRet.Message;
                 }
 
+                Error.WriteLog_Conditional("STEP 2 : Channel Validation completed ");
+
                 var httpRequest = HttpContext.Current.Request;
                 var fileWithTimeStamp = "";
                 DataTable datatable = new DataTable();
 
                 if (httpRequest.Files.Count > 0 && _objRet.IsSuccess)
                 {
+                    Error.WriteLog_Conditional("STEP 3 : File uploading process started ");
+
                     foreach (string file in httpRequest.Files)
                     {
                         var postedFile = httpRequest.Files[file];
@@ -344,7 +385,11 @@ namespace RightsU.BMS.WebAPI.Controllers
                             var filePath = HttpContext.Current.Server.MapPath("~/Uploads/CSVFile/" + fileWithTimeStamp);
                             postedFile.SaveAs(filePath);
 
+                            Error.WriteLog_Conditional("STEP 4 : Text file uploaded : " + Convert.ToString(fileWithTimeStamp));
+
                             UploadFileName = Convert.ToString(fileWithTimeStamp);
+
+                            Error.WriteLog_Conditional("STEP 5 : File reading process start.");
 
                             StreamReader streamreader = new StreamReader(filePath);
                             char[] delimiter = new char[] { ',' };
@@ -353,6 +398,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                             {
                                 datatable.Columns.Add(columnheader);
                             }
+
+                            Error.WriteLog_Conditional("STEP 6 : Column headers are filled into datatable.");
 
                             while (streamreader.Peek() > 0)
                             {
@@ -363,6 +410,8 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                             if (datatable.Rows.Count > 0)
                             {
+                                Error.WriteLog_Conditional("STEP 7 : Data rows are filled into datatable.");
+
                                 Upload_Files objUploadFiles = new Upload_Files();
 
                                 objUploadFiles.File_Name = fileWithTimeStamp;
@@ -373,11 +422,15 @@ namespace RightsU.BMS.WebAPI.Controllers
                                 objUploadFilesService.Upload_Files_Save(objUploadFiles);
                                 int? FileCode = objUploadFiles.File_Code;
 
+                                Error.WriteLog_Conditional("STEP 8 : File detail added into file upload table : File_Code = " + Convert.ToString(FileCode));                                
+
                                 List<BMS_Schedule_Import_Config> objBMSScheduleImportConfig = new List<BMS_Schedule_Import_Config>();
                                 objBMSScheduleImportConfig = objBMSScheduleImportConfigServices.SearchFor(new { File_Format = "csv" }).ToList();
 
                                 if (objBMSScheduleImportConfig.Count > 0)
                                 {
+                                    Error.WriteLog_Conditional("STEP 9 : Checked columns detail into schedule config. ");
+
                                     List<Schedule_Data_UDT> ScheduleDataUDT = new List<Schedule_Data_UDT>();
                                     foreach (DataRow row in datatable.Rows)
                                     {
@@ -435,6 +488,8 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                                     if (ScheduleDataUDT.Count > 0)
                                     {
+                                        Error.WriteLog_Conditional("STEP 10 : Schedule UDT filled.");
+
                                         ListtoDataTable lstToDataTable = new ListtoDataTable();
                                         DataTable dt = lstToDataTable.ToDataTable(ScheduleDataUDT);
                                         if (dt.Rows.Count > 0)
@@ -442,6 +497,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                                             int id = objBMSServices.BMSUploadData(dt, "csv", Convert.ToInt32(ChannelCode));
                                             if (id > 0)
                                             {
+                                                Error.WriteLog_Conditional("STEP 11 : File detail uploaded into Temp_BV_Scheduler table with ID : " + Convert.ToString(id));
+
                                                 _objRet.Message = "File Uploaded Successfully";
                                                 _objRet.IsSuccess = true;
                                             }
@@ -467,14 +524,20 @@ namespace RightsU.BMS.WebAPI.Controllers
                     }
                 }
 
+                Error.WriteLog_Conditional("STEP 12 : Start inserting log detail");
+
                 ScheduleInput.FileName = UploadFileName;
                 objLog.Request_Xml = JsonConvert.SerializeObject(ScheduleInput);
                 objLog.Response_Time = DateTime.Now;
                 _objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
+                Error.WriteLog_Conditional("STEP 13 : Log detail inserted into table BMS_Log");
+
             }
             catch(Exception ex)
-            {                
+            {
+                Error.WriteLog_Conditional("STEP 14 : Exception accured into file uploading process, Please check file BMS_Log table");
+
                 objLog.Request_Xml = JsonConvert.SerializeObject(ScheduleInput);
                 objLog.Record_Status = "E";
                 objLog.Error_Description = _objRet.Message;
@@ -494,6 +557,8 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             if (_objRet.IsSuccess)
             {
+                Error.WriteLog_Conditional("STEP 15 : File uploading process successfully done");
+
                 var response = Request.CreateResponse(HttpStatusCode.OK, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("LogId", _objRet.LogId.ToString());
                 response.Headers.Add("Message", _objRet.Message);
@@ -502,6 +567,8 @@ namespace RightsU.BMS.WebAPI.Controllers
             }
             else
             {
+                Error.WriteLog_Conditional("STEP 16 : File uploading process failed.");
+
                 var response = Request.CreateResponse(HttpStatusCode.BadRequest, new { Return = _objRet }, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("LogId", _objRet.LogId.ToString());
                 response.Headers.Add("Message", _objRet.Message);
