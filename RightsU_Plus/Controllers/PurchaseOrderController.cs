@@ -433,11 +433,17 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult GetPurchaseOrderStatus(int PurchaseOrderCode)
         {
-            string recordStatus = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).Select(s => s.Status).FirstOrDefault();
+            //AL_Purchase_Order PO = new AL_Purchase_Order();
+            //PO = new AL_Purchase_Order_Service(objLoginEntity.ConnectionStringName).GetById(PurchaseOrderCode);            
+
+            USPAL_GetPurchaseOrderList_Result PO = new USPAL_GetPurchaseOrderList_Result();
+            PO = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_GetPurchaseOrderList(objLoginUser.Users_Code).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
 
             var obj = new
             {
-                RecordStatus = recordStatus,
+                RecordStatus = PO.Status,
+                WorkflowStatus = PO.Workflow_Status,
+                ApprovalStatus = PO.Final_PO_Workflow_Status
             };
             return Json(obj);
         }
@@ -455,33 +461,45 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult RefreshPoList(int PurchaseOrderCode, int BookingSheetCode)
         {
-            string status = "S", message = "";
+            string status = "S", message = "", FlagStatus = "";
 
             AL_Purchase_Order obj_AL_Purchase_Order = new AL_Purchase_Order();
             obj_AL_Purchase_Order = objPO_Service.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
-
-            RefreshPOD(PurchaseOrderCode);
-            obj_AL_Purchase_Order.Status = "I";
-            obj_AL_Purchase_Order.EntityState = State.Modified;
-
-
-            dynamic resultSet;
-            if (!objPO_Service.Save(obj_AL_Purchase_Order, out resultSet))
+            
+            RefreshPOD(PurchaseOrderCode, out FlagStatus);
+            if (FlagStatus == "N")
             {
-                status = "E";
-                message = resultSet;
+                obj_AL_Purchase_Order.Status = "I";
+                obj_AL_Purchase_Order.EntityState = State.Modified;
+
+                dynamic resultSet;
+                if (!objPO_Service.Save(obj_AL_Purchase_Order, out resultSet))
+                {
+                    status = "E";
+                    message = resultSet;
+                }
+                else
+                {
+                    status = "S";
+                    message = objMessageKey.Recordsavedsuccessfully;
+                    var a = lstPOSearched.Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
+                    a.Status = "I";
+
+                    obj_AL_Purchase_Order = null;
+                    objPO_Service = null;
+
+                    //POData(BookingSheetCode);
+                }
+            }
+            else if(FlagStatus == "H")
+            {
+                status = "I";
+                message = "Purchase order already generated with holdover data";
             }
             else
             {
-                status = "S";
-                message = objMessageKey.Recordsavedsuccessfully;
-                var a = lstPOSearched.Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).FirstOrDefault();
-                a.Status = "I";
-
-                obj_AL_Purchase_Order = null;
-                objPO_Service = null;
-
-                //POData(BookingSheetCode);
+                status = "I";
+                message = "Purchase order contains deleted data, It Cannot be refreshed.";
             }
 
             var obj = new
@@ -493,23 +511,39 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-        public void RefreshPOD(int PurchaseOrderCode)
-        {           
+        public void RefreshPOD(int PurchaseOrderCode, out string FlagStatus)
+        {
+            FlagStatus = "";
             List<AL_Purchase_Order_Details>  lst_AL_Purchase_Order_Details = new List<AL_Purchase_Order_Details>();
             List<AL_Purchase_Order_Rel> lstPOR = new List<AL_Purchase_Order_Rel>();
-
-            lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode && w.Status == "N").ToList();
-            lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).ToList();
-            lst_AL_Purchase_Order_Details = lst_AL_Purchase_Order_Details.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).ToList();
-            
-            foreach (AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
+            List<AL_Purchase_Order_Rel> lstPORALL = new List<AL_Purchase_Order_Rel>();
+            lstPORALL = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode).ToList();
+            if(lstPORALL.Count > 0)
             {
-                obj_AL_Purchase_Order_Details.Status = "P";
-                obj_AL_Purchase_Order_Details.EntityState = State.Modified;
+                if(!lstPORALL.Exists(e=>e.Status == "N"))
+                {
+                    if (lstPORALL.Exists(e => e.Status == "H"))
+                    {
+                        FlagStatus = "H";
+                    }
+                }
+                else
+                {
+                    lstPOR = objPORel_Serice.SearchFor(s => true).Where(w => w.AL_Purchase_Order_Code == PurchaseOrderCode && w.Status == "N").ToList();
+                    lst_AL_Purchase_Order_Details = objPoDetailsData_Service.SearchFor(s => true).ToList();
+                    lst_AL_Purchase_Order_Details = lst_AL_Purchase_Order_Details.Where(w => lstPOR.Any(a => w.AL_Purchase_Order_Details_Code == a.AL_Purchase_Order_Details_Code)).ToList();
 
-                dynamic resultSet;
-                objPoDetailsData_Service.Save(obj_AL_Purchase_Order_Details, out resultSet);           
-            }                     
+                    foreach (AL_Purchase_Order_Details obj_AL_Purchase_Order_Details in lst_AL_Purchase_Order_Details)
+                    {
+                        obj_AL_Purchase_Order_Details.Status = "P";
+                        obj_AL_Purchase_Order_Details.EntityState = State.Modified;
+
+                        dynamic resultSet;
+                        objPoDetailsData_Service.Save(obj_AL_Purchase_Order_Details, out resultSet);
+                    }
+                    FlagStatus = "N";
+                } 
+            }             
         }
 
         //-----------------------------------------------------GetFileNameToDownload------------------------------------------------------------------------
@@ -664,7 +698,7 @@ namespace RightsU_Plus.Controllers
                 int noOfRecordSkip, noOfRecordTake;
                 pageNo = GetPaging(pageNo, recordPerPage, RecordCount, out noOfRecordSkip, out noOfRecordTake);
                 if (sortType == "T")
-                    lst = lstStatusHistorySearched.OrderByDescending(o => o.Last_Action_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    lst = lstStatusHistorySearched.OrderByDescending(o => o.Module_Status_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
             }
 
             return PartialView("_StatusHistoryList", lst);

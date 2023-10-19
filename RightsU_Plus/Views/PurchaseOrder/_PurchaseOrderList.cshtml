@@ -1,11 +1,14 @@
 ﻿@model List<RightsU_Entities.USPAL_GetPurchaseOrderList_Result>
 @using UTOFrameWork.FrameworkClasses
+@using RightsU_Entities;
+
 @{
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
+    RightsU_Entities.User objLoginUser = ((RightsU_Entities.RightsU_Session)Session[RightsU_Entities.RightsU_Session.SESS_KEY]).Objuser;
 }
 
 <table class="table table-bordered table-hover">
@@ -40,54 +43,36 @@
                         @item.Inserted_On.Value.ToString("dd MMM yyyy")
                     </td>
                     <td style="text-align:center">
-                        @Html.DisplayFor(modelItem => item.InsertedBy)
+                        @Html.DisplayFor(modelItem => item.CreatedBy)
                     </td>
-                    @*<td style="text-align:center" class="clsTdStatusPO_@item.AL_Purchase_Order_Code@item.Status">                      
-                        @if(item.Status == "C")
-                        {
-                            <span>Success</span>
-                        }
-                        else
-                        {
-                            <span>In Progress</span>
-                        }
-                    </td>*@
-                    <td style="text-align:center">
-                        @if (item.Workflow_Status == "W")
-                        {
-                            <span>Awaiting For Approval</span>
-                        }
-                        else if (item.Workflow_Status == "A")
-                        {
-                            <span>Approved</span>
-                        }
-                        else if(item.Workflow_Status == "R")
-                        {
-                            <span>Rejected</span>
-                        }
-                        else
-                        {
-
-                        }
+                    <td style="text-align:center" class="clsTdStatusPO_@item.AL_Purchase_Order_Code">                        
+                        @Html.DisplayFor(modelItem => item.Final_PO_Workflow_Status)
                     </td>
                     <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status clsTdAction2_@item.AL_Proposal_Code@item.Status">
                         @if (item.Status == "C")
                         {
                             <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
 
-                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForApprove))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForDealReject))) && item.Workflow_Status == "W")
-                            {
-                                <a title="Approve" class="glyphicon glyphicon-check" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', 'ARView')"></a>
-                            }
-                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForSendForApproval))) && item.Workflow_Status == "R")
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForSendForApproval))) && item.Workflow_Status == "R" && item.Inserted_By == objLoginUser.Users_Code)
                             {
                                 <a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup('@item.AL_Purchase_Order_Code')"></a>
                             }
                             if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView)) || item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForApprove)) || item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForDealReject))) && item.Workflow_Status == "A")
                             {
-                                @*<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>*@
                                 <a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor:pointer;" onclick="RefreshPoList('@item.AL_Purchase_Order_Code','@item.AL_Booking_Sheet_Code' )"></a>
                                 <img id="imgLoadingPO_@item.AL_Purchase_Order_Code@item.Status" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px; display:none" />
+                            }
+                        }
+                        else if (item.Status == "P")
+                        {
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForApprove))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForDealReject))) && item.Workflow_Status == "W")
+                            {
+                                <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
+                                <a title="Approve" class="glyphicon glyphicon-check" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', 'ARView')"></a>
+                            }
+                            else
+                            {
+                                <img id="imgLoadingPO_@item.AL_Purchase_Order_Code@item.Status" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
                             }
                         }
                         else

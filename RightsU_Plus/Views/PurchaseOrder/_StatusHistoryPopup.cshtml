@@ -12,7 +12,9 @@
     var IsCall = 'Y';
 
     $(document).ready(function () {
+        debugger;
         addNumeric();
+        tdExpander();
     });
 
     function SetPaging_MSH() {
@@ -98,6 +100,16 @@
         });
     }
 
+    function tdExpander() {
+        $('.expand_Remaks').expander({
+        slicePoint: 32,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+        });
+    }
+
 </script>
 
 <div class="modal_block modal_header">
@@ -130,8 +142,8 @@
                     <tr>
                         <th style="width:20%">Last Action By</th>
                         <th style="width:20%">Last Action On</th>
-                        <th style="width:20%">Workflow_Status</th>
-                        <th style="width:20%">Remark</th>
+                        <th style="width:20%">Workflow Status</th>
+                        <th style="width:20%">Remarks</th>
                     </tr>
                 </thead>
                 <tbody>
