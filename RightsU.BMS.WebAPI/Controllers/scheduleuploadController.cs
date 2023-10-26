@@ -64,10 +64,20 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 Error.WriteLog("Text File Uploading Process Started", includeTime: true, addSeperater: true);
 
-                ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
-                ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
+                //ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
+                if(string.IsNullOrEmpty(ChannelName))
+                {
+                    _objRet.Message = "Channel Name Should Not Be Blank.";
+                    _objRet.IsSuccess = false;
+                    objLog.Record_Status = "E";
+                    objLog.Error_Description = _objRet.Message;
+                }
+                else
+                {
+                    ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
 
-                Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
+                    Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
+                }   
 
                 if (!string.IsNullOrEmpty(Convert.ToString(ChannelCode)) && ChannelCode != 0)
                 {
@@ -340,10 +350,20 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 Error.WriteLog("CSV File Uploading Process Started", includeTime: true, addSeperater: true);
 
-                ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
-                ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
+                //ChannelName = Convert.ToString(this.ActionContext.Request.Headers.GetValues("ChannelName").FirstOrDefault());
+                if (string.IsNullOrEmpty(ChannelName))
+                {
+                    _objRet.Message = "Channel Name Should Not Be Blank.";
+                    _objRet.IsSuccess = false;
+                    objLog.Record_Status = "E";
+                    objLog.Error_Description = _objRet.Message;
+                }
+                else
+                {
+                    ChannelCode = objChannelServices.SearchFor(new { Channel_Name = ChannelName.Trim() }).Select(x => (x.Channel_Code)).SingleOrDefault();
 
-                Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
+                    Error.WriteLog_Conditional("STEP 1 : Get Channel Code = " + Convert.ToString(ChannelCode));
+                }
 
                 if (!string.IsNullOrEmpty(Convert.ToString(ChannelCode)) && ChannelCode != 0)
                 {
