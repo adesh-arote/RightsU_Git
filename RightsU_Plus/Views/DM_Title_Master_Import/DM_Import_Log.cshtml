@@ -1,5 +1,5 @@
 ﻿@model List<RightsU_Entities.DM_Master_Log>
-@{ 
+@{
     RightsU_Entities.DM_Title_Resolve_Conflict objDTRC = ViewBag.DM_Title_RC;
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
@@ -11,6 +11,7 @@
         $("#hdnRecordCount").val(@ViewBag.RecordCount);
         $("#txtPageSize").val(@ViewBag.PageSize);
         SetPaging();
+
     });
 </script>
 
@@ -49,7 +50,7 @@
                                 {
                                     <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" disabled="disabled" />
                                 }
-                               else if (item.Is_Create_New)
+                                else if (item.Is_Create_New)
                                 {
                                     <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" checked="checked" />
                                 }
@@ -57,38 +58,56 @@
                                 {
                                     <input type="checkbox" id="chkCreateNew_@item.DM_Master_Log_Code" />
                                 }
-                               
-                                
+
+
                             </td>
                         }
                         <td align="center">
-                            @if (item.IsIgnore)
+                            @if (objDTRC.Master_Type == "MP")
                             {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                @*<input type="text">*@
+                                 if (item.IsIgnore)
+                                    {
+                                        @Html.DropDownList("MappedName", (IEnumerable<SelectListItem>)ViewBag.MPAData, "Please Select", htmlAttributes: new { @id = "txtMappedName_" + item.DM_Master_Log_Code, @class = "form_input chosen-select" })
+                                    }
+                                     if (item.Is_Create_New)
+                                    {
+                                        @Html.DropDownList("MappedName", (IEnumerable<SelectListItem>)ViewBag.MPAData, "Please Select", htmlAttributes: new { @id = "txtMappedName_" + item.DM_Master_Log_Code, @class = "form_input chosen-select" })
+                                    }
+                                    if (!item.Is_Create_New)
+                                    {
+                                        @Html.DropDownList("MappedName", (IEnumerable<SelectListItem>)ViewBag.MPAData, "Please Select", htmlAttributes: new { @id = "txtMappedName_" + item.DM_Master_Log_Code, @class = "form_input chosen-select" })
+                                    }
+                            }
+                            else
+                            {
+                                if (item.IsIgnore)
+                                {
+                                    <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
 
+                                }
+                                else if (item.Is_Create_New)
+                                {
+                                    <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
+                                }
+                                else if (!item.Is_Create_New)
+                                {
+                                    <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
+                                }
                             }
-                            else if (item.Is_Create_New)
-                            {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" disabled="disabled" />
-                            }
-                            else if(!item.Is_Create_New)
-                            {
-                                <input type="text" id="txtMappedName_@item.DM_Master_Log_Code" name="MappedName" autocomplete="on" width="100" onkeyup="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" onblur="PopulateAutoCompleteData(@item.DM_Master_Log_Code, '@ViewBag.TabName','@item.Roles')" value="@item.Mapped_Name" />
-                            }
-                            
-                           
+
                             <input type="hidden" id="hdnMappedCode_@item.DM_Master_Log_Code" name="MappedCode" value="@item.Mapped_Code" />
                             <input type="hidden" id="hdnMasterLogCode_@item.DM_Master_Log_Code" value="@item.DM_Master_Log_Code" />
                         </td>
                         <td align="center">
-                           @if (item.IsIgnore)
-                           {
-                            <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" checked="checked" />
-                           }
-                           else
-                           {
-                            <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" />
-                           }
+                            @if (item.IsIgnore)
+                            {
+                                <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" checked="checked" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="chkIsIgnore_@item.DM_Master_Log_Code" />
+                            }
                         </td>
                     </tr>
                 }
