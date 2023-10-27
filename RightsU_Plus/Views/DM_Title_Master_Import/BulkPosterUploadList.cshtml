@@ -224,6 +224,7 @@
                 hideLoading();
                 $('#hdnPageNo').text(1);
                 $('#hdnPageNo').val(1);
+                $('#PageValidation').val("0");
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
@@ -419,7 +420,20 @@
                     else if (result == "Y") {
                         debugger;
                         showAlert("S", "Title Posters updated successfully");
-                        SearchTitles("", "", "", "", "", "");
+
+                        var Title = $('#searchCommon').val();
+                        if ($('#ddlLanguage').val() != null)
+                            var Language = $('#ddlLanguage').val().join(",");
+                        if ($('#ddlStarCast').val() != null)
+                            var StarCast = $('#ddlStarCast').val().join(",");
+                        if ($('#ddlGenre').val() != null)
+                            var Genre = $('#ddlGenre').val().join(",");
+                        if ($('#ddlTitleType').val() != null)
+                            var TitleType = $('#ddlTitleType').val().join(",");
+
+                        var Display = $('#ddlDisplayItem').val();
+
+                        SearchTitles(Title, Language, StarCast, Genre, TitleType, Display);
                     }
                 },
                 error: function (er) {
@@ -510,7 +524,7 @@
                         <span class="pull-left">@objMessageKey.TotalRecords: </span>
                         <span class="pull-left" id="lblRecordCount"></span>
                         <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
-                        <input type="hidden" id="PageValidation" name="PageValidation" value="1" />
+                        <input type="hidden" id="PageValidation" name="PageValidation" value="0" />
                         <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
                         <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
                         <div id="Pagination" class="pagination">
