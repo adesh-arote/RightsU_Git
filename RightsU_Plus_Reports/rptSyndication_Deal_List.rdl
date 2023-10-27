@@ -139,6 +139,10 @@
           <DataField>Rights End Date</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
+        <Field Name="Rights_Expiry_Status">
+          <DataField>Rights Expiry Status</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
         <Field Name="Tentative">
           <DataField>Tentative</DataField>
           <rd:TypeName>System.String</rd:TypeName>
@@ -1468,9 +1472,7 @@ WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "", 
-CDate(IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "01-JAN-2000",Parameters!Start_Date.Value))
-)</Value>
+                                  <Value>=IIF(Isnothing(Parameters!Start_Date.Value), "", Parameters!Start_Date.Value)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1577,9 +1579,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "01-JAN-2000",Param
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "", 
-CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Parameters!End_Date.Value))
-)</Value>
+                                  <Value>=IIF(Isnothing(Parameters!End_Date.Value), "", Parameters!End_Date.Value)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1604,6 +1604,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -3429,7 +3430,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Rights Expiry Status</Value>
+                                  <Value>=First(Fields!Rights_Expiry_Status.Value, "DataSet1")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>12pt</FontSize>
@@ -4973,7 +4974,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Agreement_Date.Value</Value>
+                                  <Value>=format(CDate(Fields!Agreement_Date.Value),"dd/MM/yyyy")</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5580,7 +5581,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Rights_Start_Date.Value</Value>
+                                  <Value>=IIF(Isnothing(Fields!Rights_Start_Date.Value),"",format(CDate(Fields!Rights_Start_Date.Value),"dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5616,7 +5617,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Rights_End_Date.Value</Value>
+                                  <Value>=IIF(Isnothing(Fields!Rights_End_Date.Value),"",format(CDate(Fields!Rights_End_Date.Value),"dd/MM/yyyy"))</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5652,7 +5653,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(format(CDate(Fields!Rights_End_Date.Value), "dd/MM/yyyy") &lt; format(CDate(today), "dd/MM/yyyy"), "Expired", "Active")</Value>
+                                  <Value>=IIF(Isnothing(Fields!Rights_End_Date.Value),"",Fields!Rights_Expiry_Status.Value)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5676,7 +5677,6 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Paramet
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -7566,9 +7566,7 @@ IIf(Fields!Right_Status.Value = "C", "Complete",""))))</Value>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "", 
-CDate(IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "01-JAN-2000",Parameters!Start_Date.Value))
-)</Value>
+                                  <Value>=IIF(Isnothing(Parameters!Start_Date.Value), "NA", Parameters!Start_Date.Value)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -7677,9 +7675,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!Start_Date.Value), "01-JAN-2000",Param
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "", 
-CDate(IIF(String.IsNullOrEmpty(Parameters!End_Date.Value), "01-JAN-2000",Parameters!End_Date.Value))
-)</Value>
+                                  <Value>=IIF(Isnothing(Parameters!End_Date.Value), "NA", Parameters!End_Date.Value)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
