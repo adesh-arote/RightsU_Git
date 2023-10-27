@@ -1,6 +1,6 @@
-﻿namespace RightsU_LoadSheet_Export
+﻿namespace RightsU_Recommendation_Export
 {
-    partial class Service1
+    partial class RightsU_AL_Recommendation
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            this.ServiceName = "Service1";
+            // 
+            // RightsU_AL_Recommendation
+            // 
+            this.ServiceName = "RightsU_AL_Recommendation";
+
         }
 
         #endregion

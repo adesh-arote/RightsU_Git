@@ -23,11 +23,11 @@ using OfficeOpenXml.Style;
 
 namespace RightsU_Recommendation_Export
 {
-    public partial class Service1 : ServiceBase
+    public partial class RightsU_AL_Recommendation : ServiceBase
     {
         int TimeInSec = Convert.ToInt32(ConfigurationManager.AppSettings["TimeInSec"]);
         public Thread Worker = null;
-        public Service1()
+        public RightsU_AL_Recommendation()
         {
             InitializeComponent();
         }
@@ -48,9 +48,11 @@ namespace RightsU_Recommendation_Export
                 {
                     Error.WriteLog("EXE Started", includeTime: true, addSeperater: true);
                     RecommendationExport();
+
+                    Thread.Sleep(TimeInSec * 1000);
                 }
 
-                Thread.Sleep(TimeInSec * 1000);
+                
             }
             catch (Exception ex)
             {

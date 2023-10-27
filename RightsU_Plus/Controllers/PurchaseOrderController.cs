@@ -443,7 +443,9 @@ namespace RightsU_Plus.Controllers
             {
                 RecordStatus = PO.Status,
                 WorkflowStatus = PO.Workflow_Status,
-                ApprovalStatus = PO.Final_PO_Workflow_Status
+                ApprovalStatus = PO.Final_PO_Workflow_Status,
+                ShowHideButtons = PO.ShowHideButtons,
+                InsertedBy = PO.Inserted_By
             };
             return Json(obj);
         }
