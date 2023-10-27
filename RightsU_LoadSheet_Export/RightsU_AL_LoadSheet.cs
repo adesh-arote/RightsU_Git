@@ -20,11 +20,11 @@ using System.IO.Compression;
 
 namespace RightsU_LoadSheet_Export
 {
-    public partial class Service1 : ServiceBase
+    public partial class RightsU_AL_LoadSheet : ServiceBase
     {
         int TimeInSec = Convert.ToInt32(ConfigurationManager.AppSettings["TimeInSec"]);
         public Thread Worker = null;
-        public Service1()
+        public RightsU_AL_LoadSheet()
         {
             InitializeComponent();
         }

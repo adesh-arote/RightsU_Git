@@ -92,11 +92,11 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Repository\ExportToExcelRepositories.cs" />
-    <Compile Include="Service1.cs">
+    <Compile Include="RightsU_AL_LoadSheet.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Service1.Designer.cs">
-      <DependentUpon>Service1.cs</DependentUpon>
+    <Compile Include="RightsU_AL_LoadSheet.Designer.cs">
+      <DependentUpon>RightsU_AL_LoadSheet.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -107,6 +107,9 @@
   <ItemGroup>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RightsU_AL_LoadSheet.resx">
+      <DependentUpon>RightsU_AL_LoadSheet.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
