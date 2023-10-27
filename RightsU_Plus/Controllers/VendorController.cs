@@ -398,7 +398,7 @@ namespace RightsU_Plus.Controllers
                 //    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
                 //    ModuleName = "Customer";
                 //}
-                lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+                lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(w => w.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
                 ViewBag.ModuleName = ModuleName;
                 lstVendorContact_Searched = lstVendorContact = new Vendor_Contacts_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
