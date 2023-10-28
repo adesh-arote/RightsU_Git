@@ -19,8 +19,8 @@
     /*#ddl_Payment_Term_Code_chosen {
         width: 92% !important;
     }*/
-    ddl_Cost_Type_Code_0_chosen {
-        width: 60px;
+    ddl_Cost_Type_Code_0_chosen{
+        width:60px;
     }
 </style>
 <script>
@@ -75,7 +75,7 @@
         if ('@ViewBag.CommandName' == 'Edit') {
             CostTypeEDIT();
         }
-
+        
         //RemoveReqClass();
         tmp_ValidatePaymentTerm = 0;
         var SelectedddlFCostTypeCode = $('#ddl_Cost_Type_Code_' + strRowIndex).val();
@@ -111,7 +111,7 @@
             var ctCnt = 0;
         }
         else { var ctCnt = 1;}
-
+        
         CostType.each(function (ctrowId_Outer) {
             debugger;
             var CostTypeCode = 0, CostTypeAmt = 0;
@@ -360,7 +360,7 @@
                 error: function (result) {
                     alert('Error: ' + result.responseText);
                 }
-            });
+            });   
     }
 </script>
 <div class="paging_area clearfix">
@@ -402,6 +402,8 @@
                 int count = 0;
                 foreach (var item in Model)
                 {
+                    var Amount = Math.Round(decimal.Parse(item.Amount.ToString()), 2).ToString();
+                    var Percentage = Math.Round(decimal.Parse(item.Percentage.ToString()), 2).ToString();
                     count++;
                     <tr id="trList">
                         @{string dt = "";
@@ -422,11 +424,11 @@
                             <label for="Days_After" id="Days_After">@item.Days_After</label>
                         </td>
                         <td>
-
+                            
                             <div style="width:60%; float:left;"><label for="Cost_Type_Name" id="Cost_Type_Name">@item.Cost_Type_Name</label></div>
                             <div style="width:133px; float:right;">
-                                <label for="Amount" id="Amount">@string.Format("{0:#,0.00}", item.Amount)</label>&nbsp;&nbsp;&nbsp;
-                                <label for="Percentage" id="Percentage">@string.Format("{0:#,0.00}", @item.Percentage)</label>
+                                <label for="Amount" id="Amount">@Amount</label>&nbsp;&nbsp;&nbsp;
+                                <label for="Percentage" id="Percentage">@Percentage</label>
                                 <span id="percentageSign">%</span> &nbsp;&nbsp;
                             </div>
                         </td>
@@ -451,26 +453,26 @@
                 <td>
                     @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:230px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
                     @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForPaymentTermAdd + "~"))
-                    {
-                        <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
-                    }
+    {
+                <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
+}
                 </td>
                 <td>
                     @Html.TextBox("Days_After", "", new { @class = "numberDaysText", style = "width:40px;", maxlength = 3, @id = "txt_Days_After" })
                 </td>
-                @{
+                @{ 
                     var Cost_Type_Code = Model.Select(s => s.Cost_Type_Code).FirstOrDefault();
                     //var Cost_Type_Amount = Model.Select(s => s.Cost_Type_Amount).FirstOrDefault();
                 }
                 <td>
                     @*@Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:70px;", @class = "form_input chosen-select", onchange = "return validatePercent(txt_Percentage, this, ddl_Payment_Term_Code);", @id = "ddl_Cost_Type_Code_0" })*@
                     @*@Html.TextBox("Percentage", "", new { @class = "numberText", style = "width:60px;", Title = "Percentage", maxlength = 7, onchange = "return validatePercent(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })
-                        @Html.TextBox("Amount", "", new { @class = "numberText", style = "width:60px;", Title = "Amount", maxlength = 7, onchange = "return validatePercent(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
+        @Html.TextBox("Amount", "", new { @class = "numberText", style = "width:60px;", Title = "Amount", maxlength = 7, onchange = "return validatePercent(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
 
                     @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:70px;", @class = "form_input chosen-select", onchange = "return CostTypeADD()", @id = "ddl_Cost_Type_Code_0" })
-                    <input class="text text-right" id="txtAmountSR_0" type="text" title="Amount" value="" onkeyup="ValidPaymentTermOnAmount(0)" />
-                    <input class="text" id="txtPercentageSR_0" type="text" value="" title="Percentage" onkeyup="ValidPaymentTermOnPercentage(0)" />
-                    @Html.Hidden("hdn_CostTypeCode_0", Model.Select(s => s.Cost_Type_Code).FirstOrDefault())
+                    <input class="text text-right" id="txtAmountSR_0" type="text" title="Amount"  value="" onkeyup="ValidPaymentTermOnAmount(0)" />
+                    <input class="text" id="txtPercentageSR_0" type="text"  value="" title="Percentage" onkeyup="ValidPaymentTermOnPercentage(0)" />
+                    @Html.Hidden("hdn_CostTypeCode_0", Model.Select(s=>s.Cost_Type_Code).FirstOrDefault())
                     @Html.Hidden("hdn_BudgetedAmt_0")
                 </td>
                 <td>
@@ -489,37 +491,39 @@
             int i = 1;
             foreach (var item in Model)
             {
+                var Amount = Math.Round(decimal.Parse(item.Amount.ToString()), 2).ToString();
+                var Percentage = Math.Round(decimal.Parse(item.Percentage.ToString()), 2).ToString();
                 count++;
                 if (ViewBag.Acq_Deal_Payment_Terms_Code == item.Acq_Deal_Payment_Terms_Code)
                 {
                     if (ViewBag.CommandName == "Edit")
                     {
                         <tr>
-                            @{string dt = "";
-                                if (Convert.ToDateTime(item.Due_Date) == DateTime.MinValue)
-                                {
-                                    dt = "";
-                                }
-                                else
-                                {
-                                    dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
-                                }}
+                                        @{string dt = "";
+                                        if (Convert.ToDateTime(item.Due_Date) == DateTime.MinValue)
+                                        {
+                                            dt = "";
+                                        }
+                                        else
+                                        {
+                                            dt = Convert.ToDateTime(item.Due_Date).ToString("dd/MM/yyyy");
+                                        }}
                             <td>
                                 @Html.Hidden("Acq_Deal_Payment_Terms_Code", item.Acq_Deal_Payment_Terms_Code)
                                 @Html.DropDownList("Payment_Term_Code", (List<SelectListItem>)ViewBag.Payment_Terms_List, new { style = "width:230px;", @class = "form_input chosen-select", @id = "ddl_Payment_Term_Code" })
                                 @if (ViewBag.UserModuleRights.Contains("~" + UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForPaymentTermAdd + "~"))
-                                {
-                                    <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
-                                }
+    {
+                            <a class="red_icon glyphicon glyphicon-plus" title="@objMessageKey.AddProgram" onclick="AddPaymentTerm();" />
+}
                             </td>
                             <td>
                                 @Html.TextBox("Days_After", item.Days_After, new { @class = "smallTextBox numberDaysText", maxlength = 3, @id = "txt_Days_After" })
                             </td>
                             <td>
-                                @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_" + i })
+                                @Html.DropDownList("Cost_Type_Code", (List<SelectListItem>)ViewBag.Cost_Type_List, new { style = "width:200px;", @class = "form_input chosen-select", onchange = "return CostTypeEDIT()", @id = "ddl_Cost_Type_Code_"+ i })
                                 @*@Html.TextBox("Percentage", item.Percentage, new { @class = "numberText", @style = "width:60px;", @maxlength = 7, @onchange = "return validatePercentOnEdit(this, ddl_Cost_Type_Code, ddl_Payment_Term_Code);", @id = "txt_Percentage" })*@
-                                @Html.TextBox("Amount", string.Format("{0:0.00}", item.Amount), new { @id = "txtAmountSR_" + i, @class = "text-right", @title = "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
-                                @Html.TextBox("Percentage", string.Format("{0:0.00}", item.Percentage), new { @id = "txtPercentageSR_" + i, @title = "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
+                                @Html.TextBox("Amount", Amount, new { @id = "txtAmountSR_" + i, @class = "text-right",@title= "Amount", @onkeyup = "ValidPaymentTermOnAmount(" + i + ")" })
+                                @Html.TextBox("Percentage", Percentage, new { @id = "txtPercentageSR_" + i, @title = "Percentage", @onkeyup = "ValidPaymentTermOnPercentage(" + i + ")" })
                                 @Html.Hidden("hdn_CostTypeCode_" + i, item.Cost_Type_Code)
                                 @Html.Hidden("hdn_BudgetedAmt_" + i)
                             </td>
@@ -555,15 +559,15 @@
                             <label for="Days_After" id="Days_After_Edit">@item.Days_After</label>
                         </td>
                         <td>
-
+                            
                             <div class="divBlock">
                                 <div style="width:50%; float:left;">
                                     <label for="Cost_Type_Name" id="Cost_Type_Name_Edit">@item.Cost_Type_Name</label>
                                     <label for="Cost_Type_Code" style="display: none;" id="Cost_Type_Code_Edit">@item.Cost_Type_Code</label>
                                 </div>
                                 <div style="width:135px; float:right;">
-                                    <label for="Amount" id="Amount_Edit">@string.Format("{0:#,0.00}", @item.Amount)</label>
-                                    <label for="Percentage" id="Percentage_Edit">@string.Format("{0:#,0.00}", @item.Percentage)</label>
+                                    <label for="Amount" id="Amount_Edit">@Amount</label>
+                                    <label for="Percentage" id="Percentage_Edit">@Percentage</label>
                                     <span id="percentageSign_Edit">%</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                 </div>
 

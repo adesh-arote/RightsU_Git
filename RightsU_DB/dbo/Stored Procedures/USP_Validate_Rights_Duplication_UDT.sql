@@ -16,6 +16,8 @@ As
 -- Description:	Checks If User is trying to enter a Duplicate Deal
 -- =============================================
 Begin
+Declare @Loglavel int  
+ if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_Validate_Rights_Duplication_UDT]', 'Step 1', 0, 'Started Procedure', 0, ''
    SET NOCOUNT ON
    DECLARE @RC int 
    
@@ -61,5 +63,6 @@ Begin
 
 	  
  -- END
-  
+    
+ if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_Validate_Rights_Duplication_UDT]', 'Step 2', 0, 'Procedure Excuting Completed', 0, ''
 End

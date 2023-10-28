@@ -6,17 +6,16 @@
 );
 
 
-GO
-CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Rights_Platform]
-    ON [dbo].[Acq_Deal_Rights_Platform]([Acq_Deal_Rights_Code] ASC);
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Rights_Platform_1]
-    ON [dbo].[Acq_Deal_Rights_Platform]([Platform_Code] ASC);
+
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_Acq_Deal_Rights_Platform_2]
-    ON [dbo].[Acq_Deal_Rights_Platform]([Acq_Deal_Rights_Code] ASC, [Platform_Code] ASC);
+
+
+
+GO
+
 

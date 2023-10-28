@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_UPDATE_SYN_DEAL]
+﻿CREATE PROCEDURE [dbo].[USP_UPDATE_SYN_DEAL]
 (
     @Syn_Deal_Code INT ,
 	@Deal_Type_Code INT ,
@@ -41,7 +40,8 @@ CREATE PROCEDURE [dbo].[USP_UPDATE_SYN_DEAL]
 	@Last_Updated_Time DATETIME ,
 	@Last_Action_By INT ,
 	@Deal_Segment_Code INT,
-	@Revenue_Vertical_Code INT
+	@Revenue_Vertical_Code INT,
+	@Material_Remarks NVARCHAR(4000)
 )
 AS
 -- =============================================
@@ -50,46 +50,54 @@ AS
 -- Description:	Updates SYN Deal Call From EF Table Mapping
 -- =============================================
 BEGIN
-UPDATE [Syn_Deal]
-   SET [Deal_Type_Code] = @Deal_Type_Code
-      ,[Business_Unit_Code] = @Business_Unit_Code
-      ,[Other_Deal] = @Other_Deal
-      ,[Agreement_No] = @Agreement_No
-      ,[Version] = @Version
-      ,[Agreement_Date] = @Agreement_Date
-      ,[Deal_Description] = @Deal_Description
-      ,[Status] = @Status
-      ,[Total_Sale] = @Total_Sale
-      ,[Year_Type] = @Year_Type
-      ,[Customer_Type] = @Customer_Type
-      ,[Vendor_Code] = @Vendor_Code
-      ,[Vendor_Contact_Code] = @Vendor_Contact_Code
-      ,[Sales_Agent_Code] = @Sales_Agent_Code
-      ,[Sales_Agent_Contact_Code] = @Sales_Agent_Contact_Code
-      ,[Entity_Code] = @Entity_Code
-      ,[Currency_Code] = @Currency_Code
-      ,[Exchange_Rate] = @Exchange_Rate
-      ,[Ref_No] = @Ref_No
-      ,[Attach_Workflow] = @Attach_Workflow
-      ,[Deal_Workflow_Status] = @Deal_Workflow_Status
-      ,[Work_Flow_Code] = @Work_Flow_Code
-      ,[Is_Completed] = @Is_Completed
-      ,[Category_Code] = @Category_Code
-      ,[Parent_Syn_Deal_Code] = @Parent_Syn_Deal_Code
-      ,[Is_Migrated] = @Is_Migrated
-      ,[Payment_Terms_Conditions] = @Payment_Terms_Conditions
-      ,[Deal_Tag_Code] = @Deal_Tag_Code
-      ,[Ref_BMS_Code] = @Ref_BMS_Code
-      ,[Remarks] = @Remarks
-      ,[Rights_Remarks] = @Rights_Remarks
-      ,[Payment_Remarks] = @Payment_Remarks
-      ,[Is_Active] = @Is_Active
-      --,[Inserted_On] = @Inserted_On
-      --,[Inserted_By] = @Inserted_By
-      ,[Lock_Time] = @Lock_Time
-      ,[Last_Updated_Time] = @Last_Updated_Time
-      ,[Last_Action_By] = @Last_Action_By
-	  ,[Deal_Segment_Code] = @Deal_Segment_Code
-	  ,[Revenue_Vertical_Code] = @Revenue_Vertical_Code
-  WHERE Syn_Deal_Code = @Syn_Deal_Code
+	Declare @Loglevel int;
+
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_UPDATE_SYN_DEAL]', 'Step 1', 0, 'Started Procedure', 0, '' 
+		UPDATE [Syn_Deal]
+		   SET [Deal_Type_Code] = @Deal_Type_Code
+			  ,[Business_Unit_Code] = @Business_Unit_Code
+			  ,[Other_Deal] = @Other_Deal
+			  ,[Agreement_No] = @Agreement_No
+			  ,[Version] = @Version
+			  ,[Agreement_Date] = @Agreement_Date
+			  ,[Deal_Description] = @Deal_Description
+			  ,[Status] = @Status
+			  ,[Total_Sale] = @Total_Sale
+			  ,[Year_Type] = @Year_Type
+			  ,[Customer_Type] = @Customer_Type
+			  ,[Vendor_Code] = @Vendor_Code
+			  ,[Vendor_Contact_Code] = @Vendor_Contact_Code
+			  ,[Sales_Agent_Code] = @Sales_Agent_Code
+			  ,[Sales_Agent_Contact_Code] = @Sales_Agent_Contact_Code
+			  ,[Entity_Code] = @Entity_Code
+			  ,[Currency_Code] = @Currency_Code
+			  ,[Exchange_Rate] = @Exchange_Rate
+			  ,[Ref_No] = @Ref_No
+			  ,[Attach_Workflow] = @Attach_Workflow
+			  ,[Deal_Workflow_Status] = @Deal_Workflow_Status
+			  ,[Work_Flow_Code] = @Work_Flow_Code
+			  ,[Is_Completed] = @Is_Completed
+			  ,[Category_Code] = @Category_Code
+			  ,[Parent_Syn_Deal_Code] = @Parent_Syn_Deal_Code
+			  ,[Is_Migrated] = @Is_Migrated
+			  ,[Payment_Terms_Conditions] = @Payment_Terms_Conditions
+			  ,[Deal_Tag_Code] = @Deal_Tag_Code
+			  ,[Ref_BMS_Code] = @Ref_BMS_Code
+			  ,[Remarks] = @Remarks
+			  ,[Rights_Remarks] = @Rights_Remarks
+			  ,[Payment_Remarks] = @Payment_Remarks
+			  ,[Is_Active] = @Is_Active
+			  --,[Inserted_On] = @Inserted_On
+			  --,[Inserted_By] = @Inserted_By
+			  ,[Lock_Time] = @Lock_Time
+			  ,[Last_Updated_Time] = @Last_Updated_Time
+			  ,[Last_Action_By] = @Last_Action_By
+			  ,[Deal_Segment_Code] = @Deal_Segment_Code
+			  ,[Revenue_Vertical_Code] = @Revenue_Vertical_Code
+			  ,[Material_Remarks] = @Material_Remarks
+		  WHERE Syn_Deal_Code = @Syn_Deal_Code
+  
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_UPDATE_SYN_DEAL]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 END

@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Generate_Avail_Data]
+﻿CREATE PROCEDURE [dbo].[USP_Generate_Avail_Data]
 AS
 -- =============================================
 -- Author:		Abhaysingh N. Rajpurohit
@@ -7,12 +6,11 @@ AS
 -- Description:	This procedure for Generate Available Data by executing another USP 'USP_Avail_Acq_Cache' OR 'USP_Avail_Syn_Cache'
 -- =============================================
 BEGIN
+	DECLARE @Record_Code INT, @Deal_Type CHAR(1), @Is_Amend CHAR(1),@Deal_Right_Code INT
+	DECLARE @Approved_Deal_Code INT = 0, @Title_Code INT = 0
 
 	IF OBJECT_ID('tempdb..#TempTitleAvail') IS NOT NULL DROP TABLE #TempTitleAvail
 
-	DECLARE @Record_Code INT, @Deal_Type CHAR(1), @Is_Amend CHAR(1),@Deal_Right_Code INT
-	DECLARE @Approved_Deal_Code INT = 0, @Title_Code INT = 0
-	
 	CREATE TABLE #TempTitleAvail
 	(
 		Title_Code INT
@@ -76,6 +74,7 @@ BEGIN
 		)
 	)
 
+	
 	SELECT TOP 1 @Approved_Deal_Code = Approved_Deal_Process_Code FROM Approved_Deal_Process WHERE ISNULL(Deal_Status, 'P') = 'P' ORDER BY Deal_Type ASC
 	WHILE(@Approved_Deal_Code > 0)
 	BEGIN
@@ -114,15 +113,11 @@ BEGIN
 	FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code
 	WHILE (@@FETCH_STATUS = 0)
 	BEGIN
-
 		EXEC [dbo].[USPGenerateAvailTitleData] @Title_Code
-
 		FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code	
 	END
 	CLOSE CurRefreshTitleAvail
 	DEALLOCATE CurRefreshTitleAvail
-
 	IF OBJECT_ID('tempdb..#TempTitleAvail') IS NOT NULL DROP TABLE #TempTitleAvail
-
 END
 

@@ -108,7 +108,7 @@ namespace RightsU_Plus.Controllers
             {
                 ViewBag.CommandName = "";
             }
-            if(Convert.ToInt32(Material_Quantity_Default_Value) > 0)
+            if (Convert.ToInt32(Material_Quantity_Default_Value) > 0)
             {
                 ViewBag.MaterialQtyDefaultValue = Material_Quantity_Default_Value;
             }
@@ -182,7 +182,7 @@ namespace RightsU_Plus.Controllers
             }
             return BindGridAcqMaterial(txtPageSize, pageNo);
         }
-        
+
         public JsonResult ChangeTab(string hdnMaterialRemark, string hdnTabName, string hdnReopenMode = "")
         {
             string msg = "", mode = "", status = "S";
@@ -200,8 +200,8 @@ namespace RightsU_Plus.Controllers
             }
 
             if (objDeal_Schema.Mode != "V")
-            SaveRemark(hdnMaterialRemark);              
-            
+                SaveRemark(hdnMaterialRemark);
+
             if (hdnTabName == "")
             {
                 Dictionary<string, string> obj_Dic = new Dictionary<string, string>();
@@ -224,7 +224,7 @@ namespace RightsU_Plus.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult BindGridAcqMaterial(int txtPageSize, int page_No=0)
+        public PartialViewResult BindGridAcqMaterial(int txtPageSize, int page_No = 0)
         {
             int pageSize;
             if (txtPageSize != null)
@@ -285,9 +285,13 @@ namespace RightsU_Plus.Controllers
                 if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
                 {
                     Title_List objTitle_List = objDeal_Schema.Title_List.Where(x => x.Acq_Deal_Movie_Code == Title_Code).FirstOrDefault();
-                    objAcq_Deal_Material.Title_Code = objTitle_List.Title_Code;
-                    objAcq_Deal_Material.Episode_From = objTitle_List.Episode_From;
-                    objAcq_Deal_Material.Episode_To = objTitle_List.Episode_To;
+                    if (objTitle_List != null)
+                    {
+                        objAcq_Deal_Material.Title_Code = objTitle_List.Title_Code;
+                        objAcq_Deal_Material.Episode_From = objTitle_List.Episode_From;
+                        objAcq_Deal_Material.Episode_To = objTitle_List.Episode_To;
+                    }
+
                 }
                 else
                 {
@@ -312,9 +316,24 @@ namespace RightsU_Plus.Controllers
 
                     foreach (var titleCode in lstTitleCode)
                     {
-                        objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
-                        objAcq_Deal_Material.Episode_From = 1;
-                        objAcq_Deal_Material.Episode_To = 1;
+                        if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                        {
+                            Acq_Deal_Movie objAcq_Deal_Movie = new Acq_Deal_Movie();
+                            int TitleCode = Convert.ToInt32(titleCode);
+
+                            objAcq_Deal_Movie = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == TitleCode).FirstOrDefault();
+                            objAcq_Deal_Material.Title_Code = objAcq_Deal_Movie.Title_Code;
+                            objAcq_Deal_Material.Episode_From = objAcq_Deal_Movie.Episode_Starts_From;
+                            objAcq_Deal_Material.Episode_To = objAcq_Deal_Movie.Episode_End_To;
+
+                        }
+                        else
+                        {
+                            objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                            objAcq_Deal_Material.Episode_From = 1;
+                            objAcq_Deal_Material.Episode_To = 1;
+                        }
+
 
                         if (!CheckDuplicateMaterial(objAcq_Deal_Material, "Add", lstTitleName[i]))
                         {
@@ -331,10 +350,23 @@ namespace RightsU_Plus.Controllers
                     i = 0;
                     foreach (var titleCode in lstTitleCode)
                     {
+                        if (objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Program || objDeal_Schema.Deal_Type_Condition == GlobalParams.Deal_Music)
+                        {
+                            Acq_Deal_Movie objAcq_Deal_Movie = new Acq_Deal_Movie();
+                            int TitleCode = Convert.ToInt32(titleCode);
 
-                        objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
-                        objAcq_Deal_Material.Episode_From = 1;
-                        objAcq_Deal_Material.Episode_To = 1;
+                            objAcq_Deal_Movie = new Acq_Deal_Movie_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Movie_Code == TitleCode).FirstOrDefault();
+                            objAcq_Deal_Material.Title_Code = objAcq_Deal_Movie.Title_Code;
+                            objAcq_Deal_Material.Episode_From = objAcq_Deal_Movie.Episode_Starts_From;
+                            objAcq_Deal_Material.Episode_To = objAcq_Deal_Movie.Episode_End_To;
+
+                        }
+                        else
+                        {
+                            objAcq_Deal_Material.Title_Code = Convert.ToInt32(titleCode);
+                            objAcq_Deal_Material.Episode_From = 1;
+                            objAcq_Deal_Material.Episode_To = 1;
+                        }
 
                         if (CheckDuplicateMaterial(objAcq_Deal_Material, "Add", lstTitleName[i]))
                         {

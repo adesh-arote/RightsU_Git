@@ -14,6 +14,9 @@
     [validation]                      NVARCHAR (MAX) NULL,
     [Is_Allowed_For_Resolve_Conflict] CHAR (1)       NULL,
     [ShortName]                       NVARCHAR (MAX) NULL,
+    [Import_Type]                     CHAR (1)       NULL,
     PRIMARY KEY CLUSTERED ([DM_Title_Import_Utility_Code] ASC)
 );
+
+
 

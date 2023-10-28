@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[RUSQLLog] (
+    [UTOLogId]              BIGINT        IDENTITY (1, 1) NOT NULL,
+    [ApplicationId]         INT           NULL,
+    [RequestId]             VARCHAR (50)  NULL,
+    [UserId]                INT           NULL,
+    [RequestUri]            VARCHAR (200) NULL,
+    [RequestMethod]         VARCHAR (200) NULL,
+    [Method]                VARCHAR (200) NULL,
+    [IsSuccess]             BIT           NULL,
+    [TimeTaken]             FLOAT (53)    NULL,
+    [RequestContent]        TEXT          NULL,
+    [RequestLength]         INT           NULL,
+    [RequestDateTime]       DATETIME      NULL,
+    [ResponseContent]       VARCHAR (MAX) NULL,
+    [ResponseLength]        INT           NULL,
+    [ResponseDateTime]      DATETIME      NULL,
+    [HttpStatusCode]        INT           NULL,
+    [HttpStatusDescription] VARCHAR (MAX) NULL,
+    [AuthenticationKey]     VARCHAR (MAX) NULL,
+    [UserAgent]             VARCHAR (200) NULL,
+    [ServerName]            VARCHAR (200) NULL,
+    [ClientIpAddress]       VARCHAR (100) NULL,
+    CONSTRAINT [PK_UTOLog] PRIMARY KEY CLUSTERED ([UTOLogId] ASC)
+);
+

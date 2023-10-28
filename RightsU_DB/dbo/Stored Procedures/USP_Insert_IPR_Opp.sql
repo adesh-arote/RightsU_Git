@@ -37,84 +37,91 @@ AS
 -- Description:	Insert IPR_Opp Data Calling From EF
 -- =============================================
 BEGIN	
-	SET NOCOUNT ON;
-	SET FMTONLY OFF;
+	Declare @Loglevel  int;
 
-	INSERT INTO IPR_Opp
-	( 
-		Version, 
-		IPR_For, 
-		Opp_No, 
-		IPR_Rep_Code, 
-		Party_Name, 
-		Trademark, 
-		Application_No, 
-		IPR_Class_Code, 
-		IPR_App_Status_Code, 
-		Journal_No, 
-		Publication_Date, 
-		Page_No, 
-		Date_Counter_Statement, 
-		Date_Evidence_UR50, 
-		Date_Evidence_UR51, 
-		Date_Opposition_Notice, 
-		Date_Rebuttal_UR52, 
-		Deadline_Counter_Statement, 
-		Deadline_Evidence_UR50, 
-		Deadline_Evidence_UR51, 
-		Deadline_Opposition_Notice, 
-		Deadline_Rebuttal_UR52, 
-		Order_Date, 
-		Outcomes, 
-		Workflow_Status,
-		Comments, 
-		Creation_Date, 
-		Created_By,
-		IPR_Opp_Status_Code
-	)
-	Select   
-	@Version, 
-	@IPR_For, 
-	@Opp_No, 
-	@IPR_Rep_Code, 
-	@Party_Name, 
-	@Trademark, 
-	@Application_No, 
-	@IPR_Class_Code, 
-	@IPR_App_Status_Code, 
-	@Journal_No, 
-	@Publication_Date, 
-	@Page_No, 
-	@Date_Counter_Statement, 
-	@Date_Evidence_UR50, 
-	@Date_Evidence_UR51, 
-	@Date_Opposition_Notice, 
-	@Date_Rebuttal_UR52, 
-	@Deadline_Counter_Statement, 
-	@Deadline_Evidence_UR50, 
-	@Deadline_Evidence_UR51, 
-	@Deadline_Opposition_Notice, 
-	@Deadline_Rebuttal_UR52, 
-	@Order_Date, 
-	@Outcomes, 
-	@Workflow_Status,
-	@Comments, 
-	@Creation_Date, 
-	@Created_By,
-	@IPR_Opp_Status_Code
+	select @Loglevel  = Parameter_Value from System_Parameter_New where Parameter_Name='Loglevel '
 
-	Declare @IPR_Opp_Code INT
-	SELECT @IPR_Opp_Code = IPR_Opp_Code
-	FROM IPR_Opp WHERE IPR_Opp_Code = SCOPE_IDENTITY()
+	if(@Loglevel  < 2)Exec [USPLogSQLSteps] '[USP_Insert_IPR_Opp]', 'Step 1', 0, 'Started Procedure', 0, ''
+		SET NOCOUNT ON;
+		SET FMTONLY OFF;
+
+		INSERT INTO IPR_Opp
+		( 
+			Version, 
+			IPR_For, 
+			Opp_No, 
+			IPR_Rep_Code, 
+			Party_Name, 
+			Trademark, 
+			Application_No, 
+			IPR_Class_Code, 
+			IPR_App_Status_Code, 
+			Journal_No, 
+			Publication_Date, 
+			Page_No, 
+			Date_Counter_Statement, 
+			Date_Evidence_UR50, 
+			Date_Evidence_UR51, 
+			Date_Opposition_Notice, 
+			Date_Rebuttal_UR52, 
+			Deadline_Counter_Statement, 
+			Deadline_Evidence_UR50, 
+			Deadline_Evidence_UR51, 
+			Deadline_Opposition_Notice, 
+			Deadline_Rebuttal_UR52, 
+			Order_Date, 
+			Outcomes, 
+			Workflow_Status,
+			Comments, 
+			Creation_Date, 
+			Created_By,
+			IPR_Opp_Status_Code
+		)
+		Select   
+		@Version, 
+		@IPR_For, 
+		@Opp_No, 
+		@IPR_Rep_Code, 
+		@Party_Name, 
+		@Trademark, 
+		@Application_No, 
+		@IPR_Class_Code, 
+		@IPR_App_Status_Code, 
+		@Journal_No, 
+		@Publication_Date, 
+		@Page_No, 
+		@Date_Counter_Statement, 
+		@Date_Evidence_UR50, 
+		@Date_Evidence_UR51, 
+		@Date_Opposition_Notice, 
+		@Date_Rebuttal_UR52, 
+		@Deadline_Counter_Statement, 
+		@Deadline_Evidence_UR50, 
+		@Deadline_Evidence_UR51, 
+		@Deadline_Opposition_Notice, 
+		@Deadline_Rebuttal_UR52, 
+		@Order_Date, 
+		@Outcomes, 
+		@Workflow_Status,
+		@Comments, 
+		@Creation_Date, 
+		@Created_By,
+		@IPR_Opp_Status_Code
+
+		Declare @IPR_Opp_Code INT
+		SELECT @IPR_Opp_Code = IPR_Opp_Code
+		FROM IPR_Opp (NOLOCK) WHERE IPR_Opp_Code = SCOPE_IDENTITY()
 		
-	IF(@Workflow_Status = 'A')
-	BEGIN
+		IF(@Workflow_Status = 'A')
+		BEGIN
+			INSERT INTO IPR_Opp_Status_History(IPR_Opp_Code,IPR_Status,Changed_On,Changed_By)
+			VALUES(@IPR_Opp_Code,'N',GETDATE(),@Created_By)
+		END
+
 		INSERT INTO IPR_Opp_Status_History(IPR_Opp_Code,IPR_Status,Changed_On,Changed_By)
-		VALUES(@IPR_Opp_Code,'N',GETDATE(),@Created_By)
-	END
-
-	INSERT INTO IPR_Opp_Status_History(IPR_Opp_Code,IPR_Status,Changed_On,Changed_By)
-	VALUES(@IPR_Opp_Code,@Workflow_Status,GETDATE(),@Created_By)
+		VALUES(@IPR_Opp_Code,@Workflow_Status,GETDATE(),@Created_By)
 		
-	Select @IPR_Opp_Code IPR_Opp_Code
+		Select @IPR_Opp_Code IPR_Opp_Code
+	 
+	if(@Loglevel  < 2)Exec [USPLogSQLSteps] '[USP_Insert_IPR_Opp]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

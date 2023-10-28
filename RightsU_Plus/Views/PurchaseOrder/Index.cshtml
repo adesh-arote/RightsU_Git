@@ -1,4 +1,5 @@
 ﻿@using UTOFrameWork.FrameworkClasses
+@using RightsU_Entities;
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     MessageKey objMessageKey = new MessageKey();
@@ -14,6 +15,7 @@
     }
 
     string DownloadPath = @System.Configuration.ConfigurationManager.AppSettings["DownloadReportPath"];
+    RightsU_Entities.User objLoginUser = ((RightsU_Entities.RightsU_Session)Session[RightsU_Entities.RightsU_Session.SESS_KEY]).Objuser;
 }
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
 
@@ -294,7 +296,7 @@
     //}
 
     function CheckPendingStatus() {
-        //debugger;
+        debugger;
         var pendingRecord = 0;
         $(".deal_action").each(function () {
             var Sibling = $(this).attr('class').split(' ')[2];
@@ -310,7 +312,7 @@
                 if (isNaN(Sibling1.substr(Sibling1.length - 1)))
                     var ProposalCode = Sibling1.slice(13, Sibling1.length - 1);
 
-                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' ) {
+                if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P' || SiblingClass.substr(SiblingClass.length - 1) == 'C') {
                     $.ajax({
                         type: "POST",
                         url: URL_GetPurchaseOrderStatus,
@@ -322,7 +324,7 @@
                             PurchaseOrderCode: PurchaseOrderCode
                         }),
                         success: function (result) {
-                            debugger
+                            debugger;
                             if (result == "true") {
                                 redirectToLogin();
                             }
@@ -330,35 +332,56 @@
                                 $("#imgLoadingPO_" + PurchaseOrderCode).css("display", '');
                                 //pendingRecord++;
 
-                                var status = '<span>In Progress</span>'
+                                var ProcessStatus = '<span>In Process</span>'
 
-                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
-                                }
-                                else {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
-                                }                                                         
+                                $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ProcessStatus);
+
                             }
                             else if (result.RecordStatus == "C") {
                                 $("#imgLoadingPO_" + PurchaseOrderCode).css("display", 'none');
-                                $('.' + SiblingClass).empty();
+                                //$('.' + SiblingClass).empty();
+                                var a = "";
 
-                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ');"</a>' +
-                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
-                                $('.' + SiblingClass).append(a);
-
-                                var status = '<span>Success</span>'
-
-                                if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'I').append(status);
+                                if (result.WorkflowStatus == 'W')
+                                {
+                                    if (result.ShowHideButtons.includes(@Convert.ToString(GlobalParams.RightCodeForApprove)) && result.ShowHideButtons.includes(@Convert.ToString(GlobalParams.RightCodeForDealReject))) {
+                                        $('.' + SiblingClass).empty();
+                                        a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
+                                            '<a title="Approve/Reject" class="glyphicon glyphicon-check" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ' ,\'ARView\');"></a>';
+                                        $('.' + SiblingClass).append(a);
+                                    }
+                                    else {
+                                        $("#imgLoadingPO_" + PurchaseOrderCode).css("display", '');
+                                    }
                                 }
-                                else {
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').empty();
-                                    $('.clsTdStatusPO_' + PurchaseOrderCode + 'P').append(status);
-                                }                               
+                                if (result.WorkflowStatus == 'A') {
+
+                                    $('.' + SiblingClass).empty();
+
+                                    a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
+                                        '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
+                                    $('.' + SiblingClass).append(a);
+                                }
+                                if (result.WorkflowStatus == 'R') {
+
+                                    $('.' + SiblingClass).empty();
+
+                                    if (result.InsertedBy == @objLoginUser.Users_Code) {
+                                        a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
+                                            '<a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup(' + PurchaseOrderCode + ');"></a>';
+                                        $('.' + SiblingClass).append(a);
+                                    }
+                                    else {
+                                        a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>';
+                                        $('.' + SiblingClass).append(a);
+                                    }
+
+                                }
+                                var ApprovalStatus = '<span>' + result.ApprovalStatus + '</span>'
+
+                                    $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ApprovalStatus);
 
                                 //initializeTooltip();
                             }
@@ -393,9 +416,12 @@
                 if (result.Status == "S") {
                     SearchPOList("");
                 }
+                else if (result.Status == "I") {
+                    showAlert('I', result.Message);
+                }
                 else {
                     showAlert('E', result.Message);
-                }     
+                }
             },
             error: function (result) {
                 alert('Error: ' + result.responseText);
@@ -403,6 +429,100 @@
         });
     }
 
+</script>
+
+<script>
+    //function CheckPendingStatus() {
+    //    //debugger;
+    //    var pendingRecord = 0;
+    //    $(".deal_action").each(function () {
+    //        var Sibling = $(this).attr('class').split(' ')[2];
+    //        var Sibling1 = $(this).attr('class').split(' ')[3];
+
+    //        var SiblingClass = $(this).attr('class').split(' ')[1];
+    //        if (isNaN(SiblingClass.substr(SiblingClass.length - 1))) {
+    //            var PurchaseOrderCode = SiblingClass.slice(12, SiblingClass.length - 1);
+
+    //            if (isNaN(Sibling.substr(Sibling.length - 1)))
+    //                var BookingSheetCode = Sibling.slice(13, Sibling.length - 1);
+
+    //            if (isNaN(Sibling1.substr(Sibling1.length - 1)))
+    //                var ProposalCode = Sibling1.slice(13, Sibling1.length - 1);
+
+    //            if (SiblingClass.substr(SiblingClass.length - 1) == 'I' || SiblingClass.substr(SiblingClass.length - 1) == 'P') {
+    //                $.ajax({
+    //                    type: "POST",
+    //                    url: URL_GetPurchaseOrderStatus,
+    //                    traditional: true,
+    //                    enctype: 'multipart/form-data',
+    //                    contentType: "application/json; charset=utf-8",
+    //                    async: false,
+    //                    data: JSON.stringify({
+    //                        PurchaseOrderCode: PurchaseOrderCode
+    //                    }),
+    //                    success: function (result) {
+    //                        debugger
+    //                        if (result == "true") {
+    //                            redirectToLogin();
+    //                        }
+    //                        if (result.RecordStatus == "P" || result.RecordStatus == "I") {
+    //                            $("#imgLoadingPO_" + PurchaseOrderCode).css("display", '');
+    //                            //pendingRecord++;
+
+    //                            var ProcessStatus = '<span>In Progress</span>'
+    //                            var ApprovalStatus = '<span>' + result.ApprovalStatus + '</span>'
+
+    //                            if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ProcessStatus);
+    //                            }
+    //                            else {
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ApprovalStatus);
+    //                            }
+    //                        }
+    //                        else if (result.RecordStatus == "C") {
+    //                            $("#imgLoadingPO_" + PurchaseOrderCode).css("display", 'none');
+    //                            $('.' + SiblingClass).empty();
+
+    //                            if (result.WorkflowStatus == 'A') {
+    //                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
+    //                                    '<a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor: pointer;" onclick="RefreshPoList(' + PurchaseOrderCode + ',' + BookingSheetCode + ');"></a>';
+    //                                $('.' + SiblingClass).append(a);
+
+    //                            }
+    //                            else {
+    //                                var a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
+    //                                    '<a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup(' + PurchaseOrderCode + ');"></a>';
+    //                                $('.' + SiblingClass).append(a);
+
+    //                            }
+    //                            var ApprovalStatus = '<span>' + result.ApprovalStatus + '</span>'
+
+    //                            if (SiblingClass.substr(SiblingClass.length - 1) == 'I') {
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ApprovalStatus);
+    //                            }
+    //                            else {
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).empty();
+    //                                $('.clsTdStatusPO_' + PurchaseOrderCode).append(ApprovalStatus);
+    //                            }
+
+    //                            //initializeTooltip();
+    //                        }
+    //                    },
+    //                    error: function (result) {
+    //                    }
+    //                });
+    //            }
+    //            initializeTooltip();
+    //        }
+    //    });
+
+    //    //if (pendingRecord > 0) {
+    //    setTimeout(CheckPendingStatus, 5000);
+    //    //}
+    //}
 </script>
 
 <div class="main_section">

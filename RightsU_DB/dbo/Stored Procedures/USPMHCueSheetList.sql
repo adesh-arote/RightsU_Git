@@ -11,69 +11,73 @@ AS
 -- Description: 
 -- =============================================
 BEGIN  
-	SET NOCOUNT ON
-	IF(OBJECT_ID('TEMPDB..#TempRightsPagingData') IS NOT NULL)
-		DROP TABLE #TempRightsPagingData
+	Declare @Loglevel int;
 
-	CREATE TABLE #TempRightsPagingData
-	(
-		Row_No INT IDENTITY(1,1),
-		MHCueSheetCode INT,
-		RequestID NVARCHAR(40),
-		[FileName] NVARCHAR(MAX),
-		NoOfRecords INT,
-		UploadStatus NVARCHAR(50),
-		CreatedBy NVARCHAR(500),
-		CreatedOn DATETIME,
-		ApprovedBy NVARCHAR(500),
-		ApprovedOn DATETIME,
-		SpecialInstruction NVARCHAR(MAX)
-	)
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
 
-	IF(@PageNo = 0)
-        SET @PageNo = 1
+	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPMHCueSheetList]', 'Step 1', 0, 'Started Procedure', 0, ''
+		SET NOCOUNT ON
+		IF(OBJECT_ID('TEMPDB..#TempRightsPagingData') IS NOT NULL)
+			DROP TABLE #TempRightsPagingData
 
-	INSERT INTO #TempRightsPagingData
-	(
-		MHCueSheetCode, RequestID, [FileName], NoOfRecords, UploadStatus, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, SpecialInstruction
-	)
-	SELECT DISTINCT
-		MR.MHCueSheetCode,
-		MR.RequestID, 
-		MR.[FileName],
-		(SELECT COUNT(*) FROM MHCueSheetSong MCSS WHERE MR.MHCueSheetCode = MCSS.MHCueSheetCode) AS NoOfRecords,
-		CASE WHEN MR.UploadStatus = 'W'  THEN  'Data Error'
-			 WHEN MR.UploadStatus = 'S'  THEN  'Submitted'
-			 WHEN MR.UploadStatus = 'C'  THEN  'Completed'
-			 WHEN MR.UploadStatus = 'P'  THEN  'Pending'
-			 ELSE 'Error'
-		END,
-		V.Vendor_Name +' / '+ U.First_Name,
-		MR.CreatedOn,
-		UM.First_Name,
-		MR.ApprovedOn,
-		MR.SpecialInstruction
-	FROM MHCueSheet MR
-		LEFT JOIN MHUsers MU ON MR.CreatedBy = MU.Users_Code AND MR.VendorCode = MU.Vendor_Code
-		LEFT JOIN Users U ON MU.Users_Code = U.Users_Code
-		LEFT JOIN Users UM ON MR.ApprovedBy = UM.Users_Code
-		LEFT JOIN Vendor V ON V.Vendor_Code = MU.Vendor_Code
-	WHERE
-		(@ProductionHouseCode = 0 OR MR.VendorCode = @ProductionHouseCode)
-		AND (@MHUploadStatus = '' OR MR.UploadStatus = @MHUploadStatus)
-		AND MR.UploadStatus not in( 'E','P')
-		AND MR.SubmitBy IS NOT NULL
-	ORDER By MR.CreatedOn DESC
+		CREATE TABLE #TempRightsPagingData
+		(
+			Row_No INT IDENTITY(1,1),
+			MHCueSheetCode INT,
+			RequestID NVARCHAR(40),
+			[FileName] NVARCHAR(MAX),
+			NoOfRecords INT,
+			UploadStatus NVARCHAR(50),
+			CreatedBy NVARCHAR(500),
+			CreatedOn DATETIME,
+			ApprovedBy NVARCHAR(500),
+			ApprovedOn DATETIME,
+			SpecialInstruction NVARCHAR(MAX)
+		)
 
-	SELECT @RecordCount = COUNT(*) FROM #TempRightsPagingData
+		IF(@PageNo = 0)
+			SET @PageNo = 1
 
-	DELETE from  #TempRightsPagingData
-	WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
+		INSERT INTO #TempRightsPagingData
+		(
+			MHCueSheetCode, RequestID, [FileName], NoOfRecords, UploadStatus, CreatedBy, CreatedOn, ApprovedBy, ApprovedOn, SpecialInstruction
+		)
+		SELECT DISTINCT
+			MR.MHCueSheetCode,
+			MR.RequestID, 
+			MR.[FileName],
+			(SELECT COUNT(*) FROM MHCueSheetSong (NOLOCK) MCSS WHERE MR.MHCueSheetCode = MCSS.MHCueSheetCode) AS NoOfRecords,
+			CASE WHEN MR.UploadStatus = 'W'  THEN  'Data Error'
+				 WHEN MR.UploadStatus = 'S'  THEN  'Submitted'
+				 WHEN MR.UploadStatus = 'C'  THEN  'Completed'
+				 WHEN MR.UploadStatus = 'P'  THEN  'Pending'
+				 ELSE 'Error'
+			END,
+			V.Vendor_Name +' / '+ U.First_Name,
+			MR.CreatedOn,
+			UM.First_Name,
+			MR.ApprovedOn,
+			MR.SpecialInstruction
+		FROM MHCueSheet MR (NOLOCK)
+			LEFT JOIN MHUsers MU (NOLOCK) ON MR.CreatedBy = MU.Users_Code AND MR.VendorCode = MU.Vendor_Code
+			LEFT JOIN Users U (NOLOCK) ON MU.Users_Code = U.Users_Code
+			LEFT JOIN Users UM (NOLOCK) ON MR.ApprovedBy = UM.Users_Code
+			LEFT JOIN Vendor V (NOLOCK) ON V.Vendor_Code = MU.Vendor_Code
+		WHERE
+			(@ProductionHouseCode = 0 OR MR.VendorCode = @ProductionHouseCode)
+			AND (@MHUploadStatus = '' OR MR.UploadStatus = @MHUploadStatus)
+			AND MR.UploadStatus not in( 'E','P')
+			AND MR.SubmitBy IS NOT NULL
+		ORDER By MR.CreatedOn DESC
 
-	SELECT MHCueSheetCode, RequestID, [FileName], NoOfRecords, UploadStatus, CreatedBy, CreatedOn, SpecialInstruction FROM #TempRightsPagingData
+		SELECT @RecordCount = COUNT(*) FROM #TempRightsPagingData
 
-	IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
+		DELETE from  #TempRightsPagingData
+		WHERE Row_No > (@PageNo * @PageSize) OR Row_No <= ((@PageNo - 1) * @PageSize)
+
+		SELECT MHCueSheetCode, RequestID, [FileName], NoOfRecords, UploadStatus, CreatedBy, CreatedOn, SpecialInstruction FROM #TempRightsPagingData
+
+		IF OBJECT_ID('tempdb..#TempRightsPagingData') IS NOT NULL DROP TABLE #TempRightsPagingData
+	
+	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPMHCueSheetList]', 'Step 2', 0, 'Procedure Excution COmpleted', 0, ''
 END
-
---DECLARE @RC INT  
---EXEC USPMHCueSheetList 0,'',1,25,@RC  

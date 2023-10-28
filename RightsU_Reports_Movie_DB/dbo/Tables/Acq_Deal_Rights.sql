@@ -30,6 +30,7 @@
     [Promoter_Flag]           CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Right_Status]            CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Is_Under_Production]     CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [Buyback_Syn_Rights_Code] NVARCHAR (MAX)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CONSTRAINT [PK_Acq_Deal_Rights_Code] PRIMARY KEY CLUSTERED ([Acq_Deal_Rights_Code] ASC)
 );
 

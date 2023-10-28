@@ -13,7 +13,7 @@
 
 <script>
     var Module_Code = @GlobalParams.ModuleCodeForDeliveryTracking, SysLanguageCode = @ViewBag.LangCode ;
-    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "M", IncludeHoldover = "N";
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "M", IncludeHoldover = "N", PageNo = 1;
     arr = [];
     var URL_SearchDeliveryTracking = '@Url.Action("SearchDeliveryTracking", "DeliveryTracking")';
     var URL_BindMoviesList = '@Url.Action("BindMoviesList", "DeliveryTracking")';
@@ -21,6 +21,7 @@
     var URL_SaveDelivery = '@Url.Action("SaveDelivery", "DeliveryTracking")';
 
     $(document).ready(function () {
+        debugger;
         if (LayoutDirection_G == "RTL") {
 
             $('#ddlSortType_chosen').css("text-align", "right");
@@ -97,8 +98,8 @@
             }),
             async: false,
             success: function (result) {
-                $('#hdnPageNo').text(1);
-                $('#hdnPageNo').val(1);
+                $('#hdnPageNo').text(PageNo);
+                $('#hdnPageNo').val(PageNo);
                 $('#lblRecordCount').text(result.Record_Count);
                 $("#hdnRecordCount").val(result.Record_Count);
                 SetPaging();
@@ -169,6 +170,7 @@
     function SaveDeliveryTracking() {
         debugger;
         showLoading();
+        PageNo = $('#hdnPageNo').val();
         var deliveryTrackingList = new Array();
 
         var PosterValue = $('#chk_Poster').is(':checked') == true ? "Yes" : "No";
@@ -232,10 +234,16 @@
                 else {
                     if (result.Status == "S") {
                         showAlert("S", result.Message);
-                        //$('#lblRecordCount').text(result.RecordCount);
-                        //$('#hdnRecodLockingCode').val(0);
 
-                        SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
+                        var Client = $('#ddlClient').val();
+                        var CycleDate = $('#CycleDate').val();
+                        var Lab = $('#ddlLab').val();
+                        var Distributor = $('#Distributor').val();
+                        var Display = $('#ddlDisplayItem').val();
+                        $('#hdnPageNo').val(PageNo);
+
+                        SearchDeliveryTracking(TabName, Client, CycleDate, Lab, Distributor, Display, IncludeHoldover);
+                        //SearchDeliveryTracking(TabName, "", "", "", "", "", IncludeHoldover);
                     }
                     else
                         showAlert("E", result.Message);
@@ -283,7 +291,7 @@
 
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
-
+        PageNo = 1;
         if (!ValidatePageSize())
             return false;
 

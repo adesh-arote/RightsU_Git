@@ -10,11 +10,13 @@
     [Lookup_Column]         NVARCHAR (50)   NULL,
     [Display_Column]        NVARCHAR (50)   NULL,
     [Right_Code]            INT             NULL,
-    [Max_Length]            INT             NULL,
+    [Max_Length]            NVARCHAR (50)   NULL,
     [WhCondition]           NVARCHAR (1000) NULL,
     [ValidOpList]           VARCHAR (50)    NULL,
-    [Alternate_Config_Code] INT             NULL,
+    [Alternate_Config_Code] NVARCHAR (50)   NULL,
     [Display_Type]          VARCHAR (5)     NULL,
     CONSTRAINT [PK_Report_Column_Setup_IT] PRIMARY KEY CLUSTERED ([Column_Code] ASC)
 );
+
+
 

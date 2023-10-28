@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Generate_Avail_Data]
+﻿CREATE PROCEDURE [dbo].[USP_Generate_Avail_Data]
 AS
 -- =============================================
 -- Author:		Abhaysingh N. Rajpurohit
@@ -9,8 +8,10 @@ AS
 BEGIN
 
 	IF OBJECT_ID('tempdb..#TempTitleAvail') IS NOT NULL DROP TABLE #TempTitleAvail
-	DECLARE @Record_Code INT, @Deal_Type CHAR(1), @Is_Amend CHAR(1),@Deal_Right_Code INT
-	DECLARE @Approved_Deal_Code INT = 0,  @Title_Code INT = 0
+	
+	DECLARE @Record_Code INT, @Deal_Type CHAR(1), @Is_Amend CHAR(1),@Deal_Right_Code INT, @DealTypeCode INT = 0
+	DECLARE @Approved_Deal_Code INT = 0, @Title_Code INT = 0
+	
 	
 	CREATE TABLE #TempTitleAvail
 	(
@@ -53,11 +54,10 @@ BEGIN
 			)
 		)
 	)
-
-
 	
-	
-	SELECT TOP 1 @Approved_Deal_Code =  Approved_Deal_Process_Code FROM Approved_Deal_Process WHERE ISNULL(Deal_Status, 'P') = 'P' AND Approved_Deal_Process_Code = 13 ORDER BY Deal_Type ASC
+	--Usp_Avail_Sport_Cache
+
+	SELECT TOP 1 @Approved_Deal_Code = Approved_Deal_Process_Code FROM Approved_Deal_Process WHERE ISNULL(Deal_Status, 'P') = 'P' ORDER BY Deal_Type ASC
 	WHILE(@Approved_Deal_Code > 0)
 	BEGIN
 	
@@ -80,7 +80,7 @@ BEGIN
 		END
 		ELSE IF(@Deal_Type = 'S')
 		BEGIN
-			DELETE FROM Approved_Deal_Process WHERE Deal_Rights_Code = @Record_Code AND Deal_Type = 'S'
+			DELETE FROM Approved_Deal_Process WHERE Deal_Rights_Code = @Deal_Right_Code AND Deal_Type = 'S'
 		END
 
 		SET @Approved_Deal_Code = 0
@@ -90,20 +90,22 @@ BEGIN
 		Select GETDATE(), 'D', @Record_Code, @Deal_Type
 		
 	END
-	--DECLARE CurRefreshTitleAvail CURSOR FOR SELECT Title_Code FROM #TempTitleAvail
-	--OPEN CurRefreshTitleAvail
-	--FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code
-	--WHILE (@@FETCH_STATUS = 0)
-	--BEGIN
 
-	--	EXEC [dbo].[USPGenerateAvailTitleData] @Title_Code
+	DECLARE CurRefreshTitleAvail CURSOR FOR SELECT Title_Code FROM #TempTitleAvail
+	OPEN CurRefreshTitleAvail
+	FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code
+	WHILE (@@FETCH_STATUS = 0)
+	BEGIN
 
-	--	FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code	
-	--END
-	--CLOSE CurRefreshTitleAvail
-	--DEALLOCATE CurRefreshTitleAvail
+		EXEC [dbo].[USPGenerateAvailTitleData] @Title_Code
+
+		FETCH NEXT FROM CurRefreshTitleAvail INTO @Title_Code	
+	END
+	CLOSE CurRefreshTitleAvail
+	DEALLOCATE CurRefreshTitleAvail
 
 	IF OBJECT_ID('tempdb..#TempTitleAvail') IS NOT NULL DROP TABLE #TempTitleAvail
+
 END
 
 

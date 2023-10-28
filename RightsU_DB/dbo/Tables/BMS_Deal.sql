@@ -8,11 +8,11 @@
     [RU_Currency_Code]  INT             NULL,
     [RU_Licensee_Code]  INT             NULL,
     [RU_Category_Code]  INT             NULL,
-    [BMS_Licensor_Code] INT             NULL,
-    [BMS_Payee_Code]    INT             NULL,
-    [BMS_Currency_Code] INT             NULL,
-    [BMS_Licensee_Code] INT             NULL,
-    [BMS_Category_Code] INT             NULL,
+    [BMS_Licensor_Code] DECIMAL (38)    NULL,
+    [BMS_Payee_Code]    DECIMAL (38)    NULL,
+    [BMS_Currency_Code] DECIMAL (38)    NULL,
+    [BMS_Licensee_Code] DECIMAL (38)    NULL,
+    [BMS_Category_Code] DECIMAL (38)    NULL,
     [License_Fees]      DECIMAL (18, 3) NULL,
     [Description]       VARCHAR (80)    NULL,
     [Contact]           VARCHAR (80)    NULL,
@@ -27,6 +27,14 @@
     [Response_Time]     DATETIME        NULL,
     [Record_Status]     VARCHAR (5)     NULL,
     [Error_Description] VARCHAR (4000)  NULL,
+    [Counter]           INT             NULL,
+    [IsMailSent]        BIT             NULL,
+    [Inserted_ON]       DATETIME        NULL,
+    [Created_On]        DATETIME        NULL,
+    [Updated_On]        DATETIME        NULL,
+    [Is_Active]         CHAR (1)        NULL,
     CONSTRAINT [PK_BV_Deal] PRIMARY KEY CLUSTERED ([BMS_Deal_Code] ASC)
 );
+
+
 

@@ -15,6 +15,8 @@
     [Last_Action_By]     INT             NULL,
     [Lock_Time]          DATETIME        NULL,
     [Genres_Code]        INT             NULL,
+    [Movie_Album_Type]   CHAR (1)        NULL,
+    [Title_Code]         INT             NULL,
     [Music_Album_Code]   INT             NULL,
     [Music_Tag]          NVARCHAR (200)  NULL,
     [Public_Domain]      CHAR (1)        NULL,
@@ -22,8 +24,11 @@
     CONSTRAINT [FK_Music_Title_Language] FOREIGN KEY ([Language_Code]) REFERENCES [dbo].[Language] ([Language_Code]),
     CONSTRAINT [FK_Music_Title_Music_Album] FOREIGN KEY ([Music_Album_Code]) REFERENCES [dbo].[Music_Album] ([Music_Album_Code]),
     CONSTRAINT [FK_Music_Title_Music_Type] FOREIGN KEY ([Music_Type_Code]) REFERENCES [dbo].[Music_Type] ([Music_Type_Code]),
-    CONSTRAINT [FK_Music_Title_Music_Type1] FOREIGN KEY ([Music_Version_Code]) REFERENCES [dbo].[Music_Type] ([Music_Type_Code])
+    CONSTRAINT [FK_Music_Title_Music_Type1] FOREIGN KEY ([Music_Version_Code]) REFERENCES [dbo].[Music_Type] ([Music_Type_Code]),
+    CONSTRAINT [FK_Music_Title_Title] FOREIGN KEY ([Title_Code]) REFERENCES [dbo].[Title] ([Title_Code])
 );
+
+
 
 
 GO

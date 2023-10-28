@@ -40234,7 +40234,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Workflow_Status" Nullable="true" MaxLength="5" />
           <Property Type="String" Name="ShowHideButtons" Nullable="false" MaxLength="20" />
           <Property Type="Int32" Name="Vendor_Code" Nullable="false" />
-          <Property Type="String" Name="InsertedBy" Nullable="true" MaxLength="601" />
+          <Property Type="String" Name="CreatedBy" Nullable="true" MaxLength="601" />
+          <Property Type="Int32" Name="Inserted_By" Nullable="true" />
+          <Property Type="String" Name="Final_PO_Workflow_Status" Nullable="false" MaxLength="56" />
         </ComplexType>
         <EntityType Name="AL_Material_Tracking">
           <Key>
@@ -51047,7 +51049,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Workflow_Status" ColumnName="Workflow_Status" />
                 <ScalarProperty Name="ShowHideButtons" ColumnName="ShowHideButtons" />
                 <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
-                <ScalarProperty Name="InsertedBy" ColumnName="InsertedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="Final_PO_Workflow_Status" ColumnName="Final_PO_Workflow_Status" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>

@@ -1,5 +1,4 @@
-﻿
-CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Main]
+﻿CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Main]
 (
 	@dBug CHAR(1)='N'
 )
@@ -10,6 +9,10 @@ AS
 -- Description: SP to migrate LOOP ON ALL DEALS AND CAll Migrate SP
 -- =============================================
 BEGIN
+Declare @Loglevel int
+select @Loglevel = Parameter_Value from System_Parameter_New   where Parameter_Name='loglevel'
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Main]', 'Step 1', 0, 'Started Procedure', 0, '' 
+
 	DECLARE @Deal_Code_Cur INT
 	DECLARE CUR_DEAL CURSOR
 	READ_ONLY
@@ -46,7 +49,6 @@ BEGIN
 	where isnull(adOld.Master_Deal_Movie_Code_ToLink,0)>0 
 	--and adOld.acq_Deal_code <> 53
 	and adOld.Is_Master_Deal='N'
-
+	 
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Main]', 'Step 2', 0, 'Procedure Excution Completed', 0, '' 
 END
-
---exec [USP_MIGRATE_TO_NEW_Main] 'D'

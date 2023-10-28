@@ -9,5 +9,8 @@
     [Duration_Frame]        VARCHAR (MAX)  NULL,
     [Version_Name]          NVARCHAR (MAX) NULL,
     [DM_Master_Import_Code] VARCHAR (50)   NULL,
-    [Excel_Line_No]         NVARCHAR (50)  NULL);
+    [Excel_Line_No]         NVARCHAR (50)  NULL,
+    [Movie_Album]           NVARCHAR (MAX) NULL);
+
+
 

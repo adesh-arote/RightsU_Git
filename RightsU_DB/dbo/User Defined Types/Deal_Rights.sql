@@ -19,5 +19,8 @@
     [Right_End_Date]          DATETIME       NULL,
     [Title_Code]              INT            NULL,
     [Platform_Code]           INT            NULL,
-    [Check_For]               VARCHAR (10)   NULL);
+    [Check_For]               VARCHAR (10)   NULL,
+    [Buyback_Syn_Rights_Code] NVARCHAR (MAX) NULL);
+
+
 

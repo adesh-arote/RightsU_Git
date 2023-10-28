@@ -359,13 +359,20 @@
         var lstDM_MasterLog = new Array();
         var lstSystemMapLog = new Array();
         var tblData = $("#tblMasterLogData tbody tr");
+        var currentTabName = $.trim($('#hdnTabName').val());
         var tblSystemMappedDta = $("#tblSystemMappedMasterLogData tbody tr");
         $.each($(tblData), function (index, value) {
             var masterLogCode = $(value).find('input[id*="hdnMasterLogCode_"]').val();
             var isChecked = $(value).find('input[id*="chkCreateNew_"]').prop('checked');
             var isIgnoreChecked = $(value).find('input[id*="chkIsIgnore_"]').prop('checked');
-            var mappedName = $(value).find('input[name="MappedName"]').val();
-            var mappedCode = $(value).find('input[name="MappedCode"]').val();
+            if (currentTabName == "MP") {
+                var mappedName = $('select[name="MappedName"] option:selected').text();
+                var mappedCode = $('select[name="MappedName"] option:selected').val();;
+            }
+            else {
+                var mappedName = $(value).find('input[name="MappedName"]').val();
+                var mappedCode = $(value).find('input[name="MappedCode"]').val();
+            }
             if (isChecked || isIgnoreChecked)
                 var mappedCode = 0;
 
@@ -377,7 +384,18 @@
             var mappedCode = "", SystemMappedName= "", systemMappedCode = "";
             var masterLogCode = $(value).find('input[id*="hdnSystemMappingMasterLogCode_"]').val();
             //var isChecked = $(value).find('input[id*="chkCreateNew_"]').prop('checked');
+            if (currentTabName == "MP") {
+                var mappedName = $(value).find('select[name="MappedName"] option:selected').text();
+                var mappedCode = $('select[name="MappedName"] option:selected').val();
+                if (mappedName == "" || mappedCode == undefined) {
+                    mappedName = undefined;
+                    mappedCode = "";
+                }
+            }
+            else {
             var mappedName = $(value).find('input[name="MappedName"]').val();
+                mappedCode = $(value).find('input[name="MappedCode"]').val();
+            }
             if (mappedName == undefined) {
                 SystemMappedName = $('#lblMappedName_' + masterLogCode).text();
             }
@@ -387,7 +405,7 @@
                 isvalid = false;
                 return false;
             }
-            mappedCode = $(value).find('input[name="MappedCode"]').val();
+           
             if (mappedCode == "") {
                 systemMappedCode = $('#lblMappedCode_' + masterLogCode).text();
             }
@@ -440,14 +458,23 @@
     //    return false;
     //}
     function ValidateTalent() {
+        debugger;
         var isValid = true;
         var lstDM_MasterLog = new Array();
         var tblData = $("#tblMasterLogData tbody tr");
+        var currentTabName = $.trim($('#hdnTabName').val());
         $.each($(tblData), function (index, value) {
             var masterLogCode = $(value).find('input[id*="hdnMasterLogCode_"]').val();
             var isChecked = $(value).find('input[id*="chkCreateNew_"]').prop('checked');
-            var mappedName = $(value).find('input[name="MappedName"]').val();
-            var mappedCode = $(value).find('input[name="MappedCode"]').val();
+            if (currentTabName == "MP") {
+                var mappedName = $('select[name="MappedName"] option:selected').text();
+                var mappedCode = $('select[name="MappedName"] option:selected').val();;
+            }
+            else {
+                var mappedName = $(value).find('input[name="MappedName"]').val();
+                var mappedCode = $(value).find('input[name="MappedCode"]').val();
+            }
+           
             if (isChecked)
                 var mappedCode = 0;
 
@@ -497,6 +524,7 @@
     }
 
     function ValidateMap() {
+        debugger;
         var isValidate = true;
         isValidate = SaveMappedData();
         if (isValidate) {

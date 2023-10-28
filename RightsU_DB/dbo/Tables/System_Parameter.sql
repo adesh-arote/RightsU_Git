@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[System_Parameter] (
-    [Id]                INT             IDENTITY (1, 1) NOT NULL,
+    [Id]                INT             NOT NULL,
     [Parameter_Name]    VARCHAR (1000)  NULL,
     [Parameter_Value]   VARCHAR (1000)  NULL,
     [Inserted_On]       DATETIME        NULL,
@@ -15,4 +15,6 @@
     [Client_Name]       NVARCHAR (MAX)  NULL,
     CONSTRAINT [PK_System_Parameter] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 

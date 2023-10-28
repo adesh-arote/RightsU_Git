@@ -40,3 +40,5 @@ BEGIN
 	Select @RowId, @Country_Name  
 	RETURN  
 END  
+  
+--SELECT * FROM DBO.UFN_Get_Report_Country('1,12,15,17,2,36,48', '1,15,2,36,48,17,15,12,56,89,45248,589,698', 1)    

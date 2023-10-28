@@ -1,0 +1,25 @@
+﻿CREATE TABLE [dbo].[Trace] (
+    [TraceId]               INT           IDENTITY (1, 1) NOT NULL,
+    [RequestId]             VARCHAR (50)  NULL,
+    [UserId]                INT           NULL,
+    [RequestUri]            VARCHAR (200) NULL,
+    [RequestMethod]         VARCHAR (200) NULL,
+    [Method]                VARCHAR (200) NULL,
+    [IsSuccess]             BIT           NULL,
+    [TimeTaken]             INT           NULL,
+    [RequestContent]        VARCHAR (MAX) NULL,
+    [RequestLength]         INT           NULL,
+    [RequestDateTime]       DATETIME      NULL,
+    [ResponseContent]       VARCHAR (MAX) NULL,
+    [ResponseLength]        INT           NULL,
+    [ResponseDateTime]      DATETIME      NULL,
+    [HttpStatusCode]        INT           NULL,
+    [HttpStatusDescription] VARCHAR (MAX) NULL,
+    [AuthenticationKey]     VARCHAR (MAX) NULL,
+    [UserAgent]             VARCHAR (200) NULL,
+    [ServerName]            VARCHAR (200) NULL,
+    [ClientIpAddress]       VARCHAR (100) NULL,
+    [x_IsLoginSuccessful]   BIT           NULL,
+    CONSTRAINT [PK_Trace] PRIMARY KEY CLUSTERED ([TraceId] ASC)
+);
+

@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[System_Language] (
-    [System_Language_Code] INT            IDENTITY (1, 1) NOT NULL,
+    [System_Language_Code] INT            NOT NULL,
     [Language_Name]        NVARCHAR (400) NULL,
     [Layout_Direction]     VARCHAR (10)   NULL,
     [Is_Default]           CHAR (1)       NULL,
@@ -10,4 +10,6 @@
     [Last_Action_By]       INT            NULL,
     CONSTRAINT [PK_System_Language] PRIMARY KEY CLUSTERED ([System_Language_Code] ASC)
 );
+
+
 

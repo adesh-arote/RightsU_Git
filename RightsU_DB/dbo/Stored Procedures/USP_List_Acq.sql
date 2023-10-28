@@ -1,8 +1,4 @@
-﻿
-
---EXEC USP_List_Acq 'AND Business_Unit_Code =1',1,'Acq_Deal_Code desc','Y',50,0,143,''
-
-CREATE PROCEDURE [dbo].[USP_List_Acq]
+﻿CREATE PROCEDURE [dbo].[USP_List_Acq]
 (
 --DECLARE
 	@StrSearch NVARCHAR(Max)='AND Is_Master_Deal =''Y'' and deal_workflow_status = ''A'' AND deal_Type_Code = ''1'' And Business_Unit_Code In (1) AND is_active=''Y''',
@@ -24,6 +20,10 @@ As
 -- Reason: Added one column which will Business Unit Name
 -- =============================================
 Begin
+
+	Declare @Loglevel int
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq]', 'Step 1', 0, 'Started Procedure', 0, ''
 
 
 	--Set FMTONLY Off
@@ -96,10 +96,14 @@ IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	--select * from #Temp
 	
 	PRINT '1'
+	Exec [USPLogSQLSteps] '[USP_List_Acq]', 'Step 2', 0, 'In between Procedure', 0, ''
+
 	Set @ExactMatch = '%'+@ExactMatch+'%'
 	Update #Temp Set Sort = '0' Where Title_name like @ExactMatch OR Vendor_Name like @ExactMatch OR [Entity_Name] like @ExactMatch OR agreement_no like @ExactMatch 
 
 	PRINT '2'
+	Exec [USPLogSQLSteps] '[USP_List_Acq]', 'Step 3', 0, 'In between Procedure', 0, ''
+
 	delete from T From #Temp T Inner Join
 	(
 		Select ROW_NUMBER()Over(Partition By AgreeMent_No Order By Sort asc) RowNum, Id, Agreement_No, Sort From #Temp
@@ -203,10 +207,17 @@ ORDER BY tbl.Row_Num'
 	 --WHERE tbl.Acq_Deal_Code in (Select RowId From #Temp) ORDER BY  + @OrderByCndition
 			--,AD.Deal_Complete_Flag
 	PRINT @Sql
+
+	Exec [USPLogSQLSteps] '[USP_List_Acq]', 'Step 4', 0, @Sql, 0, ''
+
 	Exec(@Sql)
 	--Drop Table #Temp
 
 	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+
+	
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq]', 'Step 5', 0, 'Procedure Execution Completed ', 0, ''
+
 End
 /*
 EXEC  USP_List_Acq '',1,'1','Y',10,10,1

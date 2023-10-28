@@ -30,12 +30,15 @@
     [Is_Verified]             CHAR (1)        NULL,
     [Original_Right_Type]     CHAR (1)        NULL,
     [Promoter_Flag]           CHAR (1)        NULL,
+    [CoExclusive_Remarks]     NVARCHAR (4000) NULL,
     CONSTRAINT [PK_Syn_Deal_Rights_Code] PRIMARY KEY CLUSTERED ([Syn_Deal_Rights_Code] ASC),
     CONSTRAINT [FK_Syn_Deal_Rights_Milestone_Type] FOREIGN KEY ([Milestone_Type_Code]) REFERENCES [dbo].[Milestone_Type] ([Milestone_Type_Code]),
     CONSTRAINT [FK_Syn_Deal_Rights_ROFR] FOREIGN KEY ([ROFR_Code]) REFERENCES [dbo].[ROFR] ([ROFR_Code]),
     CONSTRAINT [FK_Syn_Deal_Rights_Sub_License] FOREIGN KEY ([Sub_License_Code]) REFERENCES [dbo].[Sub_License] ([Sub_License_Code]),
     CONSTRAINT [FK_Syn_Deal_Rights_Syn_Deal] FOREIGN KEY ([Syn_Deal_Code]) REFERENCES [dbo].[Syn_Deal] ([Syn_Deal_Code])
 );
+
+
 
 
 GO

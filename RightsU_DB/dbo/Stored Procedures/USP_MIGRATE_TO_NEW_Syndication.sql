@@ -1,5 +1,4 @@
-﻿
-CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Syndication]
+﻿CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Syndication]
 (
 	@SYN_DEALCODE INT=0,
 	@dBug CHAR(1)='N'
@@ -11,7 +10,9 @@ AS
 -- Description: SP to migrate SYN Deals from OLD to NEW DB STructure
 -- =============================================
 BEGIN
-
+Declare @Loglevel int
+select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Syndication]', 'Step 1', 0, 'Started Procedure', 0, ''
 BEGIN TRAN
 DECLARE @SYN_Deal_Code INT,@Syn_Deal_Rights_Code INT,@Syn_Deal_Pushback_Code INT,@Syn_Deal_Run_Code INT,@Syn_Deal_Ancillary_Code INT, @Business_unit_code Int = 0
 ,@Syn_Deal_Revenue_Code INT,@Syn_Deal_Revenue_HB_Code INT
@@ -61,20 +62,20 @@ BEGIN TRY
 		remerks,salesagent_code,salesagent_contact_code
 		,status,total_sale,vnew.Vendor_Code
 		,vcnew.Vendor_Contacts_Code,'0001',
-		(SELECT TOP 1 Workflow_Code FROM Workflow_Module W WHERE W.Business_Unit_Code=Business_Unit_Code AND System_End_Date IS NULL) work_flow_code,  -- HC
+		(SELECT TOP 1 Workflow_Code FROM Workflow_Module W (NOLOCK) WHERE W.Business_Unit_Code=Business_Unit_Code AND System_End_Date IS NULL) work_flow_code,  -- HC
 		year_type,@Business_unit_code,0 Ref_BMS_Code,
 		''Rights_Remarks,''Payment_Remarks,'R,C' Deal_Complete_Flag
 	FROM 
 		Rightsu_vmpl_live_27March_2015.dbo.syndication_deal  SD
 		Inner Join Rightsu_vmpl_live_27March_2015.dbo.Vendor v On SD.vendor_code = v.vendor_code
-		Inner Join Vendor vNew On vNew.Vendor_Name = v.vendor_name
+		Inner Join Vendor vNew (NOLOCK) On vNew.Vendor_Name = v.vendor_name
 		left join Rightsu_vmpl_live_27March_2015.dbo.Vendor_Contacts vc on vc.vendor_contacts_code=sd.vendor_contact_code
-		left join Vendor_Contacts vcnew on vcnew.Contact_Name =vc.Contact_Name
+		left join Vendor_Contacts vcnew (NOLOCK) on vcnew.Contact_Name =vc.Contact_Name
 		---Category , Currency,Payment Terms---
 		Inner join Rightsu_vmpl_live_27March_2015.dbo.Category c on sd.category_code=c.category_code
-		inner join Category cNew on cNew.Category_Name=c.category_name
+		inner join Category cNew (NOLOCK) on cNew.Category_Name=c.category_name
 		inner join Rightsu_vmpl_live_27March_2015.dbo.Currency curr on sd.currency_code=curr.currency_code
-		inner join Currency currNew on currNew.Currency_Name=curr.currency_name
+		inner join Currency currNew (NOLOCK) on currNew.Currency_Name=curr.currency_name
 		---Category , Currency,Payment Terms---
 	WHERE syndication_deal_code=@SYN_DEALCODE --and sd.Is_Active='Y'
 	--select * from Rightsu_vmpl_live_27March_2015.dbo.syndication_deal  
@@ -109,7 +110,7 @@ BEGIN TRY
 		@eps_end
 	FROM Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie sdm
 	Inner Join Rightsu_vmpl_live_27March_2015.dbo.Title tit on sdm.title_code = tit.title_code 
-	Inner Join Title titNew On tit.english_title = titNew.Title_Name
+	Inner Join Title titNew (NOLOCK) On tit.english_title = titNew.Title_Name
 	WHERE syndication_deal_code=@SYN_DEALCODE
 	/*--- Syn_Deal_Movie ---*/
 
@@ -148,9 +149,9 @@ BEGIN TRY
 		sdpt.Last_Action_By
 	FROM Rightsu_vmpl_live_27March_2015.dbo.Syn_deal_payment_terms sdpt
 	Inner join Rightsu_vmpl_live_27March_2015.dbo.Payment_Terms p on sdpt.payment_term_code=p.payment_terms_code
-	inner join Payment_Terms pNew on pNew.Payment_Terms=p.Payment_Terms
+	inner join Payment_Terms pNew (NOLOCK) on pNew.Payment_Terms=p.Payment_Terms
 	inner join Rightsu_vmpl_live_27March_2015.dbo.Cost_Type c on c.cost_type_code=sdpt.Cost_Type_Code
-	inner join Cost_Type cNew on cNew.Cost_Type_Name=c.Cost_Type_Name
+	inner join Cost_Type cNew (NOLOCK) on cNew.Cost_Type_Name=c.Cost_Type_Name
 	WHERE syndication_deal_code=@SYN_DEALCODE
 	/*---Syn_Deal_payment_terms ---*/
 
@@ -179,7 +180,7 @@ BEGIN TRY
 	SELECT is_group,titNew.Title_Code,@eps_start,@eps_end
 	FROM Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie sdm
 	Inner Join Rightsu_vmpl_live_27March_2015.dbo.Title tit on sdm.title_code = tit.title_code
-	Inner Join Title titNew On tit.english_title = titNew.Title_Name
+	Inner Join Title titNew (NOLOCK) On tit.english_title = titNew.Title_Name
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE and isnull(sdmr.isPushBack,'N')='N'
 	GROUP BY is_group,titNew.Title_Code, no_of_episode
@@ -196,7 +197,7 @@ BEGIN TRY
 
 	select country_code 
 	into #tmpCountry
-	from Country where Country_code>142
+	from Country (NOLOCK) where Country_code>142
 
 	DECLARE @Syn_Deal_Rights_Territory Deal_Rights_Territory
 	INSERT INTO @Syn_Deal_Rights_Territory (Deal_Rights_Code,Territory_Type,Country_Code,Territory_Code)
@@ -209,11 +210,11 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code 
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Territory SDMRT ON SDMR.syn_deal_movie_rights_code=SDMRT.Syn_Deal_movie_rights_code 
 	left join Rightsu_vmpl_live_27March_2015.dbo.International_Territory it on it.international_territory_code=SDMRT.territory_code
-	left join Country c on c.country_name=it.international_territory_name
+	left join Country c (NOLOCK) on c.country_name=it.international_territory_name
 	left join Rightsu_vmpl_live_27March_2015.dbo.Territory t on t.territory_code=SDMRT.territory_code
-	left join Country cTerr on cTerr.country_name=t.territory_name
+	left join Country cTerr (NOLOCK) on cTerr.country_name=t.territory_name
 	left join Rightsu_vmpl_live_27March_2015.dbo.territory_group tg on tg.territory_group_code=SDMRT.territory_group_code
-	left join Territory tnew  on tnew.Territory_Name=tg.territory_group_name
+	left join Territory tnew (NOLOCK) on tnew.Territory_Name=tg.territory_group_name
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE and isnull(sdmr.isPushBack,'N')='N'	
 	GROUP BY sdmr.is_group,territory_type,c.country_code,cterr.country_code,tnew.territory_code,sdmrt.is_domestic_territory,sdmrt.is_international_territory
 	ORDER BY sdmr.is_group
@@ -229,10 +230,10 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code 
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Subtitling SDMRS ON SDMR.syn_deal_movie_rights_code=SDMRS.Syn_Deal_movie_rights_code 
 	left join Rightsu_vmpl_live_27March_2015.dbo.Language l on l.language_code=SDMRS.language_code
-	left join Language lnew on lNew.Language_Name=l.Language_Name
+	left join Language lnew (NOLOCK) on lNew.Language_Name=l.Language_Name
 	Left join Rightsu_vmpl_live_27March_2015.dbo.Language_Group lg on lg.Language_Group_Code=sdmrs.Language_Group_Code
-	Left join Language_Group lgNew on lgNew.Language_Group_Name=lg.Language_Group_Name
-	LEFT JOIN Language_Group_Details LGD ON lgNew.Language_Group_Code=LGD.Language_Group_Code
+	Left join Language_Group lgNew (NOLOCK) on lgNew.Language_Group_Name=lg.Language_Group_Name
+	LEFT JOIN Language_Group_Details LGD (NOLOCK) ON lgNew.Language_Group_Code=LGD.Language_Group_Code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE	 and isnull(sdmr.isPushBack,'N')='N'
 	GROUP BY sdmr.is_group,lnew.language_code,lgnew.Language_Group_Code,SDMRS.language_code,LGD.Language_Code
 
@@ -247,10 +248,10 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code 
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Dubbing SDMRD ON SDMR.syn_deal_movie_rights_code=SDMRD.Syn_Deal_movie_rights_code 
 	left join Rightsu_vmpl_live_27March_2015.dbo.Language l on l.language_code=SDMRD.language_code
-	left join Language lnew on lNew.Language_Name=l.Language_Name
+	left join Language lnew (NOLOCK) on lNew.Language_Name=l.Language_Name
 	Left join Rightsu_vmpl_live_27March_2015.dbo.Language_Group lg on lg.Language_Group_Code=SDMRD.Language_Group_Code
-	Left join Language_Group lgNew on lgNew.Language_Group_Name=lg.Language_Group_Name
-	LEFT JOIN Language_Group_Details LGD ON lgNew.Language_Group_Code=LGD.Language_Group_Code
+	Left join Language_Group lgNew (NOLOCK) on lgNew.Language_Group_Name=lg.Language_Group_Name
+	LEFT JOIN Language_Group_Details LGD (NOLOCK) ON lgNew.Language_Group_Code=LGD.Language_Group_Code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE	 and isnull(sdmr.isPushBack,'N')='N'
 	GROUP BY sdmr.is_group,lnew.language_code,lgNew.Language_Group_Code,SDMRD.language_code,LGD.Language_Code
 	
@@ -265,7 +266,7 @@ BEGIN TRY
 	SELECT is_group,titNew.Title_Code,@eps_start,@eps_end
 	FROM Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie sdm
 	Inner Join Rightsu_vmpl_live_27March_2015.dbo.Title tit on sdm.title_code = tit.title_code
-	Inner Join Title titNew On tit.english_title = titNew.Title_Name
+	Inner Join Title titNew (NOLOCK) On tit.english_title = titNew.Title_Name
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE and isnull(sdmr.isPushBack,'N')='Y'
 	GROUP BY is_group,titNew.Title_Code, no_of_episode
@@ -291,11 +292,11 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code 
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Territory SDMRT ON SDMR.syn_deal_movie_rights_code=SDMRT.Syn_Deal_movie_rights_code 
 	left join Rightsu_vmpl_live_27March_2015.dbo.International_Territory it on it.international_territory_code=SDMRT.territory_code
-	left join Country c on c.country_name=it.international_territory_name
+	left join Country c (NOLOCK) on c.country_name=it.international_territory_name
 	left join Rightsu_vmpl_live_27March_2015.dbo.Territory t on t.territory_code=SDMRT.territory_code
-	left join Country cTerr on cTerr.country_name=t.territory_name
+	left join Country cTerr (NOLOCK) on cTerr.country_name=t.territory_name
 	left join Rightsu_vmpl_live_27March_2015.dbo.territory_group tg on tg.territory_group_code=SDMRT.territory_group_code
-	left join Territory tnew  on tnew.Territory_Name=tg.territory_group_name
+	left join Territory tnew (NOLOCK) on tnew.Territory_Name=tg.territory_group_name
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE and isnull(sdmr.isPushBack,'N')='Y'
 	GROUP BY sdmr.is_group,territory_type,c.country_code,cterr.country_code,tnew.territory_code,sdmrt.is_domestic_territory,sdmrt.is_international_territory
 	ORDER BY sdmr.is_group
@@ -311,10 +312,10 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_rights SDMR ON SDM.syndication_deal_movie_code=SDMR.syndication_deal_movie_code 
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Subtitling SDMRS ON SDMR.syn_deal_movie_rights_code=SDMRS.Syn_Deal_movie_rights_code 
 	left join Rightsu_vmpl_live_27March_2015.dbo.Language l on l.language_code=SDMRS.language_code
-	left join Language lnew on lNew.Language_Name=l.Language_Name
+	left join Language lnew (NOLOCK) on lNew.Language_Name=l.Language_Name
 	Left join Rightsu_vmpl_live_27March_2015.dbo.Language_Group lg on lg.Language_Group_Code=sdmrs.Language_Group_Code
-	Left join Language_Group lgNew on lgNew.Language_Group_Name=lg.Language_Group_Name
-	LEFT JOIN Language_Group_Details LGD ON lgnew.Language_Group_Code=LGD.Language_Group_Code
+	Left join Language_Group lgNew (NOLOCK) on lgNew.Language_Group_Name=lg.Language_Group_Name
+	LEFT JOIN Language_Group_Details LGD (NOLOCK) ON lgnew.Language_Group_Code=LGD.Language_Group_Code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE and isnull(sdmr.isPushBack,'N')='Y'
 	GROUP BY sdmr.is_group,lnew.language_code,lgnew.Language_Group_Code,SDMRS.language_code,lgd.Language_Code
 
@@ -330,10 +331,10 @@ BEGIN TRY
 	INNER JOIN Rightsu_vmpl_live_27March_2015.dbo.Syn_Deal_Movie_Rights_Dubbing SDMRD ON SDMR.syn_deal_movie_rights_code=SDMRD.Syn_Deal_movie_rights_code 
 	--LEFT JOIN Language_Group_Details LGD ON SDMRD.Language_Group_Code=LGD.Language_Group_Code
 	left join Rightsu_vmpl_live_27March_2015.dbo.Language l on l.language_code=SDMRD.language_code
-	left join Language lnew on lNew.Language_Name=l.Language_Name
+	left join Language lnew (NOLOCK) on lNew.Language_Name=l.Language_Name
 	Left join Rightsu_vmpl_live_27March_2015.dbo.Language_Group lg on lg.Language_Group_Code=SDMRD.Language_Group_Code
-	Left join Language_Group lgNew on lgNew.Language_Group_Name=lg.Language_Group_Name
-	LEFT JOIN Language_Group_Details LGD ON lgNew.Language_Group_Code=LGD.Language_Group_Code
+	Left join Language_Group lgNew (NOLOCK) on lgNew.Language_Group_Name=lg.Language_Group_Name
+	LEFT JOIN Language_Group_Details LGD (NOLOCK) ON lgNew.Language_Group_Code=LGD.Language_Group_Code
 	WHERE SDM.syndication_deal_code=@SYN_DEALCODE  and isnull(sdmr.isPushBack,'N')='Y'
 	GROUP BY sdmr.is_group,lnew.language_code,lgNew.Language_Group_Code,SDMRD.language_code,LGD.Language_Code
 	
@@ -964,7 +965,7 @@ BEGIN TRY
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_cost dmc on dmc.syn_deal_movie_cost_code=sdmca.syn_deal_movie_cost_code
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie dm on dm.syndication_deal_movie_code=dmc.syndication_deal_movie_code
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.Additional_Expense a on a.additional_expense_code= sdmca.additional_expense_code
-			 inner join Additional_Expense aNew on anew.Additional_Expense_Name=a.additional_expense_name
+			 inner join Additional_Expense aNew (NOLOCK) on anew.Additional_Expense_Name=a.additional_expense_name
 			 where dm.syndication_deal_code=@Syn_DEALCODE and dmc.is_group=@is_group
 			 group by aNew.additional_expense_code,amount,min_max
 
@@ -976,11 +977,11 @@ BEGIN TRY
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_cost dmc on dmc.syn_deal_movie_cost_code=sdmcc.syn_deal_movie_cost_code
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie dm on dm.syndication_deal_movie_code=dmc.syndication_deal_movie_code
 			 left join Rightsu_vmpl_live_27March_2015.dbo.Cost_Type ct on ct.cost_type_code=sdmcc.cost_type_code
-			 left join Cost_Type ctNew on ct.cost_type_name=ctNew.cost_type_name
+			 left join Cost_Type ctNew (NOLOCK) on ct.cost_type_name=ctNew.cost_type_name
 			 left join Rightsu_vmpl_live_27March_2015.dbo.Entity e on e.entity_code=sdmcc.vendor_code
-			 left join Entity eNew on e.entity_name=eNew.Entity_Name
+			 left join Entity eNew (NOLOCK) on e.entity_name=eNew.Entity_Name
 			 left join Rightsu_vmpl_live_27March_2015.dbo.Vendor v on v.vendor_code=sdmcc.vendor_code
-			 left join Vendor vNew on v.vendor_name=vNew.vendor_name
+			 left join Vendor vNew (NOLOCK) on v.vendor_name=vNew.vendor_name
 			 where dm.syndication_deal_code=@Syn_DEALCODE and dmc.is_group=@is_group
 			 group by ctNew.cost_type_code,royalty_commission_code,vNew.vendor_code,type,commission_type,percentage,amount,eNew.Entity_Code
 
@@ -1001,9 +1002,9 @@ BEGIN TRY
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_cost dmc on dmc.syn_deal_movie_cost_code=sdmcvc.syn_deal_movie_cost_code
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie dm on dm.syndication_deal_movie_code=dmc.syndication_deal_movie_code
 			left join Rightsu_vmpl_live_27March_2015.dbo.Entity e on e.entity_code=sdmcvc.licensr_code
-			left join Entity eNew on e.entity_name=eNew.Entity_Name
+			left join Entity eNew (NOLOCK) on e.entity_name=eNew.Entity_Name
 			left join Rightsu_vmpl_live_27March_2015.dbo.Vendor v on v.vendor_code=sdmcvc.licensr_code
-			left join Vendor vNew on v.vendor_name=vNew.vendor_name
+			left join Vendor vNew (NOLOCK)on v.vendor_name=vNew.vendor_name
 			where dm.syndication_deal_code=@Syn_DEALCODE and dmc.is_group=@is_group
 			group by vNew.Vendor_Code,percentage,amount,eNew.Entity_Code
 
@@ -1014,7 +1015,7 @@ BEGIN TRY
 			inner join Rightsu_vmpl_live_27March_2015.dbo.syn_deal_movie_cost dmc on dmc.syn_deal_movie_cost_code=sdmcc.syn_deal_movie_cost_code
 			 inner join Rightsu_vmpl_live_27March_2015.dbo.syndication_deal_movie dm on dm.syndication_deal_movie_code=dmc.syndication_deal_movie_code
 			inner join Rightsu_vmpl_live_27March_2015.dbo.Cost_Type c on c.cost_type_code=sdmcc.cost_type_code
-			inner join Cost_Type cNew on cNew.Cost_Type_Name=c.Cost_Type_Name
+			inner join Cost_Type cNew (NOLOCK) on cNew.Cost_Type_Name=c.Cost_Type_Name
 			where dm.syndication_deal_code=@Syn_DEALCODE and dmc.is_group=@is_group
 			group by cNew.cost_type_code,amount
 
@@ -1142,7 +1143,6 @@ RETURN
 
 
 */
+
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Syndication]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
-
-
-SET ANSI_NULLS ON

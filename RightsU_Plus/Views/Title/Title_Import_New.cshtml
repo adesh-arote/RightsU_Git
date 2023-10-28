@@ -17,6 +17,9 @@
     }
     RightsU_Entities.System_Parameter_New Movies_Shows_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Import_Movies_Shows").FirstOrDefault();
     var Allow_Import_Movies_Shows = Movies_Shows_system_Parameter.Parameter_Value;
+
+    RightsU_Entities.System_Parameter_New Bulk_Poster_Upload_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Bulk_Poster_Upload").FirstOrDefault();
+    var Allow_Bulk_Poster_Upload = Bulk_Poster_Upload_Parameter.Parameter_Value;
 }
 <!DOCTYPE html>
 <html>
@@ -458,10 +461,12 @@
             <div class="container acq main_col">
                 <div class="top_area">
                     <h2 class="pull-left">@objMessageKey.TitleImport</h2>
-                    <div class="pull-right" style="padding-top:17px">
-                        <input type="button" id="btnSampleDownload" value="BULK POSTER UPLOAD" class="btn btn-primary" onclick="@(" window.location.href='"+ @Url.Action("BulkPosterUploadList", "DM_Title_Master_Import") + "' ")" />
-
-                    </div>
+                    @if (Allow_Bulk_Poster_Upload == "Y")
+                    {
+                        <div class="pull-right" style="padding-top:17px">
+                            <input type="button" id="btnSampleDownload" value="BULK POSTER UPLOAD" class="btn btn-primary" onclick="@(" window.location.href='" + @Url.Action("BulkPosterUploadList", "DM_Title_Master_Import") + "' ")" />
+                        </div>
+                    }
                 </div>
                 <div class="">
                     <div id="divSearch" class="search_area clearfix">

@@ -60,13 +60,17 @@
         if (NewTab == "MV") {
             $("[id*='tab']").removeClass('active');
             $("#tabMovie").addClass('active');
-            $("#Holdover").prop("checked", false);
+            if (IncludeHoldover == "N") {
+                $("#Holdover").prop("checked", false);
+            }
             TabName = NewTab;
         }
         else if (NewTab == "SH") {
             $("[id*='tab']").removeClass('active');
             $("#tabShow").addClass('active');
-            $("#Holdover").prop("checked", false);
+            if (IncludeHoldover == "N") {
+                $("#Holdover").prop("checked", false);
+            }
             TabName = NewTab;
         }
 
