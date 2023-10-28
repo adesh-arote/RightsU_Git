@@ -1,6 +1,4 @@
-﻿
-
-CREATE FUNCTION [dbo].[UFN_Check_Workflow]
+﻿CREATE FUNCTION [dbo].[UFN_Check_Workflow]
 (
 	@Module_Code INT, 
 	@Record_Code INT
@@ -33,10 +31,27 @@ Begin
 	BEGIN
 		SELECT @BU_Code = Business_Unit_Code FROM Music_Deal WITH(NOLOCK) WHERE Music_Deal_Code = @Record_Code
 	END
+	ELSE IF(@Module_Code = 261 OR @Module_Code = 262)
+	BEGIN
+		--SELECT @BU_Code = Business_Unit_Code FROM Music_Deal WITH(NOLOCK) WHERE Music_Deal_Code = @Record_Code
+		SELECT @Workflow_Code = Workflow_Code FROM Workflow_Module WITH(NOLOCK)
+		WHERE Module_Code = 261 --@Module_Code 
+		And cast(GetDate()AS Date ) Between Effective_Start_Date And ISNULL(System_End_Date, GETDATE())
+	END	
+	ELSE IF(@Module_Code = 265)
+	BEGIN
+		--SELECT @BU_Code = Business_Unit_Code FROM Music_Deal WITH(NOLOCK) WHERE Music_Deal_Code = @Record_Code
+		SELECT @Workflow_Code = Workflow_Code FROM Workflow_Module WITH(NOLOCK)
+		WHERE Module_Code = 265 --@Module_Code 
+		And cast(GetDate()AS Date ) Between Effective_Start_Date And ISNULL(System_End_Date, GETDATE())
+	END
 		 
-	SELECT @Workflow_Code = Workflow_Code FROM Workflow_Module WITH(NOLOCK)
-	WHERE Module_Code = @Module_Code And (Business_Unit_Code = @BU_Code Or @BU_Code < 1)
-	And cast(GetDate()AS Date ) Between Effective_Start_Date And ISNULL(System_End_Date, GETDATE())
+	IF(@Module_Code <> 261 OR @Module_Code <> 262)
+	BEGIN
+		SELECT @Workflow_Code = Workflow_Code FROM Workflow_Module WITH(NOLOCK)
+		WHERE Module_Code = @Module_Code And (Business_Unit_Code = @BU_Code Or @BU_Code < 1)
+		And cast(GetDate()AS Date ) Between Effective_Start_Date And ISNULL(System_End_Date, GETDATE())
+	END
 
 	IF(@Workflow_Code > 0)
 	BEGIN

@@ -480,8 +480,10 @@ BEGIN
 					CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,C.Category_Name,DT.Deal_Type_Name
 			FROM Acq_Deal_Rights ar
 			INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+			INNER JOIN Acq_Deal_Rights_Title ADRT ON ar.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
+			INNER JOIN #Temp_Title TT ON ADRT.Title_Code = TT.Title_Code
 			Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
-			INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
+			INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADRT.Title_Code = ADM.Title_Code AND ADRT.Episode_From = ADM.Episode_Starts_From AND ADRT.Episode_To = ADM.Episode_End_To
 			Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
 			INNER JOIN Category C ON ad.Category_Code = C.Category_Code
 			INNER JOIN Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code

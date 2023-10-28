@@ -17,7 +17,7 @@ namespace RightsU_LoadSheet_Export
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new RightsU_AL_LoadSheet()
             };
             ServiceBase.Run(ServicesToRun);
         }

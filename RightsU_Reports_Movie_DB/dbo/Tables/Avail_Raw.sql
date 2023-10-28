@@ -3,10 +3,12 @@
     [Acq_Deal_Code]        INT          NULL,
     [Acq_Deal_Rights_Code] INT          NULL,
     [Avail_Dates_Code]     NUMERIC (38) NULL,
-    [Is_Exclusive]         BIT          NULL,
+    [Is_Exclusive]         INT          NULL,
     CONSTRAINT [PK_Avail_Acq_Show_Det] PRIMARY KEY CLUSTERED ([Avail_Raw_Code] ASC),
     CONSTRAINT [FK_Avail_Acq_Show_Details_Avail_Dates] FOREIGN KEY ([Avail_Dates_Code]) REFERENCES [dbo].[Avail_Dates] ([Avail_Dates_Code])
 );
+
+
 
 
 GO

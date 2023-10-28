@@ -9,8 +9,13 @@
     [Status]                VARCHAR (2)    NULL,
     [File_Type]             VARCHAR (2)    NULL,
     [Mapped_By]             CHAR (1)       NULL,
+    [Import_Type]           CHAR (1)       NULL,
+    [Record_Code]           INT            NULL,
+    [Remarks]               NVARCHAR (MAX) NULL,
     CONSTRAINT [PK_DM_Master_Import] PRIMARY KEY CLUSTERED ([DM_Master_Import_Code] ASC)
 );
+
+
 
 
 GO

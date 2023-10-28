@@ -27,7 +27,12 @@ AS
 -- @Channel_Codes VARCHAR(200) = '24',              
 -- @Foreign_System_Name VARCHAR(100)='FPC'             
               
-BEGIN               
+BEGIN 
+Declare @Loglevel int
+
+select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Integration_Generate_XML]', 'Step 1', 0, 'Started Procedure', 0, ''               
  SET NOCOUNT ON;              
  DECLARE @Error_Desc VARCHAR(5000) = '',@Is_Error CHAR(1) = 'N' ,@Record_Status VARCHAR(5) = 'W'          
  DECLARE @Integration_Config_Code INT,@xmlData NVARCHAR(MAX)              
@@ -45,11 +50,11 @@ BEGIN
           
  /********************************Check Module Name****************/              
  BEGIN TRY                
- IF EXISTS(SELECT TOP 1 IC.Module_Code FROM Integration_Config IC WHERE IC.IS_Active = 'Y' AND (IC.Module_Name = @Module_Name) AND IC.Foreign_System_Name=@Foreign_System_Name)              
+ IF EXISTS(SELECT TOP 1 IC.Module_Code FROM Integration_Config IC (NOLOCK) WHERE IC.IS_Active = 'Y' AND (IC.Module_Name = @Module_Name) AND IC.Foreign_System_Name=@Foreign_System_Name)              
  BEGIN                  
   SELECT TOP 1 @Integration_Config_Code = ISNULL(ID.Integration_Config_Code,0)                
-  FROM Integration_Data ID WHERE ID.Integration_Config_Code IN(              
-   SELECT TOP 1 Integration_Config_Code FROM Integration_Config IC              
+  FROM Integration_Data ID (NOLOCK) WHERE ID.Integration_Config_Code IN(              
+   SELECT TOP 1 Integration_Config_Code FROM Integration_Config IC (NOLOCK)              
    WHERE 1 =1  AND UPPER(IC.Module_Name) = UPPER(@Module_Name) AND IC.Foreign_System_Name='FPC'           
   )                
   --SELECT @Integration_Config_Code AS Integration_Config_Code              
@@ -106,21 +111,21 @@ BEGIN
    ADRTitle.Acq_Deal_Rights_Code,ADRight.Actual_Right_Start_Date,ADRight.Actual_Right_End_Date,              
    ADR.Acq_Deal_Run_Code,ISNULL(ADR.Right_Rule_Code,0),ADRC.Channel_Code, ad.Deal_Desc,AD.Vendor_Code,      
    IAR.Integration_Acq_Run_Code,IT.Integration_Title_Code      
-   FROM Acq_Deal AD               
-   INNER JOIN Acq_Deal_Rights ADRight ON AD.Acq_Deal_Code = ADRight.Acq_Deal_Code               
+   FROM Acq_Deal AD (NOLOCK)               
+   INNER JOIN Acq_Deal_Rights ADRight (NOLOCK) ON AD.Acq_Deal_Code = ADRight.Acq_Deal_Code               
    AND ISNULL(ADRight.Actual_Right_Start_Date,'') <> ''              
    --AND ISNULL(ADRight.Actual_Right_End_Date,'31DEC9999') > GETDATE()              
-   INNER JOIN Acq_Deal_Rights_Title ADRTitle ON  ADRight.Acq_Deal_Rights_Code =ADRTitle.Acq_Deal_Rights_Code              
-   INNER JOIN Acq_Deal_Run ADR ON AD.Acq_Deal_Code = ADR.Acq_Deal_Code              
-   INNER JOIN Acq_Deal_Run_Title ADRT ON ADR.Acq_Deal_Run_Code= ADRT.Acq_Deal_Run_Code AND ADRTitle.Title_Code = ADRT.Title_Code              
-   INNER JOIN Acq_Deal_Run_Channel ADRC ON ADRT.Acq_Deal_Run_Code= ADRC.Acq_Deal_Run_Code AND ADRC.Channel_Code IN              
+   INNER JOIN Acq_Deal_Rights_Title ADRTitle (NOLOCK) ON  ADRight.Acq_Deal_Rights_Code =ADRTitle.Acq_Deal_Rights_Code              
+   INNER JOIN Acq_Deal_Run ADR (NOLOCK) ON AD.Acq_Deal_Code = ADR.Acq_Deal_Code              
+   INNER JOIN Acq_Deal_Run_Title ADRT (NOLOCK) ON ADR.Acq_Deal_Run_Code= ADRT.Acq_Deal_Run_Code AND ADRTitle.Title_Code = ADRT.Title_Code              
+   INNER JOIN Acq_Deal_Run_Channel ADRC (NOLOCK) ON ADRT.Acq_Deal_Run_Code= ADRC.Acq_Deal_Run_Code AND ADRC.Channel_Code IN              
     (               
      SELECT number FROM fn_Split_withdelemiter(@Channel_Codes,',')              
     )              
-   INNER JOIN Title T ON T.Title_Code= ADRT.Title_Code       
+   INNER JOIN Title T (NOLOCK) ON T.Title_Code= ADRT.Title_Code       
    AND T.Title_Language_Code = @Title_Lang_Code AND T.Deal_Type_Code = @Deal_Type_Code      
-   INNER JOIN Integration_Acq_Run IAR ON IAR.Acq_Deal_Run_Code=ADR.Acq_Deal_Run_Code      
-   INNER JOIN Integration_Title IT ON IT.Title_Code=T.Title_Code         
+   INNER JOIN Integration_Acq_Run IAR (NOLOCK) ON IAR.Acq_Deal_Run_Code=ADR.Acq_Deal_Run_Code      
+   INNER JOIN Integration_Title IT (NOLOCK) ON IT.Title_Code=T.Title_Code         
    WHERE  AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND AD.Business_Unit_Code = @BU_Code AND AD.Deal_Type_Code = @Deal_Type_Code                   
             
    --AND AD.Acq_Deal_Code IN              
@@ -146,7 +151,7 @@ BEGIN
      OR        
      ADRT.Territory_Code IN        
      (        
-    SELECT DISTINCT TD.Territory_Code  FROM Territory_Details TD         
+    SELECT DISTINCT TD.Territory_Code  FROM Territory_Details TD  (NOLOCK)        
     WHERE TD.Country_Code IN(SELECT number FROM fn_Split_withdelemiter(@CountryCodes,','))        
      )        
   )                    
@@ -163,7 +168,7 @@ BEGIN
      SELECT DISTINCT          
      ISNULL([dbo].[UFN_Get_Integration_Key] ('ROLE',R.Role_Code,'FPC'),0) AS Role_Code,R.Role_Code AS Foreign_Code,              
      R.Role_Name,'Y' AS Is_Active              
-     FROM [Role] R              
+     FROM [Role] R   (NOLOCK)            
      WHERE 1 = 1               
      AND R.Deal_Type_Code =@Deal_Type_Code              
      AND R.Role_Type IN('T')              
@@ -174,7 +179,7 @@ BEGIN
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID  (NOLOCK)              
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = R.Role_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -205,15 +210,15 @@ BEGIN
      ISNULL([dbo].[UFN_Get_Integration_Key] ('Role',              
      (              
       SELECT STUFF((SELECT DISTINCT  ',' + CAST(ISNULL(TR.Role_Code,0) AS VARCHAR(MAX))               
-      FROM Talent_Role TR              
+      FROM Talent_Role TR  (NOLOCK)             
       WHERE T.Talent_Code = TR.Talent_Code              
       AND TR.Role_Code IN(1,2)              
       FOR XML PATH('')), 1, 1, '')               
      ),'FPC'),'0') AS Talent_Roles,              
      T.Is_Active              
-     FROM Talent T                  
-     INNER JOIN Title_Talent TT ON ISNULL(TT.Talent_Code,0)= T.Talent_Code                
-     INNER JOIN Talent_Role TR ON TR.Talent_Code= T.Talent_Code   AND TR.Role_Code IN(1,2)       
+     FROM Talent T   (NOLOCK)                
+     INNER JOIN Title_Talent TT (NOLOCK) ON ISNULL(TT.Talent_Code,0)= T.Talent_Code                
+     INNER JOIN Talent_Role TR (NOLOCK) ON TR.Talent_Code= T.Talent_Code   AND TR.Role_Code IN(1,2)       
      WHERE 1 = 1                   
      AND T.Is_Active = 'Y'              
      AND TT.Title_Code IN(              
@@ -226,7 +231,7 @@ BEGIN
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID   (NOLOCK)             
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = T.Talent_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -260,7 +265,7 @@ BEGIN
      ISNULL(Is_First_Air,'0') AS Is_First_Air,              
      ISNULL(Short_Key,'0') AS Short_Key,              
      RR.Is_Active                   
-     FROM Right_Rule RR              
+     FROM Right_Rule RR   (NOLOCK)            
      WHERE RR.Is_Active = 'Y'              
      AND RR.Right_Rule_Code IN(              
       SELECT DISTINCT TDD.Right_Rule_Code FROM #Temp_Deal_Data TDD              
@@ -272,7 +277,7 @@ BEGIN
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID  (NOLOCK)              
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = RR.Right_Rule_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -300,13 +305,13 @@ BEGIN
    G.Genres_Code AS Foreign_Code,              
    G.Genres_Name,              
    G.Is_Active                  
-   FROM Genres G              
+   FROM Genres G   (NOLOCK)            
    WHERE G.Is_Active = 'Y'              
    AND G.Genres_Code IN          
    (              
     SELECT DISTINCT TG.Genres_Code              
     FROM #Temp_Deal_Data TDD              
-    INNER JOIN Title_Geners TG ON TG.Title_Code = TDD.Title_Code              
+    INNER JOIN Title_Geners TG  (NOLOCK) ON TG.Title_Code = TDD.Title_Code              
    )              
    AND               
    (              
@@ -315,7 +320,7 @@ BEGIN
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID   (NOLOCK)             
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = G.Genres_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -351,9 +356,9 @@ BEGIN
  --,T.Is_Active      
  ,T.Last_UpDated_Time       
  INTO #Temp_Title          
- FROM Title T              
+ FROM Title T (NOLOCK)         
  INNER JOIN #Temp_Deal_Data temp ON T.Title_Code= temp.Title_Code         
- INNER JOIN Integration_Title IT ON T.Title_Code=IT.Title_Code                 
+ INNER JOIN Integration_Title IT (NOLOCK) ON T.Title_Code=IT.Title_Code                 
  WHERE 1 = 1              
  AND               
  (              
@@ -362,7 +367,7 @@ BEGIN
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID   (NOLOCK)             
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = T.Title_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -427,10 +432,10 @@ BEGIN
   -- ),' ') AS CBFC_Rating       
    ,ISNULL((            
     SELECT Case When MEC.Columns_Value_Code = 3 Then 'O' When MEC.Columns_Value_Code = 4 Then 'D' Else '' End             
-    FROM Map_Extended_Columns MEC WHERE Columns_Value_Code IN     
+    FROM Map_Extended_Columns MEC (NOLOCK) WHERE Columns_Value_Code IN     
     (              
-   SELECT Columns_Value_Code FROM Extended_Columns_Value  WHERE Columns_Code IN(              
-    SELECT Columns_Code FROM Extended_Columns WHERE Columns_Name like 'Type of Film')          
+   SELECT Columns_Value_Code FROM Extended_Columns_Value (NOLOCK)  WHERE Columns_Code IN(              
+    SELECT Columns_Code FROM Extended_Columns (NOLOCK) WHERE Columns_Name like 'Type of Film')          
     )              
     AND MEC.Table_Name = 'TITLE' AND MEC.Record_Code = T.Title_Code            
     ), '') AS  Original_Dub      
@@ -462,16 +467,16 @@ END
     DECLARE @RequestTime DATETIME , @ResponseTime DATETIME,@Title_Int_Config_Code INT = 0       
        
  SELECT TOP 1 @RequestTime = IL.Request_DateTime ,@ResponseTime = IL.Response_DateTime,@Title_Int_Config_Code = IL.Intergration_Config_Code       
- FROM Integration_Log IL WHERE IL.Intergration_Config_Code IN      
+ FROM Integration_Log IL (NOLOCK) WHERE IL.Intergration_Config_Code IN      
  (      
   SELECT IC.Integration_Config_Code      
-  FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'TITLE' AND IC.Foreign_System_Name=@Foreign_System_Name      
+  FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'TITLE' AND IC.Foreign_System_Name=@Foreign_System_Name      
  ) AND  IL.Response_DateTime  IS NOT NULL ORDER BY IL.Request_DateTime DESC      
       
  SELECT ID.RU_Record_Code AS Title_Code INTO #Temp_Title_Code       
  FROM  #Temp_Deal_Data TDD      
- INNER JOIN Title T ON T.Title_Code = TDD.Title_Code      
- INNER JOIN Integration_Data ID ON ID.RU_Record_Code = T.Title_Code AND ID.Integration_Config_Code = ISNULL(@Title_Int_Config_Code,0)       
+ INNER JOIN Title T (NOLOCK) ON T.Title_Code = TDD.Title_Code      
+ INNER JOIN Integration_Data ID (NOLOCK) ON ID.RU_Record_Code = T.Title_Code AND ID.Integration_Config_Code = ISNULL(@Title_Int_Config_Code,0)       
  AND ID.Processing_Date BETWEEN  @RequestTime AND @ResponseTime      
  AND ISNULL(ID.Foreign_System_Code,0) > 0      
       
@@ -484,19 +489,19 @@ END
   TT.Title_Talent_Code As Foreign_Code,               
   IDT.Foreign_System_Code AS Title_Code, IDTL.Foreign_System_Code AS Talent_Code,               
   IDR.Foreign_System_Code AS Role_Code              
-  FROM Title_Talent TT                   
-  INNER JOIN  #Temp_Title_Code TDD  ON TDD.Title_Code  = TT.Title_Code              
-  INNER JOIN Integration_Data IDT On IDT.RU_Record_Code = TT.Title_Code AND IDT.Integration_Config_Code = (              
+  FROM Title_Talent TT (NOLOCK)                  
+  INNER JOIN  #Temp_Title_Code TDD ON TDD.Title_Code  = TT.Title_Code              
+  INNER JOIN Integration_Data IDT  (NOLOCK) On IDT.RU_Record_Code = TT.Title_Code AND IDT.Integration_Config_Code = (              
    SELECT TOP 1 IC.Integration_Config_Code              
-   FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'TITLE' AND IC.Foreign_System_Name=@Foreign_System_Name)              
-  INNER JOIN Integration_Data IDTL On IDTL.RU_Record_Code = TT.Talent_Code AND IDTL.Integration_Config_Code = (              
+   FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'TITLE' AND IC.Foreign_System_Name=@Foreign_System_Name)              
+  INNER JOIN Integration_Data IDTL  (NOLOCK) On IDTL.RU_Record_Code = TT.Talent_Code AND IDTL.Integration_Config_Code = (              
    SELECT TOP 1 IC.Integration_Config_Code              
-   FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'TALENT' AND IC.Foreign_System_Name=@Foreign_System_Name)              
-  INNER JOIN Integration_Data IDR On IDR.RU_Record_Code = TT.Role_Code AND IDR.Integration_Config_Code = (              
+   FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'TALENT' AND IC.Foreign_System_Name=@Foreign_System_Name)              
+  INNER JOIN Integration_Data IDR (NOLOCK) On IDR.RU_Record_Code = TT.Role_Code AND IDR.Integration_Config_Code = (              
    SELECT TOP 1 IC.Integration_Config_Code              
-   FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'ROLE' AND IC.Foreign_System_Name=@Foreign_System_Name)               
+   FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'ROLE' AND IC.Foreign_System_Name=@Foreign_System_Name)               
   --INNER JOIN #TempTalent ttl On ttl.Title_Talent_Code = TT.Title_Talent_Code          
- INNER JOIN Integration_Title IT ON IT.Title_Code=TT.Title_Code          
+ INNER JOIN Integration_Title IT (NOLOCK) ON IT.Title_Code=TT.Title_Code          
   WHERE 1 = 1 AND TT.Role_Code IN(1,2) AND IT.Record_Status='P'      
   FOR XML PATH('Title_Talent'),TYPE              
  )              
@@ -517,7 +522,7 @@ END
     FROM Acq_Deal_Rights_Holdback ADRH              
     INNER JOIN #Temp_Deal_Data TDRD ON ADRH.Acq_Deal_Rights_Code = TDRD.Acq_Deal_Rights_Code              
     INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRP ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRP.Acq_Deal_Rights_Holdback_Code              
-    AND ADRP.Platform_Code IN(SELECT P.Platform_Code FROM [Platform] P   WHERE P.Applicable_For_Asrun_Schedule = 'Y')              
+    AND ADRP.Platform_Code IN(SELECT P.Platform_Code FROM [Platform] P (NOLOCK) WHERE P.Applicable_For_Asrun_Schedule = 'Y')              
     WHERE  1 = 1              
     AND ISNULL(ADRH.Holdback_Type,'') = 'D'  AND ISNULL(ADRH.Holdback_Release_Date,'') <> ''              
               
@@ -562,7 +567,7 @@ END
      --ISNULL(ADR.Off_Prime_Time_Balance_Count,0) AS Off_Prime_Time_Balance_Count,                   
      ISNULL((              
       SELECT STUFF((SELECT DISTINCT ', '+  CAST(ADRRD.Day_Code AS VARCHAR)              
-      FROM Acq_Deal_Run_Repeat_On_Day ADRRD              
+      FROM Acq_Deal_Run_Repeat_On_Day ADRRD (NOLOCK)              
       WHERE ADRRD.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code                    
       AND ADRRD.Day_Code is NOT NULL              
       FOR XML PATH('')), 1, 1, '')              
@@ -586,23 +591,23 @@ END
   ,ISNULL(IAR.Is_Archive,'N') AS Is_Archive      
      FROM Acq_Deal_Run ADR              
      INNER JOIN #Temp_Deal_Data TDD ON ADR.Acq_Deal_Code = TDD.Acq_Deal_Code       
-     INNER JOIN Acq_Deal_Run_Title ADRT ON ADR.Acq_Deal_Run_Code = ADRT.Acq_Deal_Run_Code AND TDD.Title_Code = ADRT.Title_Code              
+     INNER JOIN Acq_Deal_Run_Title ADRT (NOLOCK) ON ADR.Acq_Deal_Run_Code = ADRT.Acq_Deal_Run_Code AND TDD.Title_Code = ADRT.Title_Code              
      AND TDD.Acq_Deal_Run_Code = ADRT.Acq_Deal_Run_Code              
      AND TDD.Title_Code IN              
      (              
       SELECT ID.RU_Record_Code              
-      FROM Integration_Data ID              
+      FROM Integration_Data ID   (NOLOCK)            
       WHERE ID.Integration_Config_Code IN              
       (              
        SELECT TOP 1 IC.Integration_Config_Code              
-       FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'TITLE'  AND IC.Foreign_System_Name=@Foreign_System_Name          
+       FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'TITLE'  AND IC.Foreign_System_Name=@Foreign_System_Name          
       )              
      )      
-  INNER JOIN Acq_Deal_Movie ADM ON ADM.Title_Code=ADRT.Title_Code       
+  INNER JOIN Acq_Deal_Movie ADM  (NOLOCK) ON ADM.Title_Code=ADRT.Title_Code       
   AND ADM.Acq_Deal_Code=ADR.Acq_Deal_Code       
   AND ADM.Episode_Starts_From=ADRT.Episode_From       
   AND ADM.Episode_End_To=ADRT.Episode_To      
-  INNER JOIN Integration_Acq_Run IAR ON TDD.Integration_Acq_Run_Code = IAR.Integration_Acq_Run_Code       
+  INNER JOIN Integration_Acq_Run IAR (NOLOCK) ON TDD.Integration_Acq_Run_Code = IAR.Integration_Acq_Run_Code       
         
     -- --AND TDD.Acq_Deal_Run_Code NOT IN--Need To Comment              
     -- --(              
@@ -645,21 +650,21 @@ END
      --ISNULL(ADRC.No_Of_Runs_Sched,0) AS No_Of_Runs_Sched,              
      --ISNULL(ADRC.No_Of_AsRuns,0) AS No_Of_AsRuns      
  , ISNULL(IRC.Is_Archive,'N') AS Is_Archive              
-     FROM Acq_Deal_Run_Channel ADRC              
+     FROM Acq_Deal_Run_Channel ADRC (NOLOCK)         
      INNER JOIN #Temp_Deal_Data TDD ON ADRC.Acq_Deal_Run_Code =TDD.Acq_Deal_Run_Code               
     AND ADRC.Channel_Code = TDD.Channel_Code                   
      AND TDD.Acq_Deal_Run_Code  IN              
      (              
       SELECT ID.RU_Record_Code              
-      FROM Integration_Data ID              
+      FROM Integration_Data ID    (NOLOCK)           
       WHERE ID.Integration_Config_Code IN              
       (              
        SELECT TOP 1 IC.Integration_Config_Code              
-       FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'   AND IC.Foreign_System_Name=@Foreign_System_Name          
+       FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'   AND IC.Foreign_System_Name=@Foreign_System_Name          
       )              
      )       
    --INNER JOIN Integration_Acq_Run IAR ON ADRC.Acq_Deal_Run_Code = IAR.Acq_Deal_Run_Code      
-   INNER JOIN Integration_Acq_Run_Channel IRC ON IRC.Channel_Code=ADRC.Channel_Code       
+   INNER JOIN Integration_Acq_Run_Channel IRC (NOLOCK) ON IRC.Channel_Code=ADRC.Channel_Code       
    AND TDD.Integration_Acq_Run_Code=IRC.Integration_Acq_Run_Code      
    AND IRC.Record_Status='P'      
        ----Comment Below line              
@@ -712,11 +717,11 @@ END
     AND TDD.Acq_Deal_Run_Code  IN              
     (              
      SELECT ID.RU_Record_Code              
-     FROM Integration_Data ID              
+     FROM Integration_Data ID  (NOLOCK)             
      WHERE ID.Integration_Config_Code IN              
      (              
       SELECT TOP 1 IC.Integration_Config_Code              
-      FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'  AND IC.Foreign_System_Name=@Foreign_System_Name                
+      FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'  AND IC.Foreign_System_Name=@Foreign_System_Name                
      )              
     )              
     AND ISNULL(ADRYR.[Start_Date],'') <> '' AND ISNULL(ADRYR.End_Date,'') <> ''                    
@@ -737,7 +742,7 @@ END
   --  --FROM Acq_Deal_Rights_Holdback ADRH              
   --  --INNER JOIN #Temp_Deal_Data TDRD ON ADRH.Acq_Deal_Rights_Code = TDRD.Acq_Deal_Rights_Code              
   --  --INNER JOIN Acq_Deal_Rights_Holdback_Platform ADRP ON ADRH.Acq_Deal_Rights_Holdback_Code = ADRP.Acq_Deal_Rights_Holdback_Code              
-  --  --AND ADRP.Platform_Code IN(SELECT P.Platform_Code FROM [Platform] P   WHERE P.Applicable_For_Asrun_Schedule = 'Y')              
+  --  --AND ADRP.Platform_Code IN(SELECT P.Platform_Code FROM [Platform] P WHERE P.Applicable_For_Asrun_Schedule = 'Y')              
   --  --WHERE  1 = 1              
   --  --AND ISNULL(ADRH.Holdback_Type,'') = 'D'  AND ISNULL(ADRH.Holdback_Release_Date,'') <> ''              
               
@@ -801,7 +806,7 @@ IF(UPPER(@Module_Name) = 'LICENSOR')
      ,V.Vendor_Code AS Foreign_Code              
      ,V.Vendor_Name AS Licensor_Name           
      ,V.Is_Active                   
-     FROM Vendor V              
+     FROM Vendor V    (NOLOCK)           
      WHERE V.Is_Active = 'Y'              
      AND V.Vendor_Code IN(              
       SELECT DISTINCT TDD.Licensor_Code FROM #Temp_Deal_Data TDD              
@@ -813,7 +818,7 @@ IF(UPPER(@Module_Name) = 'LICENSOR')
    SELECT TOP 1 Processing_Date      
    FROM       
    (      
-    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID               
+    SELECT TOP 1 ID.Processing_Date AS Processing_Date FROM Integration_Data ID (NOLOCK)             
     WHERE ID.Integration_Config_Code = @Integration_Config_Code AND ID.RU_Record_Code = V.Vendor_Code ORDER BY Processing_Date DESC      
     UNION      
     SELECT CAST('01Jan1900' AS DATETIME) AS Processing_Date         
@@ -857,7 +862,7 @@ IF(UPPER(@Module_Name) = 'LICENSOR')
      AND TDD.Acq_Deal_Run_Code  IN              
      (              
       SELECT ID.RU_Record_Code              
-      FROM Integration_Data ID              
+      FROM Integration_Data ID (NOLOCK)            
       WHERE ID.Integration_Config_Code IN              
       (              
        SELECT TOP 1 IC.Integration_Config_Code              
@@ -900,16 +905,16 @@ IF(UPPER(@Module_Name) = 'LICENSOR')
     ISNULL(IR.Schedule_Run,0) AS Schedule_Run ,        
     ISNULL(IR.Prime_Runs_Sched,0) AS Prime_Runs_Sched,        
     ISNULL(IR.Off_Prime_Runs_Sched,0) AS Off_Prime_Runs_Sched                        
-   FROM Integration_Runs IR        
+   FROM Integration_Runs IR (NOLOCK)        
    WHERE 1 = 1         
    AND IR.IsRead = 'N'        
    AND IR.Acq_Deal_Run_Code IN        
    (        
-   SELECT  ID.RU_Record_Code FROM Integration_Data ID WHERE ID.RU_Record_Code = IR.Acq_Deal_Run_Code         
+   SELECT  ID.RU_Record_Code FROM Integration_Data ID  (NOLOCK) WHERE ID.RU_Record_Code = IR.Acq_Deal_Run_Code         
    AND ID.Integration_Config_Code IN              
    (              
     SELECT TOP 1 IC.Integration_Config_Code              
-    FROM Integration_Config IC WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'  AND IC.Foreign_System_Name=@Foreign_System_Name             
+    FROM Integration_Config IC (NOLOCK) WHERE UPPER(IC.Module_Name) = 'ACQ_DEAL_RUN'  AND IC.Foreign_System_Name=@Foreign_System_Name             
    )             
    )        
    FOR XML PATH('Integration_Run'),TYPE              
@@ -948,7 +953,7 @@ BEGIN CATCH
 END CATCH              
 /********************************Log File Code ****************/              
  IF(ISNULL(@Integration_Config_Code,0) = 0)              
-  SELECT @Integration_Config_Code = Integration_Config_Code FROM Integration_Config WHERE UPPER(Module_Name) = @Module_Name  AND Foreign_System_Name=@Foreign_System_Name            
+  SELECT @Integration_Config_Code = Integration_Config_Code FROM Integration_Config (NOLOCK) WHERE UPPER(Module_Name) = @Module_Name  AND Foreign_System_Name=@Foreign_System_Name            
               
  INSERT INTO Integration_Log(Intergration_Config_Code,Request_XML,Request_Type,Request_DateTime,Response_DateTime,Response_XML,[Error_Message],              
    [Record_Status] ,[Deal_Type_Code],[BU_Code],[Title_Lang_Code],[Channel_Code]                    
@@ -967,38 +972,6 @@ SELECT @xmlData AS XML_Data, @Error_Desc AS Error_Desc,@Is_Error AS IS_Error,@Cu
 	IF OBJECT_ID('tempdb..#Temp_Title') IS NOT NULL DROP TABLE #Temp_Title
 	IF OBJECT_ID('tempdb..#Temp_Title_Code') IS NOT NULL DROP TABLE #Temp_Title_Code
 	IF OBJECT_ID('tempdb..#TempTalent') IS NOT NULL DROP TABLE #TempTalent
-END          
-
-/*        
-SELECT ISNULL([dbo].[UFN_Get_Integration_Key] ('Role',0,'FPC'),0)        
---UPDATE Integration_Deal SET Record_Status = 'D' WHERE Record_Status = 'P'    
-/*        
-UPDATE Integration_Data SET Processing_Date = GETDATE()        
-UPDATE Talent SET Last_Updated_Time = GETDATE()         
-UPDATE Role SET Last_Updated_Time = GETDATE()         
-UPDATE Right_Rule SET Last_Updated_Time = GETDATE()         
-UPDATE Genres SET Last_Updated_Time = GETDATE()         
-UPDATE Title SET Last_Updated_Time = GETDATE()             
-Step 2         
-EXEC [dbo].[USP_Integration_Generate_XML] 'Title','1',2,14,24,'FPC' ---Title        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Role','1',1,2,14,'FPC' ---Role        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Right_Rule','1',1,2,14,'FPC' - ---TITLE_TALENT        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Talent','1',2,14,24,'FPC' ---Talent        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Genre','1',1,1,1,'FPC' ---Genre        
-EXEC [dbo].[USP_Integration_Generate_XML] 'TITLE_TALENT','1',1,1,1,'FPC' ---TITLE_TALENT        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Acq_Deal_Run','1',2,14,24,'FPC'  ---Acq_Deal_Run        
-EXEC [dbo].[USP_Integration_Generate_XML] 'ACQ_DEAL_RUN_CHANNEL','1',2,14,24,'FPC'   ---ACQ_DEAL_RUN_CHANNEL        
-EXEC [dbo].[USP_Integration_Generate_XML] 'Acq_Deal_Run_Yearwise_Run','1',2,14,24,'FPC'   ---Acq_Deal_Run_Yearwise_Run        
-EXEC [dbo].[USP_Integration_Generate_XML] 'INTEGRATION_RUNS','1',2,14,24,'FPC'   ---INTEGRATION_RUNS      
-        
---SELECT * FROM Integration_Config       
-        
-Step 3        
-        
---INSERT INTO Integration_Config(Module_Code,Module_Name,Foreign_System_Name,IS_Active)        
---SELECT 0, 'BU_Code_English','FPC','Y'         
-        
---INSERT INTO Integration_Data(Integration_Config_Code,RU_Record_Code,Foreign_System_Code,Creation_Date)        
---SELECT 23 AS Integration_Config_Code, 2,1067,GETDATE()            
-*/        
-*/
+	 
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Integration_Generate_XML]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
+END

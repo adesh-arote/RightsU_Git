@@ -257,16 +257,16 @@ namespace RightsU_Plus.Controllers
             string SelectedBU = "";
             System_Parameter_New_Service objSystemParamService = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName);
 
-            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForMovieAvailabilityReport)
+            if (Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForMovieAvailabilityReport)
             {
                 SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_BU").ToList().FirstOrDefault().Parameter_Value;
             }
 
-            if(Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
+            if (Convert.ToInt32(modulecode) == GlobalParams.ModuleCodeForProgramAvailabilityReport)
             {
                 SelectedBU = objSystemParamService.SearchFor(p => p.Parameter_Name == "Title_Avail_Show_BU").ToList().FirstOrDefault().Parameter_Value;
             }
-            
+
             string[] arr_BU_Codes = SelectedBU.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             List<SelectListItem> list = new SelectList(new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(b => b.Users_Business_Unit.Any(UB => UB.Business_Unit_Code == b.Business_Unit_Code
@@ -1660,6 +1660,10 @@ namespace RightsU_Plus.Controllers
             string Region_MustHave_Codes = string.Join(",", ddlMustHaveCountry);
             string Region_Exclusion_Codes = string.Join(",", ddlListCountry);
 
+            //Check whether Modelling avail is enable or not
+
+            string Is_Enable_Modelling_Avail = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Enable_Modelling_Avail").ToList().FirstOrDefault().Parameter_Value;
+
             var strBU_Code = BU_Code.ToString();
             if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
             {
@@ -1750,6 +1754,13 @@ namespace RightsU_Plus.Controllers
             {
                 noOfParam = 26;
             }
+
+            if (Is_Enable_Modelling_Avail == "Y")
+            {
+                noOfParam = 34;
+            }
+
+
             if (tabName == "check" || tabName == "UnCheck")
             {
                 TabName = "IF";
@@ -1757,233 +1768,301 @@ namespace RightsU_Plus.Controllers
             }
             TabName = tabName;
             ReportParameter[] parm = new ReportParameter[noOfParam];
-            if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+
+            if (Is_Enable_Modelling_Avail == "N")
             {
-                parm[0] = new ReportParameter("Title_Code", strTitleCodes);
-                parm[1] = new ReportParameter("Is_Original_Language", isOriginalLang);
-                parm[2] = new ReportParameter("Title_Language_Code", Title_Language_Codes);
-                parm[3] = new ReportParameter("Date_Type", rblPeriodType);
-                parm[4] = new ReportParameter("Start_Date", startDate);
-                parm[5] = new ReportParameter("End_Date", endDate);
 
-                parm[6] = new ReportParameter("Platform_Group_Code", pfGroupCode);
-                parm[7] = new ReportParameter("Platform_Code", strPlatformCodes);
-                parm[8] = new ReportParameter("Platform_ExactMatch", ExcactMatch_Platform);
-                parm[9] = new ReportParameter("Platform_MustHave", MustHave_Platform);
-
-                parm[10] = new ReportParameter("Is_IFTA_Cluster", chkIFTACluster);
-                parm[11] = new ReportParameter("Territory_Code", Territory_Code);
-                parm[12] = new ReportParameter("Country_Code", Country_Code);
-                parm[13] = new ReportParameter("Region_ExactMatch", chkExactMatch);
-                parm[14] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
-                parm[15] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
-
-                parm[16] = new ReportParameter("Dubbing_Subtitling", Dubbing_Subtitling);
-                parm[17] = new ReportParameter("Subtit_Language_Code", Subtit_Language_Code);
-                parm[18] = new ReportParameter("Subtitling_Group_Code", LangGroup_Sub);
-                parm[19] = new ReportParameter("Subtitling_ExactMatch", chkExactMatch_Sub);
-                parm[20] = new ReportParameter("Subtitling_MustHave", strMustHave_Subtitle_Codes);
-                parm[21] = new ReportParameter("Subtitling_Exclusion", Sub_Exclusion_Codes);
-
-                parm[22] = new ReportParameter("Dubbing_Group_Code", LangGroup_Dub);
-                parm[23] = new ReportParameter("Dubbing_ExactMatch", chkExactMatch_Dub);
-                parm[24] = new ReportParameter("Dubbing_MustHave", strMustHave_Dubbing_Codes);
-                parm[25] = new ReportParameter("Dubbing_Exclusion", Dub_Exclusion_Codes);
-                parm[26] = new ReportParameter("Dubbing_Language_Code", Dubbing_Language_Code);
-
-                parm[27] = new ReportParameter("Restriction_Remarks", chkRestRemarks);
-                parm[28] = new ReportParameter("Others_Remarks", chkOtherRemarks);
-                parm[29] = new ReportParameter("Exclusivity", Exclusivity);
-
-                parm[30] = new ReportParameter("SubLicense_Code", SubLicense_Code);
-                parm[31] = new ReportParameter("BU_Code", BU_Code.ToString());
-                parm[32] = new ReportParameter("Country_Level", chkCountryLevel);
-                parm[33] = new ReportParameter("Territory_Level", chkTerritoryLevel);
-                parm[34] = new ReportParameter("TabName", tabName);
-
-                parm[35] = new ReportParameter("Promoter_Groups", strPromoterCodes);
-                parm[36] = new ReportParameter("Promoter_ExactMatch", ExcactMatch_Promoter);
-                parm[37] = new ReportParameter("Promoter_MustHave", MustHave_Promoter);
-                parm[38] = new ReportParameter("Episode_From", episodeFrom.ToString());
-                parm[39] = new ReportParameter("Episode_To", episodeTo.ToString());
-                parm[40] = new ReportParameter("Show_EpisodeWise", "N");
-                //parm[11] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-
-
-
-
-                //if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
-                //{
-                //    //parm[35] = new ReportParameter("Include_Ancillary", IncludeAncillary);
-                //    parm[36] = new ReportParameter("Promoter_Code", strPromoterCodes);
-                //    parm[37] = new ReportParameter("Promoter_ExactMatch", ExcactMatch_Promoter);
-                //    parm[38] = new ReportParameter("Promoter_MustHave", MustHave_Promoter);
-                //}
-                //if (module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-                //{
-
-                //}
-            }
-            else
-            {
-                if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
-
+                if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
                 {
                     parm[0] = new ReportParameter("Title_Code", strTitleCodes);
-                    parm[1] = new ReportParameter("Country_Code", Country_Code);
+                    parm[1] = new ReportParameter("Is_Original_Language", isOriginalLang);
                     parm[2] = new ReportParameter("Title_Language_Code", Title_Language_Codes);
                     parm[3] = new ReportParameter("Date_Type", rblPeriodType);
+                    parm[4] = new ReportParameter("Start_Date", startDate);
+                    parm[5] = new ReportParameter("End_Date", endDate);
 
-                    parm[4] = new ReportParameter("StartDate", GlobalUtil.MakedateFormat(startDate));
-                    parm[5] = new ReportParameter("EndDate", GlobalUtil.MakedateFormat(endDate));
-                    parm[6] = new ReportParameter("RestrictionRemarks", chkRestRemarks);
-                    parm[7] = new ReportParameter("OthersRemarks", chkOtherRemarks);
-                    parm[8] = new ReportParameter("Exclusivity", Exclusivity);
-                    parm[9] = new ReportParameter("SubLicense_Code", SubLicense_Code);
-                    parm[10] = new ReportParameter("Region_ExactMatch", (chkExactMatch == "") ? "False" : chkExactMatch);
-                    parm[11] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
-                    parm[12] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
-                    parm[13] = new ReportParameter("BU_Code", BU_Code.ToString());
-                    parm[14] = new ReportParameter("Is_Digital", "False");
-                    parm[15] = new ReportParameter("Include_Metadata", chkMetaData);
-                    parm[16] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                    parm[17] = new ReportParameter("Territory_Code", Territory_Code);
-                    parm[18] = new ReportParameter("Is_IFTA_Cluster", "");
-                    parm[19] = new ReportParameter("Subtitling_Group_Code", "");
-                    parm[20] = new ReportParameter("Subtitling_MustHave", "");
-                    parm[21] = new ReportParameter("Subtitling_Exclusion", "");
-                    parm[22] = new ReportParameter("Dubbing_Group_Code", "");
-                    parm[23] = new ReportParameter("Dubbing_Exclusion", "");
-                    parm[24] = new ReportParameter("Dubbing_MustHave", "");
-                    parm[25] = new ReportParameter("Platform_Group_Code", "");
-                    //parm[26] = new ReportParameter("Episode_From", episodeFrom.ToString());
-                    //parm[27] = new ReportParameter("Episode_To", episodeTo.ToString());
-                    //parm[28] = new ReportParameter("Show_EpisodeWise", "N");
+                    parm[6] = new ReportParameter("Platform_Group_Code", pfGroupCode);
+                    parm[7] = new ReportParameter("Platform_Code", strPlatformCodes);
+                    parm[8] = new ReportParameter("Platform_ExactMatch", ExcactMatch_Platform);
+                    parm[9] = new ReportParameter("Platform_MustHave", MustHave_Platform);
 
+                    parm[10] = new ReportParameter("Is_IFTA_Cluster", chkIFTACluster);
+                    parm[11] = new ReportParameter("Territory_Code", Territory_Code);
+                    parm[12] = new ReportParameter("Country_Code", Country_Code);
+                    parm[13] = new ReportParameter("Region_ExactMatch", chkExactMatch);
+                    parm[14] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
+                    parm[15] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
+
+                    parm[16] = new ReportParameter("Dubbing_Subtitling", Dubbing_Subtitling);
+                    parm[17] = new ReportParameter("Subtit_Language_Code", Subtit_Language_Code);
+                    parm[18] = new ReportParameter("Subtitling_Group_Code", LangGroup_Sub);
+                    parm[19] = new ReportParameter("Subtitling_ExactMatch", chkExactMatch_Sub);
+                    parm[20] = new ReportParameter("Subtitling_MustHave", strMustHave_Subtitle_Codes);
+                    parm[21] = new ReportParameter("Subtitling_Exclusion", Sub_Exclusion_Codes);
+
+                    parm[22] = new ReportParameter("Dubbing_Group_Code", LangGroup_Dub);
+                    parm[23] = new ReportParameter("Dubbing_ExactMatch", chkExactMatch_Dub);
+                    parm[24] = new ReportParameter("Dubbing_MustHave", strMustHave_Dubbing_Codes);
+                    parm[25] = new ReportParameter("Dubbing_Exclusion", Dub_Exclusion_Codes);
+                    parm[26] = new ReportParameter("Dubbing_Language_Code", Dubbing_Language_Code);
+
+                    parm[27] = new ReportParameter("Restriction_Remarks", chkRestRemarks);
+                    parm[28] = new ReportParameter("Others_Remarks", chkOtherRemarks);
+                    parm[29] = new ReportParameter("Exclusivity", Exclusivity);
+
+                    parm[30] = new ReportParameter("SubLicense_Code", SubLicense_Code);
+                    parm[31] = new ReportParameter("BU_Code", BU_Code.ToString());
+                    parm[32] = new ReportParameter("Country_Level", chkCountryLevel);
+                    parm[33] = new ReportParameter("Territory_Level", chkTerritoryLevel);
+                    parm[34] = new ReportParameter("TabName", tabName);
+
+                    parm[35] = new ReportParameter("Promoter_Groups", strPromoterCodes);
+                    parm[36] = new ReportParameter("Promoter_ExactMatch", ExcactMatch_Promoter);
+                    parm[37] = new ReportParameter("Promoter_MustHave", MustHave_Promoter);
+                    parm[38] = new ReportParameter("Episode_From", episodeFrom.ToString());
+                    parm[39] = new ReportParameter("Episode_To", episodeTo.ToString());
+                    parm[40] = new ReportParameter("Show_EpisodeWise", "N");
+                    //parm[11] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+
+
+
+
+                    //if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
+                    //{
+                    //    //parm[35] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                    //    parm[36] = new ReportParameter("Promoter_Code", strPromoterCodes);
+                    //    parm[37] = new ReportParameter("Promoter_ExactMatch", ExcactMatch_Promoter);
+                    //    parm[38] = new ReportParameter("Promoter_MustHave", MustHave_Promoter);
+                    //}
+                    //if (module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+                    //{
+
+                    //}
                 }
                 else
                 {
-                    parm[0] = new ReportParameter("Title_Code", strTitleCodes);
-                    parm[1] = new ReportParameter("Platform_Code", strPlatformCodes);
-                    parm[2] = new ReportParameter("Country_Code", Country_Code);
-                    parm[3] = new ReportParameter("Is_Original_Language", isOriginalLang);
-                    parm[4] = new ReportParameter("Dubbing_Subtitling", Dubbing_Subtitling);
-                    parm[5] = new ReportParameter("Date_Type", rblPeriodType);
-                    parm[6] = new ReportParameter("Title_Language_Code", Title_Language_Codes);
-                    parm[7] = new ReportParameter("Platform_ExactMatch", ExcactMatch_Platform);
-                    parm[8] = new ReportParameter("Exclusivity", Exclusivity);
-                    parm[9] = new ReportParameter("SubLicense_Code", SubLicense_Code);
-                    parm[10] = new ReportParameter("Region_ExactMatch", chkExactMatch);
-                    parm[11] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
-                    parm[12] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
-                    parm[13] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
-                    parm[14] = new ReportParameter("Subtit_Language_Code", Subtit_Language_Code);
-                    parm[15] = new ReportParameter("Dubbing_Language_Code", Dubbing_Language_Code);
-                    if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
+                    if (module == GlobalParams.ModuleCodeForTheatricalAvailabilityReport.ToString())
+
                     {
-                        parm[16] = new ReportParameter("BU_Code", strBU_Code);
+                        parm[0] = new ReportParameter("Title_Code", strTitleCodes);
+                        parm[1] = new ReportParameter("Country_Code", Country_Code);
+                        parm[2] = new ReportParameter("Title_Language_Code", Title_Language_Codes);
+                        parm[3] = new ReportParameter("Date_Type", rblPeriodType);
+
+                        parm[4] = new ReportParameter("StartDate", GlobalUtil.MakedateFormat(startDate));
+                        parm[5] = new ReportParameter("EndDate", GlobalUtil.MakedateFormat(endDate));
+                        parm[6] = new ReportParameter("RestrictionRemarks", chkRestRemarks);
+                        parm[7] = new ReportParameter("OthersRemarks", chkOtherRemarks);
+                        parm[8] = new ReportParameter("Exclusivity", Exclusivity);
+                        parm[9] = new ReportParameter("SubLicense_Code", SubLicense_Code);
+                        parm[10] = new ReportParameter("Region_ExactMatch", (chkExactMatch == "") ? "False" : chkExactMatch);
+                        parm[11] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
+                        parm[12] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
+                        parm[13] = new ReportParameter("BU_Code", BU_Code.ToString());
+                        parm[14] = new ReportParameter("Is_Digital", "False");
+                        parm[15] = new ReportParameter("Include_Metadata", chkMetaData);
+                        parm[16] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                        parm[17] = new ReportParameter("Territory_Code", Territory_Code);
+                        parm[18] = new ReportParameter("Is_IFTA_Cluster", "");
+                        parm[19] = new ReportParameter("Subtitling_Group_Code", "");
+                        parm[20] = new ReportParameter("Subtitling_MustHave", "");
+                        parm[21] = new ReportParameter("Subtitling_Exclusion", "");
+                        parm[22] = new ReportParameter("Dubbing_Group_Code", "");
+                        parm[23] = new ReportParameter("Dubbing_Exclusion", "");
+                        parm[24] = new ReportParameter("Dubbing_MustHave", "");
+                        parm[25] = new ReportParameter("Platform_Group_Code", "");
+                        //parm[26] = new ReportParameter("Episode_From", episodeFrom.ToString());
+                        //parm[27] = new ReportParameter("Episode_To", episodeTo.ToString());
+                        //parm[28] = new ReportParameter("Show_EpisodeWise", "N");
+
                     }
                     else
                     {
-                        parm[16] = new ReportParameter("BU_Code", BU_Code.ToString());
-                    }
-                    parm[17] = new ReportParameter("Is_Digital", chkDigital.ToString());
-
-                    if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
-                    {
-                        parm[18] = new ReportParameter("StartDate", startDate);
-                        parm[19] = new ReportParameter("EndDate", endDate);
-                        parm[20] = new ReportParameter("RestrictionRemarks", chkRestRemarks);
-                        parm[21] = new ReportParameter("OthersRemarks", chkOtherRemarks);
-                        parm[22] = new ReportParameter("MustHave_Platform", MustHave_Platform);
-                    }
-                    else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-                    {
-                        parm[18] = new ReportParameter("Start_Date", startDate);
-                        parm[19] = new ReportParameter("End_Date", endDate);
-                        parm[20] = new ReportParameter("Restriction_Remarks", chkRestRemarks);
-                        parm[21] = new ReportParameter("Others_Remarks", chkOtherRemarks);
-                        parm[22] = new ReportParameter("Platform_MustHave", MustHave_Platform);
-                    }
-
-                    parm[23] = new ReportParameter("Include_Metadata", chkMetaData);
-                    parm[24] = new ReportParameter("Is_IFTA_Cluster", chkIFTACluster);
-                    parm[25] = new ReportParameter("Platform_Group_Code", pfGroupCode);
-                    parm[26] = new ReportParameter("Subtitling_Group_Code", LangGroup_Sub);
-                    parm[27] = new ReportParameter("Subtitling_ExactMatch", chkExactMatch_Sub);
-                    parm[28] = new ReportParameter("Subtitling_MustHave", strMustHave_Subtitle_Codes);
-                    parm[29] = new ReportParameter("Subtitling_Exclusion", Sub_Exclusion_Codes);
-                    parm[30] = new ReportParameter("Dubbing_Group_Code", LangGroup_Dub);
-                    parm[31] = new ReportParameter("Dubbing_ExactMatch", chkExactMatch_Dub);
-                    parm[32] = new ReportParameter("Dubbing_MustHave", strMustHave_Dubbing_Codes);
-                    parm[33] = new ReportParameter("Dubbing_Exclusion", Dub_Exclusion_Codes);
-                    parm[34] = new ReportParameter("Territory_Code", Territory_Code);
-                    if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-                    {
-                        parm[35] = new ReportParameter("Episode_From", episodeFrom.ToString());
-                        parm[36] = new ReportParameter("Episode_To", episodeTo.ToString());
-                        parm[37] = new ReportParameter("Show_EpisodeWise", "N");
-                        if (Availability_Ifta_And_Ancillary == "Y")
+                        parm[0] = new ReportParameter("Title_Code", strTitleCodes);
+                        parm[1] = new ReportParameter("Platform_Code", strPlatformCodes);
+                        parm[2] = new ReportParameter("Country_Code", Country_Code);
+                        parm[3] = new ReportParameter("Is_Original_Language", isOriginalLang);
+                        parm[4] = new ReportParameter("Dubbing_Subtitling", Dubbing_Subtitling);
+                        parm[5] = new ReportParameter("Date_Type", rblPeriodType);
+                        parm[6] = new ReportParameter("Title_Language_Code", Title_Language_Codes);
+                        parm[7] = new ReportParameter("Platform_ExactMatch", ExcactMatch_Platform);
+                        parm[8] = new ReportParameter("Exclusivity", Exclusivity);
+                        parm[9] = new ReportParameter("SubLicense_Code", SubLicense_Code);
+                        parm[10] = new ReportParameter("Region_ExactMatch", chkExactMatch);
+                        parm[11] = new ReportParameter("Region_MustHave", Region_MustHave_Codes);
+                        parm[12] = new ReportParameter("Created_By", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+                        parm[13] = new ReportParameter("Region_Exclusion", Region_Exclusion_Codes);
+                        parm[14] = new ReportParameter("Subtit_Language_Code", Subtit_Language_Code);
+                        parm[15] = new ReportParameter("Dubbing_Language_Code", Dubbing_Language_Code);
+                        if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
                         {
-                            if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
+                            parm[16] = new ReportParameter("BU_Code", strBU_Code);
+                        }
+                        else
+                        {
+                            parm[16] = new ReportParameter("BU_Code", BU_Code.ToString());
+                        }
+                        parm[17] = new ReportParameter("Is_Digital", chkDigital.ToString());
+
+                        if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
+                        {
+                            parm[18] = new ReportParameter("StartDate", startDate);
+                            parm[19] = new ReportParameter("EndDate", endDate);
+                            parm[20] = new ReportParameter("RestrictionRemarks", chkRestRemarks);
+                            parm[21] = new ReportParameter("OthersRemarks", chkOtherRemarks);
+                            parm[22] = new ReportParameter("MustHave_Platform", MustHave_Platform);
+                        }
+                        else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                        {
+                            parm[18] = new ReportParameter("Start_Date", startDate);
+                            parm[19] = new ReportParameter("End_Date", endDate);
+                            parm[20] = new ReportParameter("Restriction_Remarks", chkRestRemarks);
+                            parm[21] = new ReportParameter("Others_Remarks", chkOtherRemarks);
+                            parm[22] = new ReportParameter("Platform_MustHave", MustHave_Platform);
+                        }
+
+                        parm[23] = new ReportParameter("Include_Metadata", chkMetaData);
+                        parm[24] = new ReportParameter("Is_IFTA_Cluster", chkIFTACluster);
+                        parm[25] = new ReportParameter("Platform_Group_Code", pfGroupCode);
+                        parm[26] = new ReportParameter("Subtitling_Group_Code", LangGroup_Sub);
+                        parm[27] = new ReportParameter("Subtitling_ExactMatch", chkExactMatch_Sub);
+                        parm[28] = new ReportParameter("Subtitling_MustHave", strMustHave_Subtitle_Codes);
+                        parm[29] = new ReportParameter("Subtitling_Exclusion", Sub_Exclusion_Codes);
+                        parm[30] = new ReportParameter("Dubbing_Group_Code", LangGroup_Dub);
+                        parm[31] = new ReportParameter("Dubbing_ExactMatch", chkExactMatch_Dub);
+                        parm[32] = new ReportParameter("Dubbing_MustHave", strMustHave_Dubbing_Codes);
+                        parm[33] = new ReportParameter("Dubbing_Exclusion", Dub_Exclusion_Codes);
+                        parm[34] = new ReportParameter("Territory_Code", Territory_Code);
+                        if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                        {
+                            parm[35] = new ReportParameter("Episode_From", episodeFrom.ToString());
+                            parm[36] = new ReportParameter("Episode_To", episodeTo.ToString());
+                            parm[37] = new ReportParameter("Show_EpisodeWise", "N");
+                            if (Availability_Ifta_And_Ancillary == "Y")
                             {
-                                parm[38] = new ReportParameter("Country_Level", chkCountryLevel);
-                                parm[39] = new ReportParameter("Territory_Level", chkTerritoryLevel);
-                                parm[40] = new ReportParameter("TabName", tabName);
-                                parm[41] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
+                                {
+                                    parm[38] = new ReportParameter("Country_Level", chkCountryLevel);
+                                    parm[39] = new ReportParameter("Territory_Level", chkTerritoryLevel);
+                                    parm[40] = new ReportParameter("TabName", tabName);
+                                    parm[41] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                }
                             }
                         }
-                    }
 
-                    if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
-                    {
-                        string Is_Allow_Title_Objection = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Title_Objection").ToList().FirstOrDefault().Parameter_Value;
-                        string Is_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name == "Is_Syn_CoExclusive").ToList().FirstOrDefault().Parameter_Value;
-
-                        parm[35] = new ReportParameter("StartMonth", "0");
-                        parm[36] = new ReportParameter("EndYear", "0");
-                        parm[37] = new ReportParameter("DisplayObjection", (Is_Allow_Title_Objection == "Y" ? "TRUE" : "FALSE"));
-                        parm[38] = new ReportParameter("DisplayCoExRemarks", (Is_Syn_CoExclusive == "Y" ? "TRUE" : "FALSE"));
-                        if (Availability_Ifta_And_Ancillary == "Y")
+                        if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString() || module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
                         {
-                            if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
+                            string Is_Allow_Title_Objection = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Parameter_Name == "Is_Allow_Title_Objection").ToList().FirstOrDefault().Parameter_Value;
+                            string Is_Syn_CoExclusive = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(p => p.Parameter_Name == "Is_Syn_CoExclusive").ToList().FirstOrDefault().Parameter_Value;
+
+                            parm[35] = new ReportParameter("StartMonth", "0");
+                            parm[36] = new ReportParameter("EndYear", "0");
+                            parm[37] = new ReportParameter("DisplayObjection", (Is_Allow_Title_Objection == "Y" ? "TRUE" : "FALSE"));
+                            parm[38] = new ReportParameter("DisplayCoExRemarks", (Is_Syn_CoExclusive == "Y" ? "TRUE" : "FALSE"));
+                            if (Availability_Ifta_And_Ancillary == "Y")
                             {
-                                parm[39] = new ReportParameter("Country_Level", chkCountryLevel);
-                                parm[40] = new ReportParameter("Territory_Level", chkTerritoryLevel);
-                                parm[41] = new ReportParameter("TabName", tabName);
-                                parm[42] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
+                                {
+                                    parm[39] = new ReportParameter("Country_Level", chkCountryLevel);
+                                    parm[40] = new ReportParameter("Territory_Level", chkTerritoryLevel);
+                                    parm[41] = new ReportParameter("TabName", tabName);
+                                    parm[42] = new ReportParameter("Include_Ancillary", IncludeAncillary);
+                                }
                             }
                         }
                     }
                 }
             }
+            else
+            {
+                string Report_Type = "M";
+                if(module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
+                {
+                    Report_Type = "M";
+                }
+                else if(module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
+                {
+                    Report_Type = "S";
+                }
+
+                parm[0] = new ReportParameter("TitleCodes", strTitleCodes);
+                parm[1] = new ReportParameter("DateType", rblPeriodType);
+                parm[2] = new ReportParameter("StartDate", startDate);
+                parm[3] = new ReportParameter("EndDate", endDate);
+                parm[4] = new ReportParameter("PlatformCodes", strPlatformCodes);
+                parm[5] = new ReportParameter("ExactMatchPlatforms", ExcactMatch_Platform);
+                parm[6] = new ReportParameter("MustHavePlatforms", MustHave_Platform);
+
+                parm[7] = new ReportParameter("IsIFTACluster", chkIFTACluster);
+                parm[8] = new ReportParameter("TerritoryCodes", Territory_Code);
+                parm[9] = new ReportParameter("CountryCodes", Country_Code);
+                parm[10] = new ReportParameter("ExactMatchCountry", chkExactMatch);
+                parm[11] = new ReportParameter("MustHaveCountry", Region_MustHave_Codes);
+                parm[12] = new ReportParameter("ExclusionCountry", Region_Exclusion_Codes);
+
+                parm[13] = new ReportParameter("IsTitleLanguage", isOriginalLang);
+                parm[14] = new ReportParameter("TitleLanguageCode", Title_Language_Codes);
+
+                parm[15] = new ReportParameter("DubbingSubtitling", Dubbing_Subtitling);
+                parm[16] = new ReportParameter("SubtitlingGroupCodes", LangGroup_Sub);
+                parm[17] = new ReportParameter("SubtitlingCodes", Subtit_Language_Code);
+                parm[18] = new ReportParameter("ExactMatchSubtitling", chkExactMatch_Sub);
+                parm[19] = new ReportParameter("MustHaveSubtitling", strMustHave_Subtitle_Codes);
+                parm[20] = new ReportParameter("ExclusionSubtitling", Sub_Exclusion_Codes);
+
+                parm[21] = new ReportParameter("DubbingGroupCodes", LangGroup_Dub);
+                parm[22] = new ReportParameter("DubbingCodes", Dubbing_Language_Code);
+                parm[23] = new ReportParameter("ExactMatchDubbing", chkExactMatch_Dub);
+                parm[24] = new ReportParameter("MustHaveDubbing", strMustHave_Dubbing_Codes);
+                parm[25] = new ReportParameter("ExclusionDubbing", Dub_Exclusion_Codes);
+
+                parm[26] = new ReportParameter("Exclusivity", Exclusivity);
+                parm[27] = new ReportParameter("SubLicenseCode", SubLicense_Code);
+                parm[28] = new ReportParameter("RestrictionRemarks", chkRestRemarks);
+                parm[29] = new ReportParameter("OthersRemarks", chkOtherRemarks);
+                parm[30] = new ReportParameter("BUCode", BU_Code.ToString());
+                parm[31] = new ReportParameter("IsDigital", chkDigital);
+                parm[32] = new ReportParameter("L1Output", "N");
+                parm[33] = new ReportParameter("Report_Type", "M");
+
+            }
+
 
             ReportViewer rptViewer = new ReportViewer();
-            if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
-            {
-                if (Availability_Ifta_And_Ancillary == "Y")//availabilyIFTAAND ANCILARY IF Y DEN V18 ESLE SPN
-                    rptViewer = BindReport(parm, "Title_Availability_Languagewise_V18");
-                else if (Availability_Ifta_And_Ancillary == "N")
-                    rptViewer = BindReport(parm, "Title_Availability_Languagewise_3");
-            }
-            else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
-            {
-                if (Availability_Ifta_And_Ancillary == "Y")
-                    rptViewer = BindReport(parm, "Title_Availability_Show_3_V18");
-                else if (Availability_Ifta_And_Ancillary == "N")
-                    rptViewer = BindReport(parm, "Title_Availability_Show_3");
-            }
-            else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
-                rptViewer = BindReport(parm, "Movie_Availability_Indiacast");
-            else if (module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
-                rptViewer = BindReport(parm, "Show_availability_Indiacast");
-            else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
-                rptViewer = BindReport(parm, "Self_Utilization_Movie_Availability");
-            else if (module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
-                rptViewer = BindReport(parm, "Self_Utilization_Show_Availability");
-            else
-                rptViewer = BindReport(parm, "Theatrical_Availability");
 
+            if (Is_Enable_Modelling_Avail == "Y")
+            {
+
+                rptViewer = BindReport(parm, "rpt_Availability");
+            }
+            else
+            {
+
+                if (module == GlobalParams.ModuleCodeForMovieAvailabilityReport.ToString())
+                {
+                    if (Availability_Ifta_And_Ancillary == "Y")//availabilyIFTAAND ANCILARY IF Y DEN V18 ESLE SPN
+                        rptViewer = BindReport(parm, "Title_Availability_Languagewise_V18");
+                    else if (Availability_Ifta_And_Ancillary == "N")
+                        rptViewer = BindReport(parm, "Title_Availability_Languagewise_3");
+                }
+                else if (module == GlobalParams.ModuleCodeForProgramAvailabilityReport.ToString())
+                {
+                    if (Availability_Ifta_And_Ancillary == "Y")
+                        rptViewer = BindReport(parm, "Title_Availability_Show_3_V18");
+                    else if (Availability_Ifta_And_Ancillary == "N")
+                        rptViewer = BindReport(parm, "Title_Availability_Show_3");
+                }
+                else if (module == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport.ToString())
+                    rptViewer = BindReport(parm, "Movie_Availability_Indiacast");
+                else if (module == GlobalParams.ModuleCodeForIndiacastProgramAvailabilityReport.ToString())
+                    rptViewer = BindReport(parm, "Show_availability_Indiacast");
+                else if (module == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport.ToString())
+                    rptViewer = BindReport(parm, "Self_Utilization_Movie_Availability");
+                else if (module == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport.ToString())
+                    rptViewer = BindReport(parm, "Self_Utilization_Show_Availability");
+                else
+                    rptViewer = BindReport(parm, "Theatrical_Availability");
+            }
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
         }

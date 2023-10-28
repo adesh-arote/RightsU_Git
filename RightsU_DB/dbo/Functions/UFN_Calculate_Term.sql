@@ -1,9 +1,15 @@
-﻿SELECT [dbo].[UFN_Calculate_Term]('22-May-2023', '31-May-2023')
+﻿--USE [RightsU_Plus_Testing]
+--GO
+--/****** Object:  UserDefinedFunction [dbo].[UFN_Calculate_Term]    Script Date: 31-05-2023 18:29:56 ******/
+--SET ANSI_NULLS ON
+--GO
+--SET QUOTED_IDENTIFIER ON
+--GO
 
 CREATE FUNCTION [dbo].[UFN_Calculate_Term]
 (
-	@startDate DATETIME, 
-	@endDate DATETIME
+	@startDate DATETIME, --= '26-Jan-2024', 
+	@endDate DATETIME --= '01-Mar-2024'
 )
 RETURNS VARCHAR(10)
 AS 
@@ -14,47 +20,59 @@ AS
 -- =============================================
 BEGIN
 	--DECLARE @startDate DATETIME = CAST('2020-03-24' AS DATETIME), @endDate DATETIME = CAST('9999-12-29' AS DATETIME)
-
+	
 	IF( @endDate <> '9999-12-31 00:00:00.000')
-	 SET @endDate = DATEADD(D, 1, @endDate)
+		SET @endDate = DATEADD(D, 1, @endDate)
 
-	DECLARE @term VARCHAR(10), @totalMonth INT, @year INT, @month INT
-	DECLARE @day INT, @SDno INT, @EDno INT
+	DECLARE @term VARCHAR(10), @year INT, @month INT, @day INT, @tmpFromDate DATETIME
+    SET @year = DATEDIFF(YEAR, @startDate, @endDate) - (CASE WHEN DATEADD(YEAR, DATEDIFF(YEAR, @startDate, @endDate), @startDate) > @endDate THEN 1 ELSE 0 END)
+    
+    SET @tmpFromDate = DATEADD(YEAR, @year, @startDate)
+    SET @month =  DATEDIFF(MONTH, @tmpFromDate, @endDate) - (CASE WHEN DATEADD(MONTH, DATEDIFF(MONTH, @tmpFromDate, @endDate), @tmpFromDate) > @endDate THEN 1 ELSE 0 END) 
+    
+    SET @tmpFromDate = DATEADD(MONTH, @month , @tmpFromDate)
+    SET @day =  DATEDIFF(DAY, @tmpFromDate, @endDate) - (CASE WHEN DATEADD(DAY, DATEDIFF(DAY, @tmpFromDate, @endDate), @tmpFromDate) > @endDate THEN 1 ELSE 0 END) 
 
-	SET @totalMonth = DATEDIFF(MM, @startDate, @endDate)
+	--IF( @endDate <> '9999-12-31 00:00:00.000')
+	-- SET @endDate = DATEADD(D, 1, @endDate)
 
-	SET @SDno = DATEPART(day, @startDate)
-    SET @EDno = DATEPART(day, @endDate)
+	--DECLARE @term VARCHAR(10)--, @totalMonth INT, @year INT, @month INT
+	--DECLARE @day INT, @SDno INT, @EDno INT
 
-	IF @EDno < @SDno 
-		SET @totalMonth = @totalMonth -1
+	--SET @totalMonth = DATEDIFF(MM, @startDate, @endDate)
 
-	SET @year = @totalMonth / 12
-	SET @month = @totalMonth % 12
+	--SET @SDno = DATEPART(day, @startDate)
+ --   SET @EDno = DATEPART(day, @endDate)
+
+	--IF @EDno < @SDno 
+	--	SET @totalMonth = @totalMonth -1
+
+	--SET @year = @totalMonth / 12
+	--SET @month = @totalMonth % 12
 	
-	IF (@EDno > @SDno)
-       SET @day = @EDno - @SDno
-    ELSE IF (@SDno = @EDno)
-       SET @day = 0
-	ELSE IF ( DATEPART(month, @startDate) =  DATEPART(month, @endDate) AND  DATEPART(YEAR, @startDate) = DATEPART(YEAR, @endDate)) 
-       SET @day =  DATEDIFF(DD, @startDate, @endDate)
-    ELSE
-	BEGIN
-		DECLARE @FirstDay DATETIME, @LastDay DATETIME
+	--IF (@EDno > @SDno)
+ --      SET @day = @EDno - @SDno
+ --   ELSE IF (@SDno = @EDno)
+ --      SET @day = 0
+	--ELSE IF ( DATEPART(month, @startDate) =  DATEPART(month, @endDate) AND  DATEPART(YEAR, @startDate) = DATEPART(YEAR, @endDate)) 
+ --      SET @day =  DATEDIFF(DD, @startDate, @endDate)
+ --   ELSE
+	--BEGIN
+	--	DECLARE @FirstDay DATETIME, @LastDay DATETIME
 
-		SET @FirstDay = @endDate-DAY(@endDate)+1
-		set @day =  DATEDIFF(DD, @FirstDay, @endDate)
+	--	SET @FirstDay = @endDate-DAY(@endDate)+1
+	--	set @day =  DATEDIFF(DD, @FirstDay, @endDate)
 	
-		--SET @startDate = DateAdd(month,@month,@startDate)
-		--SET @startDate = DateAdd(year,@year,@startDate)
+	--	--SET @startDate = DateAdd(month,@month,@startDate)
+	--	--SET @startDate = DateAdd(year,@year,@startDate)
 
-		SET @LastDay =  DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,@startDate)+1,0))
-		SET @day = @day + DATEDIFF(DD, @startDate, @LastDay)
-		--SELECT @day
-	END
+	--	SET @LastDay =  DATEADD(s,-1,DATEADD(mm, DATEDIFF(m,0,@startDate)+1,0))
+	--	SET @day = @day + DATEDIFF(DD, @startDate, @LastDay) + 1
+	--	--SELECT @day
+	--END
 
 	SET @term = CAST(@year AS VARCHAR) + '.' + CAST(@month AS VARCHAR) + '.' + CAST(@day AS VARCHAR)
-	RETURN  ISNULL(@term, '')
+	RETURN ISNULL(@term, '')
 END
 
  /*var val = CalculateMonthBetweenTwoDate(startDate, endDate);

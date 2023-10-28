@@ -148,9 +148,12 @@ BEGIN
 	ELSE
 		SET @OthersRemarks = 'N'
 
-	DECLARE @EX_YES bit=2,@EX_NO bit=2
+	DECLARE @EX_YES INT = 3, @EX_NO INT = 3, @EX_CO INT = 3
 	IF(UPPER(@Exclusivity) = 'E')
+	BEGIN
 		SET @EX_YES = 1
+		SET @EX_CO = 2
+	END
 	ELSE IF(UPPER(@Exclusivity) = 'N')
 	BEGIN
 		SET @EX_NO = 0
@@ -160,6 +163,7 @@ BEGIN
 	BEGIN
 		SET @EX_YES = 1
 		SET @EX_NO = 0
+		SET @EX_CO = 2
 	END
 	
 	----------------- Title AND Platform Population
@@ -466,7 +470,7 @@ BEGIN
 		--	@Episode_To Between ar.Episode_From And ar.Episode_To
 		--) 
 		--AND 
-		ar.Is_Exclusive IN (@Ex_YES, @Ex_NO)
+		ar.Is_Exclusive IN (@Ex_YES, @Ex_NO, @EX_CO)
 
 		Drop Table #Avail_Dates
 	END
@@ -512,8 +516,10 @@ BEGIN
 					CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,ADM.Due_Diligence,C.Category_Name,DT.Deal_Type_Name
 			FROM Acq_Deal_Rights ar
 			INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+			INNER JOIN Acq_Deal_Rights_Title ADRT ON ar.Acq_Deal_Rights_Code = ADRT.Acq_Deal_Rights_Code
+			INNER JOIN #Temp_Title TT ON ADRT.Title_Code = TT.Title_Code
 			Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
-			INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
+			INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADRT.Title_Code = ADM.Title_Code AND ADRT.Episode_From = ADM.Episode_Starts_From AND ADRT.Episode_To = ADM.Episode_End_To
 			INNER JOIN Category C ON ad.Category_Code = C.Category_Code
 			INNER JOIN Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
 			Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
@@ -1311,7 +1317,7 @@ BEGIN
 			Sub_Language_Names, Dub_Language_Names, trt.Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS Genres_Name, trt.Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS Star_Cast, 
 			trt.Director COLLATE SQL_Latin1_General_CP1_CI_AS Director, trt.Duration_In_Min, trt.Year_Of_Production,
 			trr.Restriction_Remarks Restriction_Remark, trr.Sub_Deal_Restriction_Remark,
-			trr.Remarks, trr.Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' ELSE 'Non Exclusive' END AS Exclusive,
+			trr.Remarks, trr.Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' WHEN ar.Is_Exclusive = 2 THEN 'Co-Exclusive' ELSE 'Non Exclusive' END AS Exclusive,
 			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail,
 			CASE WHEN ISNULL(pt1.Platform_Hiearachy,'') = '' OR ar.Start_Date > tm.Holdback_Release_Date THEN '' ELSE hb.HBComments + pt1.Platform_Hiearachy END COLLATE SQL_Latin1_General_CP1_CI_AS As HoldbackOn, 
 			tm.Holdback_Type COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Type, 
@@ -1366,7 +1372,7 @@ BEGIN
 			Sub_Language_Names, Dub_Language_Names, trt.Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS Genres_Name, trt.Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS Star_Cast, 
 			trt.Director COLLATE SQL_Latin1_General_CP1_CI_AS Director, trt.Duration_In_Min, trt.Year_Of_Production,
 			'' Restriction_Remark, '' Sub_Deal_Restriction_Remark,
-			'' Remarks, '' Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' ELSE 'Non Exclusive' END AS Exclusive,
+			'' Remarks, '' Rights_Remarks, CASE WHEN ar.Is_Exclusive = 1 THEN 'Exclusive' WHEN ar.Is_Exclusive = 2 THEN 'Co-Exclusive' ELSE 'Non Exclusive' END AS Exclusive,
 			trr.Sub_License_Name AS Sub_License, 'Yes' Platform_Avail,
 			CASE WHEN ISNULL(pt1.Platform_Hiearachy,'') = '' OR ar.Start_Date > tm.Holdback_Release_Date THEN '' ELSE hb.HBComments + pt1.Platform_Hiearachy END 
 			COLLATE SQL_Latin1_General_CP1_CI_AS As HoldbackOn

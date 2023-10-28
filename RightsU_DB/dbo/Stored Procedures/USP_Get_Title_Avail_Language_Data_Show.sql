@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Get_Title_Avail_Language_Data_Show]      
+﻿CREATE PROCEDURE [dbo].[USP_Get_Title_Avail_Language_Data_Show]      
 	 @Mode CHAR(1),                  
 	 @UserCode INT,                  
 	 @StrCriteria NVARCHAR(MAX),                  
@@ -11,7 +10,11 @@ CREATE PROCEDURE [dbo].[USP_Get_Title_Avail_Language_Data_Show]
 	 @Avail_Report_Schedule_Data Avail_Report_Schedule_Data READONLY    
 AS      
 BEGIN      
-      
+Declare @Loglevel int;
+
+select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Get_Title_Avail_Language_Data_Show]', 'Step 1', 0, 'Started Procedure', 0, ''
  --=============================================      
  --Author:  Faisal Khan      
  --Create date: 06th July, 2016      
@@ -119,7 +122,7 @@ BEGIN
 		, Region_ExactMatch, Region_MustHave, Region_Exclusion, Subtit_Language_Code, Dubbing_Language_Code, BU_Code, Report_Type, Digital, IncludeMetadata, Is_IFTA_Cluster, Platform_Group_Code
 		, Subtitling_Group_Code, Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion, Territory_Code
 		, IndiaCast, Region_On, Include_Ancillary, Promoter_Code, MustHave_Promoter, Promoter_ExactMatch, Module_Code, Episode_From, Episode_To
-      FROM Y'
+      FROM Y  (NOLOCK)'
   print @SqlQuery        
   EXEC(@SqlQuery)        
   DEclare @RecCount INT 
@@ -158,19 +161,19 @@ BEGIN
       ISNULL((      
        SELECT Distinct STUFF(      
           (SELECT '', '' + CAST(Title_Name AS NVARCHAR(250)) [text()]      
-        FROM Title       
+        FROM Title   (NOLOCK)     
         WHERE Title_Code IN (select number from fn_Split_withdelemiter(ISNULL(tbl.Title_Code,''''), '',''))      
         ORDER BY Title_Name       
         FOR XML PATH(''''), TYPE).value(''.'',''NVARCHAR(MAX)''),1,2,'' '') List_Output      
-       FROM Title T      
+       FROM Title T    (NOLOCK)   
        GROUP BY Title_Name       
       ), '''') AS Title_Names,   
       ISNULL((      
        SELECT Distinct STUFF(      
           (SELECT '', '' + CAST(Platform_Hiearachy AS NVARCHAR(100)) [text()]          
-         From dbo.UFN_Get_Platform_With_Parent (tbl.Platform_Code)      
+         From dbo.UFN_Get_Platform_With_Parent (tbl.Platform_Code)      (NOLOCK) 
         FOR XML PATH(''''), TYPE).value(''.'',''NVARCHAR(MAX)''),1,2,'' '') List_Output      
-       FROM Platform P      
+       FROM Platform P   (NOLOCK)    
        GROUP BY Platform_Hiearachy      
       ), '''') AS Platform_Names,      
       (select dbo.UFN_GetRegionNames(Country_Code)) Country_Names,      
@@ -188,7 +191,7 @@ BEGIN
 	 ,Promoter_Code, Promoter_ExactMatch, MustHave_Promoter, Module_Code, '+CAST(@RecCount as varchar(10))+' As Recordcount, Episode_From, Episode_To
     
    FROM ' + @ReportDB + '..Avail_Report_Schedule as tbl      
-      INNER JOIN Users u ON u.Users_Code = tbl.User_Code      
+      INNER JOIN Users u  (NOLOCK) ON u.Users_Code = tbl.User_Code      
       WHERE 1=1 AND Avail_Report_Schedule_Code IN (SELECT Avail_Report_Schedule_Code FROM #Temp)      
       ORDER BY Avail_Report_Schedule_Code DESC '      
       --
@@ -250,4 +253,6 @@ BEGIN
 
 	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	IF OBJECT_ID('tempdb..#tempVariable') IS NOT NULL DROP TABLE #tempVariable
+	 
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Get_Title_Avail_Language_Data_Show]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

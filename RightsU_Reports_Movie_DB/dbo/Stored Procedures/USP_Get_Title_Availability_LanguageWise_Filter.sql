@@ -1,4 +1,5 @@
-﻿--sp_helptext USP_Get_Title_Availability_LanguageWise_Filter      
+﻿
+--sp_helptext USP_Get_Title_Availability_LanguageWise_Filter      
       
  --use RightsU_Reports_Movie        
 -- Select * from Language        
@@ -42,6 +43,29 @@ BEGIN
  SET NOCOUNT ON;          
  SET FMTONLY OFF;          
     
+
+	Insert InTo TestParam(Params, ProcType)
+	Select '@Title_Code=''' + CAST(@Title_Code AS VARCHAR(MAX)) +
+	''', @Platform_Code=''' + CAST(ISNULL(@Platform_Code, '') AS VARCHAR(MAX)) +
+	''', @Country_Code=''' + CAST(ISNULL(@Country_Code, '') AS VARCHAR(MAX)) +
+	''', @Subtit_Language_Code=''' + CAST(ISNULL(@Subtit_Language_Code, '') AS VARCHAR(MAX)) +
+	''', @Dubbing_Language_Code=''' + CAST(ISNULL(@Dubbing_Language_Code, '') AS VARCHAR(MAX)) +
+	''', @MustHavePlatform=''' + CAST(ISNULL(@MustHavePlatform, '') AS VARCHAR(MAX)) +
+	''', @Dubbing_Subtitling=''' + CAST(ISNULL(@Dubbing_Subtitling, '') AS VARCHAR(MAX)) +
+	''', @MustHaveRegion=''' + CAST(ISNULL(@MustHaveRegion, '') AS VARCHAR(MAX)) +
+	''', @Region_Exclusion=''' + CAST(ISNULL(@Region_Exclusion, '') AS VARCHAR(MAX)) +
+	''', @Title_Language_Code=''' + CAST(ISNULL(@Title_Language_Code, '') AS VARCHAR(MAX)) +
+	''', @CallFrom=''' + CAST(ISNULL(@CallFrom, '') AS VARCHAR(MAX)) +
+	''', @Is_IFTA_Cluster=''' + CAST(ISNULL(@Is_IFTA_Cluster, '') AS VARCHAR(MAX)) +
+	''', @Subtitling_Group_Code=''' + CAST(ISNULL(@Subtitling_Group_Code, '') AS VARCHAR(MAX)) +
+	''', @Subtitling_MustHave=''' + CAST(ISNULL(@Subtitling_MustHave, '') AS VARCHAR(MAX)) +
+	''', @Subtitling_Exclusion=''' + CAST(ISNULL(@Subtitling_Exclusion, '') AS VARCHAR(MAX)) +
+	''', @Dubbing_Group_Code=''' + CAST(ISNULL(@Dubbing_Group_Code, '') AS VARCHAR(MAX)) +
+	''', @Dubbing_MustHave=''' + CAST(ISNULL(@Dubbing_MustHave, '') AS VARCHAR(MAX)) +
+	''', @Dubbing_Exclusion=''' + CAST(ISNULL(@Dubbing_Exclusion, '') AS VARCHAR(MAX)) +
+	''', @Platform_Group_Code=''' + CAST(ISNULL(@Platform_Group_Code, '') AS VARCHAR(MAX)) +
+	''', @MustHave_Platform=''' + CAST(ISNULL(@MustHave_Platform, '') AS VARCHAR(MAX)) +
+	''', @Territory_Code=''' + CAST(ISNULL(@Territory_Code, '') AS VARCHAR(MAX)), 'Filter'
           
  Declare @territoryCodes varchar(max),@countryCodes varchar(max),@languageGroupCodes varchar(max),@subtiti_languageCodes varchar(max),@dubbing_languageCodes varchar(max),        
    @subtitlingGroupCode varchar(max),@subtitlingMustHave varchar(max), @subtitlingExclusion varchar(max),@dubbingGroupCode varchar(max)        

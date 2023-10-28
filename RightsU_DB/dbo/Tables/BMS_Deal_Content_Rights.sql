@@ -6,9 +6,9 @@
     [BMS_Deal_Content_Rights_Ref_Key] DECIMAL (38)    NULL,
     [BMS_Station_Code]                INT             NULL,
     [RU_Right_Rule_Code]              INT             NULL,
-    [BMS_Right_Rule_Ref_Key]          INT             NULL,
+    [BMS_Right_Rule_Ref_Key]          DECIMAL (38)    NULL,
     [SAP_WBS_Code]                    INT             NULL,
-    [SAP_WBS_Ref_Key]                 INT             NULL,
+    [SAP_WBS_Ref_Key]                 DECIMAL (38)    NULL,
     [BMS_Asset_Code]                  INT             NULL,
     [BMS_Asset_Ref_Key]               DECIMAL (38)    NULL,
     [Asset_Type]                      VARCHAR (3)     NULL,
@@ -36,7 +36,14 @@
     [Acq_Deal_Run_Code]               INT             NULL,
     [Acq_Deal_Run_Channel_Code]       INT             NULL,
     [Acq_Deal_Run_YearWise_Run_Code]  INT             NULL,
+    [Counter]                         INT             NULL,
+    [IsMailSent]                      BIT             NULL,
+    [Created_On]                      DATETIME        NULL,
+    [Updated_On]                      DATETIME        NULL,
+    [Is_Active]                       CHAR (1)        NULL,
     CONSTRAINT [PK_BMS_Deal_Content_Rights] PRIMARY KEY CLUSTERED ([BMS_Deal_Content_Rights_Code] ASC),
     CONSTRAINT [FK_BMS_Deal_Content_Rights_BMS_Deal_Content] FOREIGN KEY ([BMS_Deal_Content_Code]) REFERENCES [dbo].[BMS_Deal_Content] ([BMS_Deal_Content_Code])
 );
+
+
 

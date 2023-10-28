@@ -21,6 +21,9 @@
     [Title_Image]            VARCHAR (2000)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Music_Label_Code]       INT             NULL,
     [Program_Code]           INT             NULL,
+    [Original_Title_Code]    INT             NULL,
     CONSTRAINT [PK_Title_1] PRIMARY KEY CLUSTERED ([Title_Code] ASC)
 );
+
+
 

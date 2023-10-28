@@ -30,12 +30,15 @@
     [Promoter_Flag]           CHAR (1)        NULL,
     [Right_Status]            CHAR (1)        CONSTRAINT [df_Right_Status] DEFAULT ('C') NULL,
     [Is_Under_Production]     CHAR (1)        NULL,
+    [Buyback_Syn_Rights_Code] NVARCHAR (MAX)  NULL,
     CONSTRAINT [PK_Acq_Deal_Rights_Code] PRIMARY KEY CLUSTERED ([Acq_Deal_Rights_Code] ASC),
     CONSTRAINT [FK_Acq_Deal_Rights_Acq_Deal] FOREIGN KEY ([Acq_Deal_Code]) REFERENCES [dbo].[Acq_Deal] ([Acq_Deal_Code]),
     CONSTRAINT [FK_Acq_Deal_Rights_Milestone_Type] FOREIGN KEY ([Milestone_Type_Code]) REFERENCES [dbo].[Milestone_Type] ([Milestone_Type_Code]),
     CONSTRAINT [FK_Acq_Deal_Rights_ROFR] FOREIGN KEY ([ROFR_Code]) REFERENCES [dbo].[ROFR] ([ROFR_Code]),
     CONSTRAINT [FK_Acq_Deal_Rights_Sub_License] FOREIGN KEY ([Sub_License_Code]) REFERENCES [dbo].[Sub_License] ([Sub_License_Code])
 );
+
+
 
 
 

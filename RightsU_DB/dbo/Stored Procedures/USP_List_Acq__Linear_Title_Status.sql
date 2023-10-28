@@ -5,10 +5,12 @@
 ---- =============================================
 ---- Author:	Akshay Rane
 ---- Create date: 25 Oct 2018
----- Description: Get List Of Linear
+---- Description: Get List Of Linear 
 ---- =============================================
 AS
 BEGIN
+Declare @Loglavel int
+if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq	_Linear_Title_Status]', 'Step 1', 0, 'Started Procedure', 0, ''
 	SET FMTONLY OFF;
 	SET NOCOUNT ON;
 
@@ -70,4 +72,6 @@ BEGIN
 	SELECT Title_Name, Linear_Status FROM #Linear_Title_Status order by Title_Name
 
 	IF OBJECT_ID('tempdb..#Linear_Title_Status') IS NOT NULL DROP TABLE #Linear_Title_Status
+ 
+if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq	_Linear_Title_Status]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

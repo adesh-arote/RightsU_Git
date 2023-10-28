@@ -38,21 +38,27 @@ AS
 -- Description:	Inserts Music Deal Call From EF Table Mapping
 -- =============================================
 BEGIN
+	Declare @Loglevel  int;
 
-	INSERT INTO [Music_Deal] 
-	(
-		[Agreement_No], 
-		[Version], [Agreement_Date], [Description], [Deal_Tag_Code], [Reference_No], [Entity_Code], [Primary_Vendor_Code], [Music_Label_Code], 
-		[Title_Type], [Duration_Restriction], [Rights_Start_Date], [Rights_End_Date], [Term], [Run_Type], [No_Of_Songs], [Channel_Type], [Right_Rule_Code], 
-		[Link_Show_Type], [Business_Unit_Code], [Deal_Type_Code], [Deal_Workflow_Status], [Work_Flow_Code], [Parent_Deal_Code],
-		[Inserted_By], [Inserted_On], [Last_Updated_Time], [Last_Action_By], [Remarks], [Agreement_Cost], [Channel_Or_Category], [Channel_Category_Code], [Right_Rule_Type]
-	)
-	SELECT	
-		[dbo].[UFN_Auto_Genrate_Agreement_No]('M', @Agreement_Date, 0) AS [Agreement_No],
-		@Version, @Agreement_Date, @Description, @Deal_Tag_Code, @Reference_No, @Entity_Code, @Primary_Vendor_Code, @Music_Label_Code, 
-		@Title_Type, @Duration_Restriction, @Rights_Start_Date, @Rights_End_Date, @Term, @Run_Type, @No_Of_Songs, @Channel_Type, @Right_Rule_Code, 
-		@Link_Show_Type, @Business_Unit_Code, @Deal_Type_Code, @Deal_Workflow_Status, @Work_Flow_Code, @Parent_Deal_Code,
-		@Inserted_By, GETDATE(), GETDATE(), @Last_Action_By, @Remarks, @Agreement_Cost, @Channel_Or_Category, @Channel_Category_Code, @Right_Rule_Type
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
 
-	SELECT Music_Deal_Code, Agreement_No FROM Music_Deal WHERE Music_Deal_Code = SCOPE_IDENTITY()
+	if(@Loglevel  < 2)Exec [USPLogSQLSteps] '[USP_Insert_Music_Deal]', 'Step 1', 0, 'Started Procedure', 0, ''
+		INSERT INTO [Music_Deal] 
+		(
+			[Agreement_No], 
+			[Version], [Agreement_Date], [Description], [Deal_Tag_Code], [Reference_No], [Entity_Code], [Primary_Vendor_Code], [Music_Label_Code], 
+			[Title_Type], [Duration_Restriction], [Rights_Start_Date], [Rights_End_Date], [Term], [Run_Type], [No_Of_Songs], [Channel_Type], [Right_Rule_Code], 
+			[Link_Show_Type], [Business_Unit_Code], [Deal_Type_Code], [Deal_Workflow_Status], [Work_Flow_Code], [Parent_Deal_Code],
+			[Inserted_By], [Inserted_On], [Last_Updated_Time], [Last_Action_By], [Remarks], [Agreement_Cost], [Channel_Or_Category], [Channel_Category_Code], [Right_Rule_Type]
+		)
+		SELECT	
+			[dbo].[UFN_Auto_Genrate_Agreement_No]('M', @Agreement_Date, 0) AS [Agreement_No],
+			@Version, @Agreement_Date, @Description, @Deal_Tag_Code, @Reference_No, @Entity_Code, @Primary_Vendor_Code, @Music_Label_Code, 
+			@Title_Type, @Duration_Restriction, @Rights_Start_Date, @Rights_End_Date, @Term, @Run_Type, @No_Of_Songs, @Channel_Type, @Right_Rule_Code, 
+			@Link_Show_Type, @Business_Unit_Code, @Deal_Type_Code, @Deal_Workflow_Status, @Work_Flow_Code, @Parent_Deal_Code,
+			@Inserted_By, GETDATE(), GETDATE(), @Last_Action_By, @Remarks, @Agreement_Cost, @Channel_Or_Category, @Channel_Category_Code, @Right_Rule_Type
+
+		SELECT Music_Deal_Code, Agreement_No FROM Music_Deal (NOLOCK) WHERE Music_Deal_Code = SCOPE_IDENTITY()
+	 
+	if(@Loglevel  < 2)Exec [USPLogSQLSteps] '[USP_Insert_Music_Deal]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

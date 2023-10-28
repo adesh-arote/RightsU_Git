@@ -10,86 +10,142 @@ AS
 ---- Description: This usp call from Title_Content_ImportExportController  and check Error and Insert into Content_Music_Link_UDT
 ---- =============================================
 BEGIN
-	SET NOCOUNT ON;
+	Declare @Loglevel int;
 
-	DECLARE	@DM_Master_Import_Code INT ,@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000); 
-	Select Top 1 @DM_Master_Import_Code = DM_Master_Import_Code From @Content_Music_Link_UDT    
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
 
-	INSERT INTO DM_Content_Music([DM_Master_Import_Code],[From],[To],[Duration],[From_Frame],[To_Frame],[Duration_Frame],[Is_Ignore],[Record_Status],[Music_Track],
-			[Title_Content_Code],[Version_Name],[Excel_Line_No],[Error_Tags])
-		SELECT  [DM_Master_Import_Code], [From], [To], [Duration],[From_Frame],  [To_Frame], [Duration_Frame], 'N','N', [Music_Track], [Title_Content_Code],
-		  [Version_Name], [Excel_Line_No], '' As Error_Tags
-	    FROM @Content_Music_Link_UDT  
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Content_Music_PI]', 'Step 1', 0, 'Started Procedure', 0, ''
+		SET NOCOUNT ON;
 
-	/* Update Version Code */
-	UPDATE T SET T.Version_Code = V.Version_Code, T.Version_Name = V.Version_Name FROM DM_Content_Music T
-	INNER JOIN [Version] V ON UPPER(RTRIM(LTRIM(T.Version_Name)))
-	COLLATE SQL_Latin1_General_CP1_CI_AS = UPPER(RTRIM(LTRIM(V.Version_Name))) COLLATE SQL_Latin1_General_CP1_CI_AS 
-		AND LTRIM(RTRIM(T.Version_Name)) != '' 
+		BEGIN TRY
+			DECLARE	 @Record_Code INT,
+				 @Record_Type CHAR = 'C',
+				 @Step_No INT = 3, 
+				 @Sub_Step_No INT = 1,
+				 @Loop_Counter INT = 0, 
+				 @Proc_Name VARCHAR(100),
+				 @Short_Status_Code VARCHAR(10),
+				 @Process_Error_Code VARCHAR(10),
+				 @Process_Error_MSG NVARCHAR(MAX) = ''
 
-	/* Update Content Name */
-	UPDATE TMP SET TMP.Content_Name = CASE WHEN ISNULL(TC.Episode_Title, '') = '' THEN T.Title_Name ELSE TC.Episode_Title END,
-	TMP.Episode_No = TC.Episode_No FROM DM_Content_Music TMP
-	INNER JOIN Title_Content TC ON CAST(TC.Title_Content_Code AS VARCHAR) COLLATE SQL_Latin1_General_CP1_CI_AS = 
-	CAST(RTRIM(LTRIM(TMP.Title_Content_Code)) AS VARCHAR) COLLATE SQL_Latin1_General_CP1_CI_AS
-	INNER JOIN Title T ON T.Title_Code = TC.Title_Code
-	--END
+		SELECT @Record_Code = (Select top 1 [DM_Master_Import_Code]  FROM @Content_Music_Link_UDT), @Step_No = @Step_No, @Sub_Step_No = 1, @Short_Status_Code = 'CM0013', @Proc_Name = 'USP_Content_Music_PI'
+		EXEC USP_Import_log_Details @Record_Code, @Record_Type, @Short_Status_Code, @Proc_Name, @Step_No, @Sub_Step_No, @Loop_Counter, @Process_Error_MSG 
 
-	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Sr. No cannot be blank~' 
-	FROM DM_Content_Music T
-	WHERE T.Excel_Line_No = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
 
-	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Music Track cannot be blank~' 
-	FROM DM_Content_Music T
-	WHERE T.Music_Track = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+		DECLARE	@DM_Master_Import_Code INT ,@Sql NVARCHAR(1000),@DB_Name VARCHAR(1000); 
+		Select Top 1 @DM_Master_Import_Code = DM_Master_Import_Code From @Content_Music_Link_UDT    
 
-	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL(T.[Error_Message], '') + '~' + T.[Music_Track] + ' - Music Track Name is Deactivated in system.'
-	FROM Music_Title MT
-	INNER JOIN DM_Content_Music T ON T.Music_Track = MT.Music_Title_Name
-	WHERE ISNULL (T.Record_Status,'') <> 'C' AND MT.Is_Active = 'N' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+		INSERT INTO DM_Content_Music([DM_Master_Import_Code],[From],[To],[Duration],[From_Frame],[To_Frame],[Duration_Frame],[Is_Ignore],[Record_Status],[Music_Track],
+				[Title_Content_Code],[Version_Name],[Excel_Line_No],[Error_Tags],[Movie_Album])
+			SELECT  [DM_Master_Import_Code], [From], [To], [Duration],[From_Frame],  [To_Frame], [Duration_Frame], 'N','N', [Music_Track], [Title_Content_Code],
+			  [Version_Name], [Excel_Line_No], '' As Error_Tags,[Movie_Album]
+			FROM @Content_Music_Link_UDT  
 
-	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Either TC IN, TC OUT or Duration cannot be zero~' 
-	FROM DM_Content_Music T
-	WHERE ((T.[From] = '' AND T.[To] = '' AND T.[Duration] = '') OR (T.[From] != '' AND T.[To] = '') OR (T.[From] = '' AND T.[To] != '')) AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+		/* Update Version Code */
+		UPDATE T SET T.Version_Code = V.Version_Code, T.Version_Name = V.Version_Name FROM DM_Content_Music T 
+		INNER JOIN [Version] V ON UPPER(RTRIM(LTRIM(T.Version_Name)))
+		COLLATE SQL_Latin1_General_CP1_CI_AS = UPPER(RTRIM(LTRIM(V.Version_Name))) COLLATE SQL_Latin1_General_CP1_CI_AS 
+			AND LTRIM(RTRIM(T.Version_Name)) != '' 
 
-	UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Invalid Title Content Code~' 
-	FROM DM_Content_Music T
-	WHERE T.Title_Content_Code Not In(select Title_Content_Code From Title_Content) AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+		/* Update Content Name */
+		UPDATE TMP SET TMP.Content_Name = CASE WHEN ISNULL(TC.Episode_Title, '') = '' THEN T.Title_Name ELSE TC.Episode_Title END,
+		TMP.Episode_No = TC.Episode_No FROM DM_Content_Music TMP 
+		INNER JOIN Title_Content TC ON CAST(TC.Title_Content_Code AS VARCHAR) COLLATE SQL_Latin1_General_CP1_CI_AS = 
+		CAST(RTRIM(LTRIM(TMP.Title_Content_Code)) AS VARCHAR) COLLATE SQL_Latin1_General_CP1_CI_AS
+		INNER JOIN Title T ON T.Title_Code = TC.Title_Code
+		--END
 
-	UPDATE DM_Content_Music SET [Record_Status] = 'E' , [Error_Message] = ISNULL([Error_Message], '') + 'Invalid Version Name'
-	WHERE ISNULL([Version_Code],'') = '' AND DM_Master_Import_Code = @DM_Master_Import_Code
+		UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Sr. No cannot be blank~' 
+		FROM DM_Content_Music T 
+		WHERE T.Excel_Line_No = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
 
-	--IF NOT EXISTS(SELECT TOP 1 Record_Status FROM DM_Content_Music WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
-	--BEGIN  
-	--print '1'
-	--EXEC USP_Validate_Content_Music_Import @DM_Master_Import_Code     
-	----IF NOT EXISTS(SELECT TOP 1 Record_Status FROM DM_Content_Music WHERE RTRIM(LTRIM(ISNULL(Record_Status,''))) = 'OR' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
-	----print '2'
-	----	BEGIN  
-	--		EXEC USP_Content_Music_PIV @DM_Master_Import_Code 
+		UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Music Track cannot be blank~' 
+		FROM DM_Content_Music T 
+		WHERE T.Music_Track = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
+		UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Movie Album cannot be blank~' 
+		FROM DM_Content_Music T 
+		WHERE T.Movie_Album = '' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
+		UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Either TC IN, TC OUT or Duration cannot be zero~' 
+		FROM DM_Content_Music T 
+		WHERE ((T.[From] = '' AND T.[To] = '' AND T.[Duration] = '') OR (T.[From] != '' AND T.[To] = '') OR (T.[From] = '' AND T.[To] != '')) AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
+		UPDATE T SET T.[Record_Status] = 'E', T.[Error_Message] = ISNULL([Error_Message], '') + 'Invalid Title Content Code~' 
+		FROM DM_Content_Music T 
+		WHERE T.Title_Content_Code Not In(select Title_Content_Code From Title_Content (NOLOCK)) AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
+		UPDATE DM_Content_Music SET [Record_Status] = 'E' , [Error_Message] = ISNULL([Error_Message], '') + 'Invalid Version Name'
+		WHERE ISNULL([Version_Code],'') = '' AND DM_Master_Import_Code = @DM_Master_Import_Code
+	
+		UPDATE T SET  T.[Error_Message] = ISNULL([Error_Message], '') + 'Music Track is Deactivated in System~' 
+		FROM DM_Content_Music T  INNER JOIN Music_Title MT ON MT.Music_Title_Name = T.Music_Track
+		WHERE MT.Is_Active = 'N' AND T.DM_Master_Import_Code = @DM_Master_Import_Code
+
+		--Updating DM_Content_Music for valid Music Track and  Movie Album
+		Update DCM SET DCM.Music_Title_Code=MT.Music_Title_Code,DCM.Movie_Album_Code=MA.Music_Album_Code
+		FROM DM_Content_Music DCM 
+		INNER JOIN Music_Title MT ON MT.Music_Title_Name=DCM.Music_Track
+		INNER JOIN Music_Album MA ON MA.Music_Album_Name=DCM.Movie_Album AND MT.Music_Album_Code=MA.Music_Album_Code
+		WHERE DCM.DM_Master_Import_Code =@DM_Master_Import_Code
+
+		--Right Album coz not mapped
+		Update DCM SET DCM.Movie_Album_Code=MA.Music_Album_Code
+		FROM DM_Content_Music DCM 
+		INNER JOIN Music_Album MA ON MA.Music_Album_Name=DCM.Movie_Album 
+		WHERE DCM.DM_Master_Import_Code =@DM_Master_Import_Code AND DCM.Movie_Album_Code IS NULL
+	
+		--Right Music Track coz not mapped
+		Update DCM SET DCM.Music_Title_Code=MT.Music_Title_Code
+		FROM DM_Content_Music DCM 
+		INNER JOIN Music_Title MT ON MT.Music_Title_Name=DCM.Music_Track 
+		WHERE DCM.DM_Master_Import_Code =@DM_Master_Import_Code  AND DCM.Music_Title_Code IS NULL
+
+		--Ignore DM_Content_Music Record for not valid track and album 
+		UPDATE DCM SET DCM.Record_Status ='E', DCM.[Error_Message] = 'Combination not valid for Music Track And Album'
+		FROM DM_Content_Music DCM 
+		WHERE DCM.Music_Title_Code NOT IN (SELECT MT.Music_Title_Code FROM Music_Title MT (NOLOCK) WHERE MT.Music_Album_Code = DCM.Movie_Album_Code)
+		AND DM_Master_Import_Code=@DM_Master_Import_Code
+		AND DCM.Music_Title_Code IS NOT NULL AND DCM.Movie_Album_Code IS NOT NULL
+		END TRY
+		BEGIN CATCH
+			SELECT @Process_Error_MSG = ERROR_MESSAGE(), @Short_Status_Code = 'All03'
+			EXEC USP_Import_log_Details @Record_Code, @Record_Type, @Short_Status_Code, @Proc_Name, @Step_No, @Sub_Step_No, @Loop_Counter, @Process_Error_MSG
+		END CATCH
+
+		--IF NOT EXISTS(SELECT TOP 1 Record_Status FROM DM_Content_Music WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
+		--BEGIN  
+		--print '1'
+		--EXEC USP_Validate_Content_Music_Import @DM_Master_Import_Code     
+		----IF NOT EXISTS(SELECT TOP 1 Record_Status FROM DM_Content_Music WHERE RTRIM(LTRIM(ISNULL(Record_Status,''))) = 'OR' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
+		----print '2'
+		----	BEGIN  
+		--		EXEC USP_Content_Music_PIV @DM_Master_Import_Code 
 	    
-	--		IF((Select [Status] From DM_Master_Import Where DM_Master_Import_Code = @DM_Master_Import_Code) = 'P')
-	--		BEGIN  
-	--			EXEC USP_Content_Music_PIII @DM_Master_Import_Code
-	--		END
-	--	--END
-	--END
-	--ELSE
-	--BEGIN
-		IF EXISTS(SELECT Record_Status FROM DM_Content_Music WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
-		BEGIN
-			SELECT [Excel_Line_No], [Content_Name], [Episode_No], [Music_Track], [From], [To], [From_Frame], [To_Frame], [Duration], [Duration_Frame], Version_Name, [Error_Message]
-			FROM DM_Content_Music Where [Record_Status] = 'E'
-			UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
+		--		IF((Select [Status] From DM_Master_Import Where DM_Master_Import_Code = @DM_Master_Import_Code) = 'P')
+		--		BEGIN  
+		--			EXEC USP_Content_Music_PIII @DM_Master_Import_Code
+		--		END
+		--	--END
+		--END
+		--ELSE
+		--BEGIN
+			IF EXISTS(SELECT Record_Status FROM DM_Content_Music (NOLOCK) WHERE ISNULL(RTRIM(LTRIM(Record_Status)),'') = 'E' AND DM_Master_Import_Code = @DM_Master_Import_Code)  
+			BEGIN
+				SELECT [Excel_Line_No], [Content_Name], [Episode_No], [Music_Track], [From], [To], [From_Frame], [To_Frame], [Duration], [Duration_Frame], Version_Name, [Error_Message],[Movie_Album]
+				FROM DM_Content_Music (NOLOCK) Where [Record_Status] = 'E'
+				UPDATE DM_Master_Import Set [Status] = 'E' where DM_Master_Import_Code  = @DM_Master_Import_Code
 
-			DECLARE @File_Name VARCHAR(MAX)
-			SELECT @File_Name = File_Name FROM DM_Master_Import WHere DM_Master_Import_Code = @DM_Master_Import_Code AND [Status] = 'E'
-			INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
-			SELECT GETDATE(),NULL,NULL,'USP_Content_Music_PI','Error in file: '+ @File_Name,'NA','NA','DB'
+				DECLARE @File_Name VARCHAR(MAX)
+				SELECT @File_Name = File_Name FROM DM_Master_Import (NOLOCK) WHere DM_Master_Import_Code = @DM_Master_Import_Code AND [Status] = 'E'
+				INSERT INTO UTO_ExceptionLog(Exception_Log_Date,Controller_Name,Action_Name,ProcedureName,Exception,Inner_Exception,StackTrace,Code_Break)
+				SELECT GETDATE(),NULL,NULL,'USP_Content_Music_PI','Error in file: '+ @File_Name,'NA','NA','DB'
 
-			SELECT @sql = 'Error in file: '+ @File_Name
-			SELECT @DB_Name = DB_Name()
-			EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Content_Music_PI','AN','VN',@sql,'DB','IP','FR','TI'
-		END
-	--END
+				SELECT @sql = 'Error in file: '+ @File_Name
+				SELECT @DB_Name = DB_Name()
+				EXEC [dbo].[USP_SendMail_Page_Crashed] 'admin', @DB_Name,'RU','USP_Content_Music_PI','AN','VN',@sql,'DB','IP','FR','TI'
+			END
+		--END
+
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Content_Music_PI]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

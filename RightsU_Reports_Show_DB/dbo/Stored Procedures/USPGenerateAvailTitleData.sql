@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USPGenerateAvailTitleData](@Title_Code INT)
+﻿CREATE PROCEDURE [dbo].[USPGenerateAvailTitleData](@Title_Code INT)
 AS
 BEGIN
 
@@ -187,7 +186,7 @@ BEGIN
 		PRINT 'Final Step 7.1 - Calling [USPMaintainAvailData]'
 	
 		DECLARE @EXECSQLAVAIL NVARCHAR(MAX) = N'
-		USE RightsU_Avail_Neo_V18
+		USE RightsU_Reports_Neo_Testing
 		
 		DECLARE @Avail_Data_UDT [Avail_Data_UDT]
 

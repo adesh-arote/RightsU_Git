@@ -137,21 +137,4 @@ BEGIN
 	--SELECT * FROM @TempPF where Is_Display='Y'
 	RETURN
 END
-/*
-
-
-SELECT Platform_Hiearachy,*
-FROM Platform where 1=1 AND IS_LAST_LEVEL='Y' --Platform_Hiearachy like '%non sta%'
-
-DECLARE @PFCodes as varchar(2000)='0'
-	
-SELECT @PFCodes = @PFCodes + ',' + CAST( platform_Code as varchar)
-FROM Platform where 1=1 AND IS_LAST_LEVEL='Y' --Platform_Hiearachy like '%non sta%'
-
-SELECT * FROM [dbo].[UFN_Get_Platform_With_Parent](@PFCodes)
-
-EXEC USP_Get_Platform_With_Parent '117,118,119,120,121,122,126,127,128,129,130,131,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213'
-
-SELECT * FROM [dbo].[UFN_Get_Platform_With_Parent]('117,118,119,120,121,122,126,127,128,129,130,131,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213')
-*/
 

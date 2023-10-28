@@ -1,42 +1,38 @@
-﻿-- =============================================
--- Author:		<Reshma Kunjal>
--- Create date: <19-Jan-2015>
--- Description:	<Update Acq_Mass_Territory_Update Can_Process="Y">
--- =============================================
-CREATE PROCEDURE [dbo].[USP_Update_Mass_Territory_Update]
+﻿CREATE PROCEDURE [dbo].[USP_Update_Mass_Territory_Update]
 	@acqDealMassCodes varchar(1000),
 	@DealFor Varchar(1)
 AS
 BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
+	Declare @Loglevel int
+	select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'  
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Update_Mass_Territory_Update]', 'Step 1', 0, 'Started Procedure', 0, ''  
+		-- SET NOCOUNT ON added to prevent extra result sets from
+		-- interfering with SELECT statements.
+		SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
---	SELECT * from Acq_Deal_Mass_Territory_Update where Acq_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
+		-- Insert statements for procedure here
+	--	SELECT * from Acq_Deal_Mass_Territory_Update where Acq_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
 	
-	IF(@DealFor = 'A')
-    BEGIN
+		IF(@DealFor = 'A')
+		BEGIN
     
-	update 
-		Acq_Deal_Mass_Territory_Update 
-	set Can_Process='Y' 
-	where 
-		Acq_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
+		update 
+			Acq_Deal_Mass_Territory_Update 
+		set Can_Process='Y' 
+		where 
+			Acq_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
 		
-	END
-	ELSE
-	BEGIN
+		END
+		ELSE
+		BEGIN
 	
-	update 
-		Syn_Deal_Mass_Territory_Update 
-	set Can_Process='Y' 
-	where 
-		Syn_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
+		update 
+			Syn_Deal_Mass_Territory_Update 
+		set Can_Process='Y' 
+		where 
+			Syn_Deal_Mass_Update_Code in (select number from dbo.[fn_Split_withdelemiter](@acqDealMassCodes,'~'))
 		
-	END
+		END
+ 
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Update_Mass_Territory_Update]', 'Step 2', 0, 'Procedure Excuting Completed', 0, ''  
 END
-
-/*
-	exec [USP_Update_Mass_Territory_Update] '287~286~285~284~283~282~281~280~279~278~'
-*/

@@ -498,11 +498,11 @@ BEGIN
 	CREATE TABLE #Temp_Right_Remarks 
 	(
 		Acq_Deal_Rights_Code INT, 
-		Restriction_Remarks VARCHAR(4000), 
-		Remarks VARCHAR(4000), 
-		Rights_Remarks VARCHAR(4000),
-		Sub_Deal_Restriction_Remark VARCHAR(8000), 
-		Sub_License_Name Varchar(100)
+		Restriction_Remarks VARCHAR(MAX), 
+		Remarks VARCHAR(MAX), 
+		Rights_Remarks VARCHAR(MAX),
+		Sub_Deal_Restriction_Remark VARCHAR(MAX), 
+		Sub_License_Name Varchar(MAX)
 	)
 
 	IF(@Restriction_Remarks = 'Y' OR @Others_Remarks = 'Y' )

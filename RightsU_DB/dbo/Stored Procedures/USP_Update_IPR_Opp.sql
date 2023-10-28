@@ -38,39 +38,44 @@ AS
 -- =============================================
 
 BEGIN	
-	SET NOCOUNT ON;
-	UPDATE IPR_Opp SET 
-	[Version] = @Version, 
-	IPR_For = @IPR_For, 
-	Opp_No = @Opp_No, 
-	IPR_Rep_Code = @IPR_Rep_Code, 
-	Party_Name = @Party_Name, 
-	Trademark = @Trademark, 
-	Application_No = @Application_No, 
-	IPR_Class_Code = @IPR_Class_Code, 
-	IPR_App_Status_Code = @IPR_App_Status_Code, 
-	Journal_No = @Journal_No, 
-	Publication_Date = @Publication_Date, 
-	Page_No = @Page_No, 
-	Date_Counter_Statement = @Date_Counter_Statement, 
-	Date_Evidence_UR50 = @Date_Evidence_UR50, 
-	Date_Evidence_UR51 = @Date_Evidence_UR51, 
-	Date_Opposition_Notice = @Date_Opposition_Notice, 
-	Date_Rebuttal_UR52 = @Date_Rebuttal_UR52, 
-	Deadline_Counter_Statement = @Deadline_Counter_Statement, 
-	Deadline_Evidence_UR50 = @Deadline_Evidence_UR50, 
-	Deadline_Evidence_UR51 = @Deadline_Evidence_UR51, 
-	Deadline_Opposition_Notice = @Deadline_Opposition_Notice, 
-	Deadline_Rebuttal_UR52 = @Deadline_Rebuttal_UR52, 
-	Order_Date = @Order_Date, 
-	Outcomes = @Outcomes, 
-	Comments = @Comments, 
-	Workflow_Status = @Workflow_Status,
-	IPR_Opp_Status_Code = @IPR_Opp_Status_Code,
-	Created_By=@Created_By
-	Where IPR_Opp_Code = @IPR_Opp_Code			
+	Declare @Loglevel int  
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Update_IPR_Opp]', 'Step 1', 0, 'Started Procedure', 0, ''  
+		SET NOCOUNT ON;
+		UPDATE IPR_Opp SET 
+		[Version] = @Version, 
+		IPR_For = @IPR_For, 
+		Opp_No = @Opp_No, 
+		IPR_Rep_Code = @IPR_Rep_Code, 
+		Party_Name = @Party_Name, 
+		Trademark = @Trademark, 
+		Application_No = @Application_No, 
+		IPR_Class_Code = @IPR_Class_Code, 
+		IPR_App_Status_Code = @IPR_App_Status_Code, 
+		Journal_No = @Journal_No, 
+		Publication_Date = @Publication_Date, 
+		Page_No = @Page_No, 
+		Date_Counter_Statement = @Date_Counter_Statement, 
+		Date_Evidence_UR50 = @Date_Evidence_UR50, 
+		Date_Evidence_UR51 = @Date_Evidence_UR51, 
+		Date_Opposition_Notice = @Date_Opposition_Notice, 
+		Date_Rebuttal_UR52 = @Date_Rebuttal_UR52, 
+		Deadline_Counter_Statement = @Deadline_Counter_Statement, 
+		Deadline_Evidence_UR50 = @Deadline_Evidence_UR50, 
+		Deadline_Evidence_UR51 = @Deadline_Evidence_UR51, 
+		Deadline_Opposition_Notice = @Deadline_Opposition_Notice, 
+		Deadline_Rebuttal_UR52 = @Deadline_Rebuttal_UR52, 
+		Order_Date = @Order_Date, 
+		Outcomes = @Outcomes, 
+		Comments = @Comments, 
+		Workflow_Status = @Workflow_Status,
+		IPR_Opp_Status_Code = @IPR_Opp_Status_Code,
+		Created_By=@Created_By
+		Where IPR_Opp_Code = @IPR_Opp_Code			
 	
 	
-	INSERT INTO IPR_Opp_Status_History(IPR_Opp_Code,IPR_Status,Changed_On,Changed_By)
-	VALUES(@IPR_Opp_Code,@Workflow_Status,GETDATE(),@Created_By)
+		INSERT INTO IPR_Opp_Status_History(IPR_Opp_Code,IPR_Status,Changed_On,Changed_By)
+		VALUES(@IPR_Opp_Code,@Workflow_Status,GETDATE(),@Created_By)
+	 
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Update_IPR_Opp]', 'Step 2', 0, 'Procedure Excuting Completed', 0, ''  
 END

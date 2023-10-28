@@ -28,10 +28,13 @@
     [Acq_Deal_Rights_Code]    INT             NULL,
     [Original_Right_Type]     CHAR (1)        NULL,
     [Promoter_Flag]           CHAR (1)        NULL,
+    [Buyback_Syn_Rights_Code] NVARCHAR (MAX)  NULL,
     CONSTRAINT [PK_AT_Acq_Deal_Rights_Code] PRIMARY KEY CLUSTERED ([AT_Acq_Deal_Rights_Code] ASC),
     CONSTRAINT [FK_AT_Acq_Deal_Rights_AT_Acq_Deal] FOREIGN KEY ([AT_Acq_Deal_Code]) REFERENCES [dbo].[AT_Acq_Deal] ([AT_Acq_Deal_Code]),
     CONSTRAINT [FK_AT_Acq_Deal_Rights_Milestone_Type] FOREIGN KEY ([Milestone_Type_Code]) REFERENCES [dbo].[Milestone_Type] ([Milestone_Type_Code]),
     CONSTRAINT [FK_AT_Acq_Deal_Rights_ROFR] FOREIGN KEY ([ROFR_Code]) REFERENCES [dbo].[ROFR] ([ROFR_Code]),
     CONSTRAINT [FK_AT_Acq_Deal_Rights_Sub_License] FOREIGN KEY ([Sub_License_Code]) REFERENCES [dbo].[Sub_License] ([Sub_License_Code])
 );
+
+
 

@@ -12,6 +12,9 @@ AS
 -- Description:	To Get Data All Login And Logout USers
 -- =============================================
 BEGIN	
+Declare @Loglevel int;
+select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Login_Details_Report]', 'Step 1', 0, 'Started Procedure', 0, '' 
 	SET NOCOUNT ON;
 	SET FMTONLY OFF
 
@@ -33,12 +36,12 @@ BEGIN
 	SELECT k = ROW_NUMBER() OVER (ORDER BY Login_Details_Code desc),LD.Login_Details_Code,first_name,middle_Name,last_name
 	,login_name,CONVERT(VARCHAR,LD.Login_Time,113) AS LoginTime, CONVERT(VARCHAR,LD.Logout_Time,113) AS LogoutTime,SG.security_group_name
 	,DATEDIFF(MI,Login_Time,Logout_Time) as duration
-	FROM Login_Details LD
-	INNER JOIN Users U ON U.users_code = LD.Users_Code
-	INNER JOIN Security_Group SG ON U.security_group_code = SG.security_group_code
+	FROM Login_Details LD (NOLOCK)
+	INNER JOIN Users U (NOLOCK) ON U.users_code = LD.Users_Code
+	INNER JOIN Security_Group SG (NOLOCK) ON U.security_group_code = SG.security_group_code
 	WHERE 1 =1 '+ @StrSearch + '
 	)
-	INSERT INTO #Temp SELECT k, Login_Details_Code,first_name,middle_Name,last_name,login_name,LoginTime,LogoutTime,security_group_name,duration FROM Y'
+	INSERT INTO #Temp SELECT k, Login_Details_Code,first_name,middle_Name,last_name,login_name,LoginTime,LogoutTime,security_group_name,duration FROM Y (NOLOCK)'
 	--PRINT @SqlPageNo
 	EXEC(@SqlPageNo)	
 	
@@ -53,4 +56,6 @@ BEGIN
 	--DROP Table #Temp
 
 	IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
+	 
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Login_Details_Report]', 'Step 2', 0, 'Procedure Excution Completed', 0, '' 
 END

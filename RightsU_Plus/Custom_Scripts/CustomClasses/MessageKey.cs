@@ -754,6 +754,7 @@ public class MessageKey
     public string BroadviewChannelCode { get; set; }
     public string OffsetTimeSchedule { get; set; }
     public string OffsetTimeAsRun { get; set; }
+    public string Cannoteditthischannelasitisdeactivated { get; set; }
     #endregion
 
     #region Cost Type

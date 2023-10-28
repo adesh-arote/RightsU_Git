@@ -140,9 +140,3 @@ Begin
 	RETURN ISNULL(@term, '')
 END
 
-/*
-
-Select DBO.[UFN_GET_SYNRHB](1124)
-
-*/
-

@@ -38,6 +38,11 @@
     [Ref_Timeline_ID]                     INT            NULL,
     [Deal_Type]                           CHAR (1)       NULL,
     [Deal_Code]                           INT            NULL,
+    [Is_Permier]                          CHAR (1)       NULL,
+    [Schedule_Item_Log_DateTime]          DATETIME       NULL,
+    [BMS_Deal_Content_Rights_Code]        INT            NULL,
     CONSTRAINT [PK_BV_Schedule_Transaction] PRIMARY KEY CLUSTERED ([BV_Schedule_Transaction_Code] ASC)
 );
+
+
 

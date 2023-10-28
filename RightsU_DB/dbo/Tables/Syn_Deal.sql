@@ -42,6 +42,7 @@
     [Role_Code]                INT             NULL,
     [Deal_Segment_Code]        INT             NULL,
     [Revenue_Vertical_Code]    INT             NULL,
+    [Material_Remarks]         NVARCHAR (4000) NULL,
     CONSTRAINT [PK_Syn_Deal] PRIMARY KEY CLUSTERED ([Syn_Deal_Code] ASC),
     CONSTRAINT [FK_Syn_Deal_Business_Unit] FOREIGN KEY ([Business_Unit_Code]) REFERENCES [dbo].[Business_Unit] ([Business_Unit_Code]),
     CONSTRAINT [FK_Syn_Deal_Category] FOREIGN KEY ([Category_Code]) REFERENCES [dbo].[Category] ([Category_Code]),
@@ -55,6 +56,12 @@
     CONSTRAINT [FK_Syn_Deal_Vendor_Contacts] FOREIGN KEY ([Vendor_Contact_Code]) REFERENCES [dbo].[Vendor_Contacts] ([Vendor_Contacts_Code]),
     CONSTRAINT [FK_Syn_Deal_Workflow] FOREIGN KEY ([Work_Flow_Code]) REFERENCES [dbo].[Workflow] ([Workflow_Code])
 );
+
+
+GO
+ALTER TABLE [dbo].[Syn_Deal] NOCHECK CONSTRAINT [FK_Syn_Deal_Deal_Type];
+
+
 
 
 GO

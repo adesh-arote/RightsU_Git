@@ -14,7 +14,14 @@
     [Record_Status]            VARCHAR (5)    NULL,
     [Error_Description]        VARCHAR (4000) NULL,
     [Is_Archived]              VARCHAR (5)    NULL,
+    [Counter]                  INT            NULL,
+    [IsMailSent]               BIT            NULL,
+    [Created_On]               DATETIME       NULL,
+    [Updated_On]               DATETIME       NULL,
+    [Is_Active]                CHAR (1)       NULL,
     CONSTRAINT [PK_BV_Deal_Content] PRIMARY KEY CLUSTERED ([BMS_Deal_Content_Code] ASC),
     CONSTRAINT [FK_BV_Deal_Content_BV_Deal] FOREIGN KEY ([BMS_Deal_Code]) REFERENCES [dbo].[BMS_Deal] ([BMS_Deal_Code])
 );
+
+
 

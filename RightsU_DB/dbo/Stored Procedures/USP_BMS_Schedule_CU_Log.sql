@@ -18,29 +18,34 @@ AS
 --    Notes			:   This procedure will return @BMS_Schedule_Log_Code
 --    ==========================
 BEGIN
+	Declare @Loglevel int;
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_Schedule_CU_Log]', 'Step 1', 0, 'Started Procedure', 0, ''
 
-	IF(LTRIM(RTRIM(@Data_Since)) = '')
-		SET @Data_Since = NULL
+		IF(LTRIM(RTRIM(@Data_Since)) = '')
+			SET @Data_Since = NULL
 	
-	IF(ISNULL(@BMS_Schedule_Log_Code, 0) > 0)
-	BEGIN
-		PRINT 'UPDATE Response Log'
-		UPDATE BMS_Schedule_Log SET 
-		Response_Time = GETDATE(),
-		Response_Xml = ISNULL(@Response_Xml, Response_Xml),
-		Record_Status = ISNULL(@Record_Status, 'P'),
-		Error_Description = @Error_Desc,
-		Response_Message = @Response_Message
-		WHERE BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code
-	END
-	ELSE
-	BEGIN
-		PRINT 'Insert Request Log'
-		INSERT INTO BMS_Schedule_Log(Channel_Code, Data_Since, Method_Type, Request_Time, Request_Xml, Record_Status)
-		VALUES(@Channel_Code, @Data_Since, @Method_Type, GETDATE(), @Request_Xml, ISNULL(@Record_Status, 'W'))
+		IF(ISNULL(@BMS_Schedule_Log_Code, 0) > 0)
+		BEGIN
+			PRINT 'UPDATE Response Log'
+			UPDATE BMS_Schedule_Log SET 
+			Response_Time = GETDATE(),
+			Response_Xml = ISNULL(@Response_Xml, Response_Xml),
+			Record_Status = ISNULL(@Record_Status, 'P'),
+			Error_Description = @Error_Desc,
+			Response_Message = @Response_Message
+			WHERE BMS_Schedule_Log_Code = @BMS_Schedule_Log_Code
+		END
+		ELSE
+		BEGIN
+			PRINT 'Insert Request Log'
+			INSERT INTO BMS_Schedule_Log(Channel_Code, Data_Since, Method_Type, Request_Time, Request_Xml, Record_Status)
+			VALUES(@Channel_Code, @Data_Since, @Method_Type, GETDATE(), @Request_Xml, ISNULL(@Record_Status, 'W'))
 
-		SELECT @BMS_Schedule_Log_Code = IDENT_CURRENT('BMS_Schedule_Log')
-	END
+			SELECT @BMS_Schedule_Log_Code = IDENT_CURRENT('BMS_Schedule_Log')
+		END
 	
-	SELECT @BMS_Schedule_Log_Code AS BMS_Schedule_Log_Code
+		SELECT @BMS_Schedule_Log_Code AS BMS_Schedule_Log_Code
+	
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BMS_Schedule_CU_Log]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
