@@ -26,7 +26,8 @@ namespace RightsU_Entities
         public Nullable<int> Columns_Value_Code { get; set; }
         public string Column_Value { get; set; }
         public string Is_Multiple_Select { get; set; }
-    
+        public Nullable<int> Row_No { get; set; }
+
         public virtual Extended_Columns Extended_Columns { get; set; }
         public virtual Extended_Columns_Value Extended_Columns_Value { get; set; }
         public virtual ICollection<Map_Extended_Columns_Details> Map_Extended_Columns_Details { get; set; }

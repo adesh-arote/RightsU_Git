@@ -1,0 +1,229 @@
+﻿@model RightsU_Entities.AL_Vendor_Details
+
+
+<script>
+    var DisplayMode = '@ViewBag.DisplayMode';
+
+    function SwitchVendorClient() {
+        debugger;
+        if ($('input[name="Vendor"]:checked').val() == "V") {
+            $('#Switch').html('Vendor selected');
+            $("#PrefExclusion").attr('disabled', true).trigger("chosen:updated");
+            $("#PrefExclusion").val("").trigger("chosen:updated");
+            $("#Banner").removeAttr('disabled').trigger("chosen:updated");
+            $('#AddInfoGrid').empty();
+            $('#GridDiv').hide();
+        } else if ($('input[name="Vendor"]:checked').val() == "C") {
+            $('#Switch').html('Client selected');
+            $("#Banner").attr('disabled', true).trigger("chosen:updated");
+            $("#Banner").val("").trigger("chosen:updated");
+            $("#PrefExclusion").removeAttr('disabled').trigger("chosen:updated");
+            $('#GridDiv').show();
+            AdditionalInfoTab('CR', '', 0);
+        }
+        initializeChosen();
+    }
+
+    function AdditionalInfoTab(NewTab, commandName, id) {
+        debugger;
+
+        if (DisplayMode == "VIEW") {
+            commandName = DisplayMode;
+        }
+
+        if ($('input[name="Vendor"]:checked').val() == "C") {
+
+            if (NewTab == "CR") {
+                var URL_LoadTab = URL_ContentRule;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabCR").addClass('active');
+            }
+            if (NewTab == "OEM") {
+                var URL_LoadTab = URL_OEM;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabOEM").addClass('active');
+            }
+            if (NewTab == "TNC") {
+                var URL_LoadTab = URL_TnC;
+                $("[id*='AdditionalInfoTab']").removeClass('active');
+                $("#AdditionalInfoTabTNC").addClass('active');
+            }
+            $.ajax({
+                type: "POST",
+                url: URL_LoadTab,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html", data: JSON.stringify({
+                    TabName: NewTab,
+                    commandName: commandName,
+                    Id: id
+                }),
+                success: function (result) {
+                    debugger;
+                    $('#AddInfoGrid').html(result);
+                    if (NewTab == "TNC" && commandName == "EDIT") {
+                        $("#UsedLetters").html($("#tncRemark").val().length);
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<div class="modal_block modal_header">
+    @*<a class="close" onclick="ClosePopup()">
+        <span>×</span>
+        <span class="sr-only">Close</span>
+    </a>*@
+
+    <h2>Additional Info</h2>
+</div>
+
+<div class="modal_block">
+    <table class="table add_title_popup">
+        <tbody>
+            <tr>
+                <td style="width:25%; padding-left:2%">
+                    <b>Vendor/Client</b>
+                </td>
+                <td>
+                    @if (ViewBag.DisplayMode == "VIEW" && Model.SelectedPartyType == "V")
+                    {
+                        @Html.RadioButton("Vendor", "V", true, new { @onclick = "return false;" }) <span>Vendor</span>
+                        @Html.RadioButton("Vendor", "C", new { @onclick = "return false;" }) <span>Client</span>
+                    }
+                    else if (ViewBag.DisplayMode == "VIEW" && Model.SelectedPartyType == "C")
+                    {
+                        @Html.RadioButton("Vendor", "V", new { @onclick = "return false;" }) <span>Vendor</span>
+                        @Html.RadioButton("Vendor", "C", true, new { @onclick = "return false;" }) <span>Client</span>
+                    }
+                    else if (Model.SelectedPartyType == "V")
+                    {
+                        @Html.RadioButton("Vendor", "V", true, new { @onclick = "SwitchVendorClient()" }) <span>Vendor</span>
+                        @Html.RadioButton("Vendor", "C", new { @onclick = "SwitchVendorClient()" }) <span>Client</span>
+                    }
+                    else if (Model.SelectedPartyType == "C")
+                    {
+                        @Html.RadioButton("Vendor", "V", new { @onclick = "SwitchVendorClient()" }) <span>Vendor</span>
+                        @Html.RadioButton("Vendor", "C", true, new { @onclick = "SwitchVendorClient()" }) <span>Client</span>
+                    }
+                    else
+                    {
+                        @Html.RadioButton("Vendor", "V", new { @onclick = "SwitchVendorClient()" }) <span>Vendor</span>
+                        @Html.RadioButton("Vendor", "C", new { @onclick = "SwitchVendorClient()" }) <span>Client</span>
+                    }
+                    @*<span id="Switch"></span>*@
+                    <input type="hidden" value="@Model.AL_Vendor_Detail_Code" id="hdnVendorDetailCode" />
+                    <input type="hidden" value="@Model.Vendor_Code" id="hdnVendorCode" />
+                </td>
+            </tr>
+            @if ((ViewBag.DisplayMode != "VIEW") || (ViewBag.DisplayMode == "VIEW" && Model.SelectedPartyType == "V"))
+            {
+                <tr>
+                    <td style="width:25%; padding-left:2%">
+                        <b>Banner</b>
+                    </td>
+                    <td>
+                        @if (ViewBag.DisplayMode == "VIEW")
+                        {
+                            <span>@Model.SelectedBannerValues</span>
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Banner_Vendor", (IEnumerable<SelectListItem>)ViewBag.Banner, "Please select", new { @id = "Banner", @style = "width:50%", @class = "chosen-select" })
+                            @*@Html.DropDownList("Banner_Vendor", (IEnumerable<SelectListItem>)ViewBag.Banner as MultiSelectList, new { @id = "Banner", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })*@
+                        }
+                    </td>
+                </tr>
+            }
+            @if ((ViewBag.DisplayMode != "VIEW") || (ViewBag.DisplayMode == "VIEW" && Model.SelectedPartyType == "C"))
+            {
+                <tr>
+                    <td style="width:25%; padding-left:2%">
+                        <b>Pref. Exclusion</b>
+                    </td>
+                    <td>
+                        @if (ViewBag.DisplayMode == "VIEW")
+                        {
+                            <span>@Model.SelectedPrefExclusionValues</span>
+                        }
+                        else
+                        {
+                            @Html.DropDownList("Pref_Exclusion", (IEnumerable<SelectListItem>)ViewBag.PrefExclusion as MultiSelectList, new { @id = "PrefExclusion", @style = "width:50%", @class = "chosen-select", multiple = "multiple" })
+                        }
+                    </td>
+                </tr>
+            }
+            @if (ViewBag.DisplayBookingSheet == "Y")
+            {
+                <tr>
+                    <td style="width:25%; padding-left:2%">
+                        <b>Booking sheet on Party</b>
+                    </td>
+                    <td>
+                        @if (ViewBag.DisplayMode == "VIEW")
+                        {
+                            <span>@Model.SelectedBookingSheetValue</span>
+                        }
+                        else
+                        {
+                            @*@Html.DropDownList("Extended_Group", (IEnumerable<SelectListItem>)ViewBag.ExtGrpCfg, "Please Select", new { @id = "ExtendedGroup", @style = "width:50%" })*@
+                            @Html.DropDownListFor(m => m.Extended_Group_Code_Booking, (IEnumerable<SelectListItem>)ViewBag.ExtGrpCfg, "Please Select", new { @id = "ExtendedGroup", @style = "width:50%" })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<br />
+
+<div class="grid_area" id="GridDiv" style="margin: 0 auto; width: 98%;">
+    <div class="navigation_tabs">
+        <div class="tabbable" id="divAlternateConfig">
+            <input type="hidden" id="hdnTabName" value="TA">
+            <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                <li class="active" id="AdditionalInfoTabCR">
+                    <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="AdditionalInfoTab('CR', '', 0)"> Content Rule </a>
+                </li>
+                @*<li class="" id="AdditionalInfoTabOEM">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="AL" data-configitem="1" onclick="AdditionalInfoTab('OEM', '', 0)"> OEM </a>
+                    </li>
+                    <li class="" id="AdditionalInfoTabTNC">
+                        <a data-toggle="tab" href="#" role="tab" data-tabname="AL" data-configitem="2" onclick="AdditionalInfoTab('TNC', '', 0)"> TnC </a>
+                    </li>*@
+            </ul>
+        </div>
+    </div>
+    <input type="hidden" id="hdnActionTnC" name="hdnActionTnC" value="" />
+    <input type="hidden" id="hdnActionOEM" name="hdnActionOEM" value="" />
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block" id="AddInfoGrid">
+
+        </div>
+    </div>
+</div>
+@*<div class="btn-group">
+        <button onclick="AdditionalInfoTab('CR', '', 0)">Content Rule</button>
+        <button onclick="AdditionalInfoTab('OEM', '', 0)">OEM</button>
+        <button onclick="AdditionalInfoTab('TNC', '', 0)">TnC</button>
+    </div>*@
+
+<div class="modal_block_full" style="margin-top: 10px;">
+    <div class="form_links">
+        <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+            @if (ViewBag.DisplayMode != "VIEW")
+            {
+                <li>
+                    <button type="button" id="SaveAdditionalInfoBtn" class="btn btn-primary" onclick="SaveAdditionalInfo()">Save</button>
+                </li>
+            }
+            <li>
+                <button type="button" id="CloseAdditionalInfoBtn" class="btn btn-primary" onclick="ClosePopup()">Close</button>
+            </li>
+        </ul>
+    </div>
+</div>
+

@@ -43,8 +43,12 @@
     var URL_Refresh_Lock = '@Url.Action("Refresh_Lock", "Global")';
     var URL_Release_Lock = '@Url.Action("Release_Lock", "Global")';
     URL_Reload_Current_Page = '@Url.Action("View", "Title")';
+    var TitleTypeCode = '@ViewBag.TitleTypeEpisodeTab';
+    var IsView = '@ViewBag.IsView';
+    var VarTitleCodeModel = '@Model.Title_Code';
     $(document).ready(function () {
         debugger;
+        BindTitleMetadataHeader();
         if ('RTL' == '@objMessageKey.LayoutDirection'){
             $('.divRelease').css("float", "left");
             $('.poptalent').css("float", "Right");
@@ -237,6 +241,23 @@
 
     }
     function BindExtended() {
+
+        if ($("#hdnTabCode").val() == 0 || $("#hdnTabCode").val() == "undefined") {
+            var hdnActiveTabValue = $('ul.ulTabs').find('li.active').data('configitem');
+            $("#hdnTabCode").val(hdnActiveTabValue);
+            var hdnTabAddEditType = $('ul.ulTabs').find('li.active').data('content');
+            $("#hdnTabAddEditType").val(hdnTabAddEditType);
+            var hdnTabwiseName = $('ul.ulTabs').find('li.active').data('tabname');
+            $("#hdnTabwiseName").val(hdnTabwiseName);
+            if ($("#hdnTabAddEditType").val() == 'row') {
+                $('.divgvAdditionalFieldGrid').hide();
+                $('.divgvAdditionalField').show();
+            }
+            else if ($("#hdnTabAddEditType").val() == 'grid') {
+                $('.divgvAdditionalField').hide();
+                $('.divgvAdditionalFieldGrid').show();
+            }
+        }   
         showLoading();
         var TitleCode = '@Model.Title_Code.ToString()';
         $.ajax({
@@ -256,6 +277,28 @@
                 hideLoading();
             },
             error: function (result) {
+            }
+        });
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindFieldGrid", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode,
+                operation: "V"
+            }),
+            success: function (result) {
+                //ddl_first_col = result;
+                $('.divgvAdditionalFieldGrid').html(result);
+                initializeChosen();
+                initializeTooltip();
+                //hideLoading();
+            },
+            error: function (result) {
+                //alert('Error: '+ result.responseText);
             }
         });
     }
@@ -474,6 +517,49 @@
                 alert(result);
             }
         });
+    }
+
+    function BindTitleMetadataHeader() {
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("BindTitleMetadataHeader", "Title")',
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            async: false,
+            success: function (result) {
+
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTitleMetadataHeader').empty();
+                    $('#divTitleMetadataHeader').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function hideaddPopup() {
+        debugger;
+        //$('#inputValidation').val("false");
+        var shortName = $('#hdnTabShortName').val();
+        var tabValues = $('#TabValues').val();
+        let tabArray = tabValues.split(',');
+        for (let i = 0; i < tabArray.length; i++) {
+            var IS_Input_Name = "#tblMain" + tabArray[i];
+            if (tabArray[i] == shortName) {
+                $(IS_Input_Name).addClass("active");
+                $(IS_Input_Name).show();
+            }
+            else {
+                $(IS_Input_Name).removeClass("active");
+                $(IS_Input_Name).hide();
+            }
+        }
     }
 
 </script>
@@ -769,10 +855,14 @@
                                         </div>
                                     </div>
                                     <div class="padding">
-                                        <div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
-                                        </div>
+                                        @*<div class="divgvAdditionalField" style="text-align-last:@(textalignlast);">
+                                        </div>*@
                                     </div>
 
+                                    <div class="navigation_tabs" style="padding: 10px; background-color: white;">
+                                        <div id="divTitleMetadataHeader">
+                                        </div>
+                                    </div>
                                     @*<div class="divAdditionalField">
                                         </div>*@
                                     <br />

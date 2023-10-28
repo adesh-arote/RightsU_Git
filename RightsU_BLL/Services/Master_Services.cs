@@ -2547,22 +2547,60 @@ namespace RightsU_BLL
             return true;
         }
     }
-    public class Extended_Columns_Service
+    public class Extended_Columns_Service : BusinessLogic<Extended_Columns>
     {
-        private readonly Extended_Columns_Repository objExtCol;
+        private readonly Extended_Columns_Repository objRepository;
+        private readonly Extended_Columns_Value_Repository extended_Columns_Value_Repository;
 
         public Extended_Columns_Service(string Connection_Str)
         {
-            this.objExtCol = new Extended_Columns_Repository(Connection_Str);
+            this.objRepository = new Extended_Columns_Repository(Connection_Str);
+            this.extended_Columns_Value_Repository = new Extended_Columns_Value_Repository(Connection_Str);
         }
         public IQueryable<Extended_Columns> SearchFor(Expression<Func<Extended_Columns, bool>> predicate)
         {
-            return objExtCol.SearchFor(predicate);
+            return objRepository.SearchFor(predicate);
         }
-
         public Extended_Columns GetById(int id)
         {
-            return objExtCol.GetById(id);
+            return objRepository.GetById(id);
+        }
+        public bool Save(Extended_Columns objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Extended_Columns objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Extended_Columns objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+        private bool ValidateDuplicate(Extended_Columns objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Columns_Name == objToValidate.Columns_Name && s.Columns_Code != objToValidate.Columns_Code).Count() > 0)
+            {
+                resultSet = "Extended Column already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
     public class Extended_Columns_Value_Service : BusinessLogic<Extended_Columns_Value>
@@ -2577,7 +2615,6 @@ namespace RightsU_BLL
         {
             return objExtCol.SearchFor(predicate);
         }
-
         public Extended_Columns_Value GetById(int id)
         {
             return objExtCol.GetById(id);
@@ -2585,6 +2622,10 @@ namespace RightsU_BLL
         public bool Save(Extended_Columns_Value objUPD, out dynamic resultSet)
         {
             return base.Save(objUPD, objExtCol, out resultSet);
+        }
+        public bool Update(Extended_Columns_Value objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objExtCol, out resultSet);
         }
         public bool Delete(Extended_Columns_Value objUPD, out dynamic resultSet)
         {
@@ -2596,13 +2637,11 @@ namespace RightsU_BLL
             resultSet = "";
             return true;
         }
-
         public override bool ValidateUpdate(Extended_Columns_Value objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;
         }
-
         public override bool ValidateDelete(Extended_Columns_Value objToValidate, out dynamic resultSet)
         {
             resultSet = "";
@@ -3123,6 +3162,48 @@ namespace RightsU_BLL
         }
 
         public override bool ValidateDelete(Music_Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class Title_Talent_Service : BusinessLogic<Title_Talent>
+    {
+        private readonly Title_Talent_Repository objRepository;
+
+        public Title_Talent_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Talent_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Talent> SearchFor(Expression<Func<Title_Talent, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Talent GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public void Save(Title_Talent objD)
+        {
+            objRepository.Save(objD);
+        }
+
+        public override bool Validate(Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateUpdate(Title_Talent objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        public override bool ValidateDelete(Title_Talent objToValidate, out dynamic resultSet)
         {
             resultSet = "";
             return true;
@@ -7441,4 +7522,1482 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
     }
+
+    public class Extended_Group_Config_Service : BusinessLogic<Extended_Group_Config>
+    {
+        private readonly Extended_Group_Config_Repository objRepository;
+
+        public Extended_Group_Config_Service(string Connection_Str)
+        {
+            this.objRepository = new Extended_Group_Config_Repository(Connection_Str);
+        }
+        public IQueryable<Extended_Group_Config> SearchFor(Expression<Func<Extended_Group_Config, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Extended_Group_Config GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Extended_Group_Config objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Extended_Group_Config objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Extended_Group_Config objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Extended_Group_Config objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class Extended_Group_Service : BusinessLogic<Extended_Group>
+    {
+        private readonly Extended_Group_Repository objRepository;
+
+        public Extended_Group_Service(string Connection_Str)
+        {
+            this.objRepository = new Extended_Group_Repository(Connection_Str);
+        }
+        public IQueryable<Extended_Group> SearchFor(Expression<Func<Extended_Group, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Extended_Group GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Extended_Group objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Extended_Group objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Extended_Group objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Extended_Group objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => (s.Module_Code == objToValidate.Module_Code && s.Group_Order == objToValidate.Group_Order) && (s.Extended_Group_Code != objToValidate.Extended_Group_Code)).Count() > 0)
+            {
+                resultSet = "Extended Group already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    #region---Aeroplay----------
+
+    public class AL_Vendor_Details_Service : BusinessLogic<AL_Vendor_Details>
+    {
+        private readonly AL_Vendor_Details_Repository objRepository;
+
+        public AL_Vendor_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Vendor_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Vendor_Details> SearchFor(Expression<Func<AL_Vendor_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Vendor_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Vendor_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Vendor_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Vendor_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Vendor_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Vendor_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Vendor_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Vendor_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
+            {
+                resultSet = "AL_Vendor_Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Vendor_TnC_Service : BusinessLogic<AL_Vendor_TnC>
+    {
+        private readonly AL_Vendor_TnC_Repository objRepository;
+
+        public AL_Vendor_TnC_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Vendor_TnC_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Vendor_TnC> SearchFor(Expression<Func<AL_Vendor_TnC, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Vendor_TnC GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Vendor_TnC objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Vendor_TnC objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Vendor_TnC objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Vendor_TnC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Vendor_TnC objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
+            {
+                resultSet = "AL_Vendor_TnC already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Vendor_OEM_Service : BusinessLogic<AL_Vendor_OEM>
+    {
+        private readonly AL_Vendor_OEM_Repository objRepository;
+
+        public AL_Vendor_OEM_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Vendor_OEM_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Vendor_OEM> SearchFor(Expression<Func<AL_Vendor_OEM, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Vendor_OEM GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Vendor_OEM objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Vendor_OEM objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Vendor_OEM objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Vendor_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Vendor_OEM objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Vendor_Code == objToValidate.Vendor_Code).Count() > 0)
+            {
+                resultSet = "AL_Vendor_OEM already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Vendor_Rule_Criteria_Service : BusinessLogic<AL_Vendor_Rule_Criteria>
+    {
+        private readonly AL_Vendor_Rule_Criteria_Repository objRepository;
+
+        public AL_Vendor_Rule_Criteria_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Vendor_Rule_Criteria_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Vendor_Rule_Criteria> SearchFor(Expression<Func<AL_Vendor_Rule_Criteria, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Vendor_Rule_Criteria GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Vendor_Rule_Criteria objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Vendor_Rule_Criteria objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Vendor_Rule_Criteria objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Vendor_Rule_Criteria objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Vendor_Rule_Code == objToValidate.AL_Vendor_Rule_Code).Count() > 0)
+            {
+                resultSet = "AL_Vendor_Rule_Criteria already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Vendor_Rule_Service : BusinessLogic<AL_Vendor_Rule>
+    {
+        private readonly AL_Vendor_Rule_Repository objRepository;
+
+        public AL_Vendor_Rule_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Vendor_Rule_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Vendor_Rule> SearchFor(Expression<Func<AL_Vendor_Rule, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Vendor_Rule GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Vendor_Rule objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Vendor_Rule objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Vendor_Rule objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Vendor_Rule objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Vendor_Rule objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Vendor_Rule_Code == objToValidate.AL_Vendor_Rule_Code).Count() > 0)
+            {
+                resultSet = "AL_Vendor_Rule already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_OEM_Service : BusinessLogic<AL_OEM>
+    {
+        private readonly AL_OEM_Repository objRepository;
+
+        public AL_OEM_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_OEM_Repository(Connection_Str);
+        }
+        public IQueryable<AL_OEM> SearchFor(Expression<Func<AL_OEM, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_OEM GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_OEM objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_OEM objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_OEM objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_OEM objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Company_Name == objToValidate.Company_Name && s.AL_OEM_Code != objToValidate.AL_OEM_Code).Count() > 0)
+            {
+                resultSet = "OEM already exist with this Device Name";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class Banner_Service : BusinessLogic<Banner>
+    {
+        private readonly Banner_Repository objRepository;
+
+        public Banner_Service(string Connection_Str)
+        {
+            this.objRepository = new Banner_Repository(Connection_Str);
+        }
+        public IQueryable<Banner> SearchFor(Expression<Func<Banner, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Banner GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Banner objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Banner objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Banner objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Banner objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Banner objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Banner objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Banner objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Banner_Name == objToValidate.Banner_Name && s.Banner_Code != objToValidate.Banner_Code).Count() > 0)
+            {
+                resultSet = "Banner Name already exists";
+                return false;
+            }
+            else if (SearchFor(s => s.Banner_Short_Name == objToValidate.Banner_Short_Name && s.Banner_Code != objToValidate.Banner_Code).Count() > 0)
+            {
+                resultSet = "Banner Short Name already exists";
+                return false;
+            }
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class Title_Episode_Details_TC_Service : BusinessLogic<Title_Episode_Details_TC>
+    {
+        private readonly Title_Episode_Details_TC_Repository objRepository;
+
+        public Title_Episode_Details_TC_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Episode_Details_TC_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Episode_Details_TC> SearchFor(Expression<Func<Title_Episode_Details_TC, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Episode_Details_TC GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Episode_Details_TC objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Episode_Details_TC objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Episode_Details_TC objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Episode_Details_TC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Episode_Details_TC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Title_Episode_Details_TC objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Title_Episode_Details_TC objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Title_Content_Code == objToValidate.Title_Content_Code).Count() > 0)
+            {
+                resultSet = "Title_Episode_Details_TC already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class Title_Episode_Details_Service : BusinessLogic<Title_Episode_Details>
+    {
+        private readonly Title_Episode_Details_Repository objRepository;
+
+        public Title_Episode_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new Title_Episode_Details_Repository(Connection_Str);
+        }
+        public IQueryable<Title_Episode_Details> SearchFor(Expression<Func<Title_Episode_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public Title_Episode_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(Title_Episode_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(Title_Episode_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(Title_Episode_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(Title_Episode_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Title_Episode_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Title_Episode_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(Title_Episode_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Title_Episode_Detail_Code == objToValidate.Title_Episode_Detail_Code).Count() > 0)
+            {
+                resultSet = "Title_Episode_Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Lab_Service : BusinessLogic<AL_Lab>
+    {
+        private readonly AL_Lab_Repository objRepository;
+
+        public AL_Lab_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Lab_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Lab> SearchFor(Expression<Func<AL_Lab, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Lab GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Lab objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Lab objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Lab objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(AL_Lab objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Lab_Name == objToValidate.AL_Lab_Name && s.AL_Lab_Code != objToValidate.AL_Lab_Code).Count() > 0)
+            {
+                resultSet = "AL Lab Name already exists";
+                return false;
+            }
+            else if (SearchFor(s => s.AL_Lab_Short_Name == objToValidate.AL_Lab_Short_Name && s.AL_Lab_Code != objToValidate.AL_Lab_Code).Count() > 0)
+            {
+                resultSet = "AL Lab Short Name already exists";
+                return false;
+            }
+            resultSet = "";
+            return true;
+        }
+
+    }
+
+    public class AL_Booking_Sheet_Service : BusinessLogic<AL_Booking_Sheet>
+    {
+        private readonly AL_Booking_Sheet_Repository objRepository;
+
+        public AL_Booking_Sheet_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Booking_Sheet_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Booking_Sheet> SearchFor(Expression<Func<AL_Booking_Sheet, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Booking_Sheet GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Booking_Sheet objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Booking_Sheet objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Booking_Sheet objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Booking_Sheet objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.AL_Booking_Sheet_Code == objToValidate.AL_Booking_Sheet_Code).Count() > 0)
+            //{
+            //    resultSet = "Booking sheet already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Booking_Sheet_Details_Service : BusinessLogic<AL_Booking_Sheet_Details>
+    {
+        private readonly AL_Booking_Sheet_Details_Repository objRepository;
+
+        public AL_Booking_Sheet_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Booking_Sheet_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Booking_Sheet_Details> SearchFor(Expression<Func<AL_Booking_Sheet_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Booking_Sheet_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Booking_Sheet_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Booking_Sheet_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Booking_Sheet_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Booking_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Booking_Sheet_Details_Code == objToValidate.AL_Booking_Sheet_Details_Code).Count() > 0)
+            {
+                resultSet = "Booking sheet details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Recommendation_Service : BusinessLogic<AL_Recommendation>
+    {
+        private readonly AL_Recommendation_Repository objRepository;
+
+        public AL_Recommendation_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Recommendation_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Recommendation> SearchFor(Expression<Func<AL_Recommendation, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Recommendation GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Recommendation objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Recommendation objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Recommendation objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Recommendation objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Recommendation_Code == objToValidate.AL_Recommendation_Code).Count() > 0)
+            {
+                resultSet = "Recommendation already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Recommendation_Content_Service : BusinessLogic<AL_Recommendation_Content>
+    {
+        private readonly AL_Recommendation_Content_Repository objRepository;
+
+        public AL_Recommendation_Content_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Recommendation_Content_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Recommendation_Content> SearchFor(Expression<Func<AL_Recommendation_Content, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Recommendation_Content GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Recommendation_Content objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Recommendation_Content objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Recommendation_Content objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Recommendation_Content objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Recommendation_Content_Code == objToValidate.AL_Recommendation_Content_Code).Count() > 0)
+            {
+                resultSet = "Recommendation Content already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class DM_Booking_Sheet_Data_Service : BusinessLogic<DM_Booking_Sheet_Data>
+    {
+        private readonly DM_Booking_Sheet_Data_Repository objRepository;
+
+        public DM_Booking_Sheet_Data_Service(string Connection_Str)
+        {
+            this.objRepository = new DM_Booking_Sheet_Data_Repository(Connection_Str);
+        }
+        public IQueryable<DM_Booking_Sheet_Data> SearchFor(Expression<Func<DM_Booking_Sheet_Data, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public DM_Booking_Sheet_Data GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(DM_Booking_Sheet_Data objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(DM_Booking_Sheet_Data objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(DM_Booking_Sheet_Data objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(DM_Booking_Sheet_Data objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.DM_Booking_Sheet_Data_Code == objToValidate.DM_Booking_Sheet_Data_Code).Count() > 0)
+            {
+                resultSet = "Booking Sheet Data already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Purchase_Order_Service : BusinessLogic<AL_Purchase_Order>
+    {
+        private readonly AL_Purchase_Order_Repository objRepository;
+
+        public AL_Purchase_Order_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Purchase_Order_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order> SearchFor(Expression<Func<AL_Purchase_Order, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.AL_Purchase_Order_Code == objToValidate.AL_Purchase_Order_Code).Count() > 0)
+            //{
+            //    resultSet = "Purchase Order already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Purchase_Order_Details_Service : BusinessLogic<AL_Purchase_Order_Details>
+    {
+        private readonly AL_Purchase_Order_Details_Repository objRepository;
+
+        public AL_Purchase_Order_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Purchase_Order_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order_Details> SearchFor(Expression<Func<AL_Purchase_Order_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order_Details objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.AL_Purchase_Order_Details_Code == objToValidate.AL_Purchase_Order_Details_Code).Count() > 0)
+            //{
+            //    resultSet = "Purchase Order Details already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Load_Sheet_Service : BusinessLogic<AL_Load_Sheet>
+    {
+        private readonly AL_Load_Sheet_Repository objRepository;
+
+        public AL_Load_Sheet_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Load_Sheet_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Load_Sheet> SearchFor(Expression<Func<AL_Load_Sheet, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Load_Sheet GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Load_Sheet objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Load_Sheet objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Load_Sheet objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Load_Sheet objToValidate, out dynamic resultSet)
+        {
+            //if (SearchFor(s => s.AL_Load_Sheet_Code == objToValidate.AL_Load_Sheet_Code).Count() > 0)
+            //{
+            //    resultSet = "Load Sheet already exists";
+            //    return false;
+            //}
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Load_Sheet_Details_Service : BusinessLogic<AL_Load_Sheet_Details>
+    {
+        private readonly AL_Load_Sheet_Details_Repository objRepository;
+
+        public AL_Load_Sheet_Details_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Load_Sheet_Details_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Load_Sheet_Details> SearchFor(Expression<Func<AL_Load_Sheet_Details, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Load_Sheet_Details GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Load_Sheet_Details objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Load_Sheet_Details objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Load_Sheet_Details objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Load_Sheet_Details objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Load_Sheet_Details_Code == objToValidate.AL_Load_Sheet_Details_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Material_Tracking_Service : BusinessLogic<AL_Material_Tracking>
+    {
+        private readonly AL_Material_Tracking_Repository objRepository;
+
+        public AL_Material_Tracking_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Material_Tracking_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Material_Tracking> SearchFor(Expression<Func<AL_Material_Tracking, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Material_Tracking GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Material_Tracking objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Material_Tracking objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Material_Tracking objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Material_Tracking objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Material_Tracking_Code == objToValidate.AL_Material_Tracking_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Material_Tracking_OEM_Service : BusinessLogic<AL_Material_Tracking_OEM>
+    {
+        private readonly AL_Material_Tracking_OEM_Repository objRepository;
+
+        public AL_Material_Tracking_OEM_Service(string Connection_Str)
+        {
+            this.objRepository = new AL_Material_Tracking_OEM_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Material_Tracking_OEM> SearchFor(Expression<Func<AL_Material_Tracking_OEM, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Material_Tracking_OEM GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Material_Tracking_OEM objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Material_Tracking_OEM objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Material_Tracking_OEM objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Material_Tracking_OEM objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.AL_Material_Tracking_OEM_Code == objToValidate.AL_Material_Tracking_OEM_Code).Count() > 0)
+            {
+                resultSet = "Load Sheet Details already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
+        }
+    }
+
+    public class AL_Purchase_Order_Rel_Service : BusinessLogic<AL_Purchase_Order_Rel>
+    {
+        private readonly Al_Purchase_Order_Rel_Repository objRepository;
+
+        public AL_Purchase_Order_Rel_Service(string Connection_Str)
+        {
+            this.objRepository = new Al_Purchase_Order_Rel_Repository(Connection_Str);
+        }
+        public IQueryable<AL_Purchase_Order_Rel> SearchFor(Expression<Func<AL_Purchase_Order_Rel, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public AL_Purchase_Order_Rel GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+        public bool Save(AL_Purchase_Order_Rel objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+
+        public bool Update(AL_Purchase_Order_Rel objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+
+        public bool Delete(AL_Purchase_Order_Rel objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+
+        public override bool Validate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        private bool ValidateDuplicate(AL_Purchase_Order_Rel objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+    }
+
+    #endregion
 }

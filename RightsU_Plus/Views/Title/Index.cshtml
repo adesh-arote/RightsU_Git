@@ -28,7 +28,8 @@
     <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
     <script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
     <script type="text/javascript">
-    debugger;
+        debugger;
+        var IsView = '';
     var CommandName_G = "";
     var recordLockingCode = @ViewBag.RecordLockingCode;
     var confirmed = false;
@@ -345,6 +346,9 @@
                 else
                 {
                     showAlert("E", result.Message);
+                    if (result.HideLoading == "Y") {
+                        hideLoading();
+                    }
                 }
             }
         }
@@ -694,7 +698,7 @@
                                 </a>
                                 <h2>Add Extended Metadata Column</h2>
                             </div>
-                            <div class="modal_block" style="height:46px;">
+                            <div class="modal_block">
                                 <ul class="add_title_popup">
                                     <li>
                                         <label><b>Extended Metadata</b></label>

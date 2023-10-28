@@ -310,19 +310,41 @@ namespace RightsU_Plus.Controllers
                 ViewBag.SearchedTitle = SearchedTitle;
                 SearchedTitle_EDIT = SearchedTitle;
                 objTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+
+                objTitle.Movie_Album_Type = string.IsNullOrEmpty(objTitle.Movie_Album_Type) ? "A" : objTitle.Movie_Album_Type;
+
                 BindDDL();
                 Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
                 string MusicThemeVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
                 ViewBag.MusicThemeVisibility = MusicThemeVisibility;
                 ViewBag.RolesList = new SelectList(objRoleService.SearchFor(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
-                int Music_Album_Code = Convert.ToInt32(objTitle.Music_Album_Code);
-                string Movie_Album_Name = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Code == objTitle.Music_Album_Code).Select(x => x.Music_Album_Name).FirstOrDefault();
-                ViewBag.MovieAlbum = Movie_Album_Name;
-                ViewBag.MovieAlbumCode = Music_Album_Code;
+
+                if (String.IsNullOrEmpty(objTitle.Movie_Album_Type) || objTitle.Movie_Album_Type == "A")
+                {
+                    int Music_Album_Code = Convert.ToInt32(objTitle.Music_Album_Code);
+                    string Movie_Album_Name = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Code == objTitle.Music_Album_Code).Select(x => x.Music_Album_Name).FirstOrDefault();
+                    ViewBag.MovieAlbum = Movie_Album_Name;
+                    ViewBag.MovieAlbumCode = Music_Album_Code;
+
+                    BindStarcast(Music_Album_Code, objTitle.Movie_Album_Type);
+                }
+                else
+                {
+                    int Title_Code = Convert.ToInt32(objTitle.Title_Code);
+                    string Movie_Album_Name = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Code == objTitle.Title_Code).Select(x => x.Title_Name).FirstOrDefault();
+                    ViewBag.MovieAlbum = Movie_Album_Name;
+                    ViewBag.MovieAlbumCode = Title_Code;
+
+                    BindStarcast(Title_Code, objTitle.Movie_Album_Type);
+                }
+
+                ViewBag.isSyndicated = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code.Contains("," + objTitle.Music_Title_Code.ToString() + ",") ||
+                                            x.Digital_Data_Code.StartsWith(objTitle.Music_Title_Code.ToString() + ",") || x.Digital_Data_Code.EndsWith("," + objTitle.Music_Title_Code.ToString()) || x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count() > 0 ? "Y" : "N";
+
                 //ViewBag.MovieAlbum = BindMovieAlbum(Music_Album_Code);
                 ViewBag.Record_Locking_Code = RLCode;
                 Record_Locking_Code = RLCode;
-                BindStarcast(Music_Album_Code);
+
                 return View(objTitle);
             }
             else
@@ -401,7 +423,7 @@ namespace RightsU_Plus.Controllers
             TempData["SearchedTitle"] = SearchedTitle;
             mode = "V";
             PageNo = Page_No;
-           string PublicDomainView = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Music_Title_Code == objTitle.Music_Title_Code).Select(w=>w.Public_Domain).ToString();
+            string PublicDomainView = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Music_Title_Code == objTitle.Music_Title_Code).Select(w => w.Public_Domain).ToString();
             ViewBag.PublicDomainView = PublicDomainView;
             if (MusicPageSize == 0)
                 MusicPageSize = PageSize;
@@ -409,6 +431,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.SearchedTitle = SearchedTitle;
             //SearchedTitle_EDIT = SearchedTitle;
             objTitle = new Music_Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            objTitle.Movie_Album_Type = string.IsNullOrEmpty(objTitle.Movie_Album_Type) ? "A" : objTitle.Movie_Album_Type;
+
             BindDDL();
             Role_Service objRoleService = new Role_Service(objLoginEntity.ConnectionStringName);
             ViewBag.RolesList = new SelectList(objRoleService.SearchFor(r => r.Role_Type == "T"), "Role_Code", "Role_Name").ToList();
@@ -418,8 +442,17 @@ namespace RightsU_Plus.Controllers
 
             string MusicThemeVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Parameter_Name == "MusicThemeVisibility").Select(i => i.Parameter_Value).FirstOrDefault();
             ViewBag.MusicThemeVisibility = MusicThemeVisibility;
-            int code = Convert.ToInt32(objTitle.Music_Album_Code);
-            BindStarcast(code);
+
+            if (String.IsNullOrEmpty(objTitle.Movie_Album_Type) || objTitle.Movie_Album_Type == "A")
+            {
+                int code = Convert.ToInt32(objTitle.Music_Album_Code);
+                BindStarcast(code, objTitle.Movie_Album_Type);
+            }
+            else
+            {
+                int code = Convert.ToInt32(objTitle.Title_Code);
+                BindStarcast(code, objTitle.Movie_Album_Type);
+            }
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
             return View(objTitle);
             //if (objTitle.Original_Language_Code > 0)
@@ -763,7 +796,8 @@ namespace RightsU_Plus.Controllers
                 //if (Type == "N")
                 //    Count = (from Acq_Deal_Movie obj in objTitle.Acq_Deal_Movie where obj.Title_Code == Title_Code && (obj.Is_Closed != "X" || obj.Is_Closed != "Y") select obj).ToList().Distinct().Count();
 
-
+                Count = new Syn_Deal_Digital_Detail_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Digital_Data_Code.Contains("," + objTitle.Music_Title_Code.ToString() + ",") ||
+                                            x.Digital_Data_Code.StartsWith(objTitle.Music_Title_Code.ToString() + ",") || x.Digital_Data_Code.EndsWith("," + objTitle.Music_Title_Code.ToString()) || x.Digital_Data_Code == objTitle.Music_Title_Code.ToString()).ToList().Count();
                 if (Count > 0)
                     objJson.Add("Error", objMessageKey.CannotdeactivatethisMusictitleasTitleisusedindeal);
                 else
@@ -826,6 +860,9 @@ namespace RightsU_Plus.Controllers
                 ViewBag.PageNo = PageNo;
             ViewBag.PageSize = (objPage_Properties.Page_Size == 0) ? 10 : objPage_Properties.Page_Size;
 
+            var MusicAlbumVisibility = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "MusicTrack_Album_Visibility").Select(w => w.Parameter_Value).SingleOrDefault();
+            ViewBag.MusicAlbumVisibility = MusicAlbumVisibility;
+
             ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMusic_Title), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
             string c = addRights.FirstOrDefault();
             ViewBag.VisibilityforAdd = c;
@@ -853,7 +890,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.PageNo = PageNo;
             ViewBag.SearchedTitle = objPage_Properties.SearchText;
             ViewBag.PageSize = MusicPageSize;
-         
+
             List<SelectListItem> lstMusicLabel = new List<SelectListItem>();
             lstMusicLabel = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y"), "Music_Label_Code", "Music_Label_Name", 0).ToList();
             lstMusicLabel.Insert(0, new SelectListItem() { Value = "0", Text = "Please Select" });
@@ -864,17 +901,17 @@ namespace RightsU_Plus.Controllers
             return PartialView("_Create", new Music_Title());
         }
 
-        public JsonResult ValidateIsDuplicate(string MusicTitleName, int MusicAlbumCode, string MusicAlbumName, string mode = "Add")
+        public JsonResult ValidateIsDuplicate(string MusicTitleName, int MusicAlbumCode, string MusicAlbumName, string Movie_Album_Type, string mode = "Add")
         {
             int Count = 0;
             bool dupStringsCount = true;
             int MusicAlbum = 0;
             char[] splitchar = { '~' };
             string[] parts = MusicTitleName.Split(splitchar, StringSplitOptions.RemoveEmptyEntries);
-            string Music_Album_Code = "";        
+            string Music_Album_Code = "";
             //MusicTitleName = MusicTitleName.Trim(' ');
             //MovieAlbumName = MovieAlbumName;
-            foreach(string NewMusicTitleName in parts)
+            foreach (string NewMusicTitleName in parts)
             {
                 if (parts.Distinct().Count() != parts.Count())
                 {
@@ -882,38 +919,96 @@ namespace RightsU_Plus.Controllers
                 }
                 if (MusicAlbumCode == 0)
                 {
-                    Music_Album_Code = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault().ToString();
+                    if (Movie_Album_Type == "A")
+                    {
+                        Music_Album_Code = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault().ToString();
+                    }
+                    else if (Movie_Album_Type == "M")
+                    {
+                        string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                        var strArrdealType = dealType.Split(',');
+                        Music_Album_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == MusicAlbumName && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault().ToString();
+                    }
+                    else if (Movie_Album_Type == "S")
+                    {
+                        string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                        var strArrdealType = dealType.Split(',');
+                        Music_Album_Code = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == MusicAlbumName && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault().ToString();
+                    }
+
                     MusicAlbumCode = Convert.ToInt32(Music_Album_Code);
-                }               
+                }
                 if (mode == "Add")
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+
+                    if (Movie_Album_Type == "A")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+                    }
+                    else if (Movie_Album_Type == "M" || Movie_Album_Type == "S")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Title_Code == MusicAlbumCode).Distinct().Count();
+                    }
+
                     Count += countDuplicate;
                 }
                 else if (mode == "Clone")
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+
+                    if (Movie_Album_Type == "A")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode).Distinct().Count();
+                    }
+                    else if (Movie_Album_Type == "M" || Movie_Album_Type == "S")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Title_Code == MusicAlbumCode).Distinct().Count();
+                    }
+
                     Count += countDuplicate;
                 }
                 else
                 {
                     int countDuplicate = 0;
-                    countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode && x.Music_Title_Code != objTitle.Music_Title_Code).Distinct().Count();
+
+                    if (Movie_Album_Type == "A")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Music_Album_Code == MusicAlbumCode && x.Music_Title_Code != objTitle.Music_Title_Code).Distinct().Count();
+                    }
+                    else if (Movie_Album_Type == "M" || Movie_Album_Type == "S")
+                    {
+                        countDuplicate = new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name == NewMusicTitleName && x.Title_Code == MusicAlbumCode && x.Music_Title_Code != objTitle.Music_Title_Code).Distinct().Count();
+                    }
+
                     Count += countDuplicate;
                 }
                 if (MusicAlbumCode != 0)
                 {
-                    MusicAlbum = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault();
+                    if (Movie_Album_Type == "A")
+                    {
+                        MusicAlbum = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == MusicAlbumName).Select(x => x.Music_Album_Code).FirstOrDefault();
+                    }
+                    else if (Movie_Album_Type == "M")
+                    {
+                        string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                        var strArrdealType = dealType.Split(',');
+                        MusicAlbum = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == MusicAlbumName && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault();
+                    }
+                    else if (Movie_Album_Type == "S")
+                    {
+                        string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                        var strArrdealType = dealType.Split(',');
+                        MusicAlbum = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == MusicAlbumName && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault();
+                    }
                 }
             }
-           
+
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             if (!dupStringsCount)
                 objJson.Add("ErrorMsg", "Music Title name can not be duplicate");
             else
-               objJson.Add("ErrorMsg", "");      
+                objJson.Add("ErrorMsg", "");
             if (Count > 0)
                 objJson.Add("Message", objMessageKey.MusicTitlewithsamenamealreadyexists);
             else
@@ -940,7 +1035,7 @@ namespace RightsU_Plus.Controllers
         }
 
 
-        public JsonResult SaveTitle(string MusicTitleName, string MovieAlbumName, string hdnddlLanguage, string hdnMusicLabel)
+        public JsonResult SaveTitle(string MusicTitleName, string MovieAlbumName, string hdnddlLanguage, string hdnMusicLabel, string Movie_Album_Type)
         {
             char[] splitchar = { '~' };
             string[] parts = MusicTitleName.Split(splitchar, StringSplitOptions.RemoveEmptyEntries);
@@ -958,9 +1053,18 @@ namespace RightsU_Plus.Controllers
                 objMusicTitle.Last_UpDated_Time = DateTime.Now;
                 objMusicTitle.Is_Active = "Y";
                 objMusicTitle.Public_Domain = "N";
+                objMusicTitle.Movie_Album_Type = Movie_Album_Type;
                 if (MovieAlbumName != "")
                 {
-                    objMusicTitle.Music_Album_Code = Convert.ToInt32(MovieAlbumName);
+                    if (Movie_Album_Type == "A")
+                    {
+                        objMusicTitle.Music_Album_Code = Convert.ToInt32(MovieAlbumName);
+                    }
+                    else
+                    {
+                        objMusicTitle.Title_Code = Convert.ToInt32(MovieAlbumName);
+                    }
+
                 }
                 new Music_Title_Service(objLoginEntity.ConnectionStringName).Save(objMusicTitle);
                 TempData["MusicTitleCode"] = objMusicTitle.Music_Title_Code;
@@ -990,12 +1094,12 @@ namespace RightsU_Plus.Controllers
                 }
                 #endregion
             }
-                //new Music_Title_Language_Service().
-                //Message = "Record Added SuccessFully";
-                Message = objMessageKey.RecordAddedSuccessfully;
-                Dictionary<string, object> objJson = new Dictionary<string, object>();
-                objJson.Add("Message", Message);
-                objJson.Add("MusicTitleCode", Convert.ToInt32(TempData["MusicTitleCode"]));
+            //new Music_Title_Language_Service().
+            //Message = "Record Added SuccessFully";
+            Message = objMessageKey.RecordAddedSuccessfully;
+            Dictionary<string, object> objJson = new Dictionary<string, object>();
+            objJson.Add("Message", Message);
+            objJson.Add("MusicTitleCode", Convert.ToInt32(TempData["MusicTitleCode"]));
             return Json(objJson);
         }
 
@@ -1032,7 +1136,7 @@ namespace RightsU_Plus.Controllers
 
                 objPage_Properties = null;
                 objPage_Properties.isAdvanced = "N";
-                MusicTitleList = objUSP.USP_List_Music_Title(sqlStr, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "", "","", ExactMatchStr).ToList();
+                MusicTitleList = objUSP.USP_List_Music_Title(sqlStr, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "", "", "", ExactMatchStr).ToList();
                 //MusicTitleList = objUSP.USP_List_Music_Title(sqlStr, pageNo, objRecordCount, "Y", "", "", "", "", "", "", "", "", "", "", "", "", "", searchText);
 
             }
@@ -1040,7 +1144,8 @@ namespace RightsU_Plus.Controllers
             {
                 objPage_Properties = null;
                 objPage_Properties.isAdvanced = "N";
-                MusicTitleList = objUSP.USP_List_Music_Title(searchText, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "","", "","").ToList();
+
+                MusicTitleList = objUSP.USP_List_Music_Title(searchText, objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "").ToList();
             }
             else
             {
@@ -1053,12 +1158,12 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.MusicTitleName_Search = string.Join(",", termsMTN);
 
                 objPage_Properties.isAdvanced = "Y";
-                MusicTitleList = objUSP.USP_List_Music_Title("",objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage,
+                MusicTitleList = objUSP.USP_List_Music_Title("", objLoginUser.System_Language_Code, pageNo, objRecordCount, "Y", recordPerPage,
                     objPage_Properties.StarCastCodes_Search, objPage_Properties.LanguagesCodes_Search, objPage_Properties.AlbumsCodes_Search,
                     objPage_Properties.GenresCodes_Search, objPage_Properties.MusicLabelCodes_Search, objPage_Properties.YearOfRelease,
                     objPage_Properties.SingerCodes_Search, objPage_Properties.ComposerCodes_Search, objPage_Properties.LyricistCodes_Search,
-                    objPage_Properties.MusicTitleName_Search, objPage_Properties.ThemeCodes_Search, objPage_Properties.Music_Tag_Search,objPage_Properties.Public_Domain).ToList();
-                   
+                    objPage_Properties.MusicTitleName_Search, objPage_Properties.ThemeCodes_Search, objPage_Properties.Music_Tag_Search, objPage_Properties.Public_Domain, "", objPage_Properties.Movie_Album_Type).ToList();
+
             }
 
             RecordCount = Convert.ToInt32(objRecordCount.Value);
@@ -1079,7 +1184,7 @@ namespace RightsU_Plus.Controllers
 
         }
         public void AdvanceSearch(string SrchStarCast = "", string SrchLanguage = "", string SrchAlbum = "", string SrchGenres = "", string SrchMusicLabel = "", string SrchTheme = "",
-            string SrchYearOfRelease = "", string SrchSinger = "", string SrchComposer = "", string SrchLyricist = "", string SrchMusic = "", string SrchMusicTag = "", string SrchMusicAlbumName = "", string SrchPublicDomain = "")
+            string SrchYearOfRelease = "", string SrchSinger = "", string SrchComposer = "", string SrchLyricist = "", string SrchMusic = "", string SrchMusicTag = "", string SrchMusicAlbumName = "", string SrchPublicDomain = "", string SrchMovieAlbumType = "")
         {
             objPage_Properties.StarCastCodes_Search = SrchStarCast;
             objPage_Properties.LanguagesCodes_Search = SrchLanguage;
@@ -1097,6 +1202,7 @@ namespace RightsU_Plus.Controllers
             objPage_Properties.MusicAlbumName = SrchMusicAlbumName;
             objPage_Properties.Public_Domain = SrchPublicDomain;
             objPage_Properties.isAdvanced = "Y";
+            objPage_Properties.Movie_Album_Type = SrchMovieAlbumType;
         }
         public void ExportToExcel(string TitleName = "", int PageIndex = 0)//string DealTypeCode = "1", 
         {
@@ -1108,7 +1214,7 @@ namespace RightsU_Plus.Controllers
             string mimeType;
             string[] streams;
             Warning[] warnings;
-            ReportParameter[] parm = new ReportParameter[20];
+            ReportParameter[] parm = new ReportParameter[21];
             int pageSize = 10;
             USP_Service objUSP = new USP_Service(objLoginEntity.ConnectionStringName);
             int RecordCount = 0;
@@ -1122,7 +1228,7 @@ namespace RightsU_Plus.Controllers
             if (objPage_Properties.StarCastCodes_Search == null && objPage_Properties.LanguagesCodes_Search == null
                 && objPage_Properties.AlbumsCodes_Search == null && objPage_Properties.GenresCodes_Search == null && objPage_Properties.MusicLabelCodes_Search == null &&
                objPage_Properties.YearOfRelease == null && objPage_Properties.SingerCodes_Search == null && objPage_Properties.ComposerCodes_Search == null &&
-                objPage_Properties.LyricistCodes_Search == null && objPage_Properties.MusicTitleName_Search == null && objPage_Properties.ThemeCodes_Search == null && objPage_Properties.Public_Domain == null)
+                objPage_Properties.LyricistCodes_Search == null && objPage_Properties.MusicTitleName_Search == null && objPage_Properties.ThemeCodes_Search == null && objPage_Properties.Public_Domain == null && objPage_Properties.Movie_Album_Type == null)
             {
                 objPage_Properties.StarCastCodes_Search = "";
                 objPage_Properties.LanguagesCodes_Search = "";
@@ -1136,6 +1242,7 @@ namespace RightsU_Plus.Controllers
                 objPage_Properties.MusicTitleName_Search = "";
                 objPage_Properties.ThemeCodes_Search = "";
                 objPage_Properties.Public_Domain = "";
+                objPage_Properties.Movie_Album_Type = "";
             }
             if (objPage_Properties.Music_Tag_Search == null)
                 objPage_Properties.Music_Tag_Search = "";
@@ -1181,6 +1288,7 @@ namespace RightsU_Plus.Controllers
             parm[17] = new ReportParameter("MusicTag", objPage_Properties.Music_Tag_Search);
             parm[18] = new ReportParameter("ExactMatch", ExactMatchStr);
             parm[19] = new ReportParameter("PublicDomain", objPage_Properties.Public_Domain);
+            parm[20] = new ReportParameter("MovieAlbumType", objPage_Properties.Movie_Album_Type);
             ReportCredential();
             ReportViewer1.ServerReport.ReportPath = string.Empty;
             if (ReportViewer1.ServerReport.ReportPath == "")
@@ -1343,11 +1451,29 @@ namespace RightsU_Plus.Controllers
 
         [HttpPost]
         public ActionResult Save(RightsU_Entities.Music_Title objTitleModel, string Language_Code, string Music_Type_Code, string hdnLanguage, string hdnTheme
-            , string hdnSinger, string hdnComposer, string hdnLyricist, string Music_Label_Code, string Music_Version_Code, string Genres_Code, string hdnStarCast, string Music_Album_Name, string hdnmode, string Public_Domain, int? hdnMusicTitleCode)
+            , string hdnSinger, string hdnComposer, string hdnLyricist, string Music_Label_Code, string Music_Version_Code, string Genres_Code, string hdnStarCast, string Music_Album_Name, string hdnmode, string Public_Domain, string hdnMovie_Album_Type, int? hdnMusicTitleCode)
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
             HttpPostedFileBase file = Request.Files["uploadFile"];
-            int Music_Album_Code = Convert.ToInt32(new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == Music_Album_Name).Select(x => x.Music_Album_Code).FirstOrDefault());
+            int Music_Album_Code = 0;
+            objTitleModel.Movie_Album_Type = hdnMovie_Album_Type;
+            if (objTitleModel.Movie_Album_Type == "M")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                Music_Album_Code = Convert.ToInt32(new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == Music_Album_Name && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault());
+            }
+            else if (objTitleModel.Movie_Album_Type == "S")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                Music_Album_Code = Convert.ToInt32(new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name == Music_Album_Name && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Select(x => x.Title_Code).FirstOrDefault());
+            }
+            else if (objTitleModel.Movie_Album_Type == "A")
+            {
+                Music_Album_Code = Convert.ToInt32(new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name == Music_Album_Name).Select(x => x.Music_Album_Code).FirstOrDefault());
+            }
+
             int TitleCode = 0;
             if (hdnmode != "C")
             {
@@ -1372,8 +1498,33 @@ namespace RightsU_Plus.Controllers
 
             objTitle.Music_Tag = objTitleModel.Music_Tag;
             objTitle.Public_Domain = objTitleModel.Public_Domain;
-            if (Music_Album_Name != "")
-                objTitle.Music_Album_Code = Music_Album_Code;
+
+            if (objTitleModel.Movie_Album_Type == "M")
+            {
+                if (Music_Album_Name != "")
+                {
+                    objTitle.Title_Code = Music_Album_Code;
+                    objTitle.Music_Album_Code = null;
+                }
+            }
+            else if (objTitleModel.Movie_Album_Type == "S")
+            {
+                if (Music_Album_Name != "")
+                {
+                    objTitle.Title_Code = Music_Album_Code;
+                    objTitle.Music_Album_Code = null;
+                }
+            }
+            else if (objTitleModel.Movie_Album_Type == "A")
+            {
+                if (Music_Album_Name != "")
+                {
+                    objTitle.Music_Album_Code = Music_Album_Code;
+                    objTitle.Title_Code = null;
+                }
+            }
+
+            objTitle.Movie_Album_Type = objTitleModel.Movie_Album_Type;
 
             if (Music_Type_Code != "0")
                 objTitle.Music_Type_Code = Convert.ToInt32(Music_Type_Code);
@@ -1631,11 +1782,11 @@ namespace RightsU_Plus.Controllers
             ViewBag.FilterBy = lstFliter;
             ViewBag.FilterbyStatus = TempData["FilterByStatus"] == null ? "A" : TempData["FilterByStatus"];
             int PageNo = Convert.ToInt32(TempData["PageNoBack"]);
-            ViewBag.PageNoBack = PageNo == 0   ? 0 : PageNo-1 ;
+            ViewBag.PageNoBack = PageNo == 0 ? 0 : PageNo - 1;
             ViewBag.Query_String_Page_No = objPage_Properties.PageNo;
             ViewBag.Page_Size = objPage_Properties.Page_Size;
             ViewBag.searchText = objPage_Properties.SearchText;
-            ViewBag.txtPageSizeBack = TempData["txtPageSizeBack"] == null? 10 : TempData["txtPageSizeBack"];
+            ViewBag.txtPageSizeBack = TempData["txtPageSizeBack"] == null ? 10 : TempData["txtPageSizeBack"];
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForMusic_Title);
             Session["lstError_Session"] = null;
             return View("Music_Title_Import", objPage_Properties);
@@ -1649,11 +1800,11 @@ namespace RightsU_Plus.Controllers
             // string filePath = (Server.MapPath("~") + "\\Download\\Music_Title_Import_Sample.xlsx").Replace("\\\\", "\\");
             if (MusicTitleVersion == "Y")
             {
-                 filePath = Server.MapPath("~") + "\\Download\\SPN_Music_Title_Import_Sample.xlsx";
+                filePath = Server.MapPath("~") + "\\Download\\SPN_Music_Title_Import_Sample.xlsx";
             }
             else
             {
-                 filePath = Server.MapPath("~") + "\\Download\\Music_Title_Import_Sample.xlsx";
+                filePath = Server.MapPath("~") + "\\Download\\Music_Title_Import_Sample.xlsx";
             }
             try
             {
@@ -1739,7 +1890,7 @@ namespace RightsU_Plus.Controllers
                         {
                             //If error in select of sheet data.....
                             //errorStr = "Please upload excel sheet named as \\'" + sheetName.Trim() + "\\'";
-                            errorStr = objMessageKey.PleaseuploadExcelSheetnamedas+ " \\'" + sheetName.Trim() + "\\'";
+                            errorStr = objMessageKey.PleaseuploadExcelSheetnamedas + " \\'" + sheetName.Trim() + "\\'";
                         }
                         finally
                         {
@@ -1829,7 +1980,7 @@ namespace RightsU_Plus.Controllers
                                 }
                                 else
                                 {
-                                   // message = "please Fill the Data in the Excel File";
+                                    // message = "please Fill the Data in the Excel File";
                                     message = objMessageKey.PleaseFillTheDataIntheExcelFile;
                                 }
                             }
@@ -1847,13 +1998,13 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    message = objMessageKey.PleaseSelectExcelFile+ "...";
+                    message = objMessageKey.PleaseSelectExcelFile + "...";
                 }
 
             }
             else
             {
-                message = objMessageKey.PleaseSelectExcelFile+ "...";
+                message = objMessageKey.PleaseSelectExcelFile + "...";
 
             }
             ViewBag.Message = message;
@@ -1920,9 +2071,9 @@ namespace RightsU_Plus.Controllers
             List<string> terms = keyword.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().Where(w => w.Talent_Name.ToUpper().Contains(searchString.ToUpper()) &&w.Role_Code == GlobalParams.Role_code_StarCast).Distinct()
+            var result = new USP_Service(objLoginEntity.ConnectionStringName).USP_Get_Talent_Name().Where(w => w.Talent_Name.ToUpper().Contains(searchString.ToUpper()) && w.Role_Code == GlobalParams.Role_code_StarCast).Distinct()
                 .Select(x => new { Talent_Name = x.Talent_Name, Talent_Code = x.Talent_Code }).ToList();
-               
+
             return Json(result);
         }
         public JsonResult SaveMovieAlbum(Music_Album frmdata, string rdoMovieAlbum, string Music_Album_Name, string hdnStarCastList)
@@ -2036,13 +2187,24 @@ namespace RightsU_Plus.Controllers
             objJson.Add("Value", strName);
             return Json(objJson);
         }
-        public void BindStarcast(int value)
+        public void BindStarcast(int value, string Movie_Album_Type)
         {
-            var MovieAlbumTalent = new Music_Album_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
             int code = Convert.ToInt32(value);
-            var lstTalentName = MovieAlbumTalent.Where(a => a.Music_Album_Code == code).Select(b => b.Talent).ToList();
-            string strName = string.Join(", ", lstTalentName.Select(s => s.Talent_Name).ToArray());
-            ViewBag.StarcastJoins = strName;
+
+            if (Movie_Album_Type == "A")
+            {
+                var MovieAlbumTalent = new Music_Album_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true);
+                var lstTalentName = MovieAlbumTalent.Where(a => a.Music_Album_Code == code).Select(b => b.Talent).ToList();
+                string strName = string.Join(", ", lstTalentName.Select(s => s.Talent_Name).ToArray());
+                ViewBag.StarcastJoins = strName;
+            }
+            else
+            {
+                var TitleTalent = new Title_Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(a => a.Role_Code == 2);
+                var lstTalentName = TitleTalent.Where(a => a.Title_Code == code).Select(b => b.Talent).ToList();
+                string strName = string.Join(", ", lstTalentName.Select(s => s.Talent_Name).ToArray());
+                ViewBag.StarcastJoins = strName;
+            }
         }
         private List<SelectListItem> BindMovieAlbum(int Music_Album_Code = 0)
         {
@@ -2244,22 +2406,59 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
         #endregion
-        public ActionResult PopulateAutoCompleteMovieAlbum(string keyword)
+        public ActionResult PopulateAutoCompleteMovieAlbum(string keyword, string Movie_Album_Type)
         {
             dynamic result = "";
-
-            result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y").Distinct()
+            if (Movie_Album_Type == "M")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                .Select(x => new { Music_Album_Name = x.Title_Name, Music_Album_Code = x.Title_Code }).ToList();
+            }
+            else if (Movie_Album_Type == "S")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                .Select(x => new { Music_Album_Name = x.Title_Name, Music_Album_Code = x.Title_Code }).ToList();
+            }
+            else if (Movie_Album_Type == "A")
+            {
+                result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(keyword.ToUpper()) && x.Is_Active == "Y").Distinct()
                 .Select(x => new { Music_Album_Name = x.Music_Album_Name, Music_Album_Code = x.Music_Album_Code }).ToList();
-            //.Where(x => x.Music_Album_Code == music_Album_Code)
+                //.Where(x => x.Music_Album_Code == music_Album_Code)
+            }
+
             return Json(result);
         }
-        public JsonResult AutoMovieAlbum(string keyword)
+        public JsonResult AutoMovieAlbum(string keyword, string Movie_Album_Type)
         {
             List<string> terms = keyword.Split('﹐').ToList();
             terms = terms.Select(s => s.Trim()).ToList();
             string searchString = terms.LastOrDefault().ToString().Trim();
-            var result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
+
+            dynamic result = "";
+
+            if (Movie_Album_Type == "M")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Movies").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                .Select(x => new { Music_Album_Name = x.Title_Name, Music_Album_Code = x.Title_Code }).ToList();
+            }
+            else if (Movie_Album_Type == "S")
+            {
+                string dealType = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AL_DealType_Show").Select(x => x.Parameter_Value).FirstOrDefault();
+                var strArrdealType = dealType.Split(',');
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y" && strArrdealType.Contains(x.Deal_Type_Code.ToString())).Distinct()
+                .Select(x => new { Music_Album_Name = x.Title_Name, Music_Album_Code = x.Title_Code }).ToList();
+            }
+            else if (Movie_Album_Type == "A")
+            {
+                result = new Music_Album_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Album_Name.ToUpper().Contains(searchString.ToUpper()) && x.Is_Active == "Y").Distinct()
                 .Select(x => new { Music_Album_Name = x.Music_Album_Name, Music_Album_Code = x.Music_Album_Code }).ToList();
+            }
 
             return Json(result);
         }
@@ -2267,7 +2466,7 @@ namespace RightsU_Plus.Controllers
 
     public partial class Music_Title_Search
     {
-        public string MusicTitleName { get; set; }      
+        public string MusicTitleName { get; set; }
         public int DealTypeCode { get; set; }
         public string isAdvanced { get; set; }
         public string MusicLabelCodes_Search { get; set; }
@@ -2288,6 +2487,7 @@ namespace RightsU_Plus.Controllers
         public string Public_Domain { get; set; }
         public int PageNo { get; set; }
         public int Page_Size { get; set; }
+        public string Movie_Album_Type { get; set; }
     }
 
 }

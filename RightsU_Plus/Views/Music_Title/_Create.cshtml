@@ -8,12 +8,11 @@
 }
 <style>
 
-    .btn-disable
-        {
-        opacity: 0.65; 
+    .btn-disable {
+        opacity: 0.65;
         cursor: not-allowed;
-        /*pointer-events:none;*/            
-        }
+        /*pointer-events:none;*/
+    }
 </style>
 
 <script type="text/javascript">
@@ -73,6 +72,8 @@
             }
             counter--;
         })
+
+        SwitchMovieAlbumType();
     });
     function LanguageOnChange(obj) {
         debugger;
@@ -135,6 +136,8 @@
         var ISDuplicate = ""
         var MusicAlbumCode = $("#hdnMovieAlbumCode").val();
         var MusicAlbumName = $('#txtmusicAlbum').val();
+        var Movie_Album_Type = $('input[name="Create_Movie_Album_Type"]:checked').val();
+
         if (MusicAlbumCode == "")
             MusicAlbumCode = 0;
         if (NewTitleName != "") {
@@ -150,7 +153,9 @@
                     MusicTitleName: NewTitleName,
                     MusicAlbumCode: MusicAlbumCode,
                     MusicAlbumName: MusicAlbumName,
+                    Movie_Album_Type: Movie_Album_Type,
                     mode: "Add"
+
 
                 }),
                 contentType: "application/json; charset=utf-8",
@@ -196,7 +201,7 @@
                     MovieAlbumName: MusicAlbumCode,
                     hdnddlLanguage: hdnddlLanguage,
                     hdnMusicLabel: hdnMusicLabel,
-
+                    Movie_Album_Type: Movie_Album_Type
                 }),
                 contentType: "application/json; charset=utf-8",
                 success: function (result) {
@@ -226,6 +231,7 @@
     function AutoCompleteMovieAlbum(keyword) {
         debugger;
         var keyword = $("#txtmusicAlbum").val();
+        var MovieAlbumType = $("input[name='Create_Movie_Album_Type']:checked").val();
         $("#txtmusicAlbum").autocomplete({
             focus: function () {
                 return false;
@@ -235,7 +241,8 @@
             },
             source: function (request, response) {
                 var param = {
-                    keyword: keyword
+                    keyword: keyword,
+                    Movie_Album_Type: MovieAlbumType
                 };
                 $.ajax({
                     url: URL_AutoCompleteMovieAlbum,
@@ -286,6 +293,22 @@
         });
     }
 
+    function SwitchMovieAlbumType() {
+        debugger;
+        var MovieAlbumTypeVal = $('input[name="Create_Movie_Album_Type"]:checked').val();
+        $('#txtmusicAlbum').val('');
+        $('#hdnMovieAlbumCode').val('');
+
+
+        if (MovieAlbumTypeVal) {
+            if (MovieAlbumTypeVal == "A") {
+                $('#divAddAlbum').show();
+            }else {
+                $('#divAddAlbum').hide();
+            }
+        }
+    }
+
 
 </script>
 <style>
@@ -309,26 +332,40 @@
                     <div class="modal_block">
                         <ul class="add_title_popup">
                             <li>
+                                @Html.Hidden("hdnddlLanguage")
                                 <label>@objMessageKey.MusicTrack</label>
                                 <div class="input_fields_wrap">
-                                    <div>                                      
-                                        @Html.TextBoxFor(m => Model.Music_Title_Name, new{ @id ="txtMusicTitleName1", @class = "form_input", autocomplete = "off", maxlength = "200", style = "width:80%;" })
+                                    <div>
+                                        @Html.TextBoxFor(m => Model.Music_Title_Name, new { @id = "txtMusicTitleName1", @class = "form_input", autocomplete = "off", maxlength = "200", style = "width:80%;" })
                                         <span id="addRemoveButton">
                                             <a class="glyphicon glyphicon-plus add_field_button" id="addButton" />
                                             @*<a title="Remove" class="glyphicon glyphicon-remove" id="removeButton"></a>*@
                                         </span>
                                     </div>
-                                </div>                                                                                                                                                                           
-                                    <input type="text" id="lblDealTitleCode" style="display: none;" />                                                                                                       
+                                </div>
+                                <input type="text" id="lblDealTitleCode" style="display: none;" />
                             </li>
                             <li>
-                                @Html.Hidden("hdnddlLanguage")
+                                <label>@objMessageKey.Movie/@objMessageKey.Album Type</label>
+                                <br />
+                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddMovie" value="M" style="width:20px" checked onclick="SwitchMovieAlbumType();" />
+                                <label for="rdbAddMovie" style="vertical-align:2px">@objMessageKey.Movie</label>
+                                <input type="radio" name="Create_Movie_Album_Type" id="rdbAddShow" value="S" style="width:20px" onclick="SwitchMovieAlbumType();" />
+                                <label for="rdbAddShow" style="vertical-align:2px">@objMessageKey.Show</label>
+                                @if (ViewBag.MusicAlbumVisibility == "Y")
+                                {
+                                    <input type="radio" name="Create_Movie_Album_Type" id="rdbAddAlbum" value="A" style="width:20px" onclick="SwitchMovieAlbumType();" />
+                                    <label for="rdbAddAlbum" style="vertical-align:2px">@objMessageKey.Album</label>
+                                }
+
+                            </li>
+                            <li>
                                 <label> Music Movie / Album </label>
                                 <br />
                                 @*@Html.DropDownList("Music_Album_Name", (List<SelectListItem>)ViewBag.MovieAlbum, new { @id = "Music_Album_Name", @class = "form_input chosen-select", onchange = "jsFunction(this.value);" })*@
                                 <input type="text" placeholder="Music Movie / Album" name="Music_Album_Name" id="txtmusicAlbum" value="@ViewBag.MovieAlbum" autocomplete="on" style="width:250px" onkeyup="AutoCompleteMovieAlbum(this)" />
                                 <input type="hidden" id="hdnMovieAlbumCode" />
-                                <a class="red_icon glyphicon glyphicon-plus" title="Add Music Movie/Album" onclick="AddTalent();" />
+                                <div id="divAddAlbum" style="display:inline"><a class="red_icon glyphicon glyphicon-plus" title="Add Music Movie/Album" onclick="AddTalent();" /></div>
                             </li>
                             <li>
                                 <label>@objMessageKey.MusicLanguage</label>
@@ -364,13 +401,13 @@
                         <div class="form_links">
                             <ul class="modal_block clearfix">
                                 <li>
-                                    <a class="btn btn-primary"  onclick="ValidateSave('S');">@objMessageKey.Save</a>
+                                    <a class="btn btn-primary" onclick="ValidateSave('S');">@objMessageKey.Save</a>
                                 </li>
                                 <li>
                                     @*<input type="button" class="btn btn-primary" id="btnAddAdditionalmetadata" value="Add Additional metadata" onclick="ValidateSave('SS');">*@
                                     <span class="Wrapper1">
                                         <a class="btn btn-primary" id="btnAddAdditionalmetadata" onclick="ValidateSave('SS');">@objMessageKey.AddAdditionalmetadata</a>
-                                    </span>                              
+                                    </span>
                                 </li>
                                 <li>
                                     <a data-dismiss="modal" class="btn btn-primary" href="#">@objMessageKey.Cancel</a>

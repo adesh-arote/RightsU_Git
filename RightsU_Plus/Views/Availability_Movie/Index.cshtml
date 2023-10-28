@@ -75,7 +75,7 @@
 
         $('.ClosePanel').click(function () {
             debugger;
-            $('.tab-content').css("display", "none");
+            $('.CloseTabContent').css("display", "none");
             $('#wrapper').css("width", "0px");
             $('li').removeClass("current1");
             $('.MoreDubbingDiv').hide('slow');
@@ -1217,7 +1217,7 @@
             + MustHave_Subtitle_Codes + "','" + ddlListLanguageGroup + "','" + LangGroup_Dub + "','" + chkExactMatch_Dub + "','" + MustHave_Dubbing_Codes + "','"
             + ddlListLanguageGroup_Dub + "','" + Country_Code + "', '"+ IncludeAncillary +"','" + promoterCodes + "','" + ExcactMatch_Promoter + "','" + MustHave_Promoter_Codes + "'";
         }
-        $('.tab-content').css("display", "none");
+        $('.CloseTabContent').css("display", "none");
         $('#wrapper').css("width", "0px");
 
         $.ajax({
@@ -1688,7 +1688,7 @@
             + MustHave_Subtitle_Codes + "','" + ddlListLanguageGroup + "','" + LangGroup_Dub + "','" + chkExactMatch_Dub + "','" + MustHave_Dubbing_Codes + "','"
             + ddlListLanguageGroup_Dub + "','" + Country_Code + "', '"+ IncludeAncillary +"','" + PromoterCodes + "','" + ExcactMatch_Promoter + "','" + MustHave_Promoter_Codes + "'";
         }
-        $('.tab-content').css("display", "none");
+        $('.CloseTabContent').css("display", "none");
         $('#wrapper').css("width", "0px");
 
 
@@ -1746,6 +1746,7 @@
             }),
             //async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -1770,7 +1771,7 @@
         debugger;
         $('#hdnAccordianRegion').val('Y');
 
-        $('.tab-content').css("display", "none");// for closing the opened panel
+        $('.CloseTabContent').css("display", "none");// for closing the opened panel
         $('#wrapper').css("width", "0px");       //
         //
         var ReportName = $('#rptName').val();
@@ -3714,7 +3715,7 @@
                     @*<li  class="last" title="Query List" data-placement="left"><a class="glyphicon glyphicon-check" id="rptShow" onclick="BindAvailReport()"></a></li>*@
                 </ul>
 
-                <div class="tab-content">
+                <div class="tab-content CloseTabContent">
                     @*<h4><b>Title</b></h4>*@
                     <div class="scale_table_block">
                         @*<div id="divLanguageGroupDetails">*@
@@ -3763,7 +3764,7 @@
 
                 </div>
 
-                <div class="tab-content">
+                <div class="tab-content CloseTabContent">
                     @*<h4><b>Period</b></h4>*@
                     <div class="scale_table_block">
                         <div id="divPeriodCriteria" class="deal">
@@ -3780,7 +3781,7 @@
                     </table>
                 </div>
 
-                <div class="tab-content">
+                <div class="tab-content CloseTabContent">
                     @*<h4><b>Region</b></h4>*@
                     <div id="divRegionCriteria" class="deal">
                     </div>
@@ -3802,7 +3803,7 @@
                 </div>
                 @if (Convert.ToInt32(ViewBag.Code) != GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
                 {
-                    <div class="tab-content">
+                    <div class="tab-content CloseTabContent">
                         @*<h4><b>Platform</b></h4>*@
                         <div id="divPlatformCriteria" class="deal">
                         </div>
@@ -3822,7 +3823,7 @@
                         </table>
                     </div>
 
-                    <div class="tab-content">
+                    <div class="tab-content CloseTabContent">
                         @*<h4><b>Subtitle Language</b></h4>*@
                         <div id="divSubtitleLanguageCriteria" class="deal">
                         </div>
@@ -3842,7 +3843,7 @@
                         </table>
                     </div>
 
-                    <div class="tab-content">
+                    <div class="tab-content CloseTabContent">
                         @*<h4><b>Dubbing Language</b></h4>*@
                         <div id="divDubbingLanguageCriteria" class="deal">
                         </div>
@@ -3864,7 +3865,7 @@
                     </div>
                     if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForSelfUtilizationProgramAvailabilityReport)
                     {
-                        <div class="tab-content">
+                        <div class="tab-content CloseTabContent">
                             @*<h4><b>Platform</b></h4>*@
                             <div id="divPromoterCriteria" class="deal">
                             </div>
@@ -3886,7 +3887,7 @@
                     }
                 }
 
-                <div class="tab-content">
+                <div class="tab-content CloseTabContent">
                     @*<h4><b>Others</b></h4>*@
                     <div class="scale_table_block">
                         <div id="divOtherCriteria" class="deal">

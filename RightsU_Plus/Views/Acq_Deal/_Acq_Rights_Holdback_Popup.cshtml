@@ -350,7 +350,7 @@
                             $('#spnHoldBackCount').text(count);
                         }
                         //$('.modal-backdrop').hide();
-                        var msg = result.Status == "A" ? "@objMessageKey.Holdbackaddedsuccessfully" : "@objMessageKey.ReverseHoldbackupdatedsuccessfully";
+                        var msg = result.Status == "A" ? "@objMessageKey.Holdbackaddedsuccessfully" : "@objMessageKey.Holdbackupdatedsuccessfully";
                         showAlert("S", msg);
                         if ($('#Is_Theatrical_Right').prop('checked') == false) {
                             BindPlatform();

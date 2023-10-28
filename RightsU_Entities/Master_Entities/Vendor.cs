@@ -11,7 +11,7 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
+
     public partial class Vendor
     {
         public Vendor()
@@ -33,10 +33,16 @@ namespace RightsU_Entities
             this.MHPlayLists = new HashSet<MHPlayList>();
             this.MHRequests = new HashSet<MHRequest>();
             this.MHCueSheets = new HashSet<MHCueSheet>();
-
+            this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
+            this.AL_Vendor_OEM = new HashSet<AL_Vendor_OEM>();
+            this.AL_Vendor_Rule = new HashSet<AL_Vendor_Rule>();
+            this.AL_Vendor_TnC = new HashSet<AL_Vendor_TnC>();
+            this.AL_Booking_Sheet = new HashSet<AL_Booking_Sheet>();
+            this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
 
-        public State EntityState { get; set; }    public int Vendor_Code { get; set; }
+        public State EntityState { get; set; }
+        public int Vendor_Code { get; set; }
         public string Vendor_Name { get; set; }
         public string Address { get; set; }
         public string Phone_No { get; set; }
@@ -87,5 +93,12 @@ namespace RightsU_Entities
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
         public virtual Party_Category Party_Category { get; set; }
         public virtual Party_Group Party_Group { get; set; }
+        public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        public virtual ICollection<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
+        public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
+        public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
+        public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

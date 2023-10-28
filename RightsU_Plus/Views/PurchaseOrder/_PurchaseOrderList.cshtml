@@ -1,0 +1,116 @@
+﻿@model List<RightsU_Entities.USPAL_GetPurchaseOrderList_Result>
+@using UTOFrameWork.FrameworkClasses
+@using RightsU_Entities;
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    RightsU_Entities.User objLoginUser = ((RightsU_Entities.RightsU_Session)Session[RightsU_Entities.RightsU_Session.SESS_KEY]).Objuser;
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th style="width:10%">Clients</th>
+            <th style="width:10%">Proposal - CY</th>
+            <th style="width:10%">Booking Sheet No</th>
+            <th style="width:10%">Created On</th>
+            <th style="width:10%">Created By</th>
+            @*<th style="width: 10%;">Status</th>*@
+            <th style="width: 10%;">Workflow Status</th>
+            <th style="width: 5%;">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Vendor_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Proposal_CY)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Booking_Sheet_No)
+                    </td>
+                    <td style="text-align:center">
+                        @item.Inserted_On.Value.ToString("dd MMM yyyy")
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.CreatedBy)
+                    </td>
+                    <td style="text-align:center" class="clsTdStatusPO_@item.AL_Purchase_Order_Code">                        
+                        @Html.DisplayFor(modelItem => item.Final_PO_Workflow_Status)
+                    </td>
+                    <td style="text-align:center" class="deal_action clsTdAction_@item.AL_Purchase_Order_Code@item.Status clsTdAction1_@item.AL_Booking_Sheet_Code@item.Status clsTdAction2_@item.AL_Proposal_Code@item.Status">
+                        @if (item.Status == "C")
+                        {
+                            <img id="imgLoadingPO_@item.AL_Purchase_Order_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px; display:none; cursor:pointer;" />
+
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForApprove))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForDealReject))) && item.Workflow_Status == "W")
+                            {
+                                <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
+                                <a title="Approve/Reject" class="glyphicon glyphicon-check" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', 'ARView')"></a>
+                            }
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForSendForApproval))) && item.Workflow_Status == "R" && item.Inserted_By == objLoginUser.Users_Code)
+                            {
+                                <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
+                                <a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup('@item.AL_Purchase_Order_Code')"></a>
+                            }
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView)) || item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForApprove)) || item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForDealReject))) && item.Workflow_Status == "A")
+                            {
+                                <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
+                                <a title="Refresh" class="glyphicon glyphicon-refresh" style="cursor:pointer;" onclick="RefreshPoList('@item.AL_Purchase_Order_Code','@item.AL_Booking_Sheet_Code' )"></a>
+                            }
+                        }
+                        else
+                        {
+                            <img id="imgLoadingPO_@item.AL_Purchase_Order_Code" title="In Process" src="~/Images/square_dots_loading.gif" style="height: 26px;" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <div style="margin:20px; text-align:left">
+        @if (ViewBag.Configuration == "config")
+        {
+            @Html.ActionLink("Booking Sheet List", "Index", "BookingSheet", null, new { @class = "btn btn-primary" })
+        }
+    </div>
+</div>
+
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="ResendPopup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="modal_block modal_header">
+                <a class="close" onclick="CloseResendPopup()">
+                    <span>X</span>
+                    <span class="sr-only">Close</span>
+                </a>
+                <h2>Resend For Approval</h2>
+            </div>
+            <div class="modal_block">
+                <table class="add_title_popup">
+                    <tbody id="ResendPopupTbl"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

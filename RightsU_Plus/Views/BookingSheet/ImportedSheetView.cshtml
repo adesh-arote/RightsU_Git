@@ -1,0 +1,451 @@
+﻿
+@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+    RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType objSDMCFT = new RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType();
+    if (Session["objDMCFT"] != null)
+    {
+        objSDMCFT = (RightsU_Plus.Controllers.SelectDmMasterCodeAndFiletType)Session["objDMCFT"];
+    }
+}
+
+<script>
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T", URL_LoadTab = "", TabName = "MV";
+
+    var DMICode = '@objSDMCFT.DmMasterImportCode';
+
+    var URL_BindMovieSheetData = '@Url.Action("BindMovieSheetData", "BookingSheet")';
+    var URL_BindShowSheetData = '@Url.Action("BindShowSheetData", "BookingSheet")';
+    var URL_SearchOnSheet = '@Url.Action("SearchOnSheet", "BookingSheet")';
+    var URL_ErrorMessagePopUp = '@Url.Action("ErrorMessagePopUp", "BookingSheet")';
+    
+
+    $(document).ready(function () {
+        addNumeric();
+        SearchOnSheet("", TabName, DMICode);
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });    
+    });
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function OpenTab(NewTab) {
+        debugger;
+        if (NewTab == "MV") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabMovie").addClass('active');
+            TabName = NewTab;
+        }
+        if (NewTab == "SH") {
+            $("[id*='tab']").removeClass('active');
+            $("#tabShow").addClass('active');
+            TabName = NewTab;
+        }
+        $('#txtPageSize').val(10)
+        SearchOnSheet("", TabName, DMICode);
+    }
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#chkErrorRec').val('');
+        $("#chkError").prop('checked', false);
+        $("#chkNoError").prop('checked', false);
+
+        var searchText = $('#searchCommon').val();
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchOnSheet(searchText, TabName, DMICode);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type = "T";
+        $("#chkError").prop('checked', false);
+        $("#chkNoError").prop('checked', false);
+        $('#chkErrorRec').val('');
+        $('#hdnPageNo').val(1);
+
+        SearchOnSheet("", TabName, DMICode);
+    }
+
+    function SearchOnSheet(searchText, TabName, DMICode) {
+        debugger;
+        $('#searchCommon').val(searchText);
+        chkStatus = $('#chkErrorRec').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_SearchOnSheet,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText,
+                TabName: TabName,
+                DM_Master_Import_Code: DMICode,
+                searchStatus: chkStatus
+            }),
+            async: false,
+            success: function (result) {
+                debugger;
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                $("#IsSearched").val(result.Is_Search);
+                //IsSearch = result.Is_Search;
+                SetPaging();
+                if (TabName == "MV") {
+                    BindMovieSheetData(DMICode, sort_Type);
+                }
+                if (TabName == "SH") {
+                    BindShowSheetData(DMICode, sort_Type);
+                }
+            }
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;      
+        $('.required').removeClass('required');
+
+        if (!ValidatePageSize())
+            return false;
+
+        var pageNo = page_index + 1
+        $('#hdnPageNo').val(pageNo);
+        if (IsCall == 'Y') {
+            if (TabName == "MV") {
+                BindMovieSheetData(DMICode, sort_Type);
+            }
+            if (TabName == "SH") {
+                BindShowSheetData(DMICode, sort_Type);
+            }
+        }
+        else {
+            IsCall = 'Y';
+        }              
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        if (TabName == "MV") {
+            BindMovieSheetData(DMICode, sort_Type);
+        }
+        else if (TabName == "SH") {
+            BindShowSheetData(DMICode, sort_Type);
+        }
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function BindMovieSheetData(DMICode, sort_Type) {
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindMovieSheetData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type,
+                DM_Master_Import_Code: DMICode
+            }),
+            success: function (result) {
+                debugger;
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function BindShowSheetData(DMICode, sort_Type) {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindShowSheetData,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type,
+                DM_Master_Import_Code: DMICode
+            }),
+            success: function (result) {
+                $('#divBindList').empty();
+                $('#divBindList').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function OnChecked() {
+        debugger;        
+        $('#searchCommon').attr('required', false);
+        $('#searchCommon').val('');
+        $('#chkErrorRec').val('');
+
+        if (($("#chkError").is(":checked")) && ($("#chkNoError").is(":checked"))) {           
+            $('#chkErrorRec').val('');
+        }
+        else if (($("#chkError").is(":checked") && $("#chkNoError").not(":checked"))) {
+            //sort_Type = "E";
+            $('#chkErrorRec').val('E');
+        }
+        else if (($("#chkNoError").is(":checked") && $("#chkError").not(":checked"))) {
+            //sort_Type = "N";
+            $('#chkErrorRec').val('C');
+        }
+        else {
+            $('#chkErrorRec').val('');
+        }
+
+        SearchOnSheet("", TabName, DMICode)
+
+        //if (TabName == "MV") {
+        //    BindMovieSheetData(DMICode, sort_Type)
+        //}
+        //if (TabName == "SH") {
+        //    BindShowSheetData(DMICode, sort_Type)
+        //}
+    }
+
+    function BindErrorPopUp(Id) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ErrorMessagePopUp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                DM_Booking_Sheet_Data_Code: Id,
+                TabName: TabName
+            }),
+            success: function (result) {
+                debugger;
+                $('#popup').modal();
+                $('#ErrorMesseageTbl').empty();
+                $('#ErrorMesseageTbl').html(result);
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function ClosePopup() {
+        debugger;
+     
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        
+        //if (TabName = "MV") {
+        //    BindMovieSheetData(DMICode, sort_Type);
+        //}
+        //else if (TabName = "SH") {
+        //    BindShowSheetData(DMICode, sort_Type);
+        //}
+    }   
+
+    function ExportToExcel() {
+        debugger;
+        var DM_Master_Import_Code = DMICode;
+        var TabToExport = TabName;
+        window.location.href = '@Url.Action("ExportToExcel", "BookingSheet")?DM_Import_Master_Code=' +
+            DM_Master_Import_Code + '&TabName=' + TabToExport;
+    }
+
+</script>
+
+<div class="main_section">
+    <div class="container acq main_col">
+        <div class="top_area">
+            <div class="title_block clearfix">
+                <h2 class="pull-left">
+                    Booking Sheet Details
+                </h2>
+                <span class="pull-left" style="margin-top: 23px;margin-left: 80px;">
+                    <input type="checkbox" name="chkError" id="chkError" value="E" onclick="OnChecked()" />&nbsp;&nbsp;<span>Error</span>&nbsp;&nbsp;
+                    <input type="checkbox" name="chkNoError" id="chkNoError" value="C" onclick="OnChecked()" />&nbsp;&nbsp;<span>Non Error</span>
+                    <input type="hidden" id="chkErrorRec" value="" />
+                </span>
+                <span class="pull-left" style="margin-top: 15px; margin-left: 7px; position: absolute;">
+                    <input type="hidden" id="IsSearched" value=""/>
+                    <input type="text" name="txtSearchCommon" id="searchCommon" class="search" placeholder="Title Name, Title Type, Language, Cast, Director" style="width:500px; height:30px;" />
+                    <input type="button" class="btn btn-primary" name="btnSearch" id="btnSearch" value="Search" onclick="btnSearch_OnClick()" style="vertical-align: top; cursor:pointer;" />
+                    <input type="button" class="btn btn-primary" name="btnShowAll" id="btnShowAll" value="Show All" style="margin-right:5px; vertical-align: top; cursor:pointer;" onclick="btnShowAll_OnClick()" />
+                    @*<a title="Save To Excel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; " onclick="ExportToExcel()"></a>*@
+                </span>
+            </div>
+        </div>
+        <div class="grid_area">         
+            <div class="paging_area clearfix">
+                <span class="pull-left">Total Records: </span>
+                <span class="pull-left" id="lblRecordCount"></span>
+                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                <div id="Pagination" class="pagination">
+                </div>
+                <span class="pull-right">
+                    Page Size:
+                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" autocomplete="off" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                </span>
+            </div>
+            <div class="grid_area">
+                <div class="navigation_tabs">
+                    <div class="tabbable" id="divAlternateConfig">
+                        <input type="hidden" id="hdnTabName" value="TA" />
+                        <ul class="nav nav-tabs nav-tab pull-left" id="ulalternate">
+                            <li class="active" id="tabMovie">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('MV')">@objMessageKey.Movies</a>
+                            </li>
+                            <li id="tabShow">
+                                <a data-toggle="tab" href="#" role="tab" data-tabname="TA" data-configitem="0" onclick="OpenTab('SH')">@objMessageKey.TVShows</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content clearfix table-wrapper scale_table_container">
+                <div class="scale_table_block">
+                    <input type="hidden" id="hdnAction" value="" />
+                    <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                    <div id="divBindList" class="deal clearfix">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div>
+            @Html.ActionLink("Back to List", "ImportMasterView", "BookingSheet", new { @class = "btn btn-primary" })
+            @*<input type="button" value="BACK" class="btn btn-primary" onclick="return btnCancel();" />*@
+        </div>
+    </div>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields" id="pupupHtml">
+                <div class="modal_block modal_header">
+                    <a class="close" onclick="ClosePopup()">
+                        <span>X</span>
+                        <span class="sr-only">Close</span>
+                    </a>
+                    <h2>Error Message</h2>
+                </div>
+                <div style="margin:20px;">
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block" style="max-height: 390px;overflow-y: auto;">
+                            <table class="table table-bordered table-hover">
+                                <tbody id="ErrorMesseageTbl"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,60 @@
+﻿@using RightsU_BLL;
+@using System.Configuration;
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+}
+
+<table id="tblTabwisePopup" class="table table-bordered table-hover" style="padding:10px;">
+    <tbody>
+        @if (ViewBag.ExtendedColums != null)
+        {
+            foreach (var item in ViewBag.ExtendedColums)
+            {
+                <tr>
+                    <td style="width: 40%;" data-tabname="@item.Columns_Name">@item.Columns_Name</td>
+                    <td data-content='@item.Control_Type~@item.Columns_Code~@item.Is_Ref~@item.Is_Defined_Values~@item.Is_Multiple_Select~@item.Ref_Table~@item.Ref_Display_Field~@item.Ref_Value_Field~@item.Additional_Condition~@item.Is_Add_OnScreen~@item.Columns_Name'>
+
+                        @if (item.Control_Type == "DDL")
+                        {
+                            
+                        }
+                        else if (item.Control_Type == "TXT")
+                        {
+                        }
+                        else if (item.Control_Type == "CHK")
+                        {
+                        }
+                        else if (item.Control_Type == "RD")
+                        {
+                        }
+                        else if (item.Control_Type == "DATE")
+                        {
+                        }
+                        else if (item.Control_Type == "FRMTO")
+                        {
+                        }
+
+                    </td>
+
+                </tr>
+            }
+        }
+
+        <tr style="background-color: #EEEEEE;">
+            <td style="text-align: left;" colspan="2">
+                <input type="submit" id="btnSavePopup" class="btn btn-primary" value="Save" style="margin-right: 4px;" onclick="return SaveSupp(this,'0'); ">
+                <input type="submit" id="btnCancelPopup" class="btn btn-primary" value="Cancel" onclick="closeEdit(0); ">
+            </td>
+        </tr>
+    </tbody>
+</table>

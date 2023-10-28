@@ -227,10 +227,10 @@ namespace RightsU_Plus.Controllers
             if (isAdvAncillary == "Y")
             {
                 ViewBag.PlatFormCodes = "";
-                return View("~/Views/Acq_Deal/_Acq_Ancillary_Adv.cshtml", new Acq_Deal_Ancillary());
+                return PartialView("~/Views/Acq_Deal/_Acq_Ancillary_Adv.cshtml", new Acq_Deal_Ancillary());
             }
             else
-                return View("~/Views/Acq_Deal/_Acq_Ancillary.cshtml", new Acq_Deal_Ancillary());
+                return PartialView("~/Views/Acq_Deal/_Acq_Ancillary.cshtml", new Acq_Deal_Ancillary());
         }
         public ActionResult Edit_Ancillary(int selected_Acq_Deal_Ancillary_Code, string Mode = "EDIT")
         {
@@ -253,10 +253,10 @@ namespace RightsU_Plus.Controllers
             if (isAdvAncillary == "Y")
             {
                 ViewBag.PlatFormCodes = string.Join(",", obj.Acq_Deal_Ancillary_Platform.Select(x => x.Platform_Code).ToArray());
-                return View("~/Views/Acq_Deal/_Acq_Ancillary_Adv.cshtml", obj);
+                return PartialView("~/Views/Acq_Deal/_Acq_Ancillary_Adv.cshtml", obj);
             }
             else
-                return View("~/Views/Acq_Deal/_Acq_Ancillary.cshtml", obj);
+                return PartialView("~/Views/Acq_Deal/_Acq_Ancillary.cshtml", obj);
         }
         public JsonResult Delete_Ancillary(int? acq_Deal_Ancillary_Code)
         {

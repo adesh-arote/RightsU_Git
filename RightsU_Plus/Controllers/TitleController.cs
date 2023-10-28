@@ -22,6 +22,7 @@ namespace RightsU_Plus.Controllers
 {
     public class TitleController : BaseController
     {
+        string _fieldList = "";
         #region --- Properties ---
         // GET: /Title/
         public List<Map_Extended_Columns> lstMapExtendedColumns
@@ -264,6 +265,17 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstTitle_Milestone"] = value; }
         }
+
+        private List<RightsU_Entities.Title_Episode_Details> lstEpisodeDetails
+        {
+            get
+            {
+                if (Session["lstEpisodeDetails"] == null)
+                    Session["lstEpisodeDetails"] = new List<RightsU_Entities.Title_Episode_Details>();
+                return (List<RightsU_Entities.Title_Episode_Details>)Session["lstEpisodeDetails"];
+            }
+            set { Session["lstEpisodeDetails"] = value; }
+        }
         #endregion
 
         public ActionResult Index(int id = 0, string Type = "", int Page_No = 0, string DealTypeCode = "0", string SearchedTitle = "", int PageSize = 10)
@@ -316,6 +328,7 @@ namespace RightsU_Plus.Controllers
 
             SearchedTitle_EDIT = SearchedTitle;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            lstEpisodeDetails = objTitle.Title_Episode_Details.ToList();
             Binddl();
             ViewBag.CommandName = Type;
             if (Type == "E")
@@ -375,6 +388,7 @@ namespace RightsU_Plus.Controllers
             else
                 ViewBag.RecordLockingCode_View = 0;
             objTitle = new Title_Service(objLoginEntity.ConnectionStringName).GetById(id);
+            lstEpisodeDetails = objTitle.Title_Episode_Details.ToList();
             mode = "V";
             PageNo = Page_No;
             ViewBag.PageNo = PageNo;
@@ -408,6 +422,8 @@ namespace RightsU_Plus.Controllers
 
             string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
 
+            ViewBag.TitleTypeEpisodeTab = objTitle.Deal_Type_Code;
+            ViewBag.IsView = "Y";
             if (Per_Logic == "Y")
             {
                 return View("~/Views/Title/View_Release.cshtml", objTitle);
@@ -630,6 +646,61 @@ namespace RightsU_Plus.Controllers
         //public string Save(RightsU_Entities.Title objTitleModel, string Deal_Type_Code, string Title_Language_Code
         //    , string Original_Language_Code, string ddlCountry, string hdnProducer, string hdnDirector, string hdnGenres, string hdnStarCast, string hdnCountry)
         {
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            int DealShowType = lstShowCode.Where(w => w == Deal_Type_Code).Count();
+            string AllowSeasonAddition = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(i => i.Parameter_Name == "AddSeasonForTitleTypeProgram" && i.IsActive == "Y").Select(s => s.Parameter_Value).FirstOrDefault();
+
+            if (AllowSeasonAddition == "Y" && DealShowType == 1)
+            {
+                bool IsSeasonAdded = true;
+                List<Map_Extended_Columns> CheckSeasonList = new List<Map_Extended_Columns>();
+                CheckSeasonList.AddRange(lstDBExtendedColumns);
+                CheckSeasonList.AddRange(lstAddedExtendedColumns);
+
+                //if (lstDBExtendedColumns.Count > 0)
+                //{
+                //    if (lstDBExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                //    {
+                //        IsSeasonAdded = false;
+                //    }
+                //}
+
+                //if (lstAddedExtendedColumns.Count > 0)
+                //{
+                //    if (lstAddedExtendedColumns.Where(w => w.Columns_Code == 31).Count() < 1)
+                //    {
+                //        IsSeasonAdded = false;
+                //    }
+                //}
+
+                if (CheckSeasonList.Count > 0)
+                {
+                    if (CheckSeasonList.Where(w => w.Columns_Code == 31).Count() < 1)
+                    {
+                        IsSeasonAdded = false;
+                    }
+                }
+
+                if (lstAddedExtendedColumns.Count == 0 && lstDBExtendedColumns.Where(w => w.EntityState != State.Deleted).ToList().Count == 0)
+                {
+                    IsSeasonAdded = false;
+                }
+
+                if (!IsSeasonAdded)
+                {
+                    var SeasonCheckObj = new
+                    {
+                        Status = "E",
+                        Message = "Season is mandatory for selected Title type",
+                        HideLoading = "Y",
+                        TabNAme = hdnAlternateTabName,
+                        ConfigCode = hdnAlternateConfigCode
+                    };
+                    return Json(SeasonCheckObj);
+                }
+            }
+
             dynamic resultSet;
 
             int TitleCode = 0;
@@ -658,7 +729,7 @@ namespace RightsU_Plus.Controllers
                 objTitle.Title_Image = newTitleImage;
             }
 
-            objTitle.Title_Name = objTitleModel.Title_Name;
+            objTitle.Title_Name = objTitleModel.Title_Name.Trim();
             objTitle.Original_Title = objTitleModel.Original_Title;
             objTitle.Year_Of_Production = objTitleModel.Year_Of_Production;
             if (hdnOriginalTitleCode != null)
@@ -838,22 +909,53 @@ namespace RightsU_Plus.Controllers
                 }
             }
             #endregion
+            #region ========= Insert Episode  =========
+            System_Parameter_New Content_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "Allow_Generate_Content_From_Title_Import").FirstOrDefault();
+            if (Content_system_Parameter.Parameter_Value == "Y")
+            {
+                System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                List<string> lstMovieCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                int DealTypeIncluded = lstMovieCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
 
+                if (DealTypeIncluded == 1)
+                {
+                    if (objTitle.Title_Episode_Details.Count() < 1)
+                    {
+                        Title_Episode_Details objNewTED = new Title_Episode_Details();
+                        objNewTED.EntityState = State.Added;
+                        objNewTED.Episode_Nos = 1;
+                        objNewTED.Remarks = objTitle.Title_Name;
+                        objNewTED.Status = "P";
+                        objNewTED.Inserted_On = DateTime.Now;
+                        objNewTED.Inserted_By = objLoginUser.Users_Code;
+                        objTitle.Title_Episode_Details.Add(objNewTED);
+                    }
+                }
 
+                //if (objTitle.Title_Code > 0)
+                //    objTitle.EntityState = State.Modified;
+                //else
+                //    objTitle.EntityState = State.Added;
 
-            //if (objTitle.Title_Code > 0)
-            //    objTitle.EntityState = State.Modified;
-            //else
-            //    objTitle.EntityState = State.Added;
+                objTitle.Title_Code = TitleCode;
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                {
+                    objTitle.EntityState = State.Added;
+                    objTitle.Is_Active = "Y";
+                }
 
-            objTitle.Title_Code = TitleCode;
-            if (objTitle.Title_Code > 0)
-                objTitle.EntityState = State.Modified;
+                objTitle = DBSaveEpisodeDetails(objTitle);
+            }
             else
             {
-                objTitle.EntityState = State.Added;
-                objTitle.Is_Active = "Y";
+                if (objTitle.Title_Code > 0)
+                    objTitle.EntityState = State.Modified;
+                else
+                    objTitle.EntityState = State.Added;
             }
+            #endregion
 
             dynamic resultset;
             bool isValid = objTitleS.Save(objTitle, out resultset);
@@ -958,6 +1060,7 @@ namespace RightsU_Plus.Controllers
             Session["lstMapExtendedColumns"] = null;
             Session["lstAddedExtendedColumns"] = null;
             Session["lstDBExtendedColumns"] = null;
+            Session["lstEpisodeDetails"] = null;
             TempData["id"] = objTitle.Title_Code;
             TempData["Type"] = "E";
             TempData["PageNo"] = PageNo;
@@ -1001,7 +1104,13 @@ namespace RightsU_Plus.Controllers
                 TabNAme = hdnAlternateTabName,
                 ConfigCode = hdnAlternateConfigCode
             };
-
+            #region ========= Insert Content  =========
+            if (Content_system_Parameter.Parameter_Value == "Y")
+            {
+                int SentTitleCodeToProc = TitleCode;
+                var SentTitleObj = new USP_Service(objLoginEntity.ConnectionStringName).USPAL_Title_Content_Gen_From_Title(SentTitleCodeToProc);
+            }
+            #endregion
             return Json(objs);
         }
 
@@ -1157,6 +1266,27 @@ namespace RightsU_Plus.Controllers
                         obj.IsDelete = "N";
                     }
                 }
+
+                string isAeroplay = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Allow_Import_Movies_Shows").Select(x => x.Parameter_Value).FirstOrDefault();
+
+                //int Extended_Group_Code;
+                int? TabCode = 0;
+
+                if (isAeroplay == "N")
+                {
+                    int[] arrExtendedGroupCodes = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Extended_Group_Code).ToArray();
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && arrExtendedGroupCodes.Any(a=> x.Extended_Group_Code == a)).Select(x => x.Extended_Group_Code).FirstOrDefault();
+
+                    //Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+                else
+                {
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                }
+
+                int? Row_No = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Map_Extended_Columns_Code == obj.Map_Extended_Columns_Code).Select(x => x.Row_No).FirstOrDefault();
+                obj.Extended_Group_Code = TabCode;
+                obj.Row_No = Row_No;
             }
             ViewBag.mode = mode;
             return PartialView("_Extended_Columns", gvExtended);
@@ -1210,7 +1340,7 @@ namespace RightsU_Plus.Controllers
             return true;
         }
 
-        public string BindNewRowDdl(int ColumnCode, int RowNum, string IsExists)
+        public string BindNewRowDdl(int ColumnCode, int RowNum, string IsExists, int Ext_Grp_Code = 0)
         {
             int Column_Code = Convert.ToInt32(ColumnCode);
             //var lstextCol = new Extended_Columns_Service().SearchFor(x => 1 == 1).Select(y => new { Columns_Name = y.Columns_Name, Control_Type = y.Control_Type }).ToList();
@@ -1223,7 +1353,11 @@ namespace RightsU_Plus.Controllers
                 ColumnNotInCode = gvExtended.Select(x => x.Columns_Code).Distinct().ToList();
             //List<int> ColumnNotInCode = gvExtended.Select(x => x.Columns_Code).Distinct().ToList();
 
+            // Commented for mapping etended_group and Extended_Group_Config table
+            //var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
             var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code && x.Is_Active == "Y").ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
 
             if (ColumnCode == Convert.ToInt32(str_Program_Category_Value))
                 lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => !ColumnNotInCode.Contains(x.Columns_Code) && x.Columns_Name == "Program Category").ToList();
@@ -1306,6 +1440,20 @@ namespace RightsU_Plus.Controllers
                 RoleCode = Convert.ToInt32(AdditionalCondition);
             var lstextCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y")
                 .Select(i => new { ColumnsValue = i.Talent_Name, Columns_Value_Code = i.Talent_Code }).ToList();
+            return Json(lstextCol, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult BindddlExtendedColumns(string ColumnsCode, string AdditionalCondition)
+        {
+            //int RoleCode = 0;
+
+            //if (AdditionalCondition != "")
+            //    RoleCode = Convert.ToInt32(AdditionalCondition);
+            //var lstextCol = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(i => new { ColumnsValue = i.Banner_Name, Columns_Value_Code = i.Banner_Code }).ToList();
+            //return Json(lstextCol, JsonRequestBehavior.AllowGet);
+            List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result> lstextCol = new List<RightsU_Entities.USPGet_DDLValues_For_ExtendedColumns_Result>();
+            lstextCol = new USP_Service(objLoginEntity.ConnectionStringName).USPGet_DDLValues_For_ExtendedColumns(Convert.ToInt32(ColumnsCode)).ToList();
+
             return Json(lstextCol, JsonRequestBehavior.AllowGet);
         }
 
@@ -1407,7 +1555,8 @@ namespace RightsU_Plus.Controllers
 
                 objTalent.Columns_Code = ExtendedColumnsCode;
                 objTalent.Columns_Value = ExtendedColumnValue;
-                ExtendedColumnsCode = 0;
+                objTalent.EntityState = State.Added;
+                //ExtendedColumnsCode = 0;
                 new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).Save(objTalent, out resultSet);
                 objJson.Add("Value", objTalent.Columns_Code);
                 objJson.Add("Text", objTalent.Columns_Value);
@@ -1547,7 +1696,7 @@ namespace RightsU_Plus.Controllers
             if (hdnColumnValueCode == null || hdnColumnValueCode == "")
                 hdnColumnValueCode = "0";
             string[] arrColumnsValueCode = hdnColumnValueCode.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            
+
             int ColumnCode = Convert.ToInt32(hdnExtendedColumnsCode);
             if (hdnType == "A" || hdnType == "")
             {
@@ -1587,11 +1736,26 @@ namespace RightsU_Plus.Controllers
 
                     objMapExtendedColumns.Columns_Value_Code = null;
                 }
+                else if (hdnIsDefined_Values.Trim().ToUpper() == "N" && (hdnControlType.Trim().ToUpper() == "DATE" || hdnControlType.Trim().ToUpper() == "INT"))
+                {
+                    objMapExtendedColumns.Column_Value = hdnName;
+
+                    objMapExtendedColumns.Columns_Value_Code = null;
+                }
                 else if ((hdnRefTable.Trim().ToUpper() == "TITLE" || hdnRefTable.Trim().ToUpper() == "") && hdnIsMultipleSelect.Trim().ToUpper() == "N")
                 {
                     objMapExtendedColumns.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
                 }
                 if (hdnRefTable.Trim().ToUpper() == "CBFC" && hdnIsMultipleSelect.Trim().ToUpper() == "Y")
+                {
+                    foreach (string str in arrColumnsValueCode)
+                    {
+                        Map_Extended_Columns_Details objMapExtDet = new Map_Extended_Columns_Details();
+                        objMapExtDet.Columns_Value_Code = Convert.ToInt32(str);
+                        objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
+                    }
+                }
+                if (hdnControlType == "DDL" && hdnRefTable.Trim().ToUpper() != "TALENT")
                 {
                     foreach (string str in arrColumnsValueCode)
                     {
@@ -1632,8 +1796,8 @@ namespace RightsU_Plus.Controllers
                 //{
                 //    gvExtended.Remove(obj);
                 //}
-                
-                
+
+
                 int MapExtendedColumnCode = 0;
 
                 if (hdnMEColumnCode != "")
@@ -1744,7 +1908,7 @@ namespace RightsU_Plus.Controllers
                                     }
                                 }
                             }
-                            if (hdnControlType.Trim().ToUpper() == "TXT")
+                            if (hdnControlType.Trim().ToUpper() == "TXT" || hdnControlType.Trim().ToUpper() == "DATE" || hdnControlType.Trim().ToUpper() == "INT" || hdnControlType.Trim().ToUpper() == "DT")
                             {
                                 objMEc.Columns_Value_Code = null;
                                 objMEc.Column_Value = hdnExtendedColumnValue;
@@ -1762,6 +1926,8 @@ namespace RightsU_Plus.Controllers
                                     {
                                         lstDBExtendedColumns.ForEach(t => { if (t.Map_Extended_Columns_Code == code) t.EntityState = State.Deleted; });
                                     }
+                                    //Object removed from gvExtended to re-populate dropdowns (check BindNewRowDdl method)
+                                    gvExtended.Remove(obj);
                                 }
                                 catch { }
                             }
@@ -1795,7 +1961,19 @@ namespace RightsU_Plus.Controllers
                                 foreach (string str in arrColumnsValueCode)
                                 {
                                     int ColumnValueCode = Convert.ToInt32(str);
-                                    Map_Extended_Columns_Details objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+                                    Map_Extended_Columns_Details objMECD;
+                                    if (hdnIsMultipleSelect == "N")
+                                    {
+                                        objMECD = objMEc.Map_Extended_Columns_Details.FirstOrDefault();
+                                        if (objMECD != null)
+                                        {
+                                            objMECD.Columns_Value_Code = Convert.ToInt32(str);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+                                    }
 
                                     if (objMECD == null)
                                     {
@@ -1810,6 +1988,7 @@ namespace RightsU_Plus.Controllers
                         if (hdnType == "D")
                         {
                             lstAddedExtendedColumns.Remove(objMEc);
+                            gvExtended.Remove(obj);
                         }
                     }
                     //}
@@ -1924,7 +2103,7 @@ namespace RightsU_Plus.Controllers
                 ViewBag.Is_AcqSyn_Type_Of_Film = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_AcqSyn_Type_Of_Film").FirstOrDefault().Parameter_Value;
                 //return PartialView("~/Views/Title/Index.cshtml", objTitle);
 
-                string Per_Logic =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
+                string Per_Logic = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Allow_Perpetual_Date_Logic_Title").FirstOrDefault().Parameter_Value;
 
                 if (Per_Logic == "Y")
                 {
@@ -2827,6 +3006,101 @@ namespace RightsU_Plus.Controllers
             Response.End();
         }
 
+        public void DummySampleDownload(string TitleType)
+        {
+            string Is_New_DM_TitleImport = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Is_Advance_Title_Import").Select(x => x.Parameter_Value).FirstOrDefault();
+            string filePath;
+            filePath = HttpContext.Server.MapPath("~/UploadFolder/Title_Import_" + DateTime.Now.ToString("ddMMyyyyhhmmss.fff") + ".xlsx");
+            FileInfo fileInfo = new FileInfo(filePath);
+            FileInfo fileTemplate;
+
+            fileTemplate = new FileInfo(HttpContext.Server.MapPath("~/Download/Title_Import_Utility_Sample.xlsx"));
+            using (ExcelPackage exlPackage = new ExcelPackage(fileInfo, fileTemplate))
+            {
+                List<DM_Title_Import_Utility> lstDMtIU = new DM_Title_Import_Utility_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Is_Active == "Y").OrderBy(o => o.Order_No).ToList();
+                //List<DM_Title_Import_Utility_Test> lstDMtIU = new List<DM_Title_Import_Utility_Test>();
+                //lstDMtIU = GenericListData();
+                ExcelWorksheet exlWorksheet = exlPackage.Workbook.Worksheets[1];
+                int ColNo = 1, RowNo = 1;
+                Color colRed = System.Drawing.ColorTranslator.FromHtml("#F73131");
+                Color colGreen = System.Drawing.ColorTranslator.FromHtml("#8FD64B");
+
+                exlWorksheet.Cells[RowNo, ColNo].Value = "Excel Sr. No";
+                exlWorksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                exlWorksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                exlWorksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+
+                if (TitleType == "M")
+                {
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "M").ToList();
+                }
+                else if (TitleType == "S")
+                {
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == "S").ToList();
+                }
+                else
+                {
+                    lstDMtIU = lstDMtIU.Where(w => w.Import_Type == null).ToList();
+                }
+                foreach (var item in lstDMtIU)
+                {
+                    ColNo++;
+                    exlWorksheet.Cells[RowNo, ColNo].Value = item.Display_Name;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.Font.Bold = true;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    exlWorksheet.Cells[RowNo, ColNo].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+
+                    if (item.validation.Contains("man"))
+                    {
+                        exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colRed);
+                    }
+                    else
+                    {
+                        exlWorksheet.Cells[RowNo, ColNo].Style.Fill.BackgroundColor.SetColor(colGreen);
+                    }
+                }
+
+                ColNo = 1;
+                for (int i = 1; i <= 2; i++)
+                {
+                    RowNo = i + 1;
+                    exlWorksheet.Cells[RowNo, ColNo].Value = i;
+                }
+                exlPackage.Save();
+            }
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(filePath);
+            Response.Clear();
+            Response.ContentType = "application/ms-excel";
+            Response.AddHeader("content-disposition", "Attachment;filename=" + fileInfo.Name);
+            Response.BinaryWrite(buffer);
+
+            Response.End();
+        }
+
+        //public List<DM_Title_Import_Utility_Test> GenericListData()
+        //{
+        //    List<DM_Title_Import_Utility_Test> lst = new List<DM_Title_Import_Utility_Test>()
+        //    {
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Name", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Type", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Language", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Release Year", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Movie Desc", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "M" },
+
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Name", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Type", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Language", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Release Year", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Show Desc", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" },
+        //        new DM_Title_Import_Utility_Test(){ DM_Title_Import_Utility_Code = 1, Display_Name = "Episode No", Order_No = 1, Target_Table = "Title", Target_Column = "Title_Name", Colum_Type = "TEXT", Is_Multiple = "N", Reference_Table = "NULL", Reference_Text_Field = "Null_txt", Reference_Value_Field = "NUll", Reference_Whr_Criteria = "", Is_Active = "Y", validation = "man", Is_Allowed_For_Resolve_Conflict = "N", ShortName = "Null", Import_Type = "S" }
+        //    };
+
+        //    return lst;
+        //}
+
         /*
         public void SampleDownload()
         {
@@ -2922,6 +3196,1570 @@ namespace RightsU_Plus.Controllers
             ViewBag.DealListPageSize = txtpageSize;
             return PartialView("_Title_Deal_Info", list);
         }
+        #endregion
+
+        #region Aeroplay Catelog
+        public ActionResult BindTitleMetadataHeader()
+        {
+            List<Extended_Group> objExt_Grp = new List<Extended_Group>();
+            objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.IsActive == "Y").OrderBy(x => x.Group_Order).ToList();
+            ViewBag.ExtendedGroup = objExt_Grp;
+            return PartialView("~/Views/Title/_Title_Metadata_Header.cshtml", objExt_Grp);
+        }
+
+        public string BindTabwisePopup(int Ext_Grp_Code, int rowno = 0, int num = 0, int Title_Code = 0)
+        {
+            string Operation = "A";
+            if (rowno > 0) Operation = "E";
+            string TabShortName = "";
+
+            var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+            TabShortName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).Select(x => x.Short_Name).FirstOrDefault();
+            ViewBag.TabwiseName = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == Ext_Grp_Code).FirstOrDefault();
+            ViewBag.ExtendedColums = lstextCol;
+            var lstEditRecord = lstAddedExtendedColumns;
+            var lstEditRecordDB = gvExtended;
+
+            if (Operation == "E")
+            {
+                if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) != 0 && gvExtended.Count != 0)
+                {
+                    lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList();
+                    var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).Distinct().ToList();
+                    lstEditRecordDB = gvExtended.Where(w => lstColumnRowNo.Any(a => w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).ToList();
+                }
+                else if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno) != 0)
+                {
+                    lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).ToList();
+                }
+                else if (gvExtended.Count != 0)
+                {
+                    var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code && x.Row_No == rowno).Distinct().ToList();
+                    lstEditRecordDB = gvExtended.Where(w => lstColumnRowNo.Any(a => w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).ToList();
+                }
+            }
+
+            string strAddRow = "";
+
+            strAddRow = "<style>input:invalid {background-color: white;border-color: #bbb;} .RequiredClass{background-color: rgba(155,0,0,0.1) !important;border-color: red !important;} </style><Table class=\"table table-bordered table-hover\" style=\"padding:10px;\">";
+
+            string prevRowTitle = "";
+            int i = 1, j = 1, k = 1, l = 1, m = 1;
+
+            foreach (var TabControls in lstextCol)
+            {
+                string SelectedValues = null ?? "";
+                strAddRow = strAddRow.Replace("utospltag", "");
+                strAddRow = strAddRow + "<tr>";
+                strAddRow = strAddRow + "<td style=\"width: 40%;\">";
+                strAddRow = strAddRow + TabControls.Columns_Name;
+                strAddRow = strAddRow + "</td>";
+                strAddRow = strAddRow + "<td>";
+                prevRowTitle = TabControls.Columns_Name;
+                ConfigCode = TabControls.Columns_Code;
+
+                if (Operation == "E")
+                {
+                    if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
+                    {
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
+                        {
+                            SelectedValues = Convert.ToString(lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).Select(x => x.Columns_Value_Code).FirstOrDefault());
+                        }
+                        else
+                        {
+                            SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Columns_Value_Code).FirstOrDefault());
+                        }
+                    }
+                    else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
+                    {
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
+                        {
+                            var EditRecordObj = lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).FirstOrDefault();
+                            string a = string.Join(",", EditRecordObj.Map_Extended_Columns_Details.Select(s => s.Columns_Value_Code).ToList());
+                            SelectedValues = Convert.ToString(a);
+                        }
+                        else
+                        {
+                            SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Columns_Value_Code1).FirstOrDefault());
+                        }
+                    }
+                    else if (TabControls.Control_Type == "TXT" || TabControls.Control_Type == "INT" || TabControls.Control_Type == "DBL" || TabControls.Control_Type == "DATE" || TabControls.Control_Type == "CHK")
+                    {
+                        if (lstEditRecord.Count(x => x.Record_Code == Title_Code && x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code) > 0)
+                        {
+                            SelectedValues = Convert.ToString(lstEditRecord.Where(x => x.Row_No == rowno && x.Columns_Code == TabControls.Columns_Code).Select(x => x.Column_Value).FirstOrDefault());
+                        }
+                        else
+                        {
+                            SelectedValues = Convert.ToString(lstEditRecordDB.Where(w => lstextCol.Any(a => w.Columns_Code == a.Columns_Code) && w.Columns_Code == TabControls.Columns_Code).Select(w => w.Name).FirstOrDefault());
+                        }
+                    }
+
+                }
+
+                string required = "";
+                string CustomDataDuplicateAttr = "";
+                var objExtGrpConfig = lstextGrpConfig.Where(w => w.Columns_Code == TabControls.Columns_Code).FirstOrDefault();
+                if (objExtGrpConfig.Validations != null && objExtGrpConfig.Validations.Contains("man"))
+                {
+                    required = "required";
+                }
+                if (objExtGrpConfig.Validations != null && objExtGrpConfig.Validations.Contains("dup"))
+                {
+                    CustomDataDuplicateAttr = "data-validate-duplicate = \"Y\"";
+                }
+
+                if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "N")
+                {
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    i++;
+                }
+                else if (TabControls.Control_Type == "DDL" && TabControls.Is_Multiple_Select == "Y")
+                {
+                    strAddRow = strAddRow + getDDL(lstextCol, TabControls.Columns_Code, i, Operation, "multiple", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    i++;
+                }
+                else if (TabControls.Control_Type == "TXT")
+                {
+                    strAddRow = strAddRow + getTXT(TabControls.Columns_Code, j, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    j++;
+                }
+                else if (TabControls.Control_Type == "DATE")
+                {
+                    strAddRow = strAddRow + getDATE(TabControls.Columns_Code, k, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    k++;
+                }
+                else if (TabControls.Control_Type == "INT")
+                {
+                    strAddRow = strAddRow + getNumber(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    l++;
+                }
+                else if (TabControls.Control_Type == "DBL")
+                {
+                    strAddRow = strAddRow + getDBL(TabControls.Columns_Code, l, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    l++;
+                }
+                else if (TabControls.Control_Type == "CHK")
+                {
+                    strAddRow = strAddRow + getCheckbox(TabControls.Columns_Code, m, Operation, "", Ext_Grp_Code, TabShortName, SelectedValues, required, CustomDataDuplicateAttr);
+                    m++;
+                }
+
+                strAddRow = strAddRow + " utospltag </td></tr>";
+            }
+            strAddRow = strAddRow.Replace("utospltag", "");
+            strAddRow = strAddRow + "<TR style=\"background-color: #EEEEEE;\"><td style=\"text-align: left;\" colspan=2><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Save\" style=\"margin-right: 4px;\" onclick=\"return SavePopup(this,'" + rowno.ToString() + "'); \"><input type=\"submit\" id=\"btnSaveDeal\" class=\"btn btn-primary\" value=\"Cancel\" onclick=\"closeEdit(" + num + "); \"></td></TR>";
+
+            strAddRow = strAddRow + "</Table>";
+
+            return strAddRow;
+        }
+
+        public PartialViewResult BindFieldGrid(int TitleCode, string operation = "")
+        {
+            ViewBag.hdnTitleCode = TitleCode;
+            ViewBag.mode = operation;
+            return PartialView("_Title_Popup_Grid_Result");
+        }
+
+        public JsonResult URL_BindDynamicGrid(int title_code = 0, int Ext_Grp_Code = 0, string operation = "")
+        {
+            string strtableHeader = "";
+            string tabNames = "";
+            string tabTable = "";
+            string[] arrStr;
+            int i = 1;
+            int j = 1;
+
+            var lstextCol = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Name != "Program Category").ToList();
+            var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
+            var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+            lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
+            lstextCol = lstextCol.Where(w => lstextGrpConfig.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();           
+                foreach (Extended_Group EG in objExt_Grp)
+                {
+                    tabNames = tabNames + EG.Short_Name + ",";
+                    if (i != 1)
+                    {
+                        tabTable = tabTable + "<div class=\"tab - pane active\" style=\"display:none;\" id=\"tblMain" + EG.Short_Name + "\">";
+                    }
+                    else
+                    {
+                        tabTable = tabTable + "<div class=\"tab - pane active\" id=\"tblMain" + EG.Short_Name + "\">";
+                        obj.Add("TabName", EG.Short_Name);
+                    }
+
+                    var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == EG.Extended_Group_Code).Select(x => x.Columns_Code).ToList();
+                    var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
+
+                    strtableHeader = GetTableHeader(EG.Extended_Group_Code, EG.Short_Name, extColLst, "grid", operation);
+                    //List<USP_SUPP_Create_Table_Result> rowList = objUspService.USP_SUPP_Create_Table_Result(ST.Supplementary_Tab_Code, objDeal_Schema.Deal_Code, supplementary_Code.ToString(), ViewOperation).ToList(); //string.Join(",", titleList.Select(a => a.Title_Code).ToList())
+                    string str = BindPopupGridResult(extColLst, EG.Short_Name, operation, title_code, EG.Extended_Group_Code);
+
+                    arrStr = strtableHeader.Split('~');
+
+                    tabTable = tabTable + "<div class=\"scale_table_block\">";
+                    tabTable = tabTable + "<table class=\"table table-bordered table-hover tblGridBind\"  id=\"tbl" + EG.Short_Name + "\">" + arrStr[0] + str + "</table>";
+
+                    tabTable = tabTable + "<input type=\"hidden\" name=\"hdn" + EG.Short_Name + "\" id=\"hdn" + EG.Short_Name + "\" Value='" + arrStr[1] + "'/>";
+                    tabTable = tabTable + "<input type=\"hidden\" name=\"hdnwt" + EG.Short_Name + "\" id=\"hdnwt" + EG.Short_Name + "\" Value='" + EG.Add_Edit_Type + "'/>";
+
+                    tabTable = tabTable + "</div></div>";
+                    i++;
+                }
+
+                tabNames = tabNames.Substring(0, tabNames.Length - 1);
+                    
+            obj.Add("FieldList", _fieldList.TrimEnd(','));
+            obj.Add("tabNames", tabNames);
+            obj.Add("Divs", tabTable);
+
+            return Json(obj);
+        }
+
+        public string GetTableHeader(int tabCode, string Short_Name, List<Extended_Columns> ListExtended_Columns_Data, string WindowType, string ViewOperation)
+        {
+            string strPrevHeader = "";
+            string strtableHeader = "<tr>";
+            string strAddRow = "<tr id = \"add" + Short_Name + "\" style=\"display:none;\">";
+
+            //List<USP_Acq_SUPP_Tab_Result> columnList = objUspService.USP_Acq_SUPP_Tab_Result(tabCode).ToList();
+            List<Extended_Columns> columnList = ListExtended_Columns_Data.ToList();
+            int i = 1, j = 1, k = 1, l = 1, m = 1;
+            double width = 0, viewWidth = 5;
+            if (ViewOperation != "VIEW")
+                width = 100 / columnList.Count() - 10;
+            else
+            {
+                viewWidth = columnList.Count > 5 ? 5 : 10;
+                width = (100 - viewWidth) / columnList.Count();
+            }
+
+            width = Math.Round(width);
+
+            //var extGrpConfigLst = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code == tabCode).Select(x => x.Columns_Code).ToList();
+            //var extColLst = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => extGrpConfigLst.Contains((x.Columns_Code))).ToList();
+
+            foreach (Extended_Columns EC in columnList)
+            {
+                var lstextGrpConfig = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Extended_Group_Code != null).ToList();
+                var objExt_Grp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").OrderBy(x => x.Group_Order).ToList();
+                lstextGrpConfig = lstextGrpConfig.Where(w => objExt_Grp.Any(a => w.Extended_Group_Code == a.Extended_Group_Code)).ToList();
+                int? TabCodeGrid = 0;
+                TabCodeGrid = lstextGrpConfig.Where(w => w.Columns_Code == EC.Columns_Code).Select(w => w.Extended_Group_Code).FirstOrDefault();
+                if (strPrevHeader != "" && strPrevHeader == EC.Columns_Name)
+                {
+                    strtableHeader = strtableHeader.Replace("UTOsplTag", " colspan=2 ");
+                }
+                else
+                {
+                    strtableHeader = strtableHeader.Replace("UTOsplTag", "");
+                    strtableHeader = strtableHeader + "<th style=\"width:" + width + "%\" data-configitem =\"" + TabCodeGrid + "\" UTOsplTag> " + EC.Columns_Name + "</th>";
+                    strPrevHeader = EC.Columns_Name;
+                }
+
+                if (WindowType == "grid")
+                {
+                    if (EC.Control_Type == "DDL")
+                    {
+                        _fieldList = _fieldList + Short_Name + "ddPopup" + i.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        i++;
+                    }
+                    else if (EC.Control_Type == "TXT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "txtPopup" + j.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        j++;
+                    }
+                    else if (EC.Control_Type == "DATE")
+                    {
+                        _fieldList = _fieldList + Short_Name + "dtPopup" + k.ToString() + "~" + EC.Columns_Code.ToString().ToString() + ",";
+                        k++;
+                    }
+                    else if (EC.Control_Type == "INT")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numPopup" + l.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (EC.Control_Type == "DBL")
+                    {
+                        _fieldList = _fieldList + Short_Name + "numPopup" + l.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        l++;
+                    }
+                    else if (EC.Control_Type == "CHK")
+                    {
+                        _fieldList = _fieldList + Short_Name + "chkPopup" + m.ToString() + "~" + EC.Columns_Code.ToString() + ",";
+                        m++;
+                    }
+                }
+
+            }
+            strtableHeader = strtableHeader.Replace("UTOsplTag", "");
+            if (ViewOperation != "VIEW")
+            {
+                strtableHeader = strtableHeader + "<th style=\"width:" + viewWidth + "%\"> Action </th>";
+            }
+            strtableHeader = strtableHeader + "</tr>";
+
+            if (WindowType == "inLine")
+            {
+                strAddRow = strAddRow + "<td style=\"text-align: center;\"><a class=\"glyphicon glyphicon-ok-circle\" onclick = \"SavePopup(this,0);\" style=\"padding: 3px;\"></a><a class=\"glyphicon glyphicon-remove-circle\" onclick = \"hideaddPopup();\"></a></td>";
+                strAddRow = strAddRow + "</tr>";
+                strtableHeader = strtableHeader + strAddRow;
+            }
+            else
+            {
+                i = columnList.Count(a => a.Control_Type == "TXTDDL") + 1;
+            }
+
+            return strtableHeader + "~" + (i - 1).ToString();
+        }
+        public string getDDL(List<Extended_Columns> ExtendedColumns, int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string strDDL;
+            int RoleCode = 0;
+            if (SelectedValues == null)
+                SelectedValues = "";
+
+            string[] SelectedList = SelectedValues.Split(',');
+
+            if (multiple == "")
+            {
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" " + required + " " + ValDuplicate + ">";
+                strDDL = strDDL + "<option value=\"''\" disabled selected style=\"display: none !important;\">Please Select</option>";
+            }
+            else
+            {
+                strDDL = "<select class=\"sumoUnder form_input chosen-select\" placeholder=\"Please Select\" id=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "ddPopup" + i.ToString() + "\" " + multiple + " " + required + " " + ValDuplicate + ">";
+            }
+
+            var ExtendedColumn = ExtendedColumns.Where(x => x.Columns_Code == Columns_Code).FirstOrDefault();
+            if (ExtendedColumn.Is_Ref == "Y" && ExtendedColumn.Is_Defined_Values == "N" && ExtendedColumn.Ref_Table == "TALENT")
+            {
+                if (ExtendedColumn.Additional_Condition != "" && ExtendedColumn.Additional_Condition != null)
+                    RoleCode = Convert.ToInt32(ExtendedColumn.Additional_Condition);
+                var lstTalentCol = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode)).Where(y => y.Is_Active == "Y").ToList();
+
+                foreach (var T in lstTalentCol)
+                {
+                    if (SelectedList.Contains(T.Talent_Code.ToString()))
+                    {
+                        strDDL = strDDL + "<option value=" + T.Talent_Code + " selected>" + T.Talent_Name + "</option>";
+                    }
+                    else
+                    {
+                        strDDL = strDDL + "<option value=" + T.Talent_Code + ">" + T.Talent_Name + "</option>";
+                    }
+                }
+            }
+            else
+            {
+                var lstextColVal = new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Columns_Code).ToList();
+                foreach (Extended_Columns_Value ECV in lstextColVal)
+                {
+                    if (SelectedList.Contains(ECV.Columns_Value_Code.ToString()))
+                    {
+                        strDDL = strDDL + "<option value=" + ECV.Columns_Value_Code + " selected>" + ECV.Columns_Value + "</option>";
+                    }
+                    else
+                    {
+                        strDDL = strDDL + "<option value=" + ECV.Columns_Value_Code + ">" + ECV.Columns_Value + "</option>";
+                    }
+                }
+            }
+
+            strDDL = strDDL + "</select>";
+
+            _fieldList = _fieldList + Columns_Code + "ddPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+
+            return strDDL;
+        }
+        public string getTXT(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string getText = "<input type=\"text\" id=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "txtPopup" + i.ToString() + "\" value=\"" + SelectedValues + "\"" + required + " " + ValDuplicate + " style=\"width:100%\" maxlength=\"1000\" >";
+            _fieldList = _fieldList + Columns_Code + "txtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getText;
+        }
+        public string getDATE(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string getDATE = "<input type=\"text\" class=\"datepicker\" id =\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "dtPopup" + i.ToString() + "\" placeholder=\"DD / MM / YYYY\" style=\"height: 30px width:125px; \" value=\"" + SelectedValues + "\"" + required + " " + ValDuplicate + ">";
+            _fieldList = _fieldList + TabShortName + "dtPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getDATE;
+        }
+        public string getNumber(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string getNumber = "<input type=\"number\" min=\"0\" onkeypress=\"return !(event.charCode == 46)\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\"" + required + " " + ValDuplicate + ">";
+            _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getDBL(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string getNumber = "<input type=\"number\" value=\"" + "" + "\" placeholder=\"0.00\" step=\"0.01\" min=\"0\" value=\"" + "" + "\" id=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "numPopup" + i.ToString() + "\"" + required + " " + ValDuplicate + ">";
+            _fieldList = _fieldList + TabShortName + "numPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getNumber;
+        }
+        public string getCheckbox(int Columns_Code, int i, string Operation, string multiple, int Ext_Grp_Code, string TabShortName, string SelectedValues, string required, string ValDuplicate)
+        {
+            string strChecked = "";
+            string User_Value = "";
+            if (User_Value == "" || User_Value.ToUpper() == "NO")
+            {
+                strChecked = "";
+            }
+            else
+                strChecked = " checked ";
+
+            if (User_Value == "") User_Value = "YES";
+
+            string getCheckbox = "<input type=\"checkbox\" value=\"" + User_Value + "\" id=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" name=\"" + Operation + TabShortName + "chkPopup" + i.ToString() + "\" style=\"margin-left: 4px;\"" + strChecked + " " + required + " " + ValDuplicate + ">";
+            _fieldList = _fieldList + TabShortName + "chkPopup" + i.ToString() + "~" + ConfigCode.ToString() + ",";
+            return getCheckbox;
+        }
+
+        public string PopupSaveInSession(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex, int Title_Code = 0)
+        {
+            if (Operation == "D" && Value_list == "")
+            {
+                foreach (USP_Bind_Extend_Column_Grid_Result objAddInValueList in gvExtended.Where(w => w.Row_No == Row_No))
+                {
+                    Extended_Columns ExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == objAddInValueList.Columns_Code).FirstOrDefault();
+
+                    if (ExtendedColumns.Control_Type == "DDL")
+                    {
+                        if (ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "Y")
+                        {
+                            Value_list = Value_list + objAddInValueList.Columns_Value_Code1.Replace(',', '-') + "ï¿" + objAddInValueList.Columns_Code + "¿ï";
+                        }
+                        else
+                        {
+                            Value_list = Value_list + objAddInValueList.Columns_Value_Code + "ï¿" + objAddInValueList.Columns_Code + "¿ï";
+                        }
+                    }
+                    else if (ExtendedColumns.Control_Type == "TXT" || ExtendedColumns.Control_Type == "INT" || ExtendedColumns.Control_Type == "DBL" || ExtendedColumns.Control_Type == "DATE" || ExtendedColumns.Control_Type == "CHK")
+                    {
+                        Value_list = Value_list + objAddInValueList.Name + "ï¿" + objAddInValueList.Columns_Code + "¿ï";
+                    }
+                }
+            }
+            else
+            {
+                string isDuplicate = ValidateDuplicate(Value_list, Short_Name, Operation, Row_No, rwIndex, Title_Code);
+                if (isDuplicate == "Y")
+                {
+                    return "Duplicate";
+                }
+            }
+
+            int TabCode = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).Select(b => b.Extended_Group_Code).FirstOrDefault();
+
+            int rowNum = 0;
+            var MapExtDetail = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code).ToList();
+
+            if (lstAddedExtendedColumns.Count(b => b.Record_Code == Title_Code) != 0 && Operation == "A")
+            {
+                rowNum = (int)lstAddedExtendedColumns.Where(b => b.Record_Code == Title_Code).Max(a => a.Row_No).Value;
+            }
+            else if (MapExtDetail.Count > 0 && Operation == "A")
+            {
+                rowNum = (int)MapExtDetail.Where(b => b.Record_Code == Title_Code).Max(a => a.Row_No).Value;
+            }
+            else
+            {
+                rowNum = Row_No;
+            }
+
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+
+            string Output = "";
+            if (rowNum == 0)
+            {
+                Output = "<tr id=\"" + Short_Name + (1).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+            }
+            else
+            {
+                Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+            }
+            foreach (string str in columnValueList)
+            {
+                string hdnExtendedColumnsCode = "";
+                string hdnColumnValueCode = "0";
+                USP_Bind_Extend_Column_Grid_Result obj = new USP_Bind_Extend_Column_Grid_Result();
+                Map_Extended_Columns objMapExtCol = new Map_Extended_Columns();
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                int config_Code = Convert.ToInt32(vals[1]);
+                string[] arrColumnsValueCode = null;
+                string hdnExtendedColumnValue = "0";
+                string ControlType = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == config_Code).Select(b => b.Control_Type).FirstOrDefault();
+                var ExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == config_Code).FirstOrDefault();
+                //if (Operation == "E")
+                //    obj = lstDetailObj.Where(a => a.Supplementary_Config_Code == config_Code && a.Supplementary_Tab_Code == TabCode && a.Row_Num == rowNum).FirstOrDefault();
+                int RoleCode = 0;
+                if (ControlType == "DDL")
+                {
+                    if (vals[0] != "")
+                    {
+                        string t = "";
+                        int[] dtextval = Array.ConvertAll(vals[0].Split('-'), x => int.Parse(x));
+                        var ExtendedColumn = ExtendedColumns;
+                        if (ExtendedColumn.Is_Ref == "Y" && ExtendedColumn.Is_Defined_Values == "N" && ExtendedColumn.Ref_Table == "TALENT")
+                        {
+                            if (ExtendedColumn.Additional_Condition != "" && ExtendedColumn.Additional_Condition != null)
+                                RoleCode = Convert.ToInt32(ExtendedColumn.Additional_Condition);
+                            t = string.Join(",", new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Talent_Role.Any(TR => TR.Role_Code == RoleCode) && dtextval.Contains(x.Talent_Code)).Where(y => y.Is_Active == "Y").Select(b => b.Talent_Name).ToList());
+                        }
+                        else
+                        {
+                            t = string.Join(",", new Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(x => dtextval.Contains(x.Columns_Value_Code)).Select(b => b.Columns_Value).ToList());
+                        }
+
+                        Output = Output + "<td data-configitem =\"" + TabCode + "\">" + t + "</td>";
+                        obj.Name = t;
+                    }
+                    else
+                    {
+                        Output = Output + "<td>&nbsp;</td>";
+                    }
+                    //obj.Columns_Value_Code = vals[0].Replace('-', ',');
+                    //obj.Columns_Value_Code = Convert.ToInt32(vals[0]);
+                    arrColumnsValueCode = vals[0].Replace('-', ',').Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "Y")
+                    {
+                        foreach (string strColumnCode in arrColumnsValueCode)
+                        {
+                            Map_Extended_Columns_Details objMapExtDet = new Map_Extended_Columns_Details();
+                            objMapExtDet.Columns_Value_Code = Convert.ToInt32(strColumnCode);
+                            objMapExtCol.Map_Extended_Columns_Details.Add(objMapExtDet);
+                        }
+                        obj.Columns_Value_Code1 = vals[0].Replace('-', ',');
+                        hdnColumnValueCode = vals[0].Replace('-', ',');
+                    }
+                    else
+                    {
+                        foreach (string strColumnCode in arrColumnsValueCode)
+                        {
+                            objMapExtCol.Columns_Value_Code = Convert.ToInt32(strColumnCode);
+                            obj.Columns_Value_Code = Convert.ToInt32(strColumnCode);
+                            hdnColumnValueCode = vals[0].Replace('-', ',');
+                            hdnExtendedColumnValue = vals[0].Replace('-', ',');
+                        }
+                    }
+
+                }
+                if (ControlType == "TXT" || ControlType == "INT" || ControlType == "DBL" || ControlType == "DATE" || ControlType == "CHK")
+                {
+                    Output = Output + "<td>" + vals[0] + "</td>";
+                    obj.Name = vals[0];
+                    objMapExtCol.Column_Value = vals[0];
+                    arrColumnsValueCode = vals[0].Replace('-', ',').Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    hdnExtendedColumnValue = vals[0].Replace('-', ',');
+                }
+
+                if (Operation == "A")
+                {
+                    obj.Columns_Code = Convert.ToInt32(vals[1]);
+                    //if (arrColumnsValueCode.Split(',').Count() <= 1)
+                    //    obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                    obj.Is_Ref = ExtendedColumns.Is_Ref;
+                    obj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
+                    obj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                    obj.Ref_Table = ExtendedColumns.Ref_Table;
+                    obj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
+                    obj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
+                    obj.Columns_Name = ExtendedColumns.Columns_Name;
+                    obj.Row_No = rowNum + 1;
+                    //obj.Name = hdnName;
+
+                    gvExtended.Add(obj);
+
+                    objMapExtCol.Row_No = rowNum + 1;
+                    objMapExtCol.Columns_Code = Convert.ToInt32(vals[1]);
+                    objMapExtCol.Table_Name = "TITLE";
+                    objMapExtCol.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                    objMapExtCol.Record_Code = Title_Code;
+                    objMapExtCol.EntityState = State.Added;
+                    lstAddedExtendedColumns.Add(objMapExtCol);
+                }
+                else if (Operation == "E" || Operation == "D")
+                {
+                    int OldColumnCode = 0;
+                    hdnExtendedColumnsCode = Convert.ToString(config_Code);
+                    string hdnRefTable = "";
+                    if (ExtendedColumns.Ref_Table != null)
+                    {
+                        hdnRefTable = ExtendedColumns.Ref_Table;
+                    }
+                    string hdnMEColumnCode = "0";
+                    int ColumnCode = Convert.ToInt32(config_Code);
+                    //int RowNum = Convert.ToInt32(hdnRowNum);
+                    //obj = gvExtended[RowNum - 1];
+                    var chkObj = gvExtended.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+
+                    if (chkObj == null && config_Code > 1)
+                    {
+                        chkObj = obj;
+                        chkObj.Columns_Code = Convert.ToInt32(config_Code);
+                        chkObj.Is_Ref = ExtendedColumns.Is_Ref;
+                        chkObj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
+                        chkObj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                        chkObj.Ref_Table = ExtendedColumns.Ref_Table;
+                        chkObj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
+                        chkObj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
+                        chkObj.Columns_Name = ExtendedColumns.Columns_Name;
+                        chkObj.Row_No = rowNum;
+                        chkObj.Name = hdnExtendedColumnValue;
+                        chkObj.Column_Value = hdnExtendedColumnValue;
+                        gvExtended.Add(chkObj);
+                        var ChklstAdd = lstAddedExtendedColumns.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+                        if (ChklstAdd == null)
+                        {
+                            objMapExtCol.Row_No = Row_No;
+                            objMapExtCol.Columns_Code = Convert.ToInt32(config_Code);
+                            objMapExtCol.Table_Name = "TITLE";
+                            objMapExtCol.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                            objMapExtCol.Record_Code = Title_Code;
+                            objMapExtCol.EntityState = State.Added;
+                            lstAddedExtendedColumns.Add(objMapExtCol);
+                        }
+                    }
+                    else
+                    {
+                        obj = gvExtended.Where(x => x.Columns_Code == config_Code && x.Row_No == Row_No).FirstOrDefault();
+
+                        OldColumnCode = obj.Columns_Code;
+
+                        if (hdnExtendedColumnsCode != "")
+                            obj.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
+                        if (hdnColumnValueCode != "")
+                        {
+                            if (hdnColumnValueCode.Split(',').Count() <= 1)
+                                obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                        }
+                        obj.Is_Ref = ExtendedColumns.Is_Ref;
+                        obj.Is_Defined_Values = ExtendedColumns.Is_Defined_Values;
+                        obj.Is_Multiple_Select = ExtendedColumns.Is_Multiple_Select;
+                        obj.Ref_Table = ExtendedColumns.Ref_Table;
+                        obj.Ref_Display_Field = ExtendedColumns.Ref_Display_Field;
+                        obj.Ref_Value_Field = ExtendedColumns.Ref_Value_Field;
+                        obj.Columns_Name = ExtendedColumns.Columns_Name;
+                        obj.Name = hdnExtendedColumnValue;
+                        obj.Column_Value = hdnExtendedColumnValue;
+
+                    }
+
+                    int MapExtendedColumnCode = 0;
+                    hdnMEColumnCode = Convert.ToString(obj.Map_Extended_Columns_Code);
+
+                    if (hdnMEColumnCode != "")
+                        MapExtendedColumnCode = Convert.ToInt32(hdnMEColumnCode);
+
+                    Map_Extended_Columns objMEc;
+                    try
+                    {
+                        objMEc = lstDBExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.Row_No == Row_No && y.EntityState != State.Added).FirstOrDefault();
+
+
+
+                        if (objMEc != null)
+                        {
+
+                            if (ValidateTalent(hdnColumnValueCode.ToString().Trim(' ').Trim(','), ColumnCode, "S") != "N")
+                            {
+                                objMEc.EntityState = State.Modified;
+                                objMEc.Columns_Code = ColumnCode;
+                                if (hdnColumnValueCode.Split(',').Count() <= 0)
+                                    objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+                                var FirstList = objMEc.Map_Extended_Columns_Details.Select(y => y.Columns_Value_Code.ToString()).Distinct().ToList();
+                                var SecondList = arrColumnsValueCode.Distinct().ToList();
+                                var Diff = FirstList.Except(SecondList);
+
+                                foreach (string str1 in Diff)
+                                {
+                                    if (str1 != "" && str1 != " ")
+                                    {
+                                        int ColumnValCode = Convert.ToInt32(str1);
+                                        objMEc.Map_Extended_Columns_Details.Where(y => y.Columns_Value_Code == ColumnValCode).ToList().ForEach(x => x.EntityState = State.Deleted);
+                                    }
+                                }
+
+                                foreach (string str1 in arrColumnsValueCode)
+                                {
+                                    if (str1 != "" && str1 != "0" && str1 != " ")
+                                    {
+                                        Map_Extended_Columns_Details objMECD;
+
+                                        objMECD = objMEc.Map_Extended_Columns_Details.Where(p => p.Columns_Value_Code == Convert.ToInt32(str1) && p.EntityState != State.Added).FirstOrDefault();
+                                        if (objMECD != null)
+                                        {
+                                            if (Operation == "D")
+                                                objMECD.EntityState = State.Deleted;
+                                            else
+                                                objMECD.EntityState = State.Modified;
+
+                                            objMECD.Columns_Value_Code = Convert.ToInt32(str1);
+                                        }
+                                        else
+                                        {
+                                            objMECD = objMEc.Map_Extended_Columns_Details.Where(p => p.Columns_Value_Code == Convert.ToInt32(str1) && p.EntityState == State.Added).FirstOrDefault();
+                                            if (objMECD == null)
+                                            {
+                                                if ((hdnRefTable.Trim().ToUpper() == "TITLE" || hdnRefTable.Trim().ToUpper() == "") && ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "N")
+                                                {
+                                                    if (ExtendedColumns.Control_Type.Trim().ToUpper() != "TXT")
+                                                    {
+                                                        objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                                                        objMEc.Columns_Code = ColumnCode;
+                                                        objMEc.Column_Value = "";
+                                                    }
+                                                    else
+                                                    {
+                                                        objMEc.Columns_Value_Code = null;
+                                                        objMEc.Column_Value = hdnExtendedColumnValue;
+                                                    }
+                                                    objMEc.EntityState = State.Modified;
+                                                    if (objMEc.Map_Extended_Columns_Details.Count > 0)
+                                                    {
+                                                        foreach (Map_Extended_Columns_Details objMECD_inner in objMEc.Map_Extended_Columns_Details)
+                                                        {
+                                                            objMECD_inner.EntityState = State.Deleted;
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    objMECD = new Map_Extended_Columns_Details();
+                                                    objMECD.Columns_Value_Code = Convert.ToInt32(str1);
+
+                                                    int MapExtCode;
+                                                    if (objMEc.Map_Extended_Columns_Details.Count > 0)
+                                                    {
+                                                        //MapExtCode =(int) objMEc.Map_Extended_Columns_Details.Select(x => x.Map_Extended_Columns_Code).Distinct().SingleOrDefault();
+                                                        if (hdnMEColumnCode != "")
+                                                            objMECD.Map_Extended_Columns_Code = Convert.ToInt32(hdnMEColumnCode);
+                                                    }
+                                                    else
+                                                    {
+                                                        objMECD.Map_Extended_Columns_Code = null;
+                                                    }
+                                                    if (Operation == "D")
+                                                    {
+                                                        objMECD.EntityState = State.Deleted;
+                                                    }
+                                                    else
+                                                        objMECD.EntityState = State.Added;
+                                                    objMEc.Map_Extended_Columns_Details.Add(objMECD);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (ExtendedColumns.Control_Type.Trim().ToUpper() == "TXT" || ExtendedColumns.Control_Type.Trim().ToUpper() == "DATE" || ExtendedColumns.Control_Type.Trim().ToUpper() == "INT" || ExtendedColumns.Control_Type.Trim().ToUpper() == "DT")
+                                {
+                                    objMEc.Columns_Value_Code = null;
+                                    objMEc.Column_Value = hdnExtendedColumnValue;
+                                    objMEc.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
+                                }
+                                if (Operation == "D")
+                                {
+                                    USP_Bind_Extend_Column_Grid_Result objDeleteUBECD = gvExtended.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
+                                    //gvExtended.Remove(objDeleteUBECD);
+                                    try
+                                    {
+
+                                        int code = Convert.ToInt32(objDeleteUBECD.Map_Extended_Columns_Code);
+                                        if (code > 0)
+                                        {
+                                            lstDBExtendedColumns.ForEach(t => { if (t.Map_Extended_Columns_Code == code) t.EntityState = State.Deleted; });
+                                        }
+                                    }
+                                    catch { }
+                                }
+                            }
+                            else
+                                Message = "Cannot delete talent as already referenced in deal";
+                        }
+                        else
+                        {
+
+                            //objMEc = lstDBExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.EntityState == State.Added).FirstOrDefault();
+                            //if (objMEc == null)
+                            //{
+                            if (OldColumnCode != 0)
+                                objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == OldColumnCode).FirstOrDefault();
+                            else
+                                objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == config_Code).FirstOrDefault();
+
+                            objMEc.Columns_Code = ColumnCode;
+                            if (hdnColumnValueCode.Split(',').Count() <= 0)
+                                objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+
+                            if (objMEc.Map_Extended_Columns_Details.Count > 0)
+                            {
+                                if (arrColumnsValueCode.Length < 1)
+                                {
+                                    foreach (Map_Extended_Columns_Details objMECD in objMEc.Map_Extended_Columns_Details)
+                                    {
+                                        objMECD.Columns_Value_Code = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (string str1 in arrColumnsValueCode)
+                                    {
+                                        int ColumnValueCode = Convert.ToInt32(str1);
+                                        Map_Extended_Columns_Details objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+
+                                        if (objMECD == null)
+                                        {
+                                            objMECD = new Map_Extended_Columns_Details();
+                                            objMECD.Columns_Value_Code = Convert.ToInt32(str1);
+                                            objMEc.Map_Extended_Columns_Details.Add(objMECD);
+                                        }
+                                    }
+                                }
+                            }
+                            if (ControlType == "TXT" || ControlType == "INT" || ControlType == "DBL" || ControlType == "DATE" || ControlType == "CHK")
+                            {
+                                objMEc.Column_Value = hdnExtendedColumnValue;
+                            }                                
+
+                            if (Operation == "D")
+                            {
+                                lstAddedExtendedColumns.Remove(objMEc);
+                                USP_Bind_Extend_Column_Grid_Result objUSPbecgr = gvExtended.Where(w => w.Row_No == Row_No && w.Columns_Code == config_Code).FirstOrDefault();
+                                gvExtended.Remove(objUSPbecgr);
+                            }
+                        }
+                        //}
+                    }
+                    catch
+                    {
+                        objMEc = lstAddedExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
+                        if (objMEc != null)
+                        {
+                            if (Operation == "D")
+                                objMEc.EntityState = State.Deleted;
+                            else
+                                objMEc.EntityState = State.Modified;
+                        }
+                    }
+                }
+            }
+            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid").FirstOrDefault();
+            int ExtColCount = objExtGrp.Extended_Group_Config.Select(s => s.Extended_Columns).Count();
+            int ColValCount = columnValueList.Count();
+            if (ExtColCount > ColValCount)
+            {
+                for (int i = ColValCount; i < ExtColCount; i++)
+                {
+                    Output = Output + "<td></td>";
+                }
+            }
+            if (Operation == "A")
+            {
+                Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"PopupEdit(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"PopupDelete(this,'0','" + Convert.ToString(rowNum + 1) + "','" + Convert.ToString(rowNum + 1) + "','" + TabCode + "','" + Short_Name + "' );\"></a></td>";
+            }
+            else if (Operation == "E")
+            {
+                Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"PopupEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"PopupDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></td>";
+
+            }
+            Output = Output + "</tr>";
+
+            //objSupplementary.Acq_Deal_Supplementary_detail = lstDetailObj;
+            //objAcq_Deal_Supplementary = objSupplementary;
+            return Output;
+        }
+
+        public string BindPopupGridResult(List<Extended_Columns> ListExtended_Columns_Data, string Short_Name, string Operation, int Title_Code = 0, int TabCode = 0)
+        {
+            string Output = "";
+
+            var lstExtendedColumnDB = gvExtended.Where(w => ListExtended_Columns_Data.Any(a => w.Columns_Code == a.Columns_Code)).ToList();
+            var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == Title_Code).Distinct().ToList();
+            var lstTabwiseData = lstColumnRowNo.Where(w => lstExtendedColumnDB.Any(a => w.Columns_Code == a.Columns_Code && w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).OrderBy(x => x.Row_No).ToList();
+            var lstRowDetail = lstTabwiseData.Select(x => x.Row_No).Distinct().ToList();
+
+            int? rowNum = 0;
+            int Count = 0;
+
+            foreach (int? RowDetail in lstRowDetail)
+            {
+                rowNum = RowDetail;
+                if (rowNum > 0)
+                {
+                    Output = Output + "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+                }
+                foreach (var i in ListExtended_Columns_Data)
+                {
+                    var ExtendedColumn = lstTabwiseData.Where(x => x.Columns_Code == i.Columns_Code && x.Row_No == RowDetail).FirstOrDefault();
+                    USP_Bind_Extend_Column_Grid_Result ExtendedColumnDB = null;
+                    if (ExtendedColumn != null)
+                    {
+                        ExtendedColumnDB = lstExtendedColumnDB.Where(x => x.Columns_Code == i.Columns_Code && x.Map_Extended_Columns_Code == ExtendedColumn.Map_Extended_Columns_Code).FirstOrDefault();
+                    }
+
+                    //if (rowNum > 0 && Count == 0)
+                    //{
+                    //    Output = "<tr id=\"" + Short_Name + (rowNum).ToString() + "\"data-configitem =\"" + TabCode + "\"> ";
+                    //}
+
+                    if (ExtendedColumnDB != null && (ExtendedColumnDB.Control_Type == "DDL"))
+                    {
+                        Output = Output + "<td data-configitem =\"" + TabCode + "\">" + ExtendedColumnDB.Name + "</td>";
+                    }
+                    else if (ExtendedColumnDB != null && (ExtendedColumnDB.Control_Type == "TXT" || ExtendedColumnDB.Control_Type == "INT" || ExtendedColumnDB.Control_Type == "DBL" || ExtendedColumnDB.Control_Type == "DATE" || ExtendedColumnDB.Control_Type == "CHK"))
+                    {
+                        Output = Output + "<td>" + ExtendedColumnDB.Name + "</td>";
+                    }
+                    else
+                    {
+                        Output = Output + "<td></td>";
+                    }
+
+                    Count++;
+                }
+
+                if (Operation != "VIEW")
+                {
+                    Output = Output + "<td style=\"text-align: center;\"><a title = \"Edit\" class=\"glyphicon glyphicon-pencil\" onclick=\"PopupEdit(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "');\"></a><a title =\"Delete\" class=\"glyphicon glyphicon-trash\" onclick=\"PopupDelete(this,'0','" + Convert.ToString(rowNum) + "','" + Convert.ToString(rowNum) + "','" + TabCode + "','" + Short_Name + "');\"></a></td>";
+                }
+
+                Output = Output + "</tr>";
+            }
+
+            return Output;
+        }
+
+        public JsonResult GridRowDelete(int TitleCode = 0, int rowno = 0, int TabCode = 0)
+        {
+            Map_Extended_Columns objMEc;
+            var lstEditRecord = lstAddedExtendedColumns;
+            var lstEditRecordDB = gvExtended;
+
+            if (lstAddedExtendedColumns.Count != 0 && lstAddedExtendedColumns.Count(x => x.Record_Code == TitleCode && x.Row_No == rowno) != 0)
+            {
+                lstEditRecord = lstAddedExtendedColumns.Where(x => x.Record_Code == TitleCode && x.Row_No == rowno).ToList();
+            }
+            else if (gvExtended.Count != 0)
+            {
+                var lstColumnRowNo = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Row_No != null).Where(x => x.Record_Code == TitleCode && x.Row_No == rowno).Distinct().ToList();
+                lstEditRecordDB = gvExtended.Where(w => lstColumnRowNo.Any(a => w.Map_Extended_Columns_Code == a.Map_Extended_Columns_Code)).ToList();
+            }
+
+            //if (lstEditRecord.Count > 0)
+            //{
+            //    foreach(var i in lstEditRecord)
+            //    {
+            //        objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == i.Columns_Code).FirstOrDefault();
+            //        objMEc.Columns_Code = i.Columns_Code;
+            //        if (objMEc.Map_Extended_Columns_Details.Count > 0)
+            //        {
+            //            if (arrColumnsValueCode.Length < 1)
+            //            {
+            //                foreach (Map_Extended_Columns_Details objMECD in objMEc.Map_Extended_Columns_Details)
+            //                {
+            //                    objMECD.Columns_Value_Code = 0;
+            //                }
+            //            }
+            //            else
+            //            {
+            //                foreach (string str in arrColumnsValueCode)
+            //                {
+            //                    int ColumnValueCode = Convert.ToInt32(str);
+            //                    Map_Extended_Columns_Details objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+
+            //                    if (objMECD == null)
+            //                    {
+            //                        objMECD = new Map_Extended_Columns_Details();
+            //                        objMECD.Columns_Value_Code = Convert.ToInt32(str);
+            //                        objMEc.Map_Extended_Columns_Details.Add(objMECD);
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }                
+            //}
+
+
+
+            //objMEc.Columns_Code = ColumnCode;
+            //if (hdnColumnValueCode.Split(',').Count() <= 0)
+            //    objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+
+
+
+            //if (hdnType == "D")
+            //{
+            //    lstAddedExtendedColumns.Remove(objMEc);
+            //}
+            ///////////////////////////////////////////////////////////////////////
+            //int OldColumnCode = 0;
+
+            //   int RowNum = Convert.ToInt32(hdnRowNum);
+            //   obj = gvExtended[RowNum - 1];
+
+            //   OldColumnCode = obj.Columns_Code;
+
+            //   if (hdnExtendedColumnsCode != "")
+            //       obj.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
+            //   if (hdnColumnValueCode != "")
+            //   {
+            //       if (hdnColumnValueCode.Split(',').Count() <= 1)
+            //           obj.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+            //   }
+            //   obj.Is_Ref = hdnIsRef;
+            //   obj.Is_Defined_Values = hdnIsDefined_Values;
+            //   obj.Is_Multiple_Select = hdnIsMultipleSelect;
+            //   obj.Ref_Table = hdnRefTable;
+            //   obj.Ref_Display_Field = hdnRefDisplayField;
+            //   obj.Ref_Value_Field = hdnRefValueField;
+            //   obj.Columns_Name = hdnExtendedColumnName;
+            //   obj.Name = hdnName;
+
+            //   //if(hdnType == "D")
+            //   //{
+            //   //    gvExtended.Remove(obj);
+            //   //}
+
+
+            //   int MapExtendedColumnCode = 0;
+
+            //   if (hdnMEColumnCode != "")
+            //       MapExtendedColumnCode = Convert.ToInt32(hdnMEColumnCode);
+
+            //   Map_Extended_Columns objMEc;
+            //   try
+            //   {
+            //       //if (hdnMEColumnCode != "")
+            //       objMEc = lstDBExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.EntityState != State.Added).FirstOrDefault();
+
+
+
+            //       if (objMEc != null)
+            //       {
+
+            //           if (ValidateTalent(hdnColumnValueCode.ToString().Trim(' ').Trim(','), ColumnCode, "S") != "N")
+            //           {
+            //               objMEc.EntityState = State.Modified;
+            //               objMEc.Columns_Code = ColumnCode;
+            //               if (hdnColumnValueCode.Split(',').Count() <= 0)
+            //                   objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+            //               var FirstList = objMEc.Map_Extended_Columns_Details.Select(y => y.Columns_Value_Code.ToString()).Distinct().ToList();
+            //               var SecondList = arrColumnsValueCode.Distinct().ToList();
+            //               var Diff = FirstList.Except(SecondList);
+
+
+
+
+            //               foreach (string str in Diff)
+            //               {
+            //                   if (str != "" && str != " ")
+            //                   {
+            //                       int ColumnValCode = Convert.ToInt32(str);
+            //                       objMEc.Map_Extended_Columns_Details.Where(y => y.Columns_Value_Code == ColumnValCode).ToList().ForEach(x => x.EntityState = State.Deleted);
+            //                   }
+            //               }
+
+            //               foreach (string str in arrColumnsValueCode)
+            //               {
+            //                   if (str != "" && str != "0" && str != " ")
+            //                   {
+            //                       Map_Extended_Columns_Details objMECD;
+
+            //                       objMECD = objMEc.Map_Extended_Columns_Details.Where(p => p.Columns_Value_Code == Convert.ToInt32(str) && p.EntityState != State.Added).FirstOrDefault();
+            //                       if (objMECD != null)
+            //                       {
+            //                           if (hdnType == "D")
+            //                               objMECD.EntityState = State.Deleted;
+            //                           else
+            //                               objMECD.EntityState = State.Modified;
+
+            //                           objMECD.Columns_Value_Code = Convert.ToInt32(str);
+            //                       }
+            //                       else
+            //                       {
+            //                           objMECD = objMEc.Map_Extended_Columns_Details.Where(p => p.Columns_Value_Code == Convert.ToInt32(str) && p.EntityState == State.Added).FirstOrDefault();
+            //                           if (objMECD == null)
+            //                           {
+            //                               if ((hdnRefTable.Trim().ToUpper() == "TITLE" || hdnRefTable.Trim().ToUpper() == "") && hdnIsMultipleSelect.Trim().ToUpper() == "N")
+            //                               {
+            //                                   if (hdnControlType.Trim().ToUpper() != "TXT")
+            //                                   {
+            //                                       objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+            //                                       objMEc.Columns_Code = ColumnCode;
+            //                                       objMEc.Column_Value = "";
+            //                                   }
+            //                                   else
+            //                                   {
+            //                                       objMEc.Columns_Value_Code = null;
+            //                                       objMEc.Column_Value = hdnExtendedColumnValue;
+            //                                   }
+            //                                   objMEc.EntityState = State.Modified;
+            //                                   if (objMEc.Map_Extended_Columns_Details.Count > 0)
+            //                                   {
+            //                                       foreach (Map_Extended_Columns_Details objMECD_inner in objMEc.Map_Extended_Columns_Details)
+            //                                       {
+            //                                           objMECD_inner.EntityState = State.Deleted;
+            //                                       }
+            //                                   }
+            //                               }
+            //                               else
+            //                               {
+            //                                   objMECD = new Map_Extended_Columns_Details();
+            //                                   objMECD.Columns_Value_Code = Convert.ToInt32(str);
+
+            //                                   int MapExtCode;
+            //                                   if (objMEc.Map_Extended_Columns_Details.Count > 0)
+            //                                   {
+            //                                       //MapExtCode =(int) objMEc.Map_Extended_Columns_Details.Select(x => x.Map_Extended_Columns_Code).Distinct().SingleOrDefault();
+            //                                       if (hdnMEColumnCode != "")
+            //                                           objMECD.Map_Extended_Columns_Code = Convert.ToInt32(hdnMEColumnCode);
+            //                                   }
+            //                                   else
+            //                                   {
+            //                                       objMECD.Map_Extended_Columns_Code = null;
+            //                                   }
+            //                                   if (hdnType == "D")
+            //                                   {
+            //                                       objMECD.EntityState = State.Deleted;
+            //                                   }
+            //                                   else
+            //                                       objMECD.EntityState = State.Added;
+            //                                   objMEc.Map_Extended_Columns_Details.Add(objMECD);
+            //                               }
+            //                           }
+            //                       }
+            //                   }
+            //               }
+            //               if (hdnControlType.Trim().ToUpper() == "TXT")
+            //               {
+            //                   objMEc.Columns_Value_Code = null;
+            //                   objMEc.Column_Value = hdnExtendedColumnValue;
+            //                   objMEc.Columns_Code = Convert.ToInt32(hdnExtendedColumnsCode);
+            //               }
+            //               if (hdnType == "D")
+            //               {
+            //                   USP_Bind_Extend_Column_Grid_Result objDeleteUBECD = gvExtended.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
+            //                   //gvExtended.Remove(objDeleteUBECD);
+            //                   try
+            //                   {
+
+            //                       int code = Convert.ToInt32(objDeleteUBECD.Map_Extended_Columns_Code);
+            //                       if (code > 0)
+            //                       {
+            //                           lstDBExtendedColumns.ForEach(t => { if (t.Map_Extended_Columns_Code == code) t.EntityState = State.Deleted; });
+            //                       }
+            //                   }
+            //                   catch { }
+            //               }
+            //           }
+            //           else
+            //               Message = "Cannot delete talent as already referenced in deal";
+            //       }
+            //       else
+            //       {
+
+            //           //objMEc = lstDBExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode && y.EntityState == State.Added).FirstOrDefault();
+            //           //if (objMEc == null)
+            //           //{
+            //           objMEc = lstAddedExtendedColumns.Where(y => y.Columns_Code == OldColumnCode).FirstOrDefault();
+            //           objMEc.Columns_Code = ColumnCode;
+            //           if (hdnColumnValueCode.Split(',').Count() <= 0)
+            //               objMEc.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+
+
+            //           if (objMEc.Map_Extended_Columns_Details.Count > 0)
+            //           {
+            //               if (arrColumnsValueCode.Length < 1)
+            //               {
+            //                   foreach (Map_Extended_Columns_Details objMECD in objMEc.Map_Extended_Columns_Details)
+            //                   {
+            //                       objMECD.Columns_Value_Code = 0;
+            //                   }
+            //               }
+            //               else
+            //               {
+            //                   foreach (string str in arrColumnsValueCode)
+            //                   {
+            //                       int ColumnValueCode = Convert.ToInt32(str);
+            //                       Map_Extended_Columns_Details objMECD = objMEc.Map_Extended_Columns_Details.Where(x => x.Columns_Value_Code == ColumnValueCode).FirstOrDefault();
+
+            //                       if (objMECD == null)
+            //                       {
+            //                           objMECD = new Map_Extended_Columns_Details();
+            //                           objMECD.Columns_Value_Code = Convert.ToInt32(str);
+            //                           objMEc.Map_Extended_Columns_Details.Add(objMECD);
+            //                       }
+            //                   }
+            //               }
+            //           }
+
+            //           if (hdnType == "D")
+            //           {
+            //               lstAddedExtendedColumns.Remove(objMEc);
+            //           }
+            //       }
+            //       //}
+            //   }
+            //   catch
+            //   {
+            //       objMEc = lstAddedExtendedColumns.Where(y => y.Map_Extended_Columns_Code == MapExtendedColumnCode).FirstOrDefault();
+            //       if (objMEc != null)
+            //       {
+            //           if (hdnType == "D")
+            //               objMEc.EntityState = State.Deleted;
+            //           else
+            //               objMEc.EntityState = State.Modified;
+            //       }
+            //   }
+
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+
+            obj.Add("ErrorCode", "100");
+            obj.Add("ErrorMsg", "Deal Deleted successfully");
+
+            return Json(obj);
+        }
+
+        public ActionResult AddEditEpisodeData(Title_Episode_Details objTED, string CommandName)
+        {
+            //Title_Episode_Details objTED_Edit = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+
+            List<Title_Episode_Details> listTitleEpisodeDetail = new List<Title_Episode_Details>();
+            listTitleEpisodeDetail = lstEpisodeDetails.Where(w => w.Title_Code == objTED.Title_Code).ToList();
+            string TDBind = "";
+            foreach (Title_Episode_Details objTEDlst in listTitleEpisodeDetail.Where(w => w.EntityState != State.Deleted))
+            {
+                string status = "";
+                if (objTEDlst.Status == "P")
+                {
+                    status = "Pending";
+                }
+                if (objTEDlst.Status == "C")
+                {
+                    status = "Complete";
+                }
+                if (objTEDlst.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code && CommandName == "EDIT")
+                {
+                    TDBind = TDBind + "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" value = \"" + objTEDlst.Episode_Nos + "\" />  <input type=\"hidden\" id=\"hdnTitleEpsDetailCode\" value=\"" + objTEDlst.Title_Episode_Detail_Code + "\" />  <input type=\"hidden\" id=\"hdnTitleCode\" value=\"" + objTEDlst.Title_Code + "\" />  </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"" + objTEDlst.Remarks + "\"  /> </td> <td> <input type=\"hidden\" id=\"EpsStatus\" value=\"" + objTEDlst.Status + "\" /> " + status + "</td> <td> <a class=\"glyphicon glyphicon-ok-circle\" title=\"Save\" onclick=\"PostEpisodeDetails()\"></a> <a class=\"glyphicon glyphicon-remove-circle\" title=\"Close\" onclick=\"EditEpisodeDetails('', '')\" > </a> </td> </tr>";
+                }
+                else
+                {
+                    if (objTEDlst.Status == "C")
+                    {
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td> <a class=\"glyphicon glyphicon-eye-open\" title=\"View Title Contents\" onclick=\"ViewTitleEpisodeDetailsTC('" + objTEDlst.Title_Episode_Detail_Code + "')\"></a> </td></tr>";
+                    }
+                    else
+                    {
+                        TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTEDlst.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTEDlst.Remarks + "</span></td><td>" + status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', 'EDIT')\"></a> <a class=\"glyphicon glyphicon-trash\" title=\"Delete\" onclick=\"DeleteEpisodeDetails(" + objTEDlst.Title_Episode_Detail_Code + ")\"></a> </td></tr>";
+                        //<a class=\"glyphicon glyphicon-arrow-up\" title=\"Proceed\" onclick=\"ProceedEpisodeDetails('" + objTEDlst.Title_Episode_Detail_Code + "', '" + objTEDlst.Episode_Nos + "', '" + objTEDlst.Remarks + "', '" + objTEDlst.Title_Code + "')\"></a>
+                    }
+                }
+            }
+            if (CommandName == "ADD")
+            {
+                TDBind = TDBind + "<tr id=\"trGrid_EpisodeNum\" data-configitem=\"1\"> <td> <input type=\"text\" id=\"txtEpisodeNumber\" />  <input type=\"hidden\" id=\"hdnTitleEpsDetailCode\" value=\"0\" />  <input type=\"hidden\" id=\"hdnTitleCode\" value=\"" + objTitle.Title_Code + "\" />  </td> <td> <input type=\"text\" id=\"txtRemark\" style=\"width:100%\"  value = \"\"  /> </td> <td> <input type=\"hidden\" id=\"EpsStatus\" value=\"\" /> </td> <td> <a class=\"glyphicon glyphicon-ok-circle\" title=\"Save\" onclick=\"PostEpisodeDetails()\"></a> <a class=\"glyphicon glyphicon-remove-circle\" title=\"Close\" onclick=\"EditEpisodeDetails('', '')\" > </a> </td> </tr>";
+            }
+
+            return Json(TDBind);
+        }
+
+        public ActionResult ViewEpisodeData(int TitleCode)
+        {
+            List<Title_Episode_Details> listTitleEpisodeDetail = new List<Title_Episode_Details>();
+            listTitleEpisodeDetail = lstEpisodeDetails.Where(w => w.Title_Code == TitleCode).ToList();
+            string TDBind = "";
+            foreach (Title_Episode_Details objTED in listTitleEpisodeDetail)
+            {
+                string status = "";
+                if (objTED.Status == "P")
+                {
+                    status = "Pending";
+                }
+                if (objTED.Status == "C")
+                {
+                    status = "Complete";
+                }
+                if (objTED.Status == "C")
+                {
+                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + status + "</td><td> <a class=\"glyphicon glyphicon-eye-open\" title=\"View Title Contents\" onclick=\"ViewTitleEpisodeDetailsTC('" + objTED.Title_Episode_Detail_Code + "')\"></a> </td></tr>";
+                }
+                else
+                {
+                    TDBind = TDBind + "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + status + "</td></tr>";
+                }
+            }
+            return Json(TDBind);
+        }
+
+        public ActionResult SaveEpisodeData(Title_Episode_Details objTED)
+        {
+            if (objTED.Title_Episode_Detail_Code == 0)
+            {
+                if (lstEpisodeDetails.Count == 0)
+                {
+                    objTED.Title_Episode_Detail_Code = -1;
+                    objTED.Status = "P";
+                    objTED.EntityState = State.Added;
+                    lstEpisodeDetails.Add(objTED);
+                }
+                else
+                {
+                    objTED.Title_Episode_Detail_Code = Convert.ToInt32(Session["tempTED_Code"]) - 1;
+                    objTED.Status = "P";
+                    objTED.EntityState = State.Added;
+                    lstEpisodeDetails.Add(objTED);
+                }
+                Session["tempTED_Code"] = objTED.Title_Episode_Detail_Code;
+                objTED.Inserted_By = objLoginUser.Users_Code;
+                objTED.Inserted_On = DateTime.Now;
+            }
+            else
+            {
+                if (objTED.Title_Episode_Detail_Code > 0)
+                {
+                    Title_Episode_Details objTED_DB = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+                    objTED_DB.Episode_Nos = objTED.Episode_Nos;
+                    objTED_DB.Remarks = objTED.Remarks;
+                    objTED_DB.Status = objTED.Status;
+                    objTED_DB.EntityState = State.Modified;
+                }
+                if (objTED.Title_Episode_Detail_Code < 0)
+                {
+                    Title_Episode_Details objTED_Sess = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == objTED.Title_Episode_Detail_Code).FirstOrDefault();
+                    objTED_Sess.Episode_Nos = objTED.Episode_Nos;
+                    objTED_Sess.Remarks = objTED.Remarks;
+                    objTED_Sess.Status = objTED.Status;
+                    objTED_Sess.EntityState = State.Added;
+                    objTED.Inserted_By = objLoginUser.Users_Code;
+                    objTED.Inserted_On = DateTime.Now;
+                }
+            }
+
+            //string TDBind = "<tr><td><span id=\"spnEpisodeNumber\">" + objTED.Episode_Nos + "</span></td><td><span id=\"spnEpisodeRemark\">" + objTED.Remarks + "</span></td><td>" + objTED.Status + "</td><td><a class=\"glyphicon glyphicon-pencil\" title=\"Edit\" onclick=\"EditEpisodeDetails('" + objTED.Title_Episode_Detail_Code + "', 'EDIT')\"></a></td></tr>";
+
+            var EpsSaveObj = new
+            {
+                status = "S",
+                message = "Episode data saved successfully"
+            };
+
+            return Json(EpsSaveObj);
+        }
+
+        public ActionResult ProceedEpisodeDetail(Title_Episode_Details objTED)
+        {
+            //Call procedure
+            //return Json("Episode details sent for auto data generation");
+            return Json("");
+        }
+
+        public ActionResult DeleteEpisodeDetails(int TitleEpisodeDetailCode)
+        {
+            string status = "S";
+            string message = "";
+
+            Title_Episode_Details ObjDeleteEpsDetails = lstEpisodeDetails.Where(w => w.Title_Episode_Detail_Code == TitleEpisodeDetailCode).FirstOrDefault();
+            if (ObjDeleteEpsDetails != null)
+            {
+                if (ObjDeleteEpsDetails.Title_Episode_Detail_Code < 0)
+                {
+                    lstEpisodeDetails.Remove(ObjDeleteEpsDetails);
+                }
+                else if (ObjDeleteEpsDetails.Title_Episode_Detail_Code > 0)
+                {
+                    ObjDeleteEpsDetails.EntityState = State.Deleted;
+                }
+            }
+            else
+            {
+                status = "E";
+                message = objMessageKey.FileNotFound;
+            }
+
+            var obj = new
+            {
+                status,
+                message
+            };
+
+            return Json(obj);
+        }
+
+        public RightsU_Entities.Title DBSaveEpisodeDetails(RightsU_Entities.Title objTitle)
+        {
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+            int DealTypeIncluded = lstShowCode.Where(w => w == objTitle.Deal_Type_Code.ToString()).Count();
+
+            if (DealTypeIncluded == 1)
+            {
+                foreach (Title_Episode_Details objTEDSess in lstEpisodeDetails)
+                {
+                    if (objTEDSess.Title_Episode_Detail_Code > 0)
+                    {
+                        Title_Episode_Details objTEDdbSave = new Title_Episode_Details();
+                        if (objTEDSess.EntityState == State.Modified)
+                        {
+                            objTEDdbSave = objTitle.Title_Episode_Details.Where(w => w.Title_Episode_Detail_Code == objTEDSess.Title_Episode_Detail_Code).FirstOrDefault();
+                            objTEDdbSave.Episode_Nos = objTEDSess.Episode_Nos;
+                            objTEDdbSave.Remarks = objTEDSess.Remarks;
+                            objTEDdbSave.Status = objTEDSess.Status;
+                        }
+                        if (objTEDSess.EntityState == State.Deleted)
+                        {
+                            objTEDdbSave = objTitle.Title_Episode_Details.Where(w => w.Title_Episode_Detail_Code == objTEDSess.Title_Episode_Detail_Code).FirstOrDefault();
+                            objTEDdbSave.EntityState = objTEDSess.EntityState;
+                        }
+                    }
+
+                    if (objTEDSess.Title_Episode_Detail_Code < 0 || objTEDSess.Title_Episode_Detail_Code == 0)
+                    {
+                        if (objTEDSess.EntityState == State.Added)
+                        {
+                            objTitle.Title_Episode_Details.Add(objTEDSess);
+                        }
+                    }
+                }
+            }
+            return objTitle;
+        }
+
+        #region 
+
+        public ActionResult ViewTitleEpisodeDetailsTC(int TitleEpisodeDetailCode, string CurrentTitleURL)
+        {
+            Title_Episode_Details_TC_Service objTEDTCservice = new Title_Episode_Details_TC_Service(objLoginEntity.ConnectionStringName);
+            List<Title_Episode_Details_TC> lstEpisodeContent = new List<Title_Episode_Details_TC>();
+            lstEpisodeContent = objTEDTCservice.SearchFor(s => true).Where(w => w.Title_Episode_Detail_Code == TitleEpisodeDetailCode).ToList();
+            //RightsU_Entities.Title objTitle = new RightsU_Entities.Title();
+            string TitleName = new Title_Episode_Details_Service(objLoginEntity.ConnectionStringName).GetById(TitleEpisodeDetailCode).Title.Title_Name;
+            //return RedirectToAction("SearchProgram", "Title_Content", new { searchText = "Wandering Minds", episodeFrom = 0, episodeTo = 0 });
+            TempData["IsSearchFromTitle"] = "Y";
+            Session["SearchTitleInTitleContent"] = TitleName;
+            Session["CurrentTitleURL"] = CurrentTitleURL;
+            return Json(TitleName);
+        }
+
+        #endregion
+
+        public string ValidateDuplicate(string Value_list, string Short_Name, string Operation, int Row_No, string rwIndex, int Title_Code = 0)
+        {
+            string isDuplicate = "";
+            Extended_Group objExtGrp = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.Add_Edit_Type == "grid" && x.Short_Name == Short_Name).FirstOrDefault();
+            List<Extended_Group_Config> lstExtGrpCfgWithDuplicateVal = new List<Extended_Group_Config>();
+            List<USP_Bind_Extend_Column_Grid_Result> lstOfRecordsToCheckDuplicateFor = new List<USP_Bind_Extend_Column_Grid_Result>();
+
+            foreach (Extended_Group_Config objExtGrpCfg in objExtGrp.Extended_Group_Config)
+            {
+                if (objExtGrpCfg.Validations != null && objExtGrpCfg.Validations.Contains("dup"))
+                {
+                    lstExtGrpCfgWithDuplicateVal.Add(objExtGrpCfg);
+                }
+            }
+            //Total fields with duplication validation in a group. Group wise duplication check.
+            int totalFieldsToCheckDuplicate = lstExtGrpCfgWithDuplicateVal.Count();
+
+            if (totalFieldsToCheckDuplicate == 0)
+            {
+                return isDuplicate;
+            }
+
+            var Value = "";
+            Value_list = Value_list.Substring(0, Value_list.Length - 2);
+            string[] columnValueList = Value_list.Split(new string[] { "¿ï" }, StringSplitOptions.None);
+            foreach (string str in columnValueList)
+            {
+                string[] vals = str.Split(new string[] { "ï¿" }, StringSplitOptions.None);
+                //string[] arrColumnsValueCode = null;
+                Value = vals[0];
+                int Columns_Code = Convert.ToInt32(vals[1]);
+                Extended_Columns ExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == Columns_Code).FirstOrDefault();
+                int checkDuplicateCount = lstExtGrpCfgWithDuplicateVal.Where(w => w.Columns_Code == Columns_Code).Count();
+
+                if (checkDuplicateCount > 0)
+                {
+                    if (ExtendedColumns.Control_Type == "DDL")
+                    {
+                        if (vals[0] != null && vals[0] != "")
+                        {
+                            if (ExtendedColumns.Is_Multiple_Select.Trim().ToUpper() == "Y")
+                            {
+                                var MultiSelectColumnsValueCode = vals[0].Replace('-', ',');
+                                string[] MultiSelectValuesArray = MultiSelectColumnsValueCode.Split(',');
+
+                                foreach (string SelectedVal in MultiSelectValuesArray)
+                                {
+                                    int Duplicate = gvExtended.Where(w => w.Columns_Code == Columns_Code && w.Columns_Value_Code1 != null && w.Columns_Value_Code1.Contains(SelectedVal) && w.Row_No != Row_No).Count();
+                                    if (Duplicate > 0)
+                                    {
+                                        isDuplicate = "Y";
+                                        return isDuplicate;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var SingleSelectColumnsValueCode = vals[0];
+                                int Duplicate = gvExtended.Where(w => w.Columns_Value_Code == Convert.ToInt32(SingleSelectColumnsValueCode) && w.Row_No != Row_No).Count();
+                                if (Duplicate > 0)
+                                {
+                                    isDuplicate = "Y";
+                                    return isDuplicate;
+                                }
+                            }
+                        }
+                    }
+                    if (ExtendedColumns.Control_Type == "TXT" || ExtendedColumns.Control_Type == "INT" || ExtendedColumns.Control_Type == "DBL" || ExtendedColumns.Control_Type == "DATE" || ExtendedColumns.Control_Type == "CHK")
+                    {
+                        //var SingleValueField = vals[0];
+                        //int Duplicate = gvExtended.Where(w => w.Name == SingleValueField && w.Row_No != Row_No).Count();
+                        //if (Duplicate > 0)
+                        //{
+                        //    isDuplicate = "Y";
+                        //    return isDuplicate;
+                        //}
+                        USP_Bind_Extend_Column_Grid_Result objToCheckDuplicate = new USP_Bind_Extend_Column_Grid_Result();
+                        objToCheckDuplicate.Column_Value = vals[0];
+                        objToCheckDuplicate.Name = vals[0];
+                        objToCheckDuplicate.Columns_Code = Convert.ToInt32(vals[1]);
+                        lstOfRecordsToCheckDuplicateFor.Add(objToCheckDuplicate);
+                    }
+                }
+            }
+            //check duplicate for objects added in List with gvExtended
+            var GroupedByRowNum = gvExtended.GroupBy(g => g.Row_No).ToList();
+            foreach (var SingleGroup in GroupedByRowNum)
+            {
+                int IsDuplicateCount = SingleGroup.Where(w => lstOfRecordsToCheckDuplicateFor.Any(a => a.Columns_Code == w.Columns_Code && (a.Column_Value == w.Column_Value || a.Name == w.Name) && w.Row_No != Row_No)).Count();
+                if (IsDuplicateCount >= totalFieldsToCheckDuplicate)
+                {
+                    isDuplicate = "Y";
+                }
+            }
+
+            return isDuplicate;
+        }
+
+        public ActionResult ProgramShowList()
+        {
+            System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+            List<string> lstShowCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+
+            return Json(lstShowCode, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
     }
 }

@@ -561,7 +561,7 @@ namespace RightsU_Plus.Controllers
             if (isLocked)
             {
 
-                string errorMessage = objUSP_Service.USP_Validate_Rollback(Syn_Deal_Code, "S").ElementAt(0).ToString();
+                string errorMessage = objUSP_Service.USP_Validate_Rollback(Syn_Deal_Code, "S", objLoginUser.Users_Code).ElementAt(0).ToString();
                 if (errorMessage.Trim().Equals(""))
                 {
                     //ObjectResult<USP_RollBack_Syn_Deal_Result> objObjectResult = (new USP_Service(objLoginEntity.ConnectionStringName)).USP_RollBack_Syn_Deal(Syn_Deal_Code, objLoginUser.Users_Code);
@@ -1128,7 +1128,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.Button_Visibility = Button_Visibility;
             ViewBag.Deal_Type_Code = Syn_Deal_obj.Deal_Type_Code;
             ViewBag.Agreement_No = Syn_Deal_obj.Agreement_No;
-            ViewBag.Type = "S";
+            ViewBag.Type = "Syn_List";
             return PartialView("~/Views/Shared/_ActionButton.cshtml");
         }
 

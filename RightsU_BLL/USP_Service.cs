@@ -789,11 +789,11 @@ namespace RightsU_BLL
             return objUSPDAL.USP_DM_Title_PI(LstTitle_Import_UDT, User_Code);
         }
         public IEnumerable<USP_Title_Import_Utility_PI> USP_Title_Import_Utility_PI(
-        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code
+        List<Title_Import_Utility_UDT> LstTitle_Import_Utility_UDT, string CallFor, int User_Code, int DM_Master_Import_Code, string TitleType
           )
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code);
+            return objUSPDAL.USP_Title_Import_Utility_PI(LstTitle_Import_Utility_UDT, CallFor, User_Code, DM_Master_Import_Code, TitleType);
         }
         public IEnumerable<USP_Validate_Title_Objection_Dup> USP_Validate_Title_Objection_Dup(List<Title_Objection_UDT> LstTitle_Objection_UDT, int User_Code)
         {
@@ -821,10 +821,10 @@ namespace RightsU_BLL
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Syn_Termination_UDT(lstTermination_Deals_UDT, loginUserCode);
         }
-        public virtual ObjectResult<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string ExactMatch = "")
+        public virtual ObjectResult<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string ExactMatch = "", string movieAlbumType = "")
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_List_Music_Title(musicTitleName, sysLanguageCode, pageNo, recordCount, isPaging, pageSize, starCastCode, languageCode, albumCode, genresCode, musicLabelCode, yearOfRelease, singerCode, composerCode, lyricistCode, musicNameText, themeCode, musicTag, publicDomain, ExactMatch);
+            return objUSPDAL.USP_List_Music_Title(musicTitleName, sysLanguageCode, pageNo, recordCount, isPaging, pageSize, starCastCode, languageCode, albumCode, genresCode, musicLabelCode, yearOfRelease, singerCode, composerCode, lyricistCode, musicNameText, themeCode, musicTag, publicDomain, ExactMatch, movieAlbumType);
         }
         //public virtual ObjectResult<USP_Get_Title_Avail_Language_Data_Result> USP_Get_Title_Avail_Language_Data(string mode, Nullable<int> userCode, string strCriteria, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, string visibility, string Report_Name, string Right_Level)
         //{
@@ -1233,10 +1233,10 @@ namespace RightsU_BLL
             return objUSPDAL.USP_Multi_Music_Schedule_Process(LstMusic_Content_Assignment_UDT);
         }
 
-        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type)
+        public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type, int Users_Code)
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
-            return objUSPDAL.USP_Validate_Rollback(deal_Code, type);
+            return objUSPDAL.USP_Validate_Rollback(deal_Code, type, Users_Code);
         }
         public virtual void USP_BV_Title_Mapping_Shows(string BV_HouseId_Data_Code)
         {
@@ -1778,6 +1778,109 @@ namespace RightsU_BLL
         {
             USP_DAL objUSPDAL = new USP_DAL(conStr);
             return objUSPDAL.USP_Delete_Acq_Digital_Result(DigitalCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingSheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetReCommendationList();
+        }
+
+        public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(int? TitleCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_Title_Content_Gen_From_Title(TitleCode);
+        }
+
+        public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(int? extendedColumnsCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPGet_DDLValues_For_ExtendedColumns(extendedColumnsCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, int? loadsheetCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetBookingsheetDataForLoadsheet(loadsheetMonth, loadsheetCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetLoadsheetList();
+        }
+
+        public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetPurchaseOrderList(usersCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingListMovies(client, cycle, aL_Lab_Code, distributor, display);
+        }
+
+        public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetDeliveryTrackingList(client, cycle, aL_Lab_Code, distributor, display, tabName, includeHoldover);
+        }
+
+        public void SaveDeliveryTrackingUDT(List<DeliveryTracking_UDT> LstDeliveryTracking_UDT)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            objUSPDAL.SaveDeliveryTrackingUDT(LstDeliveryTracking_UDT);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(int? loadsheetCode)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetRevisionHistoryForLoadsheet(loadsheetCode);
+        }
+
+        public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(int? record_Code, int? module_Code)
+        {
+            USP_DAL objUSPDAL = new USP_DAL(conStr);
+            return objUSPDAL.USPAL_GetRevisionHistoryForModule(record_Code, module_Code);
+        }
+
+        public virtual ObjectResult<USP_Syn_Deal_Digital_List_Result> USP_Syn_Deal_Digital_List(Nullable<int> syn_Deal_Code, string title_Code, int pageNo, int pagesize, ObjectParameter recordCount)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Syn_Deal_Digital_List(syn_Deal_Code, title_Code, pageNo, pagesize, recordCount);
+        }
+        public virtual ObjectResult<USP_Get_Title_For_Syn_Digital_Result> USP_Get_Title_For_Syn_Digital(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Get_Title_For_Syn_Digital(syn_Deal_Code, title_Code);
+        }
+        public virtual ObjectResult<USP_Syn_Deal_Digital_Details_Data_Result> USP_Syn_Deal_Digital_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Digital_Code, string view)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Syn_Deal_Digital_Details_Data(tabCode, syn_Deal_Digital_Code, view);
+        }
+        public virtual ObjectResult<USP_Get_Digital_Config_Result> USP_Get_Digital_Config(Nullable<int> digital_Tab_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Get_Digital_Config(digital_Tab_Code);
+        }
+        public virtual int USP_Delete_Syn_Digital(Nullable<int> digital_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Delete_Syn_Digital(digital_Code);
+        }
+        public virtual ObjectResult<USP_Title_PosterList_Result> USP_Title_PosterList(string Title_Code, string Title_language_Code, string Title_Star_Cast, string Title_Genre_Code, string Title_Type, string Poster_Status)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Title_PosterList(Title_Code, Title_language_Code, Title_Star_Cast, Title_Genre_Code, Title_Type, Poster_Status);
         }
     }
 }

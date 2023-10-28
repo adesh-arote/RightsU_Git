@@ -1,0 +1,44 @@
+﻿@*@{
+        Layout = "~/Views/Shared/_Layout.cshtml";
+    }*@
+
+<script>
+    $(document).ready(function() {
+        //$("#divAeroplay").load( "http://192.168.0.114/rightsopedia/#/login" );
+        //alert("RU User: " +@ViewBag.UsersCode);
+        var link = document.getElementById("objAeroplay");
+        link.setAttribute('data', 'http://192.168.0.114/aeroplay/#/welcome?UserCode=' +@ViewBag.UsersCode );
+      });
+
+    function ClosePopup() {
+        debugger;
+        $('#Aeroplaypopup').modal('hide');
+        $('#AeroplaypupupHtml').empty();
+    }
+
+</script>
+
+@*<div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="">
+                    <object class="dialog-object" type="text/html" data="http://192.168.0.114/rightsopedia/#/login" style="width:100% !important;height:100% !important"></object>
+                </div>
+            </div>
+        </section>
+    </div>*@
+<div class="modal_block modal_header">
+    <a class="close" onclick="ClosePopup()" style="margin-top: -10px ">
+        <span>X</span>
+        <span class="sr-only">Close</span>
+    </a>
+    
+</div>
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div id="divAeroplay">
+            <object class="dialog-object" id="objAeroplay" type="text/html" style="width:100% !important;height: 95vh !important"></object>
+        </div>
+    </section>
+</div>
+

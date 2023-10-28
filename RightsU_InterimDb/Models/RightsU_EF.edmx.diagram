@@ -1038,6 +1038,77 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Digital_Config_Digital_Tab" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Banner" Width="1.5" PointX="36.375" PointY="50.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group" Width="1.5" PointX="1.75" PointY="54.875" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Extended_Group_Config" Width="1.5" PointX="4" PointY="0.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details" Width="1.5" PointX="11.25" PointY="131" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Title_Episode_Details_TC" Width="1.5" PointX="16.5" PointY="123.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Title_Episode_Details_TC_Title_Episode_Details" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_OEM" Width="1.5" PointX="15.75" PointY="110.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Details" Width="1.5" PointX="15" PointY="131.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_OEM" Width="1.5" PointX="18" PointY="57.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Rule" Width="1.5" PointX="15" PointY="145.375" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_Rule_Criteria" Width="1.5" PointX="26.25" PointY="72.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Vendor_TnC" Width="1.5" PointX="15" PointY="142.875" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_OEM_AL_OEM" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_OEM_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_AL_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_TnC_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Vendor_Details_Extended_Group" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Lab" Width="1.5" PointX="47.375" PointY="21.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet" Width="1.5" PointX="35.5" PointY="89.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Booking_Sheet_Details" Width="1.5" PointX="37.75" PointY="84.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Group" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation" Width="1.5" PointX="30.875" PointY="95" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Recommendation_Content" Width="1.5" PointX="33.125" PointY="104.5" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Booking_Sheet_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Recommendation" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_AL_Vendor_Rule" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Recommendation_Content_Title_Content" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" Width="1.5" PointX="46.75" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet" Width="1.5" PointX="35.875" PointY="95.5" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Load_Sheet_Details" Width="1.5" PointX="38.125" PointY="91.25" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order" Width="1.5" PointX="21.125" PointY="113.375" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Load_Sheet_Details_AL_Load_Sheet" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking" Width="1.5" PointX="49.625" PointY="71.625" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" Width="1.5" PointX="51.875" PointY="91.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Booking_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Lab" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_Load_Sheet" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_Material_Tracking" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_OEM_AL_OEM" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Material_Tracking_AL_OEM" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order_Rel" Width="1.5" PointX="26.25" PointY="103" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.AL_Purchase_Order_Details" Width="1.5" PointX="23" PointY="90.125" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Title_Content" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_AL_Purchase_Order_Rel_AL_Purchase_Order_Details" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Music_Title_Title" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital" Width="1.5" PointX="37.875" PointY="77.125" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Digital_Detail" Width="1.5" PointX="40.125" PointY="77.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Syn_Deal" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -1,0 +1,214 @@
+﻿@model List<RightsU_Entities.USP_Title_PosterList_Result>
+@using UTOFrameWork.FrameworkClasses
+@using System.Configuration;
+@{
+    /**/
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    
+}
+<script>
+    $(document).ready(function () {
+        $("#imgTitle").on("click", function () {
+            debugger;
+            var trid = $(this).closest('tr').attr('id');
+            $("#uploadFile_" + trid).click();
+            
+        });
+
+
+
+        $('#chkAll').on("click", function () {
+            debugger;
+            var IsCheck = $(this).prop("checked");
+            $('.checkboxLst').prop('checked', IsCheck);
+
+            if ($('.checkboxLst:checked').length > 0) {
+                $("#EditableFields :input").prop("disabled", false);
+            }
+            else {
+                // ClearInputs();
+                $("#EditableFields :input").prop("disabled", true);
+            }
+        });
+
+        $('.checkbox').on("click", function () {
+            debugger;
+            if ($('.checkbox:checked').length == $('.checkbox').length) {
+                $('#chkAll').prop('checked', true);
+            } else {
+                $('#chkAll').prop('checked', false);
+            }
+            var closestTr = $(':checkbox:checked').closest('tr').attr('id');
+            //alert(closestTr);
+        });
+    });
+
+
+
+    $('input[type=image]').on("click", function () {
+        debugger;
+        alert($(this).parent('tr').attr('id'));
+
+    });
+
+    $('input[type=file]').on("click", function () {
+        debugger;
+        var trid = $(this).closest('tr').attr('id');
+        if ($("#chk_" + trid).prop('checked') == false) {
+            //alert("Please Select Checkbox First");
+            return false;
+        }
+    });
+
+    function CheckImage(TitleCode) {
+        debugger;
+        $("#uploadFile_" + TitleCode).click();
+    }
+
+
+    function fileCheck(obj, Title_code) {
+        debugger;
+        const fsize = obj.files[0].size;
+        const file = Math.round((fsize / 1024));
+        if (file >= Number($("#fileSize").val())) {
+            showAlert("E", "Please upload poster of size less than 2 MB.");
+            delete obj.files[0];
+            $("#uploadFile_" + Title_code).val("");
+            return false;
+        }
+
+        var fileExtension = ['jpeg', 'jpg', 'png', 'gif', 'bmp'];
+
+        if ($.inArray($(obj).val().split('.').pop().toLowerCase(), fileExtension) == -1) {
+            alert("Only '.jpeg','.jpg', '.png', '.gif', '.bmp' formats are allowed.");
+            return false;
+        }
+
+
+        if (obj.files && obj.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#imgTitle_' + Title_code).attr('src', e.target.result);
+            }
+            reader.readAsDataURL(obj.files[0]);
+        }
+
+        return true;
+    }
+</script>
+<style>
+    thead th {
+        background: #2b64a5;
+        color: #FFF;
+        z-index: 1;
+        position: sticky;
+        top: -5px;
+        height: 35px;
+    }
+</style>
+@{
+    int counter = 0;
+    <div id="AllsubmenuHide" dir=@objMessageKey.LayoutDirection>
+        <table class="table table-bordered table-hover" id="tblPosterList">
+            <thead>
+
+                <tr class="TableHeader">
+                    <th width="100px" style="width:1%; text-align:center"><input type="checkbox" id="chkAll" /></th>
+                    <th style="width:10%; text-align:center">Poster</th>
+                    <th style="width:30%;">Titles</th>
+                    <th style="width:18%;">Title Type</th>
+                    <th style="width:18%;">Title Language</th>
+                    <th style="width:25%;">Genre</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                @if (Model.Count() > 0)
+                {
+                    for (int item = 0; item < Model.Count(); item++)
+                    {
+                        counter += 1;
+                        <tr id="@Model[item].Title_Code">
+                            <td style="text-align:center !important;">
+                                <input type="checkbox" id="chk_@Model[item].Title_Code" class="checkbox checkboxLst" value="@Model[item].Title_Code" />
+                                @Html.Hidden("hdnCnt", Model[item].Title_Code, new { id = counter + "_hdnCnt" })
+                            </td>
+                            <td class="title_Posterlogo" style="text-align:center">
+                                @if (@Model[item].Title_Image != null && @Model[item].Title_Image.ToString().Trim(' ') != "")
+                                {
+                                    <div>
+                                        <a>
+                                            <img onclick="CheckImage(@Model[item].Title_Code)" id="imgTitle_@Model[item].Title_Code" src="@Url.Content(ConfigurationManager.AppSettings["TitleImagePath"] + @Model[item].Title_Image)" alt="Image" />
+                                        </a>
+                                        <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    @*<div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/movieIcon.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>*@
+                                    if (@Model[item].Deal_Type_Code == GlobalParams.Deal_Type_Music)
+                                    {
+                                        <div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/musicIcon.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>
+                                    }
+                                    else if (@Model[item].Deal_Type_Code == GlobalParams.Deal_Type_Content)
+                                    {
+                                        <div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/program.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>
+                                    }
+                                    else if (@Model[item].Deal_Type_Code == GlobalParams.Deal_Type_Format_Program || @Model[item].Deal_Type_Code == GlobalParams.Deal_Type_WebSeries)
+                                    {
+                                        <div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/formatShow.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>
+                                    }
+                                    else if (@Model[item].Deal_Type_Code == GlobalParams.Deal_Type_Event)
+                                    {
+                                        <div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/Event.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div>
+                                            <img id="imgTitle_@Model[item].Title_Code" src="~/Images/movieIcon.png" onclick="CheckImage(@Model[item].Title_Code)" alt="Image" />
+                                            <input type="file" class="uploadFile" id="uploadFile_@Model[item].Title_Code" name="uploadFile_@Model[item].Title_Code" onchange="fileCheck(this,@Model[item].Title_Code);" />
+                                        </div>
+                                    }
+                                }
+                                @Html.Hidden("hdnTitleCode", @Model[item].Title_Code, new { id = counter + "_hdnTitleCode" })
+                            </td>
+                            <td>
+                                @Model[item].Title_Name
+                            </td>
+                            <td>
+                                @Model[item].Deal_Type_Name
+                            </td>
+                            <td>
+                                @Model[item].Language_Name
+                            </td>
+                            <td>
+                                @Model[item].Genres_Name
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}

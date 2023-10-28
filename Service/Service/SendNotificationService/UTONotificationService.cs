@@ -59,8 +59,15 @@ namespace SendNotificationService
 
             WriteLog = ConfigurationSettings.AppSettings["WriteLog"];
             LogLevel = Convert.ToInt16(ConfigurationSettings.AppSettings["LogLevel"]);
-            if (Convert.ToBoolean(WriteLog)) { LogService("Service Started"); }
-            if (LogLevel > 3) LogError("Service Started");
+            if (Convert.ToBoolean(WriteLog))
+            {
+                //LogService("Service Started");
+                Error.WriteLog("Service Started", includeTime: true, addSeperater: true);
+            }
+            if (LogLevel > 3)
+            {
+                LogError("Service Started");
+            }
             StartTimer();
         }
 
@@ -85,21 +92,42 @@ namespace SendNotificationService
             StopTimer();
 
             string process = "Timer Tick " + count + DateTime.Now;
-            if (Convert.ToBoolean(WriteLog)) { LogService(process); }
-            if (LogLevel > 3) LogError(process);
+            if (Convert.ToBoolean(WriteLog))
+            {
+                //LogService(process);
+                Error.WriteLog_Conditional("STEP 1.1 : " + process + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+            }
+            if (LogLevel > 3)
+            {
+                LogError(process);
+            }
+
             count++;
 
             try
             {
-                if (Convert.ToBoolean(WriteLog)) { LogService("Running Notification started"); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Running Notification started");
+                    Error.WriteLog_Conditional("STEP 1.2 : Running Notification started - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+
+                }
                 if (LogLevel > 3) LogError("Running Notification started");
                 USPGetConfig objConfig = RunUSPGetConfigProcedure();
 
-                if (Convert.ToBoolean(WriteLog)) { LogService("After fetching config"); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("After fetching config");
+                    Error.WriteLog_Conditional("STEP 1.3 : After fetching config - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
 
                 List<USPGetPendingNotifications> lstNotifications = RunUSPGetPendingNotificationsProcedure();
 
-                if (Convert.ToBoolean(WriteLog)) { LogService("After Getting Pending List"); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("After Getting Pending List");
+                    Error.WriteLog_Conditional("STEP 1.4 : After Getting Pending List - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
 
                 RunNotifications(lstNotifications, objConfig);
 
@@ -110,7 +138,11 @@ namespace SendNotificationService
                 {
                     if (DateTime.Now.Minute < 5)
                     {
-                        if (Convert.ToBoolean(WriteLog)) { LogService("Running Archive started"); }
+                        if (Convert.ToBoolean(WriteLog))
+                        {
+                            //LogService("Running Archive started");
+                            Error.WriteLog_Conditional("STEP 1.5 : Running Archive started - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                        }
                         if (LogLevel > 3) LogError("Running Archive started");
                         int ArchiveDaysBefore = Convert.ToInt32(ConfigurationSettings.AppSettings["ArchiveDaysBefore"]);
                         RunUSPArchiveNotificationsProcedure(ArchiveDaysBefore);
@@ -120,12 +152,20 @@ namespace SendNotificationService
             }
             catch (Exception ex)
             {
-                if (Convert.ToBoolean(WriteLog)) { LogService(ex.Message + " " + ex.StackTrace); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService(ex.Message + " " + ex.StackTrace);
+                    Error.WriteLog_Conditional("STEP 1.6 :" + ex.Message + " " + ex.StackTrace + "- " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError(ex.Message + " " + ex.StackTrace);
                 throw;
             }
+            finally
+            {
+                StartTimer();
+            }
 
-            StartTimer();
+            //StartTimer();
         }
 
         public static USPGetConfig RunUSPGetConfigProcedure()
@@ -171,7 +211,11 @@ namespace SendNotificationService
                 myConn.Dispose();
 
                 SendErrorEmail("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPGetConfigProcedure");
-                if (Convert.ToBoolean(WriteLog)) { LogService("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException)); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
+                    Error.WriteLog_Conditional("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException) + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError("API : RunUSPGetConfigProcedure => " + Convert.ToString(ex.InnerException));
 
                 return new USPGetConfig();
@@ -230,7 +274,11 @@ namespace SendNotificationService
                 myConn.Close();
                 myConn.Dispose();
                 SendErrorEmail("API : RunUSPGetPendingNotificationsProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPGetPendingNotificationsProcedure");
-                if (Convert.ToBoolean(WriteLog)) { LogService("API : RunUSPGetPendingNotificationsProcedure => " + Convert.ToString(ex.InnerException)); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("API : RunUSPGetPendingNotificationsProcedure => " + Convert.ToString(ex.InnerException));
+                    Error.WriteLog_Conditional("API : RunUSPGetPendingNotificationsProcedure => " + Convert.ToString(ex.InnerException) + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError("API : RunUSPGetPendingNotificationsProcedure => " + Convert.ToString(ex.InnerException));
                 return new List<USPGetPendingNotifications>();
             }
@@ -244,14 +292,22 @@ namespace SendNotificationService
             String ResponseText;
             DateTime startTime;
 
-            if (Convert.ToBoolean(WriteLog)) { LogService("Inside Run Notifications"); }
+            if (Convert.ToBoolean(WriteLog))
+            {
+                //LogService("Inside Run Notifications");
+                Error.WriteLog_Conditional("Inside Run Notifications - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+            }
 
             foreach (USPGetPendingNotifications notification in notificationList)
             {
                 isSuccess = false; ResponseText = ""; TimeTaken = 0;
                 try
                 {
-                    if (Convert.ToBoolean(WriteLog)) { LogService("Sending Email"); }
+                    if (Convert.ToBoolean(WriteLog))
+                    {
+                        //LogService("Sending Email");
+                        Error.WriteLog_Conditional("Sending Email - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    }
 
                     SendMail objSendEmail = new SendMail();
                     objSendEmail.UserName = config.UserName;
@@ -274,7 +330,11 @@ namespace SendNotificationService
                     isSuccess = true;
                     ResponseText = "Message Sent Ok";
 
-                    if (Convert.ToBoolean(WriteLog)) { LogService("mail sent updating status in table"); }
+                    if (Convert.ToBoolean(WriteLog))
+                    {
+                        //LogService("mail sent updating status in table");
+                        Error.WriteLog_Conditional("mail sent updating status in table - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    }
 
                     RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 1, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, "");
 
@@ -287,12 +347,18 @@ namespace SendNotificationService
                         if (status == SmtpStatusCode.MailboxBusy ||
                             status == SmtpStatusCode.MailboxUnavailable)
                         {
-                            LogService("Delivery failed");
+                            //LogService("Delivery failed");
+                            Error.WriteLog_Conditional("Delivery failed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
                             ResponseText = "Delivery failed";
                         }
                         else
                         {
-                            if (Convert.ToBoolean(WriteLog)) { LogService("Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient); }
+                            if (Convert.ToBoolean(WriteLog))
+                            {
+                                //LogService("Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient);
+                                Error.WriteLog_Conditional("Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+
+                            }
                             ResponseText = "Failed to deliver message to {0}" + ex.InnerExceptions[i].FailedRecipient;
                         }
                     }
@@ -313,7 +379,11 @@ namespace SendNotificationService
                     }
                     ResponseText = "API : RunNotifications => " + error;
                     SendErrorEmail("API : RunNotifications => " + error, "Error on api : RunNotifications");
-                    if (Convert.ToBoolean(WriteLog)) { LogService("API : RunNotifications => " + error); }
+                    if (Convert.ToBoolean(WriteLog))
+                    {
+                        //LogService("API : RunNotifications => " + error);
+                        Error.WriteLog_Conditional("API : RunNotifications => " + error + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    }
                     RunUSPUpdateNotificationStatusProcedure(notification.NotificationsCode, isSuccess, 2, DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), 0, Convert.ToString(ex.InnerException));
                 }
 
@@ -335,10 +405,14 @@ namespace SendNotificationService
 
                 if (LogLevel > 3) LogService(logObj);
             }
-            if (Convert.ToBoolean(WriteLog)) { LogService("Running Notification completed"); }
+            if (Convert.ToBoolean(WriteLog))
+            {
+                //LogService("Running Notification completed");
+                Error.WriteLog_Conditional("Running Notification completed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+            }
         }
 
-        public static void SendErrorEmail(string Error, string Subject)
+        public static void SendErrorEmail(string Error_, string Subject)
         {
             try
             {
@@ -357,7 +431,7 @@ namespace SendNotificationService
                     + "<tr>        <td style='font-family: Helvetica;font-size:13px;padding-bottom: 10px;'>        "
                     + "Below error found on notification service        </td>       </tr>"
                     + "<tr>        <td style='font-family: Helvetica;font-size:13px;padding-bottom: 10px;'>        "
-                    + Error
+                    + Error_
                     + " </td>       </tr>       <tr>        <td style='font-family: Helvetica;font-size:13px;padding-bottom: 10px;padding-top: 10px;'>     "
                     + "    Thanks You,<br>             Notification – Admin        </td>       </tr>      </table>     </td>    </tr>   </table>  </body>  </html>";
 
@@ -377,7 +451,12 @@ namespace SendNotificationService
             }
             catch (Exception ex)
             {
-                if (Convert.ToBoolean(WriteLog)) { LogService("API : SendErrorEmail => " + Convert.ToString(ex.InnerException)); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    LogService("API : SendErrorEmail => " + Convert.ToString(ex.InnerException));
+                    Error.WriteLog_Conditional("Running Notification completed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                    //Error.WriteLog_Conditional("API : SendErrorEmail => " + Convert.ToString(ex.InnerException) + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError("API : SendErrorEmail => " + Convert.ToString(ex.InnerException));
             }
         }
@@ -387,7 +466,11 @@ namespace SendNotificationService
             myConn.ConnectionString = ConfigurationSettings.AppSettings["DefaultConnection"];
             myConn.Open();
 
-            if (Convert.ToBoolean(WriteLog)) { LogService("inside table update"); }
+            if (Convert.ToBoolean(WriteLog))
+            {
+                //LogService("inside table update");
+                Error.WriteLog_Conditional("inside table update - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+            }
 
             try
             {
@@ -422,7 +505,11 @@ namespace SendNotificationService
                 myConn.Dispose();
 
                 SendErrorEmail("API : RunUSPUpdateNotificationStatusProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPUpdateNotificationStatusProcedure");
-                if (Convert.ToBoolean(WriteLog)) { LogService("API : RunUSPUpdateNotificationStatusProcedure => " + Convert.ToString(ex.InnerException)); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    LogService("API : RunUSPUpdateNotificationStatusProcedure => " + Convert.ToString(ex.InnerException));
+                    Error.WriteLog_Conditional("API : RunUSPUpdateNotificationStatusProcedure => " + Convert.ToString(ex.InnerException) + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError("API : RunUSPUpdateNotificationStatusProcedure => " + Convert.ToString(ex.InnerException));
             }
         }
@@ -455,7 +542,11 @@ namespace SendNotificationService
                 myConn.Close();
                 myConn.Dispose();
 
-                if (Convert.ToBoolean(WriteLog)) { LogService("Running Archive completed"); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    //LogService("Running Archive completed");
+                    Error.WriteLog_Conditional("Running Archive completed - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
             }
             catch (Exception ex)
             {
@@ -463,7 +554,11 @@ namespace SendNotificationService
                 myConn.Dispose();
                 SendErrorEmail("API : RunUSPArchiveNotificationsProcedure => " + Convert.ToString(ex.InnerException), "Error on api : RunUSPArchiveNotificationsProcedure");
 
-                if (Convert.ToBoolean(WriteLog)) { LogService("API : RunUSPArchiveNotificationsProcedure => " + Convert.ToString(ex.InnerException)); }
+                if (Convert.ToBoolean(WriteLog))
+                {
+                    LogService("API : RunUSPArchiveNotificationsProcedure => " + Convert.ToString(ex.InnerException));
+                    Error.WriteLog_Conditional("API : RunUSPArchiveNotificationsProcedure => " + Convert.ToString(ex.InnerException) + " - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
+                }
                 if (LogLevel > 3) LogError("API : RunUSPArchiveNotificationsProcedure => " + Convert.ToString(ex.InnerException));
             }
         }
@@ -566,7 +661,8 @@ namespace SendNotificationService
             catch (Exception ex)
             {
                 request.Abort();
-                LogService("Not able to post to Log Service");
+                //LogService("Not able to post to Log Service");
+                Error.WriteLog_Conditional("Not able to post to Log Service - " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss"));
             }
 
             if (result != "")

@@ -372,7 +372,7 @@ namespace RightsU_Plus.Controllers
             objSyn_Deal_Rights.Region_Type = "I";
             objSyn_Deal_Rights.Sub_Type = "L";
             objSyn_Deal_Rights.Dub_Type = "L";
-            return View("~/Views/Syn_Deal/_Syn_Pushback.cshtml", objSyn_Deal_Rights);
+            return PartialView("~/Views/Syn_Deal/_Syn_Pushback.cshtml", objSyn_Deal_Rights);
         }
         #endregion
 

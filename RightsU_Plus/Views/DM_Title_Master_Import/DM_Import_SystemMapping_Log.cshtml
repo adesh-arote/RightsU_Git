@@ -86,7 +86,22 @@
                     {
                         Mapped_Name = new RightsU_BLL.Program_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Program_Code == code).Select(s => s.Program_Name).FirstOrDefault();
                     }
-
+                    else if (ViewBag.TabName == "BA")
+                    {
+                        Mapped_Name = new RightsU_BLL.Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Banner_Code == code).Select(s => s.Banner_Name).FirstOrDefault();
+                    }
+                    else if (ViewBag.TabName == "LA")
+                    {
+                        Mapped_Name = new RightsU_BLL.AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.AL_Lab_Code == code).Select(s => s.AL_Lab_Name).FirstOrDefault();
+                    }
+                    else if (ViewBag.TabName == "VE")
+                    {
+                        Mapped_Name = new RightsU_BLL.Version_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Version_Code == code).Select(s => s.Version_Name).FirstOrDefault();
+                    }
+                    else if (ViewBag.TabName == "MP")
+                    {
+                        Mapped_Name = new RightsU_BLL.Extended_Columns_Value_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Columns_Value_Code == code).Select(s => s.Columns_Value).FirstOrDefault();
+                    }
                     <tr>
                         <td>
                             <label id="lblName_@item.DM_Master_Log_Code">@item.Name</label>
@@ -134,6 +149,9 @@
             }
         </tbody>
     </table>
+    <div id="DataInputs">
+
+    </div>
 </div>
 <script>
 
@@ -142,7 +160,39 @@
         $('#divMapped_' + masterLogcode).hide();
         $('#divtxtMapped_' + masterLogcode).show();
       //$('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
-        $('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\',\'' + RoleName + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+        debugger;
+        if (tabname == "MP") {
+            var param = {
+                keyword: "",
+                tabName: tabname,
+                RoleName: RoleName
+            };
+
+            $.ajax({
+                url: URL_PopulateAutoCompleteData,
+                data: JSON.stringify(param),
+                dataType: "json",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                dataFilter: function (data) { return data; },
+                success: function (data) {
+                    if (data.length != 0) {
+
+                        $('#divtxtMapped_' + masterLogcode).append('<select id="txtSystemMappedName_' + masterLogcode + '" name="MappedName" class="txtMapped chosen-select" Placeholder="Please Select"> </select> <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+                        $.each(data, function () {
+                            debugger;
+                            $("#txtSystemMappedName_" + masterLogcode).append($("<option>").val(this.Mapping_Code).text(this.Mapping_Name));
+                        });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error" + textStatus);
+                }
+            });
+        }
+        else {
+            $('#divtxtMapped_' + masterLogcode).append('<input type="text" id="txtSystemMappedName_' + masterLogcode + '"  name="MappedName" class="txtMapped" onkeyup="PopulateAutoComplete(' + masterLogcode + ',\'' + tabname + '\',\'' + RoleName + '\')" > <a title = "Cancel" class= "glyphicon glyphicon-remove-circle" onclick = "Cancel(' + masterLogcode + ')" ></a >');
+        }
 
         initializeTooltip();
             //$('#divMapped_' + masterLogcode).empty();
@@ -232,6 +282,7 @@
             },
         });
     }
+
 </script>
 <style>
     .loader {

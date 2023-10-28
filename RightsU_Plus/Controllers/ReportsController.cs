@@ -3120,5 +3120,163 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
+
+        #region ---Music Availability Report----
+
+        public ActionResult MusicAvailabilityReport()
+        {
+            LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForAcqDealListReport);
+            ViewBag.MusicLabelList = GetMusicLabelList();
+
+            return View();
+        }
+
+        public SelectList GetMusicLabelList()
+        {
+            List<SelectListItem> list = new SelectList(new Music_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Select(i => new { Display_Value = i.Music_Label_Code, Display_Text = i.Music_Label_Name }).ToList().Distinct(), "Display_Value", "Display_Text").ToList();
+
+            return new SelectList(list, "Value", "Text");
+        }
+
+        public JsonResult BindTitleForMusicAvailReport(string keyword = "", string TitleType = "", string selectedMusicLabelCode = "")
+        {
+            dynamic result = "";
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                List<string> terms = keyword.Split('﹐').ToList();
+                terms = terms.Select(s => s.Trim()).ToList();
+                string searchString = terms.LastOrDefault().ToString().Trim();
+
+                List<string> lstTitleTypeCode = new List<string>();
+
+                if (TitleType == "M")
+                {
+                    System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                    lstTitleTypeCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+                else
+                {
+                    System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+                    lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+                
+                //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
+                //&& lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
+                //    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
+
+                if (!string.IsNullOrEmpty(selectedMusicLabelCode))
+                {
+                    int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
+                
+                    result =
+                        new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                        join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
+                                        on x.Title_Code equals y.Title_Code
+                                        join z in new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(y => y.Music_Label_Code == MusicLabelCode).ToList()
+                                        on y.Music_Title_Code equals z.Music_Title_Code
+                                        select new
+                                        {
+                                            x.Title_Name,
+                                            x.Title_Code
+                                        }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
+                }
+                else
+                {
+                    result =
+                        new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                        join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(y => true).ToList()
+                                        on x.Title_Code equals y.Title_Code
+                                        select new
+                                        {
+                                            x.Title_Name,
+                                            x.Title_Code
+                                        }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
+                }
+            }
+            return Json(result);
+        }
+
+        public JsonResult BindMusicTitleForMusicAvailReport(string keyword = "", string selectedMusicLabelCode = "", string selectedTitleCodes = "")
+        {
+            dynamic result = "";
+
+            List<string> terms = keyword.Split('﹐').ToList();
+            terms = terms.Select(s => s.Trim()).ToList();
+            string searchString = terms.LastOrDefault().ToString().Trim();
+
+            if (!string.IsNullOrEmpty(selectedMusicLabelCode) && !string.IsNullOrEmpty(selectedTitleCodes))
+            {
+                int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
+                List<string> lstTitleCodes = selectedTitleCodes.Split(',').ToList();
+                lstTitleCodes = lstTitleCodes.Select(s => s.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                int[] TitleCodes = lstTitleCodes.Select(int.Parse).ToArray();
+
+                result =
+                new SelectList((from x in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => TitleCodes.Contains(x.Title_Code ?? 0) && x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                join y in new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Code == MusicLabelCode).ToList()
+                                on x.Music_Title_Code equals y.Music_Title_Code
+                                select new
+                                {
+                                    x.Music_Title_Name,
+                                    x.Music_Title_Code
+                                }).Distinct(), "Music_Title_Code", "Music_Title_Name").OrderBy(x => x.Text).ToList();
+            }
+            else if (!string.IsNullOrEmpty(selectedMusicLabelCode) && string.IsNullOrEmpty(selectedTitleCodes))
+            {
+                int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
+
+                result =
+                new SelectList((from x in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                join y in new Music_Title_Label_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Label_Code == MusicLabelCode).ToList()
+                                on x.Music_Title_Code equals y.Music_Title_Code
+                                select new
+                                {
+                                    x.Music_Title_Name,
+                                    x.Music_Title_Code
+                                }).Distinct(), "Music_Title_Code", "Music_Title_Name").OrderBy(x => x.Text).ToList();
+            }
+            else if (!string.IsNullOrEmpty(selectedTitleCodes) && string.IsNullOrEmpty(selectedMusicLabelCode))
+            {
+                List<string> lstTitleCodes = selectedTitleCodes.Split(',').ToList();
+                lstTitleCodes = lstTitleCodes.Select(s => s.Trim()).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                int[] TitleCodes = lstTitleCodes.Select(int.Parse).ToArray();
+
+                result =
+                new SelectList((from x in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => TitleCodes.Contains(x.Title_Code ?? 0) && x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                select new
+                                {
+                                    x.Music_Title_Name,
+                                    x.Music_Title_Code
+                                }).Distinct(), "Music_Title_Code", "Music_Title_Name").OrderBy(x => x.Text).ToList();
+            }
+            else
+            {
+                result =
+                new SelectList((from x in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Music_Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                select new
+                                {
+                                    x.Music_Title_Name,
+                                    x.Music_Title_Code
+                                }).Distinct(), "Music_Title_Code", "Music_Title_Name").OrderBy(x => x.Text).ToList();
+            }
+
+            return Json(result);
+        }
+
+        public PartialViewResult BindMusicAvailExcelReport(string MusicLabelCode = "", string selectedTitleCodes = "", string selectedMusicTitleCodes = "", string TitleType = "")
+        {
+            ReportParameter[] parm = new ReportParameter[5];
+            parm[0] = new ReportParameter("Music_Label_Code", MusicLabelCode);
+            parm[1] = new ReportParameter("Title_Code", selectedTitleCodes);
+            parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
+            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
+            parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
+            ReportViewer rptViewer = BindReport(parm, "rptMusicAvailability");
+            ViewBag.ReportViewer = rptViewer;
+            return PartialView("~/Views/Shared/ReportViewer.cshtml");
+        }
+
+        #endregion
     }
 }

@@ -185,6 +185,16 @@ namespace RightsU_Plus.Controllers
         public JsonResult SearchProgram(string searchText, int episodeFrom, int episodeTo)
         {
             string Title_Content_Codes = "";
+            string ListSearchedFromTitle = "";
+            string TitleUrl = "";
+            if (TempData["IsSearchFromTitle"] != null)
+            {
+                searchText = Convert.ToString(Session["SearchTitleInTitleContent"]);
+                ViewBag.ListSearchedFromTitle = "Y";
+                TitleUrl = Convert.ToString(Session["CurrentTitleURL"]);
+                ListSearchedFromTitle = "Y";
+                TempData["BackToListTitle"] = "Y";
+            }
             if (objSearch.SearchText != null && objSearch.EpisodeFrom > 0 && objSearch.EpisodeTo > 0)
             {
                 if (searchText == "" && episodeFrom == 0 && episodeTo == 0)
@@ -229,6 +239,9 @@ namespace RightsU_Plus.Controllers
             Title_Content_Code = string.Join(",", lstContent.Select(s => s.Title_Content_Code));
             Dictionary<string, object> obj = new Dictionary<string, object>();
             obj.Add("Record_Count", lstContent.Count);
+            obj.Add("ListSearchedFromTitle", ListSearchedFromTitle);
+            obj.Add("TitleUrl", TitleUrl);
+            obj.Add("PopulateSearchBox", searchText);
             return Json(obj);
         }
 
@@ -548,9 +561,9 @@ namespace RightsU_Plus.Controllers
                 //foreach (Content_Music_Link objCML in lstContent_Music_Link)
                 foreach (Content_Music_Link objCML in lstContent_Music_Link_Searched)
                 {
-                   
-                   Title_Content_Version objTCV = new Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Version_Code == objCML.Version_Code && w.Title_Content_Code == objTC.Title_Content_Code).FirstOrDefault();
-                   
+
+                    Title_Content_Version objTCV = new Title_Content_Version_Service(objLoginEntity.ConnectionStringName).SearchFor(w => w.Version_Code == objCML.Version_Code && w.Title_Content_Code == objTC.Title_Content_Code).FirstOrDefault();
+
                     if (objTCV == null)
                     {
                         objTCV = new Title_Content_Version();
