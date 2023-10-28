@@ -42,6 +42,9 @@
     [Role_Code]                INT             NULL,
     [Deal_Segment_Code]        INT             NULL,
     [Revenue_Vertical_Code]    INT             NULL,
+    [Material_Remarks]         NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CONSTRAINT [PK_Syn_Deal] PRIMARY KEY CLUSTERED ([Syn_Deal_Code] ASC)
 );
+
+
 

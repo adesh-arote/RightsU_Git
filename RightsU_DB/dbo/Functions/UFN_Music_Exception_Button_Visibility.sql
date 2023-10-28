@@ -1,4 +1,5 @@
-﻿CREATE FUNCTION [dbo].[UFN_Music_Exception_Button_Visibility]
+﻿
+CREATE FUNCTION [dbo].[UFN_Music_Exception_Button_Visibility]
 (
 	--DECLARE
  	 @Music_Schedule_Transaction_Code INT=1193 
@@ -22,6 +23,8 @@ BEGIN
 	--	SELECT TOP 1 @dealTypeCode_Music = CAST(Parameter_Value AS INT) FROM System_Parameter_New WHERE Parameter_Name = 'Deal_Type_Music'
 
 	SELECT @UserSecCode = Security_Group_Code FROM Users WHERE Users_Code = @User_Code  
+	declare @Security_Group_Code INT, @Right_Code INT
+	select @Security_Group_Code = Security_Group_Code From Users where Users_Code = @User_Code
 
 	DECLARE @Module_Rights Table
 	(
@@ -34,7 +37,7 @@ BEGIN
 	SELECT DISTINCT sr.Right_Code, sr.Right_Name ,CASE WHEN ISNULL(sgr.Security_Group_Code,0)=0 THEN  'N' ELSE 'Y' END
 	FROM System_Module_Right smr 
 	INNER JOIN System_Right sr ON sr.Right_Code = smr.Right_Code
-	LEFT JOIN Security_Group_Rel sgr ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=1
+	LEFT JOIN Security_Group_Rel sgr ON smr.Module_Right_Code = sgr.System_Module_Rights_Code AND sgr.Security_Group_Code=@Security_Group_Code
 	WHERE SR.Right_Code IN (1, 2, 6, 7, 8, 10, 11, 12, 18, 71, 79, 88, 89, 116, 127, 130, 134, 135) AND smr.Module_Code=154  
 	ORDER BY SR.Right_Code
 	

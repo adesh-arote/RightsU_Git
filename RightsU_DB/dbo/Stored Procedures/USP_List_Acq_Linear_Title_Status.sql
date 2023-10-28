@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_List_Acq_Linear_Title_Status]
+﻿CREATE PROCEDURE [dbo].[USP_List_Acq_Linear_Title_Status]
 (
 	@Acq_Deal_Code INT
 )
@@ -12,7 +11,8 @@ AS
 
 BEGIN
 
-
+Declare @Loglavel int
+if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq_Linear_Title_Status]', 'Step 1', 0, 'Started Procedure', 0, ''
 	SET FMTONLY OFF;
 	SET NOCOUNT ON;
 	
@@ -160,7 +160,7 @@ BEGIN
 	DROP Table #Linear_Title_Status
 
 	--SELECT '' as Title_Name,'' as Title_Added, '' as Runs_Added
+	 
+if(@Loglavel < 2)Exec [USPLogSQLSteps] '[USP_List_Acq_Linear_Title_Status]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
-
---exec [USP_List_Acq_Linear_Title_Status] 15342
 

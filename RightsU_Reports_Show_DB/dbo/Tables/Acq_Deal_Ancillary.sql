@@ -4,9 +4,11 @@
     [Ancillary_Type_code]     INT             NULL,
     [Duration]                NUMERIC (5)     NULL,
     [Day]                     NUMERIC (4)     NULL,
-    [Remarks]                 NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [Remarks]                 NVARCHAR (4000) NULL,
     [Group_No]                INT             NULL,
-    [Catch_Up_From]           CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [Catch_Up_From]           CHAR (1)        NULL,
     CONSTRAINT [PK_Acq_Deal_Ancillary] PRIMARY KEY CLUSTERED ([Acq_Deal_Ancillary_Code] ASC)
 );
+
+
 

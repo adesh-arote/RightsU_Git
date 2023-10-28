@@ -174,7 +174,7 @@ BEGIN
 									Is_Title_Language, Sub_Language_Codes, Dub_Language_Codes, Episode_From, Episode_To, Is_Theatrical)
 		SELECT DISTINCT Acq_Deal_Code, Acq_Deal_Rights_Code, Start_Date, End_Date, Is_Exclusive, atd.Title_Code, Platform_Codes, Country_Codes, 
 			   Is_Title_Language, sl.Language_Codes AS Sub_Language_Codes, dl.Language_Codes AS Dub_Language_Codes, 1, 1, 0
-		FROM Avail_Title_Data atd
+		 FROM Avail_Title_Data atd
 		INNER JOIN Avail_Raw ar ON atd.Avail_Raw_Code =	 ar.Avail_Raw_Code
 		INNER JOIN Avail_Dates ad ON ar.Avail_Dates_Code = ad.Avail_Dates_Code
 		INNER JOIN Avail_Platforms ap ON atd.Avail_Platform_Code = ap.Avail_Platform_Code
@@ -185,8 +185,10 @@ BEGIN
 		
 		PRINT 'Final Step 7.1 - Calling [USPMaintainAvailData]'
 	
+		DELETE FROM #TempData WHERE ISNULL(End_Date, '31-DEC-9999') <= CAST(DATEADD(d, -1, GETDATE()) AS DATE)
+
 		DECLARE @EXECSQLAVAIL NVARCHAR(MAX) = N'
-		USE RightsU_Avail_Neo_V18
+		USE RightsU_Reports_Neo_Testing
 		
 		DECLARE @Avail_Data_UDT [Avail_Data_UDT]
 

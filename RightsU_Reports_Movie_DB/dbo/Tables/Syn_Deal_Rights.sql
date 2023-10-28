@@ -30,6 +30,9 @@
     [Is_Verified]             CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Original_Right_Type]     CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Promoter_Flag]           CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [CoExclusive_Remarks]     NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CONSTRAINT [PK_Syn_Deal_Rights_Code] PRIMARY KEY CLUSTERED ([Syn_Deal_Rights_Code] ASC)
 );
+
+
 

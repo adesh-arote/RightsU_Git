@@ -1,4 +1,4 @@
-﻿CREATE Function [dbo].[UFN_Get_Report_Territory](@Country_Codes Varchar(2000), @RowId Int)
+﻿CREATE FUNCtion [dbo].[UFN_Get_Report_Territory](@Country_Codes Varchar(2000), @RowId Int)
 Returns @Tbl_Ret TABLE (
 	Region_Code Int,
 	Cluster_Name NVarchar(MAX),
@@ -45,7 +45,7 @@ Begin
 			Select Country_Code From Country Where Is_Active = 'Y'
 		)
 	), 'N', ''
-	From Report_Territory trc1
+	From Report_Territory trc1 where Is_Active = 'Y'
 
 	Update @Temp_Territory Set In_Percent = Round((DB_Cnt * @InclPercent) / 100.0, 0)
 

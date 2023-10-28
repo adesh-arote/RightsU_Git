@@ -1,5 +1,4 @@
-﻿
-CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Main_Syndication]
+﻿CREATE PROC [dbo].[USP_MIGRATE_TO_NEW_Main_Syndication]
 (
 	@dBug CHAR(1)='N'
 )
@@ -10,6 +9,9 @@ AS
 -- Description: SP to migrate LOOP ON ALL Syn DEALS AND CAll Migrate SP
 -- =============================================
 BEGIN
+Declare @Loglevel int
+select @Loglevel = Parameter_Value from System_Parameter_New   where Parameter_Name='loglevel'
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Main_Syndication]', 'Step 1', 0, 'Started Procedure', 0, '' 
 	DECLARE @Syn_Deal_Code_Cur INT
 	DECLARE CUR_DEAL CURSOR
 	READ_ONLY
@@ -32,4 +34,6 @@ BEGIN
 	END
 	CLOSE CUR_DEAL
 	DEALLOCATE CUR_DEAL
+	 
+ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_MIGRATE_TO_NEW_Main_Syndication]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

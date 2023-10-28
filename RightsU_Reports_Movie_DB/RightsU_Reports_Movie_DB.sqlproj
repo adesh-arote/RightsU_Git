@@ -168,5 +168,16 @@
     <Build Include="dbo\Stored Procedures\USP_Theatrical_Availability_Report.sql" />
     <Build Include="dbo\Stored Procedures\USPGenerateAvailTitleData.sql" />
     <Build Include="dbo\User Defined Types\Avail_Data_UDT.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Type.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Territory.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Status.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Rights_Period.sql" />
+    <Build Include="dbo\Tables\Title_Objection_Platform.sql" />
+    <Build Include="dbo\Tables\Title_Objection.sql" />
+    <Build Include="dbo\Tables\TestParam.sql" />
+    <Build Include="dbo\Tables\Avail_Title_Data_SLN.sql" />
+    <Build Include="dbo\Tables\Avail_Title_Data_SL.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Show_Availability_Report_V3_IFTA.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Movie_Availability_L1Level.sql" />
   </ItemGroup>
 </Project>

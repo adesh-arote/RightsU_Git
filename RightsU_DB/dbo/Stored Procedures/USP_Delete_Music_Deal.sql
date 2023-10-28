@@ -9,6 +9,11 @@ AS
 -- Description:	DELETE Acq Deal Call From Acq Deal List Page
 -- =============================================
 BEGIN
+Declare @Loglevel int;
+
+select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Delete_Music_Deal]', 'Step 1', 0, 'Started Procedure', 0, ''
 	SET NOCOUNT ON
 	BEGIN TRY
 	BEGIN TRANSACTION;		
@@ -29,8 +34,6 @@ BEGIN
 		RAISERROR (@ErrorMessage, @ErrorSeverity, @ErrorState );		
 		SELECT 'ERROR' AS Result_Message
 	END CATCH;
+	
+if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Delete_Music_Deal]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
-/*
-EXEC [dbo].[USP_DELETE_Deal] 32, D
-
-*/

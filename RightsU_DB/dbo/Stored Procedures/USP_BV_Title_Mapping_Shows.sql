@@ -2,36 +2,42 @@
 	@BV_HouseID_Data_Code VARCHAR(500)
 AS
 BEGIN
+	Declare @Loglevel int;
 
-	CREATE TABLE #TempBv(
-		bv_Title VARCHAR(1000),
-		Title_Content_Code INT,
-		Title_Code INT
-	)
+	select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'
 
-	INSERT INTO #TempBv(bv_Title, Title_Content_Code, Title_Code)
-	SELECT BV_Title, Title_Content_Code, Title_Code FROM BV_HouseId_Data
-	WHERE BV_HouseId_Data_Code IN (SELECT NUMBER FROM DBO.fn_Split_withdelemiter(@BV_HouseID_Data_Code, ',') WHERE NUMBER <> '')
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BV_Title_Mapping_Shows]', 'Step 1', 0, 'Started Procedure', 0, ''
+		CREATE TABLE #TempBv(
+			bv_Title VARCHAR(1000),
+			Title_Content_Code INT,
+			Title_Code INT
+		)
 
-	SELECT DISTINCT(B.BV_HouseId_Data_Code), TC.Title_Content_Code, TC.Title_Code, B.Program_Episode_ID
-	INTO #TEMP_BVDATA
-	FROM BV_HouseId_Data B
-	INNER JOIN Title_Content TC ON RIGHT('0000' + CAST(TC.Episode_No AS VARCHAR(10)), 4) = RIGHT('0000' + CAST(B.Episode_No AS VARCHAR(10)), 4)
-	INNER JOIN #TempBv tmpBV ON TC.Title_Code = tmpBV.Title_Code
-	AND B.BV_Title COLLATE SQL_Latin1_General_CP1_CI_AS = tmpBV.bv_Title COLLATE SQL_Latin1_General_CP1_CI_AS
-	WHERE B.Is_Mapped = 'N'
+		INSERT INTO #TempBv(bv_Title, Title_Content_Code, Title_Code)
+		SELECT BV_Title, Title_Content_Code, Title_Code FROM BV_HouseId_Data (NOLOCK)
+		WHERE BV_HouseId_Data_Code IN (SELECT NUMBER FROM DBO.fn_Split_withdelemiter(@BV_HouseID_Data_Code, ',') WHERE NUMBER <> '')
 
-	UPDATE TC
-	SET TC.Ref_BMS_Content_Code = TB.Program_Episode_ID
-	FROM Title_Content TC
-	INNER JOIN #TEMP_BVDATA TB ON TB.Title_Content_Code = TC.Title_Content_Code
+		SELECT DISTINCT(B.BV_HouseId_Data_Code), TC.Title_Content_Code, TC.Title_Code, B.Program_Episode_ID
+		INTO #TEMP_BVDATA
+		FROM BV_HouseId_Data B (NOLOCK)
+		INNER JOIN Title_Content TC (NOLOCK) ON RIGHT('0000' + CAST(TC.Episode_No AS VARCHAR(10)), 4) = RIGHT('0000' + CAST(B.Episode_No AS VARCHAR(10)), 4)
+		INNER JOIN #TempBv tmpBV ON TC.Title_Code = tmpBV.Title_Code
+		AND B.BV_Title COLLATE SQL_Latin1_General_CP1_CI_AS = tmpBV.bv_Title COLLATE SQL_Latin1_General_CP1_CI_AS
+		WHERE B.Is_Mapped = 'N'
 
-	UPDATE B
-	SET B.Title_Code = TB.Title_Code, B.Title_Content_Code = TB.Title_Content_Code, B.Is_Mapped = 'Y'
-	FROM BV_HouseId_Data B
-	INNER JOIN #TEMP_BVDATA TB ON TB.BV_HouseId_Data_Code = B.BV_HouseId_Data_Code
-	WHERE B.Is_Mapped = 'N'
+		UPDATE TC
+		SET TC.Ref_BMS_Content_Code = TB.Program_Episode_ID
+		FROM Title_Content TC
+		INNER JOIN #TEMP_BVDATA TB ON TB.Title_Content_Code = TC.Title_Content_Code
 
-	IF OBJECT_ID('tempdb..#TEMP_BVDATA') IS NOT NULL DROP TABLE #TEMP_BVDATA
-	IF OBJECT_ID('tempdb..#TempBv') IS NOT NULL DROP TABLE #TempBv
+		UPDATE B
+		SET B.Title_Code = TB.Title_Code, B.Title_Content_Code = TB.Title_Content_Code, B.Is_Mapped = 'Y'
+		FROM BV_HouseId_Data B
+		INNER JOIN #TEMP_BVDATA TB ON TB.BV_HouseId_Data_Code = B.BV_HouseId_Data_Code
+		WHERE B.Is_Mapped = 'N'
+
+		IF OBJECT_ID('tempdb..#TEMP_BVDATA') IS NOT NULL DROP TABLE #TEMP_BVDATA
+		IF OBJECT_ID('tempdb..#TempBv') IS NOT NULL DROP TABLE #TempBv
+
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_BV_Title_Mapping_Shows]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

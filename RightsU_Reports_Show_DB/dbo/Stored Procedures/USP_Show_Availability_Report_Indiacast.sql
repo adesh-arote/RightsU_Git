@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_Indiacast]
+﻿
+CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_Indiacast]
 (
 --DECLARE
  @Title_Code VARCHAR(MAX)='0', 
@@ -54,10 +55,11 @@ BEGIN
 	SELECT  @Indiacast_Avail_India_Code = Parameter_Value FROM System_Parameter_New where Parameter_Name ='India_Avail'
 
 	--Select * from TestParam
+	--Truncate table TestParam
 --Create Table TestParam(
 --	Params Varchar(Max)
 --)
-	
+	--@Title_Code='577',@Is_Original_Language='1',@Title_Language_Code='',@Episode_From='1',@Episode_To='100000',@Show_EpisodeWise='N',@Date_Type='FL',@Start_Date='2021-03-25',@End_Date='',@Platform_Group_Code='3',@Platform_Code='',@Platform_ExactMatch='',@Platform_MustHave='0',@Is_IFTA_Cluster='N',@Territory_Code='1',@Country_Code='',@Region_ExactMatch='',@Region_MustHave='',@Region_Exclusion='',@Dubbing_Subtitling='0',@Subtit_Language_Code='',@Subtitling_Group_Code='G1',@Subtitling_ExactMatch='          ',@Subtitling_MustHave='0',@Subtitling_Exclusion='',@Dubbing_Group_Code='G1',@Dubbing_ExactMatch='          ',@Dubbing_MustHave='0',@Dubbing_Exclusion='',@Dubbing_Language_Code='',@Restriction_Remarks='True',@Others_Remarks='False',@Exclusivity='B',@SubLicense_Code='',@BU_Code='0',@Is_Digital='0
 --	Insert InTo TestParam
 --	Select '@Title_Code='''+ISNULL(@Title_Code, '')
 --+''',@Is_Original_Language='''+ISNULL(Cast(@Is_Original_Language As Varchar), '')
@@ -107,14 +109,14 @@ BEGIN
 	-- interfering with SELECT statements.
 	
 --select 
---@Title_Code='36432',
+--@Title_Code='577',
 --	@Is_Original_Language='1',
 --	@Title_Language_Code='',
 --	@Episode_From='1',
 --	@Episode_To='100000',
 --	@Show_EpisodeWise='N',
 --	@Date_Type='FL',
---	@Start_Date='15-Feb-2021',
+--	@Start_Date='25-Mar-2021',
 --	@End_Date='',
 --	@Platform_Group_Code='',
 --	@Platform_Code='',
@@ -137,7 +139,7 @@ BEGIN
 --	@Dubbing_MustHave='',
 --	@Dubbing_Exclusion='',
 --	@Dubbing_Language_Code='',
---	@Restriction_Remarks='false',
+--	@Restriction_Remarks='true',
 --	@Others_Remarks='false',
 --	@Exclusivity='B',
 --	@SubLicense_Code='',
@@ -530,8 +532,10 @@ BEGIN
 		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,C.Category_Name,DT.Deal_Type_Name
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+		INNER JOIN Acq_Deal_Rights_Title AS adrt ON adrt.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+		INNER JOIN #Temp_Title TT ON adrt.Title_Code = TT.Title_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
-		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
+		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADRT.Title_Code = ADM.Title_Code AND ADRT.Episode_From = ADM.Episode_Starts_From AND ADRT.Episode_To = ADM.Episode_End_To
 		Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
 		INNER JOin Category C ON ad.Category_Code = C.Category_Code
 		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
@@ -1152,9 +1156,9 @@ BEGIN
 	BEGIN
 		-----------------Query to get title details
 		SELECT t.Title_Code, t.Title_Language_Code, 
-		--t.Title_Name,
-		CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
-			,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
+		t.Title_Name,
+		--CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name,
+			Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
 			Director = [dbo].[UFN_GetDirectorForTitle](t.Title_Code),
 			COALESCE(t.Duration_In_Min, '0') Duration_In_Min, COALESCE(t.Year_Of_Production, '') Year_Of_Production,
@@ -1189,10 +1193,10 @@ BEGIN
 		Director  VARCHAR(1000), 
 		Duration_In_Min VARCHAR(10), 
 		Year_Of_Production VARCHAR(10), 
-		Restriction_Remark VARCHAR(4000), 
-		Sub_Deal_Restriction_Remark VARCHAR(4000),
-		Remarks VARCHAR(4000), 
-		Rights_Remarks VARCHAR(4000), 
+		Restriction_Remark NVARCHAR(MAX), 
+		Sub_Deal_Restriction_Remark NVARCHAR(MAX),
+		Remarks NVARCHAR(MAX), 
+		Rights_Remarks NVARCHAR(MAX), 
 		Exclusive VARCHAR(20), 
 		Sub_License VARCHAR(100), 
 		Platform_Avail VARCHAR(3),
@@ -1202,7 +1206,7 @@ BEGIN
 		Deal_Type_Name VARCHAR(1000),
 		HoldbackOn  NVARCHAR(MAX),
 		Holdback_Type		Char(1), 
-		Holdback_Release_Date Date, 
+		Holdback_Release_Date VARCHAR(100), 
 		Reverse_Holdback NVarchar(Max)
 	)
 	print 'STEP-12.01 REVERSE HOLDBACK ' + convert(varchar(30),getdate() ,109)	
@@ -1378,8 +1382,8 @@ BEGIN
 		INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
-		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME))
-		OR ISNULL(tm.Holdback_Release_Date,'') = ''
+		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
+		ISNULL(tm.Holdback_Release_Date,'') = ''
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		Country_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 

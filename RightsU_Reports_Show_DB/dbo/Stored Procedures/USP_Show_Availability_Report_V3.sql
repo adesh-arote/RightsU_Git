@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_V3]
+﻿CREATE PROC [dbo].[USP_Show_Availability_Report_V3]
 (
 	@Title_Code VARCHAR(MAX)='0', 
 	@Is_Original_Language bit, 

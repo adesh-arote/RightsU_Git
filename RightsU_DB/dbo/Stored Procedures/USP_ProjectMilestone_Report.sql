@@ -7,22 +7,27 @@
 )
 AS
 BEGIN
---Column - Agreement No, Ag Date, Name of proj, nature of deal, name of counterparty, right type, start date, end date,Term miletone start, mileston end date, 
---Tentative,Closed 
---Filter - name of proj, nature of deal, expiry in day.
+	Declare @Loglevel int
+	select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'
+	if(@Loglevel<2)Exec [USPLogSQLSteps] '[USP_ProjectMilestone_Report]', 'Step 1', 0, 'Started Procedure', 0, ''
+	--Column - Agreement No, Ag Date, Name of proj, nature of deal, name of counterparty, right type, start date, end date,Term miletone start, mileston end date, 
+	--Tentative,Closed 
+	--Filter - name of proj, nature of deal, expiry in day.
 
-	SELECT AgreementNo, CONVERT(VARCHAR(12),AgreementDate,103) AgreementDate, ProjectName, MN.Milestone_Nature_Name, T.Talent_Name, 
-	CASE WHEN PM.PeriodType ='Y' THEN 'Yearwise' ELSE  'Milestone'   END PeriodType, 
-		CONVERT(VARCHAR(12),PM.StartDate,103) StartDate, CONVERT(VARCHAR(12), PM.EndDate,103) EndDate,
-		CASE PM.PeriodType WHEN 'Y' THEN [dbo].[UFN_Get_Rights_Term](PM.StartDate, PM.EndDate, PM.Term) 
-			WHEN 'M' THEN [dbo].[UFN_Get_Rights_Milestone](PM.Milestone_Type_Code, PM.Milestone_No_Of_Unit, PM.Milestone_Unit_Type)
-		End Term,
-		CASE WHEN ISNULL(PM.IsTentitive, 'N') = 'Y' THEN 'Yes' ELSE 'No' END Tentitive, 
-		CASE WHEN ISNULL(PM.IsClosed, 'N') = 'Y' THEN 'Yes' ELSE 'No' END Closed
-	FROM ProjectMilestone PM 
-		INNER JOIN Milestone_Nature MN ON PM.MileStone_Nature_Code = MN.MileStone_Nature_Code
-		INNER JOIN Talent T ON T.Talent_Code = PM.TalentCode
-	WHERE (@ProjectMilestoneCodes = '' OR  PM.ProjectMilestoneCode IN(Select number from fn_Split_withdelemiter(@ProjectMilestoneCodes,',')))
-		AND (@MileStoneNatureCode = '' OR PM.MileStone_Nature_Code IN(Select number from fn_Split_withdelemiter(@MileStoneNatureCode,',')))
-		AND (@ExpiryInDay = 0 OR DATEDIFF(DAY, GETDATE(), EndDate) = @ExpiryInDay)
+		SELECT AgreementNo, CONVERT(VARCHAR(12),AgreementDate,103) AgreementDate, ProjectName, MN.Milestone_Nature_Name, T.Talent_Name, 
+		CASE WHEN PM.PeriodType ='Y' THEN 'Yearwise' ELSE  'Milestone'   END PeriodType, 
+			CONVERT(VARCHAR(12),PM.StartDate,103) StartDate, CONVERT(VARCHAR(12), PM.EndDate,103) EndDate,
+			CASE PM.PeriodType WHEN 'Y' THEN [dbo].[UFN_Get_Rights_Term](PM.StartDate, PM.EndDate, PM.Term) 
+				WHEN 'M' THEN [dbo].[UFN_Get_Rights_Milestone](PM.Milestone_Type_Code, PM.Milestone_No_Of_Unit, PM.Milestone_Unit_Type)
+			End Term,
+			CASE WHEN ISNULL(PM.IsTentitive, 'N') = 'Y' THEN 'Yes' ELSE 'No' END Tentitive, 
+			CASE WHEN ISNULL(PM.IsClosed, 'N') = 'Y' THEN 'Yes' ELSE 'No' END Closed
+		FROM ProjectMilestone PM (NOLOCK)
+			INNER JOIN Milestone_Nature MN (NOLOCK) ON PM.MileStone_Nature_Code = MN.MileStone_Nature_Code
+			INNER JOIN Talent T (NOLOCK) ON T.Talent_Code = PM.TalentCode
+		WHERE (@ProjectMilestoneCodes = '' OR  PM.ProjectMilestoneCode IN(Select number from fn_Split_withdelemiter(@ProjectMilestoneCodes,',')))
+			AND (@MileStoneNatureCode = '' OR PM.MileStone_Nature_Code IN(Select number from fn_Split_withdelemiter(@MileStoneNatureCode,',')))
+			AND (@ExpiryInDay = 0 OR DATEDIFF(DAY, GETDATE(), EndDate) = @ExpiryInDay)
+		 
+	if(@Loglevel<2)Exec [USPLogSQLSteps] '[USP_ProjectMilestone_Report]', 'Step 2', 0, 'Procedure Excuting Completed', 0, ''
 END

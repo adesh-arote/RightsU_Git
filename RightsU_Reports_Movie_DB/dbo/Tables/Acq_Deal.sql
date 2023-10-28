@@ -51,6 +51,10 @@
     [Is_Auto_Push]                  CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Deal_Segment_Code]             INT             NULL,
     [Revenue_Vertical_Code]         INT             NULL,
+    [Confirming_Party]              NVARCHAR (MAX)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [Material_Remarks]              NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CONSTRAINT [PK_Acq_Deal] PRIMARY KEY CLUSTERED ([Acq_Deal_Code] ASC)
 );
+
+
 

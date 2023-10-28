@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[System_Language_Message] (
-    [System_Language_Message_Code] INT            IDENTITY (1, 1) NOT NULL,
+    [System_Language_Message_Code] INT            NOT NULL,
     [System_Language_Code]         INT            NULL,
     [System_Module_Message_Code]   INT            NULL,
     [Message_Desc]                 NVARCHAR (MAX) NULL,
@@ -11,4 +11,6 @@
     CONSTRAINT [FK_System_Message_Language_System_Language] FOREIGN KEY ([System_Language_Code]) REFERENCES [dbo].[System_Language] ([System_Language_Code]),
     CONSTRAINT [FK_System_Message_Language_System_Message_Type] FOREIGN KEY ([System_Module_Message_Code]) REFERENCES [dbo].[System_Module_Message] ([System_Module_Message_Code])
 );
+
+
 

@@ -1,7 +1,5 @@
-﻿
-CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_V3_IFTA]
+﻿CREATE PROCEDURE [dbo].[USP_Show_Availability_Report_V3_IFTA]
 (
-
 --DECLARE
 	@Title_Code VARCHAR(MAX)='0', 
 	@Is_Original_Language bit, 
@@ -104,51 +102,54 @@ BEGIN
 --	Params Varchar(Max)
 --)
 	
---	Insert InTo TestParam
---	Select '@Title_Code='''+ISNULL(@Title_Code, '')
---+''',@Is_Original_Language='''+ISNULL(Cast(@Is_Original_Language As Varchar), '')
---+''',@Title_Language_Code='''+ISNULL(@Title_Language_Code, '')
---+''',@Episode_From='''+ISNULL(@Episode_From, '')
---+''',@Episode_To='''+ISNULL(@Episode_To, '')
---+''',@Show_EpisodeWise='''+ISNULL(@Show_EpisodeWise, '')
+	Insert InTo TestParam
+	Select '@Title_Code='''+ISNULL(@Title_Code, '')
++''',@Is_Original_Language='''+ISNULL(Cast(@Is_Original_Language As Varchar), '')
++''',@Title_Language_Code='''+ISNULL(@Title_Language_Code, '')
++''',@Episode_From='''+ISNULL(@Episode_From, '')
++''',@Episode_To='''+ISNULL(@Episode_To, '')
++''',@Show_EpisodeWise='''+ISNULL(@Show_EpisodeWise, '')
 
---+''',@Date_Type='''+ISNULL(@Date_Type, '')
---+''',@Start_Date='''+ISNULL(@Start_Date, '')
---+''',@End_Date='''+ISNULL(@End_Date, '')
++''',@Date_Type='''+ISNULL(@Date_Type, '')
++''',@Start_Date='''+ISNULL(@Start_Date, '')
++''',@End_Date='''+ISNULL(@End_Date, '')
 
---+''',@Platform_Group_Code='''+ISNULL(@Platform_Group_Code, '')
---+''',@Platform_Code='''+ISNULL(@Platform_Code, '')
---+''',@Platform_ExactMatch='''+ISNULL(@Platform_ExactMatch, '')
---+''',@Platform_MustHave='''+ISNULL(@Platform_MustHave, '')
++''',@Platform_Group_Code='''+ISNULL(@Platform_Group_Code, '')
++''',@Platform_Code='''+ISNULL(@Platform_Code, '')
++''',@Platform_ExactMatch='''+ISNULL(@Platform_ExactMatch, '')
++''',@Platform_MustHave='''+ISNULL(@Platform_MustHave, '')
 
---+''',@Is_IFTA_Cluster='''+ISNULL(@Is_IFTA_Cluster, '')
---+''',@Territory_Code='''+ISNULL(@Territory_Code, '')
---+''',@Country_Code='''+ISNULL(@Country_Code, '')
---+''',@Region_ExactMatch='''+ISNULL(@Region_ExactMatch, '')
---+''',@Region_MustHave='''+ISNULL(@Region_MustHave, '')
---+''',@Region_Exclusion='''+ISNULL(@Region_Exclusion, '')
++''',@Is_IFTA_Cluster='''+ISNULL(@Is_IFTA_Cluster, '')
++''',@Territory_Code='''+ISNULL(@Territory_Code, '')
++''',@Country_Code='''+ISNULL(@Country_Code, '')
++''',@Region_ExactMatch='''+ISNULL(@Region_ExactMatch, '')
++''',@Region_MustHave='''+ISNULL(@Region_MustHave, '')
++''',@Region_Exclusion='''+ISNULL(@Region_Exclusion, '')
 
---+''',@Dubbing_Subtitling='''+ISNULL(@Dubbing_Subtitling, '')
---+''',@Subtit_Language_Code='''+ISNULL(@Subtit_Language_Code, '')
---+''',@Subtitling_Group_Code='''+ISNULL(@Subtitling_Group_Code, '')
---+''',@Subtitling_ExactMatch='''+ISNULL(@Subtitling_ExactMatch, '')
---+''',@Subtitling_MustHave='''+ISNULL(@Subtitling_MustHave, '')
---+''',@Subtitling_Exclusion='''+ISNULL(@Subtitling_Exclusion, '')
++''',@Dubbing_Subtitling='''+ISNULL(@Dubbing_Subtitling, '')
++''',@Subtit_Language_Code='''+ISNULL(@Subtit_Language_Code, '')
++''',@Subtitling_Group_Code='''+ISNULL(@Subtitling_Group_Code, '')
++''',@Subtitling_ExactMatch='''+ISNULL(@Subtitling_ExactMatch, '')
++''',@Subtitling_MustHave='''+ISNULL(@Subtitling_MustHave, '')
++''',@Subtitling_Exclusion='''+ISNULL(@Subtitling_Exclusion, '')
 
---+''',@Dubbing_Group_Code='''+ISNULL(@Dubbing_Group_Code, '')
---+''',@Dubbing_ExactMatch='''+ISNULL(@Dubbing_ExactMatch, '')
---+''',@Dubbing_MustHave='''+ISNULL(@Dubbing_MustHave, '')
---+''',@Dubbing_Exclusion='''+ISNULL(@Dubbing_Exclusion, '')
---+''',@Dubbing_Language_Code='''+ISNULL(@Dubbing_Language_Code, '')
++''',@Dubbing_Group_Code='''+ISNULL(@Dubbing_Group_Code, '')
++''',@Dubbing_ExactMatch='''+ISNULL(@Dubbing_ExactMatch, '')
++''',@Dubbing_MustHave='''+ISNULL(@Dubbing_MustHave, '')
++''',@Dubbing_Exclusion='''+ISNULL(@Dubbing_Exclusion, '')
++''',@Dubbing_Language_Code='''+ISNULL(@Dubbing_Language_Code, '')
 
---+''',@Restriction_Remarks='''+ISNULL(@Restriction_Remarks, '')
---+''',@Others_Remarks='''+ISNULL(@Others_Remarks, '')
---+''',@Exclusivity='''+ISNULL(@Exclusivity, '')
---+''',@SubLicense_Code='''+ISNULL(@SubLicense_Code, '')
---+''',@BU_Code='''+ISNULL(@BU_Code, '')
---+''',@Is_Digital='''+ISNULL(Cast(@Is_Digital AS varchar), '')
-
-
++''',@Restriction_Remarks='''+ISNULL(@Restriction_Remarks, '')
++''',@Others_Remarks='''+ISNULL(@Others_Remarks, '')
++''',@Exclusivity='''+ISNULL(@Exclusivity, '')
++''',@SubLicense_Code='''+ISNULL(@SubLicense_Code, '')
++''',@BU_Code='''+ISNULL(@BU_Code, '')
++''',@Is_Digital='''+ISNULL(Cast(@Is_Digital AS varchar), '')
++''',@Country_Level='''+ISNULL(Cast(@Country_Level AS varchar), '')
++''',@Territory_Level='''+ISNULL(Cast(@Territory_Level AS varchar), '')
++''',@TabName='''+ISNULL(Cast(@TabName AS varchar), '')
++''',@Include_Ancillary='''+ISNULL(Cast(@Include_Ancillary AS varchar), '')
+	 
 	-- SET NOCOUNT ON added to prevent extra result sets FROM
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -171,10 +172,7 @@ BEGIN
 	IF(UPPER(@Exclusivity) = 'E')
 		SET @EX_YES = 1
 	ELSE IF(UPPER(@Exclusivity) = 'N')
-	BEGIN
 		SET @EX_NO = 0
-		SET @EX_YES = 0
-	END
 	ELSE IF(UPPER(@Exclusivity) = 'B')
 	BEGIN
 		SET @EX_YES = 1
@@ -526,7 +524,7 @@ BEGIN
 					FROM Acq_Deal AD_Tmp
 					INNER JOIN Acq_Deal_Movie Adm_Tmp ON AD_Tmp.Acq_Deal_Code = Adm_Tmp.Acq_Deal_Code AND AD_Tmp.Master_Deal_Movie_Code_ToLink = ADM.Acq_Deal_Movie_Code
 					INNER JOIN Acq_Deal_Rights ADR_Tmp ON adr_Tmp.Acq_Deal_Code = AD_Tmp.Acq_Deal_Code 
-					INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code 
+					INNER JOIN Acq_Deal_Rights_Title ADRT_Tmp ON ADR_Tmp.Acq_Deal_Rights_Code = ADRT_Tmp.Acq_Deal_Rights_Code AND ADRT_Tmp.Title_Code = Adm_Tmp.Title_Code
 					AND ISNULL(Adm_Tmp.Episode_Starts_From,0) = ISNULL(ADRT_Tmp.Episode_From,0) AND ISNULL(Adm_Tmp.Episode_End_To,0) = ISNULL(ADRT_Tmp.Episode_To,0)
 					WHERE AD_Tmp.Is_Master_Deal = 'N' --AND ad_Tmp.Master_Deal_Movie_Code_ToLink IN
 					--(SELECT adm_Tmp.Acq_Deal_Movie_Code FROM Acq_Deal_Movie adm_Tmp WHERE adm_Tmp.Acq_Deal_Code = ar.Acq_Deal_Code)
@@ -535,8 +533,10 @@ BEGIN
 		CASE WHEN ISNULL(sl.Sub_License_Code, 0) = @Sub_License_Code_Avail  THEN 'Yes' ELSE sl.Sub_License_Name END,ADM.Due_Diligence,C.Category_Name,DT.Deal_Type_Name
 		FROM Acq_Deal_Rights ar
 		INNER JOIN #Avail_Raw ar1 On ar1.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+		INNER JOIN Acq_Deal_Rights_Title AS adrt ON adrt.Acq_Deal_Rights_Code = ar.Acq_Deal_Rights_Code
+		INNER JOIN #Temp_Title TT ON adrt.Title_Code = TT.Title_Code
 		Inner Join Acq_Deal ad On ar.Acq_Deal_Code = ad.Acq_Deal_Code
-		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code
+		INNER JOIN Acq_Deal_Movie ADM ON ad.Acq_Deal_Code = ADM.Acq_Deal_Code AND ADRT.Title_Code = ADM.Title_Code AND ADRT.Episode_From = ADM.Episode_Starts_From AND ADRT.Episode_To = ADM.Episode_End_To
 		INNER JOin Category C ON ad.Category_Code = C.Category_Code
 		INNER JOin Deal_Type DT ON ad.Deal_Type_Code = DT.Deal_Type_Code
 		Inner Join Sub_License sl On ar.Sub_License_Code = sl.Sub_License_Code
@@ -546,7 +546,12 @@ BEGIN
 		--AND ar.Is_Sub_License = 'Y'
 		--AND ar.Sub_License_Code IN (SELECT SubLicense_Code FROM #Tmp_SL)
 		--AND 
-		(ad.Business_Unit_Code IN (SELECT CAST(number as INT) from [dbo].[fn_Split_withdelemiter](@BU_Code,',')))
+		(
+			ad.Business_Unit_Code IN (
+				SELECT number FROM dbo.fn_Split_withdelemiter(@BU_Code, ',') WHERE number NOT IN ('', '0')
+			) OR  @BU_Code = '0' OR @BU_Code = ''
+		)
+
 		--(ad.Business_Unit_Code = CAST(@BU_Code AS INT) OR CAST(@BU_Code AS INT) = 0)   
 		--AND ar.Acq_Deal_Rights_Code IN (
 		--	SELECT IsNull(adrt.Acq_Deal_Rights_Code, 0) FROM #Temp_Title tt
@@ -577,7 +582,11 @@ BEGIN
 		--AND ar.Is_Sub_License = 'Y'
 		--AND ar.Sub_License_Code IN (SELECT SubLicense_Code FROM #Tmp_SL)
 		--AND 
-		(ad.Business_Unit_Code IN (SELECT CAST(number as INT) from [dbo].[fn_Split_withdelemiter](@BU_Code,',')))
+		(
+			ad.Business_Unit_Code IN (
+				SELECT number FROM dbo.fn_Split_withdelemiter(@BU_Code, ',') WHERE number NOT IN ('', '0')
+			) OR  @BU_Code = '0' OR @BU_Code = ''
+		)
 		--(ad.Business_Unit_Code = CAST(@BU_Code AS INT) OR CAST(@BU_Code AS INT) = 0)  
 		--AND ar.Acq_Deal_Rights_Code IN (
 		--	SELECT IsNull(adrt.Acq_Deal_Rights_Code, 0) FROM #Temp_Title tt
@@ -1199,9 +1208,8 @@ BEGIN
 	print 'STEP-12 Query to get title details' + convert(varchar(30),getdate() ,109)	
 	BEGIN
 		-----------------Query to get title details
-		SELECT t.Title_Code, t.Title_Language_Code, --t.Title_Name,
-		CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
-			,Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
+		SELECT t.Title_Code, t.Title_Language_Code, t.Title_Name,
+			Genres_Name = [dbo].[UFN_GetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFN_GetStarCastForTitle](t.Title_Code),
 			Director = [dbo].[UFN_GetDirectorForTitle](t.Title_Code),
 			COALESCE(t.Duration_In_Min, '0') Duration_In_Min, COALESCE(t.Year_Of_Production, '') Year_Of_Production,
@@ -1251,7 +1259,7 @@ BEGIN
 		Episode_To INT,
 		HoldbackOn  NVARCHAR(MAX),
 		Holdback_Type		Char(1), 
-		Holdback_Release_Date Date, 
+		Holdback_Release_Date VARCHAR(100), 
 		Reverse_Holdback NVarchar(Max),
 		Due_Diligence VARCHAR(10),
 		Category_Name VARCHAR(1000),
@@ -1399,7 +1407,7 @@ BEGIN
 			LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 			LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
 			WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
-			ISNULL(tm.Holdback_Release_Date,'') = ''
+			ISNULL(tm.Holdback_Release_Date,'')  = '' 
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		COL1, COL2, COL3, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 
@@ -1456,7 +1464,7 @@ BEGIN
 		LEFT JOIN Platform pt1 ON pt1.Platform_Code = tm.Holdback_On_Platform_Code
 		LEFT JOIN #MainAH hb On tm.Acq_Deal_Rights_Holdback_Code = hb.Acq_Deal_Rights_Holdback_Code
 		WHERE (ISNULL(tm.Holdback_Release_Date,'')<>'' AND CAST(tm.Holdback_Release_Date AS DATETIME) < CAST(ISNULL(ar.End_Date, '31Dec9999') AS DATETIME)) OR
-		ISNULL(tm.Holdback_Release_Date,'') = ''
+		ISNULL(tm.Holdback_Release_Date,'')  = '' 
 		UNION 
 		SELECT Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS, Episode_From, Episode_To, Platform_Name COLLATE SQL_Latin1_General_CP1_CI_AS, 
 		COL1, COL2, COL3, Right_Start_Date, Rights_End_Date, Title_Language_Names COLLATE SQL_Latin1_General_CP1_CI_AS, 

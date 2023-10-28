@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[System_Parameter_New] (
-    [Id]                INT             IDENTITY (1, 1) NOT NULL,
+    [Id]                INT             NOT NULL,
     [Parameter_Name]    VARCHAR (1000)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Parameter_Value]   VARCHAR (1000)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Inserted_On]       DATETIME        NULL,
@@ -12,6 +12,9 @@
     [IsActive]          CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [Description]       NVARCHAR (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     [IS_System_Admin]   CHAR (1)        COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+    [Client_Name]       NVARCHAR (MAX)  COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
     CONSTRAINT [PK_System_Parameter_New] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 

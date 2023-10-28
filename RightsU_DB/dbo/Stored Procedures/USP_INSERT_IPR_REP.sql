@@ -31,69 +31,74 @@ AS
 -- =============================================
 
 BEGIN	
-	SET NOCOUNT ON;
-	INSERT INTO IPR_REP
-	(
-		Trademark_No,
-		IPR_Type_Code,
-		Application_No,
-		Application_Date,
-		Country_Code,
-		Proposed_Or_Date,
-		Date_Of_Use,
-		Application_Status_Code,
-		Renewed_Until,
-		Applicant_Code,
-		Trademark_Attorney,
-		Trademark,
-		Comments,
-		Creation_Date,
-		Created_By,
-		[Version],
-		Workflow_Status,
-		Class_Comments,
-		Date_Of_Actual_Use,
-		International_Trademark_Attorney,
-		Date_Of_Registration,
-		Registration_No,
-		IPR_For
-	)
-		Select  [dbo].[UFN_IPR_Auto_Genrate_Trademark_No]() as Trademark_No,
-		@IPR_Type_Code,
-		@Application_No,
-		@Application_Date,
-		@Country_Code,
-		@Proposed_Or_Date,
-		@Date_Of_Use,
-		@Application_Status_Code,
-		@Renewed_Until,
-		@Applicant_Code,
-		@Trademark_Attorney,
-		@Trademark,
-		@Comments,
-		@Creation_Date,
-		@Created_By,
-		@Version,
-		@Workflow_Status,
-		@Class_Comments,
-		@Date_Of_Actual_Use,
-		@International_Trademark_Attorney,
-		@Date_Of_Registration,
-		@Registration_No,
-		@IPR_For
+	Declare @Loglevel int;
+	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_INSERT_IPR_REP]', 'Step 1', 0, 'Started Procedure', 0, ''
+		SET NOCOUNT ON;
+		INSERT INTO IPR_REP
+		(
+			Trademark_No,
+			IPR_Type_Code,
+			Application_No,
+			Application_Date,
+			Country_Code,
+			Proposed_Or_Date,
+			Date_Of_Use,
+			Application_Status_Code,
+			Renewed_Until,
+			Applicant_Code,
+			Trademark_Attorney,
+			Trademark,
+			Comments,
+			Creation_Date,
+			Created_By,
+			[Version],
+			Workflow_Status,
+			Class_Comments,
+			Date_Of_Actual_Use,
+			International_Trademark_Attorney,
+			Date_Of_Registration,
+			Registration_No,
+			IPR_For
+		)
+			Select  [dbo].[UFN_IPR_Auto_Genrate_Trademark_No]() as Trademark_No,
+			@IPR_Type_Code,
+			@Application_No,
+			@Application_Date,
+			@Country_Code,
+			@Proposed_Or_Date,
+			@Date_Of_Use,
+			@Application_Status_Code,
+			@Renewed_Until,
+			@Applicant_Code,
+			@Trademark_Attorney,
+			@Trademark,
+			@Comments,
+			@Creation_Date,
+			@Created_By,
+			@Version,
+			@Workflow_Status,
+			@Class_Comments,
+			@Date_Of_Actual_Use,
+			@International_Trademark_Attorney,
+			@Date_Of_Registration,
+			@Registration_No,
+			@IPR_For
 
-		Declare @IPR_Rep_Code INT,@Trademark_No Varchar(100)
-		SELECT @IPR_Rep_Code = IPR_REP_Code,@Trademark_No=Trademark_No
-		FROM IPR_REP WHERE IPR_Rep_Code=SCOPE_IDENTITY()
+			Declare @IPR_Rep_Code INT,@Trademark_No Varchar(100)
+			SELECT @IPR_Rep_Code = IPR_REP_Code,@Trademark_No=Trademark_No
+			FROM IPR_REP (NOLOCK) WHERE IPR_Rep_Code=SCOPE_IDENTITY()
 		
-		IF(@Workflow_Status = 'A')
-		BEGIN
+			IF(@Workflow_Status = 'A')
+			BEGIN
+				INSERT INTO IPR_REP_STATUS_HISTORY(IPR_Rep_Code,IPR_Status,Changed_On,Changed_By)
+				VALUES(@IPR_Rep_Code,'N',GETDATE(),@Created_By)
+			END
+
 			INSERT INTO IPR_REP_STATUS_HISTORY(IPR_Rep_Code,IPR_Status,Changed_On,Changed_By)
-			VALUES(@IPR_Rep_Code,'N',GETDATE(),@Created_By)
-		END
-
-		INSERT INTO IPR_REP_STATUS_HISTORY(IPR_Rep_Code,IPR_Status,Changed_On,Changed_By)
-		VALUES(@IPR_Rep_Code,@Workflow_Status,GETDATE(),@Created_By)
+			VALUES(@IPR_Rep_Code,@Workflow_Status,GETDATE(),@Created_By)
 		
-		Select @IPR_Rep_Code IPR_Rep_Code,@Trademark_No Trademark_No
+			Select @IPR_Rep_Code IPR_Rep_Code,@Trademark_No Trademark_No
+		 
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_INSERT_IPR_REP]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END

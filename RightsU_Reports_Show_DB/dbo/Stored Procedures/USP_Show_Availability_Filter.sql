@@ -1,6 +1,4 @@
-﻿--sp_helptext USP_Show_Availability_Filter
-
-CREATE PROCEDURE [dbo].[USP_Show_Availability_Filter]  
+﻿CREATE PROCEDURE [dbo].[USP_Show_Availability_Filter]  
 (
 
  @Title_Code VARCHAR(MAX),   
@@ -249,11 +247,11 @@ print @territoryCodes
   
  --Delete From #Temp_Territory Where Territory_Code = 0  
   
- SET @TerritoryNames =ISNULL(STUFF((SELECT DISTINCT ',' + t.Territory_Name  
- FROM Territory t   
- WHERE t.Territory_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@territoryCodes,',') WHERE number NOT IN ('0',''))  
- FOR XML PATH(''), TYPE  
- ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')  
+ --SET @TerritoryNames =ISNULL(STUFF((SELECT DISTINCT ',' + t.Territory_Name  
+ --FROM Territory t   
+ --WHERE t.Territory_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@territoryCodes,',') WHERE number NOT IN ('0',''))  
+ --FOR XML PATH(''), TYPE  
+ --).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')  
   
  /*---End Territory---*/  
    
