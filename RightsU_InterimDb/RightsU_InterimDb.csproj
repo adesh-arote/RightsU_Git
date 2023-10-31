@@ -745,6 +745,9 @@
     <Compile Include="Models\Map_Extended_Columns_Details.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Master_Log.cs">
+      <DependentUpon>RightsU_EF.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Material_Medium.cs">
       <DependentUpon>RightsU_EF.tt</DependentUpon>
     </Compile>

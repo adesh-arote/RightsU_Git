@@ -3797,6 +3797,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Map_Extended_Columns_Code" Type="int" />
           <Property Name="Columns_Value_Code" Type="int" />
         </EntityType>
+        <EntityType Name="Master_Log">
+          <Key>
+            <PropertyRef Name="Log_Code" />
+          </Key>
+          <Property Name="Log_Code" Type="int" Nullable="false" />
+          <Property Name="Module_Code" Type="int" />
+          <Property Name="IntCode" Type="int" />
+          <Property Name="Log_Data" Type="nvarchar(max)" />
+          <Property Name="Action_By" Type="int" />
+          <Property Name="Action_On" Type="datetime" />
+          <Property Name="Action_Type" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Material_Medium">
           <Key>
             <PropertyRef Name="Material_Medium_Code" />
@@ -15159,6 +15171,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Channel" Type="varchar(max)" Mode="In" />
           <Parameter Name="ExcludeExpiredDeal" Type="bit" Mode="In" />
           <Parameter Name="RunType" Type="varchar" Mode="In" />
+          <Parameter Name="ContentType" Type="char" Mode="In" />
         </Function>
         <Function Name="usp_Schedule_RUN_SAVE_Process" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_RUN_CODE" Type="int" Mode="In" />
@@ -16111,6 +16124,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Login_Details" EntityType="Self.Login_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Map_Extended_Columns" EntityType="Self.Map_Extended_Columns" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Map_Extended_Columns_Details" EntityType="Self.Map_Extended_Columns_Details" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Master_Log" EntityType="Self.Master_Log" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Medium" EntityType="Self.Material_Medium" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Order" EntityType="Self.Material_Order" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Material_Order_Details" EntityType="Self.Material_Order_Details" Schema="dbo" store:Type="Tables" />
@@ -20796,6 +20810,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Channel" Mode="In" Type="String" />
             <Parameter Name="ExcludeExpiredDeal" Mode="In" Type="Boolean" />
             <Parameter Name="RunType" Mode="In" Type="String" />
+            <Parameter Name="ContentType" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_Language" ReturnType="Collection(String)">
           <Parameter Name="Title_Codes" Mode="In" Type="String" />
@@ -23724,6 +23739,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Title_Type" Mode="In" Type="String" />
             <Parameter Name="Poster_Status" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="Master_Log" EntityType="RightsU_NeoModel.Master_Log" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -40672,6 +40688,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Title_Poster" Nullable="false" MaxLength="1" />
           <Property Type="Int32" Name="Deal_Type_Code" Nullable="false" />
         </ComplexType>
+        <EntityType Name="Master_Log">
+          <Key>
+            <PropertyRef Name="Log_Code" />
+          </Key>
+          <Property Name="Log_Code" Type="Int32" Nullable="false" />
+          <Property Name="Module_Code" Type="Int32" />
+          <Property Name="IntCode" Type="Int32" />
+          <Property Name="Log_Data" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Action_By" Type="Int32" />
+          <Property Name="Action_On" Type="DateTime" Precision="3" />
+          <Property Name="Action_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -51300,6 +51328,19 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
+          <EntitySetMapping Name="Master_Log">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Master_Log">
+              <MappingFragment StoreEntitySet="Master_Log">
+                <ScalarProperty Name="Action_Type" ColumnName="Action_Type" />
+                <ScalarProperty Name="Action_On" ColumnName="Action_On" />
+                <ScalarProperty Name="Action_By" ColumnName="Action_By" />
+                <ScalarProperty Name="Log_Data" ColumnName="Log_Data" />
+                <ScalarProperty Name="IntCode" ColumnName="IntCode" />
+                <ScalarProperty Name="Module_Code" ColumnName="Module_Code" />
+                <ScalarProperty Name="Log_Code" ColumnName="Log_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -51314,7 +51355,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

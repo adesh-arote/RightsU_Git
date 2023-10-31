@@ -9000,4 +9000,49 @@ namespace RightsU_BLL
     }
 
     #endregion
+
+    #region Master_Log_Services
+    public class Master_Log_Service : BusinessLogic<Master_Log>
+    {
+        private readonly Master_Log_Repository objRepository;
+
+        public Master_Log_Service(string Connection_Str)
+        {
+            this.objRepository = new Master_Log_Repository(Connection_Str);
+        }
+        public Master_Log GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+        public bool Save(Master_Log objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, objRepository, out resultSet);
+        }
+        public bool Update(Master_Log objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, objRepository, out resultSet);
+        }
+        public bool Delete(Master_Log objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, objRepository, out resultSet);
+        }
+        public override bool Validate(Master_Log objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateUpdate(Master_Log objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        public override bool ValidateDelete(Master_Log objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+        private bool ValidateDuplicate(Master_Log objToValidate, out dynamic resultSet)
+        {            
+            resultSet = "";
+            return true;
+        }
+    }
+    #endregion
 }

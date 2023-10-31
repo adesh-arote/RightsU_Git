@@ -211,6 +211,7 @@
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />
+    <Compile Include="Master_Entities\Master_Log.cs" />
     <Compile Include="Master_Entities\Supplementary.cs" />
     <Compile Include="Master_Entities\Supplementary_Config.cs" />
     <Compile Include="Master_Entities\Supplementary_Data.cs" />
