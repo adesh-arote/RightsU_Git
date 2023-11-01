@@ -3801,7 +3801,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Key>
             <PropertyRef Name="Log_Code" />
           </Key>
-          <Property Name="Log_Code" Type="int" Nullable="false" />
+          <Property Name="Log_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Module_Code" Type="int" />
           <Property Name="IntCode" Type="int" />
           <Property Name="Log_Data" Type="nvarchar(max)" />
