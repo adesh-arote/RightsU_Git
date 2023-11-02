@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -34,12 +35,17 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
         public string Is_Base_Currency { get; set; }
-    
+
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         public virtual ICollection<Currency_Exchange_Rate> Currency_Exchange_Rate { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Revenue> Syn_Deal_Revenue { get; set; }
     }
 }

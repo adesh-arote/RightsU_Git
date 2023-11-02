@@ -21,6 +21,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCountry"] = value; }
         }
+
         private List<RightsU_Entities.USP_List_Country_Result> lstCountry_Searched
         {
             get
@@ -31,6 +32,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCountry_Searched"] = value; }
         }
+
         private RightsU_Entities.Country objCountry
         {
             get
@@ -41,6 +43,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objCountry"] = value; }
         }
+
         private Country_Service objCountry_Service
         {
             get
@@ -51,6 +54,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objCountry_Service"] = value; }
         }
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForCountry);
@@ -67,6 +71,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/Country/Index.cshtml");
         }
+
         public PartialViewResult BindCountryList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.USP_List_Country_Result> lst = new List<RightsU_Entities.USP_List_Country_Result>();
@@ -91,6 +96,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Country/_CountryList.cshtml", lst);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -113,10 +119,12 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private void FetchData()
         {
             lstCountry_Searched = lstCountry = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Country(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Entities.USP_List_Country_Result>();
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCountry), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -126,6 +134,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public JsonResult SearchCountry(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -141,6 +150,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult CheckRecordLock(int countryCode)
         {
             string strMessage = "";
@@ -160,6 +170,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public PartialViewResult AddEditCountry(int countryCode)
         {
             objCountry = null;
@@ -180,10 +191,11 @@ namespace RightsU_Plus.Controllers
 
             return PartialView("~/Views/Country/_AddEditCountry.cshtml", objCountry);
         }
+
         public JsonResult ActiveDeactiveCountry(int countryCode, string doActive)
         {
            // string status = "S", message = "";
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(countryCode, GlobalParams.ModuleCodeForCountry, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -197,13 +209,32 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objCountry, out resultSet);
                 if (isValid)
                 {
+                    string Action = "";
                     lstCountry.Where(w => w.Country_Code == countryCode).First().Is_Active = doActive;
                     lstCountry_Searched.Where(w => w.Country_Code == countryCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "Activate";
+                    }
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "Deactivate";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCountry);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCountry, objCountry.Country_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
+
                 }
                 else
                 {
@@ -230,6 +261,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveCountry(FormCollection objCollection)
         {
             string status = "S", message = "";
@@ -282,10 +314,17 @@ namespace RightsU_Plus.Controllers
             Deleted_Country_Language.ToList<Country_Language>().ForEach(t => t.EntityState = State.Deleted);
             #endregion
 
+            string Action = "";
             if (objCountry.Country_Code > 0)
+            {
                 message = objMessageKey.Recordupdatedsuccessfully;
+                Action = "U";
+            }  
             else
+            {
                 message = objMessageKey.RecordAddedSuccessfully;
+                Action = "C";
+            }
 
             dynamic resultSet;
             if (!objCountry_Service.Save(objCountry, out resultSet))
@@ -295,6 +334,17 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCountry);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCountry, objCountry.Country_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
+
                 int recordLockingCode = Convert.ToInt32(objCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
@@ -311,6 +361,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);

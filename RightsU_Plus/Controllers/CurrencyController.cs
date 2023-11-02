@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class CurrencyController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Currency> lstCurrency
         {
             get
@@ -76,7 +77,6 @@ namespace RightsU_Plus.Controllers
             return View("~/Views/Currency/Index.cshtml");
         }
 
-
         public PartialViewResult BindCurrencyList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.Currency> lst = new List<RightsU_Entities.Currency>();
@@ -99,6 +99,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -136,6 +137,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchCurrency(string searchText)
@@ -173,12 +175,31 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objCurrency, out resultSet);
                 if (isValid)
                 {
+                    string Action = "";
                     lstCurrency.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
                     lstCurrency_Searched.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
+
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "Activate";
+                    }
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "Deactivate";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                 }
                 else
                 {
@@ -278,10 +299,28 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
+                string Action = "";
                 if (currencyCode > 0)
+                {
                     message = objMessageKey.Recordupdatedsuccessfully;
+                    Action = "U";
+                }
                 else
+                {
                     message = objMessageKey.Recordsavedsuccessfully;
+                    Action = "C";
+                }
+                    
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch ( Exception ex )
+                {
+
+                    
+                }
 
                 objCurrency = null;
                 objCurrency_Service = null;
@@ -299,6 +338,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public PartialViewResult BindExchangeRateList(string commandName, string dummyGuid)
         {
             string maxDate = "";
