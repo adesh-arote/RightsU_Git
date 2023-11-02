@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -68,21 +69,35 @@ namespace RightsU_Entities
         public Nullable<int> Created_By { get; set; }
         public string ChangePasswordLinkGUID { get; set; }
 
-
+        [JsonIgnore]
         public virtual ICollection<BVException_Users> BVException_Users { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail { get; set; }
+        [JsonIgnore]
         public virtual Security_Group Security_Group { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Users_Channel> Users_Channel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Users_Entity> Users_Entity { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Users_Password_Detail> Users_Password_Detail { get; set; }
+        //[JsonIgnore]
         public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Glossary_AskExpert> Glossary_AskExpert { get; set; }
+        [JsonIgnore]
         public virtual System_Language System_Language { get; set; }
+        [JsonIgnore]
         public string DefaultEntityName { get; set; }
+        [JsonIgnore]
         public string DefaultEntityLogoName { get; set; }
+        //[JsonIgnore]
         public virtual ICollection<MHUser> MHUsers { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
+        //[JsonIgnore]
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
 
     }
