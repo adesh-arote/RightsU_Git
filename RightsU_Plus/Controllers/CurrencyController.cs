@@ -161,7 +161,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult ActiveDeactiveCurrency(int currencyCode, string doActive)
         {
             //string status = "S", message = "";
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(currencyCode, GlobalParams.ModuleCodeForCurrency, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -175,19 +175,19 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objCurrency, out resultSet);
                 if (isValid)
                 {
-                    string Action = "";
                     lstCurrency.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
                     lstCurrency_Searched.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
                     {
+                        Action = "A"; // A = "Active";
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "Activate";
+                        
                     }
                     else
                     {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "Deactivate";
                     }
 
                     try
@@ -272,7 +272,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveCurrency(int currencyCode, string currencyName, string currencySign, bool isBaseCurrency, int Record_Code)
         {
-            string status = "S", message = "";
+            string status = "S", message = "", Action = "";
 
             if (currencyCode > 0)
                 objCurrency.EntityState = State.Modified;
@@ -299,16 +299,15 @@ namespace RightsU_Plus.Controllers
             }
             else
             {
-                string Action = "";
                 if (currencyCode > 0)
                 {
+                    Action = "U"; // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
-                    Action = "U";
                 }
                 else
                 {
+                    Action = "C"; // C = "Create";
                     message = objMessageKey.Recordsavedsuccessfully;
-                    Action = "C";
                 }
                     
                 try

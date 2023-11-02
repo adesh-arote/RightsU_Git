@@ -37,6 +37,7 @@ namespace RightsU_Entities
 
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Country_Code { get; set; }
         public string Country_Name { get; set; }

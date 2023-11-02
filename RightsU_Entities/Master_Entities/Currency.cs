@@ -25,7 +25,9 @@ namespace RightsU_Entities
             this.Syn_Deal_Revenue = new HashSet<Syn_Deal_Revenue>();
         }
 
-        public State EntityState { get; set; }    public int Currency_Code { get; set; }
+        [JsonIgnore]
+        public State EntityState { get; set; }
+        public int Currency_Code { get; set; }
         public string Currency_Name { get; set; }
         public string Currency_Sign { get; set; }
         public System.DateTime Inserted_On { get; set; }

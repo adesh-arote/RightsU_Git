@@ -195,7 +195,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult ActiveDeactiveCountry(int countryCode, string doActive)
         {
            // string status = "S", message = "";
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(countryCode, GlobalParams.ModuleCodeForCountry, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -209,19 +209,20 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objCountry, out resultSet);
                 if (isValid)
                 {
-                    string Action = "";
                     lstCountry.Where(w => w.Country_Code == countryCode).First().Is_Active = doActive;
                     lstCountry_Searched.Where(w => w.Country_Code == countryCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
                     {
+                        Action = "A"; // A = "Active";
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "Activate";
+                        
                     }
                     else
                     {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "Deactivate";
+                        
                     }
 
                     try
@@ -264,7 +265,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveCountry(FormCollection objCollection)
         {
-            string status = "S", message = "";
+            string status = "S", message = "" , Action = "";
             objCountry.Country_Name = Convert.ToString(objCollection["Country_Name"]);
             objCountry.Is_Theatrical_Territory = Convert.ToString(objCollection["IsTheatricalTerritory"] ?? "N");
 
@@ -314,16 +315,15 @@ namespace RightsU_Plus.Controllers
             Deleted_Country_Language.ToList<Country_Language>().ForEach(t => t.EntityState = State.Deleted);
             #endregion
 
-            string Action = "";
             if (objCountry.Country_Code > 0)
             {
+                Action = "U"; // U = "Update";
                 message = objMessageKey.Recordupdatedsuccessfully;
-                Action = "U";
             }  
             else
             {
+                Action = "C"; // C = "Create";
                 message = objMessageKey.RecordAddedSuccessfully;
-                Action = "C";
             }
 
             dynamic resultSet;
