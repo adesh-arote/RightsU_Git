@@ -257,16 +257,34 @@ namespace RightsU_Plus.Controllers
             bool isValid = objSecurity_Group_Service.Save(objSecurity_Group, out resultSet);
             if (isValid)
             {
+                string Action = "C";
                 status = "S";
                 if(SecurityGroupCode > 0)
+                {
+                    Action = "U";
                     message = objMessageKey.Recordupdatedsuccessfully;
+                }                   
                 else
-                message = objMessageKey.RecordAddedSuccessfully;
+                {
+                    Action = "C";
+                    message = objMessageKey.RecordAddedSuccessfully;
+                }
+                
                 FetchData();
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 //if(recordLockingCode > 0)
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSecurity_Group);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

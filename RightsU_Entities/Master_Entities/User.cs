@@ -29,6 +29,7 @@ namespace RightsU_Entities
             this.Users_Exclusion_Rights = new HashSet<Users_Exclusion_Rights>();
             this.Users_Detail = new HashSet<Users_Detail>();
         }
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Users_Code { get; set; }
         public string Login_Name { get; set; }

@@ -819,8 +819,7 @@ namespace RightsU_Plus.Controllers
                 FetchData();
 
                 try
-                {
-                    
+                {                    
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objU);
                     bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), Convert.ToInt32(objU.Users_Code), LogData, Action, objLoginUser.Users_Code);
                 }

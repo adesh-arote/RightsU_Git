@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -34,13 +35,18 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
-    
+        [JsonIgnore]
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail1 { get; set; }
         public virtual ICollection<Security_Group_Rel> Security_Group_Rel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<User> Users { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_Role> Workflow_Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_BU_Role> Workflow_BU_Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_Module_BU_Role> Workflow_Module_BU_Role { get; set; }
     }
 }
