@@ -788,16 +788,19 @@ namespace RightsU_Plus.Controllers
             }
             if (valid)
             {
+                string Action = "C";
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
                 {
+                    Action = "U";
                     message = objMessageKey.Recordupdatedsuccessfully;
                     //message = message.Replace("{ACTION}", "updated");
                 }
                 else
                 {
+                    Action = "C";
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
                     string IsLDAPAuthReq = ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper();
@@ -814,6 +817,16 @@ namespace RightsU_Plus.Controllers
                     }
                 }
                 FetchData();
+
+                try
+                {                    
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objU);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), Convert.ToInt32(objU.Users_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

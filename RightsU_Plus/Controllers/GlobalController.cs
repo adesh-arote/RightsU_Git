@@ -830,7 +830,7 @@ namespace RightsU_Plus.Controllers
         }
         public string ConvertObjectToJson(object obj)
         {
-            string ret = JsonConvert.SerializeObject(obj);
+            string ret = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return ret;
         }
         public bool SaveMasterLogData(int ModuleCode, int IntCode, string LogData, string ActionType, int UserCode)

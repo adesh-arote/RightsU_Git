@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class CurrencyController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Currency> lstCurrency
         {
             get
@@ -76,7 +77,6 @@ namespace RightsU_Plus.Controllers
             return View("~/Views/Currency/Index.cshtml");
         }
 
-
         public PartialViewResult BindCurrencyList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.Currency> lst = new List<RightsU_Entities.Currency>();
@@ -99,6 +99,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -136,6 +137,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchCurrency(string searchText)
@@ -159,7 +161,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult ActiveDeactiveCurrency(int currencyCode, string doActive)
         {
             //string status = "S", message = "";
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(currencyCode, GlobalParams.ModuleCodeForCurrency, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -175,10 +177,29 @@ namespace RightsU_Plus.Controllers
                 {
                     lstCurrency.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
                     lstCurrency_Searched.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
+
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Active";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        
+                    }
                     else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                 }
                 else
                 {
@@ -251,7 +272,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveCurrency(int currencyCode, string currencyName, string currencySign, bool isBaseCurrency, int Record_Code)
         {
-            string status = "S", message = "";
+            string status = "S", message = "", Action = "";
 
             if (currencyCode > 0)
                 objCurrency.EntityState = State.Modified;
@@ -279,9 +300,26 @@ namespace RightsU_Plus.Controllers
             else
             {
                 if (currencyCode > 0)
+                {
+                    Action = "U"; // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
+                }
                 else
+                {
+                    Action = "C"; // C = "Create";
                     message = objMessageKey.Recordsavedsuccessfully;
+                }
+                    
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch ( Exception ex )
+                {
+
+                    
+                }
 
                 objCurrency = null;
                 objCurrency_Service = null;
@@ -299,6 +337,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public PartialViewResult BindExchangeRateList(string commandName, string dummyGuid)
         {
             string maxDate = "";

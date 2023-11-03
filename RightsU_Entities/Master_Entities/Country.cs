@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -36,39 +37,60 @@ namespace RightsU_Entities
 
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Country_Code { get; set; }
         public string Country_Name { get; set; }
         public string Is_Domestic_Territory { get; set; }
         public string Is_Theatrical_Territory { get; set; }
+        [JsonIgnore]
         public string Is_Ref_Acq { get; set; }
+        [JsonIgnore]
         public string Is_Ref_Syn { get; set; }
         public Nullable<int> Parent_Country_Code { get; set; }
+        [JsonIgnore]
         public string Applicable_For_Asrun_Schedule { get; set; }
         public System.DateTime Inserted_On { get; set; }
         public int Inserted_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
         public int Base_Country_Count { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Blackout_Territory> Acq_Deal_Rights_Blackout_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Holdback_Territory> Acq_Deal_Rights_Holdback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Territory> Acq_Deal_Rights_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
         public virtual ICollection<Country_Language> Country_Language { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Territory> Syn_Deal_Rights_Blackout_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Holdback_Territory> Syn_Deal_Rights_Holdback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Territory> Syn_Deal_Rights_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Territory_Details> Territory_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Country> Title_Country { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Vendor_Country> Vendor_Country { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Pushback_Territory> Acq_Deal_Pushback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Avail_Acq> Avail_Acq { get; set; }
+        [JsonIgnore]
         public virtual ICollection<IPR_REP> IPR_REP { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal_Country> Music_Deal_Country { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Report_Territory_Country> Report_Territory_Country { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate_Country> Title_Alternate_Country { get; set; }
 
     }

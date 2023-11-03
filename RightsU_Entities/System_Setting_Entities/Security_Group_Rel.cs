@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -17,9 +18,11 @@ namespace RightsU_Entities
         public int Security_Rel_Code { get; set; }
         public Nullable<int> Security_Group_Code { get; set; }
         public Nullable<int> System_Module_Rights_Code { get; set; }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonIgnore]
         public virtual Security_Group Security_Group { get; set; }
+        [JsonIgnore]
         public virtual System_Module_Right System_Module_Right { get; set; }
     }
 }
