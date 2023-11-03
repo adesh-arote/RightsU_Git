@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -72,6 +73,7 @@ namespace RightsU_Entities
         public virtual ICollection<Music_Deal_LinkShow> Music_Deal_LinkShow { get; set; }
         public virtual Music_Label Music_Label { get; set; }
         public virtual Right_Rule Right_Rule { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
         public virtual ICollection<Music_Deal_Vendor> Music_Deal_Vendor { get; set; }
         public virtual Deal_Tag Deal_Tag { get; set; }

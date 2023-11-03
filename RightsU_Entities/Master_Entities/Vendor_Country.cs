@@ -9,11 +9,13 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Vendor_Country
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Vendor_Country_Code { get; set; }
         public Nullable<int> Vendor_Code { get; set; }
