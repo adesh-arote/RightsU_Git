@@ -13,6 +13,7 @@ namespace RightsU_Plus.Controllers
     public class MaterialTypeController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Material_Type> lstMaterialType
         {
             get
@@ -36,7 +37,6 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
-
 
         public ViewResult Index()
         {
@@ -76,6 +76,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         public JsonResult CheckRecordLock(int Material_Code)
         {
             string strMessage = "";
@@ -94,7 +95,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
@@ -118,6 +118,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -127,6 +128,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchMaterialType(string searchText)

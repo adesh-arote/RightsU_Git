@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class MaterialMediumController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Material_Medium> lstMaterialMedium
         {
             get
@@ -75,7 +76,6 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
-
 
         public JsonResult CheckRecordLock(int Material_Medium_Code)
         {

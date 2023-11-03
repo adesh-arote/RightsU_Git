@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,7 +20,8 @@ namespace RightsU_Entities
             this.BVException_Channel = new HashSet<BVException_Channel>();
             this.BVException_Users = new HashSet<BVException_Users>();
         }
-    
+        
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Bv_Exception_Code { get; set; }
         public string Bv_Exception_Type { get; set; }
