@@ -213,12 +213,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objPlatform_Group, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstPlatform_Group.Where(w => w.Platform_Group_Code == Platform_Group_Code).First().Is_Active = doActive;
                     lstPlatform_Group_Searched.Where(w => w.Platform_Group_Code == Platform_Group_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPlatform_Group);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForPlatformGroup), Convert.ToInt32(objPlatform_Group.Platform_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -367,16 +384,34 @@ namespace RightsU_Plus.Controllers
             bool isValid = objService.Save(objPlatformGroup, out resultSet);
             if (isValid)
             {
+                string Action = "C";
                 status = "S";
                 if (platformGroupCode > 0)
+                {
                     message = objMessageKey.Recordupdatedsuccessfully;
+                    Action = "U";
+                }                    
                 else
+                {
                     message = objMessageKey.RecordAddedSuccessfully;
+                    Action = "C";
+                }
+                
                 ViewBag.Alert = message;
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 FetchData();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPlatformGroup);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForPlatformGroup), Convert.ToInt32(objPlatformGroup.Platform_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

@@ -189,6 +189,8 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForAeroplay = 266;
         public const int ModuleCodeForDeliveryTracking = 267;
         public const int ModuleCodeForAvailableForExcelReport = 268;
+        public const int ModuleCodeForBanner = 258;
+        public const int ModuleCodeForALLab = 259;
 
         #endregion
 

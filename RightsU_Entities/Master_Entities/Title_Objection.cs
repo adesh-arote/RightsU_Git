@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -20,7 +21,7 @@ namespace RightsU_Entities
             this.Title_Objection_Rights_Period = new HashSet<Title_Objection_Rights_Period>();
             this.Title_Objection_Territory = new HashSet<Title_Objection_Territory>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Title_Objection_Code { get; set; }
         public Nullable<int> Title_Objection_Status_Code { get; set; }
@@ -36,12 +37,17 @@ namespace RightsU_Entities
         public Nullable<int> Inserted_By { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
-
+        [JsonIgnore]
         public virtual Title Title { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Objection_Platform> Title_Objection_Platform { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Objection_Rights_Period> Title_Objection_Rights_Period { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Objection_Territory> Title_Objection_Territory { get; set; }
+        [JsonIgnore]
         public virtual Title_Objection_Status Title_Objection_Status { get; set; }
+        [JsonIgnore]
         public virtual Title_Objection_Type Title_Objection_Type { get; set; }
     }
 }
