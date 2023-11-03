@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -21,7 +22,7 @@ namespace RightsU_Entities
             this.Music_Deal = new HashSet<Music_Deal>();
             this.Provisional_Deal_Run = new HashSet<Provisional_Deal_Run>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Right_Rule_Code { get; set; }
         public string Right_Rule_Name { get; set; }
@@ -37,10 +38,13 @@ namespace RightsU_Entities
         public string Is_Active { get; set; }
         public Nullable<bool> IS_First_Air { get; set; }
         public string Short_Key { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Run> Syn_Deal_Run { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal> Music_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Provisional_Deal_Run> Provisional_Deal_Run { get; set; }
     }
 }

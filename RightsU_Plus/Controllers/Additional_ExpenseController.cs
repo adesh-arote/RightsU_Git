@@ -173,6 +173,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveAdditional_Expense(int additionalExpenseCode, string additionalExpenseName, string sapGLGroupCode, int Record_Code)
         {
+            string Action = "C";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
 
             if (additionalExpenseCode > 0)
@@ -185,6 +186,7 @@ namespace RightsU_Plus.Controllers
             {
                 objAdditionalExpense = objService.GetById(additionalExpenseCode);
                 objAdditionalExpense.EntityState = State.Modified;
+                Action = "U";
             }
             else
             {
@@ -192,6 +194,7 @@ namespace RightsU_Plus.Controllers
                 objAdditionalExpense.EntityState = State.Added;
                 objAdditionalExpense.Inserted_On = System.DateTime.Now;
                 objAdditionalExpense.Inserted_By = objLoginUser.Users_Code;
+                Action = "C";
             }
            objAdditionalExpense.Last_Updated_Time = DateTime.Now;
            objAdditionalExpense.Last_Action_By = objLoginUser.Users_Code;
@@ -204,6 +207,15 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                lstAdditional_Expense_Searched = lstAdditional_Expense = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAdditionalExpense);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), Convert.ToInt32(objAdditionalExpense.Additional_Expense_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

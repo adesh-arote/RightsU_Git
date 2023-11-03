@@ -157,29 +157,47 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(MaterialMediumCode, GlobalParams.ModuleCodeForMaterialMedium, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-            //string status = "S", message = "Record {ACTION} successfully";
-            Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Medium objMaterialMedium = objService.GetById(MaterialMediumCode);
-            objMaterialMedium.Is_Active = doActive;
-            objMaterialMedium.EntityState = State.Modified;
-            dynamic resultSet;
-            bool isValid = objService.Save(objMaterialMedium, out resultSet);
-            if (isValid)
-            {
-                lstMaterialMedium.Where(w => w.Material_Medium_Code == MaterialMediumCode).First().Is_Active = doActive;
-                lstMaterialMedium_Searched.Where(w => w.Material_Medium_Code == MaterialMediumCode).First().Is_Active = doActive;
-            }
-            else
-            {
-                status = "E";
-                message = "Cound not {ACTION} record";
-            }
-            if (doActive == "Y")
-                //message = message.Replace("{ACTION}", "Activated");
-                message = objMessageKey.Recordactivatedsuccessfully;
-            else
-                message = objMessageKey.Recorddeactivatedsuccessfully;
-                //message = message.Replace("{ACTION}", "Deactivated");
+                string Action = "A";
+                //string status = "S", message = "Record {ACTION} successfully";
+                Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Entities.Material_Medium objMaterialMedium = objService.GetById(MaterialMediumCode);
+                objMaterialMedium.Is_Active = doActive;
+                objMaterialMedium.EntityState = State.Modified;
+                dynamic resultSet;
+                bool isValid = objService.Save(objMaterialMedium, out resultSet);
+                if (isValid)
+                {
+                    lstMaterialMedium.Where(w => w.Material_Medium_Code == MaterialMediumCode).First().Is_Active = doActive;
+                    lstMaterialMedium_Searched.Where(w => w.Material_Medium_Code == MaterialMediumCode).First().Is_Active = doActive;
+                }
+                else
+                {
+                    status = "E";
+                    message = "Cound not {ACTION} record";
+                }
+                if (doActive == "Y")
+                {
+                    //message = message.Replace("{ACTION}", "Activated");
+                    message = objMessageKey.Recordactivatedsuccessfully;
+                    Action = "A";
+                }
+                else
+                {
+                    message = objMessageKey.Recorddeactivatedsuccessfully;
+                    //message = message.Replace("{ACTION}", "Deactivated");
+                    Action = "DA";
+                }
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialMedium);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
             else
@@ -286,17 +304,34 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objMaterialMedium, out resultSet);
                 if (isValid)
                 {
+                    string Action = "C";
                     lstMaterialMedium_Searched = lstMaterialMedium = new Material_Medium_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
                     DBUtil.Release_Record(recordLockingCode);
 
                     if (MaterialMediumCode > 0)
+                    {
+                        Action = "U";
                         message = objMessageKey.Recordupdatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "updated");
+                        //message = message.Replace("{ACTION}", "updated");
+                    }
                     else
+                    {
+                        Action = "C";
                         //message = message.Replace("{ACTION}", "added");
                         message = objMessageKey.RecordAddedSuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialMedium);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {

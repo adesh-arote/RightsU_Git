@@ -308,6 +308,7 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(SecurityGroupCode, GlobalParams.ModuleCodeForSecurityGr, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
+                string Action = "A";
                 Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Security_Group objSecurity_Group = objService.GetById(SecurityGroupCode);
                 objSecurity_Group.Is_Active = doActive;
@@ -325,11 +326,30 @@ namespace RightsU_Plus.Controllers
                     message = "Cound not {ACTION} record";
                 }
                 if (doActive == "Y")
+                {
                     message = objMessageKey.Recordactivatedsuccessfully;
-                //message = message.Replace("{ACTION}", "Activated");
+                    //message = message.Replace("{ACTION}", "Activated");
+                    Action = "A";
+                }
                 else
+                {
                     message = objMessageKey.Recorddeactivatedsuccessfully;
-                //message = message.Replace("{ACTION}", "Deactivated");
+                    //message = message.Replace("{ACTION}", "Deactivated");
+                    Action = "DA";
+                }
+
+                if (isValid)
+                {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSecurity_Group);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
 
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
