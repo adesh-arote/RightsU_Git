@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -20,7 +21,7 @@ namespace RightsU_Entities
             this.AL_Material_Tracking_OEM = new HashSet<AL_Material_Tracking_OEM>();
             this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int AL_OEM_Code { get; set; }
         public string Company_Name { get; set; }
@@ -30,9 +31,11 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Material_Tracking_OEM> AL_Material_Tracking_OEM { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

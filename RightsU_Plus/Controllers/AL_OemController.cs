@@ -594,6 +594,9 @@ namespace RightsU_Plus.Controllers
                 AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
                 Map_Extended_Columns_Service Map_Extended_Columns_Service = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName);
 
+                string Action = "C";
+                VM_AL_OEM objVmAlOEM = new VM_AL_OEM();
+
                 if (Id == 0)
                 {
                     if (lstAddedExtendedColumns.Count == 0)
@@ -623,7 +626,9 @@ namespace RightsU_Plus.Controllers
                         Status = "E";
                     }
                     else
-                    {
+                    {                        
+                        objVmAlOEM.AL_OEM = aL_OEM;
+
                         List<AL_OEM> lisOem = aL_OEM_Service.SearchFor(s => true).ToList();
                         var lastId = lisOem.OrderBy(o => o.AL_OEM_Code).LastOrDefault();
 
@@ -639,8 +644,11 @@ namespace RightsU_Plus.Controllers
                             {
                                 Session["Message"] = objMessageKey.RecordAddedSuccessfully;
                                 Status = "S";
+                                Action = "C";
                             }
                         }
+
+                        objVmAlOEM.Map_Extended_Columns = lstAddedExtendedColumns;
                     }
                 }
                 else
@@ -675,7 +683,8 @@ namespace RightsU_Plus.Controllers
                         Status = "E";
                     }
                     else
-                    {
+                    {                        
+                        objVmAlOEM.AL_OEM = aL_OEM;
                         //  List<Map_Extended_Columns> SaveToDBList = lstAddedExtendedColumns.Union(lstDataBaseExtendedColumns).ToList();
                         foreach (Map_Extended_Columns MECobj in lstAddedExtendedColumns)
                         {
@@ -723,10 +732,27 @@ namespace RightsU_Plus.Controllers
                             {
                                 Session["Message"] = objMessageKey.Recordupdatedsuccessfully;
                                 Status = "S";
+                                Action = "U";
                             }
+
+                            objVmAlOEM.Map_Extended_Columns = lstAddedExtendedColumns;
                         }
                     }
                 }
+
+                if(Status == "S")
+                {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVmAlOEM);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+
                 var Obj = new
                 {
                     Status = Status,
@@ -754,6 +780,9 @@ namespace RightsU_Plus.Controllers
                 aL_OEM = aL_OEM_Service.GetById(Id);
                 aL_OEM.EntityState = State.Deleted;
 
+                string Action = "D";
+                VM_AL_OEM objVmAlOEM = new VM_AL_OEM();
+
                 dynamic resultSet;
                 if (!aL_OEM_Service.Delete(aL_OEM, out resultSet))
                 {
@@ -762,6 +791,8 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    objVmAlOEM.AL_OEM = aL_OEM;
+
                     foreach (Map_Extended_Columns MEC in lstAddedExtendedColumns)
                     {
                         Map_Extended_Columns DBMEC = new Map_Extended_Columns();
@@ -789,8 +820,23 @@ namespace RightsU_Plus.Controllers
                             Session["Message"] = objMessageKey.RecordDeletedsuccessfully;
                             Status = "S";
                         }
+                        objVmAlOEM.Map_Extended_Columns = lstAddedExtendedColumns;
                     }
                 }
+
+                if (Status == "S")
+                {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVmAlOEM);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+
                 var Obj = new
                 {
                     Status = Status,
@@ -828,5 +874,11 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
+    }
+
+    public partial class VM_AL_OEM
+    {
+        public virtual AL_OEM AL_OEM { get; set; }
+        public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
     }
 }

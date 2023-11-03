@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -18,6 +19,7 @@ namespace RightsU_Entities
         {
             this.Map_Extended_Columns_Details = new HashSet<Map_Extended_Columns_Details>();
         }
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Map_Extended_Columns_Code { get; set; }
         public Nullable<int> Record_Code { get; set; }
@@ -27,9 +29,10 @@ namespace RightsU_Entities
         public string Column_Value { get; set; }
         public string Is_Multiple_Select { get; set; }
         public Nullable<int> Row_No { get; set; }
-
+        [JsonIgnore]
         public virtual Extended_Columns Extended_Columns { get; set; }
-        public virtual Extended_Columns_Value Extended_Columns_Value { get; set; }
+        [JsonIgnore]
+        public virtual Extended_Columns_Value Extended_Columns_Value { get; set; }        
         public virtual ICollection<Map_Extended_Columns_Details> Map_Extended_Columns_Details { get; set; }
     }
 }
