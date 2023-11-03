@@ -145,12 +145,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objLanguage, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstLanguage_Group.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
                     lstLanguage_Group_Searched.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objLanguage.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -178,6 +195,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveLanguage_Group(int Language_Group_Code, string Language_Group_Name, string[] LanguageCodes, int Record_Code)
         {
+            string Action = "C";
             string status = "S", message = "Record {ACTION} successfully";
             Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Language_Group objL = new RightsU_Entities.Language_Group();
@@ -250,18 +268,46 @@ namespace RightsU_Plus.Controllers
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
 
                 if (Language_Group_Code > 0)
-                    if(status == "E")
+                {
+                    if (status == "E")
+                    {
                         message = objMessageKey.languagegroupalreadyexists;
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recordupdatedsuccessfully;
                         //message = message.Replace("{ACTION}", "updated");
+                        Action = "U";
+                    }
+                }
                 else
+                {
                     if (status == "E")
+                    {
                         message = objMessageKey.languagegroupalreadyexists;
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recordsavedsuccessfully;
                         //message = message.Replace("{ACTION}", "saved");
+                        Action = "C";
+                    }
+                }
+
+                if (isValid)
+                {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objL);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objL.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
             }
+
             var obj = new
             {
                 RecordCount= lstLanguage_Group_Searched.Count,
@@ -269,8 +315,6 @@ namespace RightsU_Plus.Controllers
                 Message = message
             };
             return Json(obj);
-
-
 
         }
 

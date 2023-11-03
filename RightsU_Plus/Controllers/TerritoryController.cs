@@ -202,13 +202,30 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objTerritory, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstTerritory.Where(w => w.Territory_Code == territoryCode).First().Status = doActive;
                     lstTerritory_Searched.Where(w => w.Territory_Code == territoryCode).First().Status = doActive;
 
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTerritory);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -235,9 +252,13 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveTerritory(FormCollection objCollection)
         {
+            string Action = "C";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (objTerritory.Territory_Code > 0)
+            {
                 message = objMessageKey.Recordupdatedsuccessfully;
+                Action = "U";
+            }               
 
             objTerritory.Territory_Name = Convert.ToString(objCollection["Territory_Name"]).Trim();
             objTerritory.Is_Thetrical = Convert.ToString(objCollection["IsTheatrical"] ?? "N");
@@ -297,12 +318,22 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTerritory);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
                     int recordLockingCode = Convert.ToInt32(objCollection["hdnRecodLockingCode"]);
                     CommonUtil objCommonUtil = new CommonUtil();
                     objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                     objTerritory = null;
                     objTerritory_Service = null;
-                    lstTerritory_Searched = lstTerritory = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Entities.USP_List_Territory_Result>();
+                    lstTerritory_Searched = lstTerritory = new USP_Service(objLoginEntity.ConnectionStringName).USP_List_Territory(objLoginUser.System_Language_Code).OrderBy(o => o.Last_Updated_Time).ToList<RightsU_Entities.USP_List_Territory_Result>();                   
                 }
             }
             var obj = new
