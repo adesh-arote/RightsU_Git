@@ -8,6 +8,42 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.BLL.Services
 {
+    public class UserServices
+    {
+        private readonly UserRepositories objUserRepository;
+
+        public UserServices()
+        {
+            this.objUserRepository = new UserRepositories();
+        }
+
+        public User GetUserByID(int ID)
+        {
+            return objUserRepository.Get(ID);
+        }
+
+        public IEnumerable<User> GetUserList()
+        {
+            return objUserRepository.GetAll();
+        }
+        public void UpdateUser(User obj)
+        {
+            objUserRepository.Update(obj);
+        }
+
+        public IEnumerable<User> SearchForUser(object param)
+        {
+            return objUserRepository.SearchFor(param);
+        }
+
+        public IEnumerable<User> GetDataWithSQLStmt(string strSQL)
+        {
+
+            return objUserRepository.GetDataWithSQLStmt(strSQL);
+        }
+
+
+    }
     public class SystemParameterServices
     {
         private readonly SystemParametersRepositories objSystemParametersRepositories;
@@ -91,5 +127,61 @@ namespace RightsU.BMS.BLL.Services
         {
             this.objUploadFilesRepositories.Add(objUploadFiles);
         }
-    }   
+    }
+
+    public class ServiceLogServices
+    {
+        private readonly ServiceLogRepositories objServiceLogRepositories = new ServiceLogRepositories();
+
+        public ServiceLogServices()
+        {
+            this.objServiceLogRepositories = new ServiceLogRepositories();
+        }
+
+        public int AddEntity(ServiceLog param)
+        {
+            objServiceLogRepositories.Add(param);
+            return param.ServiceLogID.Value;
+        }
+
+        public void UpdateServiceLog(ServiceLog obj)
+        {
+            objServiceLogRepositories.Update(obj);
+        }
+    }
+
+    public class LoggedInUsersServices
+    {
+        private readonly LoggedInUsersRepository objLoggedInUsersRepository;
+
+        public LoggedInUsersServices()
+        {
+            this.objLoggedInUsersRepository = new LoggedInUsersRepository();
+        }
+        public LoggedInUsers GetLoggedInUserByID(int ID)
+        {
+            return objLoggedInUsersRepository.Get(ID);
+        }
+        public IEnumerable<LoggedInUsers> GetLoggedInUsersList()
+        {
+            return objLoggedInUsersRepository.GetAll();
+        }
+        public void AddEntity(LoggedInUsers param)
+        {
+            objLoggedInUsersRepository.Add(param);
+        }
+        public void UpdateLoggedInUser(LoggedInUsers obj)
+        {
+            objLoggedInUsersRepository.Update(obj);
+        }
+        public void DeleteLoggedInUsers(LoggedInUsers obj)
+        {
+            objLoggedInUsersRepository.Delete(obj);
+        }
+
+        public IEnumerable<LoggedInUsers> SearchFor(object param)
+        {
+            return objLoggedInUsersRepository.SearchFor(param);
+        }
+    }
 }
