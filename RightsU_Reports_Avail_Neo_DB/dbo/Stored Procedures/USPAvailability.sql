@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USPAvailability]
+﻿CREATE PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
 	
@@ -40,13 +39,60 @@ CREATE PROCEDURE [dbo].[USPAvailability]
 	@OthersRemarks CHAR(1) = 'N',
 	@BUCode VARCHAR(20) = '0',
 	@IsDigital CHAR(1) = 'N',
-	@L1Output CHAR(1) = 'N'
+	@L1Output CHAR(1) = 'N',
+	@ReportType CHAR(1) = 'M'
 )
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 	SET FMTONLY OFF;
+
+	INSERT INTO TestParam(Params, ProcType)
+	SELECT '@TitleCodes=''' + CAST(@TitleCodes AS VARCHAR(MAX)) +
+	
+	''', @DateType=''' + CAST(ISNULL(@DateType, '') AS VARCHAR(MAX)) +
+	''', @StartDate=''' + CAST(ISNULL(@StartDate, '') AS VARCHAR(MAX)) +
+	''', @EndDate=''' + CAST(ISNULL(@EndDate, '') AS VARCHAR(MAX)) +
+	
+	''', @PlatformCodes=''' + CAST(ISNULL(@PlatformCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchPlatforms=''' + CAST(ISNULL(@ExactMatchPlatforms, '') AS VARCHAR(MAX)) +
+	''', @MustHavePlatforms=''' + CAST(ISNULL(@MustHavePlatforms, '') AS VARCHAR(MAX)) +
+	
+	''', @IsIFTACluster=''' + CAST(ISNULL(@IsIFTACluster, '') AS VARCHAR(MAX)) +
+	''', @TerritoryCodes=''' + CAST(ISNULL(@TerritoryCodes, '') AS VARCHAR(MAX)) +
+	''', @CountryCodes=''' + CAST(ISNULL(@CountryCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchCountry=''' + CAST(ISNULL(@ExactMatchCountry, '') AS VARCHAR(MAX)) +
+	''', @MustHaveCountry=''' + CAST(ISNULL(@MustHaveCountry, '') AS VARCHAR(MAX)) +
+	''', @ExclusionCountry=''' + CAST(ISNULL(@ExclusionCountry, '') AS VARCHAR(MAX)) +
+	
+	''', @IsTitleLanguage=''' + CAST(ISNULL(@IsTitleLanguage, '') AS VARCHAR(MAX)) +
+	''', @TitleLanguageCode=''' + CAST(ISNULL(@TitleLanguageCode, '') AS VARCHAR(MAX)) +
+	
+	''', @DubbingSubtitling=''' + CAST(ISNULL(@DubbingSubtitling, '') AS VARCHAR(MAX)) +
+	''', @SubtitlingGroupCodes=''' + CAST(ISNULL(@SubtitlingGroupCodes, '') AS VARCHAR(MAX)) +
+	''', @SubtitlingCodes=''' + CAST(ISNULL(@SubtitlingCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchSubtitling=''' + CAST(ISNULL(@ExactMatchSubtitling, '') AS VARCHAR(MAX)) +
+	''', @MustHaveSubtitling=''' + CAST(ISNULL(@MustHaveSubtitling, '') AS VARCHAR(MAX)) +
+	''', @ExclusionSubtitling=''' + CAST(ISNULL(@ExclusionSubtitling, '') AS VARCHAR(MAX)) +
+
+	''', @DubbingGroupCodes=''' + CAST(ISNULL(@DubbingGroupCodes, '') AS VARCHAR(MAX)) +
+	''', @DubbingCodes=''' + CAST(ISNULL(@DubbingCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchDubbing=''' + CAST(ISNULL(@ExactMatchDubbing, '') AS VARCHAR(MAX)) +
+	''', @MustHaveDubbing=''' + CAST(ISNULL(@MustHaveDubbing, '') AS VARCHAR(MAX)) +
+	''', @ExclusionDubbing=''' + CAST(ISNULL(@ExclusionDubbing, '') AS VARCHAR(MAX)) +
+
+	''', @Exclusivity=''' + CAST(ISNULL(@Exclusivity, '') AS VARCHAR(MAX)) +
+	''', @SubLicenseCode=''' + CAST(ISNULL(@SubLicenseCode, '') AS VARCHAR(MAX)) +
+	''', @RestrictionRemarks=''' + CAST(ISNULL(@RestrictionRemarks, '') AS VARCHAR(MAX)) +
+	''', @OthersRemarks=''' + CAST(ISNULL(@OthersRemarks, '') AS VARCHAR(MAX)) +
+	''', @BUCode=''' + CAST(ISNULL(@BUCode, '') AS VARCHAR(MAX)) +
+	''', @IsDigital=''' + CAST(ISNULL(@IsDigital, '') AS VARCHAR(MAX)) +
+	''', @L1Output=''' + CAST(ISNULL(@L1Output, '') AS VARCHAR(MAX)) + '''', 'MAvail'
+
+	SET @TerritoryCodes = REPLACE(@TerritoryCodes, 'T', '')
+	SET @SubtitlingGroupCodes = REPLACE(@SubtitlingGroupCodes, 'G', '')
+	SET @DubbingGroupCodes = REPLACE(@DubbingGroupCodes, 'G', '')
 
 	-- Title Language bit operator = 1 = Available / 0 = Not Aavailable
 	

@@ -116,6 +116,9 @@
           <QueryParameter Name="@L1Output">
             <Value>=Parameters!L1Output.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@ReportType">
+            <Value>=Parameters!Report_Type.Value</Value>
+          </QueryParameter>
         </QueryParameters>
         <CommandType>StoredProcedure</CommandType>
         <CommandText>USPAvailability</CommandText>
@@ -34556,7 +34559,7 @@
             </TablixRowHierarchy>
             <DataSetName>DataSet1</DataSetName>
             <Height>1.2cm</Height>
-            <Width>1096.45959cm</Width>
+            <Width>1096.4596cm</Width>
             <Style>
               <Border>
                 <Style>Solid</Style>
