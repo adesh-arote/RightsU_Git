@@ -192,6 +192,8 @@ namespace UTOFrameWork.FrameworkClasses
         public const int ModuleCodeForBanner = 258;
         public const int ModuleCodeForALLab = 259;
         public const int ModuleCodeForALOEM = 260;
+        public const int ModuleCodeForExtendedGroup = 256;
+        public const int ModuleCodeForExtendedMetadata = 257;
 
         #endregion
 

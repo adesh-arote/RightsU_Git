@@ -11,6 +11,7 @@ namespace RightsU_Plus.Controllers
     public class SAP_WBSController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.SAP_WBS> lstSAP_WBS
         {
             get
@@ -32,7 +33,9 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSAP_WBS_Searched"] = value; }
         }
+
         #endregion
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForSAP_WBS);
@@ -48,6 +51,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/SAP_WBS/Index.cshtml");
         }
+
         public PartialViewResult BindSAP_WBSList(int pageNo, int recordPerPage, int sapWbsCode, string SortType = "")
         {
             ViewBag.SAP_WBS_Code = sapWbsCode;
@@ -69,7 +73,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/SAP_WBS/_SAP_WBS_List.cshtml", lst);
         }
+
         #region --Other Method--
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -92,7 +98,9 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         #endregion
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSAP_WBS), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
@@ -102,6 +110,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public JsonResult SearchSAP_WBS(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
