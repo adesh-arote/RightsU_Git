@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class Deal_DescriptionController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.Deal_Description> lstDealDesc
         {
             get
@@ -33,6 +34,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstDealDesc_Searched"] = value; }
         }
+
         #endregion
         public ActionResult Index()
         {
@@ -67,7 +69,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Deal_Description/_DealDescsList.cshtml", lst);
         }
+
         #region --Other Method--
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -90,6 +94,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDealDescription), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -99,7 +104,9 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
+
         public JsonResult CheckRecordLock(int DealDescsCode, string commandName)
         {
             string strMessage = "";
@@ -118,6 +125,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SearchDealDesc(string searchText)
         {
             Deal_Description_Service objService = new Deal_Description_Service(objLoginEntity.ConnectionStringName);
@@ -135,9 +143,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult ActiveDeactiveDealDesc(int DealDescs_Code, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = "";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(DealDescs_Code, GlobalParams.ModuleCodeForDealDescription, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -155,9 +164,25 @@ namespace RightsU_Plus.Controllers
                     lstDealDesc.Where(w => w.Deal_Desc_Code == DealDescs_Code).First().Is_Active = doActive;
                     lstDealDesc_Searched.Where(w => w.Deal_Desc_Code == DealDescs_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                    }
                     else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDealDesc);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -178,9 +203,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveDealDesc(int DealDescsCode, string DealDescsName,string Type, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create"; 
             if (DealDescsCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -191,6 +217,7 @@ namespace RightsU_Plus.Controllers
             {
                 objDealDesc = objService.GetById(DealDescsCode);
                 objDealDesc.EntityState = State.Modified;
+                Action = "U"; // U = "Update"; 
             }
             else
             {
@@ -210,7 +237,18 @@ namespace RightsU_Plus.Controllers
 
             if (isValid)
             {                
-                    lstDealDesc_Searched = lstDealDesc = objService.SearchFor(s => true).OrderByDescending(x => x.Deal_Desc_Code).ToList();
+                lstDealDesc_Searched = lstDealDesc = objService.SearchFor(s => true).OrderByDescending(x => x.Deal_Desc_Code).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDealDesc);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
             }
             else
             {

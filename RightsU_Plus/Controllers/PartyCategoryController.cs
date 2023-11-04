@@ -22,6 +22,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstPartyCategory"] = value; }
         }
+
         private List<RightsU_Entities.Party_Category> lstPartyCategory_Searched
         {
             get
@@ -32,6 +33,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstPartyCategory_Searched"] = value; }
         }
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForPartyCategory);
@@ -47,6 +49,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/PartyCategory/Index.cshtml");
         }
+
         public  PartialViewResult BindPartyCategoryList(int pageNo, int recordPerPage, int partyCategoryCode, string CommandName, string SortType)
         {
             ViewBag.PartyCategoryCode = partyCategoryCode;
@@ -68,6 +71,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/PartyCategory/_PartyCategoryList.cshtml",lst);
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPartyCategory), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -77,6 +81,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public JsonResult CheckRecordLock(int partyCategoryCode, string commandName)
         {
             string strMessage = "";
@@ -95,6 +100,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -117,6 +123,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         public JsonResult SearchPartyCategory(string searchText)
         {
             Party_Category_Service objService = new Party_Category_Service(objLoginEntity.ConnectionStringName);
@@ -134,9 +141,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult ActiveDeactivePartyCategory(int partyCategoryCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = "";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(partyCategoryCode, GlobalParams.ModuleCodeForPartyCategory, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -154,9 +162,25 @@ namespace RightsU_Plus.Controllers
                     lstPartyCategory.Where(w => w.Party_Category_Code == partyCategoryCode).First().Is_Active = doActive;
                     lstPartyCategory_Searched.Where(w => w.Party_Category_Code == partyCategoryCode).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A ="Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                    }
                     else
+                    {
+                        Action = "DA"; // DA ="Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPartyCategory);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPartyCategory, objPartyCategory.Party_Category_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -177,9 +201,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SavePartyCategory(int PartyCategoryCode, string PartyCategoryName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create";
             if (PartyCategoryCode > 0)
             {
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -191,6 +216,7 @@ namespace RightsU_Plus.Controllers
             {
                 objPartyCategory = objService.GetById(PartyCategoryCode);
                 objPartyCategory.EntityState = State.Modified;
+                Action = "U"; // U = "Update";
             }
             else
             {
@@ -209,6 +235,17 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstPartyCategory_Searched = lstPartyCategory = objService.SearchFor(w => true).OrderByDescending(x => x.Last_Updated_On).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPartyCategory);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPartyCategory, objPartyCategory.Party_Category_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
             }
             else
             {
