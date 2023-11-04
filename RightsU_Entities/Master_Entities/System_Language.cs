@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -20,6 +21,7 @@ namespace RightsU_Entities
             this.Users = new HashSet<User>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int System_Language_Code { get; set; }
         public string Language_Name { get; set; }
@@ -32,6 +34,7 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
 
         public virtual ICollection<System_Language_Message> System_Language_Message { get; set; }
+        [JsonIgnore]
         public virtual ICollection<User> Users { get; set; }
     }
 }

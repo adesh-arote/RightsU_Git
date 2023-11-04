@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -18,7 +19,7 @@ namespace RightsU_Entities
         {
             this.Workflow_Module_Role = new HashSet<Workflow_Module_Role>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Workflow_Role_Code { get; set; }
         public Nullable<short> Group_Level { get; set; }
@@ -40,8 +41,10 @@ namespace RightsU_Entities
             return Guid.NewGuid().ToString();
         }
         public Nullable<short> Reminder_Days { get; set; }
+        [JsonIgnore]
         public virtual Security_Group Security_Group { get; set; }
         public virtual Workflow Workflow { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_Module_Role> Workflow_Module_Role { get; set; }
     }
 }

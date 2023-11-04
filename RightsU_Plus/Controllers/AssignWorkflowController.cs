@@ -13,6 +13,7 @@ namespace RightsU_Plus.Controllers
     public class AssignWorkflowController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Workflow> lstWorkflow
         {
             get
@@ -23,6 +24,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow"] = value; }
         }
+
         private List<RightsU_Entities.Workflow> lstWorkflow_Searched
         {
             get
@@ -44,6 +46,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstBusiness_Unit"] = value; }
         }
+
         private List<RightsU_Entities.Business_Unit> lstBusiness_Unit_Searched
         {
             get
@@ -65,6 +68,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow_Role"] = value; }
         }
+
         private List<RightsU_Entities.Workflow_Role> lstWorkflow_Role_Searched
         {
             get
@@ -86,6 +90,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSecurity_Group"] = value; }
         }
+
         private List<RightsU_Entities.Security_Group> lstSecurity_Group_Searched
         {
             get
@@ -107,6 +112,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSystem_Module"] = value; }
         }
+
         private List<RightsU_Entities.System_Module> lstSystem_Module_Searched
         {
             get
@@ -128,6 +134,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstUser"] = value; }
         }
+
         private List<RightsU_Entities.User> lstUser_Searched
         {
             get
@@ -149,6 +156,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow_Module"] = value; }
         }
+
         private List<RightsU_Entities.Workflow_Module> lstWorkflow_Module_Searched
         {
             get
@@ -170,6 +178,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow_Module_Role"] = value; }
         }
+
         private List<RightsU_Entities.Workflow_Module_Role> lstWorkflow_Module_Role_Searched
         {
             get
@@ -180,6 +189,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow_Module_Role_Searched"] = value; }
         }
+
         #endregion
 
         #region --- List And Binding ---
@@ -196,6 +206,7 @@ namespace RightsU_Plus.Controllers
             lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
             return View("~/Views/AssignWorkflow/Index.cshtml");
         }
+
         public PartialViewResult BindWorkflowList(int pageNo, int recordPerPage)
         {
             List<RightsU_Entities.Workflow_Module> lst = new List<RightsU_Entities.Workflow_Module>();
@@ -210,6 +221,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/AssignWorkflow/_AssignWorkflowList.cshtml", lst);
         }
+
         public PartialViewResult BindWorkflowSG(int WFCode, int BUCode,string Status)
         {
             List<RightsU_Entities.Workflow_Role> lst = new List<RightsU_Entities.Workflow_Role>();
@@ -226,11 +238,13 @@ namespace RightsU_Plus.Controllers
             ViewBag.Status = Status;
             return PartialView("~/Views/AssignWorkflow/_Add_Edit_AWSecurityGroup.cshtml", lst);
         }
+
         public void UpdateList(int WFRCode, int ReminderDays)
         {
             short reminderDays = (short)ReminderDays;
             lstWorkflow_Role_Searched.Where(x => x.Workflow_Role_Code == WFRCode).FirstOrDefault().Reminder_Days= reminderDays;
         }
+
         public PartialViewResult BindPartialPages(string key, int WorkflowModuleCode)
         {
             TempData["View"] = "";
@@ -317,6 +331,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);
@@ -327,6 +342,7 @@ namespace RightsU_Plus.Controllers
             UPResult = Modified_Result.ToList<T>();
             return AddResult.ToList<T>();
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -349,6 +365,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForAssignWorkflow), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -357,6 +374,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         public JsonResult SearchWorkflow(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -385,6 +403,7 @@ namespace RightsU_Plus.Controllers
             objJson.Add("lstModuleName", lstModuleName);
             return Json(objJson);
         }
+
         public JsonResult BindBusinesUnit(int MCode)
         {
             var exceptionList = lstWorkflow_Module_Searched.Where(x => x.Module_Code == MCode).Select(x => x.Business_Unit_Code).ToList();
@@ -396,6 +415,7 @@ namespace RightsU_Plus.Controllers
 
             return Json(objJson);
         }
+
         public JsonResult BindWorkflow(int BUCode, int MNCode)
         {
 
@@ -415,6 +435,7 @@ namespace RightsU_Plus.Controllers
 
             return Json(objJson);
         }
+
         public JsonResult BindWorkflowEdit(int AACode)
         {
             List<RightsU_Entities.Workflow> lst_New_WorkFlow = new List<RightsU_Entities.Workflow>();
@@ -487,7 +508,7 @@ namespace RightsU_Plus.Controllers
 
 
             #endregion
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = "";
             if (WorkflowModuleCode > 0)
             {
                 Workflow_Module_Service objWorkflowService_Update = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
@@ -582,9 +603,25 @@ namespace RightsU_Plus.Controllers
                     DBUtil.Release_Record(recordLockingCode);
 
                     if (WorkflowModuleCode > 0)
+                    {
+                        Action = "U"; // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
+                    }         
                     else
+                    {
+                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflowModule);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForAssignWorkflow, objWorkflowModule.Workflow_Module_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -604,7 +641,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-
 
     }
 }

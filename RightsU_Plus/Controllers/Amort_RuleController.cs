@@ -24,7 +24,9 @@ namespace RightsU_Plus.Controllers
     {
         //
         // GET: /Amort_Rule/
+
         public int moduleCode = 180;
+
         public int PageNo
         {
             get
@@ -35,6 +37,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["AmortPageNo"] = value; }
         }
+
         public int PageSize
         {
             get
@@ -394,6 +397,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.AddVisibility = c;
             return View("Index");
         }
+
         public ActionResult CancelData()
         {
             if (TempData["TempId"] != null)
@@ -422,6 +426,7 @@ namespace RightsU_Plus.Controllers
             objAR = objAmortRuleService.GetById(id);
             return View("View", objAR);
         }
+
         public ActionResult ShowAmort()
         {
             int id = 0;
@@ -438,6 +443,7 @@ namespace RightsU_Plus.Controllers
             objAR = objAmortRuleService.GetById(id);
             return View("View", objAR);
         }
+
         public ActionResult AddAmortRule(string commandName)
         {
             if (commandName == "Add")
@@ -610,9 +616,12 @@ namespace RightsU_Plus.Controllers
     public partial class Amort_Rule_Search
     {
         public Amort_Rule_Search() { }
+
         #region ========== PAGE PROPERTIES ==========
+
         public string Rule_No { get; set; }
         public string Rule_Type { get; set; }
+
         #endregion
     }
 

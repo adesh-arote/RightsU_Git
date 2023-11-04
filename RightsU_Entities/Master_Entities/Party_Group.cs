@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -26,6 +27,7 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_By { get; set; }
         public string Is_Active { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Vendor> Vendors { get; set; }
     }
 }

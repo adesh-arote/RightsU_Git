@@ -23,7 +23,9 @@ namespace RightsU_Entities
         public string Pref_Exclusion_Codes { get; set; }
         public Nullable<int> Extended_Group_Code_Booking { get; set; }
 
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
+        [JsonIgnore]
         public virtual Extended_Group Extended_Group { get; set; }
     }
 }

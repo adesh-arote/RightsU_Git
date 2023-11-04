@@ -21,8 +21,9 @@ namespace RightsU_Entities
         public Nullable<int> Vendor_Code { get; set; }
         public Nullable<int> Country_Code { get; set; }
         public string Is_Theatrical { get; set; }
-    
+        [JsonIgnore]
         public virtual Country Country { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
     }
 }
