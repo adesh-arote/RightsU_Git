@@ -456,14 +456,30 @@ namespace RightsU_Plus.Controllers
                     objECD.Email_Config_Detail_Alert.Add(objECDA);
                 });
             }
+            string Action = "C";
             if (objECD.Email_Config_Detail_Code > 0)
+            {
                 objECD.EntityState = State.Modified;
+                Action = "U";
+            }
             else
             {
                 objECD.EntityState = State.Added;
                 objECD.Email_Config = null;
+                Action = "C";
             }
             objECDService.Save(objECD, out resultSet);
+
+            try
+            {
+                string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objECD);
+                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForEmailConfig), Convert.ToInt32(objECD.Email_Config_Detail_Code), LogData, Action, objLoginUser.Users_Code);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
             Dictionary<string, object> objdic = new Dictionary<string, object>();
             objdic.Add("Message", "Data Saved Successfully");
             objECD = null;
