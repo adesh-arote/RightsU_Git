@@ -9,11 +9,13 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
     public partial class Deal_Description
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Deal_Desc_Code { get; set; }
         public string Deal_Desc_Name { get; set; }
