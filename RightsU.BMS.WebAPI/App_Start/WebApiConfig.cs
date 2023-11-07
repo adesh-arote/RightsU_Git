@@ -10,7 +10,7 @@ namespace RightsU.BMS.WebAPI
         public static void Register(HttpConfiguration config)
         {
             // Web API configuration and services
-            config.Filters.Add(new SessionFilter());//-- UnComment at build time
+            //config.Filters.Add(new SessionFilter());//-- UnComment at build time
 
             // Web API routes
             config.MapHttpAttributeRoutes();
