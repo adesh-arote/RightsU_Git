@@ -1,0 +1,80 @@
+﻿@model List<RightsU_Entities.Supplementary_Tab>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string Module_Name = "";
+    string ListConfig = "";
+}
+
+<table class="table table-bordered table-hover" id="tblsuppconfigGrid">
+    <thead>
+        <tr>
+            <th style="width:20%;">Tab Name</th>
+            <th style="width:15%;">Short Name</th>
+            <th style="width:15%;">Tab Order</th>
+            <th style="width:15%;">Add / Edit</th>
+            <th style="width:15%;">Module</th>
+            <th style="width:10%;">List Page Config</th>
+            @if (ViewBag.PageType != "VIEW")
+            {
+                <th style="width:15%;">Action</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td class="expand_Tab_Name">
+                        <span>@item.Supplementary_Tab_Description</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@item.Short_Name</span>
+                    </td>
+                    <td align="center">
+                        <span>@item.Order_No</span>
+                    </td>
+                    <td align="center">
+                        <span>@item.EditWindowType</span>
+                    </td>
+                    <td align="center">
+                        <span>
+
+                            @if (@item.Module_Code == 30) { Module_Name = "Acquisition Deals"; }
+                            else if (item.Module_Code == 35) { Module_Name = "Syndication Deals"; }
+                            else
+                            {
+                                Module_Name = "";
+                            }
+                            @Module_Name
+                        </span>
+                    </td>
+                    <td align="center">
+                        <span>
+                            @if (item.Is_Show == "Y") { ListConfig = "Yes"; }
+                            else
+                            {
+                                ListConfig = "No";
+                            }
+                            @ListConfig
+                        </span>
+
+                    </td>
+                    @if (ViewBag.PageType != "VIEW")
+                    {
+                        <td align="center">
+                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindGridView('EDIT',@item.Supplementary_Tab_Code)"></a>
+                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindGridView('VIEW',@item.Supplementary_Tab_Code)"></a>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>

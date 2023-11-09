@@ -3136,6 +3136,22 @@ namespace RightsU_DAL
     public class Supplementary_Tab_Repository : RightsU_Repository<Supplementary_Tab>
     {
         public Supplementary_Tab_Repository(string constr) : base(constr) { }
+
+        public override void Save(Supplementary_Tab objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
     }
 
     public class Supplementary_Config_Repository : RightsU_Repository<Supplementary_Config>

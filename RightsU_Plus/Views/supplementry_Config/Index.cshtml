@@ -1,0 +1,89 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+                /**/
+
+                Layout = "~/Views/Shared/_Layout.cshtml";
+                MessageKey objMessageKey = new MessageKey();
+                if (Session["objMessageKey"] != null)
+                {
+                    objMessageKey = (MessageKey)Session["objMessageKey"];
+                }
+}
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var URL_BindGrid = '@Url.Action("BindConfigGrids", "supplementry_Config")';
+
+    $(document).ready(function () {
+        debugger;
+        BindGridView("LIST", 0);
+    });
+
+    function BindGridView(key, Supplimentary_TabCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_BindGrid,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                Supplimentary_TabCode: Supplimentary_TabCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#GridSupplimentaryConfig').empty();
+                    $('#GridSupplimentaryConfig').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindGridView("LIST", 0);
+        SetPaging();
+    }
+</script>
+
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="GridSupplimentaryConfig">
+
+            </div>
+        </div>
+    </section>
+</div>
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+</style>

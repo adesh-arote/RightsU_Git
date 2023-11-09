@@ -7293,6 +7293,10 @@ namespace RightsU_BLL
             this.obj_Repository = new Supplementary_Repository(Connection_Str);
         }
 
+        public bool Save(Supplementary objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
         public IQueryable<Supplementary> SearchFor(Expression<Func<Supplementary, bool>> predicate)
         {
             return obj_Repository.SearchFor(predicate);
@@ -7305,7 +7309,20 @@ namespace RightsU_BLL
 
         public override bool Validate(Supplementary objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
+
+        }
+
+        private bool ValidateDuplicate(Supplementary objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Supplementary_Name == objToValidate.Supplementary_Name && s.Supplementary_Code != objToValidate.Supplementary_Code).Count() > 0)
+            {
+                resultSet = "Supplementary already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
 
         public override bool ValidateUpdate(Supplementary objToValidate, out dynamic resultSet)
@@ -7358,19 +7375,40 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
 
+        public bool Save(Supplementary_Tab objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
+
+        public bool Update(Supplementary_Tab objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, obj_Repository, out resultSet);
+        }
         public override bool Validate(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return Validateduplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return Validateduplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
             throw new NotImplementedException();
+        }
+
+        private bool Validateduplicate(Supplementary_Tab objToValidate, out dynamic resultSet)
+        {
+            if(SearchFor(a => a.Supplementary_Tab_Description == objToValidate.Supplementary_Tab_Description && a.Short_Name == objToValidate.Short_Name && a.Supplementary_Tab_Code != objToValidate.Supplementary_Tab_Code).Count() > 0)
+            {
+                resultSet = "Supplementry Tab already exist";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 

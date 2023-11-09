@@ -11,11 +11,12 @@ namespace RightsU_Entities
 {
     using System;
     using System.Collections.Generic;
-    
     public partial class Supplementary_Config
     {
         public State EntityState { get; set; }
         public int Supplementary_Config_Code { get; set; }
+        public Nullable<int> Supplementary_Code { get; set; }
+        public Nullable<int> Supplementary_Tab_Code { get; set; }
         public string Page_Group { get; set; }
         public string Label_Name { get; set; }
         public string Control_Type { get; set; }
@@ -34,5 +35,20 @@ namespace RightsU_Entities
 
         public virtual Supplementary Supplementary { get; set; }
         public virtual Supplementary_Tab Supplementary_Tab { get; set; }
+
+        public string _Dummy_Guid { get; set; }
+        public string Dummy_Guid
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_Dummy_Guid))
+                    _Dummy_Guid = GetDummy_Guid();
+                return _Dummy_Guid;
+            }
+        }
+        private string GetDummy_Guid()
+        {
+            return Guid.NewGuid().ToString();
+        }
     }
 }

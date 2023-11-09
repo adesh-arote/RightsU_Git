@@ -15,6 +15,8 @@ namespace RightsU_InterimDb.Models
     public partial class Supplementary_Config
     {
     	public State EntityState { get; set; }    public int Supplementary_Config_Code { get; set; }
+    	    public Nullable<int> Supplementary_Code { get; set; }
+    	    public Nullable<int> Supplementary_Tab_Code { get; set; }
     	    public string Page_Group { get; set; }
     	    public string Label_Name { get; set; }
     	    public string Control_Type { get; set; }

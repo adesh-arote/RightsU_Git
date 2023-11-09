@@ -2,21 +2,21 @@
   <Entity>
     <ShortName>VMP</ShortName>
     <FullName>VMP</FullName>
-    <DatabaseName>RightsU_Plus_Testing</DatabaseName>
+    <DatabaseName>RightsU_Plus_dev</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>
   <Entity>
     <ShortName>VIACOM18 Network</ShortName>
     <FullName>Viacom18 Network</FullName>
-    <DatabaseName>RightsU_Plus_Testing</DatabaseName>
+    <DatabaseName>RightsU_Plus_dev</DatabaseName>
     <ConnectionStringName>RightsU_Broadcaster</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>
   <Entity>
     <ShortName>ROP</ShortName>
     <FullName>ROP</FullName>
-    <DatabaseName>RightsU_Plus_Testing</DatabaseName>
+    <DatabaseName>RightsU_Plus_dev</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>

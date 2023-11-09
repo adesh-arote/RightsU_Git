@@ -1,0 +1,550 @@
+﻿@model RightsU_Entities.Supplementary_Tab
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+    string ListConfig = "";
+
+}
+
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+
+<script>
+    var Command_Name = "", dummyGuidG = "";
+    var URL_BindTabConfigDetails = '@Url.Action("BindSuppConfigGridView", "supplementry_Config")';
+    var URL_AddEditTabConfigDetails = '@Url.Action("AddEditTabConfigDetails", "supplementry_Config")';
+    var URL_SaveConfigDetails = '@Url.Action("Savesupp_ConfigDetails", "supplementry_Config")';
+    var URL_BindSupplementary = '@Url.Action("BindSupplementaryMaster", "supplementry_Config")';
+    var URL_AddSupplementary = '@Url.Action("Save_Supp_Master", "supplementry_Config")';
+    var URL_UpdateConfig = '@Url.Action("UpdateConfigDetails", "supplementry_Config")';
+    var URL_DeleteConfig = '@Url.Action("DeleteConfig", "supplementry_Config")';
+    var URL_SearchConfig = '@Url.Action("SearchConfig", "supplementry_Config")';
+    $(document).ready(function () {
+        showLoading();
+        //SearchConfig("");
+        BindSuppTabConfig();
+        hideLoading();
+        initializeChosen();
+    })
+
+    function BindSuppTabConfig() {
+        debugger;
+       // alert('@ViewBag.PageType');
+        var Mode_G = '@ViewBag.PageType';
+        var SuppTabCode = $('#hdnSuppTabCode').val();
+        var pageNo = $('#hdnPageNo').val(), recordPerPage = $('#txtPageSize').val();
+        // alert(SuppTabCode);
+        $.ajax({
+            type: "POST",
+            url: URL_BindTabConfigDetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType:"html",
+            data: JSON.stringify({
+                SupplementaryTabCode: SuppTabCode,
+                PageType: Mode_G
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSuppDtl').empty();
+                    $('#divSuppDtl').html(result);
+                  //  SearchConfig("")
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+    function AddEditConfigDetail(Id, dummyGuid, commandName) {
+        debugger;
+        $('#hdnAction').val(commandName);
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditTabConfigDetails,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Id: Id,
+                dummyGuid: dummyGuid,
+                commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        BindSuppTabConfig();
+                        //SearchConfig("");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+    function CancelTabConfig() {
+        $('#hdnAction').val("")
+        BindSuppTabConfig();
+       // SearchConfig("");
+    }
+
+    function SaveTabConfig() {
+        var supplementry = $("#ddlSupplementary").val();
+        var control_type = $("#ddlControlType").val();
+        var ismultiselect = $("#ddlIsMultipleSelect").val();
+        var isMandatory = $("#chkMandatory").prop("checked");
+        var Maxlength = $("#txtMax_Length").val();
+        var pageControlOrder = $("#txtPage_Control_Order").val();
+        var controlFieldOrder = $("#txtControl_Field_Order").val();
+        var viewName = $("#txtView_Name").val();
+        var txtField = $("#txtText_Field").val();
+        var valueField = $("#txtValue_Field").val();
+        var additional = $("#ddlAdditional").val();
+        var SupplementaryTabCode = $('#hdnSuppTabCode').val();
+
+        var formData = new FormData();
+        formData.append("supplementary", supplementry);
+        formData.append("controlType", control_type);
+        formData.append("isMultipleSelect", ismultiselect);
+        formData.append("isMandatory", isMandatory);
+        formData.append("maxLength", Maxlength);
+        formData.append("pageControlOrder", pageControlOrder);
+        formData.append("controlFieldOrder", controlFieldOrder);
+        formData.append("viewName", viewName);
+        formData.append("txtField", txtField);
+        formData.append("valueField", valueField);
+        formData.append("additional", additional);
+        formData.append("SupplementaryTabCode", SupplementaryTabCode);
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveConfigDetails,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindSuppTabConfig();
+                        //SearchConfig("");
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function AddSupplementary() {
+        $("#popAddSupplementary").modal();
+    }
+
+
+
+    function saveSupplementary() {
+        var Supp_Name = $.trim($("#Supp_Name").val());
+        if (Supp_Name == "") {
+            $("#Supp_Name").val('');
+            $("#Supp_Name").attr('required', true);
+            return false;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_AddSupplementary,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                Supp_Name: Supp_Name
+            }),
+            success: function (result) {
+
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    $("#Supp_Name").val('');
+                    $('#popAddSupplementary').empty();
+                    $("#popAddSupplementary").modal('hide');
+                    $('#ddlSupplementary').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                    $('#ddlSupplementary').trigger("chosen:updated");
+
+                }
+                else {
+                    showAlert("E", result.Message);
+                    ("#popAddSupplementary").modal();
+                }
+            },
+            error: function (result) { }
+        });
+
+    }
+
+    function UpdateTabConfig(dummyGuid) {
+
+        var DummyGuid = dummyGuid;
+        var supplementry = $("#ddlSupplementary").val();
+        var control_type = $("#ddlControlType").val();
+        var ismultiselect = $("#ddlIsMultipleSelect").val();
+        var isMandatory = $("#chkMandatory").prop("checked");
+        var Maxlength = $("#txtMax_Length").val();
+        var pageControlOrder = $("#txtPage_Control_Order").val();
+        var controlFieldOrder = $("#txtControl_Field_Order").val();
+        var viewName = $("#txtView_Name").val();
+        var txtField = $("#txtText_Field").val();
+        var valueField = $("#txtValue_Field").val();
+        var additional = $("#ddlAdditional").val();
+        var SupplementaryTabCode = $('#hdnSuppTabCode').val();
+
+        var formData = new FormData();
+        formData.append("DummyGuid", DummyGuid);
+        formData.append("supplementary", supplementry);
+        formData.append("controlType", control_type);
+        formData.append("isMultipleSelect", ismultiselect);
+        formData.append("isMandatory", isMandatory);
+        formData.append("maxLength", Maxlength);
+        formData.append("pageControlOrder", pageControlOrder);
+        formData.append("controlFieldOrder", controlFieldOrder);
+        formData.append("viewName", viewName);
+        formData.append("txtField", txtField);
+        formData.append("valueField", valueField);
+        formData.append("additional", additional);
+        formData.append("SupplementaryTabCode", SupplementaryTabCode);
+
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateConfig,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindSuppTabConfig();
+                        //SearchConfig("");
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SaveSupplementaryTab() {
+        debugger;
+
+        if (!Validate_Save()) {
+            return false;
+        }
+
+        else {
+
+            return true;
+        }
+    }
+    $(".numeric").keypress(function () {
+        CheckNumeric(event);
+    });
+
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+
+    function SaveSuccess(result) {
+        debugger;
+        if (result.Status == "S") {
+            showAlert("S", result.Message);
+            BindGridView("LIST", 0)
+
+        }
+        else {
+            Command_Name = "";
+            showAlert("E", result.Message, "OK");
+        }
+    }
+
+    function Validate_Save() {
+        var returnVal = true;
+        if ($.trim($('#Supplementary_Tab_Name').val()) == "") {
+            $('#Supplementary_Tab_Name').val('')
+            $('#Supplementary_Tab_Name').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Short_Name').val()) == "") {
+            $('#Short_Name').val('')
+            $('#Short_Name').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Order_No').val()) == "") {
+            $('#Order_No').val('')
+            $('#Order_No').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#ddlTabType').val() == "") {
+            $('#ddlTabType').addClass("required");
+            returnVal = false;
+        }
+        if ($('#ddlAddEditWindow').val() == "") {
+            $('#ddlAddEditWindow').addClass("required");
+            returnVal = false;
+        }
+        if ($('#ddlModule').val() == "") {
+            $('#ddlModule').addClass("required");
+            returnVal = false;
+        }
+        return returnVal;
+    }
+
+    function CancelSave() {
+        Command_Name = "CANCEL_SAVE"
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+    }
+    function handleOk() {
+        //alert(Command_Name);
+        if (Command_Name == "CANCEL_SAVE") {
+            BindGridView("LIST", 0)
+        }
+        if (Command_Name == "DELETE_SAVE") {
+           // alert(Command_Name);
+
+            confirmDeleteTabConfig(dummyGuidG);
+
+        }
+    }
+
+    function DeleteTabConfig(dummyGid) {
+       // alert(dummyGid)
+        Command_Name = "DELETE_SAVE"
+        dummyGuidG = dummyGid;
+        showAlert("I", '@objMessageKey.Areyousureyouwanttodeletethisrecord?', "OKCANCEL");
+    }
+
+    function confirmDeleteTabConfig(dummyGuidG) {
+        debugger;
+       // alert(dummyGuidG);
+        $.ajax({
+            type: "POST",
+            url: URL_DeleteConfig,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                dummyGuid: dummyGuidG,
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindSuppTabConfig();
+                        //SearchConfig("");
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        })
+        dummyGuidG = "";
+        Command_Name = ""
+    }
+
+
+</script>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (@ViewBag.PageType == "ADD")
+        {
+            <span>Add Supplymentry Config</span>
+        }
+        else if (@ViewBag.PageType == "EDIT")
+        {
+            <span>Edit Supplymentry Config</span>
+        }
+
+    </h2>
+</div>
+@using (Ajax.BeginForm("SaveSupplementaryTabConfig", "supplementry_Config", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td>Tab Name</td>
+                <td>
+                    <input type="text" id="Supplementary_Tab_Name" name="Supplementary_Tab_Name" value="@Model.Supplementary_Tab_Description" maxlength="200" style="width:94% !important" />
+                    <input type="hidden" id="hdnSuppTabCode" name="hdnSuppTabCode" value="@Model.Supplementary_Tab_Code" />
+                </td>
+                <td>Short Name</td>
+                <td>
+                    <input type="text" id="Short_Name" name="Short_Name" value="@Model.Short_Name" maxlength="100" style="width:94% !important" />
+                </td>
+            </tr>
+            <tr>
+                <td>Tab Order</td>
+                <td>
+                    <input type="text" id="Order_No" name="Order_No" value="@Model.Order_No" maxlength="100" class="numeric" style="width:94% !important" />
+                </td>
+                <td>Tab Type</td>
+                <td>
+                    @Html.DropDownList("ddlTabType", TempData["TabTypeDDL"] as SelectList, "Select", new { @id = "ddlTabType", @class = "form_input chosen-select" })
+                </td>
+            </tr>
+            <tr>
+                <td>Add / Edit</td>
+                <td>
+                    @Html.DropDownList("ddlAddEditWindow", TempData["EditWindowTypeDDL"] as SelectList, "Select", new { @id = "ddlAddEditWindow", @class = "form_input chosen-select" })
+                </td>
+                <td>Module</td>
+                <td>
+                    @Html.DropDownList("ddlModule", TempData["ModuleDDL"] as SelectList, "Select", new { @id = "ddlModule", @class = "form_input chosen-select" })
+                </td>
+            </tr>
+            <tr>
+                <td>List Page Config</td>
+                <td>
+                    <span>
+                        @if (Model.Is_Show == "Y")
+                        {
+                            <input type="checkbox" id="ListConfig" name="ListConfig" class="form_input" style="width:4% !important" checked disabled />
+
+                        }
+                        else
+                        {
+                            <input type="checkbox" id="ListConfig" name="ListConfig" class="form_input" style="width:4% !important" disabled />
+                        }
+                       
+                        @*ListConfig = "Yes";
+                            @ListConfig*@
+                        @*}
+                            else
+                            {
+                                <input type="checkbox" id="chkListConfig" name="chkListConfig" class="form_input" style="width:4% !important" disabled />
+                            }*@
+
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="grid_area" style="margin: 0 auto; width: 98%;">
+        <div class="paging_area clearfix" style="height:27px !important;">
+            <span class="pull-left bold">Supplymentry Group Config</span>
+        </div>
+
+        <div class="paging_area clearfix" id="Pg3" style="height:30px !important;line-height:0px !important;padding-left:0.5% !important; margin-top: 10px">
+            @*<span class="pull-left">Total Records: </span>*@
+            <span class="pull-left" id="lblRecordCountPopup"></span>
+            <span class="pull-right" style="vertical-align:top;line-height:0px !important;margin-top:-4px;">
+                @if (ViewBag.PageType != "VIEW")
+                {
+                    <input type="button" class="btn btn-primary" value="Add" style="float:right" onclick="AddEditConfigDetail(@Model.Supplementary_Tab_Code,'0', 'ADD');" />
+                }
+            </span>
+        </div>
+        <div class="tab-content clearfix table-wrapper scale_table_container">
+            <input type="hidden" id="hdnAction" value="" />
+            <div class="scale_table_block" id="divSuppDtl" style="height:300px; overflow-y:auto;">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal_block_full" style="margin-top: 10px;">
+        <div class="form_links">
+            <ul class="modal_block clearfix" style="padding-left:10px; padding-top: 10px;">
+                @if (ViewBag.PageType != "VIEW")
+                {
+                    <li>
+                        <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SaveSupplementaryTab();" />
+                    </li>
+                }
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSave()" />
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddSupplementary" role="dialog" tabindex="-1" aria-hidden="false" style="max-width:500px">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="program_popup">
+                    <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                        <div class="modal_block modal_header">
+                            <a class="close" data-dismiss="modal" href="#">
+                                <span>×</span>
+                                <span class="sr-only">Close</span>
+                            </a>
+                            <h2>Add Supplementary</h2>
+                        </div>
+                        <div class="modal_block">
+                            <ul class="form_fields_wrapper add_program_popup">
+                                <li>
+                                    <label><b>Supplementary Name</b></label>
+                                    <input class="form_input" id="Supp_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                    <input type="hidden" id="hdnAction_SupplementaryMaster" value="" />
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="modal_block_full">
+                            <div class="form_links">
+                                <ul class="modal_block clearfix">
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" onclick="return saveSupplementary()">@objMessageKey.Save</a>
+                                    </li>
+                                    <li class="poptalent">
+                                        <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
