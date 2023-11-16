@@ -53,6 +53,7 @@
         });
        // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?Currency');
     });
+
     function addNumeric() {
         $(".pagingSize").numeric({
             allowMinus: false,
@@ -70,6 +71,7 @@
             min: 0
         });
     }
+
     function SetPaging() {
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
@@ -102,6 +104,7 @@
         opt["current_page"] = index;
         $("#Pagination").pagination(recordCount, opt);
     }
+
     function pageselectCallback(page_index, jq) {
         if (checkCurrentAction()) {
             $('.required').removeClass('required');
@@ -117,6 +120,7 @@
                 IsCall = 'Y';
         }
     }
+
     function txtPageSize_OnChange() {
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
@@ -126,6 +130,7 @@
         BindCurrencyList()
         SetPaging();
     }
+
     function ValidatePageSize() {
         var recordPerPage = $('#txtPageSize').val()
         if ($.trim(recordPerPage) != '') {
@@ -141,6 +146,7 @@
         BindCurrencyList()
         SetPaging();
     }
+
     function btnSearch_OnClick() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -157,6 +163,7 @@
         }
         SearchCurrency(searchText);
     }
+
     function btnShowAll_OnClick() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -170,7 +177,9 @@
         $('#searchCommon').val('');
         SearchCurrency("");
     }
+
     function BindCurrencyList() {
+        debugger;
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
 
@@ -187,6 +196,7 @@
                 sortType : sort_Type
             }),
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -201,7 +211,9 @@
             }
         });
     }
+
     function SearchCurrency(searchText) {
+        debugger;
         $('#searchCommon').val(searchText);
         showLoading();
         $.ajax({
@@ -215,6 +227,7 @@
             }),
             async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -234,6 +247,7 @@
             }
         });
     }
+
     function ActiveDeactiveCurrency(currencyCode, doActive) {
         if (checkCurrentAction()) {
             $.ajax({
@@ -248,12 +262,13 @@
                 }),
                 async: false,
                 success: function (result) {
+                    debugger;
                     if (result == "true") {
                         redirectToLogin();
                     }
                     else {
                         if (result.Status == "S") {
-                            showAlert("S", result.Message, "");
+                            showAlert("S", result.Message);
                             if ($("#searchCommon").val() != "") {
                                 SearchCurrency($("#searchCommon").val())
                             }
@@ -262,7 +277,7 @@
                             }
                         }
                         else {
-                            showAlert("E", result.Message, "");
+                            showAlert("E", result.Message);
                         }
                     }
                 },
@@ -273,6 +288,7 @@
             });
         }
     }
+
     function checkCurrentAction() {
         var action = $.trim($('#hdnAction').val());
         if (action == "ADD") {
@@ -285,6 +301,7 @@
         }
         return true;
     }
+
     function handleOk() {
 
         if (Command_Name == "DELETE_EXCHANGE_RATE") {
@@ -292,11 +309,13 @@
             DeleteExchangeRate(dummyGuid_G, true);
         }
     }
+
     function handleCancel() {
         $('#popup').css('z-index','1050');
         Command_Name = "";
         dummyGuid_G = "";
     }
+
     function AddEditViewCurrency(currencyCode, commandName) {
         debugger;
         $('.required').removeClass('required');
@@ -334,6 +353,7 @@
             }
         });
     }
+
     function SaveCurrency() {
         if (!checkCurrentAction())
             return false;
@@ -404,6 +424,7 @@
             })
         }
     }
+
     function ClosePopup() {
         var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
         if (recordLockingCode > 0)
@@ -416,6 +437,7 @@
         $('#popup').modal('hide');
         $('#pupupHtml').empty();
     }
+
     function BindExchangeRateList(commandName, dummyGuid) {
         debugger;
         $.ajax({
@@ -450,6 +472,7 @@
             }
         });
     }
+
     function AddEditExchangeRate(commandName, dummyGuid) {
         if (!checkCurrentAction())
             return false;
@@ -457,6 +480,7 @@
         $('#hdnAction').val(commandName);
         BindExchangeRateList(commandName, dummyGuid);
     }
+
     function SaveExchangeRate(dummyGuid, rowNumber) {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -588,10 +612,12 @@
             })
         }
     }
+
     function ExchangeRate_Cancel() {
         $('#hdnAction').val("");
         BindExchangeRateList("", "");
     }
+
     function DeleteExchangeRate(dummyGuid, confirmed) {
         if (!checkCurrentAction())
             return false;
@@ -677,7 +703,6 @@
             }
         });
     }
-
 
 </script>
 <style>

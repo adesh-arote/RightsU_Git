@@ -58,7 +58,7 @@
                                 <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
                                 <a title="Approve/Reject" class="glyphicon glyphicon-check" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', 'ARView')"></a>
                             }
-                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForSendForApproval))) && item.Workflow_Status == "R" && item.Inserted_By == objLoginUser.Users_Code)
+                            if ((item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForView))) && (item.ShowHideButtons.Contains(Convert.ToString(GlobalParams.RightCodeForSendForApproval))) && item.Workflow_Status == "R" ) /*&& item.Inserted_By == objLoginUser.Users_Code*/
                             {
                                 <a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails('@item.AL_Purchase_Order_Code', '@item.AL_Proposal_Code', '')"></a>
                                 <a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup('@item.AL_Purchase_Order_Code')"></a>
