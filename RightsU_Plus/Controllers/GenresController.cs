@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class GenresController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.Genre> lstGenre
         {
             get
@@ -33,6 +34,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstGenre_Searched"] = value; }
         }
+
         #endregion
         public ActionResult Index()
         {
@@ -72,7 +74,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Genres/_GenresList.cshtml", lst);
         }
+
         #region --Other Method--
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -95,6 +99,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGenres), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -104,7 +109,9 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
+
         public JsonResult CheckRecordLock(int genresCode, string commandName)
         {
             string strMessage = "";
@@ -123,6 +130,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SearchGenre(string searchText)
         {
             Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
@@ -140,9 +148,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult ActiveDeactiveGenre(int genres_Code, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = "";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(genres_Code, GlobalParams.ModuleCodeForGenres, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -160,9 +169,27 @@ namespace RightsU_Plus.Controllers
                     lstGenre.Where(w => w.Genres_Code == genres_Code).First().Is_Active = doActive;
                     lstGenre_Searched.Where(w => w.Genres_Code == genres_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
-                        message = objMessageKey.Recordactivatedsuccessfully;
+                    {
+                        Action = "A"; // A = "Active";
+                        message = objMessageKey.Recordactivatedsuccessfully;   
+                    }
                     else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGenre);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForGenres, objGenre.Genres_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
+
                 }
                 else
                 {
@@ -183,12 +210,16 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveGenre(int genresCode, string genresName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create";
             if (genresCode > 0)
+            {
+                Action = "U"; // U = "Update";
                 message = objMessageKey.Recordupdatedsuccessfully;
-
+            }
+                
             Genre_Service objService = new Genre_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Genre objGenre = null;
 
@@ -214,7 +245,18 @@ namespace RightsU_Plus.Controllers
 
             if (isValid)
             {                
-                    lstGenre_Searched = lstGenre = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                lstGenre_Searched = lstGenre = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGenre);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForGenres, objGenre.Genres_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
             }
             else
             {

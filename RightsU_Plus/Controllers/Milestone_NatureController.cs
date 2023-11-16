@@ -157,12 +157,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objMilestoneNature, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstMilestoneNature.Where(w => w.Milestone_Nature_Code == Milestone_Nature_Code).First().Is_Active = doActive;
                     lstMilestoneNature_Searched.Where(w => w.Milestone_Nature_Code == Milestone_Nature_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }                        
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMilestoneNature);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -185,6 +202,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveMilestoneNature(int MilestoneNatureCode, string MilestoneNatureName, int Record_Code)
         {
+            string Action = "C";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (MilestoneNatureCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -196,6 +214,7 @@ namespace RightsU_Plus.Controllers
             {
                 objMilestoneNature = objService.GetById(MilestoneNatureCode);
                 objMilestoneNature.EntityState = State.Modified;
+                Action = "U";
             }
             else
             {
@@ -203,6 +222,7 @@ namespace RightsU_Plus.Controllers
                 objMilestoneNature.EntityState = State.Added;
                 objMilestoneNature.Inserted_On = DateTime.Now;
                 objMilestoneNature.Inserted_by= objLoginUser.Users_Code;
+                Action = "C";
             }
 
             objMilestoneNature.Last_Updated_Time = DateTime.Now;
@@ -215,6 +235,16 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstMilestoneNature_Searched = lstMilestoneNature = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMilestoneNature);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

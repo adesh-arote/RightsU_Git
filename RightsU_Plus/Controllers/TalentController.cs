@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class TalentController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Talent> lstTalent
         {
             get
@@ -80,7 +81,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Talent/_TalentList.cshtml", lst);
         }
+
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -103,6 +106,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForTalent), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -111,6 +115,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchTalent(string searchText, int roleCode)
@@ -148,7 +153,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveTalent(int talentCode, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(talentCode, GlobalParams.ModuleCodeForTalent, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -164,6 +169,21 @@ namespace RightsU_Plus.Controllers
                 {
                     lstTalent.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
                     lstTalent_Searched.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
+
+                    if (doActive == "Y")
+                        Action = "A"; // A = "Active";
+                    else
+                        Action = "DA"; // DA = "Deactivate";
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -221,7 +241,7 @@ namespace RightsU_Plus.Controllers
             //  int recordCode = Convert.ToInt32(help["Record_Code"]);
             string talentname = help["Talent_Name"].ToString();
             string gender = help["Gender"].ToString();
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = "U"; // U = "Update";
 
             Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Talent objTalent = objService.GetById(talentcode);
@@ -276,6 +296,16 @@ namespace RightsU_Plus.Controllers
                     CommonUtil objCommonUtil = new CommonUtil();
                     objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                     FetchData();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -318,9 +348,7 @@ namespace RightsU_Plus.Controllers
             string talentname = help["Talent_Name"].ToString();
             string gender = help["Gender"].ToString();
             string Role_Code = help["Talent_Role"].ToString();
-            string status = "S", message = "Record {ACTION} successfully";
-
-
+            string status = "S", message = "Record {ACTION} successfully", Action = "C"; // C = "Create";
 
             Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Talent objTalent = new RightsU_Entities.Talent();
@@ -361,6 +389,16 @@ namespace RightsU_Plus.Controllers
                 status = "S";
                 message = objMessageKey.RecordAddedSuccessfully;
                 FetchData();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {
@@ -410,12 +448,8 @@ namespace RightsU_Plus.Controllers
         //    return AddResult.ToList<T>();
         //}
 
-        protected List<T> CompareLists<T>(List<T> FirstList,
-                                          List<T> SecondList,
-                                          IEqualityComparer<T> comparer,
-                                          ref List<T> DelResult) where T : class
+        protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult) where T : class
         {
-
             var AddResult = FirstList.Except(SecondList, comparer);
             var DeleteResult = SecondList.Except(FirstList, comparer);
 
@@ -423,6 +457,7 @@ namespace RightsU_Plus.Controllers
 
             return AddResult.ToList<T>();
         }
+
         private void FetchData()
         {
             lstTalent_Searched = lstTalent = new Talent_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();

@@ -18,7 +18,6 @@ using Microsoft.Reporting.WebForms;
 
 namespace RightsU_Plus.Controllers
 {
-
     public class AmortController : BaseController
     {
         private List<Amort_Month_Data> lstAMD
@@ -34,6 +33,7 @@ namespace RightsU_Plus.Controllers
                 Session["lstAMD"] = value;
             }
         }
+
         public ActionResult Index()
         {
             return View();
@@ -128,14 +128,12 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/Amort/_ViewAmortRule.cshtml", objAR);
         }
 
-
-
-
         public ActionResult AddAmort(string isEdit = "N")
         {
             ViewBag.isEdit = isEdit;
             return View("~/Views/Amort/AmortDetails.cshtml");
         }
+
         public PartialViewResult BindAmortMonthList(int pageNo, int recordPerPage)
         {
             List<Amort_Month_Data> lst = new List<Amort_Month_Data>();
@@ -151,6 +149,7 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("~/Views/Amort/_AmortMonthList.cshtml", lst);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -173,6 +172,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         public JsonResult SearchAmortMonth(string searchText)
         {
             lstAMD = new List<Amort_Month_Data>();
@@ -203,6 +203,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public class Amort_Month_Data
         {
             public string Month { get; set; }

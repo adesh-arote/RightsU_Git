@@ -9,18 +9,21 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Vendor_Country
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Vendor_Country_Code { get; set; }
         public Nullable<int> Vendor_Code { get; set; }
         public Nullable<int> Country_Code { get; set; }
         public string Is_Theatrical { get; set; }
-    
+        [JsonIgnore]
         public virtual Country Country { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
     }
 }

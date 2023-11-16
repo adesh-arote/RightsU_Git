@@ -168,12 +168,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objTitle_Objection_Type, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstTitle_Objection_Type.Where(w => w.Objection_Type_Code == Title_Objection_Type_Code).First().Is_Active = doActive;
                     lstTitle_Objection_Type_Searched.Where(w => w.Objection_Type_Code == Title_Objection_Type_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTitle_Objection_Type);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -196,6 +213,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveTitle_Objection_Type(int Title_Objection_TypeCode, string Title_Objection_TypeName, int Record_Code, int TOT_Parent_Code = 0)
         {
+            string Action = "C";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (Title_Objection_TypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -207,6 +225,7 @@ namespace RightsU_Plus.Controllers
             {
                 objTitle_Objection_Type = objService.GetById(Title_Objection_TypeCode);
                 objTitle_Objection_Type.EntityState = State.Modified;
+                Action = "U";
             }
             else
             {
@@ -214,6 +233,7 @@ namespace RightsU_Plus.Controllers
                 objTitle_Objection_Type.EntityState = State.Added;
                 objTitle_Objection_Type.Inserted_On = DateTime.Now;
                 objTitle_Objection_Type.Inserted_By = objLoginUser.Users_Code;
+                Action = "C";
             }
 
             objTitle_Objection_Type.Last_Updated_Time = DateTime.Now;
@@ -228,6 +248,16 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstTitle_Objection_Type_Searched = lstTitle_Objection_Type = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTitle_Objection_Type);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

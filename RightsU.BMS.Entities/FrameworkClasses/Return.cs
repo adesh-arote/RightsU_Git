@@ -11,6 +11,9 @@ namespace RightsU.BMS.Entities
         public string Message { get; set; }
         public bool IsSuccess { get; set; }        
         public int LogId { get; set; }
-
+        public string Token { get; set; }
+        public Nullable<int> SecurityGroupCode { get; set; }
+        public string UserName { get; set; }
+        public string IsSystemPassword { get; set; }
     }
 }

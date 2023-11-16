@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -22,6 +23,7 @@ namespace RightsU_Entities
             this.Title_Alternate_Genres = new HashSet<Title_Alternate_Genres>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Genres_Code { get; set; }
         public string Genres_Name { get; set; }
@@ -32,9 +34,13 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Channel> Channels { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Geners> Title_Geners { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Program> Programs { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate_Genres> Title_Alternate_Genres { get; set; }
 
     }

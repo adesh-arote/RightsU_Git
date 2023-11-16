@@ -9,7 +9,7 @@
 
 
 
-CREATE PROCEDURE [dbo].[USP_BMS_Data_Generation] 
+ALTER PROCEDURE [dbo].[USP_BMS_Data_Generation] 
 AS
 BEGIN
 -- ==================================[BMS_Asset_Ref_Key]===========
@@ -23,7 +23,7 @@ BEGIN
 	IF NOT EXISTS(SELECT TOP 1 BMS_Process_Deals_Code FROM  BMS_Process_Deals WHERE Record_Status = 'W')
 	BEGIN
 		DECLARE CUS_Deal_Process CURSOR FOR 
-		SELECT Acq_Deal_Code FROM  BMS_Process_Deals WHERE Record_Status = 'P' AND Acq_Deal_Code=26039 ORDER BY BMS_Process_Deals_Code ASC
+		SELECT Acq_Deal_Code FROM  BMS_Process_Deals WHERE Record_Status = 'P' AND Acq_Deal_Code=27041 ORDER BY BMS_Process_Deals_Code ASC
 		OPEN CUS_Deal_Process
 		FETCH NEXT FROM CUS_Deal_Process INTO @Deal_Code
 			WHILE(@@FETCH_STATUS = 0)

@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ namespace RightsU_Entities
             this.MHRequests = new HashSet<MHRequest>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Channel_Code { get; set; }
         public string Channel_Name { get; set; }
@@ -60,19 +62,32 @@ namespace RightsU_Entities
         public string Is_Parent_Child { get; set; }
         public Nullable<int> Parent_Channel_Code { get; set; }
         public Nullable<int> Channel_Category_Code { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
+        [JsonIgnore]
         public virtual ICollection<BVException_Channel> BVException_Channel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
+        [JsonIgnore]
         public virtual Genre Genre { get; set; }
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<RunData> RunDatas { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Region_Mapping> Channel_Region_Mapping { get; set; }
+        [JsonIgnore]
         public virtual ICollection<IPR_Opp_Channel> IPR_Opp_Channel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<IPR_Rep_Channel> IPR_Rep_Channel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal_Channel> Music_Deal_Channel { get; set; }
+        [JsonIgnore]
         public virtual Channel_Category Channel_Category { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Provisional_Deal_Run_Channel> Provisional_Deal_Run_Channel { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Category_Details> Channel_Category_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MHRequest> MHRequests { get; set; }
     }
 }

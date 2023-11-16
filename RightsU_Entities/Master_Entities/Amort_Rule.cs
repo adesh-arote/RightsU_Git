@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -18,7 +19,7 @@ namespace RightsU_Entities
         {
             this.Amort_Rule_Details = new HashSet<Amort_Rule_Details>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }    
         public int Amort_Rule_Code { get; set; }
         public string Rule_Type { get; set; }

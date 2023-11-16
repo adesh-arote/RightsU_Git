@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -30,6 +31,7 @@ namespace RightsU_Entities
         public string Rule_Type { get; set; }
 
         public virtual ICollection<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
         public virtual ICollection<AL_Recommendation_Content> AL_Recommendation_Content { get; set; }
     }

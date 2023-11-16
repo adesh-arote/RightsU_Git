@@ -13,6 +13,7 @@ namespace RightsU_Plus.Controllers
     public class ApprovalWorkflowController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Workflow> lstWorkflow
         {
             get
@@ -23,6 +24,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow"] = value; }
         }
+
         private List<RightsU_Entities.Workflow> lstWorkflow_Searched
         {
             get
@@ -44,6 +46,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstBusiness_Unit"] = value; }
         }
+
         private List<RightsU_Entities.Business_Unit> lstBusiness_Unit_Searched
         {
             get
@@ -65,6 +68,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstWorkflow_Role"] = value; }
         }
+
         private List<RightsU_Entities.Workflow_Role> lstWorkflow_Role_Searched
         {
             get
@@ -86,6 +90,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSecurity_Group"] = value; }
         }
+
         private List<RightsU_Entities.Security_Group> lstSecurity_Group_Searched
         {
             get
@@ -107,6 +112,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstUser"] = value; }
         }
+
         private List<RightsU_Entities.User> lstUser_Searched
         {
             get
@@ -121,6 +127,7 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region --- List And Binding ---
+
         public ViewResult Index()
         {
             return View("~/Views/ApprovalWorkflow/Index.cshtml");
@@ -208,8 +215,6 @@ namespace RightsU_Plus.Controllers
 
         #endregion
 
-
-
         #region  --- Other Methods ---
 
         public JsonResult CheckRecordLock(int ApprovalWorkflowCode)
@@ -231,7 +236,6 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);
@@ -242,6 +246,7 @@ namespace RightsU_Plus.Controllers
             UPResult = Modified_Result.ToList<T>();
             return AddResult.ToList<T>();
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -264,6 +269,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForApprovalWorkflow), objLoginUser.Security_Group_Code,objLoginUser.Users_Code).ToList();
@@ -272,6 +278,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         #endregion
 
         #region --- WorkflowList ---
@@ -325,7 +332,7 @@ namespace RightsU_Plus.Controllers
                 WorkflowCode = Convert.ToInt32(objFormCollection["Workflow_Code"]);
             }
             #endregion
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = "";
             if (WorkflowCode > 0)
             {
                 #region   -- -Update Workflow
@@ -421,9 +428,26 @@ namespace RightsU_Plus.Controllers
 
 
                     if (WorkflowCode > 0)
+                    {
+                        Action = "U"; // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
+                    }   
                     else
+                    {
+                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflow);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+
                 }
                 else
                 {
@@ -446,7 +470,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DeleteWorkflow(int WorkflowCode)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "D"; // D = "Delete";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(WorkflowCode, GlobalParams.ModuleCodeForApprovalWorkflow, objLoginUser.Users_Code, out RLCode, out strMessage,objLoginEntity.ConnectionStringName);
@@ -469,6 +493,16 @@ namespace RightsU_Plus.Controllers
                 {
                     message = message.Replace("{ACTION}", "Deleted");
                     lstWorkflow_Searched = lstWorkflow = new Workflow_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflow);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {

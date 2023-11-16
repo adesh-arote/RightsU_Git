@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class Extended_GroupController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Extended_Group> lstExtended_Group
         {
             get
@@ -55,6 +56,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objExtended_Group_Service"] = value; }
         }
+
         #endregion
 
         //-----------------------------------------------------Paging--------------------------------------------------------------------------------------
@@ -300,8 +302,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult SaveMaster(int ExtdGrpId, Extended_Group objEg)
         {
-            string Message = "";
-            string Status = "";
+            string Message = "", Status = "", Action = "C"; // C = "Create";
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
             //Extended_Group_Service objExtended_Group_Service = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
@@ -322,6 +323,7 @@ namespace RightsU_Plus.Controllers
                 objExtended_Group.Last_Action_By = objLoginUser.Users_Code;
 
                 objExtended_Group.EntityState = State.Modified;
+                Action = "U"; // U = "Update";
             }
             else
             {
@@ -371,6 +373,16 @@ namespace RightsU_Plus.Controllers
                 else
                 {
                     Session["Message"] = objMessageKey.Recordupdatedsuccessfully;
+                }
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+                    
                 }
             }
 
@@ -568,10 +580,10 @@ namespace RightsU_Plus.Controllers
         }
 
         #region ---Activate-Deactivate---
+
         //public JsonResult ActivateDeactivateExtdGrp(string ActiveAction, int ExtdGrpCode)
         //{
-        //    string status = "S";
-        //    string message = "";
+        //    string status = "S", message = "", Action = "";
 
         //    objExtended_Group = null;
 
@@ -585,10 +597,12 @@ namespace RightsU_Plus.Controllers
         //    {
         //        if (ActiveAction == "Y")
         //        {
+        //            Action = "A"; // A = "Activate";
         //            message = objMessageKey.Recordactivatedsuccessfully;
         //        }
         //        else
         //        {
+        //            Action = "DA"; // DA = "Deactivate";
         //            message = objMessageKey.Recorddeactivatedsuccessfully;
         //        }
         //    }
@@ -614,6 +628,17 @@ namespace RightsU_Plus.Controllers
         //    {
         //        status = "S";
         //        message = resultSet;
+
+        //    try
+        //    {
+        //        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
+        //        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //          
+        //    }
+
         //    }
 
         //    var obj = new
@@ -623,6 +648,7 @@ namespace RightsU_Plus.Controllers
         //    };
         //    return Json(obj);
         //}
+
         #endregion
 
     }

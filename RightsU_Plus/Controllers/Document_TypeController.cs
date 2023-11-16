@@ -156,12 +156,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objDocumentType, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstDocument_Type.Where(w => w.Document_Type_Code == documentTypeCode).First().Is_Active = doActive;
                     lstDocument_Type_Searched.Where(w => w.Document_Type_Code == documentTypeCode).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDocumentType);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -184,6 +201,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveDocument_Type(int documentTypeCode, string documentTypeName, int Record_Code)
         {
+            string Action = "C";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (documentTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -193,11 +211,13 @@ namespace RightsU_Plus.Controllers
 
             if (documentTypeCode > 0)
             {
+                Action = "U";
                 objDocumentType = objService.GetById(documentTypeCode);
                 objDocumentType.EntityState = State.Modified;
             }
             else
             {
+                Action = "C";
                 objDocumentType = new RightsU_Entities.Document_Type();
                 objDocumentType.EntityState = State.Added;
                 objDocumentType.Inserted_On = DateTime.Now;
@@ -213,6 +233,15 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstDocument_Type_Searched = lstDocument_Type = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDocumentType);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

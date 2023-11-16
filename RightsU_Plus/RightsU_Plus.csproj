@@ -65,9 +65,8 @@
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="AvailEntity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\AvailEntity.dll</HintPath>
+    <Reference Include="AvailEntity">
+      <HintPath>..\..\Supp\AvailEntity.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
@@ -125,13 +124,11 @@
       <HintPath>..\packages\ReportViewerForMvc.1.0.1\lib\net45\ReportViewerForMvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RightsUAvailsProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\RightsUAvailsProvider.dll</HintPath>
+    <Reference Include="RightsUAvailsProvider">
+      <HintPath>..\..\Supp\RightsUAvailsProvider.dll</HintPath>
     </Reference>
-    <Reference Include="RightsUAvailsProviderContract, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\RightsUAvailsProviderContract.dll</HintPath>
+    <Reference Include="RightsUAvailsProviderContract">
+      <HintPath>..\..\Supp\RightsUAvailsProviderContract.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -205,20 +202,17 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="UTO.Framework.Shared">
+      <HintPath>..\..\Supp\UTO.Framework.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="UTO.Framework.SharedInfrastructure">
+      <HintPath>..\..\Supp\UTO.Framework.SharedInfrastructure.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
     </Reference>
-    <Reference Include="UTO.Framework.Shared, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\UTO.Framework.Shared.dll</HintPath>
-    </Reference>
-    <Reference Include="UTO.Framework.SharedInfrastructure, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\UTO.Framework.SharedInfrastructure.dll</HintPath>
-    </Reference>
-    <Reference Include="ZeroFormatter.Interfaces, Version=1.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\adesh\Desktop\GenFiles\ZeroFormatter.Interfaces.dll</HintPath>
+    <Reference Include="ZeroFormatter.Interfaces">
+      <HintPath>..\..\Supp\ZeroFormatter.Interfaces.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -41,6 +42,7 @@ namespace RightsU_Entities
             this.MHRequestDetails = new HashSet<MHRequestDetail>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Language_Code { get; set; }
         public string Language_Name { get; set; }
@@ -51,28 +53,51 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Dubbing> Acq_Deal_Rights_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Subtitling> Acq_Deal_Rights_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Country_Language> Country_Language { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Language_Group_Details> Language_Group_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Dubbing> Syn_Deal_Rights_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Subtitling> Syn_Deal_Rights_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Pushback_Dubbing> Acq_Deal_Pushback_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Pushback_Subtitling> Acq_Deal_Pushback_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Blackout_Dubbing> Acq_Deal_Rights_Blackout_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Blackout_Subtitling> Acq_Deal_Rights_Blackout_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Holdback_Dubbing> Acq_Deal_Rights_Holdback_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Holdback_Subtitling> Acq_Deal_Rights_Holdback_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Dubbing> Syn_Deal_Rights_Blackout_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Subtitling> Syn_Deal_Rights_Blackout_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Holdback_Dubbing> Syn_Deal_Rights_Holdback_Dubbing { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Holdback_Subtitling> Syn_Deal_Rights_Holdback_Subtitling { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title> Title_Languages { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title> Original_Languages { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Sport_Language> Acq_Deal_Sport_Language { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Title> Music_Title { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate> Title_Alternate { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate> Title_Alternate1 { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MHRequestDetail> MHRequestDetails { get; set; }
     }
 }

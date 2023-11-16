@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,16 +20,17 @@ namespace RightsU_Entities
             this.Email_Config_Detail_Alert = new HashSet<Email_Config_Detail_Alert>();
             this.Email_Config_Detail_User = new HashSet<Email_Config_Detail_User>();
         }
-    
+        [JsonIgnore]
     	public State EntityState { get; set; }    public int Email_Config_Detail_Code { get; set; }
     	    public Nullable<int> Email_Config_Code { get; set; }
     	    public string OnScreen_Notification { get; set; }
     	    public string Notification_Frequency { get; set; }
     	    public Nullable<int> Notification_Days { get; set; }
     	    public Nullable<System.TimeSpan> Notification_Time { get; set; }
-    
+        [JsonIgnore]
         public virtual Email_Config Email_Config { get; set; }
         public virtual ICollection<Email_Config_Detail_Alert> Email_Config_Detail_Alert { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Email_Config_Detail_User> Email_Config_Detail_User { get; set; }
     }
 }

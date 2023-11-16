@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -41,6 +42,7 @@ namespace RightsU_Entities
             this.AL_Material_Tracking = new HashSet<AL_Material_Tracking>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Vendor_Code { get; set; }
         public string Vendor_Name { get; set; }
@@ -74,31 +76,51 @@ namespace RightsU_Entities
         public Nullable<int> Party_Category_Code { get; set; }
         public string Party_Type { get; set; }
         public Nullable<int> Party_Group_Code { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Licensor> Acq_Deal_Licensor { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Material_Order> Material_Order { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
         public virtual ICollection<Vendor_Contacts> Vendor_Contacts { get; set; }
         public virtual ICollection<Vendor_Country> Vendor_Country { get; set; }
         public virtual ICollection<Vendor_Role> Vendor_Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Commission> Acq_Deal_Cost_Commission { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Variable_Cost> Acq_Deal_Cost_Variable_Cost { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Revenue_Commission> Syn_Deal_Revenue_Commission { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Revenue_Variable_Cost> Syn_Deal_Revenue_Variable_Cost { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal> Music_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal_Vendor> Music_Deal_Vendor { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Provisional_Deal_Licensor> Provisional_Deal_Licensor { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MHPlayList> MHPlayLists { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MHRequest> MHRequests { get; set; }
+        [JsonIgnore]
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
         public virtual Party_Category Party_Category { get; set; }
         public virtual Party_Group Party_Group { get; set; }
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_Rule> AL_Vendor_Rule { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_TnC> AL_Vendor_TnC { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Booking_Sheet> AL_Booking_Sheet { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Material_Tracking> AL_Material_Tracking { get; set; }
     }
 }

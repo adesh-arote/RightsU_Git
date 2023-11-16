@@ -164,6 +164,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveAL_Lab(int AL_Lab_Code, string AL_Lab_Name, string AL_Lab_short_name, string AL_Lab_Contact_person)
         {
+            string Action = "C";
             string status = "S";
             string message = "";
             int UserId = objLoginUser.Users_Code;
@@ -206,12 +207,24 @@ namespace RightsU_Plus.Controllers
                     if (AL_Lab_Code > 0)
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
+                        Action = "U";
                     }
                     else
                     {
                         message = objMessageKey.Recordsavedsuccessfully;
+                        Action = "C";
                     }
                     lstAL_Lab_Searched = objAL_Lab_Service.SearchFor(s => true).ToList();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(lstAL_Lab);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
             else
@@ -230,7 +243,7 @@ namespace RightsU_Plus.Controllers
         }
 
         public ActionResult DeleteAL_Lab(int id)
-        {
+        {            
             string message = "";
             string status = "";
             AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
@@ -245,8 +258,19 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    string Action = "D";
                     status = "S";
                     message = objMessageKey.RecordDeletedsuccessfully;
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(AL_LabObj);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(AL_LabObj.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
             else

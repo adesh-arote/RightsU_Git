@@ -1,5 +1,5 @@
 ﻿
-CREATE PROCEDURE [dbo].[USP_BMS_Schedule1_Validate_Temp_BV_Schedule]	
+ALTER PROCEDURE [dbo].[USP_BMS_Schedule1_Validate_Temp_BV_Schedule]	
 (
 	@File_Code BIGINT,
 	@Channel_Code VARCHAR(10),
@@ -18,6 +18,33 @@ BEGIN
 
 		INSERT INTO ScheduleLog(USPName,File_Code,Channel_Code,IsProcess,BVID,STEPName,StepTime)
 		SELECT 'USP_BMS_Schedule1_Validate_Temp_BV_Schedule',@File_Code,@Channel_Code,@IsReprocess,@BV_Episode_ID,'STEP 1 Begining',GETDATE()
+
+		-------------------------------------------2.0 DELETE TEMP TABLES -------------------------------------------		
+		
+		IF OBJECT_ID('tempdb..#UnMatched_ProgramTitle') IS NOT NULL
+		BEGIN
+			DROP TABLE #UnMatched_ProgramTitle
+		END
+		
+		IF OBJECT_ID('tempdb..#tmpDealNotApprove') IS NOT NULL
+		BEGIN
+			DROP TABLE #tmpDealNotApprove 
+		END
+
+		IF OBJECT_ID('tempdb..#BVScheduleTransaction_Revert') IS NOT NULL
+		BEGIN
+			DROP TABLE #BVScheduleTransaction_Revert
+		END
+		IF OBJECT_ID('tempdb..#RevertRightsDetails') IS NOT NULL
+		BEGIN
+			DROP TABLE #RevertRightsDetails
+		END
+
+		IF OBJECT_ID('tempdb..#RevertRightsDetails_Prime') IS NOT NULL
+		BEGIN
+			DROP TABLE #RevertRightsDetails_Prime
+		END
+	---------------------------------------------2.0 END DELETE TEMP TABLES -------------------------------------------
 
 		CREATE TABLE #Temp_BV_Schedule		----- #Temp_BV_Schedule Data 
 		(
@@ -38,6 +65,29 @@ BEGIN
 			IsExceptionSent CHAR(1) DEFAULT('N')
 		)
 
+		CREATE TABLE #BVScheduleTransaction_Revert		----- BV_Schedule_Transaction Data 
+		(
+			BV_Schedule_Transaction_Code NUMERIC(18,0),				
+			Schedule_Item_Log_DateTime DATETIME,
+			File_Code bigint,
+			Acq_Deal_Code INT,		
+			BMS_Deal_Content_Rights_Code INT,
+			Acq_Deal_Run_Code INT,
+			IsPrime CHAR(1) DEFAULT('X')		
+		)
+
+		CREATE TABLE #RevertRightsDetails
+		(
+			BMS_Deal_Content_Rights_Code INT,
+			Revert_Run_Count INT
+		)
+
+		CREATE TABLE #RevertRightsDetails_Prime
+		(
+			Acq_Deal_Run_Code INT,
+			IsPrime CHAR(1) DEFAULT('X'),
+			Revert_Run_Count INT
+		)
 
 		-----1.0----------------------------
 		IF(@BV_Episode_ID = '')
@@ -59,25 +109,160 @@ BEGIN
 		BEGIN
 			SET @IsReprocess = 'N'
 		END
-		-----1.0----------------------------
-
-		-------------------------------------------2.0 DELETE TEMP TABLES -------------------------------------------		
-		
-		IF OBJECT_ID('tempdb..#UnMatched_ProgramTitle') IS NOT NULL
-		BEGIN
-			DROP TABLE #UnMatched_ProgramTitle
-		END
-		
-		IF OBJECT_ID('tempdb..#tmpDealNotApprove') IS NOT NULL
-		BEGIN
-			DROP TABLE #tmpDealNotApprove 
-		END
-	---------------------------------------------2.0 END DELETE TEMP TABLES -------------------------------------------
+		-----1.0----------------------------		
 
 		IF(@IsReprocess <> 'Y')
 		BEGIN
 			--===============3.0 REVERT_SCHEDULE_COUNT --===============
 			--EXEC USP_Schedule_Revert_Count  @File_Code, @Channel_Code
+
+			DECLARE @ScheStartDate DATETIME, @ScheEndDate DATETIME
+			SELECT @ScheStartDate = StartDate, @ScheEndDate = EndDate FROM Upload_Files where File_code =  @File_Code
+
+			INSERT INTO #BVScheduleTransaction_Revert 
+			(
+				BV_Schedule_Transaction_Code,Schedule_Item_Log_DateTime, File_Code, Acq_Deal_Code,IsPrime,BMS_Deal_Content_Rights_Code,Acq_Deal_Run_Code
+			)
+			SELECT  BV_Schedule_Transaction_Code,Schedule_Item_Log_DateTime, File_Code, Deal_Code,ISNULL(IsPrime,'X'),BMS_Deal_Content_Rights_Code,Acq_Deal_Run_Code
+			FROM BV_Schedule_Transaction bst WHERE CAST(bst.Schedule_Item_Log_DateTime AS DATE) BETWEEN @ScheStartDate AND @ScheEndDate AND bst.Channel_Code = @Channel_Code AND bst.File_Code <> @File_Code
+			AND ISNULL(bst.BMS_Deal_Content_Rights_Code,0) > 0
+
+			INSERT INTO #RevertRightsDetails
+			(
+				Revert_Run_Count, BMS_Deal_Content_Rights_Code
+			)
+			SELECT COUNT(bst.BMS_Deal_Content_Rights_Code) Run_Count,bst.BMS_Deal_Content_Rights_Code
+			FROM #BVScheduleTransaction_Revert bst 
+			GROUP BY bst.BMS_Deal_Content_Rights_Code
+
+			INSERT INTO #RevertRightsDetails_Prime
+			(
+				Revert_Run_Count, Acq_Deal_Run_Code, IsPrime
+			)
+			SELECT COUNT(*) Run_Count,BDRC.Acq_Deal_Run_Code,bst.IsPrime	
+			FROM #BVScheduleTransaction_Revert bst 
+			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+			GROUP BY BDRC.Acq_Deal_Run_Code,bst.IsPrime
+
+			UPDATE BDCR SET BDCR.Utilised_Run = ISNULL(BDCR.Utilised_Run,0) - RRD.Revert_Run_Count
+			FROM BMS_Deal_Content_Rights BDCR
+			INNER JOIN #RevertRightsDetails RRD ON RRD.BMS_Deal_Content_Rights_Code = BDCR.BMS_Deal_Content_Rights_Code
+			WHERE ISNULL(BDCR.Utilised_Run,0) > 0 
+
+			-- Revert Schedule Run Count for Run Definition Not in (C)
+			UPDATE BDCR SET BDCR.Utilised_Run = ISNULL(BDCR.Utilised_Run,0) - T.Revert_Run_Count
+			FROM BMS_Deal_Content_Rights BDCR
+			INNER JOIN (
+				SELECT COUNT(BDCR.BMS_Deal_Content_Rights_Code) Revert_Run_Count,BDCR.BMS_Deal_Content_Rights_Code
+				FROM #BVScheduleTransaction_Revert BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code AND BDCR.IS_Active='Y'
+				INNER JOIN #RevertRightsDetails_Prime RRDP ON RRDP.Acq_Deal_Run_Code = BDCR.Acq_Deal_Run_Code
+				INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = RRDP.Acq_Deal_Run_Code
+				WHERE BDCR.RU_Channel_Code NOT IN (@Channel_Code) AND ADR.Run_Definition_Type NOT IN ('C')
+				AND CAST(BVST.Schedule_Item_Log_DateTime as Date) BETWEEN BDCR.Start_Date AND BDCR.End_Date
+				GROUP BY BDCR.BMS_Deal_Content_Rights_Code
+			) T ON T.BMS_Deal_Content_Rights_Code = BDCR.BMS_Deal_Content_Rights_Code
+			WHERE ISNULL(BDCR.Utilised_Run,0) > 0
+
+			UPDATE ADR SET ADR.Prime_Time_Provisional_Run_Count = ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) - RRDP.Revert_Run_Count
+			FROM Acq_Deal_Run ADR
+			INNER JOIN #RevertRightsDetails_Prime RRDP ON RRDP.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+			WHERE RRDP.IsPrime = 'Y' AND ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) > 0 
+
+			UPDATE ADR SET ADR.Off_Prime_Time_Provisional_Run_Count = ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) - RRDP.Revert_Run_Count
+			FROM Acq_Deal_Run ADR
+			INNER JOIN #RevertRightsDetails_Prime RRDP ON RRDP.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+			WHERE RRDP.IsPrime = 'N' AND ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) > 0
+
+			-- Update No_OF_Runs_Sched of Acq_Deal_Run----------------------
+
+			UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run ADR
+			INNER JOIN
+			(
+				SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code
+				FROM (
+					SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+					FROM #BVScheduleTransaction_Revert bst 
+					INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+					INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+					GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+				) T1 Group by Acq_Deal_Run_Code
+			) T2 ON T2.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+
+			UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run ADR
+			INNER JOIN
+			(
+				SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+				FROM #BVScheduleTransaction_Revert bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code
+			) T2 ON T2.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+
+			-- Update No_OF_Runs_Sched of Acq_Deal_Run_Channel----------------------
+
+			UPDATE ADRC SET ADRC.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run_Channel ADRC
+			INNER JOIN
+			(
+				SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code,RU_Channel_Code
+				FROM (
+					SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+					FROM #BVScheduleTransaction_Revert bst 
+					INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+					INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+					GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+				) T1 Group by Acq_Deal_Run_Code,RU_Channel_Code
+			) T2 ON T2.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code AND T2.RU_Channel_Code = ADRC.Channel_Code
+
+			UPDATE ADRC SET ADRC.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run_Channel ADRC
+			INNER JOIN
+			(
+				SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+				FROM #BVScheduleTransaction_Revert bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code
+			) T2 ON T2.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code AND T2.RU_Channel_Code = ADRC.Channel_Code		
+
+			-- Update No_OF_Runs_Sched of Acq_Deal_Run_Yearwise_Run----------------------
+
+			UPDATE ADRY SET ADRY.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run_Yearwise_Run ADRY
+			INNER JOIN
+			(
+				SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code,Start_Date,End_Date
+				FROM (
+					SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+					FROM #BVScheduleTransaction_Revert bst 
+					INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+					INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+					GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+				) T1 Group by Acq_Deal_Run_Code,Start_Date,End_Date
+			)T2 ON T2.Acq_Deal_Run_Code = ADRY.Acq_Deal_Run_Code AND T2.Start_Date = ADRY.Start_Date AND T2.End_Date = ADRY.End_Date
+
+			UPDATE ADRY SET ADRY.No_Of_Runs_Sched = T2.Run_Count
+			FROM Acq_Deal_Run_Yearwise_Run ADRY
+			INNER JOIN
+			(
+				SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+				FROM #BVScheduleTransaction_Revert bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			)T2 ON T2.Acq_Deal_Run_Code = ADRY.Acq_Deal_Run_Code AND T2.Start_Date = ADRY.Start_Date AND T2.End_Date = ADRY.End_Date
+		
+			DELETE FROM Email_Notification_Schedule
+			WHERE (CONVERT(DATETIME,CONVERT(VARCHAR,Schedule_Item_Log_Date, 111), 111) + Schedule_Item_Log_Time) BETWEEN @ScheStartDate AND @ScheEndDate
+					AND Channel_Code = @Channel_Code AND File_Code not in (@File_Code)
+		
+			DELETE BV
+			FROM BV_Schedule_Transaction BV
+			INNER JOIN #BVScheduleTransaction_Revert BVST ON BVST.BV_Schedule_Transaction_Code = BV.BV_Schedule_Transaction_Code
+
 			PRINT '1 Revert Count'
 		END
 
@@ -95,12 +280,13 @@ BEGIN
 			FROM Temp_BV_Schedule TBV
 			WHERE TBV.File_Code = @File_Code AND TBV.Channel_Code = @Channel_Code			
 
+			select * from #Temp_BV_Schedule
 
 			UPDATE tbs set TitleCode = BA.RU_Title_Code,BMS_Asset_Code=BA.BMS_Asset_Code --//UPDATE BMS_Asset_Code as well
 			FROM #Temp_BV_Schedule tbs (NOLOCK)
 			INNER JOIN BMS_Asset BA (NOLOCK) ON BA.BMS_Asset_Ref_Key COLLATE SQL_Latin1_General_CP1_CI_AS = tbs.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
 			where tbs.File_Code = @File_Code
-
+			--select * from #Temp_BV_Schedule
 			Update BV SET BV.Deal_Count=T.Deal_Count
 			FROM #Temp_BV_Schedule BV
 			INNER JOIN (
@@ -125,7 +311,7 @@ BEGIN
 				FROM BMS_Deal_Content_Rights BDCR 
 				INNER JOIN BMS_Deal_Content BDC ON BDC.BMS_Deal_Content_Code = BDCR.BMS_Deal_Content_Code AND BDC.IS_Active='Y' AND BDCR.IS_Active='Y'
 				INNER JOIN BMS_Deal BD ON BD.BMS_Deal_Code = BDC.BMS_Deal_Code AND BD.IS_Active='Y'
-				INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = BD.Acq_Deal_Code
+				INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = BD.Acq_Deal_Code AND AD.Is_Active='Y'
 				WHERE BDCR.RU_Channel_Code = @Channel_Code AND BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date 
 				AND BDCR.Total_Runs > BDCR.Utilised_Run
 				AND BVST.BMS_Asset_Code = BDCR.BMS_Asset_Code
@@ -139,7 +325,7 @@ BEGIN
 				FROM BMS_Deal_Content_Rights BDCR 
 				INNER JOIN BMS_Deal_Content BDC ON BDC.BMS_Deal_Content_Code = BDCR.BMS_Deal_Content_Code AND BDC.IS_Active='Y' AND BDCR.IS_Active='Y'
 				INNER JOIN BMS_Deal BD ON BD.BMS_Deal_Code = BDC.BMS_Deal_Code AND BD.IS_Active='Y'
-				INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = BD.Acq_Deal_Code
+				INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = BD.Acq_Deal_Code AND AD.Is_Active='Y'
 				WHERE BDCR.RU_Channel_Code = @Channel_Code AND BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date
 				AND BVST.BMS_Asset_Code = BDCR.BMS_Asset_Code
 				ORDER BY AD.Agreement_Date DESC
@@ -154,19 +340,22 @@ BEGIN
 			INNER JOIN ACQ_Deal D (NOLOCK) ON D.Acq_deal_code = tbs.Deal_Code
 			INNER JOIN ACQ_Deal_Movie DM (NOLOCK) ON DM.Acq_deal_code = D.Acq_deal_code AND DM.Title_Code = tbs.TitleCode
 					AND tbs.Program_Episode_Number BETWEEN DM.Episode_Starts_From AND DM.Episode_End_To
-			where 1=1 
-			AND D.Is_Active = 'Y' 			
+			where D.Is_Active = 'Y' 			
 			AND tbs.File_Code = @File_Code
+
+			select * from #Temp_BV_Schedule
 
 			UPDATE tbs set DMCode = DM.ACQ_deal_movie_code, IsDealApproved = 'Y'
 			FROM #Temp_BV_Schedule tbs (NOLOCK)
 			INNER JOIN ACQ_Deal D (NOLOCK) ON D.Acq_deal_code = tbs.Deal_Code
 			INNER JOIN ACQ_Deal_Movie DM (NOLOCK) ON DM.Acq_deal_code = D.Acq_deal_code AND DM.Title_Code = tbs.TitleCode
 					AND tbs.Program_Episode_Number BETWEEN DM.Episode_Starts_From AND DM.Episode_End_To
-			where 1=1 OR ((isnull(@BV_Episode_ID,'N') != 'N' AND @IsReprocess = 'N'  AND tbs.Program_Episode_ID = @BV_Episode_ID))
-			AND D.is_active = 'Y' 
-			and D.deal_workflow_status = 'A' --AND ISNULL(d.status,'O') = 'O'
-			AND tbs.File_Code = @File_Code
+			where D.is_active = 'Y' 
+			and D.Deal_Workflow_Status = 'A' --AND ISNULL(d.status,'O') = 'O'
+			AND tbs.File_Code = @File_Code 
+			OR ((isnull(@BV_Episode_ID,'N') != 'N' AND @IsReprocess = 'N'  AND tbs.Program_Episode_ID = @BV_Episode_ID))
+
+			select * from #Temp_BV_Schedule
 
 			--//Basis on Deal_code identify ACQ_deal_movie_code,IsDealApproved = 'N'
 
@@ -429,7 +618,7 @@ BEGIN
 			SELECT 'USP_BMS_Schedule1_Validate_Temp_BV_Schedule',@File_Code,@Channel_Code,@IsReprocess,@BV_Episode_ID,@CanProcessRun,'STEP 2 Before Schedule Process',GETDATE()
 
 			PRINT '--===============11.0 PROCESS_DATA --==============='
-			--EXEC USP_Schedule_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
+			--EXEC USP_BMS_Schedule2_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
 		
 			IF((select isnull(Parameter_Value,'N') from System_Parameter_New where Parameter_Name ='IS_Schedule_Mail_Channelwise')  = 'Y' )
 			BEGIN

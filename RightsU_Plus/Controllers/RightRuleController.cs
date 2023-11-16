@@ -217,10 +217,11 @@ namespace RightsU_Plus.Controllers
                 objRight_Rule.IS_First_Air = false;
             }
         
-         dynamic resultSet;
+            dynamic resultSet;
             bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
             if (isValid)
             {
+                string Action = "C";
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -229,11 +230,23 @@ namespace RightsU_Plus.Controllers
                     status = "S";
                     message = objMessageKey.Recordupdatedsuccessfully;
                     ViewBag.Alert = message;
+                    Action = "U";
                 }
                 else
                 {
                     status = "S";
                     message = objMessageKey.RecordAddedSuccessfully;
+                    Action = "C";
+                }
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
                 }
             }
             else
@@ -359,15 +372,32 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objRight_Rule, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstRight_Rule.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
                     lstRight_Rule_Searched.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
+                    {
                         //message = message.Replace("{ACTION}", "Activated");
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         //message = message.Replace("{ACTION}", "Deactivated");
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
