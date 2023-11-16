@@ -12,6 +12,7 @@
     var URL_SearchVendor = '@Url.Action("SearchVendor", "Vendor")';
     var URL_ActiveDeactiveVendor = '@Url.Action("ActiveDeactiveVendor", "Vendor")';
     var URL_AddVendorList = '@Url.Action("AddVendorList", "Vendor")';
+
     $(document).ready(function () {
         if(LayoutDirection_G == "RTL")
         {
@@ -55,6 +56,7 @@
 
 
     });
+
     function addNumeric() {
         $(".pagingSize").numeric({
             allowMinus: false,
@@ -64,6 +66,7 @@
             min: 1
         });
     }
+
     function SetPaging() {
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
@@ -93,6 +96,7 @@
         opt["current_page"] = index;
         $("#Pagination").pagination(recordCount, opt);
     }
+
     function pageselectCallback(page_index, jq) {
         $('.required').removeClass('required');
         if (!ValidatePageSize())
@@ -104,6 +108,7 @@
         else
             IsCall = 'Y';
     }
+
     function txtPageSize_OnChange() {
         $("[required='required']").removeAttr("required");
         $('.required').removeClass('required');
@@ -112,6 +117,7 @@
         BindVendorList()
         SetPaging();
     }
+
     function ValidatePageSize() {
         var recordPerPage = $('#txtPageSize').val()
         if ($.trim(recordPerPage) != '') {
@@ -122,10 +128,12 @@
         $('#txtPageSize').attr('required', true)
         return false
     }
+
     function pageBinding() {
         BindVendorList()
         SetPaging();
     }
+
     function btnSearch_OnClick() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -139,6 +147,7 @@
         }
         SearchVendor(searchText);
     }
+
     function btnShowAll_OnClick() {
         if (!ValidatePageSize())
             return false;
@@ -153,6 +162,7 @@
         $('#searchCommon').val('');
         SearchVendor("");
     }
+
     function BindVendorList() {
         var pageNo=$('#hdnPageNo').val(), recordPerPage = $('#txtPageSize').val();
         var sort_Type = "";
@@ -205,6 +215,7 @@
             }
         });
     }
+
     function SearchVendor(searchText) {
         showLoading();
         $.ajax({
@@ -236,6 +247,7 @@
             }
         });
     }
+
     function ActiveDeactiveVendor(VendorCode, doActive) {
         debugger;
         $.ajax({
@@ -276,6 +288,7 @@
             }
         });
     }
+
     function AddVendor() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -308,18 +321,23 @@
             }
         });
     }
+
     function CancelVendor() {
         BindVendorList();
     }
+
     function handleOk() {
     }
+
     function handleCancel() {
     }
+
     function ExportToExcel()
     {
         debugger;
         var type = "";
-        var Module_Name = "Party";
+        //var Module_Name = "Party";
+        var Module_Name = "@ViewBag.ModuleName";
         type = $('#ddlSortType').val();
         var StrSearchCriteria = $.trim($('#searchCommon').val());
         window.location.href = '@Url.Action("ExportToExcel", "Global")?Module_Code='+Module_Code_G + '&SysLanguageCode=' + SysLanguageCode_G + '&Module_Name='+Module_Name+ '&sortColumnOrder='+type + '&StrSearchCriteria=' + StrSearchCriteria;
