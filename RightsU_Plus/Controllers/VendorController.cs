@@ -135,7 +135,6 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-
         //private AL_Vendor_Rule APVendorRule
         //{
         //    get
@@ -192,7 +191,6 @@ namespace RightsU_Plus.Controllers
         //    }
         //}
 
-
         private RightsU_Entities.Vendor objSessVendor
         {
             get
@@ -206,7 +204,6 @@ namespace RightsU_Plus.Controllers
                 Session["SessVendor"] = value;
             }
         }
-
 
         private RightsU_Entities.AL_Vendor_Rule objVr
         {
@@ -323,6 +320,7 @@ namespace RightsU_Plus.Controllers
         #endregion
 
         #region --- List And Binding ---
+
         public ViewResult Index()
         {
             string VendorModuleCode = Request.QueryString["modulecode"];
@@ -405,17 +403,26 @@ namespace RightsU_Plus.Controllers
                 ViewBag.SortType = lstSort;
                 lstRole_Searched = lstRole_Searched = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Role_Type.Contains("V")).ToList();
                 lstCountry_Searched = lstCountry = new Country_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
-                //if (ModuleCode == "10")
-                //{
-                //    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "V").OrderByDescending(o => o.Last_Updated_Time).ToList();
-                //    ModuleName = "Party";
-                //}
-                //else
-                //{
-                //    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
-                //    ModuleName = "Customer";
-                //}
-                lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(w => w.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
+                string IsAeroplay = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "Allow_Party_Details").Select(w => w.Parameter_Value).FirstOrDefault();
+                if(IsAeroplay == "Y")   // Allow_Party_Details = paremeter used for aeroplay, non-aeroplay wise configuration - IF Y then Aeroplay else N for non-aeroplay
+                {
+                    lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+                    ModuleName = "Party";   
+                }
+                else
+                {
+                    if (ModuleCode == Convert.ToString(GlobalParams.ModuleCodeForVendor))
+                    {
+                        lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "V").OrderByDescending(o => o.Last_Updated_Time).ToList();
+                        ModuleName = "Party";
+                    }
+                    else
+                    {
+                        lstVendor_Searched = lstVendor = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true && x.Party_Type == "C").OrderByDescending(o => o.Last_Updated_Time).ToList();
+                        ModuleName = "Customer";
+                    }
+                }
+                
                 ViewBag.ModuleName = ModuleName;
                 lstVendorContact_Searched = lstVendorContact = new Vendor_Contacts_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
                 ViewBag.UserModuleRights = GetUserModuleRights();
@@ -705,6 +712,7 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
         #endregion
 
         #region --- vendorList ---
