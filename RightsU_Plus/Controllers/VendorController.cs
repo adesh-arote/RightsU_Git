@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class VendorController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Vendor> lstVendor
         {
             get
@@ -22,6 +23,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstVendor"] = value; }
         }
+
         private List<RightsU_Entities.Vendor> lstVendor_Searched
         {
             get
@@ -32,6 +34,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstVendor_Searched"] = value; }
         }
+
         private List<RightsU_Entities.Vendor_Contacts> lstVendorContact
         {
             get
@@ -42,6 +45,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstVendorContact"] = value; }
         }
+
         private List<RightsU_Entities.Vendor_Contacts> lstVendorContact_Searched
         {
             get
@@ -52,6 +56,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstVendorContact_Searched"] = value; }
         }
+
         private List<RightsU_Entities.Country> lstCountry
         {
             get
@@ -62,6 +67,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCountry"] = value; }
         }
+
         private List<RightsU_Entities.Country> lstCountry_Searched
         {
             get
@@ -72,6 +78,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCountry_Searched"] = value; }
         }
+
         private List<RightsU_Entities.Role> lstRole
         {
             get
@@ -82,6 +89,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstRole"] = value; }
         }
+
         private List<RightsU_Entities.Role> lstRole_Searched
         {
             get
@@ -92,6 +100,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstRole_Searched"] = value; }
         }
+
         private string ModuleCode
         {
             get
@@ -107,9 +116,11 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+
         #endregion
 
         #region ------Additional Info---
+
         private AL_Vendor_Details objSessALVendorDetails
         {
             get
@@ -123,6 +134,7 @@ namespace RightsU_Plus.Controllers
                 Session["APVendorDetails"] = value;
             }
         }
+
 
         //private AL_Vendor_Rule APVendorRule
         //{
@@ -180,6 +192,7 @@ namespace RightsU_Plus.Controllers
         //    }
         //}
 
+
         private RightsU_Entities.Vendor objSessVendor
         {
             get
@@ -193,6 +206,7 @@ namespace RightsU_Plus.Controllers
                 Session["SessVendor"] = value;
             }
         }
+
 
         private RightsU_Entities.AL_Vendor_Rule objVr
         {
@@ -331,6 +345,7 @@ namespace RightsU_Plus.Controllers
 
             return View("~/Views/Vendor/Index.cshtml");
         }
+
         public PartialViewResult BindVendorList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.Vendor> lst = new List<RightsU_Entities.Vendor>();
@@ -355,6 +370,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Vendor/_VendorList.cshtml", lst);
         }
+
         public PartialViewResult BindVendorContact(int VendorCode, string Mode)
         {
             List<RightsU_Entities.Vendor_Contacts> lst = new List<RightsU_Entities.Vendor_Contacts>();
@@ -368,6 +384,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Vendor/_Add_Edit_Vendor.cshtml", lst);
         }
+
         public PartialViewResult BindPartialPages(string key, int VendorCode)
         {
             string ModuleName = "";
@@ -581,6 +598,7 @@ namespace RightsU_Plus.Controllers
                 return PartialView("~/Views/Vendor/_AddEditPartyVendor.cshtml");
             }
         }
+
         #endregion
 
         #region  --- Other Methods ---
@@ -629,6 +647,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new List<string>();
@@ -645,6 +664,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         protected List<T> CompareLists<T>(List<T> FirstList, List<T> SecondList, IEqualityComparer<T> comparer, ref List<T> DelResult, ref List<T> UPResult) where T : class
         {
             var AddResult = FirstList.Except(SecondList, comparer);
@@ -1095,12 +1115,30 @@ namespace RightsU_Plus.Controllers
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                     DBUtil.Release_Record(recordLockingCode);
 
+                    string Action = "";
                     if (VendorCode > 0)
+                    {
+                        Action = "U"; // U = "Update";
                         message = objMessageKey.Recordupdatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "updated");
+                        //message = message.Replace("{ACTION}", "updated");
+                    }
                     else
+                    {
+                        Action = "C"; // C = "Create";
                         message = objMessageKey.RecordAddedSuccessfully;
-                    //message = message.Replace("{ACTION}", "added");
+                        //message = message.Replace("{ACTION}", "added");
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
 
                     objSessALVendorDetails = null;
                     objSessVendor = null;
@@ -1145,6 +1183,7 @@ namespace RightsU_Plus.Controllers
 
             if (isLocked)
             {
+                string Action = "";
                 // string status = "S", message = "Record {ACTION} successfully";
                 Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Vendor objVendor = objService.GetById(vendorCode);
@@ -1156,6 +1195,22 @@ namespace RightsU_Plus.Controllers
                 {
                     lstVendor.Where(w => w.Vendor_Code == vendorCode).First().Is_Active = doActive;
                     lstVendor_Searched.Where(w => w.Vendor_Code == vendorCode).First().Is_Active = doActive;
+
+                    if (doActive == "Y")
+                        Action = "A"; // A = "Active";
+                    else
+                        Action = "DA"; // DA = "Deactivate";
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                 }
                 else
                 {
@@ -1174,9 +1229,9 @@ namespace RightsU_Plus.Controllers
                         message = objMessageKey.CouldNotDeactivatedRecord;
                     else
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "Deactivated");
-                }
-                objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
+                        //message = message.Replace("{ACTION}", "Deactivated");
+                    }
+                objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);  
             }
             else
             {
@@ -1596,9 +1651,11 @@ namespace RightsU_Plus.Controllers
 
             return Json("");
         }
+
         #endregion
 
         #region --- CONTENT RULE ---
+
         public ActionResult ContentRule(string TabName, string CommandName, int Id)
         {
             List<AL_Vendor_Rule> lstVendorRule = new List<AL_Vendor_Rule>();
@@ -1915,9 +1972,11 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
         #endregion
 
         #region --- OEM ---
+
         public ActionResult OEM(string TabName, string CommandName, int Id)
         {
             List<AL_Vendor_OEM> lstVendorOEM = new List<AL_Vendor_OEM>();
@@ -2042,9 +2101,11 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
         #endregion
 
         #region --- TNC ---
+
         public ActionResult TnC(string TabName, string CommandName, int Id)
         {
             List<AL_Vendor_TnC> lstTnC = new List<AL_Vendor_TnC>();
@@ -2128,9 +2189,11 @@ namespace RightsU_Plus.Controllers
 
             return Json(obj);
         }
+
         #endregion
 
         #region --- Extra Methods ---
+
         private void FetchAllExtendedColumns()
         {
             List<RightsU_Entities.Extended_Columns> lstExtendedColumns = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList();
@@ -2305,6 +2368,7 @@ namespace RightsU_Plus.Controllers
                 return true;
             }
         }
+
         #endregion
     }
 

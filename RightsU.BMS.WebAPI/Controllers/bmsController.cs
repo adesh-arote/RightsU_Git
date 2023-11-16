@@ -15,6 +15,7 @@ namespace RightsU.BMS.WebAPI.Controllers
 {
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
+    [Authorize]
     public class bmsController : ApiController
     {
         public readonly BMSServices objBMSServices = new BMSServices();

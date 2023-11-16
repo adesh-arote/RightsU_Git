@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -41,15 +42,23 @@ namespace RightsU_Entities
         public Nullable<int> Parent_Code { get; set; }
         public string Deal_Or_Title { get; set; }
         public Nullable<int> Deal_Title_Mapping_Code { get; set; }
-    
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Role> Roles { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title> Titles { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal> Music_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Program> Programs { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate> Title_Alternate { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Provisional_Deal> Provisional_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Deal_DealType> Music_Deal_DealType { get; set; }
     }
 }

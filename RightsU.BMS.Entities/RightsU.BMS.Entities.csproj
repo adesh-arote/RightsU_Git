@@ -76,10 +76,16 @@
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\LoggedInUsers.cs" />
+    <Compile Include="Master_Entities\ServiceLog.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Master_Entities\Upload_Files.cs" />
+    <Compile Include="Master_Entities\User.cs" />
+    <Compile Include="Master_Entities\Users_Password_Detail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -9,11 +9,13 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Amort_Rule_Details
     {
+        [JsonIgnore]
         public State EntityState { get; set; }    
         public int Amort_Rule_Details_Code { get; set; }
         public Nullable<int> Amort_Rule_Code { get; set; }
@@ -24,7 +26,7 @@ namespace RightsU_Entities
         public Nullable<int> Year { get; set; }
         public Nullable<int> End_Of_Year { get; set; }
         public string Period_Type { get; set; }
-
+        [JsonIgnore]
         public virtual Amort_Rule Amort_Rule { get; set; }
     }
 }

@@ -168,6 +168,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveBanner(int Banner_Code, string Banner_Name, string Banner_short_name)
         {
+            string Action = "C";
             string status = "S";
             string message = "";
             int UserId = objLoginUser.Users_Code;
@@ -185,12 +186,14 @@ namespace RightsU_Plus.Controllers
                     lstBanner = objBanner_Service.GetById(Banner_Code);
                     lstBanner.EntityState = State.Modified;
                     lstBanner.Inserted_By = banner.Inserted_By;
+                    Action = "U";
                 }
                 else
                 {
                     lstBanner = new Banner();
                     lstBanner.EntityState = State.Added;
                     lstBanner.Inserted_By = UserId;
+                    Action = "C";
                 }
                 lstBanner.Banner_Short_Name = Banner_short_name;
                 lstBanner.Banner_Name = Banner_Name;
@@ -215,6 +218,16 @@ namespace RightsU_Plus.Controllers
                         message = objMessageKey.Recordsavedsuccessfully;
                     }
                     lstBanner_Searched = objBanner_Service.SearchFor(s => true).ToList();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(lstBanner);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(lstBanner.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
             else
@@ -248,8 +261,19 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    string Action = "D";
                     status = "S";
                     message = objMessageKey.RecordDeletedsuccessfully;
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(bannerObj);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(bannerObj.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
             else

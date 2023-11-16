@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -18,8 +19,10 @@ namespace RightsU_Entities
         public int Country_Language_Code { get; set; }
         public Nullable<int> Country_Code { get; set; }
         public Nullable<int> Language_Code { get; set; }
-    
+
+        [JsonIgnore]
         public virtual Country Country { get; set; }
+        [JsonIgnore]
         public virtual Language Language { get; set; }
     }
 }

@@ -9,19 +9,22 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Territory_Details
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Territory_Details_Code { get; set; }
         public int Country_Code { get; set; }
         public int Territory_Code { get; set; }
         public string Is_Ref_Acq { get; set; }
         public string Is_Ref_Syn { get; set; }
-    
+        [JsonIgnore]
         public virtual Country Country { get; set; }
+        [JsonIgnore]
         public virtual Territory Territory { get; set; }
     }
 }

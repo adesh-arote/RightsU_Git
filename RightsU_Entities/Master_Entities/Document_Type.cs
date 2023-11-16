@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,7 +20,7 @@ namespace RightsU_Entities
             this.Acq_Deal_Attachment = new HashSet<Acq_Deal_Attachment>();
             this.Syn_Deal_Attachment = new HashSet<Syn_Deal_Attachment>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }    
         public int Document_Type_Code { get; set; }
         public string Document_Type_Name { get; set; }
@@ -29,8 +30,9 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
-    
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Attachment> Acq_Deal_Attachment { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Attachment> Syn_Deal_Attachment { get; set; }
     }
 }

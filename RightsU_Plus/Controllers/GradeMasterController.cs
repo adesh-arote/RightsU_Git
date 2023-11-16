@@ -11,6 +11,7 @@ namespace RightsU_Plus.Controllers
     public class GradeMastersController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.Grade_Master> lstGrade_Master
         {
             get
@@ -32,6 +33,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstGrade_Master_Searched"] = value; }
         }
+
         #endregion
 
         public ActionResult Index()
@@ -49,6 +51,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/GradeMasters/Index.cshtml");
         }
+
         public PartialViewResult BindGrade_MasterList(int pageNo, int recordPerPage, int gradeCode, string commandName, string sortType)
         {
             ViewBag.gradeCode = gradeCode;
@@ -71,7 +74,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/GradeMasters/_GradeMasterList.cshtml", lst);
         }
+
         #region --Other Method--
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -94,7 +99,9 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         #endregion
+
         public JsonResult CheckRecordLock(int gradeCode, string commandName)
         {
             string strMessage = "";
@@ -114,6 +121,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForGradeMaster), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -123,6 +131,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public JsonResult SearchGrade_Master(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -138,9 +147,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult ActiveDeactiveGrade_Master(int gradeCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(gradeCode, GlobalParams.ModuleCodeForGradeMaster, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -158,9 +168,26 @@ namespace RightsU_Plus.Controllers
                     lstGrade_Master.Where(w => w.Grade_Code == gradeCode).First().Is_Active = doActive;
                     lstGrade_Master_Searched.Where(w => w.Grade_Code == gradeCode).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                    }
                     else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGradeMaster);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForGradeMaster, objGradeMaster.Grade_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                 }
                 else
                 {
@@ -181,9 +208,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveGrade_Master(int gradeCode, string gradeName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create";
             if (gradeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -194,6 +222,7 @@ namespace RightsU_Plus.Controllers
             {
                 objGradeMaster = objService.GetById(gradeCode);
                 objGradeMaster.EntityState = State.Modified;
+                Action = "U"; // U = "update";
             }
             else
             {
@@ -213,6 +242,17 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstGrade_Master_Searched = lstGrade_Master = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGradeMaster);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForGradeMaster, objGradeMaster.Grade_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
             }
             else
             {

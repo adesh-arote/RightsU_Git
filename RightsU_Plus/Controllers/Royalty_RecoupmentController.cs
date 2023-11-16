@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class Royalty_RecoupmentController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Royalty_Recoupment> lstRoyalty
         {
             get
@@ -33,6 +34,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstRoyalty_Searched"] = value; }
         }
+
         private List<RightsU_Entities.Royalty_Recoupment_Details> RoyaltyRecoupmentDetailsList
         {
             get
@@ -43,6 +45,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["RoyaltyRecoupmentDetailsList"] = value; }
         }
+
         private string ModuleCode
         {
             get
@@ -58,6 +61,7 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+
         #endregion
 
         public ViewResult Index()
@@ -153,6 +157,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -175,10 +180,12 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private void FetchData()
         {
             lstRoyalty_Searched = lstRoyalty = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
+
         #endregion
 
         public JsonResult SearchRoyalty(string searchText)
@@ -199,7 +206,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveRoyalty(int royaltyCode, string doActive)
         {
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(royaltyCode, GlobalParams.ModuleCodeForRoyaltyRecoupment, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -213,15 +220,43 @@ namespace RightsU_Plus.Controllers
 
                 bool isValid = objService.Save(objRoyalty, out resultSet);
 
-                lstRoyalty.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
-                lstRoyalty_Searched.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
+                if (isValid)
+                {
+                    lstRoyalty.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
+                    lstRoyalty_Searched.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
 
-                if (doActive == "Y")
-                    //message = message.Replace("{ACTION}", "Activated");
-                    message = objMessageKey.Recordactivatedsuccessfully;
+                    if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
+                        //message = message.Replace("{ACTION}", "Activated");
+                        message = objMessageKey.Recordactivatedsuccessfully;
+                    }
+                    else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
+                        //message = message.Replace("{ACTION}", "Deactivated");
+                        message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRoyalty);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
+                }
                 else
-                    //message = message.Replace("{ACTION}", "Deactivated");
-                    message = objMessageKey.Recorddeactivatedsuccessfully;
+                {
+                    status = "E";
+                    if (doActive == "Y")
+                        message = objMessageKey.CouldNotActivatedRecord;
+                    else
+                        message = objMessageKey.CouldNotDeactivatedRecord;
+                }
 
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
@@ -230,7 +265,6 @@ namespace RightsU_Plus.Controllers
                 status = "E";
                 message = strMessage;
             }
-
 
             var obj = new
             {
@@ -288,6 +322,7 @@ namespace RightsU_Plus.Controllers
         [HttpPost]
         public ActionResult SaveRoyalty(RightsU_Entities.Royalty_Recoupment objRoyalty_MVC, FormCollection objFormCollection)
         {
+            string Action = "";
             Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Royalty_Recoupment objRoyalty = null;
             if (objRoyalty_MVC.Royalty_Recoupment_Code > 0)
@@ -331,7 +366,6 @@ namespace RightsU_Plus.Controllers
             Royalty_Recoupment objR = new Royalty_Recoupment();
             Royalty_Recoupment_Service objRoyaltyService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
 
-
             dynamic resultSet;
             string status = "S", message = "";
 
@@ -343,14 +377,26 @@ namespace RightsU_Plus.Controllers
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 if (objRoyalty_MVC.Royalty_Recoupment_Code > 0)
                 {
+                    Action = "U"; // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
+                    Action = "C"; // U = "Create";
                     message = objMessageKey.RecordAddedSuccessfully;
                 }
-            }
 
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRoyalty);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
+            }
 
             var obj = new
             {

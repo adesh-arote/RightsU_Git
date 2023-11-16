@@ -45,9 +45,11 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["objExtended_Columns"] = value; }
         }
+
         #endregion
 
         #region UI_Methods
+
         public ActionResult Index()
         {
             ViewBag.Message = "";
@@ -119,6 +121,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -141,6 +144,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForCurrency), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -150,9 +154,11 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         #region Extended_Column
+
         public ActionResult Create()
         {
             objExtended_Columns = null;
@@ -164,8 +170,8 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "";
-                string Status = "";
+                string Message = "", Status = "", Action = "C";  // C = "Create";
+                
                 objExtended_Columns_Service = null;
 
                 objExtended_Columns.Columns_Name = objEC.Columns_Name;
@@ -197,6 +203,16 @@ namespace RightsU_Plus.Controllers
                 {
                     Status = "S";
                     Session["Message"] = objMessageKey.Recordsavedsuccessfully;
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 var Obj = new
                 {
@@ -231,8 +247,8 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "";
-                string Status = "";
+                string Message = "", Status = "", Action = "U"; // U = "Update";
+                
                 objExtended_Columns = null;
                 objExtended_Columns = objExtended_Columns_Service.GetById(id);
 
@@ -277,6 +293,16 @@ namespace RightsU_Plus.Controllers
                     Status = "S";
                     Session["Message"] = objMessageKey.Recordupdatedsuccessfully;
                     DeleteSessionUpdatedData();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 var Obj = new
                 {
@@ -326,8 +352,7 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "";
-                string Status = "";
+                string Message = "", Status = "", Action = "D"; // D = "Delete";
 
                 dynamic resultSet;
                 objExtended_Columns = objExtended_Columns_Service.GetById(id);
@@ -349,6 +374,16 @@ namespace RightsU_Plus.Controllers
                     DeleteSessionUpdatedData();
                     Status = "S";
                     Session["Message"] = objMessageKey.RecordDeletedsuccessfully;
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 var Obj = new
                 {
@@ -364,9 +399,11 @@ namespace RightsU_Plus.Controllers
                 throw;
             }
         }
+
         #endregion
      
         #region ExtendedColumn_ValueDeatils
+
         [HttpPost]
         public ActionResult AddEditEVDetails(int Id, string CommandName)
         {
@@ -387,6 +424,7 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("~/Views/ExtendedColumn_Metadata/_ExtendedColumnValueList.cshtml", objExtended_Columns.Extended_Columns_Value);
         }
+
         public ActionResult SaveEVDetails(int Id, string ColumnValue)
         {
             int result = 0;
@@ -463,6 +501,7 @@ namespace RightsU_Plus.Controllers
             }
             return result;
         }
+
         #endregion
     }
 }

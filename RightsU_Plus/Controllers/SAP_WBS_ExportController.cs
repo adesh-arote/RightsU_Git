@@ -57,7 +57,6 @@ namespace RightsU_Plus.Controllers
             set { Session["lstSAP_WBS_Searched"] = value; }
         }
 
-
         private List<RightsU_Entities.SAP_Export> lstSAP_Export1
         {
             get
@@ -280,7 +279,6 @@ namespace RightsU_Plus.Controllers
         }
         
         //-----------------------------------------------------------------
-
 
         public PartialViewResult BindSAP_WBS_ExportList_Details(int pageNo, int recordPerPage,bool isFirstTime = false)
         {

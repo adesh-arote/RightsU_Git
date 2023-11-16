@@ -1,6 +1,6 @@
 ﻿
 
-CREATE PROCEDURE [dbo].[USP_BMS_Schedule2_Process]	
+ALTER PROCEDURE [dbo].[USP_BMS_Schedule2_Process]	
 (
 	@File_Code INT,
 	@Channel_Code VARCHAR(10),
@@ -332,7 +332,7 @@ BEGIN
 			) T ON T.BV_Schedule_Transaction_Code=BV.BV_Schedule_Transaction_Code
 			INNER JOIN BV_Schedule_Transaction BVT ON BVT.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS=T.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS AND T.Schedule_Item_Log_DateTime BETWEEN T.SimulcastStartTime AND T.SimulcastEndTime
 			AND BVT.IsProcessed = 'Y' AND BVT.Channel_Code in (select isnull(Channel_Code,0) from Channel where Channel_Code not in (@Channel_Code) AND Channel_Group = @Channel_Group_code)
-						
+			PRINT 'Simulcast'			
 		END
 
 		UPDATE BV SET IsProcessed = 'Y',IsIgnore = 'Y'
@@ -435,7 +435,7 @@ BEGIN
 			UPDATE BVST SET IsIgnoreUpdateRun = 'Y'
 			FROM #BVScheduleTransaction BVST
 			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule = (RR_No_Of_Repeat + RR_Play_Per_Day))
+			WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule <= (RR_No_Of_Repeat + RR_Play_Per_Day))
 
 			UPDATE BVST SET BVST.IsIgnore ='Y'
 			FROM BV_Schedule_Transaction BVST
@@ -956,6 +956,94 @@ BEGIN
 		AND BVST.IsInRightsPeriod = 'Y'
 
 		--===============8.5 Send an exception email on INVALID_CHANNEL ===============--		
+
+		-- Update No_OF_Runs_Sched of Acq_Deal_Run----------------------
+
+		UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run ADR
+		INNER JOIN
+		(
+			SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code
+			FROM (
+				SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+				FROM #BVScheduleTransaction bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+				WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type <> 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			) T1 Group by Acq_Deal_Run_Code
+		) T2 ON T2.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+
+		UPDATE ADR SET ADR.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run ADR
+		INNER JOIN
+		(
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+			FROM #BVScheduleTransaction bst 
+			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+			WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type = 'C'
+			GROUP BY BDRC.Acq_Deal_Run_Code
+		) T2 ON T2.Acq_Deal_Run_Code = ADR.Acq_Deal_Run_Code
+
+		-- Update No_OF_Runs_Sched of Acq_Deal_Run_Channel----------------------
+
+		UPDATE ADRC SET ADRC.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run_Channel ADRC
+		INNER JOIN
+		(
+			SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code,RU_Channel_Code
+			FROM (
+				SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+				FROM #BVScheduleTransaction bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+				WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type <> 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+			) T1 Group by Acq_Deal_Run_Code,RU_Channel_Code
+		) T2 ON T2.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code AND T2.RU_Channel_Code = ADRC.Channel_Code
+
+		UPDATE ADRC SET ADRC.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run_Channel ADRC
+		INNER JOIN
+		(
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+			FROM #BVScheduleTransaction bst 
+			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+			WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type = 'C'
+			GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code
+		) T2 ON T2.Acq_Deal_Run_Code = ADRC.Acq_Deal_Run_Code AND T2.RU_Channel_Code = ADRC.Channel_Code		
+
+		-- Update No_OF_Runs_Sched of Acq_Deal_Run_Yearwise_Run----------------------
+
+		UPDATE ADRY SET ADRY.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run_Yearwise_Run ADRY
+		INNER JOIN
+		(
+			SELECT SUM(Run_Count) Run_Count,Acq_Deal_Run_Code,Start_Date,End_Date
+			FROM (
+				SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+				FROM #BVScheduleTransaction bst 
+				INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+				--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type <> 'C'
+				WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type <> 'C'
+				GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Acq_Deal_Run_Code,BDRC.RU_Channel_Code,BDRC.Start_Date,BDRC.End_Date
+			) T1 Group by Acq_Deal_Run_Code,Start_Date,End_Date
+		)T2 ON T2.Acq_Deal_Run_Code = ADRY.Acq_Deal_Run_Code AND T2.Start_Date = ADRY.Start_Date AND T2.End_Date = ADRY.End_Date
+
+		UPDATE ADRY SET ADRY.No_Of_Runs_Sched = T2.Run_Count
+		FROM Acq_Deal_Run_Yearwise_Run ADRY
+		INNER JOIN
+		(
+			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			FROM #BVScheduleTransaction bst 
+			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
+			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
+			WHERE bst.IsIgnoreUpdateRun='N' AND bst.Run_Definition_Type = 'C'
+			GROUP BY BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+		)T2 ON T2.Acq_Deal_Run_Code = ADRY.Acq_Deal_Run_Code AND T2.Start_Date = ADRY.Start_Date AND T2.End_Date = ADRY.End_Date
+
 
 		UPDATE BV SET BV.IsProcessed = 'Y',IsIgnore = 'N',BV.IsException = CASE WHEN BVST.IsException = 'Y' THEN 'Y' ELSE BV.IsException END,
 		BV.IsPrime = BVST.IsPrime,BV.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code,BV.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code

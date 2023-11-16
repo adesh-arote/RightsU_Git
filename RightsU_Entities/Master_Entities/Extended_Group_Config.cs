@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
     public partial class Extended_Group_Config
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Extended_Group_Config_Code { get; set; }
         public Nullable<int> Extended_Group_Code { get; set; }
@@ -26,7 +28,9 @@ namespace RightsU_Entities
         public string Target_Column { get; set; }
         public string Default_Value { get; set; }
 
+        [JsonIgnore]
         public virtual Extended_Columns Extended_Columns { get; set; }
+        [JsonIgnore]
         public virtual Extended_Group Extended_Group { get; set; }
     }
 }

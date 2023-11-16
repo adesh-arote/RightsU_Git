@@ -24,7 +24,9 @@ namespace RightsU_Plus.Controllers
     {
         //
         // GET: /Amort_Rule/
+
         public int moduleCode = 180;
+
         public int PageNo
         {
             get
@@ -35,6 +37,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["AmortPageNo"] = value; }
         }
+
         public int PageSize
         {
             get
@@ -279,6 +282,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Save(Amort_Rule objAmortRule_MVC, FormCollection objFormCollection)
         {
+            string Action = "C";
             string status = "S";
             int AmortCode = Convert.ToInt32(objFormCollection["Amort_Rule_Code"].Trim());
             Amort_Rule objAmortRule = new Amort_Rule();
@@ -290,94 +294,110 @@ namespace RightsU_Plus.Controllers
             string distributeType = objFormCollection["PeriodType_Dist"];
             objAmortRule.Rule_Type = objAmortRule_MVC.Rule_Type = objFormCollection["Ruletype"];
             objAmortRule.Rule_No = objAmortRule_MVC.Rule_No = objFormCollection["txt_RuleNo"];
-            
-                objAmortRule.Rule_Desc = objAmortRule_MVC.Rule_Desc = objFormCollection["txt_RuleDescription"];
-                if (objAmortRule_MVC.Rule_Type == "R")
-                {
-                    objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = objFormCollection["RunType_Dist"];
-                    objAmortRule.Period_For = objAmortRule_MVC.Period_For = Convert.ToString(objFormCollection["RunType_Dist"]);
-                    objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["NoRun"]);
-                    if (objAmortRule.Distribution_Type == "E")
-                        objAmortRule_MVC.Amort_Rule_Details.Clear();
-                }
-                else if (objAmortRule_MVC.Rule_Type == "P")
-                {
-                    objAmortRule.Period_For = objAmortRule_MVC.Period_For = Convert.ToString(objFormCollection["PeriodType_Dist"]);
-                    objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = Convert.ToString(objFormCollection["chk_equ"]);
-                    if (objFormCollection["NoMonth"].Trim() != "")
-                        objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["NoMonth"]);
-                    else
-                        objAmortRule.Nos = null;
-                }
-                else if (objAmortRule_MVC.Rule_Type == "C")
-                {
-                    objAmortRule.Year_Type = objAmortRule_MVC.Year_Type = objFormCollection["year"];
-                    objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["Nos"]);
-                    objAmortRule.Period_For = objAmortRule_MVC.Period_For = null;
-                    objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = null;
-                }
 
-                objAmortRule.Amort_Rule_Details.ToList().ForEach(x => x.EntityState = State.Deleted);
-                for (int i = 0; i < objAmortRule_MVC.Amort_Rule_Details.Count; i++)
+            objAmortRule.Rule_Desc = objAmortRule_MVC.Rule_Desc = objFormCollection["txt_RuleDescription"];
+            if (objAmortRule_MVC.Rule_Type == "R")
+            {
+                objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = objFormCollection["RunType_Dist"];
+                objAmortRule.Period_For = objAmortRule_MVC.Period_For = Convert.ToString(objFormCollection["RunType_Dist"]);
+                objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["NoRun"]);
+                if (objAmortRule.Distribution_Type == "E")
+                    objAmortRule_MVC.Amort_Rule_Details.Clear();
+            }
+            else if (objAmortRule_MVC.Rule_Type == "P")
+            {
+                objAmortRule.Period_For = objAmortRule_MVC.Period_For = Convert.ToString(objFormCollection["PeriodType_Dist"]);
+                objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = Convert.ToString(objFormCollection["chk_equ"]);
+                if (objFormCollection["NoMonth"].Trim() != "")
+                    objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["NoMonth"]);
+                else
+                    objAmortRule.Nos = null;
+            }
+            else if (objAmortRule_MVC.Rule_Type == "C")
+            {
+                objAmortRule.Year_Type = objAmortRule_MVC.Year_Type = objFormCollection["year"];
+                objAmortRule.Nos = objAmortRule_MVC.Nos = Convert.ToInt32(objFormCollection["Nos"]);
+                objAmortRule.Period_For = objAmortRule_MVC.Period_For = null;
+                objAmortRule.Distribution_Type = objAmortRule_MVC.Distribution_Type = null;
+            }
+
+            objAmortRule.Amort_Rule_Details.ToList().ForEach(x => x.EntityState = State.Deleted);
+            for (int i = 0; i < objAmortRule_MVC.Amort_Rule_Details.Count; i++)
+            {
+                Amort_Rule_Details objAmortRuleDetail = new Amort_Rule_Details();
+                objAmortRuleDetail.EntityState = State.Added;
+                bool isAdd = true;
+
+                if (i < objAmortRule.Amort_Rule_Details.Count)
                 {
-                    Amort_Rule_Details objAmortRuleDetail = new Amort_Rule_Details();
-                    objAmortRuleDetail.EntityState = State.Added;
-                    bool isAdd = true;
-
-                    if (i < objAmortRule.Amort_Rule_Details.Count)
-                    {
-                        objAmortRuleDetail = objAmortRule.Amort_Rule_Details.ElementAt(i);
-                        objAmortRuleDetail.EntityState = State.Modified;
-                        isAdd = false;
-                    }
-                    objAmortRuleDetail.From_Range = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].From_Range;
-                    objAmortRuleDetail.To_Range = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].To_Range;
-                    objAmortRuleDetail.Per_Cent = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Per_Cent;
-                    objAmortRuleDetail.Month = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Month;
-                    objAmortRuleDetail.Year = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Year;
-                    objAmortRuleDetail.Period_Type = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Period_Type;
-                    if (isAdd)
-                        objAmortRule.Amort_Rule_Details.Add(objAmortRuleDetail);
+                    objAmortRuleDetail = objAmortRule.Amort_Rule_Details.ElementAt(i);
+                    objAmortRuleDetail.EntityState = State.Modified;
+                    isAdd = false;
                 }
-                    if (objAmortRule_MVC.Amort_Rule_Code > 0)
-                    {
-                        objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;
-                        objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
-                        status = "U";
-                    }
-                    else
-                    {
-                        objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Added;
-                        objAmortRule.Inserted_On = objAmortRule_MVC.Inserted_On = DateTime.Now;
-                        objAmortRule.Is_Active = "Y";
-                        objAmortRule.Inserted_By = objAmortRule_MVC.Inserted_By = objLoginUser.Users_Code;
-                        objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
-                    }
-                    objAmortRuleService.Save(objAmortRule);
-                    string msg = string.Empty;
-                    if (status.Equals("S"))
-                    {
-                        msg = "Amort Rule Details saved successfully.";
-                    }
-                    else
-                        msg = "Amort Rule Details updated successfully";
-                    ViewBag.Message = msg;
-                    PageNo = (PageNo == 0) ? 1 : PageNo;
-                    //return msg;
+                objAmortRuleDetail.From_Range = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].From_Range;
+                objAmortRuleDetail.To_Range = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].To_Range;
+                objAmortRuleDetail.Per_Cent = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Per_Cent;
+                objAmortRuleDetail.Month = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Month;
+                objAmortRuleDetail.Year = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Year;
+                objAmortRuleDetail.Period_Type = objAmortRule_MVC.Amort_Rule_Details.ToList()[i].Period_Type;
+                if (isAdd)
+                    objAmortRule.Amort_Rule_Details.Add(objAmortRuleDetail);
+            }
+            if (objAmortRule_MVC.Amort_Rule_Code > 0)
+            {
+                objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;
+                objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
+                status = "U";
+                Action = "U";
+            }
+            else
+            {
+                objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Added;
+                objAmortRule.Inserted_On = objAmortRule_MVC.Inserted_On = DateTime.Now;
+                objAmortRule.Is_Active = "Y";
+                objAmortRule.Inserted_By = objAmortRule_MVC.Inserted_By = objLoginUser.Users_Code;
+                objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
+                Action = "C";
+            }
+            objAmortRuleService.Save(objAmortRule);
+            string msg = string.Empty;
+            if (status.Equals("S"))
+            {
+                msg = "Amort Rule Details saved successfully.";
+            }
+            else
+            {
+                msg = "Amort Rule Details updated successfully";
+            }
 
-                    if (PageNo != 0)
-                        ViewBag.Query_String_Page_No = PageNo - 1;
-                    else
-                        ViewBag.Query_String_Page_No = 0;
-                    ViewBag.PageSize = PageSize;
-                    ViewBag.Rule_Type = objPage_Properties.Rule_Type;
-                    ViewBag.Rule_No = objPage_Properties.Rule_No;
-                    ViewBag.Rule_TypeList = BindRuleType();
-                    ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
-                    string c = addRights.FirstOrDefault();
-                    ViewBag.AddVisibility = c;
-                    return View("Index");
+            try
+            {
+                string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAmortRule);
+                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            ViewBag.Message = msg;
+            PageNo = (PageNo == 0) ? 1 : PageNo;
+            //return msg;
+
+            if (PageNo != 0)
+                ViewBag.Query_String_Page_No = PageNo - 1;
+            else
+                ViewBag.Query_String_Page_No = 0;
+            ViewBag.PageSize = PageSize;
+            ViewBag.Rule_Type = objPage_Properties.Rule_Type;
+            ViewBag.Rule_No = objPage_Properties.Rule_No;
+            ViewBag.Rule_TypeList = BindRuleType();
+            ObjectResult<string> addRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(moduleCode), objLoginUser.Security_Group_Code, objLoginUser.Users_Code);
+            string c = addRights.FirstOrDefault();
+            ViewBag.AddVisibility = c;
+            return View("Index");
         }
+
         public ActionResult CancelData()
         {
             if (TempData["TempId"] != null)
@@ -406,6 +426,7 @@ namespace RightsU_Plus.Controllers
             objAR = objAmortRuleService.GetById(id);
             return View("View", objAR);
         }
+
         public ActionResult ShowAmort()
         {
             int id = 0;
@@ -422,6 +443,7 @@ namespace RightsU_Plus.Controllers
             objAR = objAmortRuleService.GetById(id);
             return View("View", objAR);
         }
+
         public ActionResult AddAmortRule(string commandName)
         {
             if (commandName == "Add")
@@ -482,6 +504,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DelactivateData(int id)
         {
+            string Action = "A";
             string message = "";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             Amort_Rule objAR = new Amort_Rule();
@@ -491,16 +514,29 @@ namespace RightsU_Plus.Controllers
             {
                 objAmortRule.Is_Active = "N";
                 message = "Deactivated Successfully";
+                Action = "DA";
             }
             else
             {
                 objAmortRule.Is_Active = "Y";
                 message = "Activated Successfully";
+                Action = "A";
             }
             objAmortRule.EntityState =State.Modified;
             objAmortRuleService.Save(objAmortRule);
             objJson.Add("Message", message);
             objJson.Add("Error", "");
+
+            try
+            {
+                string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAmortRule);
+                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
             return Json(objJson);
         }
 
@@ -580,9 +616,12 @@ namespace RightsU_Plus.Controllers
     public partial class Amort_Rule_Search
     {
         public Amort_Rule_Search() { }
+
         #region ========== PAGE PROPERTIES ==========
+
         public string Rule_No { get; set; }
         public string Rule_Type { get; set; }
+
         #endregion
     }
 

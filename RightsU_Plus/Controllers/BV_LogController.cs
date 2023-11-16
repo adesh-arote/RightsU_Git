@@ -19,8 +19,6 @@ namespace RightsU_Plus.Controllers
 {
     public class BV_LogController : BaseController
     {
-
-
         private List<RightsU_Entities.BMS_Log> lstBMS_Log
         {
             get
@@ -87,8 +85,6 @@ namespace RightsU_Plus.Controllers
             set { Session["objBMSLog_Service"] = value; }
         }
 
-
-
         public BV_Log_Search objPage_Properties
         {
             get
@@ -111,6 +107,7 @@ namespace RightsU_Plus.Controllers
         //}
 
         #region ---------------BIND DROPDOWNS---------------
+
         private List<USP_List_BMS_log_Result> BindAllDropDowns()
         {
             int resultSet = 0;
@@ -120,6 +117,7 @@ namespace RightsU_Plus.Controllers
 
             return obj_USP_List_BMS_log_Result;
         }
+
         //public JsonResult OnChangeBindTitle(int? dealTypeCode, int? BUCode)
         //{
         //    return Json(BindTitle(dealTypeCode, BUCode), JsonRequestBehavior.AllowGet);
@@ -139,6 +137,7 @@ namespace RightsU_Plus.Controllers
 
         //    return new SelectList(new Deal_Workflow_Status_Service().SearchFor(x => x.Deal_Type == "A"), "Deal_WorkflowFlag", "Deal_Workflow_Status_Name");
         //}
+
         #endregion
 
         public JsonResult BindAdvanced_Search_Controls(string Module_Name = "", string Method_Type = "", string Record_Status = "", string Request_Xml = "")
@@ -177,8 +176,6 @@ namespace RightsU_Plus.Controllers
 
             return Json(objJson);
         }
-
-
 
         public JsonResult AdvanceSearch(string SrchModuleName = "", string SrchModuleType = "", string SrchRecordStatus = "", string SrchRequestXML = "", string SrchResponseXML = "", string SrchRequestTime = "", string SrchResponseTime = "")
         {
@@ -276,7 +273,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-
 
         private string GetUserModuleRights()
         {
@@ -600,13 +596,12 @@ namespace RightsU_Plus.Controllers
 
     }
 
-
     public partial class BV_Log_Search
     {
-
         public BV_Log_Search() { }
 
         #region ========== PAGE PROPERTIES ==========
+
         public string F { get; set; }
         public string ModuleName { get; set; }
         public int DealTypeCode { get; set; }

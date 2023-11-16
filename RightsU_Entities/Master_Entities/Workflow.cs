@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -23,7 +24,9 @@ namespace RightsU_Entities
             this.Workflow_BU = new HashSet<Workflow_BU>();
         }
 
-        public State EntityState { get; set; }    public int Workflow_Code { get; set; }
+        [JsonIgnore]
+        public State EntityState { get; set; }
+        public int Workflow_Code { get; set; }
         public string Workflow_Name { get; set; }
         public string Remarks { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
@@ -32,11 +35,16 @@ namespace RightsU_Entities
         public string Workflow_Type { get; set; }
         public Nullable<int> Business_Unit_Code { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_Module> Workflow_Module { get; set; }
         public virtual ICollection<Workflow_Role> Workflow_Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_BU> Workflow_BU { get; set; }
+        [JsonIgnore]
         public virtual Business_Unit Business_Unit { get; set; }
     }
 }
