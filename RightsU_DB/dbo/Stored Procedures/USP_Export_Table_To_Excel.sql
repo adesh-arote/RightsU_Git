@@ -554,7 +554,7 @@ BEGIN
 	   SELECT     
 			@Col_Head01 = CASE WHEN  SM.Message_Key = 'PartyCode' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
 			@Col_Head02 = CASE WHEN  SM.Message_Key = 'PartyName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END, 
-			@Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,       
+			@Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,       
 			@Col_Head04 = CASE WHEN  SM.Message_Key = 'Address' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,     
 			@Col_Head05 = CASE WHEN  SM.Message_Key = 'PhoneNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
 			@Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
@@ -1622,7 +1622,7 @@ BEGIN
 		SELECT     
 	   @Col_Head01 = CASE WHEN  SM.Message_Key = 'PartyCode' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
 	   @Col_Head02 = CASE WHEN  SM.Message_Key = 'PartyName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END, 
-	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,       
+	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,       
 	   @Col_Head04 = CASE WHEN  SM.Message_Key = 'Address' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,     
 	   @Col_Head05 = CASE WHEN  SM.Message_Key = 'PhoneNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
 	   @Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    

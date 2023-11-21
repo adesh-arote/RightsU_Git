@@ -113,7 +113,7 @@ namespace RightsU_Plus.Controllers
 
         private string GetUserModuleRights()
         {
-            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
+            List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForExtendedGroup), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
             string rights = "";
             if (lstRights.FirstOrDefault() != null)
                 rights = lstRights.FirstOrDefault();
@@ -177,7 +177,7 @@ namespace RightsU_Plus.Controllers
             if (Extended_Group_Code > 0)
             {
                 CommonUtil objCommonUtil = new CommonUtil();
-                isLocked = objCommonUtil.Lock_Record(Extended_Group_Code, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+                isLocked = objCommonUtil.Lock_Record(Extended_Group_Code, GlobalParams.ModuleCodeForExtendedGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             }
 
             var obj = new
@@ -581,73 +581,70 @@ namespace RightsU_Plus.Controllers
 
         #region ---Activate-Deactivate---
 
-        //public JsonResult ActivateDeactivateExtdGrp(string ActiveAction, int ExtdGrpCode)
-        //{
-        //    string status = "S", message = "", Action = "";
+        public JsonResult ActivateDeactivateExtdGrp(int ExtdGrpCode, string doActive)
+        {
+            string status = "S", message = "", strMessage = "", Action = "";
+            int RLCode = 0;
+            objExtended_Group = null;
+            CommonUtil objCommonUtil = new CommonUtil();
+            bool isLocked = objCommonUtil.Lock_Record(ExtdGrpCode, GlobalParams.ModuleCodeForExtendedGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
+            if (isLocked)
+            {
+                objExtended_Group = objExtended_Group_Service.GetById(ExtdGrpCode);
+                objExtended_Group.IsActive = doActive;
+                objExtended_Group.EntityState = State.Modified;
 
-        //    objExtended_Group = null;
+                dynamic resultSet;
+                bool isValid = objExtended_Group_Service.Save(objExtended_Group, out resultSet);
+                if (isValid)
+                {
+                    lstExtended_Group.Where(w => w.Extended_Group_Code == ExtdGrpCode).First().IsActive = doActive;
+                    lstExtended_Group_Searched.Where(w => w.Extended_Group_Code == ExtdGrpCode).First().IsActive = doActive;
 
-        //    if (ExtdGrpCode > 0)
-        //    {
-        //        objExtended_Group = objExtended_Group_Service.GetById(ExtdGrpCode);
-        //        objExtended_Group.EntityState = State.Modified;
-        //    }
-        //    //objExtended_Group.Is_Active = ActiveAction;
-        //    if (objExtended_Group != null)
-        //    {
-        //        if (ActiveAction == "Y")
-        //        {
-        //            Action = "A"; // A = "Activate";
-        //            message = objMessageKey.Recordactivatedsuccessfully;
-        //        }
-        //        else
-        //        {
-        //            Action = "DA"; // DA = "Deactivate";
-        //            message = objMessageKey.Recorddeactivatedsuccessfully;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (ActiveAction == "Y")
-        //        {
-        //            message = objMessageKey.CouldNotActivatedRecord;
-        //        }
-        //        else
-        //        {
-        //            message = objMessageKey.CouldNotDeactivatedRecord;
-        //        }
-        //    }
+                    if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
+                        message = objMessageKey.Recordactivatedsuccessfully;
+                    }
+                    else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
+                        message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
 
-        //    dynamic resultSet;
-        //    if (!objExtended_Group_Service.Save(objExtended_Group, out resultSet))
-        //    {
-        //        status = "E";
-        //        message = resultSet;
-        //    }
-        //    else
-        //    {
-        //        status = "S";
-        //        message = resultSet;
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
 
-        //    try
-        //    {
-        //        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
-        //        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //          
-        //    }
-
-        //    }
-
-        //    var obj = new
-        //    {               
-        //        Status = status,
-        //        Message = message
-        //    };
-        //    return Json(obj);
-        //}
+                    }
+                }
+                else
+                {
+                    status = "E";
+                    if (doActive == "Y")
+                        message = objMessageKey.CouldNotActivatedRecord;
+                    else
+                        message = objMessageKey.CouldNotDeactivatedRecord;
+                }
+                objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
+            }
+            else
+            {
+                status = "E";
+                message = strMessage;
+            }
+            
+            var obj = new
+            {               
+                Status = status,
+                Message = message
+            };
+            return Json(obj);
+        }
 
         #endregion
 
