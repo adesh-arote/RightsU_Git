@@ -215,19 +215,19 @@ namespace RightsU_Plus.Controllers
             Session["FileName"] = "syn_General";
             SearchTitle(objDeal_Schema.General_Search_Title_Codes);
 
-            var SynDealRightsCode =  objSD_Session.Syn_Deal_Rights.Distinct().Select(x => x.Syn_Deal_Rights_Code).ToList();
+            var SynDealRightsCode = objSD_Session.Syn_Deal_Rights.Distinct().Select(x => x.Syn_Deal_Rights_Code).ToList();
             string IsBuyBackRightsExist = "N";
 
             foreach (var item in SynDealRightsCode)
             {
                 string BuybackSynRightsCode = Convert.ToString(item);
                 var lstBuyBackRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Buyback_Syn_Rights_Code == BuybackSynRightsCode).ToList();
-                if(lstBuyBackRights.Count() > 0)
+                if (lstBuyBackRights.Count() > 0)
                 {
                     IsBuyBackRightsExist = "Y";
                     break;
                 }
-                
+
             }
 
             ViewBag.IsBuyBackRightsExist = IsBuyBackRightsExist;
@@ -472,18 +472,18 @@ namespace RightsU_Plus.Controllers
             objDeal_Schema.List_Deal_Tag = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTG"), "Display_Value", "Display_Text", objSD_Session.Deal_Tag_Code == 0 ? 1 : objSD_Session.Deal_Tag_Code).ToList();
 
             #region --- Deal For ---
-            ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();            
+            ViewBag.Deal_For_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP"), "Display_Value", "Display_Text").ToList();
 
             if (ViewBag.Deal_For_List.Count > 0)
                 ViewBag.Deal_For_List[0].Selected = true;
 
             string Chk_Other = lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTP" && (x.Display_Text.ToUpper() == "OTHER" || x.Display_Text.ToUpper() == "OTHERS")).Select(x => x.Display_Text).FirstOrDefault();
-            if(Chk_Other != null)
-               ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
+            if (Chk_Other != null)
+                ViewBag.Other_Deal_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "DTC"), "Display_Value", "Display_Text").ToList();
             #endregion
 
             #region --- Customer Type ---
-           
+
             ViewBag.Customer_Type_List = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For.Contains("ROL")), "Display_Value", "Display_Text").ToList();
             List<SelectListItem> lstCustomer_Type_List_Default = new SelectList(lstUSP_Get_PreReq_Result.Where(x => x.Data_For == "ROL"), "Display_Value", "Display_Text").ToList();
             lstCustomer_Type_List_Default.Insert(2, (new SelectListItem { Text = "Other", Value = "0" }));
@@ -495,11 +495,11 @@ namespace RightsU_Plus.Controllers
             if (Syn_Deal_Code <= 0)
             {
                 string Syn_Customer_Type = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Syn_Customer_Type").Select(x => x.Parameter_Value).FirstOrDefault();
-                if(Syn_Customer_Type!=null)
+                if (Syn_Customer_Type != null)
                     objSD_Session.Customer_Type = Convert.ToInt32(Syn_Customer_Type);
                 else
                     objSD_Session.Customer_Type = Convert.ToInt32(((List<SelectListItem>)ViewBag.Customer_Type_List).First().Value);
-            }                
+            }
             #endregion
 
             if (objSD_Session.Vendor_Contact_Code > 0)
@@ -867,6 +867,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult Save(Syn_Deal objSD_MVC, FormCollection objFormCollection)
         {
             string dealTypeCode = objFormCollection["hdnDeal_Type_Code"];
+            int VendorCode = Convert.ToInt32(objFormCollection["hdnVendorCode"]);
             //string dealDesc = objFormCollection["hdnDealDesc"];            
             int dealTagCode = Convert.ToInt32(objFormCollection["hdnDealTagStatusCode"]);
             string dealDesc = objFormCollection["hdnDealDesc"];
@@ -891,6 +892,11 @@ namespace RightsU_Plus.Controllers
             List<USP_Validate_Show_Episode_UDT> result = new List<USP_Validate_Show_Episode_UDT>();
             if (Convert.ToInt32(dealTypeCode) != GlobalParams.Deal_Type_Movie)
                 result = Validate_Episodes_Acquired(objSD_MVC.Syn_Deal_Movie.ToList());
+
+            if (objSD_MVC.Vendor_Code == null || objSD_MVC.Vendor_Code == 0)
+            {
+                objSD_MVC.Vendor_Code = VendorCode;
+            }
 
             int errorPageIndex = 0, totalRecordCount = 0;
             if (result.Count <= 0)
@@ -1074,7 +1080,7 @@ namespace RightsU_Plus.Controllers
 
                             objSD_Session.Deal_Complete_Flag = new Syn_Deal_Service(objLoginEntity.ConnectionStringName).GetById(objSD_Session.Syn_Deal_Code).Deal_Complete_Flag;
                         }
-                            
+
                         else
                             strMessage = "Error while saving data, " + resultSet;
 

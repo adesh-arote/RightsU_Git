@@ -461,6 +461,8 @@ namespace RightsU_Plus.Controllers
             ViewBag.CodeForEmbeddedMusic = GlobalParams.CodeForEmbeddedMusic;
             ViewBag.DealTypeCode = DealTypeCode;
             ViewBag.fromAcqGeneral = fromAcqGeneral;
+            var IsAddSeasonForTitleTypeProgram = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Parameter_Name == "AddSeasonForTitleTypeProgram").Select(w => w.Parameter_Value).SingleOrDefault();
+            ViewBag.AddSeasonForTitleTypeProgram = IsAddSeasonForTitleTypeProgram;
             return PartialView("_Create", objTitle);
         }
         private List<SelectListItem> BindMusicLabel()
