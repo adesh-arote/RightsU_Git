@@ -16,6 +16,7 @@ namespace RightsU_Plus.Controllers
     public class RUBVMappingController : BaseController
     {
         string url = "";
+
         public string SelectedValue {
             set {
                 Session["SelectedValue2"] = value;
@@ -26,10 +27,12 @@ namespace RightsU_Plus.Controllers
                 return (string)Session["SelectedValue2"];
             }           
         }
+
         public ActionResult Index()
         {
             return View();
         }  
+
         public PartialViewResult BindTable(string selectedValue,string selectedOption, int pageNo, int recordPerPage)
         {
             int RecordCount = 0;
@@ -69,6 +72,7 @@ namespace RightsU_Plus.Controllers
         }
             return PartialView(url,lstRUBVMapping);
         }        
+
         public PartialViewResult MapReferenceKey(int[] ruidArray, int[] bvidArray, string selectedOption, int pageNo, int recordPerPage)
         {
             dynamic resultset = 0;

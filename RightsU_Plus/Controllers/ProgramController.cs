@@ -166,12 +166,29 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objProgram, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstProgram.Where(w => w.Program_Code == Program_Code).First().Is_Active = doActive;
                     lstProgram_Searched.Where(w => w.Program_Code == Program_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                       
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objProgram);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForProgram), Convert.ToInt32(objProgram.Program_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -195,6 +212,7 @@ namespace RightsU_Plus.Controllers
 
          public JsonResult SaveProgram(int programCode, string programName, int Record_Code, int DealTypeCode, int GenreCode)
          {
+             string Action = "C";
              string status = "S", message = objMessageKey.Recordsavedsuccessfully;
              if (programCode > 0)
                  message = objMessageKey.Recordupdatedsuccessfully;
@@ -206,6 +224,7 @@ namespace RightsU_Plus.Controllers
              {
                  objProgram = objService.GetById(programCode);
                  objProgram.EntityState = State.Modified;
+                 Action = "U";
              }
              else
              {
@@ -213,6 +232,7 @@ namespace RightsU_Plus.Controllers
                  objProgram.EntityState = State.Added;
                  objProgram.Inserted_On = DateTime.Now;
                  objProgram.Inserted_By = objLoginUser.Users_Code;
+                 Action = "C";
              }
              if (DealTypeCode == 0)
              {
@@ -247,7 +267,21 @@ namespace RightsU_Plus.Controllers
                  status = "E";
                  message = resultSet;
              }
-             int recordLockingCode = Convert.ToInt32(Record_Code);
+
+            if (isValid)
+            {
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objProgram);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForProgram), Convert.ToInt32(objProgram.Program_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+
+            int recordLockingCode = Convert.ToInt32(Record_Code);
              DBUtil.Release_Record(recordLockingCode);
              var obj = new
              {

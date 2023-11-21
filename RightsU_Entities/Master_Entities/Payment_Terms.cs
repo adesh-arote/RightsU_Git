@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -20,6 +21,7 @@ namespace RightsU_Entities
             this.Syn_Deal_Payment_Terms = new HashSet<Syn_Deal_Payment_Terms>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Payment_Terms_Code { get; set; }
         public string Payment_Terms1 { get; set; }
@@ -30,7 +32,9 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
     
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Payment_Terms> Acq_Deal_Payment_Terms { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Payment_Terms> Syn_Deal_Payment_Terms { get; set; }
     }
 }

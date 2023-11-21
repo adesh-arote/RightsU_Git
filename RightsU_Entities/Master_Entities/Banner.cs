@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
     public partial class Banner
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Banner_Code { get; set; }
         public string Banner_Name { get; set; }

@@ -13,6 +13,7 @@ namespace RightsU_Plus.Controllers
     public class MaterialTypeController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.Material_Type> lstMaterialType
         {
             get
@@ -36,7 +37,6 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
-
 
         public ViewResult Index()
         {
@@ -76,6 +76,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         public JsonResult CheckRecordLock(int Material_Code)
         {
             string strMessage = "";
@@ -94,7 +95,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
@@ -118,6 +118,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -127,6 +128,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchMaterialType(string searchText)
@@ -155,29 +157,51 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(materialTypeCode, GlobalParams.ModuleCodeForMaterialType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-           // string status = "S", message = "Record {ACTION} successfully";
-            Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Material_Type objMaterialType = objService.GetById(materialTypeCode);
-            objMaterialType.Is_Active = doActive;
-            objMaterialType.EntityState = State.Modified;
-            dynamic resultSet;
-            bool isValid = objService.Save(objMaterialType, out resultSet);
-            if (isValid)
-            {
-                lstMaterialType.Where(w => w.Material_Type_Code == materialTypeCode).First().Is_Active = doActive;
-                lstMaterialType_Searched.Where(w => w.Material_Type_Code == materialTypeCode).First().Is_Active = doActive;
-            }
-            else
-            {
-                status = "E";
-                message = "Cound not {ACTION} record";
-            }
-            if (doActive == "Y")
-                //message = message.Replace("{ACTION}", "Activated");
-                message = objMessageKey.Recordactivatedsuccessfully;
-            else
-                //message = message.Replace("{ACTION}", "Deactivated");
-                message = objMessageKey.Recorddeactivatedsuccessfully;
+                string Action = "A";
+                // string status = "S", message = "Record {ACTION} successfully";
+                Material_Type_Service objService = new Material_Type_Service(objLoginEntity.ConnectionStringName);
+                RightsU_Entities.Material_Type objMaterialType = objService.GetById(materialTypeCode);
+                objMaterialType.Is_Active = doActive;
+                objMaterialType.EntityState = State.Modified;
+                dynamic resultSet;
+                bool isValid = objService.Save(objMaterialType, out resultSet);
+                if (isValid)
+                {
+                    lstMaterialType.Where(w => w.Material_Type_Code == materialTypeCode).First().Is_Active = doActive;
+                    lstMaterialType_Searched.Where(w => w.Material_Type_Code == materialTypeCode).First().Is_Active = doActive;
+                }
+                else
+                {
+                    status = "E";
+                    message = "Cound not {ACTION} record";
+                }
+
+                if (doActive == "Y")
+                {
+                    //message = message.Replace("{ACTION}", "Activated");
+                    message = objMessageKey.Recordactivatedsuccessfully;
+                    Action = "A";
+                }
+                else
+                {
+                    //message = message.Replace("{ACTION}", "Deactivated");
+                    message = objMessageKey.Recorddeactivatedsuccessfully;
+                    Action = "DA";
+                }
+
+                if (isValid)
+                {
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialType);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), Convert.ToInt32(objMaterialType.Material_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+
                 objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
             }
             else
@@ -248,16 +272,33 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objMaterialType, out resultSet);
                 if (isValid)
                 {
+                    string Action = "C";
                     lstMaterialType_Searched = lstMaterialType = new Material_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
                     DBUtil.Release_Record(recordLockingCode);
                     if (materialTypeCode > 0)
+                    {
+                        Action = "U";
                         //message = message.Replace("{ACTION}", "updated");
                         message = objMessageKey.Recordupdatedsuccessfully;
+                    }                        
                     else
+                    {
+                        Action = "C";
                         //message = message.Replace("{ACTION}", "added");
                         message = objMessageKey.RecordAddedSuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialType);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialType), Convert.ToInt32(objMaterialType.Material_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {

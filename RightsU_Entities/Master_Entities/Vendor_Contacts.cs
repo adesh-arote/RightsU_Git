@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -20,6 +21,7 @@ namespace RightsU_Entities
             this.Syn_Deal = new HashSet<Syn_Deal>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Vendor_Contacts_Code { get; set; }
         public Nullable<int> Vendor_Code { get; set; }
@@ -41,8 +43,11 @@ namespace RightsU_Entities
         {
             return Guid.NewGuid().ToString();
         }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
     }
 }

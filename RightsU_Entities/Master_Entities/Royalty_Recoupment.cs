@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -21,6 +22,7 @@ namespace RightsU_Entities
             this.Syn_Deal_Revenue = new HashSet<Syn_Deal_Revenue>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Royalty_Recoupment_Code { get; set; }
         public string Royalty_Recoupment_Name { get; set; }
@@ -32,7 +34,9 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
     
         public virtual ICollection<Royalty_Recoupment_Details> Royalty_Recoupment_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Revenue> Syn_Deal_Revenue { get; set; }
     }
 }

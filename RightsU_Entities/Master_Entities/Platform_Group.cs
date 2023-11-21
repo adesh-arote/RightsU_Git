@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -18,7 +19,7 @@ namespace RightsU_Entities
         {
             this.Platform_Group_Details = new HashSet<Platform_Group_Details>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Platform_Group_Code { get; set; }
         public string Platform_Group_Name { get; set; }

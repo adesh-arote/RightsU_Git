@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,7 +20,7 @@ namespace RightsU_Entities
             this.Acq_Deal_Cost_Additional_Exp = new HashSet<Acq_Deal_Cost_Additional_Exp>();
             this.Syn_Deal_Revenue_Additional_Exp = new HashSet<Syn_Deal_Revenue_Additional_Exp>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Additional_Expense_Code { get; set; }
         public string Additional_Expense_Name { get; set; }
@@ -30,8 +31,9 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
-    
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Additional_Exp> Acq_Deal_Cost_Additional_Exp { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Revenue_Additional_Exp> Syn_Deal_Revenue_Additional_Exp { get; set; }
     }
 }

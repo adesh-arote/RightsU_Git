@@ -345,7 +345,7 @@ BEGIN
 		--END
 	
 		DECLARE @Key NVARCHAR(MAX),@Value NVARCHAR(MAX),@Condition NVARCHAR(MAX),@Operator NVARCHAR(MAX),
-		@IsDisplay NVARCHAR(MAX),@OrderBy INT,@Group NVARCHAR(MAX)
+		@IsDisplay NVARCHAR(MAX),@OrderBy INT,@Group NVARCHAR(MAX), @OptCond NVARCHAR(MAX) = ''
 	
 		DECLARE db_cursor CURSOR FOR
 			Select * from @UDT udt WHERE IsDisplay = 'N'  ORDER BY [Group], [Operator]
@@ -422,7 +422,9 @@ BEGIN
 		
 			DELETE FROM @tblRights
 
-			 IF(@Condition = 'EQ' AND (@Key = 'Right Start Date' OR @Key = 'Right End Date' OR @Key = 'Deal Description' OR @Key = 'Deal Description' 
+			SET @OptCond = @Condition
+
+			 IF(@Condition = 'EQ' AND (@Key = 'Right Start Date' OR @Key = 'Right End Date' --OR @Key = 'Deal Description' OR @Key = 'Deal Description' 
 			 OR @Key = 'Original Title' OR @Key = 'Year of Release' OR @Key = 'Agreement Date'))
 				SET @Condition = ' = '
 			--ELSE IF(@Condition = 'NEQ')
@@ -990,7 +992,16 @@ BEGIN
 				
 						SELECT @SQLStmt_DealDesc =  REPLACE(@SQLStmt_DealDesc, '{txtCondition}', ''+@DealDescription_Condition+'')
 					
-						EXEC (@SQLStmt_DealDesc)
+						--EXEC (@SQLStmt_DealDesc)
+
+						if(@OptCond = 'EQ')
+						begin
+						DELETE FROM #tempDeal WHERE Deal_Description NOT IN (SELECT Deal_Desc_Name FROM Deal_Description WHERE Deal_Desc_Code = @Value)
+						end
+						if(@OptCond = 'NEQ')
+						begin
+						DELETE FROM #tempDeal WHERE Deal_Description IN (SELECT Deal_Desc_Name FROM Deal_Description WHERE Deal_Desc_Code = @Value)
+						end
 					
 						DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (SELECT Syn_Deal_Code FROM #tempDeal)
 

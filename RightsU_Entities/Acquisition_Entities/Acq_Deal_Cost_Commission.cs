@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -28,6 +29,7 @@ namespace RightsU_Entities
         public virtual Acq_Deal_Cost Acq_Deal_Cost { get; set; }
         public virtual Cost_Type Cost_Type { get; set; }
         public virtual Royalty_Commission Royalty_Commission { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
         public virtual Entity Entity { get; set; }
     }

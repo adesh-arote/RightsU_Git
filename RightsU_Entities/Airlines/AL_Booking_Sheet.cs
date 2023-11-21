@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -38,6 +39,7 @@ namespace RightsU_Entities
         public string Excel_File { get; set; }
 
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
+        [JsonIgnore]
         public virtual Vendor Vendor { get; set; }
         public virtual AL_Recommendation AL_Recommendation { get; set; }
         public virtual ICollection<AL_Load_Sheet_Details> AL_Load_Sheet_Details { get; set; }

@@ -200,8 +200,8 @@ BEGIN
 					)
 			) AS pivot_table;
 
-			EXEC('Select [TitleLanguage], null AS Acquisition, ISNULL(Acquisition,0) AS License, ISNULL([Own Production],0) AS [OwnProduction], ISNULL(['+@Role_Name+'],0) AS ['+@RoleNameWithoutSpace+'], '+@ColumnsRoleName+' null AS Others,
-			(ISNULL(Acquisition,0)+ISNULL([Own Production],0)+ISNULL([Buy Back],0)+ISNULL([Assignment],0)) AS Total FROM #temp')
+			EXEC('Select [TitleLanguage], null AS Acquisition, ISNULL(License,0) AS License, ISNULL([Own Production],0) AS [OwnProduction], ISNULL(['+@Role_Name+'],0) AS ['+@RoleNameWithoutSpace+'], '+@ColumnsRoleName+' null AS Others,
+			(ISNULL(License,0)+ISNULL([Own Production],0)+ISNULL([Buy Back],0)+ISNULL([Assignment],0)) AS Total FROM #temp')
 		END		
 		ELSE
 		BEGIN
@@ -236,8 +236,8 @@ BEGIN
 					)
 			) AS pivot_table;
 
-			Select [TitleLanguage], null AS Acquisition, ISNULL(Acquisition,0) AS License, ISNULL([Own Production],0) AS [OwnProduction], null AS [BuyBack], null AS [Assignment], ISNULL([Others],0) AS [Others],
-			(ISNULL(Acquisition,0)+ISNULL([Own Production],0)+ISNULL([Others],0)) AS Total FROM #temp1
+			Select [TitleLanguage], null AS Acquisition, ISNULL(License,0) AS License, ISNULL([Own Production],0) AS [OwnProduction], null AS [BuyBack], null AS [Assignment], ISNULL([Others],0) AS [Others],
+			(ISNULL(License,0)+ISNULL([Own Production],0)+ISNULL([Others],0)) AS Total FROM #temp1
 		END
 
 		IF OBJECT_ID('tempdb..#LinearRightCode') IS NOT NULL DROP TABLE #LinearRightCode

@@ -9,21 +9,26 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class System_Language_Message
     {
-    	public State EntityState { get; set; }    public int System_Language_Message_Code { get; set; }
-    	    public Nullable<int> System_Language_Code { get; set; }
-    	    public Nullable<int> System_Module_Message_Code { get; set; }
-    	    public string Message_Desc { get; set; }
-            public Nullable<System.DateTime> Inserted_On { get; set; }
-            public Nullable<int> Inserted_By { get; set; }
-            public Nullable<System.DateTime> Last_Updated_Time { get; set; }
-            public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
+    	public State EntityState { get; set; }
+        public int System_Language_Message_Code { get; set; }
+    	public Nullable<int> System_Language_Code { get; set; }
+    	public Nullable<int> System_Module_Message_Code { get; set; }
+    	public string Message_Desc { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        public Nullable<int> Inserted_By { get; set; }
+        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        public Nullable<int> Last_Action_By { get; set; }
 
+        [JsonIgnore]
         public virtual System_Language System_Language { get; set; }
+        [JsonIgnore]
         public virtual System_Module_Message System_Module_Message { get; set; }
     }
 }

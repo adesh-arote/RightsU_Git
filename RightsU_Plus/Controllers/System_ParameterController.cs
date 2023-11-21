@@ -6,11 +6,13 @@ using System.Web.Mvc;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
+
 namespace RightsU_Plus.Controllers
 {
     public class System_ParameterController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.System_Parameter_New> lstSystem_Parameter
         {
             get
@@ -32,7 +34,9 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSystem_Parameter_Searched"] = value; }
         }
+
         #endregion
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForSystemParameter);
@@ -43,6 +47,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/System_Parameter/Index.cshtml");
         }
+
         public PartialViewResult BindSystem_ParameterList(int pageNo, int recordPerPage, int id, string commandName)
         {
             ViewBag.Id = id;
@@ -59,6 +64,7 @@ namespace RightsU_Plus.Controllers
             }
             return PartialView("~/Views/System_Parameter/_SystemParameterList.cshtml", lst);
         }
+
         #region --Other Method--
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
@@ -83,6 +89,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         #endregion
         public JsonResult CheckRecordLock(int id, string commandName)
         {
@@ -103,6 +110,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SearchSystem_Parameter(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -118,9 +126,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveSystem_Parameter(int id, string paramValue, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C ="Create";
             if (id > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -131,6 +140,7 @@ namespace RightsU_Plus.Controllers
             {
                 objSystemParameter = objService.GetById(id);
                 objSystemParameter.EntityState = State.Modified;
+                Action = "U"; // U ="update";
             }
             else
             {
@@ -148,6 +158,16 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstSystem_Parameter_Searched = lstSystem_Parameter = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSystemParameter);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForSystemParameter, objSystemParameter.Id, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {
@@ -164,6 +184,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForSystemParameter), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();

@@ -9,16 +9,18 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Email_Config_Detail_Alert
     {
+        [JsonIgnore]
     	public State EntityState { get; set; }    public int Email_Config_Detail_Alert_Code { get; set; }
     	    public Nullable<int> Email_Config_Detail_Code { get; set; }
     	    public Nullable<int> Mail_Alert_Days { get; set; }
     	    public string Allow_Less_Than { get; set; }
-    
+        [JsonIgnore]
         public virtual Email_Config_Detail Email_Config_Detail { get; set; }
     }
 }

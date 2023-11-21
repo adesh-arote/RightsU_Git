@@ -1,5 +1,4 @@
-﻿
-CREATE PROCEDURE [dbo].[USPAvailability]
+﻿ALTER PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
 	
@@ -18,7 +17,7 @@ CREATE PROCEDURE [dbo].[USPAvailability]
 	@MustHaveCountry VARCHAR(MAX) = NULL,
 	@ExclusionCountry VARCHAR(MAX) = NULL,
 	
-	@IsTitleLanguage CHAR(1) = 'Y',
+	@IsTitleLanguage BIT = 1,
 	@TitleLanguageCode VARCHAR(MAX),
 
 	@DubbingSubtitling VARCHAR(20),
@@ -36,17 +35,75 @@ CREATE PROCEDURE [dbo].[USPAvailability]
 	 
 	@Exclusivity VARCHAR(1) = 'B',   --B-Both, E-Exclusive,N-NonExclusive 
 	@SubLicenseCode VARCHAR(MAX) = NULL, --Comma   Separated SubLicensing Code. 0-No Sub Licensing,	
-	@RestrictionRemarks CHAR(1) = 'N',
-	@OthersRemarks CHAR(1) = 'N',
+	@RestrictionRemarks VARCHAR(10) = 'TRUE',
+	@OthersRemarks VARCHAR(10) = 'TRUE',
 	@BUCode VARCHAR(20) = '0',
-	@IsDigital CHAR(1) = 'N',
-	@L1Output CHAR(1) = 'N'
+	@IsDigital BIT = 'FALSE',
+	@L1Output CHAR(1) = 'N',
+	@ReportType CHAR(1) = 'M'
 )
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 	SET FMTONLY OFF;
+
+	INSERT INTO TestParam(Params, ProcType)
+	SELECT '@TitleCodes=''' + CAST(@TitleCodes AS VARCHAR(MAX)) +
+	
+	''', @DateType=''' + CAST(ISNULL(@DateType, '') AS VARCHAR(MAX)) +
+	''', @StartDate=''' + CAST(ISNULL(@StartDate, '') AS VARCHAR(MAX)) +
+	''', @EndDate=''' + CAST(ISNULL(@EndDate, '') AS VARCHAR(MAX)) +
+	
+	''', @PlatformCodes=''' + CAST(ISNULL(@PlatformCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchPlatforms=''' + CAST(ISNULL(@ExactMatchPlatforms, '') AS VARCHAR(MAX)) +
+	''', @MustHavePlatforms=''' + CAST(ISNULL(@MustHavePlatforms, '') AS VARCHAR(MAX)) +
+	
+	''', @IsIFTACluster=''' + CAST(ISNULL(@IsIFTACluster, '') AS VARCHAR(MAX)) +
+	''', @TerritoryCodes=''' + CAST(ISNULL(@TerritoryCodes, '') AS VARCHAR(MAX)) +
+	''', @CountryCodes=''' + CAST(ISNULL(@CountryCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchCountry=''' + CAST(ISNULL(@ExactMatchCountry, '') AS VARCHAR(MAX)) +
+	''', @MustHaveCountry=''' + CAST(ISNULL(@MustHaveCountry, '') AS VARCHAR(MAX)) +
+	''', @ExclusionCountry=''' + CAST(ISNULL(@ExclusionCountry, '') AS VARCHAR(MAX)) +
+	
+	''', @IsTitleLanguage=''' + CAST(ISNULL(@IsTitleLanguage, '') AS VARCHAR(MAX)) +
+	''', @TitleLanguageCode=''' + CAST(ISNULL(@TitleLanguageCode, '') AS VARCHAR(MAX)) +
+	
+	''', @DubbingSubtitling=''' + CAST(ISNULL(@DubbingSubtitling, '') AS VARCHAR(MAX)) +
+	''', @SubtitlingGroupCodes=''' + CAST(ISNULL(@SubtitlingGroupCodes, '') AS VARCHAR(MAX)) +
+	''', @SubtitlingCodes=''' + CAST(ISNULL(@SubtitlingCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchSubtitling=''' + CAST(ISNULL(@ExactMatchSubtitling, '') AS VARCHAR(MAX)) +
+	''', @MustHaveSubtitling=''' + CAST(ISNULL(@MustHaveSubtitling, '') AS VARCHAR(MAX)) +
+	''', @ExclusionSubtitling=''' + CAST(ISNULL(@ExclusionSubtitling, '') AS VARCHAR(MAX)) +
+
+	''', @DubbingGroupCodes=''' + CAST(ISNULL(@DubbingGroupCodes, '') AS VARCHAR(MAX)) +
+	''', @DubbingCodes=''' + CAST(ISNULL(@DubbingCodes, '') AS VARCHAR(MAX)) +
+	''', @ExactMatchDubbing=''' + CAST(ISNULL(@ExactMatchDubbing, '') AS VARCHAR(MAX)) +
+	''', @MustHaveDubbing=''' + CAST(ISNULL(@MustHaveDubbing, '') AS VARCHAR(MAX)) +
+	''', @ExclusionDubbing=''' + CAST(ISNULL(@ExclusionDubbing, '') AS VARCHAR(MAX)) +
+
+	''', @Exclusivity=''' + CAST(ISNULL(@Exclusivity, '') AS VARCHAR(MAX)) +
+	''', @SubLicenseCode=''' + CAST(ISNULL(@SubLicenseCode, '') AS VARCHAR(MAX)) +
+	''', @RestrictionRemarks=''' + CAST(ISNULL(@RestrictionRemarks, '') AS VARCHAR(MAX)) +
+	''', @OthersRemarks=''' + CAST(ISNULL(@OthersRemarks, '') AS VARCHAR(MAX)) +
+	''', @BUCode=''' + CAST(ISNULL(@BUCode, '') AS VARCHAR(MAX)) +
+	''', @IsDigital=''' + CAST(ISNULL(@IsDigital, '') AS VARCHAR(MAX)) +
+	''', @L1Output=''' + CAST(ISNULL(@L1Output, '') AS VARCHAR(MAX)) +
+	''', @ReportType=''' + CAST(ISNULL(@ReportType, '') AS VARCHAR(MAX)) + '''', 'MAvail'
+
+	SET @TerritoryCodes = REPLACE(@TerritoryCodes, 'T', '')
+	SET @SubtitlingGroupCodes = REPLACE(@SubtitlingGroupCodes, 'G', '')
+	SET @DubbingGroupCodes = REPLACE(@DubbingGroupCodes, 'G', '')
+	
+	IF(UPPER(@RestrictionRemarks) = 'TRUE')
+		SET @RestrictionRemarks = 'Y'
+	ELSE
+		SET @RestrictionRemarks = 'N'
+
+	IF(UPPER(@OthersRemarks) = 'TRUE')
+		SET @OthersRemarks = 'Y'
+	ELSE
+		SET @OthersRemarks = 'N'
 
 	-- Title Language bit operator = 1 = Available / 0 = Not Aavailable
 	
@@ -916,6 +973,27 @@ BEGIN
 
 		END ------------------ END
 
+		DECLARE @DealType TABLE (
+			DealTypeCode INT
+		)
+
+		DECLARE @DealTypes VARCHAR(500) = ''
+		IF(@ReportType = 'M')
+		BEGIN
+
+			SELECT @DealTypes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'AL_DealType_Movies'
+
+		END
+		ELSE
+		BEGIN
+
+			SELECT @DealTypes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'AL_DealType_Show'
+		
+		END
+
+		INSERT INTO @DealType(DealTypeCode)
+		SELECT CAST(LTRIM(RTRIM(ISNULL([value], 0))) AS INT) FROM STRING_SPLIT(@DealTypes, ',')
+
 		INSERT INTO #AvailTitleData(Acq_Deal_Code, Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, Avail_Dates_Code, Is_Exclusive, 
 									Avail_Platform_Code, Avail_Country_Code, Is_Theatrical, Is_Title_Language, Avail_Subtitling_Code, Avail_Dubbing_Code)
 		SELECT DISTINCT adr.Acq_Deal_Code, atd.Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, atd.Avail_Dates_Code, atd.Is_Exclusive, 
@@ -926,6 +1004,7 @@ BEGIN
 		INNER JOIN Acq_Deal_Rights adr ON atd.Acq_Deal_Rights_Code = adr.Acq_Deal_Rights_Code
 		INNER JOIN Acq_Deal ad On adr.Acq_Deal_Code = ad.Acq_Deal_Code
 		INNER JOIN #SearchSubLicense tsl On tsl.SubLicenseCode = adr.Sub_License_Code
+		INNER JOIN @DealType dt ON ad.Deal_Type_Code = dt.DealTypeCode
 		WHERE (ad.Business_Unit_Code = CAST(@BUCode AS INT) OR  CAST(@BUCode AS INT) = 0) AND atd.Is_Exclusive IN (@Ex_YES, @Ex_NO, @EX_CO)
 		AND ISNULL(adt.End_Date, '9999-12-31') >= CAST(GETDATE() AS DATE)
 
@@ -1328,7 +1407,7 @@ BEGIN
 
 			UPDATE #AvailTitleData SET Avail_Subtitling_Code = NULL WHERE Avail_Subtitling_Code NOT IN (SELECT Avail_Languages_Code FROM #DBAvailLanguages WHERE LangType = 'S')
 			UPDATE #AvailTitleData SET Avail_Dubbing_Code = NULL WHERE Avail_Subtitling_Code NOT IN (SELECT Avail_Languages_Code FROM #DBAvailLanguages WHERE LangType = 'D')
-			IF(@IsTitleLanguage = 'Y')
+			IF(@IsTitleLanguage = 1)
 			BEGIN
 				UPDATE #AvailTitleData SET Is_Title_Language = NULL WHERE Is_Title_Language = 0
 			END

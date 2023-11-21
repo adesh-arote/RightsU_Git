@@ -198,7 +198,6 @@ namespace RightsU_Plus.Controllers
                     catch (Exception ex)
                     {
 
-
                     }
                 }
                 else
@@ -318,7 +317,6 @@ namespace RightsU_Plus.Controllers
                 catch ( Exception ex )
                 {
 
-                    
                 }
 
                 objCurrency = null;
