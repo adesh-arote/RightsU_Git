@@ -36,9 +36,10 @@
     var txtRemark = document.getElementById('txtRemark');
     countChar(txtRemark);
     BindAllPreReq_Async();
-
+    debugger;
     var IsBuyBackRightsExist = $('#hdnIsBuyBackRightsExist').val();
     if (IsBuyBackRightsExist == "Y") {
+
         $("select[ID='ddlLicensee']").attr('disabled', true);
     }
 });
@@ -405,6 +406,7 @@ function RequiredFieldValidation() {
     return returnVal;
 }
 function ValidateSave() {
+    debugger;
     if (!clickedOnTab) {
         if ($(event.target).val().toUpperCase() == "SAVE & APPROVE") {
             $('input[name=hdnReopenMode]').val('RO');
@@ -440,6 +442,7 @@ function ValidateSave() {
         $('input[name=hdnDealDesc]').val($("input[ID='txtDeal_Desc']").val());
     }
     $('input[name=hdnDealTagStatusCode]').val($("select[ID='ddlDeal_Tag'] option:selected").val());
+    $('input[name=hdnVendorCode]').val($("select[ID='ddlLicensee'] option:selected").val());
     return true;
 }
 
@@ -631,6 +634,12 @@ function Enable_DisableControl(isDisable) {
     else
         $("select[ID='ddlOther']").attr('disabled', true);
     $('.chosen-select:not(#ddlLicensor)').trigger("chosen:updated");
+
+    //var IsBuyBackRightsExist = $('#hdnIsBuyBackRightsExist').val();
+    //if (IsBuyBackRightsExist == "Y") {
+
+    //    $("select[ID='ddlLicensee']").attr('disabled', true);
+    //}
 }
 function BindTitleLabel(bindSearch) {
     var dealTypeCode = GetDealTypeCode();
