@@ -1,6 +1,12 @@
 ﻿@model List<RightsU_Entities.Title_Objection_Type>
+@using RightsU_BLL
+@using RightsU_Entities
 @{
-
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
 }
 <script>
     $('.expand_TOT_Name').expander({
@@ -32,7 +38,7 @@
                     <input id="txtTOTName_0" type="text" value="" maxlength="100" />
                 </td>
                 <td>
-                     @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT, "Please Select", new { @id = "ddlPTOT_0", @class = "form_input chosen-select" })
+                    @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT, "Please Select", new { @id = "ddlPTOT_0", @class = "form_input chosen-select" })
                 </td>
                 <td align="center">
                     <span>Active</span>
@@ -59,7 +65,7 @@
                             <input id="txtTOTName_@item.Objection_Type_Code" type="text" value="@item.Objection_Type_Name" maxlength="100" />
                         </td>
                         <td>
-                            @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT,"Please Select", new { @id = "ddlPTOT_"+item.Objection_Type_Code, @class = "form_input chosen-select" })
+                            @Html.DropDownList("ddlPTOT", (IEnumerable<SelectListItem>)ViewBag.ddlPTOT, "Please Select", new { @id = "ddlPTOT_" + item.Objection_Type_Code, @class = "form_input chosen-select" })
                         </td>
                         <td align="center">
                             <span>@strActive</span>
@@ -76,9 +82,18 @@
                         </td>
                         <td>
                             @{
-                                string ParentTypeName = Model.Where(x => x.Objection_Type_Code == item.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
+                                Title_Objection_Type objTitleObjection = new Title_Objection_Type();
+
+                                if (item.Parent_Objection_Type_Code.Value > 0)
+                                {
+                                    objTitleObjection = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName).GetById(item.Parent_Objection_Type_Code.Value);
+                                }
                             }
-                            <div class="expand_TOT_Name">@(ParentTypeName ?? "")</div>
+
+                            @*@{
+                                    string ParentTypeName = Model.Where(x => x.Objection_Type_Code == item.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
+                                }*@
+                            <div class="expand_TOT_Name">@(objTitleObjection.Parent_Objection_Type_Code == 0 ? objTitleObjection.Objection_Type_Name : "")</div>
                         </td>
                         <td align="center">
                             <span>@strActive</span>

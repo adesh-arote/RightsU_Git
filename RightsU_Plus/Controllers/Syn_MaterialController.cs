@@ -322,7 +322,8 @@ namespace RightsU_Plus.Controllers
                     }
                     if (IsDuplicate)
                     {
-                        ReturnMessage = string.Join(",", lstTitles);
+                        //ReturnMessage = string.Join(",", lstTitles);
+                        ReturnMessage = "N";
                         return ReturnMessage;
                     }
 

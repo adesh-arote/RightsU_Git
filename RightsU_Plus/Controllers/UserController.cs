@@ -743,30 +743,34 @@ namespace RightsU_Plus.Controllers
             Added_MHUSer.ToList<MHUser>().ForEach(t => objU.MHUsers.Add(t));
             Deleted_MHUser.ToList<MHUser>().ForEach(t => t.EntityState = State.Deleted);
 
-            ICollection<Users_Exclusion_Rights> ExclusionRightsList = new HashSet<Users_Exclusion_Rights>();
-            if (objFormCollection["hdnTvCodes"] != null)
-            {
-                string[] arrUsersSystemRights = objFormCollection["hdnTvCodes"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
-                string[] arrSystemRights = strModule_right_Code.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                var ExceptsystemRights = arrSystemRights.Except(arrUsersSystemRights);
-                foreach (string SystemRightsCode in ExceptsystemRights)
-                {
-                    if (SystemRightsCode != "0")
-                    {
-                        Users_Exclusion_Rights objTR = new Users_Exclusion_Rights();
-                        objTR.EntityState = State.Added;
-                        objTR.Module_Right_Code = Convert.ToInt32(SystemRightsCode);
-                        ExclusionRightsList.Add(objTR);
-                    }
-                }
-            }
-            IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code && x.EntityState != State.Deleted);
-            var Deleted_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
-            var Updated_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
-            var Added_Users_Exclusion_Rights = CompareLists<Users_Exclusion_Rights>(ExclusionRightsList.ToList<Users_Exclusion_Rights>(), objU.Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>(), comparerExclusion_Rights, ref Deleted_Users_Exclusion_Rights, ref Updated_Users_Exclusion_Rights);
-            Added_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Add(t));
-            Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => t.EntityState = State.Deleted);
+            #region Removed Users Exclution Rights Functionality by JD
+
+            //ICollection<Users_Exclusion_Rights> ExclusionRightsList = new HashSet<Users_Exclusion_Rights>();
+            //if (objFormCollection["hdnTvCodes"] != null)
+            //{
+            //    string[] arrUsersSystemRights = objFormCollection["hdnTvCodes"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            //    string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+            //    string[] arrSystemRights = strModule_right_Code.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            //    var ExceptsystemRights = arrSystemRights.Except(arrUsersSystemRights);
+            //    foreach (string SystemRightsCode in ExceptsystemRights)
+            //    {
+            //        if (SystemRightsCode != "0")
+            //        {
+            //            Users_Exclusion_Rights objTR = new Users_Exclusion_Rights();
+            //            objTR.EntityState = State.Added;
+            //            objTR.Module_Right_Code = Convert.ToInt32(SystemRightsCode);
+            //            ExclusionRightsList.Add(objTR);
+            //        }
+            //    }
+            //}
+            //IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code && x.EntityState != State.Deleted);
+            //var Deleted_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
+            //var Updated_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
+            //var Added_Users_Exclusion_Rights = CompareLists<Users_Exclusion_Rights>(ExclusionRightsList.ToList<Users_Exclusion_Rights>(), objU.Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>(), comparerExclusion_Rights, ref Deleted_Users_Exclusion_Rights, ref Updated_Users_Exclusion_Rights);
+            //Added_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Add(t));
+            //Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => t.EntityState = State.Deleted);
+
+            #endregion
 
             ICollection<Users_Configuration> UsersConfigurationList = new HashSet<Users_Configuration>();
             int Count = 0;

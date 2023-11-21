@@ -953,7 +953,10 @@ namespace RightsU_Plus.Controllers
                 if (objTitle.Title_Code > 0)
                     objTitle.EntityState = State.Modified;
                 else
+                {
                     objTitle.EntityState = State.Added;
+                    objTitle.Is_Active = "Y";
+                }                    
             }
             #endregion
 
