@@ -144,4 +144,29 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- System_Module -----------
+    public class System_Module_Repositories : MainRepository<System_Module>
+    {
+        public IEnumerable<System_Module> SearchFor(object param)
+        {
+            return base.SearchForEntity<System_Module>(param);
+        }
+        public IEnumerable<System_Module> GetAll()
+        {
+            return base.GetAll<System_Module>();
+        }
+        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        {
+            List<System_Module> ObjModule = new List<System_Module>();
+
+            var param = new DynamicParameters();
+            param.Add("@SecurityGroupCode", Module_Code);
+            param.Add("@IsSuperAdmin", "Y");
+            param.Add("@Users_Code", Users_Code);
+            ObjModule = base.ExecuteSQLProcedure<System_Module>("USP_GetMenu", param).ToList();
+            return ObjModule;
+        }
+    }
+    #endregion
 }

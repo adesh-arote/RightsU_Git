@@ -31,7 +31,7 @@ BEGIN
 		)
 		INSERT INTO #Trademark (Trademark_No, Trademark_Name, Applicant_Name, Renewed_Until)
 		SELECT Trademark_No,IR.Trademark,APPLICANT,Renewed_Until from IPR_Rep IR (NOLOCK)
-		INNER JOIN DM_IPR DI (NOLOCK) ON IR.Applicant_Code = DI.ID
+		LEFT JOIN DM_IPR DI (NOLOCK) ON IR.Applicant_Code = DI.ID
 		WHERE IPR_For = @DashboardType AND Renewed_Until BETWEEN @StartDate AND @EndDate
 		and( Trademark_No LIKE N'%'+@SearchFor+'%'OR IR.Trademark LIKE N'%'+@SearchFor+'%' OR Applicant LIKE '%'+@SearchFor+'%' OR Renewed_Until LIKE N'%'+@SearchFor+'%')
 
