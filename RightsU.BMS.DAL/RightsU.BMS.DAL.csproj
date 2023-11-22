@@ -72,6 +72,7 @@
     <Compile Include="Repository\BMSDealRepositories.cs" />
     <Compile Include="Repository\BMSScheduleImportRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
+    <Compile Include="Repository\TitleRepositories.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RightsU.BMS.Entities\RightsU.BMS.Entities.csproj">

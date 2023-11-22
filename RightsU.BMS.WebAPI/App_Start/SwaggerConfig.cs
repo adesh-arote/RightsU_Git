@@ -2,6 +2,7 @@ using System.Web.Http;
 using WebActivatorEx;
 using RightsU.BMS.WebAPI;
 using Swashbuckle.Application;
+using RightsU.BMS.WebAPI.Filters;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -33,7 +34,10 @@ namespace RightsU.BMS.WebAPI
                         // additional fields by chaining methods off SingleApiVersion.
                         //
                         c.SingleApiVersion("v1", "RightsU BMS API Documentation");
-                        
+
+                        //For Enable Enum Parameter as Dropdown
+                        c.DescribeAllEnumsAsStrings();
+
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
                         //c.PrettyPrint();
@@ -153,6 +157,7 @@ namespace RightsU.BMS.WebAPI
                         c.OperationFilter<Consumes>();
                         c.OperationFilter<Produces>();
                         c.OperationFilter<FileOperationFilter>();
+                        c.DocumentFilter<HideInDocsFilter>();
                         //
                         // If you've defined an OAuth2 flow as described above, you could use a custom filter
                         // to inspect some attribute on each action and infer which (if any) OAuth2 scopes are required
@@ -219,7 +224,7 @@ namespace RightsU.BMS.WebAPI
                         // Specify which HTTP operations will have the 'Try it out!' option. An empty paramter list disables
                         // it for all operations.
                         //
-                        c.SupportedSubmitMethods("POST");
+                        c.SupportedSubmitMethods("POST","GET");
                         
                         // Use the CustomAsset option to provide your own version of assets used in the swagger-ui.
                         // It's typically used to instruct Swashbuckle to return your version instead of the default
