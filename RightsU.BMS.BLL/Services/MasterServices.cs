@@ -1,4 +1,5 @@
-﻿using RightsU.BMS.DAL;
+﻿using Dapper;
+using RightsU.BMS.DAL;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -182,6 +183,56 @@ namespace RightsU.BMS.BLL.Services
         public IEnumerable<LoggedInUsers> SearchFor(object param)
         {
             return objLoggedInUsersRepository.SearchFor(param);
+        }
+    }
+
+    public class System_Module_Service
+    {
+        private readonly System_Module_Repositories objSystemModuleRepositories;
+        public System_Module_Service()
+        {
+            this.objSystemModuleRepositories = new System_Module_Repositories();
+        }
+        public IEnumerable<System_Module> GetAll()
+        {
+            return objSystemModuleRepositories.GetAll();
+        }
+        public IEnumerable<System_Module> SearchFor(object param)
+        {
+            return objSystemModuleRepositories.SearchFor(param);
+        }
+        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        {
+            return objSystemModuleRepositories.USP_GetModule(Module_Code, Users_Code);
+        }
+
+        public bool hasModuleRights(Int32 Module_Code, string authenticationToken, string RefreshToken)
+        {
+            bool hasRights = true;
+
+            LoggedInUsersServices objLoggedInUsersServices = new LoggedInUsersServices();
+            UserServices objUserServices = new UserServices();
+
+            LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken, RefreshToken = RefreshToken }).ToList().FirstOrDefault();
+
+            if (objUserDetails != null)
+            {
+                User objUser = new User();
+                objUser = objUserServices.SearchForUser(new { Login_Name = objUserDetails.LoginName }).FirstOrDefault();
+
+                var UserModuleRights = USP_GetModule(objUser.Security_Group_Code.Value, objUser.Users_Code.Value);
+
+                if (UserModuleRights.Where(x => x.Module_Code == Module_Code).ToList().Count() > 0)
+                {
+                    hasRights = true;
+                }
+                else
+                {
+                    hasRights = false;
+                }
+            }
+
+            return hasRights;
         }
     }
 }

@@ -163,12 +163,16 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="AuthorizationFilter.cs" />
     <Compile Include="Consumes.cs" />
     <Compile Include="Controllers\bmsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\loginController.cs" />
     <Compile Include="Controllers\scheduleuploadController.cs" />
-    <Compile Include="FileOperationFilter.cs" />
+    <Compile Include="Controllers\titleController.cs" />
+    <Compile Include="Filters\AuthorizationFilter.cs" />
+    <Compile Include="Filters\FileOperationFilter.cs" />
+    <Compile Include="Filters\HideInDocsAttribute.cs" />
+    <Compile Include="Filters\HideInDocsFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

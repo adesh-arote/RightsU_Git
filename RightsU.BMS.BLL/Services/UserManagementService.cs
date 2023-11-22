@@ -13,7 +13,7 @@ namespace RightsU.BMS.BLL.Services
 {
     public class UserManagementService: UserServices
     {
-        private readonly UserManagementService objUserManagementService;
+        //private readonly UserManagementService objUserManagementService;
         private readonly ServiceLogServices objServiceLogServices = new ServiceLogServices();
         private readonly SystemParameterServices objSystemParameterServices = new SystemParameterServices();
 
