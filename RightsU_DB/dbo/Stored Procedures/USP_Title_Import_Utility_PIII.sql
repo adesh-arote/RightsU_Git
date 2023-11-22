@@ -1771,7 +1771,7 @@ BEGIN
 					
 					-----------EXTENDED COLUMN IS Multiple = N With DDL AND Map_Extended_Column--------------------
 					INSERT INTO Map_Extended_Columns(Record_Code, Table_Name, Columns_Code, Columns_Value_Code, Is_Multiple_Select, Row_No)
-					SELECT AA.RefKey,'TITLE', EC.Columns_Code, A.RefKey, 'N', TempRow_No
+					SELECT DISTINCT AA.RefKey,'TITLE', EC.Columns_Code, A.RefKey, 'N', TempRow_No
 					FROM #TempTitleUnPivot A
 						INNER JOIN #TempTitleUnPivot AA ON AA.ExcelSrNo = A.ExcelSrNo 
 						INNER JOIN DM_Title_Import_Utility B (NOLOCK) ON A.ColumnHeader COLLATE SQL_Latin1_General_CP1_CI_AS = B.Display_Name
