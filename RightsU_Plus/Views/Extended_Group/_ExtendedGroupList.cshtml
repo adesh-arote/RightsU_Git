@@ -90,16 +90,16 @@
                         }
                     </td>
                     <td style="text-align:center">
-                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
-                        {
-                            <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT', '@item.Module_Code')"></a>
-                        }
-                        @if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
-                        {
-                            <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
-                        }
                         @if (item.IsActive == "Y")
                         {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="CheckRecordLock(@item.Extended_Group_Code, 'EDIT', '@item.Module_Code')"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {
+                                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
+                            }
                             if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForDeactivate + "~"))
                             {
                                 <a title="@objMessageKey.Deactivate" class="glyphicon glyphicon-thumbs-down" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'N')"></a>
@@ -107,6 +107,14 @@
                         }
                         else
                         {
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit.ToString() + "~"))
+                            {
+                                <a title="Cannot edit this group as it is deactivated" class="glyphicon glyphicon-pencil disabled" onclick="return false;"></a>
+                            }
+                            if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {
+                                <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="AddEditViewExtdGrp(@item.Extended_Group_Code, 'VIEW', '@item.Module_Code')"></a>
+                            }
                             if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForActivate + "~"))
                             {
                                 <a title="@objMessageKey.Activate" class="glyphicon glyphicon-thumbs-up" style="cursor: pointer;" onclick="ActivateDeactivateExtdGrp(@item.Extended_Group_Code, 'Y')"></a>
