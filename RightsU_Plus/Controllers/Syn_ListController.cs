@@ -428,9 +428,14 @@ namespace RightsU_Plus.Controllers
         #region --------------- BUTTON EVENTS --------------------------
         public JsonResult CheckRecordLock(int Syn_Deal_Code, string CommandName)
         {
-            string strMessage = "", Mode = "", DealWorkflowStatus;
+            string strMessage = "", Mode = "", DealWorkflowStatus = "N";
             string strMessageAutoPush = " Corresponding deal in Viacom18 Network is not in approved state";
-            DealWorkflowStatus = new USP_Service(objLoginEntity.ConnectionStringName).USP_Check_Autopush_Ammend_Syn(Syn_Deal_Code).FirstOrDefault();
+            string ISAutoPush = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AutopushAcqDeal").First().Parameter_Value;
+            if (ISAutoPush == "Y")
+            {
+                DealWorkflowStatus = new USP_Service(objLoginEntity.ConnectionStringName).USP_Check_Autopush_Ammend_Syn(Syn_Deal_Code).FirstOrDefault();
+            }
+
             ViewBag.ErrorMsg = strMessageAutoPush;
             int RL_Code = 0;
             bool isLocked = true;

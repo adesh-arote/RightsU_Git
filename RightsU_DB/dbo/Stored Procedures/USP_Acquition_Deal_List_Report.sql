@@ -498,7 +498,7 @@ BEGIN
 			AND (AD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@ModeOfAcquisition = '' OR AD.Role_Code IN (select number from fn_Split_withdelemiter(@ModeOfAcquisition,',')))
 			AND (
-					@Title_Name = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
+					ISNULL(@Title_Name,'') = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
 					OR 
 					ad.Master_Deal_Movie_Code_ToLink IN (SELECT admT.Acq_Deal_Movie_Code FROM Acq_Deal_Movie admT (NOLOCK) where admT.Title_Code IN (select number from fn_Split_withdelemiter(@Title_Name,',')))
 				)
@@ -1011,6 +1011,31 @@ BEGIN
 
 		END
 
+		IF(@IsDealSegment = 'Y')
+		BEGIN
+			DELETE tadlr FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			WHERE AD.Deal_Segment_Code <> @DealSegment AND @DealSegment > 0
+			AND tadlr.Deal_Segment IS NULL
+		
+			UPDATE tadlr
+			SET Deal_Segment = DS.Deal_Segment_Name
+			FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			INNER JOIN Deal_Segment DS ON DS.Deal_Segment_Code = AD.Deal_Segment_Code
+			WHERE tadlr.Deal_Segment IS NULL
+
+		END
+
+		IF(@IsRevenueVertical = 'Y')
+		BEGIN
+			UPDATE tadlr
+			SET Revenue_Vertical = DS.Revenue_Vertical_Name
+			FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
+			WHERE tadlr.Revenue_Vertical IS NULL
+		END
 
 		SELECT DISTINCT 
 			CASE
@@ -1230,4 +1255,3 @@ BEGIN
 		
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Acquition_Deal_List_Report]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
-
