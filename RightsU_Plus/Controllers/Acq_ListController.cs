@@ -1232,11 +1232,15 @@ namespace RightsU_Plus.Controllers
 
         private bool ShowValidationPopup(dynamic resultSet)
         {
-            lstDupRecords = resultSet;
-            if (lstDupRecords.Count > 0)
+            if(resultSet.Count > 0)
             {
-                return false;
+                lstDupRecords = resultSet;
+                if (lstDupRecords.Count > 0)
+                {
+                    return false;
+                }
             }
+            
             return true;
         }
 

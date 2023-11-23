@@ -977,9 +977,11 @@ BEGIN
 					IF(@logicalConnect = 'AND')
 					BEGIN
 						IF(@theOp = '=')
-							EXEC ('DELETE FROM #tempDeal WHERE Deal_Description <> '''+@Value+''' ')
+						    DELETE FROM #tempDeal WHERE Deal_Description NOT IN (SELECT Deal_Desc_Name FROM Deal_Description WHERE Deal_Desc_Code = @Value)
+							--EXEC ('DELETE FROM #tempDeal WHERE Deal_Description <> '''+@Value+''' ')
 						ELSE
-							EXEC ('DELETE FROM #tempDeal WHERE Deal_Description NOT '+@theOp+' '''+@Value+''' ')
+						    DELETE FROM #tempDeal WHERE Deal_Description IN (SELECT Deal_Desc_Name FROM Deal_Description WHERE Deal_Desc_Code = @Value)
+							--EXEC ('DELETE FROM #tempDeal WHERE Deal_Description NOT '+@theOp+' '''+@Value+''' ')
 	
 						DELETE FROM #tempRights WHERE Syn_Deal_Code NOT IN (SELECT Syn_Deal_Code FROM #tempDeal)
 				
