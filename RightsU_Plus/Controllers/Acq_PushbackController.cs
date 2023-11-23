@@ -524,7 +524,7 @@ namespace RightsU_WebApp.Controllers
                         else if (objExistingRight.Acq_Deal_Pushback_Platform.Count > 1)
                         {
                             Acq_Deal_Pushback objSecondRight = SetNewAcqDealRight(objExistingRight, TCODE, Episode_From, Episode_To, PCODE);
-                            objSecondRight = CreateRightObject(objSecondRight, obj, TCODE ?? 0, PCODE ?? 0);
+                            //objSecondRight = CreateRightObject(objSecondRight, obj, TCODE ?? 0, PCODE ?? 0);
                             objDeal.Acq_Deal_Pushback.Add(objSecondRight);
                         }
                     objDeal.SaveGeneralOnly = false;
