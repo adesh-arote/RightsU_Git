@@ -58,11 +58,11 @@
                     LoadDeals(tmp_pageNo, tmp_IsAdvanced, 'N');
                     if (result.strMsgType != null && result.strMsgType != '' && result.strMsgType == 'S') {
                         if (result.Message != '')
-                            showAlert("S", result.Message, "");
+                            showAlert("S", result.Message);
                     }
                     else {
                         if (result.Message != '')
-                            showAlert("E", result.Message, "");
+                            showAlert("E", result.Message);
                     }
                 }
                 else {

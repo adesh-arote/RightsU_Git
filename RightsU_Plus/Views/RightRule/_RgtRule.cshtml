@@ -7,7 +7,7 @@
     }
 }
 <script>
-    var sort_Type_G = "T",current_Sort_Type = current_Sort_Type, Module_Code_G =@ViewBag.code, SysLanguageCode_G = '@ViewBag.LangCode';
+    var sort_Type_G = "T", current_Sort_Type = current_Sort_Type, Module_Code_G =@ViewBag.code, SysLanguageCode_G = '@ViewBag.LangCode';
     var URL_BindRightRuleList = '@Url.Action("BindRight_RuleList", "RightRule")';
     var URL_SearchRightRule = '@Url.Action("SearchRightRule", "RightRule")';
     var URL_RedirectAddRightRule = '@Url.Action("AddEditRightRule", "RightRule")';
@@ -28,9 +28,10 @@
         }
         addNumeric();
         $('#ddlSortType').chosen();
-        if (current_Sort_Type != undefined) {
-            $('#ddlSortType').val(current_Sort_Type).trigger("chosen:updated");
-        }
+        //if (current_Sort_Type != undefined) {
+        //    $('#ddlSortType').val(current_Sort_Type).trigger("chosen:updated");
+        //}
+
         $('#searchCommon').keypress(function (e) {
             if (e.keyCode == 13) {
                 btnSearch_OnClick()
@@ -47,11 +48,10 @@
         }
        // $("#ancFileName").attr('href', '../Help/Masters/Layout.html?RightRule');
 
-
         $("#ddlSortType").change(function () {
             $('#hdnPageNo').val(1);
             sort_Type_G = $('#ddlSortType').val();
-            current_Sort_Type = $('#ddlSortType').val();
+            //current_Sort_Type = $('#ddlSortType').val();
             SearchRightRule($('#searchCommon').val());
         });
     });
@@ -65,6 +65,7 @@
             min: 1
         });
     }
+
     function SetPaging() {
         IsCall = 'N';
         var pageNo = parseInt($('#hdnPageNo').val());
@@ -97,6 +98,7 @@
         opt["current_page"] = index;
         $("#Pagination").pagination(recordCount, opt);
     }
+
     function pageselectCallback(page_index, jq) {
         $('.required').removeClass('required');
 
@@ -110,6 +112,7 @@
         else
             IsCall = 'Y';
     }
+
     function txtPageSize_OnChange() {
         debugger;
         $("[required='required']").removeAttr("required");
@@ -120,6 +123,7 @@
         BindRightRuleList()
         SetPaging();
     }
+
     function ValidatePageSize() {
         var recordPerPage = $('#txtPageSize').val()
         if ($.trim(recordPerPage) != '') {
@@ -130,10 +134,12 @@
         $('#txtPageSize').attr('required', true)
         return false
     }
+
     function pageBinding() {
         BindRightRuleList()
         SetPaging();
     }
+
     function btnSearch_OnClick() {
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
@@ -149,30 +155,33 @@
         }
         SearchRightRule(searchText);
     }
+
     function btnShowAll_OnClick() {
         if (!ValidatePageSize())
             return false;
 
         $("#ddlSortType").find("option").attr("selected", false);
         $("#ddlSortType").val('T').trigger("chosen:updated");
-        sort_Type_G = current_Sort_Type = "T";
+        //sort_Type_G = current_Sort_Type = "T";      
         $('#hdnPageNo').val(1);
         $('#searchCommon').attr('required', false)
         $('#searchCommon').val('');
         SearchRightRule("");
     }
+
     function BindRightRuleList() {
-        var sort_Type = "";
+        //var sort_Type = "";
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
         if (recordPerPage == "") {
             recordPerPage = 10;
             $('#txtPageSize').val("10");
         }
-        if (current_Sort_Type == sort_Type_G)
-            sort_Type = sort_Type_G;
-        else
-            sort_Type = current_Sort_Type;
+
+        //if (current_Sort_Type == sort_Type_G)
+        //    sort_Type = sort_Type_G;
+        //else
+        //    sort_Type = current_Sort_Type;
 
         $.ajax({
             type: "POST",
@@ -184,7 +193,7 @@
             data: JSON.stringify({
                 pageNo: pageNo,
                 recordPerPage: recordPerPage,
-                sortType : sort_Type
+                sortType: sort_Type_G
             }),
             success: function (result) {
                 if (result == "true") {
@@ -201,6 +210,7 @@
             }
         });
     }
+
     function SearchRightRule(searchText) {
         debugger;
         showLoading();
@@ -233,9 +243,11 @@
             }
         });
     }
+
     function CancelRightRule() {
         BindRightRuleList();
     }
+
     function AddRule() {
         debugger;
         showLoading();
@@ -263,6 +275,7 @@
             }
         });
     }
+
     function ActivateDeactivateRightRule(rightRuleCode, doActive) {
         $.ajax({
             type: "POST",

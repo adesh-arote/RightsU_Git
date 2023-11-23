@@ -9,11 +9,13 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Workflow_Module_Role
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Workflow_Module_Role_Code { get; set; }
         public Nullable<int> Workflow_Module_Code { get; set; }
@@ -21,8 +23,10 @@ namespace RightsU_Entities
         public Nullable<short> Group_Level { get; set; }
         public Nullable<int> Group_Code { get; set; }
         public Nullable<short> Reminder_Days { get; set; }
-    
+
+        [JsonIgnore]
         public virtual Workflow_Module Workflow_Module { get; set; }
+        [JsonIgnore]
         public virtual Workflow_Role Workflow_Role { get; set; }
     }
 }

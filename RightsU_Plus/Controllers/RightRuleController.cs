@@ -13,7 +13,9 @@ namespace RightsU_Plus.Controllers
     {
         //
         // GET: /RightRule/
+
         #region --- Properties ---
+
         private List<RightsU_Entities.Right_Rule> lstRight_Rule
         {
             get
@@ -51,7 +53,9 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+
         #endregion
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForRightRule);
@@ -113,7 +117,6 @@ namespace RightsU_Plus.Controllers
             return PartialView("~/Views/RightRule/_RightRule.cshtml", lst);
         }
 
-
         public JsonResult SearchRightRule(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -134,7 +137,9 @@ namespace RightsU_Plus.Controllers
         {
             lstRight_Rule_Searched = lstRight_Rule = new Right_Rule_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();
         }
+
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -157,6 +162,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -165,6 +171,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         #endregion
 
         public JsonResult SaveRuleRight(FormCollection objFormCollection,RightsU_Entities.Right_Rule ObjRightRuleMVC)
@@ -176,11 +183,8 @@ namespace RightsU_Plus.Controllers
             string No_Of_Repeat = objFormCollection["No_Of_Repeat"].ToString();
             string Short_Key = objFormCollection["Short_Key"].ToString();
             string FromFirstAir =Convert.ToString(objFormCollection["chkFromFirstAir"]);	
-
-           
+       
             string status = "S", message = "Record {ACTION} successfully";
-
-
 
             Right_Rule_Service objRight_Rule_Service = new Right_Rule_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Right_Rule objRight_Rule = new RightsU_Entities.Right_Rule();
@@ -217,10 +221,11 @@ namespace RightsU_Plus.Controllers
                 objRight_Rule.IS_First_Air = false;
             }
         
-         dynamic resultSet;
+            dynamic resultSet;
             bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
             if (isValid)
             {
+                string Action = "C";
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -229,11 +234,23 @@ namespace RightsU_Plus.Controllers
                     status = "S";
                     message = objMessageKey.Recordupdatedsuccessfully;
                     ViewBag.Alert = message;
+                    Action = "U";
                 }
                 else
                 {
                     status = "S";
                     message = objMessageKey.RecordAddedSuccessfully;
+                    Action = "C";
+                }
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
                 }
             }
             else
@@ -262,6 +279,7 @@ namespace RightsU_Plus.Controllers
 
             return View("~/Views/RightRule/AddRightRule.cshtml", objRightRule);
         }
+
         public ActionResult UpdateRightRule(FormCollection objFormCollection)
         {
             string Right_Rule_Code = objFormCollection["RightruleCode"].ToString();
@@ -359,15 +377,32 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objRight_Rule, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstRight_Rule.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
                     lstRight_Rule_Searched.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
+                    {
                         //message = message.Replace("{ACTION}", "Activated");
                         message = objMessageKey.Recordactivatedsuccessfully;
+                        Action = "A";
+                    }                        
                     else
+                    {
                         //message = message.Replace("{ACTION}", "Deactivated");
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {

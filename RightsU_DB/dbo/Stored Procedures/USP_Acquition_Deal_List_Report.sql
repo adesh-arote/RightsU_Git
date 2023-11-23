@@ -498,7 +498,7 @@ BEGIN
 			AND (AD.Business_Unit_Code IN (select number from fn_Split_withdelemiter(@Business_Unit_code,',')))
 			AND (@ModeOfAcquisition = '' OR AD.Role_Code IN (select number from fn_Split_withdelemiter(@ModeOfAcquisition,',')))
 			AND (
-					@Title_Name = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
+					ISNULL(@Title_Name,'') = '' OR ADRT.Title_Code in (select number from fn_Split_withdelemiter(@Title_Name,','))
 					OR 
 					ad.Master_Deal_Movie_Code_ToLink IN (SELECT admT.Acq_Deal_Movie_Code FROM Acq_Deal_Movie admT (NOLOCK) where admT.Title_Code IN (select number from fn_Split_withdelemiter(@Title_Name,',')))
 				)
@@ -1011,6 +1011,31 @@ BEGIN
 
 		END
 
+		IF(@IsDealSegment = 'Y')
+		BEGIN
+			DELETE tadlr FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			WHERE AD.Deal_Segment_Code <> @DealSegment AND @DealSegment > 0
+			AND tadlr.Deal_Segment IS NULL
+		
+			UPDATE tadlr
+			SET Deal_Segment = DS.Deal_Segment_Name
+			FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			INNER JOIN Deal_Segment DS ON DS.Deal_Segment_Code = AD.Deal_Segment_Code
+			WHERE tadlr.Deal_Segment IS NULL
+
+		END
+
+		IF(@IsRevenueVertical = 'Y')
+		BEGIN
+			UPDATE tadlr
+			SET Revenue_Vertical = DS.Revenue_Vertical_Name
+			FROM #TEMP_Acquition_Deal_List_Report tadlr
+			INNER JOIN Acq_Deal AD ON AD.Acq_Deal_Code = tadlr.Acq_Deal_Code
+			INNER JOIN Revenue_Vertical DS ON DS.Revenue_Vertical_Code = AD.Revenue_Vertical_Code
+			WHERE tadlr.Revenue_Vertical IS NULL
+		END
 
 		SELECT DISTINCT 
 			CASE
@@ -1176,7 +1201,14 @@ BEGIN
 					CAST([Deal_Type] AS NVARCHAR(MAX)) As [Title Type], CAST([Deal_Description] AS NVARCHAR(MAX)) As [Deal Description], CAST([Reference_No] AS NVARCHAR(MAX)) As [Reference No], CAST([Is_Master_Deal] AS NVARCHAR(MAX)) As [Deal Type],
 					CONVERT(VARCHAR(12),[Agreement_Date],103) As [Agreement Date], CAST([Deal_Tag_Description] AS NVARCHAR(MAX)) AS [Status], CAST([Deal_Segment] AS NVARCHAR(MAX)) As [Deal Segment], CAST([Revenue_Vertical] AS NVARCHAR(MAX)) As [Revenue Vertical], CAST([Party] AS NVARCHAR(MAX)) As [Party], CAST([Program_Name] AS NVARCHAR(MAX)) As [Program], CAST([Title_Name] AS NVARCHAR(MAX)) As [Title], CAST([Director] AS NVARCHAR(MAX)) As [Director],
 					CAST([Star_Cast] AS NVARCHAR(MAX)) As [Star Cast], CAST([Genre] AS NVARCHAR(MAX)) As [Genre], CAST([Title_Language] AS NVARCHAR(MAX)) As [Title Language], CAST([Year_Of_Production] AS varchar(Max))As [Release Year], CAST([Platform_Name] AS NVARCHAR(MAX)) AS [Platform], CONVERT(VARCHAR(12),[Rights_Start_Date],103) AS [Rights Start Date], 
-					CONVERT(VARCHAR(12),[Rights_End_Date],103)  As [Rights End Date], CASE WHEN Rights_End_Date < GETDATE() THEN 'Expired' ELSE 'Active' END AS [Rights Expiry Status], CAST([Is_Tentative] AS NVARCHAR(MAX)) As [Tentative], CAST([Is_PushBack] AS NVARCHAR(MAX)) As [Pushback], CAST([Term] AS NVARCHAR(MAX)) As [Term], CAST([Country_Territory_Name] AS NVARCHAR(MAX)) As [Region], CAST([Is_Exclusive] AS NVARCHAR(MAX)) As [Exclusive], 
+					CONVERT(VARCHAR(12),[Rights_End_Date],103)  As [Rights End Date],
+					CASE 
+						WHEN (Rights_End_Date IS NULL AND Rights_Start_Date <= GETDATE()) THEN 'Active'
+						WHEN (Rights_End_Date IS NULL AND Rights_Start_Date > GETDATE()) THEN 'Future'
+						WHEN  (Rights_End_Date IS NOT NULL AND Rights_Start_Date < GETDATE() AND Rights_End_Date < GETDATE()) THEN 'Expired'
+						WHEN  (Rights_End_Date IS NOT NULL AND Rights_Start_Date > GETDATE() AND Rights_End_Date > GETDATE()) THEN 'Future' ELSE 'Active' 
+					END AS [Rights Expiry Status],
+					CAST([Is_Tentative] AS NVARCHAR(MAX)) As [Tentative], CAST([Is_PushBack] AS NVARCHAR(MAX)) As [Pushback], CAST([Term] AS NVARCHAR(MAX)) As [Term], CAST([Country_Territory_Name] AS NVARCHAR(MAX)) As [Region], CAST([Is_Exclusive] AS NVARCHAR(MAX)) As [Exclusive], 
 					CAST([Is_Title_Language_Right] AS NVARCHAR(MAX)) As [Title Language Right], CAST([Subtitling] AS NVARCHAR(MAX)) As [Subtitling], CAST([Dubbing] AS NVARCHAR(MAX)) As [Dubbing], CAST([Sub_Licencing] AS NVARCHAR(MAX)) As [Sub Licensing], CAST([First_Refusal_Date] AS NVARCHAR(MAX)) As [ROFR],
 					CAST([Restriction_Remarks] AS NVARCHAR(MAX)) AS [Restriction Remark], CAST([Holdback_Platform] AS NVARCHAR(MAX)) AS [Rights Holdback Platform], CAST([Holdback_Rights] AS NVARCHAR(MAX)) As [Rights Holdback Remarks],CAST([Blackout] AS NVARCHAR(MAX)) As [Blackout],
 					CAST([Rights_Remarks] AS NVARCHAR(MAX)) As [Rights Remarks], CAST([Pushback_Platform_Name] AS NVARCHAR(MAX)) As [Reverse Holdback Platform], CONVERT(VARCHAR(12),[Pushback_Start_Date],103) As [Reverse Holdback Start Date], CONVERT(VARCHAR(12),[Pushback_End_Date],103) As [Reverse Holdback End Date],
@@ -1201,7 +1233,14 @@ BEGIN
 					CAST([Deal_Type] AS NVARCHAR(MAX)) As [Title Type], CAST([Deal_Description] AS NVARCHAR(MAX)) As [Deal Description], CAST([Reference_No] AS NVARCHAR(MAX)) As [Reference No], CAST([Is_Master_Deal] AS NVARCHAR(MAX)) As [Deal Type],
 					CONVERT(VARCHAR(12),[Agreement_Date],103) As [Agreement Date], CAST([Deal_Tag_Description] AS NVARCHAR(MAX)) AS [Status], CAST([Deal_Segment] AS NVARCHAR(MAX)) As [Deal Segment], CAST([Revenue_Vertical] AS NVARCHAR(MAX)) As [Revenue Vertical], CAST([Party] AS NVARCHAR(MAX)) As [Party], CAST([Program_Name] AS NVARCHAR(MAX)) As [Program], CAST([Title_Name] AS NVARCHAR(MAX)) As [Title], CAST([Director] AS NVARCHAR(MAX)) As [Director],
 					CAST([Star_Cast] AS NVARCHAR(MAX)) As [Star Cast], CAST([Genre] AS NVARCHAR(MAX)) As [Genre], CAST([Title_Language] AS NVARCHAR(MAX)) As [Title Language], CAST([Year_Of_Production] AS varchar(Max))As [Release Year], CAST([Platform_Name] AS NVARCHAR(MAX)) AS [Platform], CONVERT(VARCHAR(12),[Rights_Start_Date],103) AS [Rights Start Date], 
-					CONVERT(VARCHAR(12),[Rights_End_Date],103)  As [Rights End Date], CASE WHEN Rights_End_Date < GETDATE() THEN 'Expired' ELSE 'Active' END AS [Rights Expiry Status], CAST([Is_Tentative] AS NVARCHAR(MAX)) As [Tentative], CAST([Is_PushBack] AS NVARCHAR(MAX)) As [Pushback], CAST([Term] AS NVARCHAR(MAX)) As [Term], CAST([Country_Territory_Name] AS NVARCHAR(MAX)) As [Region], CAST([Is_Exclusive] AS NVARCHAR(MAX)) As [Exclusive], 
+					CONVERT(VARCHAR(12),[Rights_End_Date],103)  As [Rights End Date],
+					CASE 
+						WHEN (Rights_End_Date IS NULL AND Rights_Start_Date <= GETDATE()) THEN 'Active'
+						WHEN (Rights_End_Date IS NULL AND Rights_Start_Date > GETDATE()) THEN 'Future'
+						WHEN  (Rights_End_Date IS NOT NULL AND Rights_Start_Date < GETDATE() AND Rights_End_Date < GETDATE()) THEN 'Expired'
+						WHEN  (Rights_End_Date IS NOT NULL AND Rights_Start_Date > GETDATE() AND Rights_End_Date > GETDATE()) THEN 'Future' ELSE 'Active' 
+					END AS [Rights Expiry Status],
+					CAST([Is_Tentative] AS NVARCHAR(MAX)) As [Tentative], CAST([Is_PushBack] AS NVARCHAR(MAX)) As [Pushback], CAST([Term] AS NVARCHAR(MAX)) As [Term], CAST([Country_Territory_Name] AS NVARCHAR(MAX)) As [Region], CAST([Is_Exclusive] AS NVARCHAR(MAX)) As [Exclusive], 
 					CAST([Is_Title_Language_Right] AS NVARCHAR(MAX)) As [Title Language Right], CAST([Subtitling] AS NVARCHAR(MAX)) As [Subtitling], CAST([Dubbing] AS NVARCHAR(MAX)) As [Dubbing], CAST([Sub_Licencing] AS NVARCHAR(MAX)) As [Sub Licensing], CAST([First_Refusal_Date] AS NVARCHAR(MAX)) As [ROFR],
 					CAST([Restriction_Remarks] AS NVARCHAR(MAX)) AS [Restriction Remark], CAST([Holdback_Platform] AS NVARCHAR(MAX)) AS [Rights Holdback Platform], CAST([Holdback_Rights] AS NVARCHAR(MAX)) As [Rights Holdback Remarks],CAST([Blackout] AS NVARCHAR(MAX)) As [Blackout],
 					CAST([Rights_Remarks] AS NVARCHAR(MAX)) As [Rights Remarks], CAST([Pushback_Platform_Name] AS NVARCHAR(MAX)) As [Reverse Holdback Platform], CONVERT(VARCHAR(12),[Pushback_Start_Date],103) As [Reverse Holdback Start Date], CONVERT(VARCHAR(12),[Pushback_End_Date],103) As [Reverse Holdback End Date],
@@ -1216,4 +1255,3 @@ BEGIN
 		
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Acquition_Deal_List_Report]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
-

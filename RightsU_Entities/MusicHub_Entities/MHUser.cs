@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -17,7 +18,8 @@ namespace RightsU_Entities
     	public State EntityState { get; set; }    public int MHUsersCode { get; set; }
     	    public Nullable<int> Users_Code { get; set; }
     	    public Nullable<int> Vendor_Code { get; set; }
-    
+
+        [JsonIgnore]
         public virtual User User { get; set; }
     }
 }

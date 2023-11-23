@@ -284,10 +284,10 @@ namespace RightsU_DAL
             return objContext.USP_Add_ACQ_Milestone(acq_Deal_Code, debug);
         }
 
-        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate = "", string endDate = "", string channel = "", Nullable<bool> excludeExpiredDeal = true, string runType = "")
+        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate = "", string endDate = "", string channel = "", Nullable<bool> excludeExpiredDeal = true, string runType = "", string contentType = "")
         {
             RightsU_NeoEntities objContext = new RightsU_NeoEntities(conStr);
-            return objContext.USP_Schedule_AsRun_Report(title, episodeFrom, episodeTo, isShowAll, startDate, endDate, channel, excludeExpiredDeal, runType);
+            return objContext.USP_Schedule_AsRun_Report(title, episodeFrom, episodeTo, isShowAll, startDate, endDate, channel, excludeExpiredDeal, runType, contentType);
         }
         public virtual ObjectResult<string> USP_DELETE_Deal(Nullable<int> acq_Deal_Code, string debug)
         {

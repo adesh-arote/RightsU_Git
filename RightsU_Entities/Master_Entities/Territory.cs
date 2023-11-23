@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -26,7 +27,7 @@ namespace RightsU_Entities
             this.Acq_Deal_Pushback_Territory = new HashSet<Acq_Deal_Pushback_Territory>();
             this.Acq_Deal_Mass_Territory_Update_Details = new HashSet<Acq_Deal_Mass_Territory_Update_Details>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }    public int Territory_Code { get; set; }
         public string Territory_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -38,15 +39,22 @@ namespace RightsU_Entities
         public string Is_Ref_Acq { get; set; }
         public string Is_Ref_Syn { get; set; }
         public string Is_Thetrical { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Blackout_Territory> Acq_Deal_Rights_Blackout_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Holdback_Territory> Acq_Deal_Rights_Holdback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Territory> Acq_Deal_Rights_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Territory> Syn_Deal_Rights_Blackout_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Holdback_Territory> Syn_Deal_Rights_Holdback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Territory> Syn_Deal_Rights_Territory { get; set; }
         public virtual ICollection<Territory_Details> Territory_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Pushback_Territory> Acq_Deal_Pushback_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Acq_Deal_Mass_Territory_Update_Details> Acq_Deal_Mass_Territory_Update_Details { get; set; }
        
     }

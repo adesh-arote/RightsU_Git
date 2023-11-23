@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -23,6 +24,7 @@ namespace RightsU_Entities
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Columns_Code { get; set; }
         public string Columns_Name { get; set; }
@@ -37,9 +39,13 @@ namespace RightsU_Entities
         public string Is_Add_OnScreen { get; set; }
 
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
     }
 }

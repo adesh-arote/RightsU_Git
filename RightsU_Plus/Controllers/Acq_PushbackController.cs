@@ -524,7 +524,7 @@ namespace RightsU_WebApp.Controllers
                         else if (objExistingRight.Acq_Deal_Pushback_Platform.Count > 1)
                         {
                             Acq_Deal_Pushback objSecondRight = SetNewAcqDealRight(objExistingRight, TCODE, Episode_From, Episode_To, PCODE);
-                            objSecondRight = CreateRightObject(objSecondRight, obj, TCODE ?? 0, PCODE ?? 0);
+                            //objSecondRight = CreateRightObject(objSecondRight, obj, TCODE ?? 0, PCODE ?? 0);
                             objDeal.Acq_Deal_Pushback.Add(objSecondRight);
                         }
                     objDeal.SaveGeneralOnly = false;
@@ -605,7 +605,8 @@ namespace RightsU_WebApp.Controllers
             objDRUDT.Title_Code = TCODE; //objExistingRights.Acq_Deal_Pushback_Title.Select(x=>x.Title_Code).First();
             objDRUDT.Platform_Code = PCODE; //objExistingRights.Acq_Deal_Pushback_Platform.Select(x=>x.Platform_Code).First();
             //objDRUDT.Deal_Rights_Code = objPage_Properties.TCODE > 0 ? 0 : objPage_Properties.RCODE; //objExistingRights.Acq_Deal_Rights_Code;
-            objDRUDT.Deal_Rights_Code = objExistingRights.Acq_Deal_Pushback_Code;
+            //objDRUDT.Deal_Rights_Code = objExistingRights.Acq_Deal_Pushback_Code;
+            objDRUDT.Deal_Rights_Code = objMVCRights.Acq_Deal_Pushback_Code;
             objDRUDT.Deal_Code = objExistingRights.Acq_Deal_Code = objDeal_Schema.Deal_Code;
             //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive ? "Y" : "N";
             //objDRUDT.Is_Exclusive = objExistingRights.Is_Exclusive = IsExclusive;

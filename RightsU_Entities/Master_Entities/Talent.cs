@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -26,6 +27,7 @@ namespace RightsU_Entities
             this.ProjectMilestones = new HashSet<ProjectMilestone>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }    
         public int Talent_Code { get; set; }
         public string Talent_Name { get; set; }
@@ -38,12 +40,19 @@ namespace RightsU_Entities
         public string Is_Active { get; set; }
 
         public virtual ICollection<Talent_Role> Talent_Role { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Audio_Details_Singers> Title_Audio_Details_Singers { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Talent> Title_Talent { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Title_Talent> Music_Title_Talent { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Music_Album_Talent> Music_Album_Talent { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Alternate_Talent> Title_Alternate_Talent { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
+        [JsonIgnore]
         public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; }
 
     }

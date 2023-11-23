@@ -1178,7 +1178,7 @@ namespace RightsU_DAL
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_ShowDetails_Sche_Report_Result>("USP_Schedule_ShowDetails_Sche_Report", dMCodeParameter, title_CodeParameter, deal_CodeParameter, episodeParameter, deal_TypeParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter);
         }
-        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType)
+        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType, string contentType)
         {
             var titleParameter = title != null ?
                 new ObjectParameter("Title", title) :
@@ -1216,7 +1216,11 @@ namespace RightsU_DAL
                 new ObjectParameter("RunType", runType) :
                 new ObjectParameter("RunType", typeof(string));
 
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_AsRun_Report_Result>("USP_Schedule_AsRun_Report", titleParameter, episodeFromParameter, episodeToParameter, isShowAllParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter);
+            var contentTypeParameter = contentType != null ?
+                new ObjectParameter("ContentType", contentType) :
+                new ObjectParameter("ContentType", typeof(string));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_AsRun_Report_Result>("USP_Schedule_AsRun_Report", titleParameter, episodeFromParameter, episodeToParameter, isShowAllParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter, contentTypeParameter);
         }
         public virtual ObjectResult<USP_Get_Dashboard_Detail_Result> USP_Get_Dashboard_Detail(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
         {

@@ -126,6 +126,7 @@ namespace RightsU_Plus.Controllers
         //{
         //    lstLanguage_Searched = lstLanguage = new Language_Service().SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
         //}
+
         public JsonResult CheckRecordLock(int Language_Code)
         {
             string strMessage = "";
@@ -166,7 +167,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveLanguage(int Language_Code, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(Language_Code, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -182,6 +183,21 @@ namespace RightsU_Plus.Controllers
                 {
                     lstLanguage.Where(w => w.Language_Code == Language_Code).First().Is_Active = doActive;
                     lstLanguage_Searched.Where(w => w.Language_Code == Language_Code).First().Is_Active = doActive;
+
+                    if (doActive == "Y")
+                        Action = "A"; // A = "Active";
+                    else
+                        Action = "DA"; // DA = "Deactivate";
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objLanguage.Language_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -216,7 +232,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveLanguage(int Language_Code, string Language_Name, int Record_Code)
         {
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = "";
             Language_Service objService = new Language_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Language objGenre = null;
 
@@ -239,9 +255,23 @@ namespace RightsU_Plus.Controllers
             objGenre.Language_Name = Language_Name;
             dynamic resultSet;
             bool isValid = objService.Save(objGenre, out resultSet);
-
             if (isValid)
             {
+                if (Language_Code > 0)
+                    Action = "U"; // U = "Update";
+                else
+                    Action = "C"; // C = "Create";
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGenre);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objGenre.Language_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
                 lstLanguage_Searched = lstLanguage = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
             }
             else

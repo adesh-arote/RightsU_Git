@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -17,7 +18,7 @@ namespace RightsU_Entities
             this.AL_Vendor_Details = new HashSet<AL_Vendor_Details>();
             this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Extended_Group_Code { get; set; }
         public string Group_Name { get; set; }
@@ -33,7 +34,9 @@ namespace RightsU_Entities
         public string IsActive { get; set; }
 
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
+        [JsonIgnore]
         public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
     }
 }

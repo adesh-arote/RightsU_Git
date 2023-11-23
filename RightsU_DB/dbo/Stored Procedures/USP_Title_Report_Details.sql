@@ -19,6 +19,7 @@ BEGIN
 		--@DealTypeCode  INT ,      
 		--@TitleName NVARCHAR(2000),  
 		--@OriginalTitleName NVARCHAR(MAX) ,          
+		--@OriginalTitleName NVARCHAR(MAX) ,          
 		--@AdvanceSearch NVARCHAR(MAX)    
 
 		IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp  
@@ -137,7 +138,8 @@ BEGIN
 									(         
 								select distinct ECV.Columns_Value from Map_Extended_Columns MEC  (NOLOCK)
 								INNER JOIN Extended_Columns EC (NOLOCK) ON EC.Columns_Code = MEC.Columns_Code
-								INNER JOIN Extended_Columns_Value ECV (NOLOCK) ON ECV.Columns_Value_Code = MEC.Columns_Value_Code
+								INNER JOIN Map_Extended_Columns_Details ED (NOLOCK) ON ED.Map_Extended_Columns_Code = MEC.Map_Extended_Columns_Code
+								INNER JOIN Extended_Columns_Value ECV (NOLOCK) ON ECV.Columns_Value_Code = ED.Columns_Value_Code
 								WHERE MEC.Record_Code = T.Title_Code AND EC.Columns_Code = (Select top 1 Columns_Code from Extended_Columns (NOLOCK) where Columns_Name = ''Type of Film'')
 									FOR XML PATH(''''), root(''TypeofFilm''), type      
 									).value(''/TypeofFilm[1]'',''NVARCHAR(max)''      
@@ -166,7 +168,8 @@ BEGIN
 									(         
 										select distinct ECV.Columns_Value from Map_Extended_Columns MEC (NOLOCK)
 										INNER JOIN Extended_Columns EC (NOLOCK) ON EC.Columns_Code = MEC.Columns_Code
-										INNER JOIN Extended_Columns_Value ECV (NOLOCK) ON ECV.Columns_Value_Code = MEC.Columns_Value_Code
+										INNER JOIN Map_Extended_Columns_Details ED (NOLOCK) ON ED.Map_Extended_Columns_Code = MEC.Map_Extended_Columns_Code
+										INNER JOIN Extended_Columns_Value ECV (NOLOCK) ON ECV.Columns_Value_Code =  ED.Columns_Value_Code
 										WHERE MEC.Record_Code = T.Title_Code AND EC.Columns_Code = (Select top 1 Columns_Code from Extended_Columns (NOLOCK) where Columns_Name = ''CBFC Rating'')
 										FOR XML PATH(''''), root(''CBFCRating''), type      
 									).value(''/CBFCRating[1]'',''NVARCHAR(max)''      

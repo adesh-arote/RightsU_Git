@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,6 +20,7 @@ namespace RightsU_Entities
             this.Titles = new HashSet<Title>();
         }
 
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Grade_Code { get; set; }
         public string Grade_Name { get; set; }
@@ -29,6 +31,7 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
     
+        [JsonIgnore]
         public virtual ICollection<Title> Titles { get; set; }
     }
 }

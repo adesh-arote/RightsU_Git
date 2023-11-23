@@ -17,6 +17,7 @@ namespace RightsU_Plus.Controllers
         // GET: /System_Language/
 
         #region Properties
+
         private List<RightsU_Entities.System_Language> lstSystem_Language
         {
             get
@@ -43,7 +44,6 @@ namespace RightsU_Plus.Controllers
                 Session["RecordLockingCode"] = value;
             }
         }
-
 
         #endregion
 
@@ -80,7 +80,7 @@ namespace RightsU_Plus.Controllers
         {
             int SysLanguageCode = int.Parse(TempData["SystemLanguageCode"].ToString());
             objMVC.System_Language_Code = SysLanguageCode;
-            string status = "S", message = "Data saved successfully";
+            string status = "S", message = "Data saved successfully";  //Action = "U"; // U = "Update";
             System_Language_Service objService = new System_Language_Service(objLoginEntity.ConnectionStringName);
             if (objMVC.System_Language_Message.ToList().Count != 0)
             {
@@ -131,6 +131,16 @@ namespace RightsU_Plus.Controllers
                     CommonUtil objCommonUtil = new CommonUtil();
                     objCommonUtil.Release_Record(RecordlockingCode, objLoginEntity.ConnectionStringName);
                     lstSystem_Language = new System_Language_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
+
+                    //try
+                    //{
+                    //    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSL);
+                    //    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForSystemLanguage, objSL.System_Language_Code, LogData, Action, objLoginUser.Users_Code);
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //
+                    //}
                 }
             }
             else
@@ -168,6 +178,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/System_Language/Index.cshtml");
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeForSystemLanguage), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -177,6 +188,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public PartialViewResult BindSystemLanguageList(int pageNo, int recordPerPage, string commandName)
         {
             List<RightsU_Entities.System_Language> lst = new List<RightsU_Entities.System_Language>();
@@ -195,6 +207,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/System_Language/_SystemLanguageList.cshtml", lst);
         }
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -217,6 +230,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         public JsonResult SearchSystemLanguage(string searchText)
         {
             var obj = new
@@ -225,6 +239,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult CheckRecordLock(int SystemLanguageCode)
         {
             string strMessage = "";
@@ -244,9 +259,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveSystemLanguage(int SystemLanguageCode, string SystemLanguageName, string Direction, int Record_Code)
         {
-            string status = "S", message = "Record saved successfully";
+            string status = "S", message = "Record saved successfully"; // Action = "C"; // C = "Create";
 
             System_Language_Service objService = new System_Language_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.System_Language objSystemLanguage = null;
@@ -266,6 +282,16 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstSystem_Language = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                //try
+                //{
+                //    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSystemLanguage);
+                //    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForSystemLanguage, objSystemLanguage.System_Language_Code, LogData, Action, objLoginUser.Users_Code);
+                //}
+                //catch (Exception ex)
+                //{
+                //
+                //}
             }
             else
             {
@@ -285,7 +311,5 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
-
-
     }
 }

@@ -54,7 +54,6 @@ namespace RightsU_Plus.Controllers
             set { Session["lstSAP_WBS_Searched"] = value; }
         }
 
-
         private List<RightsU_Entities.SAP_WBS> lstSAP_WBS1
         {
             get
@@ -89,7 +88,6 @@ namespace RightsU_Plus.Controllers
 
         }
 
-
         //public PartialViewResult BindPartialPages(string key, int WorkflowModuleCode)
         //{
         //    TempData["View"] = "";
@@ -110,7 +108,6 @@ namespace RightsU_Plus.Controllers
 
 
         //}
-
 
         public PartialViewResult BindSAP_WBS_ImportList(int pageNo, int recordPerPage, int Language_Code, string commandName)
         {
@@ -251,7 +248,6 @@ namespace RightsU_Plus.Controllers
             return Json(obj);
         }
 
-
         public JsonResult SearchSAP_WBSDetails(string searchText)
         {
 
@@ -270,7 +266,6 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
-
 
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
@@ -294,6 +289,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         public ActionResult Index()
         {
             lstSAP_WBS_Searched = lstSAP_WBS = new SAP_WBS_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();

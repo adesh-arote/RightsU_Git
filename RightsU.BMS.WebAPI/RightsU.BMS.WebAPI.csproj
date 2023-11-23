@@ -166,8 +166,13 @@
     <Compile Include="Consumes.cs" />
     <Compile Include="Controllers\bmsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\loginController.cs" />
     <Compile Include="Controllers\scheduleuploadController.cs" />
-    <Compile Include="FileOperationFilter.cs" />
+    <Compile Include="Controllers\titleController.cs" />
+    <Compile Include="Filters\AuthorizationFilter.cs" />
+    <Compile Include="Filters\FileOperationFilter.cs" />
+    <Compile Include="Filters\HideInDocsAttribute.cs" />
+    <Compile Include="Filters\HideInDocsFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -264,11 +269,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RightsU.BMS.BLL\RightsU.BMS.BLL.csproj">
-      <Project>{5A9E4B8C-5FB3-484F-B6CE-78A5C547D5E0}</Project>
+      <Project>{5a9e4b8c-5fb3-484f-b6ce-78a5c547d5e0}</Project>
       <Name>RightsU.BMS.BLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\RightsU.BMS.Entities\RightsU.BMS.Entities.csproj">
-      <Project>{BE5330D0-36E5-4A59-A17C-A4534F034458}</Project>
+      <Project>{be5330d0-36e5-4a59-a17c-a4534f034458}</Project>
       <Name>RightsU.BMS.Entities</Name>
     </ProjectReference>
   </ItemGroup>

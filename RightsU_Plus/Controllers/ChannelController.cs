@@ -11,7 +11,6 @@ namespace RightsU_Plus.Controllers
 {
     public class ChannelController : BaseController
     {
-        //
         // GET: /Channel/
         #region --- Properties ---
 
@@ -27,6 +26,7 @@ namespace RightsU_Plus.Controllers
 
             return AddResult.ToList<T>();
         }
+
         private List<RightsU_Entities.Channel> lstChannel
         {
             get
@@ -37,6 +37,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstChannel"] = value; }
         }
+
         private List<RightsU_Entities.Channel> lstChannelEdit
         {
             get
@@ -47,6 +48,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstChannelEdit"] = value; }
         }
+
         private List<RightsU_Entities.Channel> lstChannel_Searched
         {
             get
@@ -57,6 +59,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstChannel_Searched"] = value; }
         }
+
         //private List<RightsU_Entities.Genre> lstGenre
         //{
         //    get
@@ -67,6 +70,7 @@ namespace RightsU_Plus.Controllers
         //    }
         //    set { Session["lstGenre"] = value; }
         //}
+
         private string ModuleCode
         {
             get
@@ -82,6 +86,7 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+
         #endregion
 
         public ActionResult Index()
@@ -91,6 +96,7 @@ namespace RightsU_Plus.Controllers
             ModuleCode = GlobalParams.ModuleCodeForChannel.ToString();
             return View("~/Views/Channel/Index.cshtml");
         }
+
         public PartialViewResult BindPartialPages(string key, int ChannelCode)
         {
             if (key == "LIST")
@@ -217,6 +223,7 @@ namespace RightsU_Plus.Controllers
             }
 
         }
+
         public PartialViewResult BindChannelList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.Channel> lst = new List<RightsU_Entities.Channel>();
@@ -237,7 +244,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Channel/_ChannelList.cshtml", lst);
         }
+
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -260,10 +269,12 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private void FetchData()
         {
             lstChannel_Searched = lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(a => true).OrderByDescending(o => o.Last_Updated_Time).ToList();
         }
+
         #endregion
 
         public JsonResult SearchChannel(string searchText)
@@ -486,6 +497,17 @@ namespace RightsU_Plus.Controllers
                 status = "S";
                 message = objMessageKey.Recordupdatedsuccessfully;
                 ViewBag.Alert = message;
+                string Action = "U"; // U = "Update";
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
 
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
@@ -667,6 +689,17 @@ namespace RightsU_Plus.Controllers
                 {
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
+                    string Action = "C"; // C = "Create";
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                     FetchData();
                 }
             }
@@ -704,10 +737,28 @@ namespace RightsU_Plus.Controllers
                 {
                     lstChannel.Where(w => w.Channel_Code == Channel_Code).First().Is_Active = doActive;
                     lstChannel_Searched.Where(w => w.Channel_Code == Channel_Code).First().Is_Active = doActive;
+                    string Action = "";
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                    }
                     else
+                    {
+                        Action = "DA"; // DA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+
+                    }
                 }
                 else
                 {

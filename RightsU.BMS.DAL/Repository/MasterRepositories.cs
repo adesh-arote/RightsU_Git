@@ -8,6 +8,36 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.DAL
 {
+    #region -------- User -----------
+    public class UserRepositories : MainRepository<User>
+    {
+        public User Get(int Id)
+        {
+            var obj = new { Users_Code = Id };
+
+            return base.GetById<User, Users_Password_Detail>(obj);
+        }
+        public IEnumerable<User> GetAll()
+        {
+            return base.GetAll<User>();
+        }
+        public void Update(User entity)
+        {
+            User oldObj = Get(entity.Users_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<User> SearchFor(object param)
+        {
+            return base.SearchForEntity<User, Users_Password_Detail>(param);
+        }
+
+        public IEnumerable<User> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<User>(strSQL);
+        }
+    }
+    #endregion
+
     #region -------- System Parameter -----------
     public class SystemParametersRepositories : MainRepository<System_Parameter_New>
     {
@@ -49,6 +79,93 @@ namespace RightsU.BMS.DAL
             var identity = base.ExecuteScalar("USP_BMS_Insert_Log", param);
             BMS_Log_Code = Convert.ToInt32(identity);
             return BMS_Log_Code;
+        }
+    }
+    #endregion
+
+    #region -----------------Service Log-----------
+    public class ServiceLogRepositories : MainRepository<ServiceLog>
+    {
+        public void Add(ServiceLog entity)
+        {
+            base.AddEntity(entity);
+        }
+        public ServiceLog Get(int Id)
+        {
+            var obj = new { ServiceLogID = Id };
+
+            return base.GetById<ServiceLog>(obj);
+        }
+        public IEnumerable<ServiceLog> GetAll()
+        {
+            return base.GetAll<ServiceLog>();
+        }
+        public void Update(ServiceLog entity)
+        {
+            ServiceLog oldObj = Get(entity.ServiceLogID.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<ServiceLog> SearchFor(object param)
+        {
+            return base.SearchForEntity<ServiceLog>(param);
+        }
+    }
+    #endregion
+
+    #region -------- Logged In Users  -----------
+    public class LoggedInUsersRepository : MainRepository<LoggedInUsers>
+    {
+        public LoggedInUsers Get(int Id)
+        {
+            var obj = new { Users_Code = Id };
+
+            return base.GetById<LoggedInUsers>(obj);
+        }
+        public void Add(LoggedInUsers entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(LoggedInUsers entity)
+        {
+            LoggedInUsers oldObj = Get(entity.LoggedInUsersCode ?? 0);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(LoggedInUsers entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<LoggedInUsers> GetAll()
+        {
+            return base.GetAll<LoggedInUsers>();
+        }
+        public IEnumerable<LoggedInUsers> SearchFor(object param)
+        {
+            return base.SearchForEntity<LoggedInUsers>(param);
+        }
+    }
+    #endregion
+
+    #region -------- System_Module -----------
+    public class System_Module_Repositories : MainRepository<System_Module>
+    {
+        public IEnumerable<System_Module> SearchFor(object param)
+        {
+            return base.SearchForEntity<System_Module>(param);
+        }
+        public IEnumerable<System_Module> GetAll()
+        {
+            return base.GetAll<System_Module>();
+        }
+        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        {
+            List<System_Module> ObjModule = new List<System_Module>();
+
+            var param = new DynamicParameters();
+            param.Add("@SecurityGroupCode", Module_Code);
+            param.Add("@IsSuperAdmin", "Y");
+            param.Add("@Users_Code", Users_Code);
+            ObjModule = base.ExecuteSQLProcedure<System_Module>("USP_GetMenu", param).ToList();
+            return ObjModule;
         }
     }
     #endregion

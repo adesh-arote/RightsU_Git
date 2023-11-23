@@ -478,6 +478,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
         public DbSet<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
         public DbSet<Syn_Deal_Digital_Detail> Syn_Deal_Digital_Detail { get; set; }
+        public DbSet<Master_Log> Master_Log { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
@@ -882,7 +883,7 @@ namespace RightsU_InterimDb.Models
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Insert_Module_Status_History", module_CodeParameter, record_CodeParameter, user_ActionParameter, login_UserParameter, remarksParameter);
         }
     
-        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType)
+        public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType, string contentType)
         {
             var titleParameter = title != null ?
                 new ObjectParameter("Title", title) :
@@ -920,7 +921,11 @@ namespace RightsU_InterimDb.Models
                 new ObjectParameter("RunType", runType) :
                 new ObjectParameter("RunType", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_AsRun_Report_Result>("USP_Schedule_AsRun_Report", titleParameter, episodeFromParameter, episodeToParameter, isShowAllParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter);
+            var contentTypeParameter = contentType != null ?
+                new ObjectParameter("ContentType", contentType) :
+                new ObjectParameter("ContentType", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_AsRun_Report_Result>("USP_Schedule_AsRun_Report", titleParameter, episodeFromParameter, episodeToParameter, isShowAllParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter, contentTypeParameter);
         }
     
         public virtual ObjectResult<string> USP_Get_Title_Language(string title_Codes)

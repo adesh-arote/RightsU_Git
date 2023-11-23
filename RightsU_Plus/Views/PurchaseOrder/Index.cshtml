@@ -367,15 +367,15 @@
 
                                     $('.' + SiblingClass).empty();
 
-                                    if (result.InsertedBy == @objLoginUser.Users_Code) {
+                                    //if (result.InsertedBy == objLoginUser.Users_Code) {
                                         a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>' +
                                             '<a title="Resend For Approval" class="glyphicon glyphicon-send" style="cursor: pointer;" onclick="ResendForApprovePopup(' + PurchaseOrderCode + ');"></a>';
                                         $('.' + SiblingClass).append(a);
-                                    }
-                                    else {
-                                        a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>';
-                                        $('.' + SiblingClass).append(a);
-                                    }
+                                    //}
+                                    //else {
+                                        //a = '<a title="view" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPODetails(' + PurchaseOrderCode + ',' + ProposalCode + ',\'\');"</a>';
+                                        //$('.' + SiblingClass).append(a);
+                                    //}
 
                                 }
                                 var ApprovalStatus = '<span>' + result.ApprovalStatus + '</span>'

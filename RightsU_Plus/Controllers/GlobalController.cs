@@ -13,6 +13,7 @@ using System.Data.Entity.Core.Objects;
 using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -826,6 +827,27 @@ namespace RightsU_Plus.Controllers
             //Currency objCurrency = new Currency();
             ViewBag.UsersCode = UsersCode;
             return PartialView("~/Views/Shared/_Aeroplay.cshtml");
+        }
+        public string ConvertObjectToJson(object obj)
+        {
+            string ret = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            return ret;
+        }
+        public bool SaveMasterLogData(int ModuleCode, int IntCode, string LogData, string ActionType, int UserCode)
+        {
+            Master_Log_Service objService = new Master_Log_Service(objLoginEntity.ConnectionStringName);
+            Master_Log objMasterLog = new Master_Log();
+            objMasterLog.EntityState = State.Added;
+            objMasterLog.Module_Code = ModuleCode;
+            objMasterLog.IntCode = IntCode;
+            objMasterLog.Log_Data = LogData;
+            objMasterLog.Action_By = UserCode; 
+            objMasterLog.Action_On = DateTime.Now;
+            objMasterLog.Action_Type = ActionType;
+            dynamic resultSet;
+            bool isValid = objService.Save(objMasterLog, out resultSet);
+
+            return isValid;
         }
     }
 }

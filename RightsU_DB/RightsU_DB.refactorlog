@@ -7,4 +7,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Acq_Adv_Ancillary_Report_Code" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="26620aee-ad30-4dff-b7ea-da17645a2d0f" ChangeDateTime="10/31/2023 06:57:08">
+    <Property Name="ElementName" Value="[dbo].[Master_Log].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Master_Log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Log_Code" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="20a01ede-0bc3-40e9-8612-802efaff6079" ChangeDateTime="10/31/2023 06:58:26">
+    <Property Name="ElementName" Value="[dbo].[Master_Log].[Action]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[Master_Log]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Action_On" />
+  </Operation>
 </Operations>

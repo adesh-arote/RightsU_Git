@@ -544,26 +544,30 @@ BEGIN
     
 	   --PARTY                                
 	   IF(@Module_Code = 10)                                
-	   BEGIN                                
+	   BEGIN
+	   
+	   DECLARE @IsAeroplay CHAR(1) = '', @PartyType VARCHAR(10) = 'V';
+	   SELECT @IsAeroplay = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'Allow_Party_Details'
+
 		--INSERT INTO #tmpExportToExcel (Col01, Col02,  Col03, Col04, Col05,  Col06, Col07, Col08)                                
 		--SELECT 'Party Code', 'Party Name', 'Address' , 'Phone No', 'Party Type', 'CST No', 'Status', 'PartyCategory'                                
-		SELECT     
-	   @Col_Head01 = CASE WHEN  SM.Message_Key = 'PartyCode' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
-	   @Col_Head02 = CASE WHEN  SM.Message_Key = 'PartyName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END, 
-	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,       
-	   @Col_Head04 = CASE WHEN  SM.Message_Key = 'Address' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,     
-	   @Col_Head05 = CASE WHEN  SM.Message_Key = 'PhoneNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
-	   @Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
-	   @Col_Head07 = CASE WHEN  SM.Message_Key = 'CSTNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head07	END,    
-	   @Col_Head08 = CASE WHEN  SM.Message_Key = 'Status' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,
-	   @Col_Head09 = CASE WHEN  SM.Message_Key = 'PartyMasterName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head09 END
+	   SELECT     
+			@Col_Head01 = CASE WHEN  SM.Message_Key = 'PartyCode' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
+			@Col_Head02 = CASE WHEN  SM.Message_Key = 'PartyName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END, 
+			@Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,       
+			@Col_Head04 = CASE WHEN  SM.Message_Key = 'Address' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,     
+			@Col_Head05 = CASE WHEN  SM.Message_Key = 'PhoneNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
+			@Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
+			@Col_Head07 = CASE WHEN  SM.Message_Key = 'CSTNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head07	END,    
+			@Col_Head08 = CASE WHEN  SM.Message_Key = 'Status' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,
+			@Col_Head09 = CASE WHEN  SM.Message_Key = 'PartyMasterName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head09 END
 
 	   FROM System_Message SM  (NOLOCK)   
-	   INNER JOIN System_Module_Message SMM (NOLOCK) ON SMM.System_Message_Code = SM.System_Message_Code AND (SMM.Module_Code = @Module_Code OR ISNULL(@Module_Code, 0)= 0)    
-	   AND SM.Message_Key IN ('PartyCode','PartyName', 'PartyCategory', 'Address','PhoneNo','PartyType','CSTNo','Status','PartyMasterName')    
-	   INNER JOIN System_Language_Message SLM (NOLOCK) ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode    
-		 INSERT INTO #tmpExportToExcel (Col01, Col02,  Col03, Col04, Col05,  Col06, Col07, Col08, Col09)     
-	  SELECT [Party Code],[Vendor_Name],[Party Category],[Address],[Phone No],[Party Type],[CST No],[Status],[PartyMasterName] FROM(    
+			INNER JOIN System_Module_Message SMM (NOLOCK) ON SMM.System_Message_Code = SM.System_Message_Code AND (SMM.Module_Code = @Module_Code OR ISNULL(@Module_Code, 0)= 0)    
+			AND SM.Message_Key IN ('PartyCode','PartyName', 'PartyCategory', 'Address','PhoneNo','PartyType','CSTNo','Status','PartyMasterName')    
+			INNER JOIN System_Language_Message SLM (NOLOCK) ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode    
+			INSERT INTO #tmpExportToExcel (Col01, Col02,  Col03, Col04, Col05,  Col06, Col07, Col08, Col09)     
+	   SELECT [Party Code],[Vendor_Name],[Party Category],[Address],[Phone No],[Party Type],[CST No],[Status],[PartyMasterName] FROM(    
 	   SELECT     
 	   Sorter = 1,    
 	   CAST(v.Vendor_Code AS VARCHAR(10)) AS [Party Code],Vendor_Name AS [Vendor_Name],
@@ -574,7 +578,8 @@ BEGIN
 	   CASE WHEN v.Is_Active = 'N' THEN @Deactive ELSE @Active END AS [Status],PG.Party_Group_Name AS [PartyMasterName], Last_Updated_Time
 	   FROM Vendor v (NOLOCK)
 	   LEFT JOIN Party_Group PG (NOLOCK) ON v.Party_Group_Code = PG.Party_Group_Code
-	   where (@StrSearchCriteria = '' OR v.Vendor_Name Like '%'+@StrSearchCriteria+'%') --v.Party_Type = 'V' AND                             
+	   where CASE WHEN @IsAeroplay = 'Y' THEN v.Party_Type ELSE v.Party_Type END = 
+				CASE WHEN @IsAeroplay = 'Y' THEN v.Party_Type ELSE @PartyType END AND (@StrSearchCriteria = '' OR v.Vendor_Name Like '%'+@StrSearchCriteria+'%') --v.Party_Type = 'V' AND                            
 	   ) X    
 	   ORDER BY CASE WHEN @Sort_Column= 'NAME' AND  @Sort_Order = 'ASC' THEN Vendor_Name END ASC,            
 	   CASE WHEN @Sort_Column = 'NAME' AND @Sort_Order = 'DSC' THEN Vendor_Name END DESC,            
@@ -1617,7 +1622,7 @@ BEGIN
 		SELECT     
 	   @Col_Head01 = CASE WHEN  SM.Message_Key = 'PartyCode' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
 	   @Col_Head02 = CASE WHEN  SM.Message_Key = 'PartyName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END, 
-	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,       
+	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'PartyCategory' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,       
 	   @Col_Head04 = CASE WHEN  SM.Message_Key = 'Address' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,     
 	   @Col_Head05 = CASE WHEN  SM.Message_Key = 'PhoneNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
 	   @Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
@@ -2002,8 +2007,16 @@ BEGIN
 		FROM                               
 		(                              
 		SELECT top 1 * FROM #tmpExportToExcel                                
-		) AS A                              
-	  SELECT * FROM #tmpMulExportToExcel  
+		) AS A   
+		IF(@Module_Code = 10)
+			BEGIN
+				Select * from #tmpMulExportToExcel order by case when Col01 = 'Party Code' then '0' else Col01 end asc
+			END
+		ELSE
+			BEGIN
+				SELECT * FROM #tmpMulExportToExcel
+			END
+	  --SELECT * FROM #tmpMulExportToExcel  
 	   --DROP TABLE #tmpExportToExcel     
 	   -- DROP TABLE #tmpMulExportToExcel     
 	   --PRINT @SqlString                                

@@ -3790,4 +3790,31 @@ namespace RightsU_DAL
         }
     }
     #endregion
+
+    #region Master Log Services
+    public class Master_Log_Repository : RightsU_Repository<Master_Log>
+    {
+        public Master_Log_Repository(string conStr) : base(conStr) { }
+
+        public override void Save(Master_Log objToSave)
+        {
+            if (objToSave.EntityState == State.Added)
+            {
+                base.Save(objToSave);
+            }
+            else if (objToSave.EntityState == State.Modified)
+            {
+                base.Update(objToSave);
+            }
+            else if (objToSave.EntityState == State.Deleted)
+            {
+                base.Delete(objToSave);
+            }
+        }
+        public override void Delete(Master_Log objToDelete)
+        {
+            base.Delete(objToDelete);
+        }
+    }
+    #endregion
 }

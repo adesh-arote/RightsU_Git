@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class BVExceptionController : BaseController
     {
         #region --- Properties ---
+
         private List<RightsU_Entities.BVException> lstBVException
         {
             get
@@ -56,8 +57,6 @@ namespace RightsU_Plus.Controllers
             set { Session["objBVException_Service"] = value; }
         }
 
-
-
         #endregion
 
         public ViewResult Index()
@@ -100,6 +99,7 @@ namespace RightsU_Plus.Controllers
         }
 
         #region  --- Other Methods ---
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -122,6 +122,7 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(GlobalParams.ModuleCodeFor_BV_Exception), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -131,6 +132,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         #endregion
 
         public JsonResult SearchBVException(string searchText)
@@ -154,7 +156,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DeleteBVException(int exceptionCode)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "D"; // D = "Delete";
             int RLCode = 0;
 
 
@@ -177,6 +179,16 @@ namespace RightsU_Plus.Controllers
                     lstBVException_Searched.Where(w => w.Bv_Exception_Code == exceptionCode).First().Is_Active = "N";
                     message = objMessageKey.RecordDeletedsuccessfully;
                     FetchDeep();
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objBVException);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objBVException.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -198,6 +210,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public void FetchDeep()
         {
             lstBVException_Searched = lstBVException = objBVException_Service.SearchFor(x => x.Is_Active == "Y").OrderByDescending(o => o.Last_Updated_Time).ToList();
@@ -248,7 +261,7 @@ namespace RightsU_Plus.Controllers
             objB.Bv_Exception_Type = objBVException_MVC.Bv_Exception_Type;
 
             dynamic resultSet;
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = "";
 
 
             ICollection<BVException_Channel> ChannelList = new HashSet<BVException_Channel>();
@@ -296,9 +309,9 @@ namespace RightsU_Plus.Controllers
 
             if (valid)
             {
-
                 if (objBVException_MVC.Bv_Exception_Code > 0)
                 {
+                    Action = "U"; // U = "Update";
                     //message = message.Replace("{ACTION}", "updated");
                     message = objMessageKey.Recordupdatedsuccessfully;
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -308,10 +321,23 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
+                    Action = "C"; // C = "Create";
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
                     FetchData();
                 }
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objB);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objB.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+
+                }
+
             }
             else
             {
@@ -360,6 +386,7 @@ namespace RightsU_Plus.Controllers
 
             return AddResult.ToList<T>();
         }
+
         private void FetchData()
         {
             lstBVException_Searched = lstBVException = new BVException_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).ToList();

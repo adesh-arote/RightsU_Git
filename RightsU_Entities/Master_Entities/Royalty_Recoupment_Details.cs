@@ -9,12 +9,14 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Royalty_Recoupment_Details
     {
         public int Royalty_Recoupment_Details_Code { get; set; }
+        [JsonIgnore]
         public State EntityState { get; set; }
         public Nullable<int> Royalty_Recoupment_Code { get; set; }
         public string Recoupment_Type { get; set; }

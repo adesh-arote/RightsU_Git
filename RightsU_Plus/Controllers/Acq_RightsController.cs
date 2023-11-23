@@ -1162,7 +1162,7 @@ namespace RightsU_Plus.Controllers
                 if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
                 {
                     var lstPlatforms = objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.ToList();
-                    string SyndicatedPlatforms = String.Join(",", objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(x=>x.Platform_Code)).ToString();
+                    string SyndicatedPlatforms = String.Join(",", objSyn_Deal_Rights_Buyback.Syn_Deal_Rights_Platform.Select(x => x.Platform_Code)).ToString();
 
                     objPTV.PlatformCodes_Display = SyndicatedPlatforms;//strPlatform;
                 }
@@ -1176,9 +1176,9 @@ namespace RightsU_Plus.Controllers
 
                 objPTV.PlatformCodes_Selected = strPlatform.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
                 //if (Convert.ToBoolean(Session["Is_Buyback"]) == true)
-                if(!String.IsNullOrEmpty(objAcq_Deal_Rights.Buyback_Syn_Rights_Code))
+                if (!String.IsNullOrEmpty(objAcq_Deal_Rights.Buyback_Syn_Rights_Code))
                 {
-                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y","","Buyback");
+                    ViewBag.TV_Platform = objPTV.PopulateTreeNode("Y", "", "Buyback");
                 }
                 else
                 {
@@ -1387,7 +1387,7 @@ namespace RightsU_Plus.Controllers
                     }
 
                     if (str_Type_SL == "SL" || str_Type_SL == "SG" || str_Type_SL == "L")
-                    {    
+                    {
                         Data_For_SL = str_Type_SL;
 
                         GET_DATA_FOR_APPROVED_TITLES(selected_Title_Code, PlatformCodes, "", Region_Type, Sub_Type_SL, Sub_Type_DL);
@@ -2441,7 +2441,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.MessageFrom = "SV";
             ViewBag.MODE = "E";
             string tabName = form["hdnTabName"];
-            
+
 
 
             if (!Is_Valid)
@@ -2715,7 +2715,8 @@ namespace RightsU_Plus.Controllers
                             string str_Syn_Rights_Code = string.Join(",", objPage_Properties.obj_lst_Syn_Rights.Select(i => i.Syn_Deal_Rights_Code).Distinct().ToArray());
                             new USP_Service(objLoginEntity.ConnectionStringName).USP_Update_Syn_Acq_Mapping(objDeal.Acq_Deal_Code, str_Affected_Acq_Rights_Code, str_Syn_Rights_Code);
                         }
-                        return ShowValidationPopup(resultSet);
+                        if (resultSet.Count > 0)
+                            return ShowValidationPopup(resultSet);
                     }
                 }
                 else
@@ -2912,7 +2913,7 @@ namespace RightsU_Plus.Controllers
 
                         return true;
                     }
-                   else
+                    else
                     {
                         UpdateDealRightProcess(objAcq_Deal_Rights.Acq_Deal_Rights_Code);
                         return ShowValidationPopup(resultSet);
@@ -3264,7 +3265,7 @@ namespace RightsU_Plus.Controllers
             string Is_Under_Production = Convert.ToString(form["Is_Under_Production"]) == "false" ? "N" : "Y";
             bool Is_Theatrical_Right = Convert.ToBoolean(form["hdnIs_Theatrical_Right"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(form["hdnIs_Title_Language_Right"]);
-            string Buyback_Syn_Rights_Code =  Convert.ToString(form["hdnBuyback_Syn_Rights_Code"]);
+            string Buyback_Syn_Rights_Code = Convert.ToString(form["hdnBuyback_Syn_Rights_Code"]);
 
 
 

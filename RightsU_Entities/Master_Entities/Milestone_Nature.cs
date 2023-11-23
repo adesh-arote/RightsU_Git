@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace RightsU_Entities
             this.Title_Milestone = new HashSet<Title_Milestone>();
             this.ProjectMilestones = new HashSet<ProjectMilestone>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Milestone_Nature_Code { get; set; }
         public string Milestone_Nature_Name { get; set; }
@@ -26,8 +27,9 @@ namespace RightsU_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
         public Nullable<System.TimeSpan> Lock_Time { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Title_Milestone> Title_Milestone { get; set; }
+        [JsonIgnore]
         public virtual ICollection<ProjectMilestone> ProjectMilestones { get; set; }
     }
 }

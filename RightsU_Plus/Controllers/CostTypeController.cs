@@ -12,6 +12,7 @@ namespace RightsU_Plus.Controllers
     public class CostTypeController : BaseController
     {
         #region --Properties--
+
         private List<RightsU_Entities.Cost_Type> lstCostType
         {
             get
@@ -33,7 +34,9 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstCostType_Searched"] = value; }
         }
+
         #endregion
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForCostType);
@@ -50,6 +53,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return View("~/Views/CostType/Index.cshtml");
         }
+
         public PartialViewResult BindCostTypeList(int pageNo, int recordPerPage, int costTypeCode, string commandName, string sortType)
         {
             ViewBag.CostTypeCode = costTypeCode;
@@ -71,7 +75,9 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/CostType/_CostTypeList.cshtml", lst);
         }
+
         #region --Other Method--
+
         private int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
         {
             noOfRecordSkip = noOfRecordTake = 0;
@@ -94,7 +100,9 @@ namespace RightsU_Plus.Controllers
             }
             return pageNo;
         }
+
         #endregion
+
         public JsonResult CheckRecordLock(int costTypeCode, string commandName)
         {
             string strMessage = "";
@@ -114,6 +122,7 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = new USP_Service(objLoginEntity.ConnectionStringName).USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForCostType), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -123,6 +132,7 @@ namespace RightsU_Plus.Controllers
 
             return rights;
         }
+
         public JsonResult SearchCostType(string searchText)
         {
             if (!string.IsNullOrEmpty(searchText))
@@ -138,9 +148,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult ActiveDeactiveCostType(int costTypeCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = "";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(costTypeCode, GlobalParams.ModuleCodeForCostType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -158,9 +169,25 @@ namespace RightsU_Plus.Controllers
                     lstCostType.Where(w => w.Cost_Type_Code == costTypeCode).First().Is_Active = doActive;
                     lstCostType_Searched.Where(w => w.Cost_Type_Code == costTypeCode).First().Is_Active = doActive;
                     if (doActive == "Y")
+                    {
+                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
+                    }   
                     else
+                    {
+                        Action = "DA"; // AA = "Deactivate";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCostType);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
@@ -181,9 +208,10 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveCostType(int costTypeCode, string costTypeName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C ="Create";
             if (costTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -194,6 +222,7 @@ namespace RightsU_Plus.Controllers
             {
                 objCostType = objService.GetById(costTypeCode);
                 objCostType.EntityState = State.Modified;
+                Action = "U";  // U ="Update";
             }
             else
             {
@@ -213,6 +242,16 @@ namespace RightsU_Plus.Controllers
             if (isValid)
             {
                 lstCostType_Searched = lstCostType = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
+
+                try
+                {
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCostType);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {

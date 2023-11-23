@@ -9,11 +9,13 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class System_Parameter_New
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Id { get; set; }
         public string Parameter_Name { get; set; }

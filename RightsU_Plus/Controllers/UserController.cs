@@ -355,7 +355,7 @@ namespace RightsU_Plus.Controllers
             bool isLocked = objCommonUtil.Lock_Record(userCode, GlobalParams.ModuleCodeForUsers, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
 
             if (isLocked)
-            {
+            {                
                 User_Service objService = new User_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.User objUser = objService.GetById(userCode);
                 objUser.Is_Active = doActive;
@@ -365,21 +365,38 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objUser, out resultSet);
                 if (isValid)
                 {
+                    string Action = "A";
                     lstUser.Where(w => w.Users_Code == userCode).First().Is_Active = doActive;
                     lstUser_Searched.Where(w => w.Users_Code == userCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
+                    {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "Activated");
+                        //message = message.Replace("{ACTION}", "Activated");
+                        Action = "A";
+                    }
                     else
+                    {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                    //message = message.Replace("{ACTION}", "Deactivated");
+                        //message = message.Replace("{ACTION}", "Deactivated");
+                        Action = "DA";
+                    }
+
+                    try
+                    {
+                        string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objUser);
+                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), Convert.ToInt32(objUser.Users_Code), LogData, Action, objLoginUser.Users_Code);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
                 else
                 {
                     message = resultSet;
                 }
-                objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);
+                objCommonUtil.Release_Record(RLCode, objLoginEntity.ConnectionStringName);                
             }
             else
             {
@@ -726,30 +743,34 @@ namespace RightsU_Plus.Controllers
             Added_MHUSer.ToList<MHUser>().ForEach(t => objU.MHUsers.Add(t));
             Deleted_MHUser.ToList<MHUser>().ForEach(t => t.EntityState = State.Deleted);
 
-            ICollection<Users_Exclusion_Rights> ExclusionRightsList = new HashSet<Users_Exclusion_Rights>();
-            if (objFormCollection["hdnTvCodes"] != null)
-            {
-                string[] arrUsersSystemRights = objFormCollection["hdnTvCodes"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
-                string[] arrSystemRights = strModule_right_Code.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-                var ExceptsystemRights = arrSystemRights.Except(arrUsersSystemRights);
-                foreach (string SystemRightsCode in ExceptsystemRights)
-                {
-                    if (SystemRightsCode != "0")
-                    {
-                        Users_Exclusion_Rights objTR = new Users_Exclusion_Rights();
-                        objTR.EntityState = State.Added;
-                        objTR.Module_Right_Code = Convert.ToInt32(SystemRightsCode);
-                        ExclusionRightsList.Add(objTR);
-                    }
-                }
-            }
-            IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code && x.EntityState != State.Deleted);
-            var Deleted_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
-            var Updated_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
-            var Added_Users_Exclusion_Rights = CompareLists<Users_Exclusion_Rights>(ExclusionRightsList.ToList<Users_Exclusion_Rights>(), objU.Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>(), comparerExclusion_Rights, ref Deleted_Users_Exclusion_Rights, ref Updated_Users_Exclusion_Rights);
-            Added_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Add(t));
-            Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => t.EntityState = State.Deleted);
+            #region Removed Users Exclution Rights Functionality by JD
+
+            //ICollection<Users_Exclusion_Rights> ExclusionRightsList = new HashSet<Users_Exclusion_Rights>();
+            //if (objFormCollection["hdnTvCodes"] != null)
+            //{
+            //    string[] arrUsersSystemRights = objFormCollection["hdnTvCodes"].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            //    string strModule_right_Code = string.Join(",", new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Security_Group_Code == objU.Security_Group_Code).ToList().Select(x => Convert.ToString(x.System_Module_Rights_Code)));
+            //    string[] arrSystemRights = strModule_right_Code.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+            //    var ExceptsystemRights = arrSystemRights.Except(arrUsersSystemRights);
+            //    foreach (string SystemRightsCode in ExceptsystemRights)
+            //    {
+            //        if (SystemRightsCode != "0")
+            //        {
+            //            Users_Exclusion_Rights objTR = new Users_Exclusion_Rights();
+            //            objTR.EntityState = State.Added;
+            //            objTR.Module_Right_Code = Convert.ToInt32(SystemRightsCode);
+            //            ExclusionRightsList.Add(objTR);
+            //        }
+            //    }
+            //}
+            //IEqualityComparer<Users_Exclusion_Rights> comparerExclusion_Rights = new LambdaComparer<Users_Exclusion_Rights>((x, y) => x.Module_Right_Code == y.Module_Right_Code && x.EntityState != State.Deleted);
+            //var Deleted_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
+            //var Updated_Users_Exclusion_Rights = new List<Users_Exclusion_Rights>();
+            //var Added_Users_Exclusion_Rights = CompareLists<Users_Exclusion_Rights>(ExclusionRightsList.ToList<Users_Exclusion_Rights>(), objU.Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>(), comparerExclusion_Rights, ref Deleted_Users_Exclusion_Rights, ref Updated_Users_Exclusion_Rights);
+            //Added_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => objU.Users_Exclusion_Rights.Add(t));
+            //Deleted_Users_Exclusion_Rights.ToList<Users_Exclusion_Rights>().ForEach(t => t.EntityState = State.Deleted);
+
+            #endregion
 
             ICollection<Users_Configuration> UsersConfigurationList = new HashSet<Users_Configuration>();
             int Count = 0;
@@ -788,16 +809,19 @@ namespace RightsU_Plus.Controllers
             }
             if (valid)
             {
+                string Action = "C";
                 int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                 CommonUtil objCommonUtil = new CommonUtil();
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 if (Convert.ToInt32(objFormCollection["hdnUsers_Code"]) > 0)
                 {
+                    Action = "U";
                     message = objMessageKey.Recordupdatedsuccessfully;
                     //message = message.Replace("{ACTION}", "updated");
                 }
                 else
                 {
+                    Action = "C";
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
                     string IsLDAPAuthReq = ConfigurationManager.AppSettings["isLDAPAuthReqd"].ToString().Trim().ToUpper();
@@ -814,6 +838,16 @@ namespace RightsU_Plus.Controllers
                     }
                 }
                 FetchData();
+
+                try
+                {                    
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objU);
+                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForUsers), Convert.ToInt32(objU.Users_Code), LogData, Action, objLoginUser.Users_Code);
+                }
+                catch (Exception ex)
+                {
+
+                }
             }
             else
             {
