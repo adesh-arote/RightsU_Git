@@ -2023,7 +2023,7 @@ namespace RightsU_Plus.Controllers
                 parm[30] = new ReportParameter("BUCode", BU_Code.ToString());
                 parm[31] = new ReportParameter("IsDigital", chkDigital);
                 parm[32] = new ReportParameter("L1Output", "N");
-                parm[33] = new ReportParameter("Report_Type", "M");
+                parm[33] = new ReportParameter("Report_Type", Report_Type);
 
             }
 
