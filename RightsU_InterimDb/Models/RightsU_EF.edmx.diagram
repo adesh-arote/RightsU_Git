@@ -1110,6 +1110,8 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Master_Log" Width="1.5" PointX="37" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_LP" Width="1.5" PointX="11.5" PointY="134.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

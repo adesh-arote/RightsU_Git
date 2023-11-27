@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPAvailability]
+﻿CREATE PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
 	
@@ -1428,7 +1428,7 @@ BEGIN
 
 		UPDATE tm SET tm.LanguageNames = tml.LanguageNames
 		FROM #DBAvailLanguages tm 
-		INNER JOIN #DBAvailLanguages tml ON tm.LanguageCodes = tml.LanguageCodes
+		INNER JOIN #TempLanguageNames tml ON tm.LanguageCodes = tml.LanguageCodes
 
 	END
 	

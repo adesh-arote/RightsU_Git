@@ -1882,5 +1882,11 @@ namespace RightsU_BLL
             USP_DAL objContext = new USP_DAL(conStr);
             return objContext.USP_Title_PosterList(Title_Code, Title_language_Code, Title_Star_Cast, Title_Genre_Code, Title_Type, Poster_Status);
         }
+
+        public virtual ObjectResult<USP_Validate_LP_Result> USP_Validate_LP(Nullable<int> deal_Code, string title_Code, Nullable<int> epsFrom, Nullable<int> epsTo, Nullable<int> module_Code)
+        {
+            USP_DAL objContext = new USP_DAL(conStr);
+            return objContext.USP_Validate_LP(deal_Code, title_Code, epsFrom, epsTo, module_Code);
+        }
     }
 }
