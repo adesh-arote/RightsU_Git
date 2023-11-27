@@ -2014,7 +2014,7 @@ BEGIN
 			END
 		ELSE
 			BEGIN
-				SELECT * FROM #tmpMulExportToExcel
+				SELECT * FROM #tmpMulExportToExcel order by case when ISNUMERIC(Col01) = 0 then '0' else Col01 end asc
 			END
 	  --SELECT * FROM #tmpMulExportToExcel  
 	   --DROP TABLE #tmpExportToExcel     
