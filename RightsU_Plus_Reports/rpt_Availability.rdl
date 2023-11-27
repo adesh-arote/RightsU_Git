@@ -35157,7 +35157,7 @@ IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value)
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Rigion</Value>
+                                  <Value>Region</Value>
                                   <Style>
                                     <FontFamily>Arial</FontFamily>
                                     <FontWeight>Bold</FontWeight>
