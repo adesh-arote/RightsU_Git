@@ -458,6 +458,7 @@ namespace RightsU_DAL
         public DbSet<AL_Purchase_Order_Details> AL_Purchase_Order_Details { get; set; }
         public DbSet<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
         public DbSet<Syn_Deal_Digital_Detail> Syn_Deal_Digital_Detail { get; set; }
+        public DbSet<Acq_Deal_Run_LP> Acq_Deal_Run_LP { get; set; }
 
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string IS_Sport_Right)
         {
@@ -6173,6 +6174,31 @@ namespace RightsU_DAL
                 new ObjectParameter("Poster_Status", typeof(string));
 
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_PosterList_Result>("USP_Title_PosterList", title_CodeParameter, title_language_CodeParameter, title_Star_CastParameter, title_Genre_CodeParameter, title_TypeParameter, poster_StatusParameter);
+        }
+
+        public virtual ObjectResult<USP_Validate_LP_Result> USP_Validate_LP(Nullable<int> deal_Code, string title_Code, Nullable<int> epsFrom, Nullable<int> epsTo, Nullable<int> module_Code)
+        {
+            var deal_CodeParameter = deal_Code.HasValue ?
+                new ObjectParameter("Deal_Code", deal_Code) :
+                new ObjectParameter("Deal_Code", typeof(int));
+
+            var title_CodeParameter = title_Code != null ?
+                new ObjectParameter("Title_Code", title_Code) :
+                new ObjectParameter("Title_Code", typeof(string));
+
+            var epsFromParameter = epsFrom.HasValue ?
+                new ObjectParameter("EpsFrom", epsFrom) :
+                new ObjectParameter("EpsFrom", typeof(int));
+
+            var epsToParameter = epsTo.HasValue ?
+                new ObjectParameter("EpsTo", epsTo) :
+                new ObjectParameter("EpsTo", typeof(int));
+
+            var module_CodeParameter = module_Code.HasValue ?
+                new ObjectParameter("Module_Code", module_Code) :
+                new ObjectParameter("Module_Code", typeof(int));
+
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_LP_Result>("USP_Validate_LP", deal_CodeParameter, title_CodeParameter, epsFromParameter, epsToParameter, module_CodeParameter);
         }
     }
 }

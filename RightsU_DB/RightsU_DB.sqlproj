@@ -1740,6 +1740,10 @@
     <Build Include="dbo\User Defined Types\Booking_Sheet_Import_Utility.sql" />
     <Build Include="dbo\User Defined Types\Acq_Deal_Rights.sql" />
     <Build Include="dbo\Tables\Master_Log.sql" />
+    <Build Include="dbo\Stored Procedures\USP_API_Bind_Extend_Column_Grid.sql" />
+    <Build Include="dbo\Stored Procedures\USP_API_Title_List.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_LP.sql" />
+    <Build Include="dbo\Tables\Acq_Deal_Run_LP.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
@@ -1758,5 +1762,6 @@
     <None Include="Database Scripts\DBSchema_v5.0.14.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.14.sql" />
     <None Include="Database Scripts\Script1.sql" />
+    <None Include="Database Scripts\Script2.sql" />
   </ItemGroup>
 </Project>

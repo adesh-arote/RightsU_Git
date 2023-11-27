@@ -118,6 +118,7 @@
     <Compile Include="Acquisition_Entities\Acq_Deal_Rights_Title.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Run.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Run_Channel.cs" />
+    <Compile Include="Acquisition_Entities\Acq_Deal_Run_LP.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Run_Repeat_On_Day.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Run_Shows.cs" />
     <Compile Include="Acquisition_Entities\Acq_Deal_Run_Title.cs" />
@@ -672,6 +673,7 @@
     <Compile Include="StoreProcedure_Entities\USP_Validate_Close_Movie__Scheduled_Run_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Validate_Duplicate_Syn_Run_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Validate_Episode_Result.cs" />
+    <Compile Include="StoreProcedure_Entities\USP_Validate_LP_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Validate_Rights_Duplication_UDT.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Validate_Run_Result.cs" />
     <Compile Include="StoreProcedure_Entities\USP_Validate_SDM_Title_Result.cs" />

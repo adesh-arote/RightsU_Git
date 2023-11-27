@@ -2285,7 +2285,6 @@ WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -5854,7 +5853,7 @@ WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Isnothing(Fields!Rights_Start_Date.Value),"",Fields!Rights_Start_Date.Value)</Value>
+                                  <Value>=Fields!Rights_Start_Date.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5891,7 +5890,7 @@ WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Isnothing(Fields!Rights_End_Date.Value),"",Fields!Rights_End_Date.Value)</Value>
+                                  <Value>=Fields!Rights_End_Date.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5928,7 +5927,7 @@ WHERE        (Parameter_Name = 'Is_Display_CBFCRating_In_Report')</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(Isnothing(Fields!Rights_End_Date.Value),"",Fields!Rights_Expiry_Status.Value)</Value>
+                                  <Value>=Fields!Rights_Expiry_Status.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>

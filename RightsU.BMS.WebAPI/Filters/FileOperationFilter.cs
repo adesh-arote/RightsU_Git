@@ -5,7 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Http.Description;
 
-namespace RightsU.BMS.WebAPI
+namespace RightsU.BMS.WebAPI.Filters
 {
     public class FileOperationFilter:IOperationFilter
     {

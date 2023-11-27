@@ -24,8 +24,7 @@
             enctype: 'multipart/form-data',
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                Extended_Group_Code: Id,
-                CommandName: CommandName
+                Extended_Group_Code: Id
             }),
             async: false,
             success: function (result) {
@@ -63,6 +62,7 @@
     var URL_ActivateDeactivateGrpDtl = '@Url.Action("ActivateDeactivateGrpDtl", "Extended_Group")';
     var URL_SaveMaster = '@Url.Action("SaveMaster", "Extended_Group")';
     var URL_Index = '@Url.Action("Index", "Extended_Group")';
+    var URL_ActivateDeactivateExtdGrp = '@Url.Action("ActivateDeactivateExtdGrp", "Extended_Group")';
 
     $(document).ready(function () {
         if (LayoutDirection_G == "RTL") {
@@ -260,7 +260,7 @@
             success: function (result) {
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
-
+                initializeTooltip();
                 addNumeric();
             },
             error: function (result) {
@@ -647,6 +647,30 @@
             $(".AddConth").attr("style", "display:none");
             $(".AddContd").attr("style", "display:none");
         }
+    }
+
+    function ActivateDeactivateExtdGrp(ExtdGrpCode, doActive) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_ActivateDeactivateExtdGrp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                ExtdGrpCode: ExtdGrpCode,
+                doActive: doActive
+            }),
+            success: function (result) {
+                if (result.Status == "S") {
+                    showAlert("S", result.Message);
+                    BindExtendedGroupList();
+                }
+                else {
+                    showAlert("E", result.Message);
+                }
+            }
+        })  
     }
 
 </script>

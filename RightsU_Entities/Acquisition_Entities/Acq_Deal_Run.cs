@@ -21,6 +21,7 @@ namespace RightsU_Entities
             this.Acq_Deal_Run_Title = new HashSet<Acq_Deal_Run_Title>();
             this.Acq_Deal_Run_Yearwise_Run = new HashSet<Acq_Deal_Run_Yearwise_Run>();
             this.Acq_Deal_Run_Shows = new HashSet<Acq_Deal_Run_Shows>();
+            this.Acq_Deal_Run_LP = new HashSet<Acq_Deal_Run_LP>();
         }
 
         public State EntityState { get; set; }    public int Acq_Deal_Run_Code { get; set; }
@@ -59,6 +60,9 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Last_updated_Time { get; set; }
         public string Channel_Type { get; set; }
         public Nullable<int> Channel_Category_Code { get; set; }
+        public Nullable<System.DateTime> Start_Date { get; set; }
+        public Nullable<System.DateTime> End_Date { get; set; }
+
         public virtual Acq_Deal Acq_Deal { get; set; }
         public virtual Channel Channel { get; set; }
         public virtual ICollection<Acq_Deal_Run_Channel> Acq_Deal_Run_Channel { get; set; }
@@ -67,5 +71,6 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Run_Title> Acq_Deal_Run_Title { get; set; }
         public virtual ICollection<Acq_Deal_Run_Yearwise_Run> Acq_Deal_Run_Yearwise_Run { get; set; }
         public virtual ICollection<Acq_Deal_Run_Shows> Acq_Deal_Run_Shows { get; set; }
+        public virtual ICollection<Acq_Deal_Run_LP> Acq_Deal_Run_LP { get; set; }
     }
 }

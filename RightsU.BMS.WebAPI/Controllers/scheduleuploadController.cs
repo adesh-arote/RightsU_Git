@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities;
+using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.LogClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,7 @@ namespace RightsU.BMS.WebAPI.Controllers
 {
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
+    [HideInDocs]
     public class scheduleuploadController : ApiController
     {
         private readonly Channel_Service objChannelServices = new Channel_Service();
@@ -27,6 +30,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly BMSServices objBMSServices = new BMSServices();
         private readonly BMS_Log_Service objBMSLogServices = new BMS_Log_Service();
         private readonly Upload_Files_Service objUploadFilesService = new Upload_Files_Service();
+        private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
 
         /// <summary>
         /// Text File Process Detail
@@ -42,6 +46,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("scheduleuploadtxt")]
         public HttpResponseMessage scheduleuploadtxt(string ChannelName = null )
         {
+            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+
+            if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Txt, authenticationToken, RefreshToken))
+            {
+                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            }
+
             Return _objRet = new Return();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
@@ -328,6 +341,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("scheduleuploadcsv")]
         public HttpResponseMessage scheduleuploadcsv(string ChannelName = null)
         {
+            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+
+            if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Csv, authenticationToken, RefreshToken))
+            {
+                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            }
+
             Return _objRet = new Return();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;

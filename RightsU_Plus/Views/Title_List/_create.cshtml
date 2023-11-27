@@ -33,7 +33,10 @@
             else
                 $("#liMusicLabel").hide();
 
-            ShowHideSeasonColumn();
+            if ('@ViewBag.AddSeasonForTitleTypeProgram' == 'Y') {
+                ShowHideSeasonColumn();
+            }
+            
         })
         $("#txtDuration").numeric({
             allowMinus: false,

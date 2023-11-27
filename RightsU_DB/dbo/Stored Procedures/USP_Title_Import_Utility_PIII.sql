@@ -427,7 +427,11 @@ BEGIN
 	
 				WHILE @@FETCH_STATUS = 0  
 				BEGIN 
-						IF (ISNUMERIC(Replace(Replace(@Value,'+','A'),'-','A') + '.0e0') > 0)
+						IF (ISNUMERIC(@Value) > 0 AND @Display_Name = 'Duration (in mins)')
+						BEGIN
+							UPDATE #TempTitleUnPivot SET RefKey = 1 WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value AND ColumnHeader = @Display_Name
+						END
+						ELSE IF (ISNUMERIC(Replace(Replace(@Value,'+','A'),'-','A') + '.0e0') > 0)
 						BEGIN
 							UPDATE #TempTitleUnPivot SET RefKey = 1 WHERE ExcelSrNo = @ExcelNo_IntDec AND TitleData = @Value AND ColumnHeader = @Display_Name
 						END
@@ -477,6 +481,16 @@ BEGIN
 					WHERE ExcelSrNo IN (
 						SELECT ExcelSrNo
 						FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 2 AND CAST(TitleData AS DECIMAL(38,2)) NOT BETWEEN 1 AND 9999
+					)
+				END
+
+				IF ('DURATION (IN MINS)' = UPPER(@Display_Name))
+				BEGIN	
+
+					UPDATE #TempTitleUnPivot SET IsError = 'Y', ErrorMessage = ISNULL(ErrorMessage, '') + '~Column ('+ @Display_Name +') should be between 0 and 9999'
+					WHERE ExcelSrNo IN (
+						SELECT ExcelSrNo
+						FROM #TempTitleUnPivot WHERE ColumnHeader = @Display_Name AND RefKey = 1 AND CAST(TitleData AS DECIMAL(38,2)) NOT BETWEEN 0 AND 9999
 					)
 				END
 
@@ -1757,7 +1771,7 @@ BEGIN
 					
 					-----------EXTENDED COLUMN IS Multiple = N With DDL AND Map_Extended_Column--------------------
 					INSERT INTO Map_Extended_Columns(Record_Code, Table_Name, Columns_Code, Columns_Value_Code, Is_Multiple_Select, Row_No)
-					SELECT AA.RefKey,'TITLE', EC.Columns_Code, A.RefKey, 'N', TempRow_No
+					SELECT DISTINCT AA.RefKey,'TITLE', EC.Columns_Code, A.RefKey, 'N', TempRow_No
 					FROM #TempTitleUnPivot A
 						INNER JOIN #TempTitleUnPivot AA ON AA.ExcelSrNo = A.ExcelSrNo 
 						INNER JOIN DM_Title_Import_Utility B (NOLOCK) ON A.ColumnHeader COLLATE SQL_Latin1_General_CP1_CI_AS = B.Display_Name

@@ -122,14 +122,6 @@
                         </td>
                         <td>
                             <div class="expandable">
-
-                                @(item.Release_Type == "W" ? "World" : (item.Release_Type == "T" ? "Territory" : "Country"))
-
-                            </div>
-                        </td>
-                        <td>
-                            <div class="expandable">
-
                                 @if (Territory_List.Count > 0)
                                 {
                                     string strRelease = "";
@@ -139,14 +131,21 @@
                                 @if (Country_List.Count > 0)
                                 {
                                     string strRelease = "";
-                                    strRelease = string.Join(", ", Country_List.Select(s=>s.Country_Name));
+                                    strRelease = string.Join(", ", Country_List.Select(s => s.Country_Name));
                                     @strRelease
                                 }
                                 @if (Territory_List.Count == 0 && Country_List.Count == 0)
                                 {
                                     @Html.Label("", "World")
 
-                                }
+                                }                                
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="expandable">
+                                @(item.Release_Type == "W" ? "World" : (item.Release_Type == "T" ? "Territory" : "Country"))
+
                             </div>
 
                         </td>
