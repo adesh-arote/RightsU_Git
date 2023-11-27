@@ -1277,9 +1277,10 @@ namespace RightsU_Plus.Controllers
 
                 if (isAeroplay == "N")
                 {
-                    int[] arrExtendedGroupCodes = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Extended_Group_Code).ToArray();
-                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && arrExtendedGroupCodes.Any(a=> x.Extended_Group_Code == a)).Select(x => x.Extended_Group_Code).FirstOrDefault();
-
+                    int[] arrExtendedGroupCodes = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Module_Code == GlobalParams.ModuleCodeForTitle && x.IsActive == "Y").Select(x => x.Extended_Group_Code).ToArray();
+                    //int[] arrExtendedGroupCodes = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Select(x => x.Extended_Group_Code).ToArray();
+                    //TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Columns_Code == obj.Columns_Code && x.Extended_Group.Module_Code == GlobalParams.ModuleCodeForTitle && arrExtendedGroupCodes.Any(a=> x.Extended_Group_Code == a)).Select(x => x.Extended_Group_Code).FirstOrDefault();
+                    TabCode = new Extended_Group_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).Where(x => x.Columns_Code == obj.Columns_Code && x.Is_Active == "Y" && arrExtendedGroupCodes.Any(item => item == x.Extended_Group_Code)).Select(x => x.Extended_Group_Code).FirstOrDefault().Value;
                     //Extended_Group_Code = new Extended_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Group_Name == "Additional Metadata").Select(x => x.Extended_Group_Code).FirstOrDefault();
                 }
                 else
@@ -1758,7 +1759,11 @@ namespace RightsU_Plus.Controllers
                         objMapExtendedColumns.Map_Extended_Columns_Details.Add(objMapExtDet);
                     }
                 }
-                if (hdnControlType == "DDL" && hdnRefTable.Trim().ToUpper() != "TALENT")
+                if (hdnControlType == "DDL" && hdnIsMultipleSelect == "N" && string.IsNullOrEmpty(hdnRefTable.Trim()))
+                {
+                    objMapExtendedColumns.Columns_Value_Code = Convert.ToInt32(hdnColumnValueCode);
+                }
+                else if (hdnControlType == "DDL" && hdnRefTable.Trim().ToUpper() != "TALENT")
                 {
                     foreach (string str in arrColumnsValueCode)
                     {

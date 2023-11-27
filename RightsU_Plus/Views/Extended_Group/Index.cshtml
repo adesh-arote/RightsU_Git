@@ -260,7 +260,7 @@
             success: function (result) {
                 $('#divBindList').empty();
                 $('#divBindList').html(result);
-
+                initializeTooltip();
                 addNumeric();
             },
             error: function (result) {
