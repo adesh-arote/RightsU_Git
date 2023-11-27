@@ -1425,6 +1425,7 @@
     <Content Include="Views\Reports\MusicAvailabilityReport.cshtml" />
     <Content Include="Views\DM_Title_Master_Import\BulkPosterUploadList.cshtml" />
     <Content Include="Views\DM_Title_Master_Import\_PosterTitleList.cshtml" />
+    <Content Include="Views\Reports\AuditLogReport.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
