@@ -3278,5 +3278,47 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
+
+        #region--- Audit Log report ---
+        public ActionResult AuditLogReport()
+        {
+            return View("~/Views/Reports/AuditLogReport.cshtml");
+        }
+
+        public JsonResult BindAuditLog_Search_Controls()
+        {
+            Dictionary<string, object> objJson = new Dictionary<string, object>();
+
+            MultiSelectList lstMasterList = new MultiSelectList(new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Parent_Module_Code == 1)
+                .Select(i => new { Display_Value = i.Module_Code, Display_Text = i.Module_Name }).ToList(), "Display_Value", "Display_Text");
+            MultiSelectList lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true)
+                .Select(i => new { Display_Value = i.Users_Code, Display_Text = i.Login_Name }).ToList(), "Display_Value", "Display_Text");
+
+            var items = new List<DDLActionType>();
+            foreach (String value in Enum.GetNames(typeof(ActionType)))
+            {
+                items.Add(new DDLActionType
+                {
+                    Text = value,
+                    Value = value
+                });
+            }
+
+            MultiSelectList lstActionType = new MultiSelectList(items.Select(i => new { Display_Value = i.Value, Display_Text = i.Text }).ToList(), "Display_Value", "Display_Text");
+
+            objJson.Add("lstMasterList", lstMasterList);
+            objJson.Add("lstUsers", lstUsers);
+            objJson.Add("lstActionType", lstActionType);
+
+            return Json(objJson);
+        }
+
+        #endregion
+    }
+
+    public class DDLActionType
+    {
+        public string Text { get; set; }
+        public string Value { get; set; }
     }
 }

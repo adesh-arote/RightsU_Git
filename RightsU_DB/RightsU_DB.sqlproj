@@ -1742,6 +1742,7 @@
     <Build Include="dbo\Tables\Master_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Bind_Extend_Column_Grid.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Title_List.sql" />
+    <Build Include="dbo\Functions\UFN_Calculate_PartyId.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

@@ -73,6 +73,7 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<int> Party_Category_Code { get; set; }
     	    public string Party_Type { get; set; }
     	    public Nullable<int> Party_Group_Code { get; set; }
+    	    public string Party_Id { get; set; }
     
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         public virtual ICollection<Acq_Deal_Licensor> Acq_Deal_Licensor { get; set; }
