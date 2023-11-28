@@ -84,7 +84,7 @@
                             @{
                                 Title_Objection_Type objTitleObjection = new Title_Objection_Type();
 
-                                if (item.Parent_Objection_Type_Code.Value > 0)
+                                if (item.Parent_Objection_Type_Code != null && item.Parent_Objection_Type_Code.Value > 0)
                                 {
                                     objTitleObjection = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName).GetById(item.Parent_Objection_Type_Code.Value);
                                 }
@@ -93,7 +93,7 @@
                             @*@{
                                     string ParentTypeName = Model.Where(x => x.Objection_Type_Code == item.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
                                 }*@
-                            <div class="expand_TOT_Name">@(objTitleObjection.Parent_Objection_Type_Code == 0 ? objTitleObjection.Objection_Type_Name : "")</div>
+                            <div class="expand_TOT_Name">@((objTitleObjection.Parent_Objection_Type_Code == null || objTitleObjection.Parent_Objection_Type_Code.Value == 0 ) ? objTitleObjection.Objection_Type_Name : "")</div>
                         </td>
                         <td align="center">
                             <span>@strActive</span>
