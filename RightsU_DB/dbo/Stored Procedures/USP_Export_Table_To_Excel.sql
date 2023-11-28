@@ -44,6 +44,7 @@ BEGIN
 		@Col_Head07 NVARCHAR(MAX) = '',    
 		@Col_Head08 NVARCHAR(MAX) = '',    
 		@Col_Head09 NVARCHAR(MAX) = '',    
+		@Col_Head10 NVARCHAR(MAX) = '',    
 		@Deactive NVARCHAR(MAX) = '',    
 		@Active NVARCHAR(MAX) = '',  
 		@Yes NVARCHAR(200) = '',  
@@ -560,14 +561,15 @@ BEGIN
 			@Col_Head06 = CASE WHEN  SM.Message_Key = 'PartyType' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
 			@Col_Head07 = CASE WHEN  SM.Message_Key = 'CSTNo' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head07	END,    
 			@Col_Head08 = CASE WHEN  SM.Message_Key = 'Status' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,
-			@Col_Head09 = CASE WHEN  SM.Message_Key = 'PartyMasterName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head09 END
+			@Col_Head09 = CASE WHEN  SM.Message_Key = 'PartyGroup' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head09 END,
+			@Col_Head10 = CASE WHEN  SM.Message_Key = 'PartyId' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head10 END
 
 	   FROM System_Message SM  (NOLOCK)   
 			INNER JOIN System_Module_Message SMM (NOLOCK) ON SMM.System_Message_Code = SM.System_Message_Code AND (SMM.Module_Code = @Module_Code OR ISNULL(@Module_Code, 0)= 0)    
-			AND SM.Message_Key IN ('PartyCode','PartyName', 'PartyCategory', 'Address','PhoneNo','PartyType','CSTNo','Status','PartyMasterName')    
+			AND SM.Message_Key IN ('PartyCode','PartyName', 'PartyCategory', 'Address','PhoneNo','PartyType','CSTNo','Status','PartyGroup','PartyId')    
 			INNER JOIN System_Language_Message SLM (NOLOCK) ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode    
-			INSERT INTO #tmpExportToExcel (Col01, Col02,  Col03, Col04, Col05,  Col06, Col07, Col08, Col09)     
-	   SELECT [Party Code],[Vendor_Name],[Party Category],[Address],[Phone No],[Party Type],[CST No],[Status],[PartyMasterName] FROM(    
+			INSERT INTO #tmpExportToExcel (Col01, Col02,  Col03, Col04, Col05,  Col06, Col07, Col08, Col09,Col10)     
+	   SELECT [Party Code],[Vendor_Name],[Party Category],[Address],[Phone No],[Party Type],[CST No],[Status],[PartyGroup],[Party_Id] FROM(    
 	   SELECT     
 	   Sorter = 1,    
 	   CAST(v.Vendor_Code AS VARCHAR(10)) AS [Party Code],Vendor_Name AS [Vendor_Name],
@@ -575,7 +577,7 @@ BEGIN
 	   [Address],Phone_No As [Phone No],                                
 	   Stuff ((SELECT ', '+r.Role_Name from [Role] r (NOLOCK) INNER JOIN Vendor_Role vr (NOLOCK) ON v.Vendor_Code=vr.Vendor_Code where r.Role_Code=vr.Role_Code FOR XML PATH('')), 1, 1, '')                                
 	   AS [Party Type],CST_No AS [CST No],                                
-	   CASE WHEN v.Is_Active = 'N' THEN @Deactive ELSE @Active END AS [Status],PG.Party_Group_Name AS [PartyMasterName], Last_Updated_Time
+	   CASE WHEN v.Is_Active = 'N' THEN @Deactive ELSE @Active END AS [Status],PG.Party_Group_Name AS [PartyGroup], Last_Updated_Time,Party_Id
 	   FROM Vendor v (NOLOCK)
 	   LEFT JOIN Party_Group PG (NOLOCK) ON v.Party_Group_Code = PG.Party_Group_Code
 	   where CASE WHEN @IsAeroplay = 'Y' THEN v.Party_Type ELSE v.Party_Type END = 
@@ -587,7 +589,7 @@ BEGIN
   
 	  INSERT INTO #tmpMulExportToExcel   
 	  SELECT  @Col_Head01 as Col01 ,@Col_Head02 as Col02 ,@Col_Head03 as Col03, @Col_Head04 as Col04,@Col_Head05 as Col05,@Col_Head06 as Col06,@Col_Head07 as Col07,@Col_Head08 as Col08,@Col_Head09 as Col09  
-	   ,''as Col10,''as Col11,''as Col12,''as Col13,''as Col14,''as Col15,''as Col16,''as Col17,''as Col18,''as Col19,''as Col20,''as Col21,''as Col22,''as Col23,''as Col24,  
+	   ,@Col_Head10 as Col10,''as Col11,''as Col12,''as Col13,''as Col14,''as Col15,''as Col16,''as Col17,''as Col18,''as Col19,''as Col20,''as Col21,''as Col22,''as Col23,''as Col24,  
 	   ''as Col25,''as Col26,''as Col27,''as Col28,''as Col29,''as Col30  
 		UNION ALL  
 	  SELECT * FROM #tmpExportToExcel   
