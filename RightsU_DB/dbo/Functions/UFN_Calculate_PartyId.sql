@@ -15,7 +15,7 @@ BEGIN
 	SET @PartyIdPrefix = (SELECT Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'PartyIdPrefix')
 	SET @PartyIdPadding = (SELECT Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'PartyIdPadding')
 
-	SET @MaxPartyId = (SELECT ISNULL(MAX(CAST(REPLACE(Party_Id,@PartyIdPrefix,'') as INT)),0) FROM Vendor (NOLOCK) WHERE Party_Type='V')
+	SET @MaxPartyId = (SELECT ISNULL(MAX(CAST(REPLACE(Party_Id,@PartyIdPrefix,'') as INT)),0) FROM Vendor (NOLOCK) WHERE Party_Type='V' AND Party_Id LIKE '%'+@PartyIdPrefix+'%')
 
 	SET @MaxPartyId = ISNULL(@MaxPartyId,0) + 1
 
