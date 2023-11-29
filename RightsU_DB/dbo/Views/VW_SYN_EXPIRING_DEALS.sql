@@ -36,7 +36,7 @@ MainOutput.* From (
 	INNER JOIN Syn_Deal_Rights SDR ON SDR.Syn_Deal_Code = SD.Syn_Deal_Code
 	INNER JOIN Syn_Deal_Rights_Title ADR_TIT ON ADR_TIT.Syn_Deal_Rights_Code = SDR.Syn_Deal_Rights_Code AND ADR_TIT.Title_Code = SDM.Title_Code
 	LEFT JOIN ROFR R ON R.ROFR_Code = SDR.ROFR_Code
-	WHERE Sd.Deal_Workflow_Status = 'A'
+	WHERE Sd.Deal_Workflow_Status = 'A' AND SDR.Is_Pushback = 'N'
 	--INNER JOIN Syn_Deal_Licensor a1 On A1.Vendor_Code=V.Vendor_Code
 	--inner join Vendor v on v.Vendor_Code=a.Vendor_Code
 ) MainOutput
