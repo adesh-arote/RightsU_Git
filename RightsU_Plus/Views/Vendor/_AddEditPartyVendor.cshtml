@@ -893,31 +893,59 @@
                                 }
 
                             }
-                            @if (ViewBag.Mode == "V")
+                            @if (!(ViewBag.isProdHouse == true && ViewBag.AllowShortCode == "Y"))
                             {
-                                <td>@objMessageKey.PartyId</td>
-                                <td>
-                                    <span>@objVendor.Party_Id</span>
-                                </td>
-                            }
-                            else
-                            {
-                                <td>@objMessageKey.PartyId</td>
-                                <td>
-                                    @if (objVendor.Vendor_Code > 0)
-                                    {
+                                if (ViewBag.Mode == "V")
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
                                         <span>@objVendor.Party_Id</span>
-                                    }
-                                    else
-                                    {
-                                        <span>New Party ID</span>
-                                    }
-                                </td>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        @if (objVendor.Vendor_Code > 0)
+                                        {
+                                            <span>@objVendor.Party_Id</span>
+                                        }
+                                        else
+                                        {
+                                            <span>New Party ID</span>
+                                        }
+                                    </td>
+                                }
                             }
 
                         </tr>
+                        @if (ViewBag.isProdHouse == true && ViewBag.AllowShortCode == "Y")
+                        {
+                            <tr>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        <span>@objVendor.Party_Id</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        @if (objVendor.Vendor_Code > 0)
+                                        {
+                                            <span>@objVendor.Party_Id</span>
+                                        }
+                                        else
+                                        {
+                                            <span>New Party ID</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
 
-
+                        }
 
                     </table>
                 </td>
