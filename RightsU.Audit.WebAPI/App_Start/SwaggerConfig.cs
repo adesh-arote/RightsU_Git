@@ -1,12 +1,12 @@
 using System.Web.Http;
 using WebActivatorEx;
-using RightsU.BMS.WebAPI;
+using RightsU.Audit.WebAPI;
 using Swashbuckle.Application;
-using RightsU.BMS.WebAPI.Filters;
+using RightsU.Audit.WebAPI.Filters;
 
 [assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
-namespace RightsU.BMS.WebAPI
+namespace RightsU.Audit.WebAPI
 {
     public class SwaggerConfig
     {
@@ -33,7 +33,7 @@ namespace RightsU.BMS.WebAPI
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "RightsU BMS API Documentation");
+                        c.SingleApiVersion("v1", "AuditLog Documentation");
 
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
@@ -63,10 +63,11 @@ namespace RightsU.BMS.WebAPI
                         //    .Description("Basic HTTP Authentication");
                         //
                         // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
-                        //c.ApiKey("apiKey")
-                        //    .Description("API Key Authentication")
-                        //    .Name("apiKey")
-                        //    .In("header");
+                        c.ApiKey("AuthKey")
+                            .Description("API Key Authentication")
+                            .Name("AuthKey")
+                            .In("header");
+                        
                         //
                         //c.OAuth2("oauth2")
                         //    .Description("OAuth2 Implicit Grant")
@@ -102,8 +103,9 @@ namespace RightsU.BMS.WebAPI
                         // those comments into the generated docs and UI. You can enable this by providing the path to one or
                         // more Xml comment files.
                         //
-                        c.IncludeXmlComments(string.Format(@"{0}\bin\RightsU.BMS.WebAPI.Swagger.XML", System.AppDomain.CurrentDomain.BaseDirectory));
-                        c.IncludeXmlComments(string.Format(@"{0}\bin\RightsU.BMS.Entities.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+                        c.IncludeXmlComments(string.Format(@"{0}\bin\RightsU.Audit.WebAPI.Documentation.XML", System.AppDomain.CurrentDomain.BaseDirectory));
+                        c.IncludeXmlComments(string.Format(@"{0}\bin\RightsU.Audit.Entities.xml", System.AppDomain.CurrentDomain.BaseDirectory));
+
                         // Swashbuckle makes a best attempt at generating Swagger compliant JSON schemas for the various types
                         // exposed in your API. However, there may be occasions when more control of the output is needed.
                         // This is supported through the "MapType" and "SchemaFilter" options:
@@ -143,7 +145,7 @@ namespace RightsU.BMS.WebAPI
                         // You can change the serializer behavior by configuring the StringToEnumConverter globally or for a given
                         // enum type. Swashbuckle will honor this change out-of-the-box. However, if you use a different
                         // approach to serialize enums as strings, you can also force Swashbuckle to describe them as strings.
-                        ////For Enable Enum Parameter as Dropdown
+                        //
                         c.DescribeAllEnumsAsStrings();
 
                         // Similar to Schema filters, Swashbuckle also supports Operation and Document filters:
@@ -152,8 +154,7 @@ namespace RightsU.BMS.WebAPI
                         // Operation filters.
                         //
                         c.OperationFilter<Consumes>();
-                        c.OperationFilter<Produces>();
-                        c.OperationFilter<FileOperationFilter>();
+                        c.OperationFilter<Produces>();                        
                         c.DocumentFilter<HideInDocsFilter>();
                         //
                         // If you've defined an OAuth2 flow as described above, you could use a custom filter
@@ -186,7 +187,7 @@ namespace RightsU.BMS.WebAPI
                         // Use the "DocumentTitle" option to change the Document title.
                         // Very helpful when you have multiple Swagger pages open, to tell them apart.
                         //
-                        //c.DocumentTitle("My Swagger UI");
+                        c.DocumentTitle("My Swagger UI");
 
                         // Use the "InjectStylesheet" option to enrich the UI with one or more additional CSS stylesheets.
                         // The file must be included in your project as an "Embedded Resource", and then the resource's
@@ -221,8 +222,8 @@ namespace RightsU.BMS.WebAPI
                         // Specify which HTTP operations will have the 'Try it out!' option. An empty paramter list disables
                         // it for all operations.
                         //
-                        c.SupportedSubmitMethods("POST","GET");
-                        
+                        c.SupportedSubmitMethods("GET", "POST");
+
                         // Use the CustomAsset option to provide your own version of assets used in the swagger-ui.
                         // It's typically used to instruct Swashbuckle to return your version instead of the default
                         // when a request is made for "index.html". As with all custom content, the file must be included
@@ -252,7 +253,7 @@ namespace RightsU.BMS.WebAPI
                         // If your API supports ApiKey, you can override the default values.
                         // "apiKeyIn" can either be "query" or "header"
                         //
-                        //c.EnableApiKeySupport("apiKey", "header");
+                        c.EnableApiKeySupport("AuthKey", "header");
                     });
         }
     }
