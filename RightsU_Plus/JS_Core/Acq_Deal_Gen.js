@@ -74,13 +74,37 @@ function Enable_DisableControl(isDisable) {
     debugger
     $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', isDisable);
     $("input[name='Is_Master_Deal'][type=radio]").attr('disabled', isDisable);
-    $("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
+    //$("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
     $("select[ID='ddlLicensor_Buyback']").attr('disabled', isDisable);
 
     var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
     if (roleCode == BuyBack) {
         $("input[name='Deal_Type_Code'][type=radio]").attr('disabled', true);
+        $("input[name='Role_Code'][type=radio]").attr('disabled', isDisable);
     }
+
+   
+
+    var titleCount = $("#tblMovie tr:not(:has(th))").length;
+    var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
+    //alert(acqDealMovie_Count, isDisable);
+
+    if (roleCode != BuyBack && acqDealMovie_Count > 0) {
+        if (roleCode != BuyBack && acqDealMovie_Count > 0 && isDisable == true) {
+            $('#rbMode_Acquisition_' + BuyBack).attr('disabled', true);
+            
+        }
+
+        if (roleCode != BuyBack && titleCount == 0 && isDisable == false) {
+            $('#rbMode_Acquisition_' + BuyBack).attr('disabled', false);
+
+        }
+    }
+    else if (roleCode != BuyBack && titleCount == 0){
+        $('#rbMode_Acquisition_' + BuyBack).attr('disabled', false);
+    }
+
+   
 
     if (isDisable) {
         $("select[ID='ddlMaster_Deal_List']").attr('disabled', isDisable);
@@ -1288,8 +1312,18 @@ function btnSaveTitle_OnClick(titleCodes, dealRightsCode) {
                         BindTitleGridview();
                         addNumeric();
                         BindTitleLabel(true);
+
+                        var titleCount = $("#tblMovie tr:not(:has(th))").length;
+                        var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
+
+                        if (roleCode != BuyBack && titleCount > 0) {
+                            $('#rbMode_Acquisition_' + BuyBack).attr('disabled', true);
+                        }
+
                         hideLoading();
                         $('#popup').modal('hide');
+
+                        
                     }
                 }
             },
@@ -2040,7 +2074,12 @@ function ValidateSavefromAcqGeneral(Type) {
 
                 general(TitleCode);
 
+                var titleCount = $("#tblMovie tr:not(:has(th))").length;
+                var roleCode = parseInt($("input[name='Role_Code']:radio:checked").val());
 
+                if (roleCode != BuyBack && titleCount > 0) {
+                    $('#rbMode_Acquisition_' + BuyBack).attr('disabled', true);
+                }
 
                 $('#popAddTitleDealPage').modal('hide');
                 showAlert("S", result.Message);

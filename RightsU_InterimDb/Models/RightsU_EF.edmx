@@ -6502,6 +6502,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Party_Category_Code" Type="int" />
           <Property Name="Party_Type" Type="char" MaxLength="1" />
           <Property Name="Party_Group_Code" Type="int" />
+          <Property Name="Party_Id" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -13780,6 +13781,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="UFN_Calculate_PartyId" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="varchar" />
         <Function Name="USP_Acq_Copy_Right_For_Sub_Deal" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="Acq_Deal_Code" Type="int" Mode="In" />
           <Parameter Name="Master_Deal_Movie_Code" Type="int" Mode="In" />
@@ -26877,6 +26879,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="AL_Booking_Sheet" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Vendor" FromRole="Vendor" ToRole="AL_Booking_Sheet" />
           <NavigationProperty Name="AL_Material_Tracking" Relationship="RightsU_NeoModel.FK_AL_Material_Tracking_Vendor" FromRole="Vendor" ToRole="AL_Material_Tracking" />
           <NavigationProperty Name="AL_Purchase_Order_Details" Relationship="RightsU_NeoModel.FK_AL_Purchase_Order_Details_Vendor" FromRole="Vendor" ToRole="AL_Purchase_Order_Details" />
+          <Property Name="Party_Id" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Vendor_Contacts">
           <Key>
@@ -41206,7 +41209,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </EntitySetMapping>
           <EntitySetMapping Name="Acq_Deal_Run">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Run">
-              <MappingFragment StoreEntitySet="Acq_Deal_Run">
+              <MappingFragment StoreEntitySet="Acq_Deal_Run">                                
                 <ScalarProperty Name="Channel_Category_Code" ColumnName="Channel_Category_Code" />
                 <ScalarProperty Name="Channel_Type" ColumnName="Channel_Type" />
                 <ScalarProperty Name="Last_updated_Time" ColumnName="Last_updated_Time" />
@@ -43707,6 +43710,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Vendors">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Vendor">
               <MappingFragment StoreEntitySet="Vendor">
+                <ScalarProperty Name="Party_Id" ColumnName="Party_Id" />
                 <ScalarProperty Name="Party_Group_Code" ColumnName="Party_Group_Code" />
                 <ScalarProperty Name="Party_Type" ColumnName="Party_Type" />
                 <ScalarProperty Name="Party_Category_Code" ColumnName="Party_Category_Code" />
@@ -51356,7 +51360,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="False" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
       </DesignerInfoPropertySet>

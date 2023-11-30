@@ -75,6 +75,7 @@ namespace RightsU_Entities
         public string Error_Description { get; set; }
         public Nullable<int> Party_Category_Code { get; set; }
         public string Party_Type { get; set; }
+        public string Party_Id { get; set; }
         public Nullable<int> Party_Group_Code { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }

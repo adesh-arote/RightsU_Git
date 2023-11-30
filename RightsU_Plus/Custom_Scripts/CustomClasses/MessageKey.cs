@@ -188,6 +188,7 @@ public class MessageKey
     public string AlternateTitleaddedsuccessfully { get; set; }
     public string AlternateTitleupdatedsuccessfully { get; set; }
     public string TitleProgramCategory { get; set; }
+    public string PartyId { get; set; }
 
     #endregion
 

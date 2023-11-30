@@ -37,6 +37,7 @@
     [Party_Category_Code] INT             NULL,
     [Party_Type]          CHAR (1)        NULL,
     [Party_Group_Code]    INT             NULL,
+    [Party_Id] VARCHAR(50) NULL, 
     CONSTRAINT [PK_Vendor] PRIMARY KEY CLUSTERED ([Vendor_Code] ASC),
     FOREIGN KEY ([Party_Group_Code]) REFERENCES [dbo].[Party_Group] ([Party_Group_Code]),
     CONSTRAINT [FK_Vendor_Party_Category] FOREIGN KEY ([Party_Category_Code]) REFERENCES [dbo].[Party_Category] ([Party_Category_Code])

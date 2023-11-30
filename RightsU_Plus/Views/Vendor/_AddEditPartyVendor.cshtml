@@ -78,6 +78,10 @@
             e.preventDefault();
             return false;
         });
+        $('.numericWithSpecialChar').keypress(function (e) {
+            debugger;
+            if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8 & e.keyCode != 43 & e.keyCode != 40 & e.keyCode != 41) { event.returnValue = false; return false; } }
+        });
         hideLoading();
     });
     function AddPartyMaster() {
@@ -418,7 +422,12 @@
             $('#Vendor_PhNo').val('')
             $('#Vendor_PhNo').attr('required', true)
             returnVal = false;
-        }
+            }
+            if ($.trim($('#Vendor_PANNo').val()) == "") {
+                $('#Vendor_PANNo').val('')
+                $('#Vendor_PANNo').attr('required', true)
+                returnVal = false;
+            }
         if ($('#ddlRoleList').val() == null) {
             $('#divddlRoleList').addClass("required");
             returnVal = false;
@@ -664,7 +673,7 @@
                                 }
                                 else
                                 {
-                                    <input type="text" id="Vendor_PhNo" name="Vendor_PhNo" class="numeric" maxlength="20" value="@objVendor.Phone_No" style="width:100%;" />
+                                    <input type="text" id="Vendor_PhNo" name="Vendor_PhNo" class="numericWithSpecialChar" maxlength="20" value="@objVendor.Phone_No" style="width:100%;" />
                                 }
                                 <br />
                                 <hr style="visibility:hidden" />
@@ -884,10 +893,59 @@
                                 }
 
                             }
+                            @if (!(ViewBag.isProdHouse == true && ViewBag.AllowShortCode == "Y"))
+                            {
+                                if (ViewBag.Mode == "V")
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        <span>@objVendor.Party_Id</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        @if (objVendor.Vendor_Code > 0)
+                                        {
+                                            <span>@objVendor.Party_Id</span>
+                                        }
+                                        else
+                                        {
+                                            <span>New Party ID</span>
+                                        }
+                                    </td>
+                                }
+                            }
 
                         </tr>
+                        @if (ViewBag.isProdHouse == true && ViewBag.AllowShortCode == "Y")
+                        {
+                            <tr>
+                                @if (ViewBag.Mode == "V")
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        <span>@objVendor.Party_Id</span>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@objMessageKey.PartyId</td>
+                                    <td>
+                                        @if (objVendor.Vendor_Code > 0)
+                                        {
+                                            <span>@objVendor.Party_Id</span>
+                                        }
+                                        else
+                                        {
+                                            <span>New Party ID</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
 
-
+                        }
 
                     </table>
                 </td>
@@ -902,14 +960,15 @@
                 </td>
 
                 <td class="right_nav pull-right" style="margin-right:10px">
-                    @if(Allow_Party_Details == "Y") { 
-                    if (ViewBag.Mode == "V")
+                    @if (Allow_Party_Details == "Y")
                     {
-                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('VIEW', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('ADD', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                        if (ViewBag.Mode == "V")
+                        {
+                            <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('VIEW', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-primary" onclick="ShowAdditionalInfo('ADD', '@objVendor.AL_Vendor_Details.Where(w => w.Vendor_Code == objVendor.Vendor_Code).Select(s => s.AL_Vendor_Detail_Code).FirstOrDefault()')">Additional Info</button>
                         }
                     }
                     @if (ViewBag.Mode != "V")
