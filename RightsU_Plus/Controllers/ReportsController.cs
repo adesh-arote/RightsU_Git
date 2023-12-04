@@ -3159,7 +3159,7 @@ namespace RightsU_Plus.Controllers
                     System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
                     lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
                 }
-                
+
                 //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
                 //&& lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
                 //    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
@@ -3167,7 +3167,7 @@ namespace RightsU_Plus.Controllers
                 if (!string.IsNullOrEmpty(selectedMusicLabelCode))
                 {
                     int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
-                
+
                     result =
                         new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
                                         join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
@@ -3270,7 +3270,7 @@ namespace RightsU_Plus.Controllers
             parm[0] = new ReportParameter("Music_Label_Code", MusicLabelCode);
             parm[1] = new ReportParameter("Title_Code", selectedTitleCodes);
             parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
-            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
+            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie" : TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
             parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             ReportViewer rptViewer = BindReport(parm, "rptMusicAvailability");
             ViewBag.ReportViewer = rptViewer;
@@ -3284,7 +3284,6 @@ namespace RightsU_Plus.Controllers
         {
             return View("~/Views/Reports/AuditLogReport.cshtml");
         }
-
         public JsonResult BindAuditLog_Search_Controls()
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
@@ -3311,6 +3310,16 @@ namespace RightsU_Plus.Controllers
             objJson.Add("lstActionType", lstActionType);
 
             return Json(objJson);
+        }
+        public JsonResult BindAuditLogDetailsReports(string SrchMaster = "", string SrchUsers = "", string SrchLog = "", string SrchStartDate = "", string SrchEndDate = "", string SrchActionType = "")
+        {
+            dynamic result = "";
+            int StartDtInSecond = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchStartDate));
+            int EndDtInSecond = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchEndDate));
+
+            //result = "{\"auditData\": [	{\"Version\": 2,\"Currency_Code\": 3026,\"Currency_Name\": \"Indian Rupees\",\"Currency_Sign\": \"INR\",\"Inserted_On\": \"2023-11-02T12:54:21.896845+05:30\",\"Inserted_By\": \"legal1\",\"Lock_Time\": null,\"Last_Updated_Time\": \"2023-11-02T12:54:32.5362367+05:30\",\"Last_Action_By\": \"legal1\",\"Is_Active\": \"Y\",\"Is_Base_Currency\": \"N\",\"Currency_Exchange_Rate\": [{\"Currency_Exchange_Rate_Code\": 3054,\"Currency_Code\": 3026,\"Effective_Start_Date\": \"2023-11-01T00:00:00+05:30\",\"System_End_Date\": null,\"Exchange_Rate\": 1.5,\"Exchange Dates\": [{\"Prop 1\": \"Value 1\",\"Prop 2\": 34,\"Prop 3\": 76,\"Prop 4\": \"Value 4\" },{\"Prop 1\": \"Value 1\",\"Prop 2\": 34,\"Prop 3\": 76,\"Prop 4\": \"Value 4\"}]}, {\"Currency_Exchange_Rate_Code\": 3014,\"Currency_Code\": 3036,\"Effective_Start_Date\": \"2023-11-01T00:00:00+05:30\",\"System_End_Date\": null,\"Exchange_Rate\": 2.3}, {\"Currency_Exchange_Rate_Code\": 30114,\"Currency_Code\": 30361,\"Effective_Start_Date\": \"2023-11-01T00:00:00+05:30\",\"System_End_Date\": null,\"Exchange_Rate\": 12.3,\"Exchange Dates\": [{\"Prop 1\": \"Value 1\",\"Prop 2\": 34,\"Prop 3\": 76,\"Prop 4\": \"Value 4\"},{\"Prop 1\": \"Value 1\",\"Prop 2\": 34,\"Prop 3\": 76,\"Prop 4\": \"Value 4\"}]}] 	}],\"paging\": {\"page\": 1,\"size\": 250,\"total\": 515}}";
+            result = "{\"auditData\":[{\"Version\":2,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5,\"Exchange Dates\":[{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"},{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"}]},{\"Currency_Exchange_Rate_Code\":3014,\"Currency_Code\":3036,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":2.3},{\"Currency_Exchange_Rate_Code\":30114,\"Currency_Code\":30361,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":12.3,\"Exchange Dates\":[{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"},{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"}]}]},{\"Version\":3,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5}]},{\"Version\":4,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5}]}],\"paging\":{\"page\":1,\"size\":250,\"total\":515}}";
+            return Json(result);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿@{
+﻿@using RightsU_BLL;
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     MessageKey objMessageKey = new MessageKey();
     if (Session["objMessageKey"] != null)
@@ -6,11 +7,21 @@
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
 
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+
+    RightsU_Entities.System_Parameter_New AuditReportDaysDiff = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AuditReportDaysDiff").FirstOrDefault();
+    var DaysDiff = AuditReportDaysDiff.Parameter_Value;
+
 }
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+
 <style>
     #divFilter {
         background: #eee;
@@ -37,8 +48,7 @@
 
     #ddlActionTypeList_chosen {
         width: 89% !important;
-    }    
-    
+    }
 </style>
 <script>
 
@@ -46,11 +56,113 @@
 
     $(document).ready(function () {
         debugger;
-
+        $('#ddlUsers,#ddlActionTypeList').css("display", 'none');
+        $('#ddlUsers').SumoSelect();
+        $('#ddlActionTypeList').SumoSelect();
         BindAuditLog_Search_Controls();
-     
     });
 
+    // Builds the HTML Table out of myList json data from Ivy restful service.
+    function buildHtmlTable(myList) {
+        addTable(myList, $("#excelDataTable"));
+    }
+
+    function addTable(list, appendObj) {
+        var columns = addAllColumnHeaders(list, appendObj);
+        for (var i = 0; i < list.length; i++) {
+            var row$ = $('<tr/>');
+            for (var colIndex = 0; colIndex < columns.length; colIndex++) {
+                var cellValue = list[i][columns[colIndex]];
+
+                if (cellValue == null) {
+                    cellValue = "";
+                }
+
+                if (cellValue.constructor === Array) {
+                    $a = $('<td/>');
+                    row$.append($a);
+                    addTable(cellValue, $a);
+
+                } else if (cellValue.constructor === Object) {
+
+                    var array = $.map(cellValue, function (value, index) {
+                        return [value];
+                    });
+
+                    $a = $('<td/>');
+                    row$.append($a);
+                    addObject(array, $a);
+
+                } else {
+                    row$.append($('<td style="padding:5px"/>').html(cellValue));
+                }
+            }
+            appendObj.append(row$);
+        }
+    }
+
+    function addObject(list, appendObj) {
+        for (var i = 0; i < list.length; i++) {
+            var row$ = $('<tr/>');
+
+            var cellValue = list[i];
+
+            if (cellValue == null) {
+                cellValue = "";
+            }
+
+            if (cellValue.constructor === Array) {
+                $a = $('<td style="padding:5px"/>');
+                row$.append($a);
+                addTable(cellValue, $a);
+
+            } else if (cellValue.constructor === Object) {
+
+                var array = $.map(cellValue, function (value, index) {
+                    return [value];
+                });
+
+                $a = $('<td style="padding:5px"/>');
+                row$.append($a);
+                addObject(array, $a);
+
+            } else {
+                row$.append($('<td style="padding:5px"/>').html(cellValue));
+            }
+            appendObj.append(row$);
+        }
+    }
+
+    // Adds a header row to the table and returns the set of columns.
+    // Need to do union of keys from all records as some records may not contain
+    // all records
+    function addAllColumnHeaders(list, appendObj) {
+        var columnSet = [];
+        var headerTr$ = $('<tr/>');
+
+        for (var i = 0; i < list.length; i++) {
+            var rowHash = list[i];
+            for (var key in rowHash) {                
+                if ($.inArray(key, columnSet) == -1) {    
+                    columnSet.push(key);
+                    headerTr$.append($('<th style="padding:5px" />').html(key));
+                    //if (key == "auditData") {
+                    //    columnSet.push(key);
+                    //}
+                    //else if (key == "paging") {
+
+                    //}
+                    //else {      
+                    //    columnSet.push(key);
+                    //    headerTr$.append($('<th style="padding:5px" />').html(key));
+                    //}                    
+                }
+            }
+        }
+        appendObj.append(headerTr$);
+
+        return columnSet;
+    }
 
     function BindAuditLog_Search_Controls() {
         $('.required').removeClass('required');
@@ -73,9 +185,9 @@
 
                         $("#ddlMasterList").empty();
                         $("#ddlUsers").empty();
-                        $("#ddlActionTypeList").empty();                        
-                        
-                        debugger;                       
+                        $("#ddlActionTypeList").empty();
+
+                        debugger;
 
                         $("#ddlMasterList").append($("<option>").val("").text("Please Select"));
                         $(result.lstMasterList).each(function (index, item) {
@@ -83,17 +195,15 @@
                         });
                         $("#ddlMasterList").trigger("chosen:updated")
 
-                        $("#ddlUsers").append($("<option>").val("").text("Please Select"));
                         $(result.lstUsers).each(function (index, item) {
                             $("#ddlUsers").append($("<option>").val(this.Value).text(this.Text));
                         });
-                        $("#ddlUsers").trigger("chosen:updated")
+                        $("#ddlUsers")[0].sumo.reload();
 
-                        $("#ddlActionTypeList").append($("<option>").val("").text("Please Select"));
                         $(result.lstActionType).each(function (index, item) {
                             $("#ddlActionTypeList").append($("<option>").val(this.Value).text(this.Text));
                         });
-                        $("#ddlActionTypeList").trigger("chosen:updated")
+                        $("#ddlActionTypeList")[0].sumo.reload();
 
                     }
                 },
@@ -101,7 +211,6 @@
                     alert('Error: ' + result.responseText);
                 }
             });
-
     }
 
     function ClearAll() {
@@ -114,237 +223,148 @@
         $("#ddlMasterList").val('').trigger("chosen:updated");
 
         $("#ddlUsers").find("option").attr("selected", false);
-        $("#ddlUsers").val('').trigger("chosen:updated");
+        $("#ddlUsers").val('')[0].sumo.reload();
 
         $("#ddlActionTypeList").find("option").attr("selected", false);
-        $("#ddlActionTypeList").val('').trigger("chosen:updated");
+        $("#ddlActionTypeList").val('')[0].sumo.reload();
 
-        $('#txtStart').val('');       
+        $('#txtStart').val('');
         $('#txtEnd').val('');
 
     }
 
-    function ShowHideSearchCriteria(show) {
-        if (show == 'S') {
-            $('#divFilter').show();
-            $('#tdShowImg').hide();
-            $('#tdHideImg').show();
-            $('#divFilter').width = '100%';
-        }
-        else if (show == 'H') {
-            debugger;
-            $('#divFilter').hide();
-            $('#tdHideImg').hide();
-            $('#tdShowImg').show();
-            $('#divFilter').width = '100%';
-        }
-    }
-
-      function populateTitle(evt) {
+    function ValidateStartDate() {
         debugger;
-        var Selected_BUCode = 0;
-        var Selected_Title_Codes = "";
 
-        var selectedtxt = $('#txtTitleSearch').val()
-        var dealtype = 0;
-        if ($('#ddlDeal_Type_CodeCommon').val() == null || $('#ddlDeal_Type_CodeCommon').val() == undefined)
-            dealtype = 0;
-        else
-            dealtype = $('#ddlDeal_Type_CodeCommon').val();
-        var txt = selectedtxt.split(',');
-        var iscomplete = true;
-        if (txt[txt.length - 1].trim() == "")
-            iscomplete = false;
-        if (iscomplete) {
-            $("#txtTitleSearch").autocomplete({
-                focus: function () {
-                    return false;
-                },
-                search: function (e, u) {
-                    $(this).addClass('loader');
-                },
-                source: function (request, response) {
-                    var param = {
-                        Selected_deal_type_Code: dealtype,
-                        Selected_BUCode: Selected_BUCode,
-                        Selected_Title_Codes: Selected_Title_Codes,
-                        Searched_Title: $('#txtTitleSearch').val()
-                    };
-                    $.ajax({
-                        url: '@Url.Action("GetTitle", "Title_List")',
-                        data: JSON.stringify(param),
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function (data) { return data; },
-                        success: function (data) {
-                            $("#lbTitle_Code").val('');
-                            if (data.length == 0) {
-                                data[0] = 'Result Not Found';
-                                response($.map(data, function (v, i) {
-                                    $('#txtTitleSearch').removeClass('loader');
-                                    return {
-                                        label: 'Result Not Found',
-                                        val: '0'
-                                    }
-                                }))
-                            }
-                            else {
-                                response($.map(data, function (v, i) {
-                                    $('#txtTitleSearch').removeClass('loader');
-                                    return {
-                                        label: v.Display_Text,
-                                        val: v.Display_Value
-                                    }
-                                }))
-                            }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            alert("Error" + textStatus);
-                        }
-                    });
-                },
-                select: function (event, i) {
-                    var text = this.value.split(/﹐\s*/);
-                    text.pop();
-                    text.push(i.item.value);
-                    text.push("");
-                    this.value = text;
-                    this.value = text.join("﹐");
-                    var value = $("#hdnTitleSearch").val().split(/,\s*/);
-                    value.pop();
-                    value.push(i.item.val);
-                    value.push("");
-                    $("#hdnTitleSearch")[0].value = value.join(", ");
-                    return false;
-                },
-                minLength: 2,
-                open: function (event, ui) {
-                    $(".ui-autocomplete").css("position", "absolute");
-                    $(".ui-autocomplete").css("max-height", "200px");
-                    $(".ui-autocomplete").css("overflow-y", "auto");
-                    $(".ui-autocomplete").css("overflow-x", "hidden");
-                    $(".ui-autocomplete").css("z-index", "2147483647");
-                },
-            });
-        }
-        else
+        if ($("#txtStart").val() == '') {
+
+            showAlert('e', 'Please Select Start Date');
+            $("#txtStart").val("");
             return false;
-    }
-
-    function populateOrigTitle(evt) {
-        debugger;
-        var Selected_BUCode = 0;
-        var Selected_Title_Codes = "";
-
-        var selectedtxt = $('#txtOrigTitleSearch').val()
-        var dealtype = 0;
-        if ($('#ddlDeal_Type_CodeCommon').val() == null || $('#ddlDeal_Type_CodeCommon').val() == undefined)
-            dealtype = 0;
-        else
-            dealtype = $('#ddlDeal_Type_CodeCommon').val();
-        var txt = selectedtxt.split(',');
-        var iscomplete = true;
-        if (txt[txt.length - 1].trim() == "")
-            iscomplete = false;
-        if (iscomplete) {
-            $("#txtOrigTitleSearch").autocomplete({
-                focus: function () {
-                    return false;
-                },
-                search: function (e, u) {
-                    $(this).addClass('loader');
-                },
-                source: function (request, response) {
-                    debugger;
-                    var param = {
-                        Selected_deal_type_Code: dealtype,
-                        Selected_BUCode: Selected_BUCode,
-                        Selected_Title_Codes: Selected_Title_Codes,
-                        Searched_Title: $('#txtOrigTitleSearch').val(),
-                        isOriginal: 'Y'
-                    };
-                    $.ajax({
-                        url: '@Url.Action("GetTitle", "Title_List")',
-                        data: JSON.stringify(param),
-                        dataType: "json",
-                        type: "POST",
-                        contentType: "application/json; charset=utf-8",
-                        dataFilter: function (data) { return data; },
-                        success: function (data) {
-                            if (data.length == 0) {
-                                $("#lbOrigTitle_Code").val('');
-                                data[0] = 'Result Not Found';
-                                response($.map(data, function (v, i) {
-                                    $('#txtOrigTitleSearch').removeClass('loader');
-                                    return {
-                                        label: 'Result Not Found',
-                                        val: '0'
-                                    }
-                                }))
-                            }
-                            else {
-                                response($.map(data, function (v, i) {
-                                    $('#txtOrigTitleSearch').removeClass('loader');
-                                    return {
-                                        label: v.Display_Text,
-                                        val: v.Display_Value
-                                    }
-                                }))
-                            }
-                        },
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            alert("Error" + textStatus);
-                        }
-                    });
-                },
-                select: function (event, i) {
-                    debugger;
-                    var text = this.value.split(/﹐\s*/);
-                    text.pop();
-                    text.push(i.item.value);
-                    text.push("");
-                    this.value = text;
-                    this.value = text.join("﹐");
-                    var value = $("#hdnOrigTitleSearch").val().split(/,\s*/);
-                    value.pop();
-                    value.push(i.item.val);
-                    value.push("");
-                    $("#hdnOrigTitleSearch")[0].value = value.join(", ");
-                    return false;
-                },
-                minLength: 2,
-                open: function (event, ui) {
-                    $(".ui-autocomplete").css("position", "absolute");
-                    $(".ui-autocomplete").css("max-height", "200px");
-                    $(".ui-autocomplete").css("overflow-y", "auto");
-                    $(".ui-autocomplete").css("overflow-x", "hidden");
-                    $(".ui-autocomplete").css("z-index", "2147483647");
-                },
-            });
         }
-        else
-            return false;
+        else {
+            var GetStartDt = $("#txtStart").val().split("/");
+            var StartDate = new Date(GetStartDt[1] + "/" + GetStartDt[0] + "/" + GetStartDt[2]);
+            var formattedStartDt = new Date(StartDate);
+
+            var GetCurrentDt = new Date();
+            var CurrentDt = new Date(GetCurrentDt.toISOString().split('T')[0]);
+
+            if (CurrentDt < formattedStartDt) {
+                showAlert('e', 'Future Start Date Not Allowed');
+                $("#txtStart").val("");
+                return false;
+            }
+        }
+
     }
 
-       function validateSearch() {
+    function ValidateEndDate() {
         debugger;
 
-        var  tmpMasterList = '', tmpUsers = '', txtLogSearch = '', tmpActionType = '';
-           
+        if ($("#txtStart").val() == '') {
+
+            showAlert('e', 'Please Select Start Date');
+            $("#txtStart").val('');
+            return false;
+        }
+        else {
+            var GetStartDt = $("#txtStart").val().split("/");
+            var StartDate = new Date(GetStartDt[1] + "/" + GetStartDt[0] + "/" + GetStartDt[2]);
+            var formattedStartDt = new Date(StartDate);
+
+            var GetEndDt = $("#txtEnd").val().split("/");
+            var EndDate = new Date(GetEndDt[1] + "/" + GetEndDt[0] + "/" + GetEndDt[2]);
+            var formattedEndDt = new Date(EndDate);
+
+            var GetCurrentDt = new Date();
+            var CurrentDt = new Date(GetCurrentDt.toISOString().split('T')[0]);
+
+            if (CurrentDt < formattedStartDt) {
+                showAlert('e', 'Future Start Date Not Allowed');
+                $("#txtEnd").val('');
+                return false;
+            }
+        }
+
+        if ($("#txtEnd").val() == '') {
+
+            showAlert('e', 'Please Select End Date');
+            $("#txtEnd").val('');
+            return false;
+        }
+        else {
+
+            var GetStartDt = $("#txtStart").val().split("/");
+            var StartDate = new Date(GetStartDt[1] + "/" + GetStartDt[0] + "/" + GetStartDt[2]);
+            var formattedStartDt = new Date(StartDate);
+
+            var GetEndDt = $("#txtEnd").val().split("/");
+            var EndDate = new Date(GetEndDt[1] + "/" + GetEndDt[0] + "/" + GetEndDt[2]);
+            var formattedEndDt = new Date(EndDate);
+
+            var GetCurrentDt = new Date();
+            var CurrentDt = new Date(GetCurrentDt.toISOString().split('T')[0]);
+
+            if (CurrentDt < formattedEndDt) {
+                showAlert('e', 'Future End Date Not Allowed');
+                $("#txtEnd").val('');
+                return false;
+            }
+
+            if (formattedStartDt > formattedEndDt) {
+                showAlert('e', 'End Date Should Not Less Than Start Date');
+                $("#txtEnd").val('');
+                return false;
+            }
+
+            var days = daysdifference(formattedEndDt, formattedStartDt);
+            if (days >= Number(@DaysDiff)) {
+                showAlert("E", "Days difference should be bettween 0 to " + @DaysDiff);
+                $("#txtEnd").val("");
+                return false;
+            }
+            
+        }
+
+    }
+
+    function daysdifference(firstDate, secondDate){
+        var startDay = new Date(firstDate);
+        var endDay = new Date(secondDate);
+
+        // Determine the time difference between two dates     
+        var millisBetween = startDay.getTime() - endDay.getTime();
+
+        // Determine the number of days between two dates  
+        var days = millisBetween / (1000 * 3600 * 24);
+
+        // Show the final number of days between dates     
+        return Math.round(Math.abs(days));
+    }  
+
+    function ValidateSearch() {
+        debugger;
+
+        var tmpMasterList = '', txtStart = '', txtEnd = '';
+
         if ($('#ddlMasterList').val())
             tmpMasterList = $('#ddlMasterList').val();
 
-        if ($('#ddlUsers').val())
-            tmpUsers = $('#ddlUsers').val
+        var txtStart = $('#txtStart').val();
 
-        if ($('#ddlActionTypeList').val())
-            tmpActionType = $('#ddlActionTypeList').val();           
+        var txtEnd = $('#txtEnd').val();
 
-           var txtLogSearch = $('#txtLogSearch').val();
-
-           if (tmpProducer == '' && tmpGenres == '' && tmpStarCast == '' && tmpLanguage == '' && tmpOrigLang == '' && tmpDeal == '' && tmpDirector == '' && txtYearOfRelease == '' && $('#txtTitleSearch').val() == '' && txtOrigTitleSearch == '' && txtLogSearch =='') {
-            showAlert('e', 'Please Select at least one record');
+        if (tmpMasterList == '') {
+            showAlert('e', 'Please Select Matster Data');
+            return false;
+        }
+        else if (txtStart == '') {
+            showAlert('e', 'Please Select Start Date');
+            return false;
+        }
+        else if (txtEnd == '') {
+            showAlert('e', 'Please Select End Date');
             return false;
         }
         else {
@@ -354,38 +374,35 @@
 
     function AdvanceSearch() {
         debugger;
-        var tmpMasterList = '', tmpUsers = '', txtLogSearch = '', tmpActionType = '';
+        var tmpMasterList = '', tmpUsers = '', txtLogSearch = '', txtStart = '', txtEnd = '', tmpActionType = '';
 
         if ($('#ddlMasterList').val())
             tmpMasterList = $('#ddlMasterList').val();
 
         if ($('#ddlUsers').val())
-            tmpUsers = $('#ddlUsers').val
-
-        if ($('#ddlActionTypeList').val())
-            tmpActionType = $('#ddlActionTypeList').val();
+            tmpUsers = $('#ddlUsers').val().join(',');
 
         var txtLogSearch = $('#txtLogSearch').val();
+        var txtStart = $('#txtStart').val();
+        var txtEnd = $('#txtEnd').val();
+
+        if ($('#ddlActionTypeList').val())
+            tmpActionType = $('#ddlActionTypeList').val().join(',');
 
         $.ajax({
             type: "POST",
-            url: '@Url.Action("BindTitleDetailsReports", "Reports")',
+            url: '@Url.Action("BindAuditLogDetailsReports", "Reports")',
             traditional: true,
             enctype: 'multipart/form-data',
             async: false,
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-                SrchStarCast: tmpStarCast,
-                SrhDealTypeCode: tmpDeal,
-                SrchLanguage: tmpLanguage,
-                SrchDirector: tmpDirector,
-                SrchYearOfRelease: txtYearOfRelease,
-                SrchTitle: $('#txtTitleSearch').val(),
-                SrchOrigLang: tmpOrigLang,
-                SrchOrigTitle: $('#txtOrigTitleSearch').val(),
-                SrchProducer: tmpProducer,
-                SrchGenres: tmpGenres,
-                ExtendedMetaData: extendedMetaData
+                SrchMaster: tmpMasterList,
+                SrchUsers: tmpUsers,
+                SrchLog: txtLogSearch,
+                SrchStartDate: txtStart,
+                SrchEndDate: txtEnd,
+                SrchActionType: tmpActionType
             }),
             success: function (result) {
 
@@ -393,8 +410,11 @@
                     redirectToLogin();
                 }
                 else {
-                    $('#divResult').empty();
-                    $('#divResult').html(result);
+                    var response = JSON.parse(result);
+                    buildHtmlTable(response.auditData)
+
+                    //$('#divResult').empty();
+                    //$('#divResult').html(result);
                 }
             },
             error: function (result) {
@@ -402,7 +422,9 @@
             }
         });
     }
+
 </script>
+
 
 <div class="main_section">
     <section class="rightsU_container clearfix">
@@ -411,7 +433,7 @@
                 <h2>Audit Log Report</h2>
             </div>
             <div id="divFilter">
-                <table border="0"style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
+                <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
                     <tr>
                         <td><label style="font-weight:bold"> Masters:</label></td>
                         <td style="width:20%">
@@ -419,58 +441,45 @@
                         </td>
                         <td style="width:10%"><label style="font-weight:bold"> User:</label></td>
                         <td style="width:20%">
-                            <select id="ddlUsers" class="form_input chosen-select"></select>
+                            <select id="ddlUsers" multiple="multiple"></select>
                         </td>
-                        <td style="width:10%" ><label style="font-weight:bold"> Log Search</label></td>
+                        <td style="width:10%"><label style="font-weight:bold"> Log Search</label></td>
                         <td style="width:20%">
                             <input type="text" placeholder="Search" class="text" id="txtLogSearch" value='' />
                         </td>
                         <td style="width:10%"><label style="font-weight:bold"> Action Type:</label></td>
                         <td style="width:20%">
-                            <select id="ddlActionTypeList" class="form_input chosen-select"></select>
+                            <select id="ddlActionTypeList" multiple="multiple"></select>
                         </td>
                     </tr>
                     <tr>
                         <td style="width:10%"><label style="font-weight:bold">Start Date:</label></td>
                         <td style="width:20%">
-                            <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="From" width="100"
-                                   title="Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="From" width="100" autocomplete="off"
+                                   title="Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" onchange="ValidateStartDate();" />
                             <input type="hidden" id="hdnStartDate" />
                         </td>
                         <td style="width:10%"><label style="font-weight:bold">End Date:</label></td>
                         <td style="width:20%">
-                            <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="To" width="100"
-                                   title="End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" />
+                            <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="To" width="100" autocomplete="off"
+                                   title="End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" onchange="ValidateEndDate();" />
                             <input type="hidden" id="hdnEndDate" />
                         </td>
                         <td colspan="2">
                             <div class="pull-right" style="padding-right: 19px;">
-                                <input type="button" id="btnShow" class="btn btn-primary " value="Show" onclick="validateSearch()"> &nbsp; &nbsp;
+                                <input type="button" id="btnShow" class="btn btn-primary " value="Show" onclick="ValidateSearch()"> &nbsp; &nbsp;
                                 <input type="button" id="btnReset" class="btn btn-primary " value="Reset" onclick="ClearAll()">
                             </div>
                         </td>
                     </tr>
-                    
+
                 </table>
             </div>
             <div class="title_block dotted_border clearfix">
             </div>
-            <div>
-                <table>
-                    <tr align="left" id="trImg">
-                        <td id='tdShowImg' align='left' style="display: none">
-                            <input type="image" title="Expand" alt="Expand Search Criteria" style="cursor:pointer;" src="~/Images/expand.jpg" onclick="return ShowHideSearchCriteria('S');" />
-                        </td>
-                        <td id='tdHideImg' align="left">
-                            <input type="image" title="Collapse" alt="Collapse Search Criteria" style="cursor:pointer;" src="~/Images/collapse.jpg" onclick="return ShowHideSearchCriteria('H');" />
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div id="divResult">
-
+            <div id="divResult" style="width: 100% !important; overflow-y: auto;">
+                <table id="excelDataTable" border="1"></table>
             </div>
         </div>
     </section>
 </div>
-

@@ -14,6 +14,8 @@ using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
 using Newtonsoft.Json;
+using System.Net;
+using System.IO;
 
 namespace RightsU_Plus.Controllers
 {
@@ -830,7 +832,7 @@ namespace RightsU_Plus.Controllers
         }
         public string ConvertObjectToJson(object obj)
         {
-            string ret = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            string ret = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, PreserveReferencesHandling = PreserveReferencesHandling.None });
             return ret;
         }
         public bool SaveMasterLogData(int ModuleCode, int IntCode, string LogData, string ActionType, int UserCode)
@@ -849,5 +851,77 @@ namespace RightsU_Plus.Controllers
 
             return isValid;
         }
+
+        #region Call API for Audit log master
+        public string PostAuditLogAPI(MasterAuditLogInput obj, string AuthKey)
+        {
+            int timeout = 3600;
+
+            string result = "";
+            string url = ConfigurationSettings.AppSettings["LogURL"];
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost:59676/api/masterauditlog");
+            request.KeepAlive = false;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.ContentType = "application/Json";
+            request.Method = "POST";
+            request.Headers.Add("ContentType", "application/json");
+            //request.Headers.Add("AuthKey", AuthKey);
+            //request.Headers.Add("Service", "False");
+            //if (obj.RequestContent == null)
+            //{
+            //    obj.RequestContent = "";
+            //}
+
+            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+            {
+                string logData = JsonConvert.SerializeObject(obj);
+                streamWriter.Write(logData);
+            }
+            var httpResponse = (HttpWebResponse)request.GetResponse();
+            try
+            {
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    result = streamReader.ReadToEnd();
+                }
+            }
+            catch (Exception ex)
+            {
+                request.Abort();
+                //LogService("Not able to post to Log Service");
+            }
+            if (result != "")
+            {
+                //request posted successfully;	
+            }
+            return result;
+        }
+
+        public int CalculateSeconds(DateTime dateTimeToConvert)
+        {
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
+
+            DateTime dtNow = dateTimeToConvert;
+            TimeSpan result = dtNow.Subtract(dt);
+            int seconds = Convert.ToInt32(result.TotalSeconds);
+            return seconds;
+        }
+
+        public string GetUserName(int UserId)
+        {
+            string Username = "";
+            if (UserId != 0)
+            {
+                User ObjUser = new User_Service(objLoginEntity.ConnectionStringName).GetById(UserId);
+                Username = ObjUser.First_Name + " " + ObjUser.Last_Name;
+            }
+            else
+            {
+                Username = null;
+            }
+            return Username;
+        }
+        #endregion
     }
+
 }
