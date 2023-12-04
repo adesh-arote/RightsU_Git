@@ -19,36 +19,64 @@ namespace RightsU.Audit.WebAPI.Filters
         {
             UTOLogInput logObj = new UTOLogInput();
 
-            logObj.ApplicationName = "AuditLog";
-            logObj.RequestId = Guid.NewGuid().ToString();            
-            logObj.RequestUri = actionExecutedContext.Request.RequestUri.AbsoluteUri;
-            logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
-            logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);
-            logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
-            logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
-            logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
-            logObj.ResponseContent = JsonConvert.SerializeObject(((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value);
-            logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
-            logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-            logObj.UserAgent = "AutidLog API";
-            logObj.Method = actionExecutedContext.Request.Method.Method;
-            logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
-            logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.Return)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-            logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.Return)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
-            logObj.HttpStatusCode = Convert.ToString(actionExecutedContext.Response.StatusCode.GetHashCode());
-            
-            string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
-            logObj.AuthenticationKey = GlobalAuthKey;
-            
-            var logDetails = LogService(logObj, GlobalAuthKey);
-            HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);
-            if (logData.LGCode > 0)
+            try
             {
-                actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
-                actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.Return)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.Return)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
-                
-            }            
+                logObj.ApplicationName = "AuditLog";
+                logObj.RequestId = Guid.NewGuid().ToString();
+                logObj.RequestUri = actionExecutedContext.Request.RequestUri.AbsoluteUri;
+                logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
+                if (actionExecutedContext.Request.Method.Method == "GET")
+                {
+                    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
+                    logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
+                    logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);                    
+                }
+                else
+                {
+                    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);
+                    logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
+                    logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                }
+
+                logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
+                logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
+                logObj.ResponseContent = JsonConvert.SerializeObject(((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value);
+                logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
+                logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
+                logObj.UserAgent = "AutidLog API";
+                logObj.Method = actionExecutedContext.Request.Method.Method;
+                logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
+
+                logObj.HttpStatusCode = Convert.ToString(actionExecutedContext.Response.StatusCode.GetHashCode());
+
+                string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
+                logObj.AuthenticationKey = GlobalAuthKey;
+
+                var logDetails = LogService(logObj, GlobalAuthKey);
+                HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);
+                if (logData.LGCode > 0)
+                {
+                    actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
+                    if (logObj.Method == "GET")
+                    {
+                        actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+                    }
+                    else
+                    {
+                        actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+                    }
+                    
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                //throw;
+            }
         }
 
         public static string LogService(UTOLogInput obj, string AuthKey)
@@ -56,7 +84,7 @@ namespace RightsU.Audit.WebAPI.Filters
             int timeout = 3600;
             string result = "";
             string url = ConfigurationSettings.AppSettings["LogURL"];
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost:65453/api/LogService/LGSaveMessage");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             request.KeepAlive = false;
             request.ProtocolVersion = HttpVersion.Version10;
             request.ContentType = "application/Json";
@@ -70,7 +98,7 @@ namespace RightsU.Audit.WebAPI.Filters
             }
 
             using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {                
+            {
                 string logData = JsonConvert.SerializeObject(obj);
                 streamWriter.Write(logData);
             }

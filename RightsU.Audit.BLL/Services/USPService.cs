@@ -19,97 +19,87 @@ namespace RightsU.Audit.BLL.Services
     public class USPService
     {
         private readonly ProcedureRepositories objProcedureRepositories = new ProcedureRepositories();
-        //public USPInsertLog USPInsertLog(string ApplicationName, string RequestId, string User, string RequestUri, string RequestMethod, string Method, string IsSuccess, string TimeTaken, string RequestContent, string RequestLength, string RequestDateTime, string ResponseContent, string ResponseLength, string ResponseDateTime, string HttpStatusCode, string HttpStatusDescription, string AuthenticationKey, string UserAgent, string ServerName, string ClientIpAddress)
-        //{
-        //    USPInsertLog objUSPInsertNotification = objProcedureRepositories.USPInsertLog(ApplicationName, RequestId, User, RequestUri, RequestMethod, Method, IsSuccess, TimeTaken, RequestContent, RequestLength, RequestDateTime, ResponseContent, ResponseLength, ResponseDateTime, HttpStatusCode, HttpStatusDescription, AuthenticationKey, UserAgent, ServerName, ClientIpAddress).FirstOrDefault();
-        //    return objUSPInsertNotification;
-        //}
-
-        //public List<USPLGGetLog> USPLGGetLog(string ApplicationId, string MethodName, string RequestFromDate, string RequestToDate, string ResponseFromDate, string ResponseToDate, string User, string size, string from)
-        //{
-        //    List<USPLGGetLog> objGetLog = objProcedureRepositories.USPLGGetLog(ApplicationId, MethodName, RequestFromDate, RequestToDate, ResponseFromDate, ResponseToDate, User, size, from).ToList();
-        //    return objGetLog;
-        //}
-
-        //public List<USPGetMasters> USPGetMasters()
-        //{
-        //    List<USPGetMasters> lstUSPGetMasters = objProcedureRepositories.USPGetMasters().ToList();
-        //    return lstUSPGetMasters;
-        //}
-
-        public Return InsertAuditLog(MasterAuditLogInput Input)
+        
+        public PostReturn InsertAuditLog(MasterAuditLogInput Input)
         {
-            Return _objRet = new Return();
+            PostReturn _objRet = new PostReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
 
             #region Input Validation
-
-            if (Input.moduleCode == null || Input.moduleCode == 0)
+            if (Input != null)
             {
-                _objRet.Message = "Input Paramater 'moduleCode' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
-            }
+                if (Input.moduleCode == null || Input.moduleCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'moduleCode' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
 
-            if (Input.intCode == null || Input.intCode == 0)
-            {
-                _objRet.Message = "Input Paramater 'intCode' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
-            }
+                if (Input.intCode == null || Input.intCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'intCode' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
 
-            if (string.IsNullOrEmpty(Input.logData))
-            {
-                _objRet.Message = "Input Paramater 'logData' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
-            }
+                if (string.IsNullOrEmpty(Input.logData))
+                {
+                    _objRet.Message = "Input Paramater 'logData' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
 
-            if (string.IsNullOrEmpty(Input.actionBy))
-            {
-                _objRet.Message = "Input Paramater 'actionBy' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
-            }
+                if (string.IsNullOrEmpty(Input.actionBy))
+                {
+                    _objRet.Message = "Input Paramater 'actionBy' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
 
-            if (Input.actionOn == null || Input.actionOn == 0)
-            {
-                _objRet.Message = "Input Paramater 'actionOn' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
-            }
+                if (Input.actionOn == null || Input.actionOn == 0)
+                {
+                    _objRet.Message = "Input Paramater 'actionOn' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
 
-            if (string.IsNullOrEmpty(Input.actionType))
-            {
-                _objRet.Message = "Input Paramater 'actionType' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                //objLog.Record_Status = "E";
-                //objLog.Error_Description = _objRet.Message;
+                if (string.IsNullOrEmpty(Input.actionType))
+                {
+                    _objRet.Message = "Input Paramater 'actionType' is mandatory";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //objLog.Record_Status = "E";
+                    //objLog.Error_Description = _objRet.Message;
+                }
+                else
+                {
+                    string[] arrActionType = new string[] { "C", "X", "U", "A", "D" };
+                    if (!arrActionType.Contains(Input.actionType.ToUpper()))
+                    {
+                        _objRet.Message = "Input Paramater 'actionType' is invalid";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
             }
             else
             {
-                string[] arrActionType = new string[] { "C", "X", "U", "A", "D" };
-                if (!arrActionType.Contains(Input.actionType.ToUpper()))
-                {
-                    _objRet.Message = "Input Paramater 'actionType' is invalid";
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
-                }
+                _objRet.Message = "Input Paramater missing";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
             }
-
             #endregion
 
             try
@@ -130,9 +120,9 @@ namespace RightsU.Audit.BLL.Services
             return _objRet;
         }
 
-        public Return GetAuditLogList(string order, string sort, Int32 size, Int32 page, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, string searchValue, string user, string userAction, string includePrevAuditVesion)
+        public GetReturn GetAuditLogList(string order, string sort, Int32 size, Int32 page, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, string searchValue, string user, string userAction, string includePrevAuditVesion)
         {
-            Return _objRet = new Return();
+            GetReturn _objRet = new GetReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
@@ -199,7 +189,7 @@ namespace RightsU.Audit.BLL.Services
 
             try
             {
-                if (!_objRet.IsSuccess)
+                if (_objRet.IsSuccess)
                 {
                     _AuditLogReturn = objProcedureRepositories.GetAuditLogList(order, sort, size, page, requestFrom, requestTo, moduleCode, searchValue, user, userAction, includePrevAuditVesion);
                 }

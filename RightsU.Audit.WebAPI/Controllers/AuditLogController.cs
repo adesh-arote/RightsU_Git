@@ -23,8 +23,8 @@ namespace RightsU.Audit.WebAPI.Controllers
     {
         public enum order
         {
-            Ascending = 1,
-            Descending = 2
+            Asc = 1,
+            Desc = 2
         }
         public enum sort
         {
@@ -34,7 +34,13 @@ namespace RightsU.Audit.WebAPI.Controllers
 
         private readonly USPService objUSPServices = new USPService();
 
-        [SwaggerResponse(HttpStatusCode.OK, "Success")]
+        /// <summary>
+        /// Master Audit Log
+        /// </summary>
+        /// <remarks>This API will be used to store Master Audit data.</remarks>
+        /// <param name="Input"></param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(PostReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
@@ -54,7 +60,7 @@ namespace RightsU.Audit.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            Return objReturn = objUSPServices.InsertAuditLog(Input);
+            PostReturn objReturn = objUSPServices.InsertAuditLog(Input);
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {                
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
@@ -76,26 +82,43 @@ namespace RightsU.Audit.WebAPI.Controllers
             return objresponse;
         }
 
-        [SwaggerResponse(HttpStatusCode.OK, "Success")]
+        /// <summary>
+        /// Master Audit List
+        /// </summary>
+        /// <remarks>This API will be used to get Master Audit data for the specific master using Search Value and date criteria.</remarks>
+        /// <param name="order">Only below keyward are allowed "ASC","DESC"</param>
+        /// <param name="sort">Only below keyward are allowed "IntCode","Version"</param>
+        /// <param name="requestFrom">Linux Date and Time format</param>
+        /// <param name="requestTo">Linux Date and Time format</param>
+        /// <param name="moduleCode">Audit data of a specific transaction, only one module code is allowed</param>
+        /// <param name="size">The size (total records) of each page</param>
+        /// <param name="page">The page number that should be retrieved</param>
+        /// <param name="searchValue">The value of the search across the LogData</param>
+        /// <param name="user">User name of a specific action, multiple users with "," separator allowed for output.</param>
+        /// <param name="userAction">Specific User action, search with multiple actions like "C,X,A" allowed.</param>
+        /// <param name="includePrevAuditVesion">Default "N"-Values "Y"/"N" pass "Y" to include the previous 1 version of data even if not fall into the provided period bracket.</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(GetReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        //[LogFilter]
         [HttpGet]
         [Route("api/masterauditlist")]
-        [EnableCors(origins: "*", headers: "*", methods: "*")]
-        public HttpResponseMessage masterauditlist(order order, sort sort, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, Int32 size = 0, Int32 page = 0, string searchValue = "", string user = "", string userAction = "", string includePrevAuditVesion = "")
+        [EnableCors(origins: "*", headers: "*", methods: "*")]        
+        public HttpResponseMessage masterauditlist(order order, sort sort, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, Int32 size = 0, Int32 page = 0, string searchValue = "", string user = "", string userAction = "")//, string includePrevAuditVesion = ""
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            Return objReturn = objUSPServices.GetAuditLogList(order.ToString(), sort.ToString(), size, page, requestFrom, requestTo, moduleCode, searchValue, user, userAction, includePrevAuditVesion);
+            GetReturn objReturn = objUSPServices.GetAuditLogList(order.ToString(), sort.ToString(), size, page, requestFrom, requestTo, moduleCode, searchValue, user, userAction, "N");
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.LogObject, Configuration.Formatters.JsonFormatter);                
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);                
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
@@ -107,7 +130,7 @@ namespace RightsU.Audit.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn.LogObject, Configuration.Formatters.JsonFormatter);                
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);                
                 return response;
             }
             return response;
