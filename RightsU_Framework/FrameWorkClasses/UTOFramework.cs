@@ -2950,15 +2950,6 @@ namespace UTOFrameWork.FrameworkClasses
         Sun,
     }
 
-    public enum ActionType
-    {
-        C,
-        X,
-        U,
-        A,
-        D,
-    }
-
     #endregion=
 }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -24,6 +25,25 @@ namespace RightsU.Audit.Entities.MasterEntities
         /// Audit Data
         /// </summary>
         public List<string> auditData { get; set; }
+    }
+
+    public class AuditLog
+    {
+        [JsonIgnore]
+        public Int32 AuditLogCode { get; set; }
+        [JsonIgnore]
+        public Int32 ModuleCode { get; set; }
+        [JsonIgnore]
+        public Int32 IntCode { get; set; }
+        public string LogData { get; set; }
+        [JsonIgnore]
+        public Int32 Version { get; set; }
+        [JsonIgnore]
+        public string ActionBy { get; set; }
+        [JsonIgnore]
+        public string ActionOn { get; set; }
+        [JsonIgnore]
+        public string ActionType { get; set; }
     }
 
     public class paging

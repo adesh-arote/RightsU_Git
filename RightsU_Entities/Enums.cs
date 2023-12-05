@@ -13,4 +13,13 @@ namespace RightsU_Entities
         Modified,
         Deleted
     }
+
+    public enum ActionType
+    {
+        C,
+        X,
+        U,
+        A,
+        D,
+    }
 }

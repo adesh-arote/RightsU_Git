@@ -30,12 +30,10 @@ namespace RightsU.Audit.WebAPI.Filters
             {
                 var resp = new HttpResponseMessage(HttpStatusCode.ExpectationFailed)
                 {
-                    ReasonPhrase = "API Key Missing"
+                    RequestMessage = context.Request,
+                    ReasonPhrase = "AuthKey Missing"
                 };
-                //throw new HttpResponseException(resp);
-                
-                context.ErrorResult = new UnauthorizedResult(new AuthenticationHeaderValue[0], context.Request);
-                return Task.FromResult(0);
+                throw new HttpResponseException(resp);
             }
              
             var myListrequstAuthKey = requstAuthKey.ToList();
@@ -49,7 +47,7 @@ namespace RightsU.Audit.WebAPI.Filters
             {
                 var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
                 {
-                    ReasonPhrase = "Authentication Failed"
+                    ReasonPhrase = "Authentication Failed"                    
                 };
                 throw new HttpResponseException(resp);
             }
