@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RightsU.Audit.Entities.MasterEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace RightsU.Audit.Entities.FrameworkClasses
         public double TimeTaken { get; set; }
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
-        public object LogObject { get; set; }
+        public AuditLogReturn LogObject { get; set; }
     }
 
     public class PostReturn

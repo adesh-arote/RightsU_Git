@@ -49,6 +49,16 @@
     #ddlActionTypeList_chosen {
         width: 89% !important;
     }
+
+    input.isDatepicker {
+        width: 150px;
+        z-index: auto;
+    }
+
+    #ddlOrderByList_chosen {
+        width: 89% !important;
+    }
+
 </style>
 <script>
 
@@ -133,9 +143,6 @@
         }
     }
 
-    // Adds a header row to the table and returns the set of columns.
-    // Need to do union of keys from all records as some records may not contain
-    // all records
     function addAllColumnHeaders(list, appendObj) {
         var columnSet = [];
         var headerTr$ = $('<tr/>');
@@ -186,6 +193,7 @@
                         $("#ddlMasterList").empty();
                         $("#ddlUsers").empty();
                         $("#ddlActionTypeList").empty();
+                        $("#ddlOrderByList").empty();
 
                         debugger;
 
@@ -205,6 +213,11 @@
                         });
                         $("#ddlActionTypeList")[0].sumo.reload();
 
+                        $("#ddlOrderByList").append($("<option>").val("").text("Please Select"));
+                        $(result.lstOrderByList).each(function (index, item) {
+                            $("#ddlOrderByList").append($("<option>").val(this.Value).text(this.Text));
+                        });
+                        $("#ddlOrderByList").trigger("chosen:updated")
                     }
                 },
                 error: function (result) {
@@ -230,6 +243,9 @@
 
         $('#txtStart').val('');
         $('#txtEnd').val('');
+
+        $("#ddlOrderByList").find("option").attr("selected", false);
+        $("#ddlOrderByList").val('').trigger("chosen:updated");
 
     }
 
@@ -346,7 +362,7 @@
     function ValidateSearch() {
         debugger;
 
-        var tmpMasterList = '', txtStart = '', txtEnd = '';
+        var tmpMasterList = '', txtStart = '', txtEnd = '', tmpOrderByList = '';
 
         if ($('#ddlMasterList').val())
             tmpMasterList = $('#ddlMasterList').val();
@@ -354,6 +370,9 @@
         var txtStart = $('#txtStart').val();
 
         var txtEnd = $('#txtEnd').val();
+
+        if ($('#ddlOrderByList').val())
+            tmpOrderByList = $('#ddlOrderByList').val();
 
         if (tmpMasterList == '') {
             showAlert('e', 'Please Select Matster Data');
@@ -374,7 +393,7 @@
 
     function AdvanceSearch() {
         debugger;
-        var tmpMasterList = '', tmpUsers = '', txtLogSearch = '', txtStart = '', txtEnd = '', tmpActionType = '';
+        var tmpMasterList = '', tmpUsers = '', txtLogSearch = '', txtStart = '', txtEnd = '', tmpActionType = '', tmpOrderByList = '';
 
         if ($('#ddlMasterList').val())
             tmpMasterList = $('#ddlMasterList').val();
@@ -389,6 +408,9 @@
         if ($('#ddlActionTypeList').val())
             tmpActionType = $('#ddlActionTypeList').val().join(',');
 
+        if ($('#ddlOrderByList').val())
+            tmpOrderByList = $('#ddlOrderByList').val();
+
         $.ajax({
             type: "POST",
             url: '@Url.Action("BindAuditLogDetailsReports", "Reports")',
@@ -402,17 +424,25 @@
                 SrchLog: txtLogSearch,
                 SrchStartDate: txtStart,
                 SrchEndDate: txtEnd,
-                SrchActionType: tmpActionType
+                SrchActionType: tmpActionType,
+                SrchOrderBy: tmpOrderByList
             }),
             success: function (result) {
 
                 if (result == "true") {
                     redirectToLogin();
                 }
-                else {
+                else {                    
+                    //$('#hdnPageNo').text(1);
+                    //$('#hdnPageNo').val(1);
+                    //$('#lblRecordCount').text(5);
+                    //$("#hdnRecordCount").val(5);
+                    //SetPaging()
                     var response = JSON.parse(result);
-                    buildHtmlTable(response.auditData)
-
+                    buildHtmlTable(response);                    
+                    //$('#lblRecordCount').text(result.Record_Count);
+                    //$("#hdnRecordCount").val(result.Record_Count);
+                    
                     //$('#divResult').empty();
                     //$('#divResult').html(result);
                 }
@@ -421,6 +451,102 @@
                 alert(result);
             }
         });
+    }
+
+</script>
+<script>
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+
+        $(".exchangeRate").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: true,
+            max: 9999,
+            min: 0
+        });
+    }
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                BindCurrencyList();
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        BindCurrencyList()
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function pageBinding() {
+        BindCurrencyList()
+        SetPaging();
     }
 
 </script>
@@ -435,7 +561,7 @@
             <div id="divFilter">
                 <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
                     <tr>
-                        <td><label style="font-weight:bold"> Masters:</label></td>
+                        <td style="width:10%"><label style="font-weight:bold"> Masters:</label></td>
                         <td style="width:20%">
                             <select id="ddlMasterList" class="form_input chosen-select"></select>
                         </td>
@@ -453,20 +579,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <td style="width:10%"><label style="font-weight:bold">Start Date:</label></td>
+                        <td><label style="font-weight:bold">Start Date:</label></td>
                         <td style="width:20%">
-                            <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="From" width="100" autocomplete="off"
+                            <input type="text" class="isDatepicker" id="txtStart" name="Start_Date" placeholder="From" width="150px;" autocomplete="off"
                                    title="Start Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" onchange="ValidateStartDate();" />
                             <input type="hidden" id="hdnStartDate" />
                         </td>
-                        <td style="width:10%"><label style="font-weight:bold">End Date:</label></td>
+                        <td><label style="font-weight:bold">End Date:</label></td>
                         <td style="width:20%">
                             <input type="text" class="isDatepicker" id="txtEnd" name="End_Date" placeholder="To" width="100" autocomplete="off"
                                    title="End Date" ondrop="return false" onpaste="return false" onkeypress="return false" onkeydown="return false" onchange="ValidateEndDate();" />
                             <input type="hidden" id="hdnEndDate" />
                         </td>
+                        <td style="width:10%"><label style="font-weight:bold"> Order By:</label></td>
+                        <td style="width:20%">
+                            <select id="ddlOrderByList" class="form_input chosen-select"></select>
+                        </td>
                         <td colspan="2">
-                            <div class="pull-right" style="padding-right: 19px;">
+                            <div class="pull-right" style="padding-right: 90px;">
                                 <input type="button" id="btnShow" class="btn btn-primary " value="Show" onclick="ValidateSearch()"> &nbsp; &nbsp;
                                 <input type="button" id="btnReset" class="btn btn-primary " value="Reset" onclick="ClearAll()">
                             </div>
@@ -477,6 +607,22 @@
             </div>
             <div class="title_block dotted_border clearfix">
             </div>
+
+            <div class="paging_area clearfix">
+                <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                <span class="pull-left" id="lblRecordCount"></span>
+                <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                <div id="Pagination" class="pagination">
+                </div>
+                <span class="pull-right">
+                    @objMessageKey.PageSize:
+                    <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
+                </span>
+            </div>
+
             <div id="divResult" style="width: 100% !important; overflow-y: auto;">
                 <table id="excelDataTable" border="1"></table>
             </div>
