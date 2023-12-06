@@ -65,9 +65,6 @@ namespace RightsU.BMS.WebAPI.Controllers
                         objLoggedInUsers.AccessToken = token.access_token;
                         objLoggedInUsers.RefreshToken = token.refresh_token;
 
-                        outputToken.AccessToken = "Bearer " + token.access_token;
-                        outputToken.RefreshToken = "Bearer " + token.refresh_token;
-
                         var obj = new { LoginName = authorizeViewModel.UserName };
                         int Count = objLoggedInUsersServices.SearchFor(obj).ToList().Count();
 
@@ -108,6 +105,11 @@ namespace RightsU.BMS.WebAPI.Controllers
 
                                     outputToken.AccessToken = "Bearer " + token.access_token;
                                     outputToken.RefreshToken = "Bearer " + token.refresh_token;
+                                }
+                                else
+                                {
+                                    outputToken.AccessToken = "Bearer " + objLoggedInUsersToCheck.AccessToken;
+                                    outputToken.RefreshToken = "Bearer " + objLoggedInUsersToCheck.RefreshToken;
                                 }
                             }
                             else
