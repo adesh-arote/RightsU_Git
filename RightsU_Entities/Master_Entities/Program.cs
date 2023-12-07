@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Program
     {
@@ -23,17 +24,32 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Program_Code { get; set; }
         public string Program_Name { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
         public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Deal_Type_Code { get; set; }
+        [NotMapped]
+        public string Deal_Type_Name { get; set; }
+        [JsonIgnore]
         public Nullable<int> Genres_Code { get; set; }
+        [NotMapped]
+        public string Genres_Name { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
-        public virtual ICollection<Title> Titles { get; set; }        
-        public virtual Deal_Type Deal_Type { get; set; }        
+        public virtual ICollection<Title> Titles { get; set; }
+        [JsonIgnore]
+        public virtual Deal_Type Deal_Type { get; set; }      
+        [JsonIgnore]
         public virtual Genre Genre { get; set; }
     }
 }

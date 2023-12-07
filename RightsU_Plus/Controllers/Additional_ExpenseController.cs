@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
@@ -130,7 +131,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ActiveDeactiveAdditional_Expense(int additionalExpenseCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(additionalExpenseCode, GlobalParams.ModuleCodeForAdditionalExpense, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -139,30 +140,48 @@ namespace RightsU_Plus.Controllers
                 Additional_Expense_Service objService = new Additional_Expense_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Additional_Expense objAdditionalExpense = objService.GetById(additionalExpenseCode);
                 objAdditionalExpense.Is_Active = doActive;
+                objAdditionalExpense.Last_Updated_Time = DateTime.Now;
+                objAdditionalExpense.Last_Action_By = objLoginUser.Users_Code;
                 objAdditionalExpense.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objAdditionalExpense, out resultSet);
 
                 if (isValid)
                 {
-                    string Action = "A";
                     lstAdditional_Expense.Where(w => w.Additional_Expense_Code == additionalExpenseCode).First().Is_Active = doActive;
                     lstAdditional_Expense_Searched.Where(w => w.Additional_Expense_Code == additionalExpenseCode).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objAdditionalExpense.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAdditionalExpense.Inserted_By));
+                        objAdditionalExpense.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAdditionalExpense.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAdditionalExpense);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), Convert.ToInt32(objAdditionalExpense.Additional_Expense_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), Convert.ToInt32(objAdditionalExpense.Additional_Expense_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForAdditionalExpense;
+                        objAuditLog.intCode = objAdditionalExpense.Additional_Expense_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objAdditionalExpense.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -190,8 +209,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveAdditional_Expense(int additionalExpenseCode, string additionalExpenseName, string sapGLGroupCode, int Record_Code)
         {
-            string Action = "C";
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
 
             if (additionalExpenseCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -203,7 +221,7 @@ namespace RightsU_Plus.Controllers
             {
                 objAdditionalExpense = objService.GetById(additionalExpenseCode);
                 objAdditionalExpense.EntityState = State.Modified;
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update"; 
             }
             else
             {
@@ -211,7 +229,6 @@ namespace RightsU_Plus.Controllers
                 objAdditionalExpense.EntityState = State.Added;
                 objAdditionalExpense.Inserted_On = System.DateTime.Now;
                 objAdditionalExpense.Inserted_By = objLoginUser.Users_Code;
-                Action = "C";
             }
            objAdditionalExpense.Last_Updated_Time = DateTime.Now;
            objAdditionalExpense.Last_Action_By = objLoginUser.Users_Code;
@@ -226,8 +243,27 @@ namespace RightsU_Plus.Controllers
                lstAdditional_Expense_Searched = lstAdditional_Expense = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
                 try
                 {
+                    objAdditionalExpense.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAdditionalExpense.Inserted_By));
+                    objAdditionalExpense.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAdditionalExpense.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAdditionalExpense);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), Convert.ToInt32(objAdditionalExpense.Additional_Expense_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAdditionalExpense), Convert.ToInt32(objAdditionalExpense.Additional_Expense_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForAdditionalExpense;
+                    objAuditLog.intCode = objAdditionalExpense.Additional_Expense_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objAdditionalExpense.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
+
                 }
                 catch (Exception ex)
                 {

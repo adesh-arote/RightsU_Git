@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
@@ -152,7 +153,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactivePayment_Term(int paymentTermCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "", Action = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(paymentTermCode, GlobalParams.ModuleCodeForPaymentTerms, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -161,6 +162,8 @@ namespace RightsU_Plus.Controllers
                 Payment_Terms_Service objService = new Payment_Terms_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Payment_Terms objPaymentTerm = objService.GetById(paymentTermCode);
                 objPaymentTerm.Is_Active = doActive;
+                objPaymentTerm.Last_Updated_Time = DateTime.Now;
+                objPaymentTerm.Last_Action_By = objLoginUser.Users_Code;
                 objPaymentTerm.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objPaymentTerm, out resultSet);
@@ -170,19 +173,36 @@ namespace RightsU_Plus.Controllers
                     lstPayment_Term_Searched.Where(w => w.Payment_Terms_Code == paymentTermCode).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }          
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }       
 
                     try
                     {
+                        objPaymentTerm.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPaymentTerm.Inserted_By));
+                        objPaymentTerm.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPaymentTerm.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPaymentTerm);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPaymentTerms, objPaymentTerm.Payment_Terms_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPaymentTerms, objPaymentTerm.Payment_Terms_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForPaymentTerms;
+                        objAuditLog.intCode = objPaymentTerm.Payment_Terms_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objPaymentTerm.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -212,7 +232,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SavePayment_Term(int paymentTermcode, string paymentTermName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create"; 
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (paymentTermcode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -223,7 +243,7 @@ namespace RightsU_Plus.Controllers
             {
                 objPaymentTerm = objService.GetById(paymentTermcode);
                 objPaymentTerm.EntityState = State.Modified;
-                Action = "U"; // U = "Update"; 
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
@@ -245,8 +265,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objPaymentTerm.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPaymentTerm.Inserted_By));
+                    objPaymentTerm.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPaymentTerm.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPaymentTerm);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPaymentTerms, objPaymentTerm.Payment_Terms_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForPaymentTerms, objPaymentTerm.Payment_Terms_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForPaymentTerms;
+                    objAuditLog.intCode = objPaymentTerm.Payment_Terms_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objPaymentTerm.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

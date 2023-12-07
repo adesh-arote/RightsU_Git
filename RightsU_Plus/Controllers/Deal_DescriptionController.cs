@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -146,7 +147,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveDealDesc(int DealDescs_Code, string doActive)
         {
-            string status = "S", message = "", strMessage = "", Action = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(DealDescs_Code, GlobalParams.ModuleCodeForDealDescription, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -155,6 +156,8 @@ namespace RightsU_Plus.Controllers
                 Deal_Description_Service objService = new Deal_Description_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Deal_Description objDealDesc = objService.GetById(DealDescs_Code);
                 objDealDesc.Is_Active = doActive;
+                objDealDesc.Last_Updated_Time = DateTime.Now;
+                objDealDesc.Last_Action_By = objLoginUser.Users_Code;
                 objDealDesc.EntityState = State.Modified;
                 dynamic resultSet;
 
@@ -165,19 +168,36 @@ namespace RightsU_Plus.Controllers
                     lstDealDesc_Searched.Where(w => w.Deal_Desc_Code == DealDescs_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objDealDesc.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDealDesc.Inserted_By));
+                        objDealDesc.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDealDesc.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDealDesc);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForDealDescription;
+                        objAuditLog.intCode = objDealDesc.Deal_Desc_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objDealDesc.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -206,7 +226,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveDealDesc(int DealDescsCode, string DealDescsName,string Type, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C = "Create"; 
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (DealDescsCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -217,18 +237,18 @@ namespace RightsU_Plus.Controllers
             {
                 objDealDesc = objService.GetById(DealDescsCode);
                 objDealDesc.EntityState = State.Modified;
-                Action = "U"; // U = "Update"; 
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
                 objDealDesc = new RightsU_Entities.Deal_Description();
                 objDealDesc.EntityState = State.Added;
-                //objDealDesc.Inserted_On = DateTime.Now;
-                //objDealDesc.Inserted_By = objLoginUser.Users_Code;
+                objDealDesc.Inserted_On = DateTime.Now;
+                objDealDesc.Inserted_By = objLoginUser.Users_Code;
             }
 
-            //objDealDesc.Last_Updated_Time = DateTime.Now;
-            //objDealDesc.Last_Action_By = objLoginUser.Users_Code;
+            objDealDesc.Last_Updated_Time = DateTime.Now;
+            objDealDesc.Last_Action_By = objLoginUser.Users_Code;
             objDealDesc.Is_Active = "Y";
             objDealDesc.Deal_Desc_Name = DealDescsName;
             objDealDesc.Type = Type;
@@ -241,8 +261,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objDealDesc.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDealDesc.Inserted_By));
+                    objDealDesc.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDealDesc.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDealDesc);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForDealDescription, objDealDesc.Deal_Desc_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForDealDescription;
+                    objAuditLog.intCode = objDealDesc.Deal_Desc_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objDealDesc.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

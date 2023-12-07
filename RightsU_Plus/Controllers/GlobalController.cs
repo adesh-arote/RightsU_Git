@@ -14,6 +14,11 @@ using System.Data;
 using Microsoft.Reporting.WebForms;
 using System.Configuration;
 using Newtonsoft.Json;
+using System.Net;
+using System.IO;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace RightsU_Plus.Controllers
 {
@@ -830,7 +835,7 @@ namespace RightsU_Plus.Controllers
         }
         public string ConvertObjectToJson(object obj)
         {
-            string ret = JsonConvert.SerializeObject(obj, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            string ret = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, PreserveReferencesHandling = PreserveReferencesHandling.None });
             return ret;
         }
         public bool SaveMasterLogData(int ModuleCode, int IntCode, string LogData, string ActionType, int UserCode)
@@ -849,5 +854,141 @@ namespace RightsU_Plus.Controllers
 
             return isValid;
         }
+
+        #region Call API for Audit log master
+        public string PostAuditLogAPI(MasterAuditLogInput obj, string AuthKey)
+        {
+            string ret = "", ErrMsg = "", StatusCode = "";
+            string url = ConfigurationSettings.AppSettings["PostAuditLogAPIURL"];
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(url);
+
+                //HTTP POST
+                var postTask = client.PostAsJsonAsync<MasterAuditLogInput>("masterauditlog", obj);
+                postTask.Wait();
+
+                var result = postTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    StatusCode = Convert.ToString(result.StatusCode);
+                    ErrMsg = "Success";
+                }
+                else
+                {
+                    ErrMsg = "Error";
+                }
+            }
+
+            var objStatus = new
+            {
+                Status = StatusCode,
+                ErrorMessage = ErrMsg,
+                Data = ret
+            };
+
+            return JsonConvert.SerializeObject(objStatus);
+        }
+        public string GetAuditLogAPI(string order, string sort, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, Int32 size = 0, Int32 page = 0, string searchValue = "", string user = "", string userAction = "", string includePrevAuditVesion = "", string AuthKey = "")
+        {
+            string ret = "", ErrMsg = "", StatusCode = "";
+            string url = ConfigurationSettings.AppSettings["GetAuditLogAPIURL"];
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(url);
+                //HTTP GET                
+                var responseTask = client.GetAsync("masterauditlist?order=" + order.ToString() + "&&sort=" + sort + "&&requestFrom=" + requestFrom + "&&requestTo=" + requestTo + "&&moduleCode=" + moduleCode + "&&size=" + size
+                    + "&&page=" + page + "&&searchValue=" + searchValue + "&&user=" + user + "&&userAction=" + userAction); //+ "&&includePrevAuditVesion=" + includePrevAuditVesion + "&&AuthKey=" + AuthKey
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    ret = Convert.ToString(result.StatusCode);
+                    var readTask = result.Content.ReadAsAsync<GetReturn>();
+                    readTask.Wait();
+
+                    var GetReturn1 = readTask.Result;
+                    var json = JsonConvert.SerializeObject(GetReturn1.LogObject);
+                    ret = json;
+                    ErrMsg = "Success";
+                }
+                else
+                {
+                    ErrMsg = "Error";
+                }
+            }
+
+            var obj = new
+            {
+                Status = StatusCode,
+                ErrorMessage = ErrMsg,
+                Data = ret
+            };
+
+            return JsonConvert.SerializeObject(obj); 
+        }
+
+        public int CalculateSeconds(DateTime dateTimeToConvert)
+        {
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
+
+            DateTime dtNow = dateTimeToConvert;
+            TimeSpan result = dtNow.Subtract(dt);
+            int seconds = Convert.ToInt32(result.TotalSeconds);
+            return seconds;
+        }
+
+        public string GetUserName(int UserId)
+        {
+            string Username = "";
+            if (UserId != 0)
+            {
+                User ObjUser = new User_Service(objLoginEntity.ConnectionStringName).GetById(UserId);
+                Username = ObjUser.First_Name + " " + ObjUser.Last_Name;
+            }
+            else
+            {
+                Username = null;
+            }
+            return Username;
+        }
+        #endregion
     }
+
+    public class GetReturn
+    {
+        [JsonIgnore]
+        public string Message { get; set; }
+        [JsonIgnore]
+        public bool IsSuccess { get; set; }
+        [JsonIgnore]
+        public double TimeTaken { get; set; }
+        [JsonIgnore]
+        public HttpStatusCode StatusCode { get; set; }
+        public AuditLogReturn LogObject { get; set; }
+    }
+
+    public class AuditLogReturn
+    {
+        public AuditLogReturn()
+        {
+            paging = new paging();
+            auditData = new List<string>();
+        }
+
+        [Required]
+        public paging paging { get; set; }
+        public List<string> auditData { get; set; }
+    }
+
+    public class paging
+    {
+        public int page { get; set; }
+        public int size { get; set; }
+        public Int64 total { get; set; }
+    }    
+
 }

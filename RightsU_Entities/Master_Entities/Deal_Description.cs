@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Deal_Description
     {
@@ -22,8 +23,14 @@ namespace RightsU_Entities
         public string Type { get; set; }
         public string Is_Active { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
     }
 }

@@ -157,6 +157,11 @@ namespace RightsU.BMS.WebAPI.Controllers
                 }
             }
 
+            if (!string.IsNullOrEmpty(search))
+            {
+                Input.search = search;
+            }
+
             try
             {
                 if (!string.IsNullOrEmpty(dateGt))
