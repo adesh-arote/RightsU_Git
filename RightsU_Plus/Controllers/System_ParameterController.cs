@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
@@ -129,7 +130,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveSystem_Parameter(int id, string paramValue, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C ="Create";
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (id > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -140,7 +141,7 @@ namespace RightsU_Plus.Controllers
             {
                 objSystemParameter = objService.GetById(id);
                 objSystemParameter.EntityState = State.Modified;
-                Action = "U"; // U ="update";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
@@ -161,8 +162,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objSystemParameter.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSystemParameter.Inserted_By));
+                    objSystemParameter.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSystemParameter.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSystemParameter);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForSystemParameter, objSystemParameter.Id, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForSystemParameter, objSystemParameter.Id, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForSystemParameter;
+                    objAuditLog.intCode = objSystemParameter.Id;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objSystemParameter.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

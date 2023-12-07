@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -25,7 +26,6 @@ namespace RightsU_Plus.Controllers
             }
         }
 
-
         private List<Banner> lstBanner_Searched = new List<Banner>();
 
         private Banner lstBanner = new Banner();
@@ -42,7 +42,6 @@ namespace RightsU_Plus.Controllers
             ViewBag.SortType = lstSort;
             return View();
         }
-
 
         public PartialViewResult BindBanner_List(int pageNo, int recordPerPage, int Banner_Code, string commandName, string sortType)
         {
@@ -166,12 +165,11 @@ namespace RightsU_Plus.Controllers
             };
             return Json(obj);
         }
+
         public JsonResult SaveBanner(int Banner_Code, string Banner_Name, string Banner_short_name)
         {
-            string Action = "C";
-            string status = "S";
-            string message = "";
-            int UserId = objLoginUser.Users_Code;
+            string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
+
             List<Banner> tempLstAttribGrp = new Banner_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.Banner_Name == Banner_Name) && (a.Banner_Short_Name == Banner_short_name) && (a.Banner_Code != Banner_Code)).ToList();
 
             if (tempLstAttribGrp.Count == 0)
@@ -185,20 +183,19 @@ namespace RightsU_Plus.Controllers
                     Banner banner = new Banner_Service(objLoginEntity.ConnectionStringName).GetById(Banner_Code);
                     lstBanner = objBanner_Service.GetById(Banner_Code);
                     lstBanner.EntityState = State.Modified;
-                    lstBanner.Inserted_By = banner.Inserted_By;
-                    Action = "U";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                 }
                 else
                 {
                     lstBanner = new Banner();
                     lstBanner.EntityState = State.Added;
-                    lstBanner.Inserted_By = UserId;
-                    Action = "C";
+                    lstBanner.Inserted_By = objLoginUser.Users_Code;
+                    lstBanner.Inserted_On = DateTime.Now;
                 }
+
                 lstBanner.Banner_Short_Name = Banner_short_name;
                 lstBanner.Banner_Name = Banner_Name;
-                lstBanner.Inserted_On = DateTime.Now;
-                lstBanner.Last_Action_By = UserId;
+                lstBanner.Last_Action_By = objLoginUser.Users_Code;
                 lstBanner.Last_Updated_Time = DateTime.Now;
 
                 dynamic resultSet;
@@ -221,8 +218,26 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        lstBanner.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(lstBanner.Inserted_By));
+                        lstBanner.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(lstBanner.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(lstBanner);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(lstBanner.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(lstBanner.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForBanner;
+                        objAuditLog.intCode = lstBanner.Banner_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(lstBanner.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -247,8 +262,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult DeleteBanner(int id)
         {
-            string message = "";
-            string status = "S";
+            string message = "", status = "S", Action = Convert.ToString(ActionType.X); // X = "Delete";
             Banner_Service objBanner_Service = new Banner_Service(objLoginEntity.ConnectionStringName);
             Banner bannerObj = objBanner_Service.GetById(id);
             if (CheckIfBannerIsUsed(id))
@@ -261,14 +275,31 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    string Action = "D";
                     status = "S";
                     message = objMessageKey.RecordDeletedsuccessfully;
 
                     try
                     {
+                        bannerObj.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(bannerObj.Inserted_By));
+                        bannerObj.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(bannerObj.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(bannerObj);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(bannerObj.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForBanner), Convert.ToInt32(bannerObj.Banner_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForBanner;
+                        objAuditLog.intCode = bannerObj.Banner_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(bannerObj.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -281,7 +312,6 @@ namespace RightsU_Plus.Controllers
                 status = "E";
                 message = "Cannot delete selected Banner as it is already in use.";
             }
-
 
             var obj = new
             {
