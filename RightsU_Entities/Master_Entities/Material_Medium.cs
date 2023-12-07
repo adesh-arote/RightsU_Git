@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Material_Medium
     {
@@ -29,10 +30,17 @@ namespace RightsU_Entities
         public Nullable<int> Duration { get; set; }
         public string Is_Qc_Required { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }

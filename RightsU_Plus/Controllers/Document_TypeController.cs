@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -142,7 +143,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ActiveDeactiveDocument_Type(int documentTypeCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Activate";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(documentTypeCode, GlobalParams.ModuleCodeForDocumentType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -151,29 +152,47 @@ namespace RightsU_Plus.Controllers
                 Document_Type_Service objService = new Document_Type_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Document_Type objDocumentType = objService.GetById(documentTypeCode);
                 objDocumentType.Is_Active = doActive;
+                objDocumentType.Last_Updated_Time = DateTime.Now;
+                objDocumentType.Last_Action_By = objLoginUser.Users_Code;
                 objDocumentType.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objDocumentType, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstDocument_Type.Where(w => w.Document_Type_Code == documentTypeCode).First().Is_Active = doActive;
                     lstDocument_Type_Searched.Where(w => w.Document_Type_Code == documentTypeCode).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objDocumentType.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDocumentType.Inserted_By));
+                        objDocumentType.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDocumentType.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDocumentType);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForDocumentType;
+                        objAuditLog.intCode = objDocumentType.Document_Type_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objDocumentType.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -201,7 +220,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveDocument_Type(int documentTypeCode, string documentTypeName, int Record_Code)
         {
-            string Action = "C";
+            string Action = Convert.ToString(ActionType.C); // C = "Create";
             string status = "S", message = objMessageKey.Recordsavedsuccessfully;
             if (documentTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
@@ -211,13 +230,12 @@ namespace RightsU_Plus.Controllers
 
             if (documentTypeCode > 0)
             {
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
                 objDocumentType = objService.GetById(documentTypeCode);
                 objDocumentType.EntityState = State.Modified;
             }
             else
             {
-                Action = "C";
                 objDocumentType = new RightsU_Entities.Document_Type();
                 objDocumentType.EntityState = State.Added;
                 objDocumentType.Inserted_On = DateTime.Now;
@@ -235,8 +253,26 @@ namespace RightsU_Plus.Controllers
                 lstDocument_Type_Searched = lstDocument_Type = objService.SearchFor(s => true).OrderByDescending(x => x.Last_Updated_Time).ToList();
                 try
                 {
+                    objDocumentType.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDocumentType.Inserted_By));
+                    objDocumentType.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objDocumentType.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objDocumentType);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForDocumentType), Convert.ToInt32(objDocumentType.Document_Type_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForDocumentType;
+                    objAuditLog.intCode = objDocumentType.Document_Type_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objDocumentType.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

@@ -55,7 +55,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UTO.Framework.Shared">
-      <HintPath>..\RightsU.BMS.Entities\bin\UTO.Framework.Shared.dll</HintPath>
+      <HintPath>..\RightsU_Plus\bin\UTO.Framework.Shared.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

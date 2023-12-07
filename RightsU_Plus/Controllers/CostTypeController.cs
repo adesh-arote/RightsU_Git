@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -151,7 +152,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveCostType(int costTypeCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "", Action = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Activate";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(costTypeCode, GlobalParams.ModuleCodeForCostType, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -160,6 +161,8 @@ namespace RightsU_Plus.Controllers
                 Cost_Type_Service objService = new Cost_Type_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Cost_Type objCostType = objService.GetById(costTypeCode);
                 objCostType.Is_Active = doActive;
+                objCostType.Last_Updated_Time = DateTime.Now;
+                objCostType.Last_Action_By = objLoginUser.Users_Code;
                 objCostType.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objCostType, out resultSet);
@@ -170,19 +173,36 @@ namespace RightsU_Plus.Controllers
                     lstCostType_Searched.Where(w => w.Cost_Type_Code == costTypeCode).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }   
                     else
                     {
-                        Action = "DA"; // AA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objCostType.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCostType.Inserted_By));
+                        objCostType.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCostType.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCostType);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForCostType;
+                        objAuditLog.intCode = objCostType.Cost_Type_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objCostType.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -211,7 +231,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveCostType(int costTypeCode, string costTypeName, int Record_Code)
         {
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = "C"; // C ="Create";
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C ="Create";
             if (costTypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -222,7 +242,9 @@ namespace RightsU_Plus.Controllers
             {
                 objCostType = objService.GetById(costTypeCode);
                 objCostType.EntityState = State.Modified;
-                Action = "U";  // U ="Update";
+                objCostType.Last_Updated_Time = DateTime.Now;
+                objCostType.Last_Action_By = objLoginUser.Users_Code;
+                Action = Convert.ToString(ActionType.U); // U ="Update";
             }
             else
             {
@@ -245,8 +267,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objCostType.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCostType.Inserted_By));
+                    objCostType.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCostType.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCostType);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCostType, objCostType.Cost_Type_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForCostType;
+                    objAuditLog.intCode = objCostType.Cost_Type_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objCostType.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

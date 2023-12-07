@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Country
     {
@@ -43,19 +44,25 @@ namespace RightsU_Entities
         public string Country_Name { get; set; }
         public string Is_Domestic_Territory { get; set; }
         public string Is_Theatrical_Territory { get; set; }
-        [JsonIgnore]
         public string Is_Ref_Acq { get; set; }
-        [JsonIgnore]
         public string Is_Ref_Syn { get; set; }
-        public Nullable<int> Parent_Country_Code { get; set; }
         [JsonIgnore]
+        public Nullable<int> Parent_Country_Code { get; set; }
+        [NotMapped]
+        public string Parent_Country_Name { get; set; }
         public string Applicable_For_Asrun_Schedule { get; set; }
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
         public int Base_Country_Count { get; set; }
 
@@ -67,6 +74,7 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Rights_Territory> Acq_Deal_Rights_Territory { get; set; }
         [JsonIgnore]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Country_Language> Country_Language { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Territory> Syn_Deal_Rights_Blackout_Territory { get; set; }

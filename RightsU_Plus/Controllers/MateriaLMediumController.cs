@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -151,17 +152,18 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveMaterialMedium(int MaterialMediumCode, string doActive)
         {
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(MaterialMediumCode, GlobalParams.ModuleCodeForMaterialMedium, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                string Action = "A";
                 //string status = "S", message = "Record {ACTION} successfully";
                 Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Material_Medium objMaterialMedium = objService.GetById(MaterialMediumCode);
                 objMaterialMedium.Is_Active = doActive;
+                objMaterialMedium.Last_Updated_Time = DateTime.Now;
+                objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
                 objMaterialMedium.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objMaterialMedium, out resultSet);
@@ -179,19 +181,36 @@ namespace RightsU_Plus.Controllers
                 {
                     //message = message.Replace("{ACTION}", "Activated");
                     message = objMessageKey.Recordactivatedsuccessfully;
-                    Action = "A";
                 }
                 else
                 {
                     message = objMessageKey.Recorddeactivatedsuccessfully;
                     //message = message.Replace("{ACTION}", "Deactivated");
-                    Action = "DA";
+                    Action = Convert.ToString(ActionType.D); // D = "Deactive";
                 }
 
                 try
                 {
+                    objMaterialMedium.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMaterialMedium.Inserted_By));
+                    objMaterialMedium.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMaterialMedium.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialMedium);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForMaterialMedium;
+                    objAuditLog.intCode = objMaterialMedium.Material_Medium_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objMaterialMedium.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -238,7 +257,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult SaveUpdateMaterialMediumList(FormCollection objFormCollection)
         {
             int recordCount = 0;
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             int int_Duration = 0;
             int MaterialMediumCode = Convert.ToInt32(objFormCollection["MaterialMediumCode"]);
             Material_Medium_Service objService = new Material_Medium_Service(objLoginEntity.ConnectionStringName);
@@ -265,7 +284,6 @@ namespace RightsU_Plus.Controllers
                     objMaterialMedium.Duration = int_Duration;
                 }
                 objMaterialMedium.Is_Qc_Required = str_QC;
-                objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
                 objMaterialMedium.EntityState = State.Modified;
             }
             else
@@ -296,6 +314,7 @@ namespace RightsU_Plus.Controllers
                 objMaterialMedium.Inserted_On = System.DateTime.Now;
                 objMaterialMedium.EntityState = State.Added;
             }
+            objMaterialMedium.Last_Action_By = objLoginUser.Users_Code;
             objMaterialMedium.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
             bool isDuplicate = objService.Validate(objMaterialMedium, out resultSet);
@@ -304,7 +323,6 @@ namespace RightsU_Plus.Controllers
                 bool isValid = objService.Save(objMaterialMedium, out resultSet);
                 if (isValid)
                 {
-                    string Action = "C";
                     lstMaterialMedium_Searched = lstMaterialMedium = new Material_Medium_Service(objLoginEntity.ConnectionStringName).SearchFor(x => true).OrderByDescending(o=>o.Last_Updated_Time).ToList();
 
                     int recordLockingCode = Convert.ToInt32(objFormCollection["Record_Code"]);
@@ -312,21 +330,38 @@ namespace RightsU_Plus.Controllers
 
                     if (MaterialMediumCode > 0)
                     {
-                        Action = "U";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = objMessageKey.Recordupdatedsuccessfully;
                         //message = message.Replace("{ACTION}", "updated");
                     }
                     else
-                    {
-                        Action = "C";
+                    { 
                         //message = message.Replace("{ACTION}", "added");
                         message = objMessageKey.RecordAddedSuccessfully;
                     }
 
                     try
                     {
+                        objMaterialMedium.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMaterialMedium.Inserted_By));
+                        objMaterialMedium.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMaterialMedium.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMaterialMedium);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMaterialMedium), Convert.ToInt32(objMaterialMedium.Material_Medium_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForMaterialMedium;
+                        objAuditLog.intCode = objMaterialMedium.Material_Medium_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objMaterialMedium.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
