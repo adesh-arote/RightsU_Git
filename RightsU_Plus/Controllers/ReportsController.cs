@@ -2925,8 +2925,8 @@ namespace RightsU_Plus.Controllers
             string Entity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Title_Detail_Report_Visibility").Select(X => X.Parameter_Value.ToString()).FirstOrDefault();
             ReportParameter[] parm = new ReportParameter[17];
             parm[0] = new ReportParameter("DealTypeCode", SrhDealTypeCode == "" ? " " : SrhDealTypeCode);
-            parm[1] = new ReportParameter("TitleName", SrchTitle == "" ? " " : SrchTitle);
-            parm[2] = new ReportParameter("OriginalTitleName", SrchOrigTitle == "" ? " " : SrchOrigTitle);
+            parm[1] = new ReportParameter("TitleName", SrchTitle == "" ? " " : SrchTitle.Replace('﹐', ','));
+            parm[2] = new ReportParameter("OriginalTitleName", SrchOrigTitle == "" ? " " : SrchOrigTitle.Replace('﹐', ','));
             parm[3] = new ReportParameter("AdvanceSearch", sql == "" ? " " : sql);
             parm[4] = new ReportParameter("Extended_Meta_Data", Convert.ToString(ExtendedMetaData == true ? "Y" : "N"));
 
