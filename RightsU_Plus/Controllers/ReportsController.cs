@@ -3293,18 +3293,6 @@ namespace RightsU_Plus.Controllers
             MultiSelectList lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true)
                 .Select(i => new { Display_Value = i.Users_Code, Display_Text = i.Login_Name }).ToList(), "Display_Value", "Display_Text");
 
-            var items = new List<DDLEnumData>();
-            foreach (String value in Enum.GetNames(typeof(ActionType)))
-            {
-                items.Add(new DDLEnumData
-                {
-                    Text = value,
-                    Value = value
-                });
-            }
-
-            MultiSelectList lstActionType = new MultiSelectList(items.Select(i => new { Display_Value = i.Value, Display_Text = i.Text }).ToList(), "Display_Value", "Display_Text");
-
             var itemOrderBy = new List<DDLEnumData>();
             foreach (String value in Enum.GetNames(typeof(order)))
             {
@@ -3317,6 +3305,15 @@ namespace RightsU_Plus.Controllers
 
             MultiSelectList lstOrderByList = new MultiSelectList(itemOrderBy.Select(i => new { Display_Value = i.Value, Display_Text = i.Text }).ToList(), "Display_Value", "Display_Text");
 
+            Dictionary<string, string> listActionType = new Dictionary<string, string>();
+            listActionType.Add("Create", "C");
+            listActionType.Add("Delete", "X");
+            listActionType.Add("Update", "U");
+            listActionType.Add("Active", "A");
+            listActionType.Add("Deactive", "D");
+
+            MultiSelectList lstActionType = new MultiSelectList(listActionType.Select(i => new { Display_Value = i.Value, Display_Text = i.Key }).ToList(), "Display_Value", "Display_Text");
+
             objJson.Add("lstMasterList", lstMasterList);
             objJson.Add("lstUsers", lstUsers);
             objJson.Add("lstActionType", lstActionType);
@@ -3324,30 +3321,61 @@ namespace RightsU_Plus.Controllers
 
             return Json(objJson);
         }
-        public JsonResult BindAuditLogDetailsReports(string SrchMaster = "", string SrchUsers = "", string SrchLog = "", string SrchStartDate = "", string SrchEndDate = "", string SrchActionType = "", string SrchOrderBy = "")
+        public JsonResult BindAuditLogDetailsReports(string SrchMaster = "", string SrchUsers = "", string SrchLog = "", string SrchStartDate = "", string SrchEndDate = "", string SrchActionType = "", string SrchOrderBy = "asc", int pageNo = 1, int recordPerPage = 10, string sortType = "T")
         {
-            string result = "", ret = "";
+            string result = "", ret = "", ErrMsg = "";
+            int PageNo = 1, TotalRecord = 0;
             int requestFrom = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchStartDate));
-            int requestTo = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchEndDate));
-            int moduleCode = Convert.ToInt32(SrchMaster), size = 0, page = 0;
-            string searchValue = SrchLog, user = SrchUsers, userAction = SrchActionType, includePrevAuditVesion = "", OrderBy = SrchOrderBy, AuthKey = "";
-            string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetAuditLogAPI(OrderBy, Convert.ToString(sort.IntCode), requestFrom = 1701694653, requestTo = 1701718323, moduleCode, size, page, searchValue, user, userAction, includePrevAuditVesion = "", AuthKey = "");
-            
-            //result = "{\"auditData\":[{\"Version\":2,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5,\"Exchange Dates\":[{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"},{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"}]},{\"Currency_Exchange_Rate_Code\":3014,\"Currency_Code\":3036,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":2.3},{\"Currency_Exchange_Rate_Code\":30114,\"Currency_Code\":30361,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":12.3,\"Exchange Dates\":[{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"},{\"Prop 1\":\"Value 1\",\"Prop 2\":34,\"Prop 3\":76,\"Prop 4\":\"Value 4\"}]}]},{\"Version\":3,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5}]},{\"Version\":4,\"Currency_Code\":3026,\"Currency_Name\":\"Indian Rupees\",\"Currency_Sign\":\"INR\",\"Inserted_On\":\"2023 - 11 - 02T12: 54:21.896845 + 05:30\",\"Inserted_By\":\"legal1\",\"Lock_Time\":null,\"Last_Updated_Time\":\"2023 - 11 - 02T12: 54:32.5362367 + 05:30\",\"Last_Action_By\":\"legal1\",\"Is_Active\":\"Y\",\"Is_Base_Currency\":\"N\",\"Currency_Exchange_Rate\":[{\"Currency_Exchange_Rate_Code\":3054,\"Currency_Code\":3026,\"Effective_Start_Date\":\"2023 - 11 - 01T00: 00:00 + 05:30\",\"System_End_Date\":null,\"Exchange_Rate\":1.5}]}],\"paging\":{\"page\":1,\"size\":250,\"total\":515}}";
-            var temp = JsonConvert.DeserializeObject<AuditLogReturn>(LogData);           
-            
-            foreach (var item in temp.auditData)
+            int requestTo = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchEndDate).Date.AddDays(1));
+            int moduleCode = Convert.ToInt32(SrchMaster), size = recordPerPage, page = pageNo;
+            string searchValue = SrchLog, user = SrchUsers, userAction = SrchActionType, includePrevAuditVesion = "", AuthKey = "", OrderBy = "asc";
+
+            if(SrchOrderBy!="")
+                OrderBy = SrchOrderBy;
+
+            var LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetAuditLogAPI(OrderBy, Convert.ToString(sort.IntCode), requestFrom, requestTo, moduleCode, size, page, searchValue, user, userAction, includePrevAuditVesion = "", AuthKey = "");
+                        
+            var LogDetail = JsonConvert.DeserializeObject<JsonData>(LogData);
+
+            if(Convert.ToString(LogDetail.ErrorMessage) == "Success")
             {
-                result = result + item + ",";
+                var temp = JsonConvert.DeserializeObject<AuditLogReturn>(Convert.ToString(LogDetail.Data));
+                if (temp.auditData.Count > 0)
+                {
+                    foreach (var item in temp.auditData)
+                    {
+                        result = result + item + ",";
+                    }
+
+                    if (result.Length > 0)
+                    {
+                        result = result.Remove(result.Length - 1);
+                        ret = "[" + result.Replace("\r\n", "") + "]";
+                    }                                       
+                }
+                else
+                {
+                    ret = "";
+                }
+
+                PageNo = temp.paging.page;
+                TotalRecord = Convert.ToInt32(temp.paging.total);
+                ErrMsg = "Success";
             }
-
-            if(result.Length > 0)
+            else
             {
-                result = result.Remove(result.Length - 1);
-                ret = "[" + result.Replace("\r\n", "") + "]";
-            }            
+                ErrMsg = "Error";
+            }
+            
+            var obj = new
+            {
+                Record_Count = TotalRecord,
+                Page_No = PageNo,
+                auditData = ret,
+                ErrorMessage = ErrMsg
+            };
 
-            return Json(ret);
+            return Json(obj);
         }
 
         #endregion
@@ -3357,5 +3385,11 @@ namespace RightsU_Plus.Controllers
     {
         public string Text { get; set; }
         public string Value { get; set; }
+    }
+    public class JsonData
+    {
+        public string Status { get; set; }
+        public string ErrorMessage { get; set; }
+        public string Data { get; set; }
     }
 }

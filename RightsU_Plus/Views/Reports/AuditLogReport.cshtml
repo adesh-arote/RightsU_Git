@@ -58,7 +58,6 @@
     #ddlOrderByList_chosen {
         width: 89% !important;
     }
-
 </style>
 <script>
 
@@ -70,10 +69,12 @@
         $('#ddlUsers').SumoSelect();
         $('#ddlActionTypeList').SumoSelect();
         BindAuditLog_Search_Controls();
+        ClearAll();
     });
 
     // Builds the HTML Table out of myList json data from Ivy restful service.
     function buildHtmlTable(myList) {
+        $("#excelDataTable").empty();
         addTable(myList, $("#excelDataTable"));
     }
 
@@ -149,8 +150,8 @@
 
         for (var i = 0; i < list.length; i++) {
             var rowHash = list[i];
-            for (var key in rowHash) {                
-                if ($.inArray(key, columnSet) == -1) {    
+            for (var key in rowHash) {
+                if ($.inArray(key, columnSet) == -1) {
                     columnSet.push(key);
                     headerTr$.append($('<th style="padding:5px" />').html(key));
                     //if (key == "auditData") {
@@ -159,10 +160,10 @@
                     //else if (key == "paging") {
 
                     //}
-                    //else {      
+                    //else {
                     //    columnSet.push(key);
                     //    headerTr$.append($('<th style="padding:5px" />').html(key));
-                    //}                    
+                    //}
                 }
             }
         }
@@ -204,7 +205,7 @@
                         $("#ddlMasterList").trigger("chosen:updated")
 
                         $(result.lstUsers).each(function (index, item) {
-                            $("#ddlUsers").append($("<option>").val(this.Value).text(this.Text));
+                            $("#ddlUsers").append($("<option>").val(this.Text).text(this.Text));
                         });
                         $("#ddlUsers")[0].sumo.reload();
 
@@ -227,6 +228,9 @@
     }
 
     function ClearAll() {
+
+        $("#dvNoRecordFound").hide();
+
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
 
@@ -247,6 +251,14 @@
         $("#ddlOrderByList").find("option").attr("selected", false);
         $("#ddlOrderByList").val('').trigger("chosen:updated");
 
+        $("#excelDataTable").empty();
+
+        $('#hdnPageNo').text(1);
+        $('#hdnPageNo').val(1);
+        $('#lblRecordCount').text(0);
+        $("#hdnRecordCount").val(0);
+        $('#txtPageSize').val(10);
+        SetPaging();
     }
 
     function ValidateStartDate() {
@@ -340,7 +352,7 @@
                 $("#txtEnd").val("");
                 return false;
             }
-            
+
         }
 
     }
@@ -349,15 +361,15 @@
         var startDay = new Date(firstDate);
         var endDay = new Date(secondDate);
 
-        // Determine the time difference between two dates     
+        // Determine the time difference between two dates
         var millisBetween = startDay.getTime() - endDay.getTime();
 
-        // Determine the number of days between two dates  
+        // Determine the number of days between two dates
         var days = millisBetween / (1000 * 3600 * 24);
 
-        // Show the final number of days between dates     
+        // Show the final number of days between dates
         return Math.round(Math.abs(days));
-    }  
+    }
 
     function ValidateSearch() {
         debugger;
@@ -387,11 +399,12 @@
             return false;
         }
         else {
-            AdvanceSearch();
+            //AdvanceSearch();
+            BindAuditlogList();
         }
     }
 
-    function AdvanceSearch() {
+    function BindAuditlogList() {
         debugger;
         var tmpMasterList = '', tmpUsers = '', txtLogSearch = '', txtStart = '', txtEnd = '', tmpActionType = '', tmpOrderByList = '';
 
@@ -411,6 +424,10 @@
         if ($('#ddlOrderByList').val())
             tmpOrderByList = $('#ddlOrderByList').val();
 
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        var sort_Type = "T";
+
         $.ajax({
             type: "POST",
             url: '@Url.Action("BindAuditLogDetailsReports", "Reports")',
@@ -425,26 +442,45 @@
                 SrchStartDate: txtStart,
                 SrchEndDate: txtEnd,
                 SrchActionType: tmpActionType,
-                SrchOrderBy: tmpOrderByList
+                SrchOrderBy: tmpOrderByList,
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type
             }),
             success: function (result) {
 
                 if (result == "true") {
                     redirectToLogin();
                 }
-                else {                    
-                    //$('#hdnPageNo').text(1);
-                    //$('#hdnPageNo').val(1);
-                    //$('#lblRecordCount').text(5);
-                    //$("#hdnRecordCount").val(5);
-                    //SetPaging()
-                    var response = JSON.parse(result);
-                    buildHtmlTable(response);                    
-                    //$('#lblRecordCount').text(result.Record_Count);
-                    //$("#hdnRecordCount").val(result.Record_Count);
-                    
-                    //$('#divResult').empty();
-                    //$('#divResult').html(result);
+                else {
+
+                    if (result.ErrorMessage == "Success") {
+                        if (result.auditData != "") {
+                            $("#dvNoRecordFound").hide();
+                            var response = JSON.parse(result.auditData);
+                            buildHtmlTable(response);
+                        }
+                        else {
+                            $("#dvNoRecordFound").show();
+                        }
+
+                        $('#hdnPageNo').text(pageNo);
+                        $('#hdnPageNo').val(pageNo);
+                        $('#lblRecordCount').text(result.Record_Count);
+                        $("#hdnRecordCount").val(result.Record_Count);
+                        SetPaging();
+                        BindAuditLogList();
+                        hideLoading();
+                    }
+                    else if (result.ErrorMessage == "Error") {
+                        $('#hdnPageNo').text(1);
+                        $('#hdnPageNo').val(1);
+                        $('#lblRecordCount').text(0);
+                        $("#hdnRecordCount").val(0);
+                        SetPaging();
+                        $("#excelDataTable").empty();
+                        showAlert("E", "An Error Occured, Please Contact Administrator");
+                    }
                 }
             },
             error: function (result) {
@@ -517,7 +553,7 @@
             var pageNo = page_index + 1
             $('#hdnPageNo').val(pageNo);
             if (IsCall == 'Y')
-                BindCurrencyList();
+                BindAuditlogList();
             else
                 IsCall = 'Y';
         }
@@ -529,7 +565,7 @@
         if (!ValidatePageSize())
             return false;
 
-        BindCurrencyList()
+        BindAuditlogList()
         SetPaging();
     }
 
@@ -545,8 +581,19 @@
     }
 
     function pageBinding() {
-        BindCurrencyList()
+        BindAuditlogList()
         SetPaging();
+    }
+
+    function checkCurrentAction() {
+        return true;
+    }
+
+    function ExportToExcel() {
+        debugger;
+        var url = 'data:application/vnd.ms-excel,' + encodeURIComponent($('#divResult').html())
+        location.href = url
+        return false;
     }
 
 </script>
@@ -556,7 +603,10 @@
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <div class="title_block dotted_border clearfix">
-                <h2>Audit Log Report</h2>
+                <h2 class="pull-left">Audit Log Report</h2>
+                <div class="right_nav pull-right">
+                    <a title="@objMessageKey.SaveToExcel" class="glyphicon glyphicon-floppy-save" style="cursor:pointer; text-decoration:underline; " onclick="ExportToExcel()"></a>
+                </div>
             </div>
             <div id="divFilter">
                 <table border="0" style="border-spacing: 5px;border-collapse: separate;padding: 0px;">
@@ -621,6 +671,10 @@
                     @objMessageKey.PageSize:
                     <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onblur="setDefaultPaging('txtPageSize')">
                 </span>
+            </div>
+
+            <div id="dvNoRecordFound" style="display:none">
+                <h4 colspan="5">@objMessageKey.Norecordfound</h4>
             </div>
 
             <div id="divResult" style="width: 100% !important; overflow-y: auto;">

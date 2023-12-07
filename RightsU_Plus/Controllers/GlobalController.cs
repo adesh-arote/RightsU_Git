@@ -857,12 +857,13 @@ namespace RightsU_Plus.Controllers
 
         #region Call API for Audit log master
         public string PostAuditLogAPI(MasterAuditLogInput obj, string AuthKey)
-        {            
-            string ret = "";
+        {
+            string ret = "", ErrMsg = "", StatusCode = "";
+            string url = ConfigurationSettings.AppSettings["PostAuditLogAPIURL"];
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:59676/api/masterauditlog");
+                client.BaseAddress = new Uri(url);
 
                 //HTTP POST
                 var postTask = client.PostAsJsonAsync<MasterAuditLogInput>("masterauditlog", obj);
@@ -871,60 +872,32 @@ namespace RightsU_Plus.Controllers
                 var result = postTask.Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    ret = Convert.ToString(result.StatusCode);
+                    StatusCode = Convert.ToString(result.StatusCode);
+                    ErrMsg = "Success";
+                }
+                else
+                {
+                    ErrMsg = "Error";
                 }
             }
 
-            return ret;
+            var objStatus = new
+            {
+                Status = StatusCode,
+                ErrorMessage = ErrMsg,
+                Data = ret
+            };
 
-            //int timeout = 3600;
-
-            //string result = "";
-            //string url = ConfigurationSettings.AppSettings["LogURL"];
-            //HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://localhost:59676/api/masterauditlog");
-            //request.KeepAlive = false;
-            //request.ProtocolVersion = HttpVersion.Version10;
-            //request.ContentType = "application/Json";
-            //request.Method = "POST";
-            //request.Headers.Add("ContentType", "application/json");
-            ////request.Headers.Add("AuthKey", AuthKey);
-            ////request.Headers.Add("Service", "False");
-            ////if (obj.RequestContent == null)
-            ////{
-            ////    obj.RequestContent = "";
-            ////}
-
-            //using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            //{
-            //    string logData = JsonConvert.SerializeObject(obj);
-            //    streamWriter.Write(logData);
-            //}
-            //var httpResponse = (HttpWebResponse)request.GetResponse();
-            //try
-            //{
-            //    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            //    {
-            //        result = streamReader.ReadToEnd();
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    request.Abort();
-            //    //LogService("Not able to post to Log Service");
-            //}
-            //if (result != "")
-            //{
-            //    //request posted successfully;	
-            //}
-            //return result;
+            return JsonConvert.SerializeObject(objStatus);
         }
         public string GetAuditLogAPI(string order, string sort, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, Int32 size = 0, Int32 page = 0, string searchValue = "", string user = "", string userAction = "", string includePrevAuditVesion = "", string AuthKey = "")
         {
-            string ret = "";            
+            string ret = "", ErrMsg = "", StatusCode = "";
+            string url = ConfigurationSettings.AppSettings["GetAuditLogAPIURL"];
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:59676/api/");
+                client.BaseAddress = new Uri(url);
                 //HTTP GET                
                 var responseTask = client.GetAsync("masterauditlist?order=" + order.ToString() + "&&sort=" + sort + "&&requestFrom=" + requestFrom + "&&requestTo=" + requestTo + "&&moduleCode=" + moduleCode + "&&size=" + size
                     + "&&page=" + page + "&&searchValue=" + searchValue + "&&user=" + user + "&&userAction=" + userAction); //+ "&&includePrevAuditVesion=" + includePrevAuditVesion + "&&AuthKey=" + AuthKey
@@ -940,10 +913,22 @@ namespace RightsU_Plus.Controllers
                     var GetReturn1 = readTask.Result;
                     var json = JsonConvert.SerializeObject(GetReturn1.LogObject);
                     ret = json;
+                    ErrMsg = "Success";
+                }
+                else
+                {
+                    ErrMsg = "Error";
                 }
             }
 
-            return ret;
+            var obj = new
+            {
+                Status = StatusCode,
+                ErrorMessage = ErrMsg,
+                Data = ret
+            };
+
+            return JsonConvert.SerializeObject(obj); 
         }
 
         public int CalculateSeconds(DateTime dateTimeToConvert)
@@ -1004,6 +989,6 @@ namespace RightsU_Plus.Controllers
         public int page { get; set; }
         public int size { get; set; }
         public Int64 total { get; set; }
-    }
+    }    
 
 }
