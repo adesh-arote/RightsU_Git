@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Additional_Expense
     {
         public Additional_Expense()
@@ -24,12 +25,32 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Additional_Expense_Code { get; set; }
         public string Additional_Expense_Name { get; set; }
+        [JsonIgnore]
         public string SAP_GL_Group_Code { get; set; }
+        [NotMapped]
+        public string SAP_GL_Group_Name
+        {
+            get
+            {
+                return SAP_GL_Group_Code;
+            }
+            set
+            {
+
+            }
+        }
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Additional_Exp> Acq_Deal_Cost_Additional_Exp { get; set; }

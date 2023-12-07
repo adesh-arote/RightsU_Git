@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -184,15 +185,14 @@ namespace RightsU_Plus.Controllers
             string Short_Key = objFormCollection["Short_Key"].ToString();
             string FromFirstAir =Convert.ToString(objFormCollection["chkFromFirstAir"]);	
        
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
 
             Right_Rule_Service objRight_Rule_Service = new Right_Rule_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Right_Rule objRight_Rule = new RightsU_Entities.Right_Rule();
 
             if (ObjRightRuleMVC.Right_Rule_Code > 0)
             {
-                objRight_Rule = objRight_Rule_Service.GetById(ObjRightRuleMVC.Right_Rule_Code);               
-                objRight_Rule.Last_Action_By = objLoginUser.Users_Code;
+                objRight_Rule = objRight_Rule_Service.GetById(ObjRightRuleMVC.Right_Rule_Code);                 
                 objRight_Rule.EntityState = State.Modified;
             }
             else
@@ -210,8 +210,9 @@ namespace RightsU_Plus.Controllers
             objRight_Rule.No_Of_Repeat = Convert.ToInt32(No_Of_Repeat);
             objRight_Rule.Short_Key = Short_Key;
             objRight_Rule.Last_Updated_Time = System.DateTime.Now;
+            objRight_Rule.Last_Action_By = objLoginUser.Users_Code;
 
-            if(FromFirstAir != null)
+            if (FromFirstAir != null)
             {
                 objRight_Rule.Start_Time = "00:00";
                 objRight_Rule.IS_First_Air = true;
@@ -225,7 +226,6 @@ namespace RightsU_Plus.Controllers
             bool isValid = objRight_Rule_Service.Save(objRight_Rule, out resultSet);
             if (isValid)
             {
-                string Action = "C";
                 if (ObjRightRuleMVC.Right_Rule_Code > 0)
                 {
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -234,19 +234,36 @@ namespace RightsU_Plus.Controllers
                     status = "S";
                     message = objMessageKey.Recordupdatedsuccessfully;
                     ViewBag.Alert = message;
-                    Action = "U";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                 }
                 else
                 {
                     status = "S";
                     message = objMessageKey.RecordAddedSuccessfully;
-                    Action = "C";
                 }
 
                 try
                 {
+                    objRight_Rule.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRight_Rule.Inserted_By));
+                    objRight_Rule.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRight_Rule.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForRightRule;
+                    objAuditLog.intCode = objRight_Rule.Right_Rule_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objRight_Rule.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -361,7 +378,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult ActiveDeactiveRightRule(int RightruleCode, string doActive)
         {
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(RightruleCode, GlobalParams.ModuleCodeForRightRule, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -369,15 +386,14 @@ namespace RightsU_Plus.Controllers
             {
                 Right_Rule_Service objService = new Right_Rule_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Right_Rule objRight_Rule = objService.GetById(Convert.ToInt32(RightruleCode));
-
-
+                objRight_Rule.Last_Updated_Time = DateTime.Now;
+                objRight_Rule.Last_Action_By = objLoginUser.Users_Code;
                 objRight_Rule.Is_Active = doActive;
                 objRight_Rule.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objRight_Rule, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstRight_Rule.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
                     lstRight_Rule_Searched.Where(w => w.Right_Rule_Code == RightruleCode).First().Is_Active = doActive;
 
@@ -385,19 +401,36 @@ namespace RightsU_Plus.Controllers
                     {
                         //message = message.Replace("{ACTION}", "Activated");
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         //message = message.Replace("{ACTION}", "Deactivated");
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objRight_Rule.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRight_Rule.Inserted_By));
+                        objRight_Rule.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRight_Rule.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRight_Rule);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForRightRule), Convert.ToInt32(objRight_Rule.Right_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForRightRule;
+                        objAuditLog.intCode = objRight_Rule.Right_Rule_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objRight_Rule.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

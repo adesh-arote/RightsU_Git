@@ -3,8 +3,11 @@ using WebActivatorEx;
 using RightsU.BMS.WebAPI;
 using Swashbuckle.Application;
 using RightsU.BMS.WebAPI.Filters;
+using System;
+using System.Web;
+using System.Net.Http;
 
-[assembly: PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
 namespace RightsU.BMS.WebAPI
 {
@@ -17,6 +20,9 @@ namespace RightsU.BMS.WebAPI
             GlobalConfiguration.Configuration
                 .EnableSwagger(c =>
                     {
+                        //c.RootUrl(req => new Uri(req.RequestUri, HttpContext.Current.Request.ApplicationPath ?? string.Empty).ToString());
+                        c.RootUrl(req => req.RequestUri.GetLeftPart(UriPartial.Authority).TrimEnd('/') +'/' +req.GetRequestContext().VirtualPathRoot.TrimStart('/'));
+
                         // By default, the service root url is inferred from the request used to access the docs.
                         // However, there may be situations (e.g. proxy and load-balanced environments) where this does not
                         // resolve correctly. You can workaround this by providing your own code to determine the root URL.
@@ -34,10 +40,7 @@ namespace RightsU.BMS.WebAPI
                         // additional fields by chaining methods off SingleApiVersion.
                         //
                         c.SingleApiVersion("v1", "RightsU BMS API Documentation");
-
-                        //For Enable Enum Parameter as Dropdown
-                        c.DescribeAllEnumsAsStrings();
-
+                        
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
                         //c.PrettyPrint();
@@ -146,8 +149,8 @@ namespace RightsU.BMS.WebAPI
                         // You can change the serializer behavior by configuring the StringToEnumConverter globally or for a given
                         // enum type. Swashbuckle will honor this change out-of-the-box. However, if you use a different
                         // approach to serialize enums as strings, you can also force Swashbuckle to describe them as strings.
-                        //
-                        //c.DescribeAllEnumsAsStrings();
+                        ////For Enable Enum Parameter as Dropdown
+                        c.DescribeAllEnumsAsStrings();
 
                         // Similar to Schema filters, Swashbuckle also supports Operation and Document filters:
                         //
@@ -213,7 +216,7 @@ namespace RightsU.BMS.WebAPI
                         // in a badge at the bottom of the page. Use these options to set a different validator URL or to disable the
                         // feature entirely.
                         //c.SetValidatorUrl("http://localhost/validator");
-                        //c.DisableValidator();
+                        c.DisableValidator();
 
                         // Use this option to control how the Operation listing is displayed.
                         // It can be set to "None" (default), "List" (shows operations for each resource),

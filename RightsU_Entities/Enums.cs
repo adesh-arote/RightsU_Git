@@ -13,4 +13,23 @@ namespace RightsU_Entities
         Modified,
         Deleted
     }
+
+    public enum ActionType
+    {
+        C,
+        X,
+        U,
+        A,
+        D,
+    }
+    public enum order
+    {
+        Asc = 1,
+        Desc = 2
+    }
+    public enum sort
+    {
+        IntCode = 1,
+        Version = 2
+    }
 }

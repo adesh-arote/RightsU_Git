@@ -901,6 +901,7 @@ namespace RightsU_Plus.Controllers
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
                 objVendor.Short_Code = Vendor_FaxNo;
+                objVendor.Fax_No = Vendor_FaxNo;
                 objVendor.ST_No = Vendor_STNo;
                 objVendor.VAT_No = Vendor_VATNo;
                 objVendor.TIN_No = Vendor_TINNo;
@@ -1009,6 +1010,7 @@ namespace RightsU_Plus.Controllers
                 objVendor.Address = Vendor_Addr;
                 objVendor.Phone_No = Vendor_PhNo;
                 objVendor.Short_Code = Vendor_FaxNo;
+                objVendor.Fax_No = Vendor_FaxNo;
                 objVendor.ST_No = Vendor_STNo;
                 objVendor.VAT_No = Vendor_VATNo;
                 objVendor.TIN_No = Vendor_TINNo;
