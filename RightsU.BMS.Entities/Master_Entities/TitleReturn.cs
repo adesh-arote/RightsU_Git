@@ -57,7 +57,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string OriginalName { get; set; }
         public string OriginalLanguage { get; set; }
         public string ProductionYear { get; set; }
-        public int DurationInMin { get; set; }
+        public decimal DurationInMin { get; set; }
         public string Program { get; set; }
         public string Country { get; set; }        
         public string StarCast { get; set; }
