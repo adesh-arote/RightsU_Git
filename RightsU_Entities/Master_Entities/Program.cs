@@ -39,31 +39,11 @@ namespace RightsU_Entities
         [JsonIgnore]
         public Nullable<int> Deal_Type_Code { get; set; }
         [NotMapped]
-        public string Deal_Type_Name
-        {
-            get
-            {
-                return Deal_Type.Deal_Type_Name;
-            }
-            set
-            {
-
-            }
-        }
+        public string Deal_Type_Name { get; set; }
         [JsonIgnore]
         public Nullable<int> Genres_Code { get; set; }
         [NotMapped]
-        public string Genres_Name
-        {
-            get
-            {
-                return Genre.Genres_Name;
-            }
-            set
-            {
-
-            }
-        }
+        public string Genres_Name { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual ICollection<Title> Titles { get; set; }
