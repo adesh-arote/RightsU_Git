@@ -51,6 +51,6 @@ Last Change     : Added Case for Control Type Date and Int to give selected valu
 		inner join Extended_Columns EC (NOLOCK) on MEC.Columns_Code = EC.Columns_Code AND MEC.Record_Code = @Title_Code
 		LEFT join Extended_Columns_Value ECV (NOLOCK) on EC.Columns_Code = ECV.Columns_Code
 		LEFT JOIN Map_Extended_Columns_Details MECD (NOLOCK) on MEC.Map_Extended_Columns_Code = MECD.Map_Extended_Columns_Code
-	
+	    order by mec.Map_Extended_Columns_Code
 	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Bind_Extend_Column_Grid]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 END
