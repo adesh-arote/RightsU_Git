@@ -20,17 +20,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public Nullable<int> Columns_Code { get; set; }
         [NotMapped]
-        public string Columns_Name
-        {
-            get
-            {
-                return Extended_Columns.Columns_Name;
-            }
-            set
-            {
-
-            }
-        }
+        public string Columns_Name { get; set; }
         public Nullable<int> Group_Control_Order { get; set; }
         public string Validations { get; set; }
         public string Additional_Condition { get; set; }

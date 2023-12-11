@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Vendor_Role
     {
@@ -19,7 +20,10 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Vendor_Role_Code { get; set; }
         public int Vendor_Code { get; set; }
+        [JsonIgnore]
         public int Role_Code { get; set; }
+        [NotMapped]
+        public string Role_Name { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual Vendor Vendor { get; set; }

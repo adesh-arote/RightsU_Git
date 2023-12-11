@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Vendor
     {
@@ -54,28 +55,43 @@ namespace RightsU_Entities
         public string TIN_No { get; set; }
         public string PAN_No { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_user { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_user { get; set; }
         public string Is_Active { get; set; }
+        [JsonIgnore]
         public string Reference_Id_1 { get; set; }
+        [JsonIgnore]
         public string Reference_Id_2 { get; set; }
+        [JsonIgnore]
         public string Reference_Id_3 { get; set; }
         public string CST_No { get; set; }
+        [JsonIgnore]
         public string SAP_Vendor_Code { get; set; }
         public string Is_External { get; set; }
         public string CIN_No { get; set; }
-
         public string GST_No { get; set; }
+        [JsonIgnore]
         public string Is_BV_Push { get; set; }
         public string Short_Code { get; set; }
         public Nullable<int> Ref_Vendor_Key { get; set; }
         public string Record_Status { get; set; }
         public string Error_Description { get; set; }
+        [JsonIgnore]
         public Nullable<int> Party_Category_Code { get; set; }
+        [NotMapped]
+        public string Party_Category_Name { get; set; }
         public string Party_Type { get; set; }
         public string Party_Id { get; set; }
+        [JsonIgnore]
         public Nullable<int> Party_Group_Code { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }

@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Royalty_Recoupment
     {
         public Royalty_Recoupment()
@@ -28,11 +29,18 @@ namespace RightsU_Entities
         public string Royalty_Recoupment_Name { get; set; }
         public string Is_Active { get; set; }
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-    
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
+
         public virtual ICollection<Royalty_Recoupment_Details> Royalty_Recoupment_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }

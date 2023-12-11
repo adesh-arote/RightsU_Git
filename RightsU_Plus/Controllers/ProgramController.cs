@@ -196,7 +196,7 @@ namespace RightsU_Plus.Controllers
                         objAuditLog.moduleCode = GlobalParams.ModuleCodeForProgram;
                         objAuditLog.intCode = objProgram.Program_Code;
                         objAuditLog.logData = LogData;
-                        objAuditLog.actionBy = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objProgram.Last_Action_By));
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
                         objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objProgram.Last_UpDated_Time));
                         objAuditLog.actionType = Action;
                         var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");

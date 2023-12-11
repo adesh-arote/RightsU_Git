@@ -19,12 +19,15 @@ namespace RightsU_Entities
         {
             this.Vendors = new HashSet<Vendor>();
         }
-
+        [JsonIgnore]
         public State EntityState { get; set; }
         public int Party_Group_Code { get; set; }
         public string Party_Group_Name { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> InsertedOn { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_By { get; set; }
+        [JsonIgnore]
         public string Is_Active { get; set; }
 
         [JsonIgnore]

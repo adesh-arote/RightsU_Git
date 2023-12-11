@@ -20,17 +20,7 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Platform_Group_Details_Code { get; set; }
         [NotMapped]
-        public string Platform_Name
-        {
-            get
-            {
-                return Platform.Platform_Name;
-            }
-            set
-            {
-                Platform_Name = Platform.Platform_Name;
-            }
-        }
+        public string Platform_Name { get; set; }
         [JsonIgnore]
         public Nullable<int> Platform_Code { get; set; }
         [JsonIgnore]

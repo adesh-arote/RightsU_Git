@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -227,7 +228,13 @@ namespace RightsU_Plus.Controllers
                         objAuditLog.actionBy = objLoginUser.Login_Name;
                         objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(lstAL_Lab.Last_Updated_Time));
                         objAuditLog.actionType = Action;
-                        string strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -283,7 +290,13 @@ namespace RightsU_Plus.Controllers
                         objAuditLog.actionBy = objLoginUser.Login_Name;
                         objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(AL_LabObj.Last_Updated_Time));
                         objAuditLog.actionType = Action;
-                        string strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

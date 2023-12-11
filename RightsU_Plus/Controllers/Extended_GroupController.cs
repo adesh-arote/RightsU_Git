@@ -380,6 +380,7 @@ namespace RightsU_Plus.Controllers
                 {
                     objExtended_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Inserted_By));
                     objExtended_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Last_Action_By));
+                    objExtended_Group.Extended_Group_Config.ToList().ForEach(f => f.Columns_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
 
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
                     //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
@@ -635,6 +636,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objExtended_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Inserted_By));
                         objExtended_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Last_Action_By));
+                        objExtended_Group.Extended_Group_Config.ToList().ForEach(f => f.Columns_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
