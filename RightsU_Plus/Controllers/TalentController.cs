@@ -173,6 +173,12 @@ namespace RightsU_Plus.Controllers
                     lstTalent.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
                     lstTalent_Searched.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
 
+                    foreach (var items in objTalent.Talent_Role)
+                    {
+                        int Role_Code = Convert.ToInt32(items.Role_Code);
+                        items.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Code).Select(x => x.Role_Name).FirstOrDefault();
+                    }
+
                     if (doActive != "Y")
                         Action = Convert.ToString(ActionType.D); // D = "Deactive";
 
@@ -275,9 +281,11 @@ namespace RightsU_Plus.Controllers
                 string[] arrRoleCodes = help["Talent_Role"].Split(',');
                 foreach (string roleCode in arrRoleCodes)
                 {
+                    int Role_Code = Convert.ToInt32(roleCode);
                     Talent_Role objTR = new Talent_Role();
                     objTR.EntityState = State.Added;
                     objTR.Role_Code = Convert.ToInt32(roleCode);
+                    objTR.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Code).Select(x => x.Role_Name).FirstOrDefault();
                     talentRoleList.Add(objTR);
                 }
             }
@@ -406,9 +414,11 @@ namespace RightsU_Plus.Controllers
                 string[] arrRoleCodes = help["Talent_Role"].Split(',');
                 foreach (string roleCode in arrRoleCodes)
                 {
+                    int Role_Codes = Convert.ToInt32(roleCode);
                     Talent_Role objTR = new Talent_Role();
                     objTR.EntityState = State.Added;
                     objTR.Role_Code = Convert.ToInt32(roleCode);
+                    objTR.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Codes).Select(x => x.Role_Name).FirstOrDefault();
                     talentRoleList.Add(objTR);
                 }
             }

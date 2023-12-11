@@ -23,17 +23,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public Nullable<int> Language_Code { get; set; }
         [NotMapped]
-        public string Language_Name
-        {
-            get
-            {
-                return Language.Language_Name;
-            }
-            set
-            {
-
-            }
-        }
+        public string Language_Name { get; set; }
         [JsonIgnore]
         public virtual Language Language { get; set; }
         [JsonIgnore]

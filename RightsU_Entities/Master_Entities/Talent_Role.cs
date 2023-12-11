@@ -24,18 +24,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public Nullable<int> Role_Code { get; set; }
         [NotMapped]
-        public string Role_Name 
-        {
-            get
-            {
-                return Role.Role_Name;
-            }
-            set
-            {
-
-            }
-        }
-
+        public string Role_Name { get; set; }
         [JsonIgnore]
         public virtual Role Role { get; set; }
         [JsonIgnore]

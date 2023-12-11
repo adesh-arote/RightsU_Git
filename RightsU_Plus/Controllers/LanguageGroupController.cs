@@ -150,6 +150,13 @@ namespace RightsU_Plus.Controllers
                 {
                     lstLanguage_Group.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
                     lstLanguage_Group_Searched.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
+
+                    foreach (var items in objLanguage.Language_Group_Details)
+                    {
+                        int Language_Code = Convert.ToInt32(items.Language_Code);
+                        items.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Language_Code == Language_Code).Select(x => x.Language_Name).FirstOrDefault();
+                    }
+
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
@@ -236,9 +243,12 @@ namespace RightsU_Plus.Controllers
                 // string[] arrBuisnessCode = LanguageCodes[0].s
                 foreach (string BuisnessUnitCode in LanguageCodes)
                 {
+                    int Language_Code = Convert.ToInt32(BuisnessUnitCode);
+
                     RightsU_Entities.Language_Group_Details objTR = new Language_Group_Details();
                     objTR.EntityState = State.Added;
                     objTR.Language_Code = Convert.ToInt32(BuisnessUnitCode);
+                    objTR.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Language_Code == Language_Code).Select(x => x.Language_Name).FirstOrDefault();
                     BuisnessUnitList.Add(objTR);
                 }
             }
