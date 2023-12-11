@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Channel
     {
@@ -51,10 +52,17 @@ namespace RightsU_Entities
         public string Schedule_Source_FilePath_Pkg { get; set; }
         public string IsUseForAsRun { get; set; }
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
         public Nullable<int> Order_For_schedule { get; set; }
         public Nullable<int> Channel_Group { get; set; }
@@ -70,6 +78,7 @@ namespace RightsU_Entities
         public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
         [JsonIgnore]
         public virtual Genre Genre { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
         [JsonIgnore]
         public virtual ICollection<RunData> RunDatas { get; set; }

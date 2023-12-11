@@ -9,6 +9,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Extended_Group_Config
     {
@@ -16,7 +17,20 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Extended_Group_Config_Code { get; set; }
         public Nullable<int> Extended_Group_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Columns_Code { get; set; }
+        [NotMapped]
+        public string Columns_Name
+        {
+            get
+            {
+                return Extended_Columns.Columns_Name;
+            }
+            set
+            {
+
+            }
+        }
         public Nullable<int> Group_Control_Order { get; set; }
         public string Validations { get; set; }
         public string Additional_Condition { get; set; }

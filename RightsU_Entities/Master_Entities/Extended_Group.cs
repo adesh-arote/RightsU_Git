@@ -9,6 +9,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Extended_Group
     {
@@ -26,10 +27,17 @@ namespace RightsU_Entities
         public Nullable<int> Group_Order { get; set; }
         public string Add_Edit_Type { get; set; }
         public Nullable<int> Module_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string IsActive { get; set; }
 

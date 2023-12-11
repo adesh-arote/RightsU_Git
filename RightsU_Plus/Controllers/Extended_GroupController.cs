@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -302,7 +303,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult SaveMaster(int ExtdGrpId, Extended_Group objEg)
         {
-            string Message = "", Status = "", Action = "C"; // C = "Create";
+            string Message = "", Status = "", Action = Convert.ToString(ActionType.C); // C = "Create";
 
             Dictionary<string, object> obj = new Dictionary<string, object>();
             //Extended_Group_Service objExtended_Group_Service = new Extended_Group_Service(objLoginEntity.ConnectionStringName);
@@ -319,11 +320,9 @@ namespace RightsU_Plus.Controllers
                 objExtended_Group.Short_Name = objEg.Short_Name;
                 objExtended_Group.Group_Order = objEg.Group_Order;
                 objExtended_Group.Add_Edit_Type = objEg.Add_Edit_Type;
-                objExtended_Group.Last_Updated_Time = DateTime.Now;
-                objExtended_Group.Last_Action_By = objLoginUser.Users_Code;
 
                 objExtended_Group.EntityState = State.Modified;
-                Action = "U"; // U = "Update";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
@@ -338,6 +337,8 @@ namespace RightsU_Plus.Controllers
 
                 objExtended_Group.EntityState = State.Added;
             }
+            objExtended_Group.Last_Updated_Time = DateTime.Now;
+            objExtended_Group.Last_Action_By = objLoginUser.Users_Code;
 
             foreach (Extended_Group_Config ObjEGC in objExtended_Group.Extended_Group_Config)
             {
@@ -377,8 +378,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objExtended_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Inserted_By));
+                    objExtended_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedGroup;
+                    objAuditLog.intCode = objExtended_Group.Extended_Group_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objExtended_Group.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -511,8 +530,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActivateDeactivateGrpDtl(string ActiveAction, int GrpDtlCode)
         {
-            string Status = "";
-            string Message = "";
+            string Status = "", Message = "";
             Dictionary<string, object> obj = new Dictionary<string, object>();
             Extended_Group_Config objEDGC = new Extended_Group_Config();
 
@@ -583,7 +601,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActivateDeactivateExtdGrp(int ExtdGrpCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "", Action = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             objExtended_Group = null;
             CommonUtil objCommonUtil = new CommonUtil();
@@ -592,6 +610,8 @@ namespace RightsU_Plus.Controllers
             {
                 objExtended_Group = objExtended_Group_Service.GetById(ExtdGrpCode);
                 objExtended_Group.IsActive = doActive;
+                objExtended_Group.Last_Updated_Time = DateTime.Now;
+                objExtended_Group.Last_Action_By = objLoginUser.Users_Code;
                 objExtended_Group.EntityState = State.Modified;
 
                 dynamic resultSet;
@@ -603,19 +623,36 @@ namespace RightsU_Plus.Controllers
 
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objExtended_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Inserted_By));
+                        objExtended_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Group.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Group);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedGroup, objExtended_Group.Extended_Group_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedGroup;
+                        objAuditLog.intCode = objExtended_Group.Extended_Group_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objExtended_Group.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
