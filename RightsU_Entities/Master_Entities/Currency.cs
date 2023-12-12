@@ -28,6 +28,7 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Currency_Code { get; set; }
         public string Currency_Name { get; set; }
         public string Currency_Sign { get; set; }
@@ -48,6 +49,7 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Currency_Exchange_Rate> Currency_Exchange_Rate { get; set; }
         [JsonIgnore]
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
