@@ -7,6 +7,7 @@ using RightsU_BLL;
 using RightsU_Entities;
 using System.Web.Script.Serialization;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -24,6 +25,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSecurity_Group"] = value; }
         }
+
         private List<RightsU_Entities.Security_Group> lstSecurity_Group_Searched
         {
             get
@@ -34,6 +36,7 @@ namespace RightsU_Plus.Controllers
             }
             set { Session["lstSecurity_Group_Searched"] = value; }
         }
+
         private string ModuleCode
         {
             get
@@ -49,6 +52,7 @@ namespace RightsU_Plus.Controllers
                 Session["ModuleCode"] = value;
             }
         }
+
         private RightsU_Entities.Security_Group objSecurity_Group
         {
             get
@@ -78,6 +82,7 @@ namespace RightsU_Plus.Controllers
 
             return View("~/Views/Security_Group/Index.cshtml");        
         }
+
         public PartialViewResult BindSecurity_GroupList(int pageNo, int recordPerPage, string sortType)
         {
             List<RightsU_Entities.Security_Group> lst = new List<RightsU_Entities.Security_Group>();
@@ -189,6 +194,7 @@ namespace RightsU_Plus.Controllers
             objSecurity_Group_Service = null;
             return PartialView("~/Views/Security_Group/_AddEditSecurityGroup.cshtml", objSecurity_Group);
         }
+
         public JsonResult SaveSecurity_Group(FormCollection objFormCollection)
         {
             string ModuleRight = objFormCollection["hdnTVCodes"].ToString();
@@ -207,7 +213,7 @@ namespace RightsU_Plus.Controllers
 
             if (SecurityGroupCode > 0)
             {
-                objSecurity_Group.EntityState = State.Modified;
+                objSecurity_Group.EntityState = State.Modified;                
             }
             else
             {
@@ -216,6 +222,7 @@ namespace RightsU_Plus.Controllers
                 objSecurity_Group.Inserted_On = System.DateTime.Now;
             }
             objSecurity_Group.Last_Updated_Time = System.DateTime.Now;
+            objSecurity_Group.Last_Action_By = objLoginUser.Users_Code;
 
             Security_Group_Rel_Service objSecurity_Group_Rel_Service = new Security_Group_Rel_Service(objLoginEntity.ConnectionStringName);
 
@@ -253,20 +260,18 @@ namespace RightsU_Plus.Controllers
             #endregion
 
             dynamic resultSet;
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             bool isValid = objSecurity_Group_Service.Save(objSecurity_Group, out resultSet);
             if (isValid)
             {
-                string Action = "C";
                 status = "S";
                 if(SecurityGroupCode > 0)
                 {
-                    Action = "U";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
                 }                   
                 else
                 {
-                    Action = "C";
                     message = objMessageKey.RecordAddedSuccessfully;
                 }
                 
@@ -278,8 +283,31 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objSecurity_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSecurity_Group.Inserted_By));
+                    objSecurity_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSecurity_Group.Last_Action_By));
+                    objSecurity_Group.Security_Group_Rel.ToList().ForEach(f => 
+                    {
+                        f.System_Module_Name = new System_Module_Right_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.System_Module_Rights_Code)).System_Module.Module_Name;
+                        f.System_Right_Name = new System_Module_Right_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.System_Module_Rights_Code)).System_Right.Right_Name;
+                    });
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSecurity_Group);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForSecurityGr;
+                    objAuditLog.intCode = objSecurity_Group.Security_Group_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objSecurity_Group.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -302,16 +330,17 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveSecurityGroup(int SecurityGroupCode, string doActive)
         {
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(SecurityGroupCode, GlobalParams.ModuleCodeForSecurityGr, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-                string Action = "A";
                 Security_Group_Service objService = new Security_Group_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Security_Group objSecurity_Group = objService.GetById(SecurityGroupCode);
                 objSecurity_Group.Is_Active = doActive;
+                objSecurity_Group.Last_Action_By = objLoginUser.Users_Code;
+                objSecurity_Group.Last_Updated_Time = System.DateTime.Now;
                 objSecurity_Group.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objSecurity_Group, out resultSet);
@@ -329,21 +358,43 @@ namespace RightsU_Plus.Controllers
                 {
                     message = objMessageKey.Recordactivatedsuccessfully;
                     //message = message.Replace("{ACTION}", "Activated");
-                    Action = "A";
                 }
                 else
                 {
                     message = objMessageKey.Recorddeactivatedsuccessfully;
                     //message = message.Replace("{ACTION}", "Deactivated");
-                    Action = "DA";
+                    Action = Convert.ToString(ActionType.D); // D = "Deactive";
                 }
 
                 if (isValid)
                 {
                     try
                     {
+                        objSecurity_Group.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSecurity_Group.Inserted_By));
+                        objSecurity_Group.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objSecurity_Group.Last_Action_By));
+                        objSecurity_Group.Security_Group_Rel.ToList().ForEach(f =>
+                        {
+                            f.System_Module_Name = new System_Module_Right_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.System_Module_Rights_Code)).System_Module.Module_Name;
+                            f.System_Right_Name = new System_Module_Right_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.System_Module_Rights_Code)).System_Right.Right_Name;
+                        });
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objSecurity_Group);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForSecurityGr), Convert.ToInt32(objSecurity_Group.Security_Group_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForSecurityGr;
+                        objAuditLog.intCode = objSecurity_Group.Security_Group_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objSecurity_Group.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
