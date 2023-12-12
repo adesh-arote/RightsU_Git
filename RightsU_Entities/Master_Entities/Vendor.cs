@@ -106,6 +106,7 @@ namespace RightsU_Entities
         public virtual ICollection<Vendor_Contacts> Vendor_Contacts { get; set; }
         [JsonProperty(Order = 2)]
         public virtual ICollection<Vendor_Country> Vendor_Country { get; set; }
+        [JsonProperty(Order = 3)]
         public virtual ICollection<Vendor_Role> Vendor_Role { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Commission> Acq_Deal_Cost_Commission { get; set; }
@@ -127,8 +128,11 @@ namespace RightsU_Entities
         public virtual ICollection<MHRequest> MHRequests { get; set; }
         [JsonIgnore]
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
+        [JsonProperty(Order = 4)]
         public virtual Party_Category Party_Category { get; set; }
+        [JsonProperty(Order = 5)]
         public virtual Party_Group Party_Group { get; set; }
+        [JsonProperty(Order = 6)]
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }
