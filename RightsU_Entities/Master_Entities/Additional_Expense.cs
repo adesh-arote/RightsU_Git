@@ -25,20 +25,7 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public int Additional_Expense_Code { get; set; }
         public string Additional_Expense_Name { get; set; }
-        [JsonIgnore]
         public string SAP_GL_Group_Code { get; set; }
-        [NotMapped]
-        public string SAP_GL_Group_Name
-        {
-            get
-            {
-                return SAP_GL_Group_Code;
-            }
-            set
-            {
-
-            }
-        }
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }

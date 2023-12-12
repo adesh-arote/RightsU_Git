@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Workflow
     {
         public Workflow()
@@ -29,17 +30,20 @@ namespace RightsU_Entities
         public int Workflow_Code { get; set; }
         public string Workflow_Name { get; set; }
         public string Remarks { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public string Workflow_Type { get; set; }
+        [JsonIgnore]
         public Nullable<int> Business_Unit_Code { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
-        [JsonIgnore]
+       
         public virtual ICollection<Workflow_Module> Workflow_Module { get; set; }
         public virtual ICollection<Workflow_Role> Workflow_Role { get; set; }
         [JsonIgnore]

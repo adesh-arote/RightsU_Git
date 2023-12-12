@@ -906,7 +906,7 @@ namespace RightsU_Plus.Controllers
                 var result = responseTask.Result;
                 if (result.IsSuccessStatusCode)
                 {
-                    ret = Convert.ToString(result.StatusCode);
+                    StatusCode = Convert.ToString(result.StatusCode);
                     var readTask = result.Content.ReadAsAsync<GetReturn>();
                     readTask.Wait();
 

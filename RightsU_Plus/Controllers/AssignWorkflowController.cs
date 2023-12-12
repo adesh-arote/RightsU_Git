@@ -7,6 +7,7 @@ using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -472,7 +473,6 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveWorkflowModule(FormCollection objFormCollection)
         {
-
             Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Workflow_Module objWorkflowModule = new RightsU_Entities.Workflow_Module();
 
@@ -508,7 +508,7 @@ namespace RightsU_Plus.Controllers
 
 
             #endregion
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             if (WorkflowModuleCode > 0)
             {
                 Workflow_Module_Service objWorkflowService_Update = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
@@ -527,7 +527,6 @@ namespace RightsU_Plus.Controllers
                     lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
                 }
 
-
                 #region   -- -Update Workflow
 
                 objWorkflowModule.Business_Unit_Code = objWM_Update.Business_Unit_Code;
@@ -537,7 +536,6 @@ namespace RightsU_Plus.Controllers
                 objWorkflowModule.Ideal_Process_Days = 0;
                 objWorkflowModule.Is_Active = "Y";
                 objWorkflowModule.EntityState = State.Added;
-
 
                 List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
                 temp_lstWorkflow_Role = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == New_Workflow_Code).ToList();
@@ -604,12 +602,11 @@ namespace RightsU_Plus.Controllers
 
                     if (WorkflowModuleCode > 0)
                     {
-                        Action = "U"; // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
                     }         
                     else
                     {
-                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
                     }
 
