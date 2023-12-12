@@ -3288,7 +3288,7 @@ namespace RightsU_Plus.Controllers
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
 
-            MultiSelectList lstMasterList = new MultiSelectList(new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && (x.Parent_Module_Code == 1 || x.Parent_Module_Code == 58 || x.Parent_Module_Code == 61 || x.Parent_Module_Code == 62 || x.Parent_Module_Code == 63))
+            MultiSelectList lstMasterList = new MultiSelectList(new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && (x.Parent_Module_Code == 1 || x.Parent_Module_Code == 58 || x.Parent_Module_Code == 61 || x.Parent_Module_Code == 62 || x.Parent_Module_Code == 63 || x.Parent_Module_Code == 22))
                 .Select(i => new { Display_Value = i.Module_Code, Display_Text = i.Module_Name }).ToList(), "Display_Value", "Display_Text");
             MultiSelectList lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true)
                 .Select(i => new { Display_Value = i.Users_Code, Display_Text = i.Login_Name }).ToList(), "Display_Value", "Display_Text");
