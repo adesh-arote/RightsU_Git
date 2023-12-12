@@ -29,7 +29,8 @@ namespace RightsU_Entities
         }
 
         [JsonIgnore]
-        public State EntityState { get; set; }    
+        public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Talent_Code { get; set; }
         public string Talent_Name { get; set; }
         public string Gender { get; set; }
@@ -47,6 +48,7 @@ namespace RightsU_Entities
         public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
 
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Talent_Role> Talent_Role { get; set; }
         [JsonIgnore]
         public virtual ICollection<Title_Audio_Details_Singers> Title_Audio_Details_Singers { get; set; }

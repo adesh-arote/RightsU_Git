@@ -45,6 +45,7 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Vendor_Code { get; set; }
         public string Vendor_Name { get; set; }
         public string Address { get; set; }
@@ -101,7 +102,9 @@ namespace RightsU_Entities
         public virtual ICollection<Material_Order> Material_Order { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Vendor_Contacts> Vendor_Contacts { get; set; }
+        [JsonProperty(Order = 2)]
         public virtual ICollection<Vendor_Country> Vendor_Country { get; set; }
         public virtual ICollection<Vendor_Role> Vendor_Role { get; set; }
         [JsonIgnore]

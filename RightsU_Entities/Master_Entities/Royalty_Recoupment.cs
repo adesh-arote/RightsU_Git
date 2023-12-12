@@ -25,6 +25,7 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Royalty_Recoupment_Code { get; set; }
         public string Royalty_Recoupment_Name { get; set; }
         public string Is_Active { get; set; }
@@ -41,6 +42,7 @@ namespace RightsU_Entities
         [NotMapped]
         public string Last_Action_By_User { get; set; }
 
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Royalty_Recoupment_Details> Royalty_Recoupment_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }

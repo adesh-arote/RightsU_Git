@@ -22,6 +22,7 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Platform_Group_Code { get; set; }
         public string Platform_Group_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -39,6 +40,7 @@ namespace RightsU_Entities
         public string Is_Active { get; set; }
         public string Group_For { get; set; }
 
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Platform_Group_Details> Platform_Group_Details { get; set; }
     }
 }

@@ -29,6 +29,7 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Language_Group_Code { get; set; }
         public string Language_Group_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -52,6 +53,7 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Pushback_Subtitling> Acq_Deal_Pushback_Subtitling { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Subtitling> Acq_Deal_Rights_Subtitling { get; set; }
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Language_Group_Details> Language_Group_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Dubbing> Syn_Deal_Rights_Dubbing { get; set; }

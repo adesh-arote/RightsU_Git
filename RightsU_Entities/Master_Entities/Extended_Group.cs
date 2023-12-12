@@ -21,6 +21,7 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Extended_Group_Code { get; set; }
         public string Group_Name { get; set; }
         public string Short_Name { get; set; }
@@ -41,6 +42,7 @@ namespace RightsU_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string IsActive { get; set; }
 
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
         [JsonIgnore]
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }

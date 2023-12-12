@@ -21,7 +21,8 @@ namespace RightsU_Entities
             this.Amort_Rule_Details = new HashSet<Amort_Rule_Details>();
         }
         [JsonIgnore]
-        public State EntityState { get; set; }    
+        public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Amort_Rule_Code { get; set; }
         public string Rule_Type { get; set; }
         public string Rule_No { get; set; }
@@ -43,6 +44,7 @@ namespace RightsU_Entities
         [NotMapped]
         public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Amort_Rule_Details> Amort_Rule_Details { get; set; }
     }
 }

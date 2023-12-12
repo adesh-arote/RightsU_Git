@@ -294,7 +294,8 @@ namespace RightsU_Plus.Controllers
                 {
                     objProgram.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objProgram.Inserted_By));
                     objProgram.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objProgram.Last_Action_By));
-                    //objProgram.Deal_Type_Name = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Deal_Type_Code == objProgram.Deal_Type_Code).Select(x => x.Deal_Type_Name).FirstOrDefault();
+                    objProgram.Deal_Type_Name = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Deal_Type_Code == objProgram.Deal_Type_Code).Select(x => x.Deal_Type_Name).FirstOrDefault();
+                    objProgram.Genres_Name = new Genre_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Genres_Code == objProgram.Genres_Code).Select(x => x.Genres_Name).FirstOrDefault();
 
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objProgram);
                     //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForProgram), Convert.ToInt32(objProgram.Program_Code), LogData, Action, objLoginUser.Users_Code);

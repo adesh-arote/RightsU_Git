@@ -32,6 +32,7 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Users_Code { get; set; }
         public string Login_Name { get; set; }
         public string First_Name { get; set; }
@@ -102,6 +103,7 @@ namespace RightsU_Entities
         public virtual ICollection<Users_Entity> Users_Entity { get; set; }
         [JsonIgnore]
         public virtual ICollection<Users_Password_Detail> Users_Password_Detail { get; set; }
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
         [JsonIgnore]
         public virtual ICollection<Glossary_AskExpert> Glossary_AskExpert { get; set; }
@@ -117,6 +119,7 @@ namespace RightsU_Entities
         public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
         [JsonIgnore]
         public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
+        [JsonProperty(Order = 2)]
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
 
     }

@@ -24,6 +24,7 @@ namespace RightsU_Entities
         
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Bv_Exception_Code { get; set; }
         public string Bv_Exception_Type { get; set; }
         [JsonIgnore]
@@ -39,8 +40,10 @@ namespace RightsU_Entities
         [NotMapped]
         public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
-    
+
+        [JsonProperty(Order = 1)]
         public virtual ICollection<BVException_Channel> BVException_Channel { get; set; }
+        [JsonProperty(Order = 2)]
         public virtual ICollection<BVException_Users> BVException_Users { get; set; }
     }
 }
