@@ -45,7 +45,6 @@ namespace RightsU_Entities
         public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
         public Nullable<bool> IS_First_Air { get; set; }
-        [JsonIgnore]
         public string Short_Key { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }

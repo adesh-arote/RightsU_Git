@@ -12,15 +12,21 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class BVException_Users
     {
         public int Bv_Exception_Users_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonIgnore]
         public int Bv_Exception_Code { get; set; }
+        [JsonIgnore]
         public int Users_Code { get; set; }
-    
+        [NotMapped]
+        public string User_Name { get; set; }
+
+        [JsonIgnore]
         public virtual BVException BVException { get; set; }
         [JsonIgnore]
         public virtual User User { get; set; }

@@ -12,13 +12,18 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Users_Business_Unit
     {
         public int Users_Business_Unit_Code { get; set; }
+        [JsonIgnore]
         public State EntityState { get; set; }
         public Nullable<int> Users_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Business_Unit_Code { get; set; }
+        [NotMapped]
+        public string Business_Unit_name { get; set; }
         [JsonIgnore]
         public virtual Business_Unit Business_Unit { get; set; }
         [JsonIgnore]

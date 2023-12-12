@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Map_Extended_Columns
     {
         public Map_Extended_Columns()
@@ -24,7 +25,10 @@ namespace RightsU_Entities
         public int Map_Extended_Columns_Code { get; set; }
         public Nullable<int> Record_Code { get; set; }
         public string Table_Name { get; set; }
+        [JsonIgnore]
         public Nullable<int> Columns_Code { get; set; }
+        [NotMapped]
+        public string Column_Name { get; set; }
         public Nullable<int> Columns_Value_Code { get; set; }
         public string Column_Value { get; set; }
         public string Is_Multiple_Select { get; set; }
@@ -33,6 +37,7 @@ namespace RightsU_Entities
         public virtual Extended_Columns Extended_Columns { get; set; }
         [JsonIgnore]
         public virtual Extended_Columns_Value Extended_Columns_Value { get; set; }        
+        [JsonIgnore]
         public virtual ICollection<Map_Extended_Columns_Details> Map_Extended_Columns_Details { get; set; }
     }
 }

@@ -20,13 +20,16 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         public Nullable<int> Royalty_Recoupment_Code { get; set; }
         public string Recoupment_Type { get; set; }
+        [JsonIgnore]
         public Nullable<int> Recoupment_Type_Code { get; set; }
         public string Add_Subtract { get; set; }
         public Nullable<int> Position { get; set; }
         public string Recoupment_Type_Name { get; set; }
+        [JsonIgnore]
         public virtual Royalty_Recoupment Royalty_Recoupment { get; set; }
-
+        [JsonIgnore]
         public string _Dummy_Guid { get; set; }
+        [JsonIgnore]
         public string Dummy_Guid
         {
             get

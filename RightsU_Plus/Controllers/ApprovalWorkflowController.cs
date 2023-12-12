@@ -7,6 +7,7 @@ using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -332,7 +333,7 @@ namespace RightsU_Plus.Controllers
                 WorkflowCode = Convert.ToInt32(objFormCollection["Workflow_Code"]);
             }
             #endregion
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             if (WorkflowCode > 0)
             {
                 #region   -- -Update Workflow
@@ -429,12 +430,11 @@ namespace RightsU_Plus.Controllers
 
                     if (WorkflowCode > 0)
                     {
-                        Action = "U"; // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
                     }   
                     else
                     {
-                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
                     }
 
@@ -447,7 +447,6 @@ namespace RightsU_Plus.Controllers
                     {
 
                     }
-
                 }
                 else
                 {
@@ -470,7 +469,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DeleteWorkflow(int WorkflowCode)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "D"; // D = "Delete";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(WorkflowCode, GlobalParams.ModuleCodeForApprovalWorkflow, objLoginUser.Users_Code, out RLCode, out strMessage,objLoginEntity.ConnectionStringName);
