@@ -999,11 +999,15 @@ namespace RightsU_Plus.Controllers
                                     .OrderBy(x => x.Order_No)
                                     .FirstOrDefault();
 
-            var lstMPAData = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_RCData("", "MP", "")
-                               .Select(R => new { Mapping_Name = R.TextField, Mapping_Code = R.ValueField }).ToList();
-            List<SelectListItem> lstMPADatas = new SelectList(lstMPAData, "Mapping_Code", "Mapping_Name").ToList();
+            if(currentTabName == "MP")
+            {
+                var lstMPAData = new USP_Service(objLoginEntity.ConnectionStringName).USP_Title_Import_RCData("", currentTabName, "")
+                              .Select(R => new { Mapping_Name = R.TextField, Mapping_Code = R.ValueField }).ToList();
+                List<SelectListItem> lstMPADatas = new SelectList(lstMPAData, "Mapping_Code", "Mapping_Name").ToList();
+                ViewBag.MPAData = lstMPADatas.ToList();
+            }
 
-            ViewBag.MPAData = lstMPADatas.ToList();
+            
             //var lstTitleType = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(w => true).Where(x => x.Is_Active == "Y").OrderBy(x => x.Deal_Type_Name).ToList();
             //ViewBag.TitleTypeList = new MultiSelectList(lstTitleType, "Deal_Type_Code", "Deal_Type_Name");
             if (MappedData == "U")
