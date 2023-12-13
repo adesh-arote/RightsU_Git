@@ -26,7 +26,7 @@ namespace RightsU_Plus.Controllers
         //
         // GET: /Amort_Rule/
 
-        public int moduleCode = 180;
+        public int moduleCode = GlobalParams.ModuleCodeForAmortRule;
 
         public int PageNo
         {
