@@ -227,6 +227,16 @@ namespace RightsU_Plus.Controllers
                 {
                     lstRoyalty.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
                     lstRoyalty_Searched.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
+                    
+                    foreach (var items in objRoyalty.Royalty_Recoupment_Details)
+                    {
+                        int Type_Code = Convert.ToInt32(items.Recoupment_Type_Code);
+                        string Tbl_Type = items.Recoupment_Type;
+                        if(Tbl_Type == "A")
+                            items.Recoupment_Type_Name = new Additional_Expense_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Additional_Expense_Code == Type_Code).Select(x => x.Additional_Expense_Name).FirstOrDefault();
+                        else
+                            items.Recoupment_Type_Name = new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Cost_Type_Code == Type_Code).Select(x => x.Cost_Type_Name).FirstOrDefault();
+                    }
 
                     if (doActive == "Y")
                     {

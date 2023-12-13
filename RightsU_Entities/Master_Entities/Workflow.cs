@@ -27,24 +27,36 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Workflow_Code { get; set; }
         public string Workflow_Name { get; set; }
         public string Remarks { get; set; }
         [JsonIgnore]
+        public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         public string Workflow_Type { get; set; }
         [JsonIgnore]
         public Nullable<int> Business_Unit_Code { get; set; }
+        [NotMapped]
+        public string Business_Unit_Name { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
-       
+
+        [JsonIgnore]
         public virtual ICollection<Workflow_Module> Workflow_Module { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Workflow_Role> Workflow_Role { get; set; }
         [JsonIgnore]
         public virtual ICollection<Workflow_BU> Workflow_BU { get; set; }
