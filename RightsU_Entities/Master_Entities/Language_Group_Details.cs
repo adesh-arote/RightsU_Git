@@ -12,14 +12,18 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Language_Group_Details
     {
         public int Language_Group_Details_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
         public Nullable<int> Language_Group_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Language_Code { get; set; }
+        [NotMapped]
+        public string Language_Name { get; set; }
         [JsonIgnore]
         public virtual Language Language { get; set; }
         [JsonIgnore]

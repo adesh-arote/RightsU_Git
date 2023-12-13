@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Talent
     {
@@ -28,17 +29,26 @@ namespace RightsU_Entities
         }
 
         [JsonIgnore]
-        public State EntityState { get; set; }    
+        public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Talent_Code { get; set; }
         public string Talent_Name { get; set; }
         public string Gender { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         public string Is_Active { get; set; }
 
+        [JsonProperty(Order = 1)]
         public virtual ICollection<Talent_Role> Talent_Role { get; set; }
         [JsonIgnore]
         public virtual ICollection<Title_Audio_Details_Singers> Title_Audio_Details_Singers { get; set; }

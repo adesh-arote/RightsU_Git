@@ -10,6 +10,7 @@ using System.Configuration;
 using System.Collections;
 using System.Globalization;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 namespace RightsU_Plus.Controllers
 {
     public class Email_ConfigController : BaseController
@@ -456,17 +457,16 @@ namespace RightsU_Plus.Controllers
                     objECD.Email_Config_Detail_Alert.Add(objECDA);
                 });
             }
-            string Action = "C";
+            string Action = Convert.ToString(ActionType.C); // C = "Create";
             if (objECD.Email_Config_Detail_Code > 0)
             {
                 objECD.EntityState = State.Modified;
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
                 objECD.EntityState = State.Added;
                 objECD.Email_Config = null;
-                Action = "C";
             }
             objECDService.Save(objECD, out resultSet);
 

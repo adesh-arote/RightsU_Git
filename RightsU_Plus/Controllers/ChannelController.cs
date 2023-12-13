@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -426,13 +427,8 @@ namespace RightsU_Plus.Controllers
             //--Vendor_Name = Convert.ToInt32(objFormCollection["ddlVendor"]);
             //string Vendor_Name = Convert.ToString(objFormCollection["ddlVendor"]);
 
-
-
             Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Channel objChannel = objService.GetById(Convert.ToInt32(Channel_Code));
-
-
-
 
             if (Convert.ToChar(Entity_Type) == 'O')
             {
@@ -463,7 +459,6 @@ namespace RightsU_Plus.Controllers
             ViewBag.RightRuleCode = "";
             ViewBag.Action = "";
             RedirectToAction("index");
-
 
             ICollection<RightsU_Entities.Channel_Territory> BuisnessUnitList = new HashSet<RightsU_Entities.Channel_Territory>();
             if (Country_Code != null)
@@ -497,11 +492,29 @@ namespace RightsU_Plus.Controllers
                 status = "S";
                 message = objMessageKey.Recordupdatedsuccessfully;
                 ViewBag.Alert = message;
-                string Action = "U"; // U = "Update";
+                string Action = Convert.ToString(ActionType.U); // U = "Update";
                 try
                 {
+                    objChannel.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Inserted_By));
+                    objChannel.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForChannel;
+                    objAuditLog.intCode = objChannel.Channel_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objChannel.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -668,6 +681,7 @@ namespace RightsU_Plus.Controllers
             objChannel.Inserted_On = System.DateTime.Now;
             objChannel.Inserted_By = objLoginUser.Users_Code;
             objChannel.Last_Updated_Time = System.DateTime.Now;
+            objChannel.Last_Action_By = objLoginUser.Users_Code;
             objChannel.Is_Active = "Y";
 
             if (Country_Code != null)
@@ -689,11 +703,29 @@ namespace RightsU_Plus.Controllers
                 {
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
-                    string Action = "C"; // C = "Create";
+                    string Action = Convert.ToString(ActionType.C); // C = "Create";
                     try
                     {
+                        objChannel.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Inserted_By));
+                        objChannel.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForChannel;
+                        objAuditLog.intCode = objChannel.Channel_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objChannel.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -721,7 +753,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveChannel(int Channel_Code, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(Channel_Code, GlobalParams.ModuleCodeForChannel, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -730,6 +762,8 @@ namespace RightsU_Plus.Controllers
                 Channel_Service objService = new Channel_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Channel objChannel = objService.GetById(Channel_Code);
                 objChannel.Is_Active = doActive;
+                objChannel.Last_Updated_Time = DateTime.Now;
+                objChannel.Last_Action_By = objLoginUser.Users_Code;
                 objChannel.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objChannel, out resultSet);
@@ -737,22 +771,38 @@ namespace RightsU_Plus.Controllers
                 {
                     lstChannel.Where(w => w.Channel_Code == Channel_Code).First().Is_Active = doActive;
                     lstChannel_Searched.Where(w => w.Channel_Code == Channel_Code).First().Is_Active = doActive;
-                    string Action = "";
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objChannel.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Inserted_By));
+                        objChannel.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objChannel.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objChannel);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForChannel, objChannel.Channel_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForChannel;
+                        objAuditLog.intCode = objChannel.Channel_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objChannel.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

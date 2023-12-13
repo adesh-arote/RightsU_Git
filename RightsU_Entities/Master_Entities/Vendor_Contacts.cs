@@ -29,7 +29,9 @@ namespace RightsU_Entities
         public string Phone_No { get; set; }
         public string Email { get; set; }
         public string Department { get; set; }
+        [JsonIgnore]
         public string _Dummy_Guid { get; set; }
+        [JsonIgnore]
         public string Dummy_Guid
         {
             get

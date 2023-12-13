@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -1088,6 +1089,7 @@ namespace RightsU_Plus.Controllers
             #endregion
             //objVendor.Short_Code = objUser_MVC.Short_Code;
             objVendor.Last_Updated_Time = System.DateTime.Now;
+            objVendor.Last_Action_By = objLoginUser.Users_Code;
 
             #region --- Additional Info Methods ---
 
@@ -1141,8 +1143,29 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objVendor.Inserted_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Inserted_By));
+                        objVendor.Last_Action_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Last_Action_By));
+                        objVendor.Vendor_Country.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
+                        objVendor.Vendor_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
+                        objVendor.Party_Category.Party_Category_Name =  new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForVendor;
+                        objAuditLog.intCode = objVendor.Vendor_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objVendor.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1213,8 +1236,29 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objVendor.Inserted_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Inserted_By));
+                        objVendor.Last_Action_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Last_Action_By));
+                        objVendor.Vendor_Country.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
+                        objVendor.Vendor_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
+                        objVendor.Party_Category.Party_Category_Name = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForVendor;
+                        objAuditLog.intCode = objVendor.Vendor_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objVendor.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

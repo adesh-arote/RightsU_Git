@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
@@ -588,13 +589,11 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "", Status = "";
+                string Message = "", Status = "", Action = Convert.ToString(ActionType.C); // C = "Create";
 
                 AL_OEM aL_OEM = new AL_OEM();
                 AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
                 Map_Extended_Columns_Service Map_Extended_Columns_Service = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName);
-
-                string Action = "C";
                 VM_AL_OEM objVmAlOEM = new VM_AL_OEM();
 
                 if (Id == 0)
@@ -644,7 +643,6 @@ namespace RightsU_Plus.Controllers
                             {
                                 Session["Message"] = objMessageKey.RecordAddedSuccessfully;
                                 Status = "S";
-                                Action = "C";
                             }
                         }
 
@@ -669,8 +667,8 @@ namespace RightsU_Plus.Controllers
 
                     aL_OEM.Company_Name = obj.Company_Name;
                     aL_OEM.Company_Short_Name = obj.Company_Short_Name;
-                    aL_OEM.Inserted_On = aL_OEM.Inserted_On;
-                    aL_OEM.Inserted_By = aL_OEM.Inserted_By;
+                    //aL_OEM.Inserted_On = aL_OEM.Inserted_On;
+                    //aL_OEM.Inserted_By = aL_OEM.Inserted_By;
                     aL_OEM.Last_Updated_Time = DateTime.Now;
                     aL_OEM.Last_Action_By = objLoginUser.Users_Code;
 
@@ -732,7 +730,7 @@ namespace RightsU_Plus.Controllers
                             {
                                 Session["Message"] = objMessageKey.Recordupdatedsuccessfully;
                                 Status = "S";
-                                Action = "U";
+                                Action = Convert.ToString(ActionType.U); // U = "Update";
                             }
 
                             objVmAlOEM.Map_Extended_Columns = lstAddedExtendedColumns;
@@ -744,8 +742,27 @@ namespace RightsU_Plus.Controllers
                 {
                     try
                     {
+                        aL_OEM.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(aL_OEM.Inserted_By));
+                        aL_OEM.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(aL_OEM.Last_Action_By));
+                        objVmAlOEM.Map_Extended_Columns.ToList().ForEach(f => f.Column_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
+                        
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVmAlOEM);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForALOEM;
+                        objAuditLog.intCode = aL_OEM.AL_OEM_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(aL_OEM.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -773,14 +790,14 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "", Status = "";
+                string Message = "", Status = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
                 AL_OEM aL_OEM = new AL_OEM();
                 AL_OEM_Service aL_OEM_Service = new AL_OEM_Service(objLoginEntity.ConnectionStringName);
                 Map_Extended_Columns_Service map_Extended_Columns_Service = new Map_Extended_Columns_Service(objLoginEntity.ConnectionStringName);
                 aL_OEM = aL_OEM_Service.GetById(Id);
                 aL_OEM.EntityState = State.Deleted;
 
-                string Action = "D";
+                
                 VM_AL_OEM objVmAlOEM = new VM_AL_OEM();
 
                 dynamic resultSet;
@@ -828,8 +845,27 @@ namespace RightsU_Plus.Controllers
                 {
                     try
                     {
+                        aL_OEM.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(aL_OEM.Inserted_By));
+                        aL_OEM.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(aL_OEM.Last_Action_By));
+                        objVmAlOEM.Map_Extended_Columns.ToList().ForEach(f => f.Column_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVmAlOEM);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALOEM), Convert.ToInt32(aL_OEM.AL_OEM_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForALOEM;
+                        objAuditLog.intCode = aL_OEM.AL_OEM_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(aL_OEM.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
