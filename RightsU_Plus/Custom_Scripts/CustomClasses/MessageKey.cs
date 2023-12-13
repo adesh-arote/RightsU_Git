@@ -1502,6 +1502,7 @@ public class MessageKey
     public string Youcannotdeletethisrightasthisrighthasmusicassociatedwithit { get; set; }
     public string CannotchangerightstitleasMusicisalreadyaddedTochangerightsperioddeleteMusicfirst { get; set; }
     public string PleaseselectatleastoneRightsInSongsrightasMusicisalreadyaddedTodeselectRightsInSongsrightsdeleteMusicfirst { get; set; }
+    public string ContractualTerm { get; set; }
 
     #endregion
 

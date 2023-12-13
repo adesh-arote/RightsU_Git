@@ -19,7 +19,7 @@ namespace RightsU.Audit.Entities.FrameworkClasses
         public double TimeTaken { get; set; }
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
-        public AuditLogReturn LogObject { get; set; }
+        public AuditLogReturn AuditResponse { get; set; }
     }
 
     public class PostReturn

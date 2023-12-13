@@ -106,7 +106,7 @@ namespace RightsU.Audit.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                    var auditId = objProcedureRepositories.InsertAuditLog(Input.moduleCode, Input.intCode, Input.logData, Input.actionBy, Input.actionOn, Input.actionType);
+                    var auditId = objProcedureRepositories.InsertAuditLog(Input.moduleCode, Input.intCode, Input.logData, Input.actionBy, Input.actionOn, Input.actionType,Input.requestId);
                 }
             }
             catch (Exception ex)
@@ -133,10 +133,41 @@ namespace RightsU.Audit.BLL.Services
             {
                 order = ConfigurationManager.AppSettings["defaultOrder"];
             }
+            else
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+
             if (string.IsNullOrEmpty(sort))
             {
                 sort = ConfigurationManager.AppSettings["defaultSort"];
             }
+            else
+            {
+                if (sort.ToLower() == "IntCode".ToLower())
+                {
+                    sort = "IntCode";
+                }
+                else if (sort.ToLower() == "Version".ToLower())
+                {
+                    sort = "Version";
+                }                
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+
             if (size == 0)
             {
                 size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
@@ -199,14 +230,14 @@ namespace RightsU.Audit.BLL.Services
                 _objRet.Message = ex.Message;
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.LogObject = _AuditLogReturn;
+                _objRet.AuditResponse = _AuditLogReturn;
                 return _objRet;
             }
 
             _AuditLogReturn.paging.page = page;
             _AuditLogReturn.paging.size = size;
 
-            _objRet.LogObject = _AuditLogReturn;
+            _objRet.AuditResponse = _AuditLogReturn;
 
             return _objRet;
         }

@@ -80,7 +80,7 @@ namespace RightsU.Audit.DAL.Repository
         //    return base.ExecuteSQLProcedure<USPGetMasters>("USPGetMasters", param);
         //}
 
-        public Int32 InsertAuditLog(Int32 moduleCode,Int32 intCode,string logData,string actionBy,Int32 actionOn,string actionType)
+        public Int32 InsertAuditLog(Int32 moduleCode,Int32 intCode,string logData,string actionBy,Int32 actionOn,string actionType,string requestId)
         {
             Int32 Audit_Log_Code = 0;
             var param = new DynamicParameters();
@@ -90,6 +90,7 @@ namespace RightsU.Audit.DAL.Repository
             param.Add("@actionBy", actionBy);
             param.Add("@actionOn", actionOn);
             param.Add("@actionType", actionType);
+            param.Add("@requestId", requestId);
 
             var identity = base.ExecuteScalar("USP_Insert_AuditLog", param);
             Audit_Log_Code = Convert.ToInt32(identity);
