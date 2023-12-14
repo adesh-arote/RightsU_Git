@@ -26,7 +26,7 @@ namespace RightsU_Plus.Controllers
         //
         // GET: /Amort_Rule/
 
-        public int moduleCode = 180;
+        public int moduleCode = GlobalParams.ModuleCodeForAmortRule;
 
         public int PageNo
         {
@@ -521,7 +521,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DelactivateData(int id)
         {
-            string message = "", Action = Convert.ToString(ActionType.A); // A = "Active";;
+            string message = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             Amort_Rule objAR = new Amort_Rule();
             Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);

@@ -181,6 +181,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Filters\AuthAttribute.cs" />
     <Compile Include="Filters\Consumes.cs" />
+    <Compile Include="Filters\CustomExceptionFilter.cs" />
     <Compile Include="Filters\HideInDocsAttribute.cs" />
     <Compile Include="Filters\HideInDocsFilter.cs" />
     <Compile Include="Filters\LogFilter.cs" />
@@ -190,6 +191,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Logging\UTOLogger.cs" />
+    <Compile Include="Models\RequestContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -255,7 +258,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RightsU.Audit.BLL\RightsU.Audit.BLL.csproj">

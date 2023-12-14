@@ -94,6 +94,8 @@ namespace RightsU_Entities
         public string Party_Id { get; set; }
         [JsonIgnore]
         public Nullable<int> Party_Group_Code { get; set; }
+        [NotMapped]
+        public string Party_Group_Name { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         [JsonIgnore]
@@ -128,11 +130,11 @@ namespace RightsU_Entities
         public virtual ICollection<MHRequest> MHRequests { get; set; }
         [JsonIgnore]
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
-        [JsonProperty(Order = 4)]
+        [JsonIgnore]
         public virtual Party_Category Party_Category { get; set; }
-        [JsonProperty(Order = 5)]
+        [JsonIgnore]
         public virtual Party_Group Party_Group { get; set; }
-        [JsonProperty(Order = 6)]
+        [JsonProperty(Order = 4)]
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }

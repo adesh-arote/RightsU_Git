@@ -11,7 +11,8 @@ AS
 -- ============================================= 
 
 BEGIN  
-	SET FMTONLY OFF
+    
+   SET FMTONLY OFF
 	SET NOCOUNT ON 
 	Declare @Loglevel int  
 	select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'
@@ -239,7 +240,7 @@ BEGIN
 
 		    Insert Into #ExtendedColumn(Columns_Code,Columns_Name,Header_Name)
 		  Values(0,'Title_Name','Title Name'),(0,'Deal_Type_Name','Title Type'),(0,'Language_Name','Language Name'),(0,'Original_Title','Original Title'),(0,'Original_Language','Original Language'),(0,'Program_Name','Program Name'),(0,'Duration_In_Min','Duration In Min'),
-		   (0,'Year_Of_Production','Year Of Production'),(0,'TalentName','TalentName'),(0,'Director','Director'),(0,'Producer','Producer'),(0,'Genres_Name','Genres Name'),(0,'CountryName','CountryName'),(0,'Synopsis','Synopsis');
+		   (0,'Year_Of_Production','Year Of Production'),(0,'TalentName','Talent Name'),(0,'Director','Director'),(0,'Producer','Producer'),(0,'Genres_Name','Genres Name'),(0,'CountryName','Country Name'),(0,'Synopsis','Synopsis');
 		   
 		   --Insert Into #ExtendedColumn(Columns_Code,Columns_Name,Ref_Table,Control_Type)
 		   --select distinct EC.Columns_Code,EC.Columns_Name,EC.Ref_Table,EC.Control_Type from Map_Extended_Columns MEC
@@ -298,17 +299,21 @@ BEGIN
 				   Declare @Map_Extended_columns_Code Int, @ColumnCode Int,@Control_Type Nvarchar(200),@Is_Multiple Nvarchar(200),@TrimColumnName Nvarchar(50);
 				   DECLARE @sqlCommand NVARCHAR(MAX) =''
                    DECLARE @ColumnValue  NVARCHAR(Max) =''
-                   DECLARE @ColumnName NVARCHAR(MAX) =''
+                   DECLARE @ColumnName NVARCHAR(MAX) ='',@Is_Defined_Values  NVARCHAR(MAX) ='';
 				   
 				  Set @ColumnCode = (select Columns_Code from #GroupwiseExtendedColumn where ID = @row)
 				   Set @ColumnName = (select Columns_Name from #GroupwiseExtendedColumn where ID = @row)
 				   --set @Map_Extended_columns_Code = (select Map_Extended_columns_Code from Map_Extended_Columns where Record_Code = @Record_Code and Columns_Code = @ColumnCode)
 			       set @Control_Type = (select Control_Type from Extended_Columns where Columns_Code = @ColumnCode);
 				   Set @Is_Multiple = (select Is_Multiple_Select from Extended_Columns where Columns_Code = @ColumnCode);
+				   Set @Is_Defined_Values = (select Is_Defined_Values from Extended_Columns where Columns_Code = @ColumnCode);
 
-				  Set @TrimColumnName = replace(@ColumnName,' ','')
+				   Set @TrimColumnName = replace(@ColumnName,' ','')
 				   Set @TrimColumnName =  REPLACE(@TrimColumnName,'(','')
-			      Set @TrimColumnName =  REPLACE(@TrimColumnName,')','')
+			       Set @TrimColumnName =  REPLACE(@TrimColumnName,')','')
+				   Set @TrimColumnName =  REPLACE(@TrimColumnName,'&','')
+				   Set @TrimColumnName =  REPLACE(@TrimColumnName,'/','')
+
 				  --print @TrimColumnName
 				  
 				  if( @Control_Type = 'DDL' and @Is_Multiple = 'Y')
@@ -327,10 +332,14 @@ BEGIN
 									)      
 							),1,2,'''')))'
 				      EXECUTE sp_executesql @sqlCommand, N'@ColumnValue nvarchar(75), @Name VARCHAR(75) OUTPUT', @ColumnValue = @ColumnValue, @Name = @ColumnValue OUTPUT
+					  if(@ColumnValue != '')
+					  begin 
+					  set @ColumnValue = (SELECT REVERSE( STUFF(REVERSE(LTRIM(RTRIM(@ColumnValue))), 1,CASE WHEN SUBSTRING((REVERSE(LTRIM(RTRIM(@ColumnValue)))), 1, 1) = ',' THEN 1 ELSE 0 END,'')))
+					  end
 				     Update #ExtendedColumn set Column_Value = @ColumnValue where Columns_Name = @ColumnName;
 					
 				  End
-				  else If(@Is_Multiple = 'N')
+				  else If(@Is_Multiple = 'N' and @Is_Defined_Values = 'N')
 				  Begin
 				    SET @sqlCommand ='select @Name= (select REVERSE(stuff(reverse(  stuff(      
 								(         
@@ -345,7 +354,33 @@ BEGIN
 							
 					
 				    EXECUTE sp_executesql @sqlCommand, N'@ColumnValue nvarchar(75), @Name VARCHAR(75) OUTPUT', @ColumnValue = @ColumnValue, @Name = @ColumnValue OUTPUT
+					 if(@ColumnValue != '')
+					  begin 
+					  set @ColumnValue = (SELECT REVERSE( STUFF(REVERSE(LTRIM(RTRIM(@ColumnValue))), 1,CASE WHEN SUBSTRING((REVERSE(LTRIM(RTRIM(@ColumnValue)))), 1, 1) = ',' THEN 1 ELSE 0 END,'')))
+					  end
+				    Update #ExtendedColumn set Column_Value = @ColumnValue where Columns_Name = @ColumnName;
+				  end
+				  else If(@Is_Defined_Values = 'Y')
+				  begin
+
+				   SET @sqlCommand ='select @Name= (select REVERSE(stuff(reverse(  stuff(      
+								(         
+									select distinct cast(ECV.Columns_Value as varchar) from Map_Extended_Columns MEC (NOLOCK)
+										INNER JOIN Extended_Columns EC (NOLOCK) ON EC.Columns_Code = MEC.Columns_Code
+										INNER JOIN Extended_Columns_Value ECV (NOLOCK) ON ECV.Columns_Value_Code = MEC.Columns_Value_Code
+									WHERE MEC.Record_Code = '+Cast(@Record_Code as varchar(200))+' AND EC.Columns_Code = '+cast(@ColumnCode as Varchar(200))+'
+      
+									FOR XML PATH(''''), root('''+@TrimColumnName+'''), type      
+								).value(''/'+@TrimColumnName+'[1]'',''NVARCHAR(max)''      
+							),1,0, '''' )      
+							),1,0,'''')))'
+							
 					
+				    EXECUTE sp_executesql @sqlCommand, N'@ColumnValue nvarchar(75), @Name VARCHAR(75) OUTPUT', @ColumnValue = @ColumnValue, @Name = @ColumnValue OUTPUT
+					 if(@ColumnValue != '')
+					  begin 
+					  set @ColumnValue = (SELECT REVERSE( STUFF(REVERSE(LTRIM(RTRIM(@ColumnValue))), 1,CASE WHEN SUBSTRING((REVERSE(LTRIM(RTRIM(@ColumnValue)))), 1, 1) = ',' THEN 1 ELSE 0 END,'')))
+					  end
 				    Update #ExtendedColumn set Column_Value = @ColumnValue where Columns_Name = @ColumnName;
 				  end
 				  else if exists(select Columns_Name from #ExtendedColumn where Columns_Name = @ColumnName and @ColumnCode = 0)
@@ -354,6 +389,10 @@ BEGIN
 				    SET @sqlCommand = 'SELECT @Name='+@ColumnName+' FROM #Temp WHERE Id = '+cast(@count as nvarchar(50))+''
 					
 					EXECUTE sp_executesql @sqlCommand, N'@ColumnValue nvarchar(75), @Name VARCHAR(75) OUTPUT', @ColumnValue = @ColumnValue, @Name = @ColumnValue OUTPUT
+					 if(@ColumnValue != '')
+					  begin 
+					  set @ColumnValue = (SELECT REVERSE( STUFF(REVERSE(LTRIM(RTRIM(@ColumnValue))), 1,CASE WHEN SUBSTRING((REVERSE(LTRIM(RTRIM(@ColumnValue)))), 1, 1) = ',' THEN 1 ELSE 0 END,'')))
+					  end
 					Update #ExtendedColumn set Column_Value = cast( @ColumnValue as varchar(200)) where Columns_Name = @ColumnName;
 				
 				  end 

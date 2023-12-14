@@ -151,12 +151,6 @@ namespace RightsU_Plus.Controllers
                     lstLanguage_Group.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
                     lstLanguage_Group_Searched.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
 
-                    foreach (var items in objLanguage.Language_Group_Details)
-                    {
-                        int Language_Code = Convert.ToInt32(items.Language_Code);
-                        items.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Language_Code == Language_Code).Select(x => x.Language_Name).FirstOrDefault();
-                    }
-
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
@@ -171,6 +165,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objLanguage.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Inserted_By));
                         objLanguage.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Last_Action_By));
+                        objLanguage.Language_Group_Details.ToList().ForEach(f => f.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Language_Code)).Language_Name);
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objLanguage.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
@@ -326,6 +321,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objL.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objL.Inserted_By));
                         objL.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objL.Last_Action_By));
+                        objL.Language_Group_Details.ToList().ForEach(f => f.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Language_Code)).Language_Name);
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objL);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objL.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);

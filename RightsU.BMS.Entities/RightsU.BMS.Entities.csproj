@@ -70,6 +70,7 @@
     <Compile Include="FrameworkClasses\Logging.cs" />
     <Compile Include="FrameworkClasses\LoginDetails.cs" />
     <Compile Include="FrameworkClasses\Return.cs" />
+    <Compile Include="HttpModel\HttpResponses.cs" />
     <Compile Include="LogClasses\Error.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="Master_Entities\User.cs" />
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />
     <Compile Include="Master_Entities\USP_Bind_Extend_Column_Grid_Result.cs" />
+    <Compile Include="Master_Entities\UTOLogInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

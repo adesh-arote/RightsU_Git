@@ -28,16 +28,28 @@ namespace RightsU_Entities
         public Nullable<int> Workflow_Code { get; set; }
         [JsonIgnore]
         public Nullable<int> Module_Code { get; set; }
+        [NotMapped]
+        public string Module_Name { get; set; }
         public Nullable<short> Ideal_Process_Days { get; set; }
         public Nullable<System.DateTime> Effective_Start_Date { get; set; }
         public Nullable<System.DateTime> System_End_Date { get; set; }
         public string Is_Active { get; set; }
         [JsonIgnore]
+        public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        public string Last_Action_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Business_Unit_Code { get; set; }
+        [NotMapped]
+        public string Business_Unit_Name { get; set; }
 
         [JsonIgnore]
         public virtual System_Module System_Module { get; set; }

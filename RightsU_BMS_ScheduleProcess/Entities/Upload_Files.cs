@@ -11,7 +11,7 @@ namespace RightsU_BMS_ScheduleProcess.Entities
     public class Upload_Files
     {
         [PrimaryKey]
-        public int File_Code { get; set; }
+        public int? File_Code { get; set; }
         public string File_Name { get; set; }
         public string Err_YN { get; set; }
         public Nullable<System.DateTime> Upload_Date { get; set; }
@@ -26,5 +26,6 @@ namespace RightsU_BMS_ScheduleProcess.Entities
         public Nullable<int> ChannelCode { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
+        public string Record_Status { get; set; }
     }
 }

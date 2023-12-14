@@ -911,7 +911,7 @@ namespace RightsU_Plus.Controllers
                     readTask.Wait();
 
                     var GetReturn1 = readTask.Result;
-                    var json = JsonConvert.SerializeObject(GetReturn1.LogObject);
+                    var json = JsonConvert.SerializeObject(GetReturn1.Response);
                     ret = json;
                     ErrMsg = "Success";
                 }
@@ -968,7 +968,7 @@ namespace RightsU_Plus.Controllers
         public double TimeTaken { get; set; }
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
-        public AuditLogReturn LogObject { get; set; }
+        public AuditLogReturn Response { get; set; }
     }
 
     public class AuditLogReturn
