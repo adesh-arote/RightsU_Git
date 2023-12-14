@@ -61,7 +61,7 @@ namespace RightsU.Audit.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
             Input.requestId = Input.isExternal == true ? HttpContext.Current.Request.Headers["LogRequestId"] : string.Empty;
-            //int obj = Convert.ToInt32("hello");
+            
             PostReturn objReturn = objUSPServices.InsertAuditLog(Input);
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -101,7 +101,7 @@ namespace RightsU.Audit.WebAPI.Controllers
         /// <param name="userAction">Specific User action, search with multiple actions like "C,X,A" allowed.</param>
         /// <param name="includePrevAuditVesion">Default "N"-Values "Y"/"N" pass "Y" to include the previous 1 version of data even if not fall into the provided period bracket.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(GetReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(GenericReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
@@ -116,7 +116,7 @@ namespace RightsU.Audit.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GetReturn objReturn = objUSPServices.GetAuditLogList(order.ToString(), sort.ToString(), size, page, requestFrom, requestTo, moduleCode, searchValue, user, userAction, "N");
+            GenericReturn objReturn = objUSPServices.GetAuditLogList(order.ToString(), sort.ToString(), size, page, requestFrom, requestTo, moduleCode, searchValue, user, userAction, "N");
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -127,7 +127,7 @@ namespace RightsU.Audit.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.AuditResponse, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)

@@ -66,8 +66,8 @@ namespace RightsU.Audit.WebAPI.Filters
                     if (actionExecutedContext.Request.Method.Method == "GET")
                     {
                         logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
-                        logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                        logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                        logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
+                        logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
                     }
                     else
                     {
@@ -98,8 +98,8 @@ namespace RightsU.Audit.WebAPI.Filters
                         actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
                         if (logObj.Method == "GET")
                         {
-                            actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                            actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.GetReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+                            actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                            actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
                         }
                         else
                         {

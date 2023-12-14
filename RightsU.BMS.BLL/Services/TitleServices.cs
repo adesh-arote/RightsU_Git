@@ -22,9 +22,9 @@ namespace RightsU.BMS.BLL.Services
         //    return objTitleReturn;
         //}
 
-        public GetReturn GetTitleList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        public GenericReturn GetTitleList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
         {
-            GetReturn _objRet = new GetReturn();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
@@ -188,14 +188,14 @@ namespace RightsU.BMS.BLL.Services
                 _objRet.Message = ex.Message;
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.AssetResponse = _TitleReturn;
+                _objRet.Response = _TitleReturn;
                 return _objRet;
             }
 
             _TitleReturn.paging.page = page;
             _TitleReturn.paging.size = size;
 
-            _objRet.AssetResponse = _TitleReturn;
+            _objRet.Response = _TitleReturn;
 
             return _objRet;
         }
@@ -213,9 +213,9 @@ namespace RightsU.BMS.BLL.Services
         //    return objTitleReturn;
         //}
 
-        public GetTitleReturn GetTitleById(Int32 id)
+        public GenericReturn GetTitleById(Int32 id)
         {
-            GetTitleReturn _objRet = new GetTitleReturn();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
@@ -276,11 +276,11 @@ namespace RightsU.BMS.BLL.Services
                 _objRet.Message = ex.Message;
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.AssetResponse = _TitleReturn;
+                _objRet.Response = _TitleReturn;
                 return _objRet;
             }
 
-            _objRet.AssetResponse = _TitleReturn;
+            _objRet.Response = _TitleReturn;
 
             return _objRet;
         }

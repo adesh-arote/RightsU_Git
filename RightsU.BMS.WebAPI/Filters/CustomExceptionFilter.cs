@@ -38,17 +38,14 @@ namespace RightsU.BMS.WebAPI.Filters
 
             if (actionExecutedContext.Request.Method.Method == "GET")
             {
-                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
-                logObj.IsSuccess = false.ToString();
-                logObj.TimeTaken = "0";
+                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                
             }
             else
             {
-                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);
-                logObj.IsSuccess = false.ToString();
-                logObj.TimeTaken = "0";
+                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                
             }
-
+            logObj.IsSuccess = false.ToString();
+            logObj.TimeTaken = "0";
             logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
             logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
             logObj.ResponseDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");

@@ -46,7 +46,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <remarks>Retrieves all available Assets</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="search">The value of the search across the title</param>
+        /// <param name="searchValue">The value of the search across the title</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
@@ -60,7 +60,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
         [Route("api/title")]
-        public async Task<HttpResponseMessage> GetTitleList(Order order, SortColumn sort, Int32 page, Int32 size, string search = "", string dateGt = "", string dateLt = "")
+        public async Task<HttpResponseMessage> GetTitleList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
             string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
@@ -75,7 +75,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GetReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, search, dateGt, dateLt, 0);
+            GenericReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -86,7 +86,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.AssetResponse, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -378,7 +378,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GetTitleReturn objReturn = objTitleServices.GetTitleById(id.Value);
+            GenericReturn objReturn = objTitleServices.GetTitleById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -389,7 +389,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.AssetResponse, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)

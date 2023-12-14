@@ -120,9 +120,9 @@ namespace RightsU.Audit.BLL.Services
             return _objRet;
         }
 
-        public GetReturn GetAuditLogList(string order, string sort, Int32 size, Int32 page, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, string searchValue, string user, string userAction, string includePrevAuditVesion)
+        public GenericReturn GetAuditLogList(string order, string sort, Int32 size, Int32 page, Int32 requestFrom, Int32 requestTo, Int32 moduleCode, string searchValue, string user, string userAction, string includePrevAuditVesion)
         {
-            GetReturn _objRet = new GetReturn();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
@@ -230,14 +230,14 @@ namespace RightsU.Audit.BLL.Services
                 _objRet.Message = ex.Message;
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.AuditResponse = _AuditLogReturn;
+                _objRet.Response = _AuditLogReturn;
                 return _objRet;
             }
 
             _AuditLogReturn.paging.page = page;
             _AuditLogReturn.paging.size = size;
 
-            _objRet.AuditResponse = _AuditLogReturn;
+            _objRet.Response = _AuditLogReturn;
 
             return _objRet;
         }

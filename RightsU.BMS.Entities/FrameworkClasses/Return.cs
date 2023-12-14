@@ -20,6 +20,19 @@ namespace RightsU.BMS.Entities.FrameworkClasses
         public string IsSystemPassword { get; set; }
     }
 
+    public class GenericReturn
+    {
+        [JsonIgnore]
+        public string Message { get; set; }
+        [JsonIgnore]
+        public bool IsSuccess { get; set; }
+        [JsonIgnore]
+        public double TimeTaken { get; set; }
+        [JsonIgnore]
+        public HttpStatusCode StatusCode { get; set; }
+        public object Response { get; set; }
+    }
+
     public class PostReturn
     {
         public string Message { get; set; }
@@ -28,32 +41,5 @@ namespace RightsU.BMS.Entities.FrameworkClasses
         public double TimeTaken { get; set; }
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
-    }
-
-    public class GetReturn
-    {
-        [JsonIgnore]
-        public string Message { get; set; }
-        [JsonIgnore]
-        public bool IsSuccess { get; set; }
-        [JsonIgnore]
-        public double TimeTaken { get; set; }
-        [JsonIgnore]
-        public HttpStatusCode StatusCode { get; set; }
-        public TitleReturn AssetResponse { get; set; }
-        //public title Asset { get; set; }
-    }
-
-    public class GetTitleReturn
-    {
-        [JsonIgnore]
-        public string Message { get; set; }
-        [JsonIgnore]
-        public bool IsSuccess { get; set; }
-        [JsonIgnore]
-        public double TimeTaken { get; set; }
-        [JsonIgnore]
-        public HttpStatusCode StatusCode { get; set; }
-        public title AssetResponse { get; set; }
     }
 }
