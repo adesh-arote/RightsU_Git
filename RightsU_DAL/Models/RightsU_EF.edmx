@@ -6567,6 +6567,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Workflow_BU">
           <Key>
@@ -6600,6 +6602,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_Action_By" Type="int" />
           <Property Name="Lock_Time" Type="datetime" />
           <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Workflow_Module_BU">
           <Key>
@@ -26935,6 +26939,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Workflow_BU" Relationship="RightsU_NeoModel.FK_Workflow_BU_Workflow" FromRole="Workflow" ToRole="Workflow_BU" />
           <Property Type="Int32" Name="Business_Unit_Code" />
           <NavigationProperty Name="Business_Unit" Relationship="RightsU_NeoModel.FK_Workflow_Business_Unit" FromRole="Workflow" ToRole="Business_Unit" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Workflow_Module">
           <Key>
@@ -26956,6 +26962,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Workflow_Module_BU" Relationship="RightsU_NeoModel.FK_Workflow_Module_BU_Workflow_Module" FromRole="Workflow_Module" ToRole="Workflow_Module_BU" />
           <Property Type="Int32" Name="Business_Unit_Code" />
           <NavigationProperty Name="Business_Unit" Relationship="RightsU_NeoModel.FK_Workflow_Module_Business_Unit" FromRole="Workflow_Module" ToRole="Business_Unit" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Workflow_Module_Role">
           <Key>
@@ -43780,6 +43788,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Workflows">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Workflow">
               <MappingFragment StoreEntitySet="Workflow">
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
                 <ScalarProperty Name="Workflow_Type" ColumnName="Workflow_Type" />
                 <ScalarProperty Name="Workflow_Code" ColumnName="Workflow_Code" />
@@ -43794,6 +43804,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Workflow_Module">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Workflow_Module">
               <MappingFragment StoreEntitySet="Workflow_Module">
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Business_Unit_Code" ColumnName="Business_Unit_Code" />
                 <ScalarProperty Name="Workflow_Module_Code" ColumnName="Workflow_Module_Code" />
                 <ScalarProperty Name="Workflow_Code" ColumnName="Workflow_Code" />

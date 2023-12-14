@@ -105,7 +105,20 @@
                     addObject(array, $a);
 
                 } else {
-                    row$.append($('<td style="padding:5px"/>').html(cellValue));
+                    var DateVal = chkDate(cellValue);
+                    if (DateVal == false) {
+                        row$.append($('<td style="padding:5px"/>').html(cellValue));
+                    } else {
+                        var date = new Date(cellValue);
+                        var dateStr =
+                            ("00" + (date.getDate())).slice(-2) + "/" +
+                            ("00" + (date.getMonth() + 1)).slice(-2) + "/" +
+                            date.getFullYear() + " " +
+                            ("00" + date.getHours()).slice(-2) + ":" +
+                            ("00" + date.getMinutes()).slice(-2) + ":" +
+                            ("00" + date.getSeconds()).slice(-2);
+                        row$.append($('<td style="padding:5px"/>').html(dateStr));
+                    }   
                 }
             }
             appendObj.append(row$);
@@ -488,6 +501,20 @@
                 alert(result);
             }
         });
+    }
+
+    function chkDate(cellValue) {
+        var chkValue = new Date(cellValue);
+        var chkValNum = isNaN(cellValue);
+        if (chkValNum == false) {
+            return false;
+        }
+        else if ((chkValue.toString() === "Invalid Date")) {
+            return false;
+        }
+        else {
+            return true;
+        }
     }
 
 </script>

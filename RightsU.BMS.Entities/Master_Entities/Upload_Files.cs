@@ -26,5 +26,6 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> ChannelCode { get; set; }
         public Nullable<System.DateTime> StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
+        public string Record_Status { get; set; }
     }
 }

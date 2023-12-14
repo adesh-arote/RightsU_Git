@@ -893,7 +893,7 @@ namespace RightsU_Plus.Controllers
             }
 
             #endregion
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             if (VendorCode > 0)
             {
                 #region   -- -Update vendor
@@ -1127,16 +1127,14 @@ namespace RightsU_Plus.Controllers
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
                     DBUtil.Release_Record(recordLockingCode);
 
-                    string Action = "";
                     if (VendorCode > 0)
                     {
-                        Action = "U"; // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = objMessageKey.Recordupdatedsuccessfully;
                         //message = message.Replace("{ACTION}", "updated");
                     }
                     else
                     {
-                        Action = "C"; // C = "Create";
                         message = objMessageKey.RecordAddedSuccessfully;
                         //message = message.Replace("{ACTION}", "added");
                     }
@@ -1147,7 +1145,8 @@ namespace RightsU_Plus.Controllers
                         objVendor.Last_Action_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Last_Action_By));
                         objVendor.Vendor_Country.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
                         objVendor.Vendor_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
-                        objVendor.Party_Category.Party_Category_Name =  new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+                        objVendor.Party_Category_Name =  new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+                        objVendor.Party_Group_Name = new Party_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Group_Code == objVendor.Party_Group_Code).Select(x => x.Party_Group_Name).FirstOrDefault();
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);
@@ -1205,7 +1204,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveVendor(int vendorCode, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             bool isLocked = true;
             CommonUtil objCommonUtil = new CommonUtil();
@@ -1216,7 +1215,6 @@ namespace RightsU_Plus.Controllers
 
             if (isLocked)
             {
-                string Action = "";
                 // string status = "S", message = "Record {ACTION} successfully";
                 Vendor_Service objService = new Vendor_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Vendor objVendor = objService.GetById(vendorCode);
@@ -1229,10 +1227,8 @@ namespace RightsU_Plus.Controllers
                     lstVendor.Where(w => w.Vendor_Code == vendorCode).First().Is_Active = doActive;
                     lstVendor_Searched.Where(w => w.Vendor_Code == vendorCode).First().Is_Active = doActive;
 
-                    if (doActive == "Y")
-                        Action = "A"; // A = "Active";
-                    else
-                        Action = "DA"; // DA = "Deactivate";
+                    if (doActive == "N")
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
 
                     try
                     {
@@ -1240,7 +1236,8 @@ namespace RightsU_Plus.Controllers
                         objVendor.Last_Action_By_user = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objVendor.Last_Action_By));
                         objVendor.Vendor_Country.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
                         objVendor.Vendor_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
-                        objVendor.Party_Category.Party_Category_Name = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+                        objVendor.Party_Category_Name = new Party_Category_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Category_Code == objVendor.Party_Category_Code).Select(x => x.Party_Category_Name).FirstOrDefault();
+                        objVendor.Party_Group_Name = new Party_Group_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Party_Group_Code == objVendor.Party_Group_Code).Select(x => x.Party_Group_Name).FirstOrDefault();
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objVendor);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForVendor, objVendor.Vendor_Code, LogData, Action, objLoginUser.Users_Code);

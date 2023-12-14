@@ -140,6 +140,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.TreeValueId = "hdnTVCodes";
             return PartialView("_TV_Platform");
         }
+
         public PartialViewResult BindPlatformTreePopup(int platformGroupCode)
         {
             RightsU_Entities.Platform_Group objPG = new Platform_Group_Service(objLoginEntity.ConnectionStringName).GetById(platformGroupCode);
@@ -153,6 +154,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.TreeValueId = "hdnTVCodes";
             return PartialView("_TV_Platform");
         }
+
         public PartialViewResult PartialPlatform_Group()
         {
 
@@ -426,7 +428,7 @@ namespace RightsU_Plus.Controllers
                 {
                     objPlatformGroup.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPlatformGroup.Inserted_By));
                     objPlatformGroup.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objPlatformGroup.Last_Action_By));
-                    objPlatform_Group.Platform_Group_Details.ToList().ForEach(f => f.Platform_Name = new Platform_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Platform_Code)).Platform_Name);
+                    objPlatformGroup.Platform_Group_Details.ToList().ForEach(f => f.Platform_Name = new Platform_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Platform_Code)).Platform_Name);
 
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objPlatformGroup);
                     //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForPlatformGroup), Convert.ToInt32(objPlatformGroup.Platform_Group_Code), LogData, Action, objLoginUser.Users_Code);
@@ -474,6 +476,7 @@ namespace RightsU_Plus.Controllers
                 rights = lstRights.FirstOrDefault();
             return rights;
         }
+
         public ActionResult Index()
         {
             LoadSystemMessage(Convert.ToInt32(objLoginUser.System_Language_Code), GlobalParams.ModuleCodeForPlatformGroup);

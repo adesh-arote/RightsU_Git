@@ -31,6 +31,8 @@ namespace RightsU_InterimDb.Models
     	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
     	    public string Workflow_Type { get; set; }
     	    public Nullable<int> Business_Unit_Code { get; set; }
+    	    public Nullable<int> Inserted_By { get; set; }
+    	    public Nullable<System.DateTime> Inserted_On { get; set; }
     
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }

@@ -48,25 +48,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Dapper.dll</HintPath>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.24\lib\net461\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="Dapper.SimpleLoad, Version=2.0.140.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Dapper.SimpleLoad.dll</HintPath>
+      <HintPath>..\packages\Dapper.SimpleLoad.2.0.140\lib\net451\Dapper.SimpleLoad.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper.SimpleSave, Version=1.0.177.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Dapper.SimpleSave.dll</HintPath>
+    <Reference Include="Dapper.SimpleSave, Version=1.0.187.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.SimpleSave.1.0.187\lib\net451\Dapper.SimpleSave.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\log4net.dll</HintPath>
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -86,8 +81,10 @@
     <Compile Include="Entities\AL_Proposal.cs" />
     <Compile Include="Entities\AL_Recommendation.cs" />
     <Compile Include="Entities\AL_Recommendation_Content.cs" />
+    <Compile Include="Entities\BMS_Schedule_Import_Config.cs" />
     <Compile Include="Entities\Channel.cs" />
     <Compile Include="Entities\RecommendationRule.cs" />
+    <Compile Include="Entities\Schedule_Data_UDT.cs" />
     <Compile Include="Entities\Upload_Files.cs" />
     <Compile Include="Entities\USPAL_RecommendationExportToExcel.cs" />
     <Compile Include="Entities\USPAL_RecommendationExportToExcel_Show.cs" />
@@ -102,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
