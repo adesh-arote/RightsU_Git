@@ -417,10 +417,18 @@ namespace RightsU_Plus.Controllers
         {
             dynamic resultSet;
             if (objECD.Email_Config_Detail_Code > 0)
+            {
                 objECD.EntityState = State.Modified;
+                objECD.Last_Updated_By = objLoginUser.Users_Code;
+                objECD.Last_Updated_On = DateTime.Now;
+            }     
             else
+            {
                 objECD.EntityState = State.Added;
-
+                objECD.Last_Updated_By = objLoginUser.Users_Code;
+                objECD.Last_Updated_On = DateTime.Now;
+            }
+                
             if (!string.IsNullOrEmpty(NotificationDays))
                 objECD.Notification_Days = Convert.ToInt32(NotificationDays);
             if (!string.IsNullOrEmpty(NotificationTime))
@@ -472,8 +480,27 @@ namespace RightsU_Plus.Controllers
 
             try
             {
+                objECD.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objECD.Inserted_By));
+                objECD.Last_Updated_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objECD.Last_Updated_By));
+                objECD.Email_Type = new Email_Config_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Email_Config_Code == objECD.Email_Config_Code).Select(x => x.Email_Type).FirstOrDefault();
+
                 string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objECD);
-                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForEmailConfig), Convert.ToInt32(objECD.Email_Config_Detail_Code), LogData, Action, objLoginUser.Users_Code);
+                //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForEmailConfig), Convert.ToInt32(objECD.Email_Config_Detail_Code), LogData, Action, objLoginUser.Users_Code);
+
+                MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForEmailConfig;
+                objAuditLog.intCode = objECD.Email_Config_Detail_Code;
+                objAuditLog.logData = LogData;
+                objAuditLog.actionBy = objLoginUser.Login_Name;
+                objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objECD.Last_Updated_On));
+                objAuditLog.actionType = Action;
+                var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                {
+
+                }
             }
             catch (Exception ex)
             {
