@@ -18,14 +18,17 @@ namespace RightsU_Entities
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Territory_Details_Code { get; set; }
         [JsonIgnore]
         public int Country_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 1)]
         public string Country_Name { get; set; }
         [JsonIgnore]
         public int Territory_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 2)]
         public string Territory_Name { get; set; }
         [JsonIgnore]
         public string Is_Ref_Acq { get; set; }

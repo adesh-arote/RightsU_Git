@@ -16,13 +16,16 @@ namespace RightsU_Entities
 
     public partial class Language_Group_Details
     {
+        [JsonProperty(Order = -1)]
         public int Language_Group_Details_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Language_Group_Code { get; set; }
         [JsonIgnore]
         public Nullable<int> Language_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 2)]
         public string Language_Name { get; set; }
         [JsonIgnore]
         public virtual Language Language { get; set; }

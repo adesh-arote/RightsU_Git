@@ -15,12 +15,17 @@ namespace RightsU_Entities
     
     public partial class Currency_Exchange_Rate
     {
+        [JsonProperty(Order = -1)]
         public int Currency_Exchange_Rate_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Currency_Code { get; set; }
+        [JsonProperty(Order = 2)]
         public System.DateTime Effective_Start_Date { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<System.DateTime> System_End_Date { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<decimal> Exchange_Rate { get; set; }
         [JsonIgnore]
         public string _Dummy_Guid { get; set; }

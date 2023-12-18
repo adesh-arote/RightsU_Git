@@ -18,26 +18,39 @@ namespace RightsU_Entities
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Id { get; set; }
+        [JsonProperty(Order = 1)]
         public string Parameter_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Parameter_Value { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 4)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 6)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 7)]
         public Nullable<int> Channel_Code { get; set; }
+        [JsonProperty(Order = 8)]
         public string Type { get; set; }
+        [JsonProperty(Order = 9)]
         public string IsActive { get; set; }
+        [JsonProperty(Order = 10)]
         public string Description { get; set; }
+        [JsonProperty(Order = 11)]
         public string IS_System_Admin { get; set; }
+        [JsonProperty(Order = 12)]
         public string Client_Name { get; set; }
     }
 }

@@ -18,8 +18,10 @@ namespace RightsU_Entities
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Platform_Group_Details_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 1)]
         public string Platform_Name { get; set; }
         [JsonIgnore]
         public Nullable<int> Platform_Code { get; set; }

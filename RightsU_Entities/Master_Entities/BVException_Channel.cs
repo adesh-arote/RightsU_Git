@@ -16,13 +16,16 @@ namespace RightsU_Entities
 
     public partial class BVException_Channel
     {
+        [JsonProperty(Order = -1)]
         public int Bv_Exception_Channel_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public int Bv_Exception_Code { get; set; }
         [JsonIgnore]
         public int Channel_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 2)]
         public string Channel_Name { get; set; }
 
         [JsonIgnore]

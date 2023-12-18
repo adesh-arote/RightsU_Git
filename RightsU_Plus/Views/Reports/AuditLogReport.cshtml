@@ -503,17 +503,45 @@
         });
     }
 
+    //function chkDate(cellValue) {
+    //    var chkValue = new Date(cellValue);
+    //    var chkValNum = isNaN(cellValue);
+    //    if (chkValNum == false) {
+    //        return false;
+    //    }
+    //    else if ((chkValue.toString() === "Invalid Date")) {
+    //        return false;
+    //    }
+    //    else {
+    //        let a = chkValue.getMonth()
+    //        if (a == 0) {
+    //            return false;
+    //        }
+    //        else {
+    //            if ((/[^a-zA-Z0-9]/.test(cellValue)) == true) {
+    //                let timestamp = Date.parse(cellValue);
+    //                if (isNaN(timestamp)) {
+    //                    alert(cellValue + "Invalid date format");
+    //                } else {
+    //                    alert(cellValue + "Valid date format");
+    //                }
+                    
+    //                return false;
+    //            }
+    //            else {
+    //                return true;
+    //            }                
+    //        }            
+    //    }
+    //}
+
     function chkDate(cellValue) {
-        var chkValue = new Date(cellValue);
-        var chkValNum = isNaN(cellValue);
-        if (chkValNum == false) {
-            return false;
-        }
-        else if ((chkValue.toString() === "Invalid Date")) {
-            return false;
-        }
-        else {
+        var regex = new RegExp("([0-9]{4}[-](0[1-9]|1[0-2])[-]([0-2]{1}[0-9]{1}|3[0-1]{1})|([0-2]{1}[0-9]{1}|3[0-1]{1})[-](0[1-9]|1[0-2])[-][0-9]{4})");
+        var dateOk = regex.test(cellValue);
+        if (dateOk) {
             return true;
+        } else {
+            return false;
         }
     }
 
