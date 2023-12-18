@@ -211,6 +211,8 @@ namespace RightsU_Plus.Controllers
                 else
                     ViewBag.Record_Locking_Code = 0;
 
+                ViewBag.AllowPeriodInRunDefinition =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AllowPeriodInRunDefinition").Select(x => x.Parameter_Value).FirstOrDefault();
+
                 Session["FileName"] = "";
                 Session["FileName"] = "acq_RunDefinition.html";
                 return PartialView("~/Views/Acq_Deal/_Acq_Run.cshtml", objAcq_Deal_Run);
@@ -1392,6 +1394,8 @@ namespace RightsU_Plus.Controllers
                     }
 
                     #region ---- Acq_Deal_Run_LP
+
+                   
 
                     string period = objFormCollection["ddlPeriod"];
                     ICollection<Acq_Deal_Run_LP> selectedLP = new HashSet<Acq_Deal_Run_LP>();
