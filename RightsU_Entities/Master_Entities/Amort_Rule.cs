@@ -24,27 +24,39 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         [JsonProperty(Order = -1)]
         public int Amort_Rule_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Rule_Type { get; set; }
+        [JsonProperty(Order = 2)]
         public string Rule_No { get; set; }
+        [JsonProperty(Order = 3)]
         public string Rule_Desc { get; set; }
+        [JsonProperty(Order = 4)]
         public string Distribution_Type { get; set; }
+        [JsonProperty(Order = 5)]
         public string Period_For { get; set; }
+        [JsonProperty(Order = 6)]
         public string Year_Type { get; set; }
+        [JsonProperty(Order = 7)]
         public Nullable<int> Nos { get; set; }
+        [JsonProperty(Order = 8)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 9)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 10)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 11)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 12)]
         public string Is_Active { get; set; }
-        [JsonProperty(Order = 1)]
+        [JsonProperty(Order = 13)]
         public virtual ICollection<Amort_Rule_Details> Amort_Rule_Details { get; set; }
     }
 }

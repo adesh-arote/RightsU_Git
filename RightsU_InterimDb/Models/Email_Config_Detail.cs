@@ -26,6 +26,10 @@ namespace RightsU_InterimDb.Models
     	    public string Notification_Frequency { get; set; }
     	    public Nullable<int> Notification_Days { get; set; }
     	    public Nullable<System.TimeSpan> Notification_Time { get; set; }
+    	    public Nullable<int> Inserted_By { get; set; }
+    	    public Nullable<System.DateTime> Inserted_On { get; set; }
+    	    public Nullable<int> Last_Updated_By { get; set; }
+    	    public Nullable<System.DateTime> Last_Updated_On { get; set; }
     
         public virtual Email_Config Email_Config { get; set; }
         public virtual ICollection<Email_Config_Detail_Alert> Email_Config_Detail_Alert { get; set; }

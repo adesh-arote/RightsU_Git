@@ -23,7 +23,7 @@ namespace RightsU.Audit.WebAPI.Controllers
     [SwaggerProduces("application/json")]
     [HideInDocs]
     //[AuthAttribute]
-    [CustomExceptionFilter]
+    //[CustomExceptionFilter]
     public class AuditLogController : ApiController
     {
         public enum order
@@ -50,7 +50,7 @@ namespace RightsU.Audit.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [LogFilter]
+        //[LogFilter]
         [HttpPost]
         [Route("api/masterauditlog")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]
@@ -106,7 +106,7 @@ namespace RightsU.Audit.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [LogFilter]
+        //[LogFilter]
         [HttpGet]
         [Route("api/masterauditlist")]
         [EnableCors(origins: "*", headers: "*", methods: "*")]

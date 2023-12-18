@@ -16,6 +16,7 @@ namespace RightsU_Entities
 
     public partial class BVException_Users
     {
+        [JsonProperty(Order = -1)]
         public int Bv_Exception_Users_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
@@ -24,6 +25,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public int Users_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 1)]
         public string User_Name { get; set; }
 
         [JsonIgnore]

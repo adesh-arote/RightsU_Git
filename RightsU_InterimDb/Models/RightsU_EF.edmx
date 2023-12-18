@@ -3092,6 +3092,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Days_Config" Type="char" MaxLength="1" />
           <Property Name="Days_Freq" Type="varchar" MaxLength="1000" />
           <Property Name="Remarks" Type="varchar" MaxLength="500" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_By" Type="int" />
+          <Property Name="Last_Updated_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -3103,6 +3107,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Notification_Frequency" Type="char" MaxLength="1" />
           <Property Name="Notification_Days" Type="int" />
           <Property Name="Notification_Time" Type="time" Precision="7" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_By" Type="int" />
+          <Property Name="Last_Updated_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Email_Config_Detail_Alert">
           <Key>
@@ -3368,6 +3376,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.DM_Title' does not have a prim
           <Property Name="Ref_Value_Field" Type="varchar" MaxLength="100" />
           <Property Name="Additional_Condition" Type="varchar" MaxLength="1000" />
           <Property Name="Is_Add_OnScreen" Type="char" MaxLength="1" />
+          <Property Name="Inserted_By" Type="int" />
+          <Property Name="Inserted_On" Type="datetime" />
+          <Property Name="Last_Updated_By" Type="int" />
+          <Property Name="Last_Updated_On" Type="datetime" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -25338,6 +25350,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Extended_Group_Config" Relationship="RightsU_NeoModel.FK_Extended_Group_Config_Extended_Columns" FromRole="Extended_Columns" ToRole="Extended_Group_Config" />
           <NavigationProperty Name="AL_Vendor_Rule_Criteria" Relationship="RightsU_NeoModel.FK_AL_Vendor_Rule_Criteria_Extended_Columns" FromRole="Extended_Columns" ToRole="AL_Vendor_Rule_Criteria" />
           <NavigationProperty Name="AL_Booking_Sheet_Details" Relationship="RightsU_NeoModel.FK_AL_Booking_Sheet_Details_Extended_Columns" FromRole="Extended_Columns" ToRole="AL_Booking_Sheet_Details" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_By" Type="Int32" />
+          <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Extended_Columns_Value">
           <Key>
@@ -35339,6 +35355,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Remarks" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Email_Config_Detail" Relationship="RightsU_NeoModel.FK_Email_Config_Detail_Email_Config" FromRole="Email_Config" ToRole="Email_Config_Detail" />
           <NavigationProperty Name="Email_Notification_Log" Relationship="RightsU_NeoModel.FK_Email_Notification_Log_Email_Config" FromRole="Email_Config" ToRole="Email_Notification_Log" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_By" Type="Int32" />
+          <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Email_Config_Detail">
           <Key>
@@ -35353,6 +35373,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Email_Config" Relationship="RightsU_NeoModel.FK_Email_Config_Detail_Email_Config" FromRole="Email_Config_Detail" ToRole="Email_Config" />
           <NavigationProperty Name="Email_Config_Detail_Alert" Relationship="RightsU_NeoModel.FK_Email_Config_Detail_Alert_Email_Config_Detail" FromRole="Email_Config_Detail" ToRole="Email_Config_Detail_Alert" />
           <NavigationProperty Name="Email_Config_Detail_User" Relationship="RightsU_NeoModel.FK_Email_Config_Detail_User_Email_Config_Detail" FromRole="Email_Config_Detail" ToRole="Email_Config_Detail_User" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Last_Updated_By" Type="Int32" />
+          <Property Name="Last_Updated_On" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Email_Config_Detail_Alert">
           <Key>
@@ -41217,7 +41241,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </EntitySetMapping>
           <EntitySetMapping Name="Acq_Deal_Run">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Run">
-              <MappingFragment StoreEntitySet="Acq_Deal_Run">                                
+              <MappingFragment StoreEntitySet="Acq_Deal_Run">
                 <ScalarProperty Name="Channel_Category_Code" ColumnName="Channel_Category_Code" />
                 <ScalarProperty Name="Channel_Type" ColumnName="Channel_Type" />
                 <ScalarProperty Name="Last_updated_Time" ColumnName="Last_updated_Time" />
@@ -42317,6 +42341,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Extended_Columns">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Extended_Columns">
               <MappingFragment StoreEntitySet="Extended_Columns">
+                <ScalarProperty Name="Last_Updated_On" ColumnName="Last_Updated_On" />
+                <ScalarProperty Name="Last_Updated_By" ColumnName="Last_Updated_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Is_Add_OnScreen" ColumnName="Is_Add_OnScreen" />
                 <ScalarProperty Name="Columns_Code" ColumnName="Columns_Code" />
                 <ScalarProperty Name="Columns_Name" ColumnName="Columns_Name" />
@@ -47709,6 +47737,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Email_Config">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config">
               <MappingFragment StoreEntitySet="Email_Config">
+                <ScalarProperty Name="Last_Updated_On" ColumnName="Last_Updated_On" />
+                <ScalarProperty Name="Last_Updated_By" ColumnName="Last_Updated_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Days_Freq" ColumnName="Days_Freq" />
                 <ScalarProperty Name="Days_Config" ColumnName="Days_Config" />
@@ -47725,6 +47757,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Email_Config_Detail">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Email_Config_Detail">
               <MappingFragment StoreEntitySet="Email_Config_Detail">
+                <ScalarProperty Name="Last_Updated_On" ColumnName="Last_Updated_On" />
+                <ScalarProperty Name="Last_Updated_By" ColumnName="Last_Updated_By" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
                 <ScalarProperty Name="Notification_Time" ColumnName="Notification_Time" />
                 <ScalarProperty Name="Notification_Days" ColumnName="Notification_Days" />
                 <ScalarProperty Name="Notification_Frequency" ColumnName="Notification_Frequency" />

@@ -23,21 +23,29 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Additional_Expense_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Additional_Expense_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string SAP_GL_Group_Code { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 4)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 6)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 7)]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Additional_Exp> Acq_Deal_Cost_Additional_Exp { get; set; }

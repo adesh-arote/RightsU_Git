@@ -24,23 +24,30 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         [JsonProperty(Order = -1)]
         public int Platform_Group_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Platform_Group_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 3)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 5)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 6)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 7)]
         public string Group_For { get; set; }
 
-        [JsonProperty(Order = 1)]
+        [JsonProperty(Order = 8)]
         public virtual ICollection<Platform_Group_Details> Platform_Group_Details { get; set; }
     }
 }
