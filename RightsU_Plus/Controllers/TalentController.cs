@@ -186,6 +186,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
                         objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                        objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
@@ -328,6 +329,7 @@ namespace RightsU_Plus.Controllers
                     {
                         objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
                         objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                        objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
 
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
                         //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
@@ -403,8 +405,8 @@ namespace RightsU_Plus.Controllers
             objTalent.Talent_Name = talentname;
             objTalent.Inserted_By = objLoginUser.Users_Code;
             objTalent.Inserted_On = System.DateTime.Now;
-            //objTalent.Last_Updated_Time = System.DateTime.Now;
-            //objTalent.Last_Action_By = objLoginUser.Users_Code;
+            objTalent.Last_Updated_Time = System.DateTime.Now;
+            objTalent.Last_Action_By = objLoginUser.Users_Code;
             objTalent.EntityState = State.Added;     
 
             #region --- Talent Role List ---
@@ -441,6 +443,7 @@ namespace RightsU_Plus.Controllers
                 {
                     objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
                     objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                    objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
 
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
                     //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);

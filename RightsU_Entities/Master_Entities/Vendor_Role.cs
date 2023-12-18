@@ -18,12 +18,16 @@ namespace RightsU_Entities
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Vendor_Role_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public int Vendor_Code { get; set; }
         [JsonIgnore]
         public int Role_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 2)]
         public string Role_Name { get; set; }
+        [JsonProperty(Order = 3)]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual Vendor Vendor { get; set; }

@@ -5,6 +5,7 @@ using RightsU_LoadSheet_Export_CA.Entities;
 using ROP.Quotes.DAL.Infrastructure;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,9 +54,9 @@ namespace RightsU_BMS_ScheduleProcess.Repository
                 base.AddEntity(entity);
             }
 
-            public Upload_Files GetUpload_Files(int Id)
+            public Upload_Files GetUpload_FilesById(int Id)
             {
-                var obj = new { Upload_Files_Code = Id };
+                var obj = new { File_Code = Id };
 
                 return base.GetById<Upload_Files>(obj);
             }
@@ -68,7 +69,7 @@ namespace RightsU_BMS_ScheduleProcess.Repository
 
             public void Update(Upload_Files entity)
             {
-                Upload_Files oldObj = GetUpload_Files(entity.File_Code);
+                Upload_Files oldObj = GetUpload_FilesById(entity.File_Code.Value);
                 base.UpdateEntity(oldObj, entity);
             }
 
@@ -259,6 +260,53 @@ namespace RightsU_BMS_ScheduleProcess.Repository
             {
                 var param = new DynamicParameters();
                 base.ExecuteSQLProcedure<dynamic>("USP_Music_Schedule", param);
+            }
+        }
+
+        public class BMS_Schedule_Import_ConfigRepositories : MainRepository<BMS_Schedule_Import_Config>
+        {
+            public void Add(BMS_Schedule_Import_Config entity)
+            {
+                base.AddEntity(entity);
+            }
+
+            public BMS_Schedule_Import_Config GetById(int Id)
+            {
+                var obj = new { BMS_Import_Config_Code = Id };
+
+                return base.GetById<BMS_Schedule_Import_Config>(obj);
+            }
+
+            public IEnumerable<BMS_Schedule_Import_Config> SearchFor(object param)
+            {
+                return base.SearchForEntity<BMS_Schedule_Import_Config>(param);
+            }
+
+
+            public void Update(BMS_Schedule_Import_Config entity)
+            {
+                BMS_Schedule_Import_Config oldObj = GetById(entity.BMS_Import_Config_Code);
+                base.UpdateEntity(oldObj, entity);
+            }
+
+            public void Delete(BMS_Schedule_Import_Config entity)
+            {
+                base.DeleteEntity(entity);
+            }
+        }
+
+        public class BMSUploadData_Repositories : MainRepository<int>
+        {
+            public int BMSUploadData(DataTable dt, string FileType, int ChannelCode)
+            {
+                Int32 BMS_Upload_Code = 0;
+                var param = new DynamicParameters();
+                param.Add("@UDT", dt.AsTableValuedParameter());
+                param.Add("@FileType", FileType);
+                param.Add("@ChannelCode", ChannelCode);
+                var identity = base.ExecuteScalar("USP_BMS_Upload_Data", param);
+                BMS_Upload_Code = Convert.ToInt32(identity);
+                return BMS_Upload_Code;
             }
         }
     }

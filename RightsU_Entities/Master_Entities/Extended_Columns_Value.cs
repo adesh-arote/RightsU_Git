@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Extended_Columns_Value
     {
         public Extended_Columns_Value()
@@ -22,9 +23,15 @@ namespace RightsU_Entities
         }
 
         [JsonIgnore]
-        public State EntityState { get; set; }    
+        public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Columns_Value_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Columns_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 1)]
+        public string Columns_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Columns_Value { get; set; }
         
         [JsonIgnore]

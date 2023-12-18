@@ -27,22 +27,28 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         [JsonProperty(Order = -1)]
         public int Royalty_Recoupment_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Royalty_Recoupment_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 3)]
         public System.DateTime Inserted_On { get; set; }
         [JsonIgnore]
         public int Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 4)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 6)]
         public string Last_Action_By_User { get; set; }
 
-        [JsonProperty(Order = 1)]
+        [JsonProperty(Order = 7)]
         public virtual ICollection<Royalty_Recoupment_Details> Royalty_Recoupment_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }

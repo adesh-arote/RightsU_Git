@@ -22,22 +22,30 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Objection_Type_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Objection_Type_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 4)]
         public string Inserted_By_User { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 6)]
         public string Last_Action_By_User { get; set; }
         [JsonIgnore]
         public Nullable<int> Parent_Objection_Type_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 7)]
         public string Parent_Objection_Type_Name { get; set; }
         [JsonIgnore]
         public virtual ICollection<Title_Objection> Title_Objection { get; set; }

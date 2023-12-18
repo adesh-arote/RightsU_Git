@@ -28,20 +28,27 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Cost_Type_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Cost_Type_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public System.DateTime Inserted_On { get; set; }
         [JsonIgnore]
         public int Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 3)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 5)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 6)]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public string Is_System_Generated { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RightsU.Audit.Entities.FrameworkClasses
 {
-    public class GetReturn
+    public class GenericReturn
     {
         [JsonIgnore]
         public string Message { get; set; }
@@ -19,7 +19,7 @@ namespace RightsU.Audit.Entities.FrameworkClasses
         public double TimeTaken { get; set; }
         [JsonIgnore]
         public HttpStatusCode StatusCode { get; set; }
-        public AuditLogReturn LogObject { get; set; }
+        public object Response { get; set; }
     }
 
     public class PostReturn

@@ -32,23 +32,31 @@ namespace RightsU_Entities
         public State EntityState { get; set; }
         [JsonProperty(Order = -1)]
         public int Territory_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Territory_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 3)]
         public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<int> Last_Action_By { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 6)]
         public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 7)]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public string Is_Ref_Acq { get; set; }
         [JsonIgnore]
         public string Is_Ref_Syn { get; set; }
+        [JsonProperty(Order = 8)]
         public string Is_Thetrical { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Rights_Blackout_Territory> Acq_Deal_Rights_Blackout_Territory { get; set; }
@@ -62,7 +70,7 @@ namespace RightsU_Entities
         public virtual ICollection<Syn_Deal_Rights_Holdback_Territory> Syn_Deal_Rights_Holdback_Territory { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Territory> Syn_Deal_Rights_Territory { get; set; }
-        [JsonProperty(Order = 1)]
+        [JsonProperty(Order = 9)]
         public virtual ICollection<Territory_Details> Territory_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Pushback_Territory> Acq_Deal_Pushback_Territory { get; set; }

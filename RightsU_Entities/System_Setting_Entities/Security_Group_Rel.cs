@@ -16,13 +16,17 @@ namespace RightsU_Entities
 
     public partial class Security_Group_Rel
     {
+        [JsonProperty(Order = -1)]
         public int Security_Rel_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Security_Group_Code { get; set; }
         [JsonIgnore]
         public Nullable<int> System_Module_Rights_Code { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 2)]
         public string System_Module_Name { get; set; }
         [NotMapped]
+        [JsonProperty(Order = 3)]
         public string System_Right_Name { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }

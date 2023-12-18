@@ -433,7 +433,7 @@ namespace RightsU_Plus.Controllers
             string Dub_Codes = Convert.ToString(Session["Dub_Codes"]);
             string Start_Date = Convert.ToString(Session["Start_Date"]);
             string End_Date = Convert.ToString(Session["End_Date"]);
-            bool IsExclusive = Convert.ToBoolean(Session["IsExclusive"]);
+            string IsExclusive = Convert.ToString(Session["IsExclusive"]);
             bool IsTitleLanguageRight = Convert.ToBoolean(Session["IsTitleLanguageRight"]);
 
             if (Region_Type == "G") // Territory type

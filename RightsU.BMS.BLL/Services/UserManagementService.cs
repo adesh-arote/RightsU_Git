@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using System.DirectoryServices;
+using RightsU.BMS.Entities.FrameworkClasses;
 
 namespace RightsU.BMS.BLL.Services
 {
