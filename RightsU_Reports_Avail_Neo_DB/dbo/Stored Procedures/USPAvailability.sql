@@ -995,6 +995,9 @@ BEGIN
 
 			SELECT @DealTypes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'AL_DealType_Show'
 		
+			SET @EpisodeFrom = CASE WHEN ISNULL(@EpisodeFrom, 0) < 1 THEN 1 ELSE @EpisodeFrom END
+			SET @EpisodeTo = CASE WHEN ISNULL(@EpisodeTo, 0) < 1 THEN 100000 ELSE @EpisodeTo END
+
 		END
 
 		INSERT INTO @DealType(DealTypeCode)
