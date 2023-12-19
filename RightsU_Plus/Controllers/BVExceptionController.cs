@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -156,19 +157,18 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DeleteBVException(int exceptionCode)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "D"; // D = "Delete";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
             int RLCode = 0;
-
 
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(exceptionCode, GlobalParams.ModuleCodeFor_BV_Exception, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
             if (isLocked)
             {
-
-
                 BVException_Service objService = new BVException_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.BVException objBVException = objService.GetById(exceptionCode);
                 objBVException.Is_Active = "N";
+                objBVException.Last_Action_By = objLoginUser.Users_Code;
+                objBVException.Last_Updated_Time = DateTime.Now;
                 objBVException.EntityState = State.Modified;
                 dynamic resultSet;
 
@@ -182,8 +182,28 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objBVException.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objBVException.Inserted_By));
+                        objBVException.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objBVException.Last_Action_By));
+                        objBVException.BVException_Channel.ToList().ForEach(f => f.Channel_Name = new Channel_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Channel_Code)).Channel_Name);
+                        objBVException.BVException_Users.ToList().ForEach(f => f.User_Name = new User_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Users_Code)).Full_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objBVException);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objBVException.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objBVException.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeFor_BV_Exception;
+                        objAuditLog.intCode = objBVException.Bv_Exception_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objBVException.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -245,8 +265,6 @@ namespace RightsU_Plus.Controllers
             if (objBVException_MVC.Bv_Exception_Code > 0)
             {
                 objB = ObjBVExceptionService.GetById(objBVException_MVC.Bv_Exception_Code);
-                objB.Last_Action_By = objLoginUser.Users_Code;
-
                 objB.EntityState = State.Modified;
             }
             else
@@ -257,11 +275,12 @@ namespace RightsU_Plus.Controllers
                 objB.EntityState = State.Added;
                 objB.Is_Active = "Y";
             }
+            objB.Last_Action_By = objLoginUser.Users_Code;
             objB.Last_Updated_Time = DateTime.Now;
             objB.Bv_Exception_Type = objBVException_MVC.Bv_Exception_Type;
 
             dynamic resultSet;
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
 
 
             ICollection<BVException_Channel> ChannelList = new HashSet<BVException_Channel>();
@@ -311,7 +330,7 @@ namespace RightsU_Plus.Controllers
             {
                 if (objBVException_MVC.Bv_Exception_Code > 0)
                 {
-                    Action = "U"; // U = "Update";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                     //message = message.Replace("{ACTION}", "updated");
                     message = objMessageKey.Recordupdatedsuccessfully;
                     int recordLockingCode = Convert.ToInt32(objFormCollection["hdnRecodLockingCode"]);
@@ -321,7 +340,6 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    Action = "C"; // C = "Create";
                     //message = message.Replace("{ACTION}", "added");
                     message = objMessageKey.RecordAddedSuccessfully;
                     FetchData();
@@ -329,8 +347,28 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objB.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objB.Inserted_By));
+                    objB.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objB.Last_Action_By));
+                    objB.BVException_Channel.ToList().ForEach(f => f.Channel_Name = new Channel_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Channel_Code)).Channel_Name);
+                    objBVException.BVException_Users.ToList().ForEach(f => f.User_Name = new User_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Users_Code)).Full_Name);
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objB);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objB.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeFor_BV_Exception, objB.Bv_Exception_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeFor_BV_Exception;
+                    objAuditLog.intCode = objB.Bv_Exception_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objB.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

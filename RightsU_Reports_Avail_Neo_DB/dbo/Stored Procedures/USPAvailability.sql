@@ -1,6 +1,8 @@
 ﻿CREATE PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
+	@EpisodeFrom INT,
+	@EpisodeTo INT,
 	
 	@DateType VARCHAR(2) = 'FL',
 	@StartDate VARCHAR(20) = '',
@@ -50,6 +52,8 @@ BEGIN
 
 	INSERT INTO TestParam(Params, ProcType)
 	SELECT '@TitleCodes=''' + CAST(@TitleCodes AS VARCHAR(MAX)) +
+	''', @EpisodeFrom=''' + CAST(ISNULL(@EpisodeFrom, '') AS VARCHAR(MAX)) +
+	''', @EpisodeTo=''' + CAST(ISNULL(@EpisodeTo, '') AS VARCHAR(MAX)) +
 	
 	''', @DateType=''' + CAST(ISNULL(@DateType, '') AS VARCHAR(MAX)) +
 	''', @StartDate=''' + CAST(ISNULL(@StartDate, '') AS VARCHAR(MAX)) +
@@ -983,12 +987,17 @@ BEGIN
 
 			SELECT @DealTypes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'AL_DealType_Movies'
 
+			SELECT @EpisodeFrom = 1, @EpisodeTo = 1
+
 		END
 		ELSE
 		BEGIN
 
 			SELECT @DealTypes = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'AL_DealType_Show'
 		
+			SET @EpisodeFrom = CASE WHEN ISNULL(@EpisodeFrom, 0) < 1 THEN 1 ELSE @EpisodeFrom END
+			SET @EpisodeTo = CASE WHEN ISNULL(@EpisodeTo, 0) < 1 THEN 100000 ELSE @EpisodeTo END
+
 		END
 
 		INSERT INTO @DealType(DealTypeCode)
@@ -1007,6 +1016,12 @@ BEGIN
 		INNER JOIN @DealType dt ON ad.Deal_Type_Code = dt.DealTypeCode
 		WHERE (ad.Business_Unit_Code = CAST(@BUCode AS INT) OR  CAST(@BUCode AS INT) = 0) AND atd.Is_Exclusive IN (@Ex_YES, @Ex_NO, @EX_CO)
 		AND ISNULL(adt.End_Date, '9999-12-31') >= CAST(GETDATE() AS DATE)
+		AND (
+			atd.Episode_From Between @EpisodeFrom And @EpisodeTo Or
+			atd.Episode_To Between @EpisodeFrom And @EpisodeTo Or
+			@EpisodeFrom Between atd.Episode_From And atd.Episode_To Or
+			@EpisodeTo Between atd.Episode_From And atd.Episode_To
+		) 
 
 	END
 

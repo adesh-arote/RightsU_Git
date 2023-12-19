@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Channel
     {
@@ -33,34 +34,69 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Channel_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Channel_Name { get; set; }
+        [JsonProperty(Order = 1)]
         public string Channel_Id { get; set; }
+        [JsonProperty(Order = 2)]
         public Nullable<int> Genres_Code { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<int> Entity_Code { get; set; }
+        [JsonProperty(Order = 4)]
         public string Entity_Type { get; set; }
+        [JsonProperty(Order = 5)]
         public string Schedule_Source_FilePath { get; set; }
+        [JsonProperty(Order = 6)]
         public Nullable<int> BV_Channel_Code { get; set; }
+        [JsonProperty(Order = 7)]
         public string AsRun_Source_FilePath { get; set; }
+        [JsonProperty(Order = 8)]
         public string HouseID_Prefix { get; set; }
+        [JsonProperty(Order = 9)]
         public Nullable<int> HouseID_Digits_AfterPrefix { get; set; }
+        [JsonProperty(Order = 10)]
         public string HouseIdRange_From { get; set; }
+        [JsonProperty(Order = 11)]
         public string HouseIdRange_To { get; set; }
+        [JsonProperty(Order = 12)]
         public string OffsetTime_Schedule { get; set; }
+        [JsonProperty(Order = 13)]
         public string OffsetTime_AsRun { get; set; }
+        [JsonProperty(Order = 14)]
         public string Schedule_Source_FilePath_Pkg { get; set; }
+        [JsonProperty(Order = 15)]
         public string IsUseForAsRun { get; set; }
+        [JsonProperty(Order = 16)]
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 17)]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 18)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 19)]
+        public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 20)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 21)]
         public Nullable<int> Order_For_schedule { get; set; }
+        [JsonProperty(Order = 22)]
         public Nullable<int> Channel_Group { get; set; }
+        [JsonProperty(Order = 23)]
         public Nullable<int> Channel_Format_Code { get; set; }
+        [JsonProperty(Order = 24)]
         public string Is_Parent_Child { get; set; }
+        [JsonProperty(Order = 25)]
         public Nullable<int> Parent_Channel_Code { get; set; }
+        [JsonProperty(Order = 26)]
         public Nullable<int> Channel_Category_Code { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }
@@ -70,6 +106,7 @@ namespace RightsU_Entities
         public virtual ICollection<Channel_Entity> Channel_Entity { get; set; }
         [JsonIgnore]
         public virtual Genre Genre { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
         [JsonIgnore]
         public virtual ICollection<RunData> RunDatas { get; set; }

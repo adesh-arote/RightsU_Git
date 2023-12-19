@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -206,7 +207,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveRoyalty(int royaltyCode, string doActive)
         {
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
+             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(royaltyCode, GlobalParams.ModuleCodeForRoyaltyRecoupment, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -215,6 +216,8 @@ namespace RightsU_Plus.Controllers
                 Royalty_Recoupment_Service objService = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Royalty_Recoupment objRoyalty = objService.GetById(royaltyCode);
                 objRoyalty.Is_Active = doActive;
+                objRoyalty.Last_Updated_Time = DateTime.Now;
+                objRoyalty.Last_Action_By = objLoginUser.Users_Code;
                 objRoyalty.EntityState = State.Modified;
                 dynamic resultSet;
 
@@ -224,24 +227,51 @@ namespace RightsU_Plus.Controllers
                 {
                     lstRoyalty.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
                     lstRoyalty_Searched.Where(w => w.Royalty_Recoupment_Code == royaltyCode).First().Is_Active = doActive;
+                    
+                    foreach (var items in objRoyalty.Royalty_Recoupment_Details)
+                    {
+                        int Type_Code = Convert.ToInt32(items.Recoupment_Type_Code);
+                        string Tbl_Type = items.Recoupment_Type;
+                        if(Tbl_Type == "A")
+                            items.Recoupment_Type_Name = new Additional_Expense_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Additional_Expense_Code == Type_Code).Select(x => x.Additional_Expense_Name).FirstOrDefault();
+                        else
+                            items.Recoupment_Type_Name = new Cost_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Cost_Type_Code == Type_Code).Select(x => x.Cost_Type_Name).FirstOrDefault();
+                    }
 
                     if (doActive == "Y")
                     {
-                        Action = "A"; // A = "Activate";
                         //message = message.Replace("{ACTION}", "Activated");
                         message = objMessageKey.Recordactivatedsuccessfully;
                     }
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         //message = message.Replace("{ACTION}", "Deactivated");
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objRoyalty.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRoyalty.Inserted_By));
+                        objRoyalty.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRoyalty.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRoyalty);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForRoyaltyRecoupment;
+                        objAuditLog.intCode = objRoyalty.Royalty_Recoupment_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objRoyalty.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -322,7 +352,7 @@ namespace RightsU_Plus.Controllers
         [HttpPost]
         public ActionResult SaveRoyalty(RightsU_Entities.Royalty_Recoupment objRoyalty_MVC, FormCollection objFormCollection)
         {
-            string Action = "";
+            string Action = Convert.ToString(ActionType.C); // C = "Create";
             Royalty_Recoupment_Service objRoyalty_Service = new Royalty_Recoupment_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Royalty_Recoupment objRoyalty = null;
             if (objRoyalty_MVC.Royalty_Recoupment_Code > 0)
@@ -344,7 +374,8 @@ namespace RightsU_Plus.Controllers
                 objRoyalty.Inserted_On = DateTime.Now;
             }
             objRoyalty.Last_Updated_Time = DateTime.Now;
-            
+            objRoyalty.Last_Action_By = objLoginUser.Users_Code;
+
             if (objFormCollection["chkRecoupmentType"] != null)
             {
                 string[] arrDummyGuid = objFormCollection["chkRecoupmentType"].Split(',');
@@ -358,7 +389,6 @@ namespace RightsU_Plus.Controllers
                         objRRD.Position = i;
                         objRoyalty.Royalty_Recoupment_Details.Add(objRRD);
                     }
-
                 }
             }
 
@@ -377,19 +407,36 @@ namespace RightsU_Plus.Controllers
                 objCommonUtil.Release_Record(recordLockingCode, objLoginEntity.ConnectionStringName);
                 if (objRoyalty_MVC.Royalty_Recoupment_Code > 0)
                 {
-                    Action = "U"; // U = "Update";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
                 {
-                    Action = "C"; // U = "Create";
                     message = objMessageKey.RecordAddedSuccessfully;
                 }
 
                 try
                 {
+                    objRoyalty.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRoyalty.Inserted_By));
+                    objRoyalty.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objRoyalty.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objRoyalty);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForRoyaltyRecoupment, objRoyalty.Royalty_Recoupment_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForRoyaltyRecoupment;
+                    objAuditLog.intCode = objRoyalty.Royalty_Recoupment_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objRoyalty.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

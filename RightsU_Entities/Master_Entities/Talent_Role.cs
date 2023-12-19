@@ -12,15 +12,19 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Talent_Role
     {
         [JsonIgnore]
         public State EntityState { get; set; }
         public int Talent_Role_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Talent_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Role_Code { get; set; }
-
+        [NotMapped]
+        public string Role_Name { get; set; }
         [JsonIgnore]
         public virtual Role Role { get; set; }
         [JsonIgnore]

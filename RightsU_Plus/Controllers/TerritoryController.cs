@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Newtonsoft.Json;
 using RightsU_BLL;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
@@ -188,7 +189,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ActiveDeactiveTerritory(int territoryCode, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(territoryCode, GlobalParams.ModuleCodeForTerritoryGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -197,30 +198,50 @@ namespace RightsU_Plus.Controllers
                 Territory_Service objService = new Territory_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Territory objTerritory = objService.GetById(territoryCode);
                 objTerritory.Is_Active = doActive;
+                objTerritory.Last_Updated_Time = DateTime.Now;
+                objTerritory.Last_Action_By = objLoginUser.Users_Code;
                 objTerritory.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objTerritory, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstTerritory.Where(w => w.Territory_Code == territoryCode).First().Status = doActive;
                     lstTerritory_Searched.Where(w => w.Territory_Code == territoryCode).First().Status = doActive;
 
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objTerritory.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTerritory.Inserted_By));
+                        objTerritory.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTerritory.Last_Action_By));
+                        objTerritory.Territory_Details.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
+                        objTerritory.Territory_Details.ToList().ForEach(f => f.Territory_Name = objTerritory.Territory_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTerritory);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTerritoryGroup;
+                        objAuditLog.intCode = objTerritory.Territory_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTerritory.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -252,12 +273,11 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveTerritory(FormCollection objCollection)
         {
-            string Action = "C";
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (objTerritory.Territory_Code > 0)
             {
                 message = objMessageKey.Recordupdatedsuccessfully;
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update"
             }               
 
             objTerritory.Territory_Name = Convert.ToString(objCollection["Territory_Name"]).Trim();
@@ -320,8 +340,28 @@ namespace RightsU_Plus.Controllers
                 {
                     try
                     {
+                        objTerritory.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTerritory.Inserted_By));
+                        objTerritory.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTerritory.Last_Action_By));
+                        objTerritory.Territory_Details.ToList().ForEach(f => f.Country_Name = new Country_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Country_Code)).Country_Name);
+                        objTerritory.Territory_Details.ToList().ForEach(f => f.Territory_Name = objTerritory.Territory_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTerritory);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTerritoryGroup), Convert.ToInt32(objTerritory.Territory_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTerritoryGroup;
+                        objAuditLog.intCode = objTerritory.Territory_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTerritory.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

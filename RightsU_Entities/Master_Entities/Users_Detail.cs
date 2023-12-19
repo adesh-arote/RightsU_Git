@@ -12,13 +12,22 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Users_Detail
     {
+        [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Users_Detail_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Users_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Attrib_Group_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 2)]
+        public string Attrib_Group_name { get; set; }
+        [JsonProperty(Order = 3)]
         public string Attrib_Type { get; set; }
         [JsonIgnore]
         public virtual Attrib_Group Attrib_Group { get; set; }

@@ -9,18 +9,27 @@
 
 namespace RightsU_Entities
 {
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
     public partial class Currency_Exchange_Rate
     {
+        [JsonProperty(Order = -1)]
         public int Currency_Exchange_Rate_Code { get; set; }
+        [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Currency_Code { get; set; }
+        [JsonProperty(Order = 2)]
         public System.DateTime Effective_Start_Date { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<System.DateTime> System_End_Date { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<decimal> Exchange_Rate { get; set; }
+        [JsonIgnore]
         public string _Dummy_Guid { get; set; }
+        [JsonIgnore]
         public string Dummy_Guid
         {
             get
@@ -34,6 +43,7 @@ namespace RightsU_Entities
         {
             return Guid.NewGuid().ToString();
         }
+        [JsonIgnore]
         public virtual Currency Currency { get; set; }
     }
 }

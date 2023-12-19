@@ -12,13 +12,20 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Platform_Group_Details
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Platform_Group_Details_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 1)]
+        public string Platform_Name { get; set; }
+        [JsonIgnore]
         public Nullable<int> Platform_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Platform_Group_Code { get; set; }
         [JsonIgnore]
         public virtual Platform Platform { get; set; }

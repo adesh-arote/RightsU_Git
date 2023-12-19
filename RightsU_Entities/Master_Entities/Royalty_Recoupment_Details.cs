@@ -15,18 +15,27 @@ namespace RightsU_Entities
     
     public partial class Royalty_Recoupment_Details
     {
+        [JsonProperty(Order = -1)]
         public int Royalty_Recoupment_Details_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Royalty_Recoupment_Code { get; set; }
+        [JsonProperty(Order = 2)]
         public string Recoupment_Type { get; set; }
+        [JsonIgnore]
         public Nullable<int> Recoupment_Type_Code { get; set; }
+        [JsonProperty(Order = 3)]
         public string Add_Subtract { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<int> Position { get; set; }
+        [JsonProperty(Order = 5)]
         public string Recoupment_Type_Name { get; set; }
+        [JsonIgnore]
         public virtual Royalty_Recoupment Royalty_Recoupment { get; set; }
-
+        [JsonIgnore]
         public string _Dummy_Guid { get; set; }
+        [JsonIgnore]
         public string Dummy_Guid
         {
             get
@@ -36,7 +45,6 @@ namespace RightsU_Entities
                 return _Dummy_Guid;
             }
         }
-
         private string GetDummy_Guid()
         {
             return Guid.NewGuid().ToString();

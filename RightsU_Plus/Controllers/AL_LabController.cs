@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -164,10 +165,8 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveAL_Lab(int AL_Lab_Code, string AL_Lab_Name, string AL_Lab_short_name, string AL_Lab_Contact_person)
         {
-            string Action = "C";
-            string status = "S";
-            string message = "";
-            int UserId = objLoginUser.Users_Code;
+            string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
+
             List<AL_Lab> tempLstAttribGrp = new AL_Lab_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList().Where(a => (a.AL_Lab_Name == AL_Lab_Name) && (a.AL_Lab_Short_Name == AL_Lab_short_name) && (a.AL_Lab_Code != AL_Lab_Code)).ToList();
 
             if (tempLstAttribGrp.Count == 0)
@@ -181,19 +180,18 @@ namespace RightsU_Plus.Controllers
                     AL_Lab AL_Lab = new AL_Lab_Service(objLoginEntity.ConnectionStringName).GetById(AL_Lab_Code);
                     lstAL_Lab = objAL_Lab_Service.GetById(AL_Lab_Code);
                     lstAL_Lab.EntityState = State.Modified;
-                    lstAL_Lab.Inserted_By = AL_Lab.Inserted_By;
                 }
                 else
                 {
                     lstAL_Lab = new AL_Lab();
                     lstAL_Lab.EntityState = State.Added;
-                    lstAL_Lab.Inserted_By = UserId;
+                    lstAL_Lab.Inserted_By = objLoginUser.Users_Code;
+                    lstAL_Lab.Inserted_On = DateTime.Now;
                 }
                 lstAL_Lab.AL_Lab_Name = AL_Lab_Name;
                 lstAL_Lab.AL_Lab_Short_Name = AL_Lab_short_name;
                 lstAL_Lab.Contact_Person = AL_Lab_Contact_person;
-                lstAL_Lab.Inserted_On = DateTime.Now;
-                lstAL_Lab.Last_Action_By = UserId;
+                lstAL_Lab.Last_Action_By = objLoginUser.Users_Code;
                 lstAL_Lab.Last_Updated_Time = DateTime.Now;
 
                 dynamic resultSet;
@@ -207,19 +205,36 @@ namespace RightsU_Plus.Controllers
                     if (AL_Lab_Code > 0)
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
-                        Action = "U";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                     }
                     else
                     {
                         message = objMessageKey.Recordsavedsuccessfully;
-                        Action = "C";
                     }
                     lstAL_Lab_Searched = objAL_Lab_Service.SearchFor(s => true).ToList();
 
                     try
                     {
+                        lstAL_Lab.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(lstAL_Lab.Inserted_By));
+                        lstAL_Lab.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(lstAL_Lab.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(lstAL_Lab);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(lstAL_Lab.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForALLab;
+                        objAuditLog.intCode = lstAL_Lab.AL_Lab_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(lstAL_Lab.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -244,8 +259,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult DeleteAL_Lab(int id)
         {            
-            string message = "";
-            string status = "";
+            string message = "", status = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
             AL_Lab_Service objAL_Lab_Service = new AL_Lab_Service(objLoginEntity.ConnectionStringName);
             AL_Lab AL_LabObj = objAL_Lab_Service.GetById(id);
             if (CheckIfLabIsUsed(id))
@@ -258,14 +272,31 @@ namespace RightsU_Plus.Controllers
                 }
                 else
                 {
-                    string Action = "D";
                     status = "S";
                     message = objMessageKey.RecordDeletedsuccessfully;
 
                     try
                     {
+                        AL_LabObj.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(AL_LabObj.Inserted_By));
+                        AL_LabObj.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(AL_LabObj.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(AL_LabObj);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(AL_LabObj.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForALLab), Convert.ToInt32(AL_LabObj.AL_Lab_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForALLab;
+                        objAuditLog.intCode = AL_LabObj.AL_Lab_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(AL_LabObj.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

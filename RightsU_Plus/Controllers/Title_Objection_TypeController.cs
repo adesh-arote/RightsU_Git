@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -153,7 +154,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ActiveDeactiveTitle_Objection_Type(int Title_Objection_Type_Code, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(Title_Objection_Type_Code, GlobalParams.ModuleCodeForTitleObjectionType, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -162,30 +163,49 @@ namespace RightsU_Plus.Controllers
                 Title_Objection_Type_Service objService = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Title_Objection_Type objTitle_Objection_Type = objService.GetById(Title_Objection_Type_Code);
                 objTitle_Objection_Type.Is_Active = doActive;
+                objTitle_Objection_Type.Last_Updated_Time = DateTime.Now;
+                objTitle_Objection_Type.Last_Action_By = objLoginUser.Users_Code;
                 objTitle_Objection_Type.EntityState = State.Modified;
                 dynamic resultSet;
 
                 bool isValid = objService.Save(objTitle_Objection_Type, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstTitle_Objection_Type.Where(w => w.Objection_Type_Code == Title_Objection_Type_Code).First().Is_Active = doActive;
                     lstTitle_Objection_Type_Searched.Where(w => w.Objection_Type_Code == Title_Objection_Type_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objTitle_Objection_Type.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTitle_Objection_Type.Inserted_By));
+                        objTitle_Objection_Type.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTitle_Objection_Type.Last_Action_By));
+                        objTitle_Objection_Type.Parent_Objection_Type_Name = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Objection_Type_Code == objTitle_Objection_Type.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTitle_Objection_Type);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitleObjectionType;
+                        objAuditLog.intCode = objTitle_Objection_Type.Objection_Type_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTitle_Objection_Type.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -213,8 +233,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveTitle_Objection_Type(int Title_Objection_TypeCode, string Title_Objection_TypeName, int Record_Code, int TOT_Parent_Code = 0)
         {
-            string Action = "C";
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (Title_Objection_TypeCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -225,7 +244,7 @@ namespace RightsU_Plus.Controllers
             {
                 objTitle_Objection_Type = objService.GetById(Title_Objection_TypeCode);
                 objTitle_Objection_Type.EntityState = State.Modified;
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
@@ -233,7 +252,6 @@ namespace RightsU_Plus.Controllers
                 objTitle_Objection_Type.EntityState = State.Added;
                 objTitle_Objection_Type.Inserted_On = DateTime.Now;
                 objTitle_Objection_Type.Inserted_By = objLoginUser.Users_Code;
-                Action = "C";
             }
 
             objTitle_Objection_Type.Last_Updated_Time = DateTime.Now;
@@ -251,8 +269,27 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objTitle_Objection_Type.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTitle_Objection_Type.Inserted_By));
+                    objTitle_Objection_Type.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTitle_Objection_Type.Last_Action_By));
+                    objTitle_Objection_Type.Parent_Objection_Type_Name = new Title_Objection_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Objection_Type_Code == objTitle_Objection_Type.Parent_Objection_Type_Code).Select(x => x.Objection_Type_Name).FirstOrDefault();
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTitle_Objection_Type);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForTitleObjectionType), Convert.ToInt32(objTitle_Objection_Type.Objection_Type_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitleObjectionType;
+                    objAuditLog.intCode = objTitle_Objection_Type.Objection_Type_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTitle_Objection_Type.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

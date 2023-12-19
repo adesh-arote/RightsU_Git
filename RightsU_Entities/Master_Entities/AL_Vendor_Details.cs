@@ -17,10 +17,15 @@ namespace RightsU_Entities
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int AL_Vendor_Detail_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Vendor_Code { get; set; }
+        [JsonProperty(Order = 2)]
         public string Banner_Codes { get; set; }
+        [JsonProperty(Order = 3)]
         public string Pref_Exclusion_Codes { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<int> Extended_Group_Code_Booking { get; set; }
 
         [JsonIgnore]

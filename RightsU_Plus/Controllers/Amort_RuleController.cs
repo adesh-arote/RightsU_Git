@@ -17,6 +17,7 @@ using System.Web.UI;
 using UTOFrameWork.FrameworkClasses;
 using System.Net;
 using System.Net.Mime;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -25,7 +26,7 @@ namespace RightsU_Plus.Controllers
         //
         // GET: /Amort_Rule/
 
-        public int moduleCode = 180;
+        public int moduleCode = GlobalParams.ModuleCodeForAmortRule;
 
         public int PageNo
         {
@@ -282,8 +283,7 @@ namespace RightsU_Plus.Controllers
 
         public ActionResult Save(Amort_Rule objAmortRule_MVC, FormCollection objFormCollection)
         {
-            string Action = "C";
-            string status = "S";
+            string status = "S", Action = Convert.ToString(ActionType.C); // C = "Create";
             int AmortCode = Convert.ToInt32(objFormCollection["Amort_Rule_Code"].Trim());
             Amort_Rule objAmortRule = new Amort_Rule();
             Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
@@ -345,20 +345,19 @@ namespace RightsU_Plus.Controllers
             }
             if (objAmortRule_MVC.Amort_Rule_Code > 0)
             {
-                objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;
-                objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
+                objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Modified;      
                 status = "U";
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
                 objAmortRule.EntityState = objAmortRule_MVC.EntityState = State.Added;
                 objAmortRule.Inserted_On = objAmortRule_MVC.Inserted_On = DateTime.Now;
-                objAmortRule.Is_Active = "Y";
                 objAmortRule.Inserted_By = objAmortRule_MVC.Inserted_By = objLoginUser.Users_Code;
-                objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
-                Action = "C";
+                objAmortRule.Is_Active = "Y";
             }
+            objAmortRule.Last_Updated_Time = objAmortRule_MVC.Last_Updated_Time = DateTime.Now;
+            objAmortRule.Last_Action_By = objAmortRule_MVC.Last_Action_By = objLoginUser.Users_Code;
             objAmortRuleService.Save(objAmortRule);
             string msg = string.Empty;
             if (status.Equals("S"))
@@ -372,8 +371,26 @@ namespace RightsU_Plus.Controllers
 
             try
             {
+                objAmortRule.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAmortRule.Inserted_By));
+                objAmortRule.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAmortRule.Last_Action_By));
+
                 string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAmortRule);
-                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+
+                MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForAmortRule;
+                objAuditLog.intCode = objAmortRule.Amort_Rule_Code;
+                objAuditLog.logData = LogData;
+                objAuditLog.actionBy = objLoginUser.Login_Name;
+                objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objAmortRule.Last_Updated_Time));
+                objAuditLog.actionType = Action;
+                var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                {
+
+                }
             }
             catch (Exception ex)
             {
@@ -504,8 +521,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DelactivateData(int id)
         {
-            string Action = "A";
-            string message = "";
+            string message = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             Dictionary<string, object> objJson = new Dictionary<string, object>();
             Amort_Rule objAR = new Amort_Rule();
             Amort_Rule_Service objAmortRuleService = new Amort_Rule_Service(objLoginEntity.ConnectionStringName);
@@ -514,13 +530,12 @@ namespace RightsU_Plus.Controllers
             {
                 objAmortRule.Is_Active = "N";
                 message = "Deactivated Successfully";
-                Action = "DA";
+                Action = Convert.ToString(ActionType.D); // D = "Deactive";
             }
             else
             {
                 objAmortRule.Is_Active = "Y";
                 message = "Activated Successfully";
-                Action = "A";
             }
             objAmortRule.EntityState =State.Modified;
             objAmortRuleService.Save(objAmortRule);
@@ -529,8 +544,26 @@ namespace RightsU_Plus.Controllers
 
             try
             {
+                objAmortRule.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAmortRule.Inserted_By));
+                objAmortRule.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objAmortRule.Last_Action_By));
+
                 string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objAmortRule);
-                bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+                //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForAmortRule), Convert.ToInt32(objAmortRule.Amort_Rule_Code), LogData, Action, objLoginUser.Users_Code);
+
+                MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                objAuditLog.moduleCode = GlobalParams.ModuleCodeForAmortRule;
+                objAuditLog.intCode = objAmortRule.Amort_Rule_Code;
+                objAuditLog.logData = LogData;
+                objAuditLog.actionBy = objLoginUser.Login_Name;
+                objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objAmortRule.Last_Updated_Time));
+                objAuditLog.actionType = Action;
+                var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                {
+
+                }
             }
             catch (Exception ex)
             {

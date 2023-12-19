@@ -12,15 +12,23 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class BVException_Channel
     {
+        [JsonProperty(Order = -1)]
         public int Bv_Exception_Channel_Code { get; set; }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = 1)]
         public int Bv_Exception_Code { get; set; }
+        [JsonIgnore]
         public int Channel_Code { get; set; }
-    
+        [NotMapped]
+        [JsonProperty(Order = 2)]
+        public string Channel_Name { get; set; }
+
+        [JsonIgnore]
         public virtual BVException BVException { get; set; }
         [JsonIgnore]
         public virtual Channel Channel { get; set; }

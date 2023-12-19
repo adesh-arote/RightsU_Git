@@ -38,12 +38,12 @@ AS
 				,(
 					select EG.Extended_Group_Code FROM Extended_Group_Config EGC
 					INNER JOIN Extended_Group EG ON EG.Extended_Group_Code = EGC.Extended_Group_Code					
-					Where Columns_Code = EC.Columns_Code AND EG.Module_Code=27
+					Where Columns_Code = EC.Columns_Code AND EG.Module_Code=27 AND EG.IsActive='Y'
 				) as Extended_Group_Code
 				,(
 					select EG.Group_Name FROM Extended_Group_Config EGC
 					INNER JOIN Extended_Group EG ON EG.Extended_Group_Code = EGC.Extended_Group_Code					
-					Where Columns_Code = EC.Columns_Code AND EG.Module_Code=27
+					Where Columns_Code = EC.Columns_Code AND EG.Module_Code=27 AND EG.IsActive='Y'
 				) as Group_Name
 		from Map_Extended_Columns MEC (NOLOCK)
 		inner join Extended_Columns EC (NOLOCK) on MEC.Columns_Code = EC.Columns_Code AND MEC.Record_Code = @Title_Code

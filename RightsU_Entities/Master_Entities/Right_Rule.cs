@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Right_Rule
     {
@@ -24,19 +25,38 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Right_Rule_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Right_Rule_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Start_Time { get; set; }
+        [JsonProperty(Order = 3)]
         public Nullable<int> Play_Per_Day { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<int> Duration_Of_Day { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<int> No_Of_Repeat { get; set; }
+        [JsonProperty(Order = 6)]
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 7)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 8)]
+        public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 9)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 10)]
         public Nullable<bool> IS_First_Air { get; set; }
+        [JsonProperty(Order = 11)]
         public string Short_Key { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Run> Acq_Deal_Run { get; set; }

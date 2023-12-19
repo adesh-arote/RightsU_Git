@@ -7,6 +7,7 @@ using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -332,7 +333,7 @@ namespace RightsU_Plus.Controllers
                 WorkflowCode = Convert.ToInt32(objFormCollection["Workflow_Code"]);
             }
             #endregion
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             if (WorkflowCode > 0)
             {
                 #region   -- -Update Workflow
@@ -341,7 +342,6 @@ namespace RightsU_Plus.Controllers
                 objWorkflow.Last_Updated_Time = System.DateTime.Now;
                 objWorkflow.Remarks = Workflow_Remarks;
                 objWorkflow.Business_Unit_Code = Business_Unit_Code;
-                objWorkflow.Last_Action_By = objLoginUser.Users_Code;
                 objWorkflow.EntityState = State.Modified;
                 List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
                 temp_lstWorkflow_Role = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == 0).ToList();
@@ -395,7 +395,8 @@ namespace RightsU_Plus.Controllers
                 objWorkflow.Remarks = Workflow_Remarks;
                 objWorkflow.Business_Unit_Code = Business_Unit_Code;
                 objWorkflow.Workflow_Type = "F";
-                objWorkflow.Last_Action_By = objLoginUser.Users_Code;
+                objWorkflow.Inserted_By = objLoginUser.Users_Code;
+                objWorkflow.Inserted_On = System.DateTime.Now;
                 objWorkflow.EntityState = State.Added;
 
                 List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
@@ -412,6 +413,7 @@ namespace RightsU_Plus.Controllers
                 }
                 #endregion
             }
+            objWorkflow.Last_Action_By = objLoginUser.Users_Code;
             objWorkflow.Last_Updated_Time = System.DateTime.Now;
             dynamic resultSet;
             bool isDuplicate = objWorkflowService.Validate(objWorkflow, out resultSet);
@@ -429,25 +431,42 @@ namespace RightsU_Plus.Controllers
 
                     if (WorkflowCode > 0)
                     {
-                        Action = "U"; // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
                     }   
                     else
                     {
-                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
                     }
 
                     try
                     {
+                        objWorkflow.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflow.Inserted_By));
+                        objWorkflow.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflow.Last_Action_By));
+                        objWorkflow.Business_Unit_Name = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Business_Unit_Code == objWorkflow.Business_Unit_Code).Select(x => x.Business_Unit_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflow);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForApprovalWorkflow;
+                        objAuditLog.intCode = objWorkflow.Workflow_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objWorkflow.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
 
                     }
-
                 }
                 else
                 {
@@ -470,7 +489,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult DeleteWorkflow(int WorkflowCode)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "D"; // D = "Delete";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(WorkflowCode, GlobalParams.ModuleCodeForApprovalWorkflow, objLoginUser.Users_Code, out RLCode, out strMessage,objLoginEntity.ConnectionStringName);
@@ -496,8 +515,27 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objWorkflow.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflow.Inserted_By));
+                        objWorkflow.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflow.Last_Action_By));
+                        objWorkflow.Business_Unit_Name = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Business_Unit_Code == objWorkflow.Business_Unit_Code).Select(x => x.Business_Unit_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflow);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForApprovalWorkflow, objWorkflow.Workflow_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForApprovalWorkflow;
+                        objAuditLog.intCode = objWorkflow.Workflow_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objWorkflow.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

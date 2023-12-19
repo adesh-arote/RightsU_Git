@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Currency
     {
         public Currency()
@@ -27,19 +28,36 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Currency_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Currency_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Currency_Sign { get; set; }
+        [JsonProperty(Order = 3)]
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 4)]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 5)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 6)]
+        public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 7)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 8)]
         public string Is_Base_Currency { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
+        [JsonProperty(Order = 9)]
         public virtual ICollection<Currency_Exchange_Rate> Currency_Exchange_Rate { get; set; }
         [JsonIgnore]
         public virtual ICollection<Material_Order_Details> Material_Order_Details { get; set; }
@@ -48,6 +66,7 @@ namespace RightsU_Entities
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost> Acq_Deal_Cost { get; set; }
         [JsonIgnore]
-        public virtual ICollection<Syn_Deal_Revenue> Syn_Deal_Revenue { get; set; }
+        public virtual ICollection<Syn_Deal_Revenue> Syn_Deal_Revenue { get; set; }    
+
     }
 }

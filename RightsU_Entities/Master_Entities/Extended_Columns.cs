@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Extended_Columns
     {
@@ -26,18 +27,44 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Columns_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Columns_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Control_Type { get; set; }
+        [JsonProperty(Order = 3)]
         public string Is_Ref { get; set; }
+        [JsonProperty(Order = 4)]
         public string Is_Defined_Values { get; set; }
+        [JsonProperty(Order = 5)]
         public string Is_Multiple_Select { get; set; }
+        [JsonProperty(Order = 6)]
         public string Ref_Table { get; set; }
+        [JsonProperty(Order = 7)]
         public string Ref_Display_Field { get; set; }
+        [JsonProperty(Order = 8)]
         public string Ref_Value_Field { get; set; }
+        [JsonProperty(Order = 9)]
         public string Additional_Condition { get; set; }
+        [JsonProperty(Order = 10)]
         public string Is_Add_OnScreen { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 11)]
+        public string Inserted_By_User { get; set; }
+        [JsonProperty(Order = 12)]
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Last_Updated_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 13)]
+        public string Last_Updated_By_User { get; set; }
+        [JsonProperty(Order = 14)]
+        public Nullable<System.DateTime> Last_Updated_On { get; set; }
 
+        [JsonProperty(Order = 15)]
         public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
         [JsonIgnore]
         public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }

@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class User
     {
         public User()
@@ -31,27 +32,58 @@ namespace RightsU_Entities
         }
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Users_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Login_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string First_Name { get; set; }
+        [JsonProperty(Order = 3)]
         public string Middle_Name { get; set; }
+        [JsonProperty(Order = 4)]
         public string Last_Name { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
+        [JsonProperty(Order = 5)]
         public string Email_Id { get; set; }
+        [JsonProperty(Order = 6)]
         public string Contact_No { get; set; }
+        [JsonIgnore]
         public Nullable<int> Security_Group_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 7)]
+        public string Security_Group_Name { get; set; }
+        [JsonProperty(Order = 8)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 9)]
         public string Is_System_Password { get; set; }
+        [JsonProperty(Order = 10)]
         public int Password_Fail_Count { get; set; }
+        [JsonIgnore]
         public int moduleCode { get; set; }
+        [JsonProperty(Order = 11)]
         public Nullable<int> Default_Channel_Code { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 12)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 13)]
+        public string Last_Action_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<int> Default_Entity_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 14)]
+        public string Default_Entity_Name { get; set; }
+        [JsonProperty(Order = 15)]
         public string User_Image { get; set; }
+        [JsonIgnore]
         public bool Validate_Email { get; set; }
+        [JsonIgnore]
         public Nullable<int> System_Language_Code { get; set; }
+        [JsonIgnore]
         public string Full_Name
         {
             get
@@ -63,11 +95,20 @@ namespace RightsU_Entities
 
             }
         }
+        [JsonIgnore]
         public string Business_Unit_Names { get; set; }
+        [JsonProperty(Order = 16)]
         public string IsLDAPUser { get; set; }
+        [JsonProperty(Order = 17)]
         public string IsProductionHouseUser { get; set; }
+        [JsonProperty(Order = 18)]
         public Nullable<System.DateTime> Created_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Created_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 19)]
+        public string Created_By_User { get; set; }
+        [JsonProperty(Order = 20)]
         public string ChangePasswordLinkGUID { get; set; }
 
         [JsonIgnore]
@@ -82,7 +123,7 @@ namespace RightsU_Entities
         public virtual ICollection<Users_Entity> Users_Entity { get; set; }
         [JsonIgnore]
         public virtual ICollection<Users_Password_Detail> Users_Password_Detail { get; set; }
-        //[JsonIgnore]
+        [JsonProperty(Order = 21)]
         public virtual ICollection<Users_Business_Unit> Users_Business_Unit { get; set; }
         [JsonIgnore]
         public virtual ICollection<Glossary_AskExpert> Glossary_AskExpert { get; set; }
@@ -92,13 +133,13 @@ namespace RightsU_Entities
         public string DefaultEntityName { get; set; }
         [JsonIgnore]
         public string DefaultEntityLogoName { get; set; }
-        //[JsonIgnore]
+        [JsonIgnore]
         public virtual ICollection<MHUser> MHUsers { get; set; }
         [JsonIgnore]
         public virtual ICollection<Users_Configuration> Users_Configuration { get; set; }
         [JsonIgnore]
         public virtual ICollection<Users_Exclusion_Rights> Users_Exclusion_Rights { get; set; }
-        //[JsonIgnore]
+        [JsonProperty(Order = 22)]
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
 
     }

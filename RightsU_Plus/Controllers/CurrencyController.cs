@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -160,8 +161,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveCurrency(int currencyCode, string doActive)
         {
-            //string status = "S", message = "";
-             string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(currencyCode, GlobalParams.ModuleCodeForCurrency, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -170,6 +170,8 @@ namespace RightsU_Plus.Controllers
                 Currency_Service objService = new Currency_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Currency objCurrency = objService.GetById(currencyCode);
                 objCurrency.Is_Active = doActive;
+                objCurrency.Last_Updated_Time = DateTime.Now;
+                objCurrency.Last_Action_By = objLoginUser.Users_Code;
                 objCurrency.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objCurrency, out resultSet);
@@ -179,21 +181,37 @@ namespace RightsU_Plus.Controllers
                     lstCurrency_Searched.Where(w => w.Currency_Code == currencyCode).First().Is_Active = doActive;
 
                     if (doActive == "Y")
-                    {
-                        Action = "A"; // A = "Active";
+                    { 
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        
                     }
                     else
                     {
-                        Action = "DA"; // DA = "Deactivate";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                         message = objMessageKey.Recorddeactivatedsuccessfully;
                     }
 
                     try
                     {
+                        objCurrency.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCurrency.Inserted_By));
+                        objCurrency.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCurrency.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForCurrency;
+                        objAuditLog.intCode = objCurrency.Currency_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objCurrency.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -271,10 +289,14 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveCurrency(int currencyCode, string currencyName, string currencySign, bool isBaseCurrency, int Record_Code)
         {
-            string status = "S", message = "", Action = "";
+            string status = "S", message = "", Action = Convert.ToString(ActionType.C); // C = "Create";
 
             if (currencyCode > 0)
+            {
                 objCurrency.EntityState = State.Modified;
+                objCurrency.Last_Updated_Time = DateTime.Now;
+                objCurrency.Last_Action_By = objLoginUser.Users_Code;
+            }
             else
             {
                 objCurrency_Service = null;
@@ -300,19 +322,36 @@ namespace RightsU_Plus.Controllers
             {
                 if (currencyCode > 0)
                 {
-                    Action = "U"; // U = "Update";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
                     message = objMessageKey.Recordupdatedsuccessfully;
                 }
                 else
-                {
-                    Action = "C"; // C = "Create";
+                {              
                     message = objMessageKey.Recordsavedsuccessfully;
                 }
                     
                 try
                 {
+                    objCurrency.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCurrency.Inserted_By)); 
+                    objCurrency.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objCurrency.Last_Action_By)); 
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objCurrency);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForCurrency, objCurrency.Currency_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForCurrency;
+                    objAuditLog.intCode = objCurrency.Currency_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objCurrency.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch ( Exception ex )
                 {

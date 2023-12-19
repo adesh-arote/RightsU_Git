@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Vendor
     {
@@ -44,39 +45,81 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Vendor_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Vendor_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Address { get; set; }
+        [JsonProperty(Order = 3)]
         public string Phone_No { get; set; }
+        [JsonProperty(Order = 4)]
         public string Fax_No { get; set; }
+        [JsonProperty(Order = 5)]
         public string ST_No { get; set; }
+        [JsonProperty(Order = 6)]
         public string VAT_No { get; set; }
+        [JsonProperty(Order = 7)]
         public string TIN_No { get; set; }
+        [JsonProperty(Order = 8)]
         public string PAN_No { get; set; }
+        [JsonProperty(Order = 9)]
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 10)]
+        public string Inserted_By_user { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 11)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 12)]
+        public string Last_Action_By_user { get; set; }
+        [JsonProperty(Order = 13)]
         public string Is_Active { get; set; }
+        [JsonIgnore]
         public string Reference_Id_1 { get; set; }
+        [JsonIgnore]
         public string Reference_Id_2 { get; set; }
+        [JsonIgnore]
         public string Reference_Id_3 { get; set; }
         public string CST_No { get; set; }
+        [JsonIgnore]
         public string SAP_Vendor_Code { get; set; }
+        [JsonProperty(Order = 14)]
         public string Is_External { get; set; }
+        [JsonProperty(Order = 15)]
         public string CIN_No { get; set; }
-
+        [JsonProperty(Order = 16)]
         public string GST_No { get; set; }
+        [JsonIgnore]
         public string Is_BV_Push { get; set; }
+        [JsonProperty(Order = 17)]
         public string Short_Code { get; set; }
+        [JsonProperty(Order = 18)]
         public Nullable<int> Ref_Vendor_Key { get; set; }
+        [JsonProperty(Order = 19)]
         public string Record_Status { get; set; }
+        [JsonProperty(Order = 20)]
         public string Error_Description { get; set; }
+        [JsonIgnore]
         public Nullable<int> Party_Category_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 21)]
+        public string Party_Category_Name { get; set; }
+        [JsonProperty(Order = 22)]
         public string Party_Type { get; set; }
+        [JsonProperty(Order = 23)]
         public string Party_Id { get; set; }
+        [JsonIgnore]
         public Nullable<int> Party_Group_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 24)]
+        public string Party_Group_Name { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal> Acq_Deal { get; set; }
         [JsonIgnore]
@@ -85,8 +128,11 @@ namespace RightsU_Entities
         public virtual ICollection<Material_Order> Material_Order { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal> Syn_Deal { get; set; }
+        [JsonProperty(Order = 25)]
         public virtual ICollection<Vendor_Contacts> Vendor_Contacts { get; set; }
+        [JsonProperty(Order = 26)]
         public virtual ICollection<Vendor_Country> Vendor_Country { get; set; }
+        [JsonProperty(Order = 27)]
         public virtual ICollection<Vendor_Role> Vendor_Role { get; set; }
         [JsonIgnore]
         public virtual ICollection<Acq_Deal_Cost_Commission> Acq_Deal_Cost_Commission { get; set; }
@@ -108,8 +154,11 @@ namespace RightsU_Entities
         public virtual ICollection<MHRequest> MHRequests { get; set; }
         [JsonIgnore]
         public virtual ICollection<MHCueSheet> MHCueSheets { get; set; }
+        [JsonIgnore]
         public virtual Party_Category Party_Category { get; set; }
+        [JsonIgnore]
         public virtual Party_Group Party_Group { get; set; }
+        [JsonProperty(Order = 28)]
         public virtual ICollection<AL_Vendor_Details> AL_Vendor_Details { get; set; }
         [JsonIgnore]
         public virtual ICollection<AL_Vendor_OEM> AL_Vendor_OEM { get; set; }

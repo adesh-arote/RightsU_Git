@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using RightsU_Entities;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -142,7 +143,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult ActiveDeactiveMilestoneNature(int Milestone_Nature_Code, string doActive)
         {
-            string status = "S", message = "", strMessage = "";
+            string status = "S", message = "", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
 
             bool isLocked = DBUtil.Lock_Record(Milestone_Nature_Code, GlobalParams.ModuleCodeForMilestoneNature, objLoginUser.Users_Code, out RLCode, out strMessage);
@@ -151,30 +152,48 @@ namespace RightsU_Plus.Controllers
                 Milestone_Nature_Service objService = new Milestone_Nature_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Milestone_Nature objMilestoneNature = objService.GetById(Milestone_Nature_Code);
                 objMilestoneNature.Is_Active = doActive;
+                objMilestoneNature.Last_Updated_Time = DateTime.Now;
+                objMilestoneNature.Last_Action_By = objLoginUser.Users_Code;
                 objMilestoneNature.EntityState = State.Modified;
                 dynamic resultSet;
 
                 bool isValid = objService.Save(objMilestoneNature, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstMilestoneNature.Where(w => w.Milestone_Nature_Code == Milestone_Nature_Code).First().Is_Active = doActive;
                     lstMilestoneNature_Searched.Where(w => w.Milestone_Nature_Code == Milestone_Nature_Code).First().Is_Active = doActive;
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }                        
 
                     try
                     {
+                        objMilestoneNature.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMilestoneNature.Inserted_by));
+                        objMilestoneNature.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMilestoneNature.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMilestoneNature);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForMilestoneNature;
+                        objAuditLog.intCode = objMilestoneNature.Milestone_Nature_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objMilestoneNature.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -202,8 +221,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult SaveMilestoneNature(int MilestoneNatureCode, string MilestoneNatureName, int Record_Code)
         {
-            string Action = "C";
-            string status = "S", message = objMessageKey.Recordsavedsuccessfully;
+            string status = "S", message = objMessageKey.Recordsavedsuccessfully, Action = Convert.ToString(ActionType.C); // C = "Create";
             if (MilestoneNatureCode > 0)
                 message = objMessageKey.Recordupdatedsuccessfully;
 
@@ -214,7 +232,7 @@ namespace RightsU_Plus.Controllers
             {
                 objMilestoneNature = objService.GetById(MilestoneNatureCode);
                 objMilestoneNature.EntityState = State.Modified;
-                Action = "U";
+                Action = Convert.ToString(ActionType.U); // U = "Update";
             }
             else
             {
@@ -222,11 +240,10 @@ namespace RightsU_Plus.Controllers
                 objMilestoneNature.EntityState = State.Added;
                 objMilestoneNature.Inserted_On = DateTime.Now;
                 objMilestoneNature.Inserted_by= objLoginUser.Users_Code;
-                Action = "C";
             }
 
             objMilestoneNature.Last_Updated_Time = DateTime.Now;
-            objMilestoneNature.Last_Action_By= objLoginUser.Users_Code;
+            objMilestoneNature.Last_Action_By = objLoginUser.Users_Code;
             objMilestoneNature.Is_Active = "Y";
             objMilestoneNature.Milestone_Nature_Name= MilestoneNatureName;
             dynamic resultSet;
@@ -238,8 +255,26 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objMilestoneNature.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMilestoneNature.Inserted_by));
+                    objMilestoneNature.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objMilestoneNature.Last_Action_By));
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objMilestoneNature);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForMilestoneNature), Convert.ToInt32(objMilestoneNature.Milestone_Nature_Code), LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForMilestoneNature;
+                    objAuditLog.intCode = objMilestoneNature.Milestone_Nature_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objMilestoneNature.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

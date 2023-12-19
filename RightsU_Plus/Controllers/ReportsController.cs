@@ -2925,8 +2925,8 @@ namespace RightsU_Plus.Controllers
             string Entity = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "Title_Detail_Report_Visibility").Select(X => X.Parameter_Value.ToString()).FirstOrDefault();
             ReportParameter[] parm = new ReportParameter[17];
             parm[0] = new ReportParameter("DealTypeCode", SrhDealTypeCode == "" ? " " : SrhDealTypeCode);
-            parm[1] = new ReportParameter("TitleName", SrchTitle == "" ? " " : SrchTitle);
-            parm[2] = new ReportParameter("OriginalTitleName", SrchOrigTitle == "" ? " " : SrchOrigTitle);
+            parm[1] = new ReportParameter("TitleName", SrchTitle == "" ? " " : SrchTitle.Replace('﹐', ','));
+            parm[2] = new ReportParameter("OriginalTitleName", SrchOrigTitle == "" ? " " : SrchOrigTitle.Replace('﹐', ','));
             parm[3] = new ReportParameter("AdvanceSearch", sql == "" ? " " : sql);
             parm[4] = new ReportParameter("Extended_Meta_Data", Convert.ToString(ExtendedMetaData == true ? "Y" : "N"));
 
@@ -3159,7 +3159,7 @@ namespace RightsU_Plus.Controllers
                     System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
                     lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
                 }
-                
+
                 //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Music_Label_Code == MusicLabelCode
                 //&& lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a))
                 //    .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList();
@@ -3167,7 +3167,7 @@ namespace RightsU_Plus.Controllers
                 if (!string.IsNullOrEmpty(selectedMusicLabelCode))
                 {
                     int MusicLabelCode = Convert.ToInt32(selectedMusicLabelCode);
-                
+
                     result =
                         new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
                                         join y in new Music_Title_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).ToList()
@@ -3270,7 +3270,7 @@ namespace RightsU_Plus.Controllers
             parm[0] = new ReportParameter("Music_Label_Code", MusicLabelCode);
             parm[1] = new ReportParameter("Title_Code", selectedTitleCodes);
             parm[2] = new ReportParameter("Music_Title_Code", selectedMusicTitleCodes);
-            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie": TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
+            parm[3] = new ReportParameter("TitleType", TitleType == "M" ? "Movie" : TitleType == "S" ? "Show" : TitleType == "A" ? "Album" : "");
             parm[4] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             ReportViewer rptViewer = BindReport(parm, "rptMusicAvailability");
             ViewBag.ReportViewer = rptViewer;
@@ -3284,41 +3284,112 @@ namespace RightsU_Plus.Controllers
         {
             return View("~/Views/Reports/AuditLogReport.cshtml");
         }
-
         public JsonResult BindAuditLog_Search_Controls()
         {
             Dictionary<string, object> objJson = new Dictionary<string, object>();
 
-            MultiSelectList lstMasterList = new MultiSelectList(new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && x.Parent_Module_Code == 1)
+            MultiSelectList lstMasterList = new MultiSelectList(new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y" && (x.Parent_Module_Code == 1 || x.Parent_Module_Code == 58 || x.Parent_Module_Code == 61 || x.Parent_Module_Code == 62 || x.Parent_Module_Code == 63 || x.Parent_Module_Code == 22) && x.Module_Code != 61)
                 .Select(i => new { Display_Value = i.Module_Code, Display_Text = i.Module_Name }).ToList(), "Display_Value", "Display_Text");
             MultiSelectList lstUsers = new MultiSelectList(new User_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true)
                 .Select(i => new { Display_Value = i.Users_Code, Display_Text = i.Login_Name }).ToList(), "Display_Value", "Display_Text");
 
-            var items = new List<DDLActionType>();
-            foreach (String value in Enum.GetNames(typeof(ActionType)))
+            var itemOrderBy = new List<DDLEnumData>();
+            foreach (String value in Enum.GetNames(typeof(order)))
             {
-                items.Add(new DDLActionType
+                itemOrderBy.Add(new DDLEnumData
                 {
                     Text = value,
                     Value = value
                 });
             }
 
-            MultiSelectList lstActionType = new MultiSelectList(items.Select(i => new { Display_Value = i.Value, Display_Text = i.Text }).ToList(), "Display_Value", "Display_Text");
+            MultiSelectList lstOrderByList = new MultiSelectList(itemOrderBy.Select(i => new { Display_Value = i.Value, Display_Text = i.Text }).ToList(), "Display_Value", "Display_Text");
+
+            Dictionary<string, string> listActionType = new Dictionary<string, string>();
+            listActionType.Add("Create", "C");
+            listActionType.Add("Delete", "X");
+            listActionType.Add("Update", "U");
+            listActionType.Add("Active", "A");
+            listActionType.Add("Deactive", "D");
+
+            MultiSelectList lstActionType = new MultiSelectList(listActionType.Select(i => new { Display_Value = i.Value, Display_Text = i.Key }).ToList(), "Display_Value", "Display_Text");
 
             objJson.Add("lstMasterList", lstMasterList);
             objJson.Add("lstUsers", lstUsers);
             objJson.Add("lstActionType", lstActionType);
+            objJson.Add("lstOrderByList", lstOrderByList);
 
             return Json(objJson);
+        }
+        public JsonResult BindAuditLogDetailsReports(string SrchMaster = "", string SrchUsers = "", string SrchLog = "", string SrchStartDate = "", string SrchEndDate = "", string SrchActionType = "", string SrchOrderBy = "asc", int pageNo = 1, int recordPerPage = 10, string sortType = "T")
+        {
+            string result = "", ret = "", ErrMsg = "";
+            int PageNo = 1, TotalRecord = 0;
+            int requestFrom = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchStartDate));
+            int requestTo = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(SrchEndDate).Date.AddDays(1));
+            int moduleCode = Convert.ToInt32(SrchMaster), size = recordPerPage, page = pageNo;
+            string searchValue = SrchLog, user = SrchUsers, userAction = SrchActionType, includePrevAuditVesion = "", AuthKey = "", OrderBy = "asc";
+
+            if(SrchOrderBy!="")
+                OrderBy = SrchOrderBy;
+
+            var LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetAuditLogAPI(OrderBy, Convert.ToString(sort.IntCode), requestFrom, requestTo, moduleCode, size, page, searchValue, user, userAction, includePrevAuditVesion = "", AuthKey = "");
+                        
+            var LogDetail = JsonConvert.DeserializeObject<JsonData>(LogData);
+
+            if(Convert.ToString(LogDetail.ErrorMessage) == "Success")
+            {
+                var temp = JsonConvert.DeserializeObject<AuditLogReturn>(Convert.ToString(LogDetail.Data));
+                if (temp.auditData.Count > 0)
+                {
+                    foreach (var item in temp.auditData)
+                    {
+                        result = result + item + ",";
+                    }
+
+                    if (result.Length > 0)
+                    {
+                        result = result.Remove(result.Length - 1);
+                        ret = "[" + result.Replace("\r\n", "") + "]";
+                    }                                       
+                }
+                else
+                {
+                    ret = "";
+                }
+
+                PageNo = temp.paging.page;
+                TotalRecord = Convert.ToInt32(temp.paging.total);
+                ErrMsg = "Success";
+            }
+            else
+            {
+                ErrMsg = "Error";
+            }
+            
+            var obj = new
+            {
+                Record_Count = TotalRecord,
+                Page_No = PageNo,
+                auditData = ret,
+                ErrorMessage = ErrMsg
+            };
+
+            return Json(obj);
         }
 
         #endregion
     }
 
-    public class DDLActionType
+    public class DDLEnumData
     {
         public string Text { get; set; }
         public string Value { get; set; }
+    }
+    public class JsonData
+    {
+        public string Status { get; set; }
+        public string ErrorMessage { get; set; }
+        public string Data { get; set; }
     }
 }

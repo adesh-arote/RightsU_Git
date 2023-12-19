@@ -12,14 +12,22 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Vendor_Country
     {
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Vendor_Country_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public Nullable<int> Vendor_Code { get; set; }
+        [JsonIgnore]
         public Nullable<int> Country_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 2)]
+        public string Country_Name { get; set; }
+        [JsonProperty(Order = 3)]
         public string Is_Theatrical { get; set; }
         [JsonIgnore]
         public virtual Country Country { get; set; }

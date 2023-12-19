@@ -19,17 +19,22 @@ namespace RightsU_Entities
             this.Email_Config_Detail = new HashSet<Email_Config_Detail>();
         }
     
-    	public State EntityState { get; set; }    public int Email_Config_Code { get; set; }
-    	    public string Email_Type { get; set; }
-    	    public string OnScreen_Notification { get; set; }
-    	    public string Allow_Config { get; set; }
-    	    public string IsChannel { get; set; }
-    	    public string IsBusinessUnit { get; set; }
-    	    public string Notification_Frequency { get; set; }
-    	    public string Days_Config { get; set; }
-    	    public string Days_Freq { get; set; }
-    	    public string Remarks { get; set; }
-            public string User_Count { get; set; }
+    	public State EntityState { get; set; }
+        public int Email_Config_Code { get; set; }
+    	public string Email_Type { get; set; }
+    	public string OnScreen_Notification { get; set; }
+    	public string Allow_Config { get; set; }
+    	public string IsChannel { get; set; }
+    	public string IsBusinessUnit { get; set; }
+    	public string Notification_Frequency { get; set; }
+    	public string Days_Config { get; set; }
+    	public string Days_Freq { get; set; }
+    	public string Remarks { get; set; }
+        public string User_Count { get; set; }
+        public Nullable<int> Inserted_By { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        public Nullable<int> Last_Updated_By { get; set; }
+        public Nullable<System.DateTime> Last_Updated_On { get; set; }
         public int Count { get; set; }
         public int TotalCount { get; set; }
         public virtual ICollection<Email_Config_Detail> Email_Config_Detail { get; set; }

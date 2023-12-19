@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
-
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -170,8 +170,8 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "", Status = "", Action = "C";  // C = "Create";
-                
+                string Message = "", Status = "", Action = Convert.ToString(ActionType.C); // C = "Create";
+
                 objExtended_Columns_Service = null;
 
                 objExtended_Columns.Columns_Name = objEC.Columns_Name;
@@ -184,6 +184,10 @@ namespace RightsU_Plus.Controllers
                 objExtended_Columns.Ref_Value_Field = objEC.Ref_Value_Field;
                 objExtended_Columns.Additional_Condition = objEC.Additional_Condition;
                 objExtended_Columns.Is_Add_OnScreen = objEC.Is_Add_OnScreen;
+                objExtended_Columns.Inserted_By = objLoginUser.Users_Code;
+                objExtended_Columns.Inserted_On = System.DateTime.Now;
+                objExtended_Columns.Last_Updated_By = objLoginUser.Users_Code;
+                objExtended_Columns.Last_Updated_On = System.DateTime.Now;
 
                 foreach (Extended_Columns_Value ObjEV in objExtended_Columns.Extended_Columns_Value)
                 {
@@ -206,8 +210,27 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objExtended_Columns.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Inserted_By));
+                        objExtended_Columns.Last_Updated_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Last_Updated_By));
+                        objExtended_Columns.Extended_Columns_Value.ToList().ForEach(f => f.Columns_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedMetadata;
+                        objAuditLog.intCode = objExtended_Columns.Columns_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objExtended_Columns.Last_Updated_On));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -247,8 +270,8 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "", Status = "", Action = "U"; // U = "Update";
-                
+                string Message = "", Status = "", Action = Convert.ToString(ActionType.U); // U = "Update";
+
                 objExtended_Columns = null;
                 objExtended_Columns = objExtended_Columns_Service.GetById(id);
 
@@ -263,6 +286,8 @@ namespace RightsU_Plus.Controllers
                 objExtended_Columns.Ref_Value_Field = objEC.Ref_Value_Field;
                 objExtended_Columns.Additional_Condition = objEC.Additional_Condition;
                 objExtended_Columns.Is_Add_OnScreen = objEC.Is_Add_OnScreen;
+                objExtended_Columns.Last_Updated_By = objLoginUser.Users_Code;
+                objExtended_Columns.Last_Updated_On = System.DateTime.Now;
 
                 foreach (Extended_Columns_Value ObjEV in objExtended_Columns.Extended_Columns_Value)
                 {
@@ -296,8 +321,27 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objExtended_Columns.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Inserted_By));
+                        objExtended_Columns.Last_Updated_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Last_Updated_By));
+                        objExtended_Columns.Extended_Columns_Value.ToList().ForEach(f => f.Columns_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedMetadata;
+                        objAuditLog.intCode = objExtended_Columns.Columns_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objExtended_Columns.Last_Updated_On));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -352,7 +396,7 @@ namespace RightsU_Plus.Controllers
         {
             try
             {
-                string Message = "", Status = "", Action = "D"; // D = "Delete";
+                string Message = "", Status = "", Action = Convert.ToString(ActionType.X); // X = "Delete";
 
                 dynamic resultSet;
                 objExtended_Columns = objExtended_Columns_Service.GetById(id);
@@ -377,8 +421,27 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objExtended_Columns.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Inserted_By));
+                        objExtended_Columns.Last_Updated_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objExtended_Columns.Last_Updated_By));
+                        objExtended_Columns.Extended_Columns_Value.ToList().ForEach(f => f.Columns_Name = new Extended_Columns_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Columns_Code)).Columns_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objExtended_Columns);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForExtendedMetadata, objExtended_Columns.Columns_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForExtendedMetadata;
+                        objAuditLog.intCode = objExtended_Columns.Columns_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objExtended_Columns.Last_Updated_On));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

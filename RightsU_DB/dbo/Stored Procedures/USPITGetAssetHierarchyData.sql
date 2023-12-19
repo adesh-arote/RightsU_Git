@@ -7,7 +7,7 @@ BEGIN
 	Declare @Loglevel int;
 	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
 	if(@Loglevel < 2) Exec [USPLogSQLSteps] '[USPITGetAssetHierarchyData]', 'Step 1', 0, 'Started Procedure', 0, ''
-		SELECT p.Program_Code AS ProgramCode, p.Program_Name AS ProgramName,t.Title_Code AS TitleCode, t.Title_Name AS TitleName, 'ep: ' + CAST(tc.Episode_No AS NVARCHAR(max)) AS EpisodeNo, tc.Episode_Title AS EpisodeName, tcv.Version_Code AS VersionCode, v.Version_Name AS VersionName FROM Program p (NOLOCK)
+		SELECT p.Program_Code AS ProgramCode, p.Program_Name AS ProgramName,t.Title_Code AS TitleCode, t.Title_Name AS TitleName, 'Ep:' + CAST(tc.Episode_No AS NVARCHAR(max)) AS EpisodeNo, tc.Episode_Title AS EpisodeName, tcv.Version_Code AS VersionCode, v.Version_Name AS VersionName FROM Program p (NOLOCK)
 				INNER JOIN Title t (NOLOCK) ON t.Program_Code=p.Program_Code
 				INNER JOIN Title_Content tc (NOLOCK) ON tc.Title_Code=t.Title_Code
 				LEFT JOIN Title_Content_Version tcv (NOLOCK) ON tcv.Title_Content_Code=tc.Title_Content_Code

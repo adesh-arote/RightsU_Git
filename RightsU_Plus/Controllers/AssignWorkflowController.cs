@@ -7,6 +7,7 @@ using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
 using System.Collections;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -472,7 +473,6 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveWorkflowModule(FormCollection objFormCollection)
         {
-
             Workflow_Module_Service objWorkflowService = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Workflow_Module objWorkflowModule = new RightsU_Entities.Workflow_Module();
 
@@ -508,7 +508,7 @@ namespace RightsU_Plus.Controllers
 
 
             #endregion
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             if (WorkflowModuleCode > 0)
             {
                 Workflow_Module_Service objWorkflowService_Update = new Workflow_Module_Service(objLoginEntity.ConnectionStringName);
@@ -527,7 +527,6 @@ namespace RightsU_Plus.Controllers
                     lstWorkflow_Module_Searched = lstWorkflow_Module = new Workflow_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Is_Active == "Y").ToList();
                 }
 
-
                 #region   -- -Update Workflow
 
                 objWorkflowModule.Business_Unit_Code = objWM_Update.Business_Unit_Code;
@@ -537,7 +536,6 @@ namespace RightsU_Plus.Controllers
                 objWorkflowModule.Ideal_Process_Days = 0;
                 objWorkflowModule.Is_Active = "Y";
                 objWorkflowModule.EntityState = State.Added;
-
 
                 List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
                 temp_lstWorkflow_Role = lstWorkflow_Role_Searched.Where(x => x.Workflow_Code == New_Workflow_Code).ToList();
@@ -567,7 +565,8 @@ namespace RightsU_Plus.Controllers
                 objWorkflowModule.Effective_Start_Date = ESD;
                 objWorkflowModule.Ideal_Process_Days = 0;
                 objWorkflowModule.Is_Active = "Y";
-                objWorkflowModule.Last_Action_By = objLoginUser.Users_Code;
+                objWorkflowModule.Inserted_By = objLoginUser.Users_Code;
+                objWorkflowModule.Inserted_On = System.DateTime.Now;
                 objWorkflowModule.EntityState = State.Added;
 
                 List<RightsU_Entities.Workflow_Role> temp_lstWorkflow_Role = new List<RightsU_Entities.Workflow_Role>();
@@ -604,19 +603,38 @@ namespace RightsU_Plus.Controllers
 
                     if (WorkflowModuleCode > 0)
                     {
-                        Action = "U"; // U = "Update";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                         message = message.Replace("{ACTION}", "updated");
                     }         
                     else
                     {
-                        Action = "C"; // C = "Create";
                         message = message.Replace("{ACTION}", "added");
                     }
 
                     try
                     {
+                        objWorkflowModule.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflowModule.Inserted_By));
+                        objWorkflowModule.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objWorkflowModule.Last_Action_By));
+                        objWorkflowModule.Business_Unit_Name = new Business_Unit_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Business_Unit_Code == objWorkflowModule.Business_Unit_Code).Select(x => x.Business_Unit_Name).FirstOrDefault();
+                        objWorkflowModule.Module_Name = new System_Module_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Module_Code == objWorkflowModule.Module_Code).Select(x => x.Module_Name).FirstOrDefault();
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objWorkflowModule);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForAssignWorkflow, objWorkflowModule.Workflow_Module_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForAssignWorkflow, objWorkflowModule.Workflow_Module_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForAssignWorkflow;
+                        objAuditLog.intCode = objWorkflowModule.Workflow_Module_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objWorkflowModule.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

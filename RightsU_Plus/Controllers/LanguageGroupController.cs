@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -131,7 +132,7 @@ namespace RightsU_Plus.Controllers
         public JsonResult ActiveDeactiveLanguage_Group(int Language_Group_Code, string doActive)
         {
 
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(Language_Group_Code, GlobalParams.ModuleCodeForLanguageGroup, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -140,29 +141,49 @@ namespace RightsU_Plus.Controllers
                 Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Language_Group objLanguage = objService.GetById(Language_Group_Code);
                 objLanguage.Is_Active = doActive;
+                objLanguage.Last_Updated_Time = System.DateTime.Now;
+                objLanguage.Last_Action_By = objLoginUser.Users_Code;
                 objLanguage.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objLanguage, out resultSet);
                 if (isValid)
                 {
-                    string Action = "A";
                     lstLanguage_Group.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
                     lstLanguage_Group_Searched.Where(w => w.Language_Group_Code == Language_Group_Code).First().Is_Active = doActive;
+
                     if (doActive == "Y")
                     {
                         message = objMessageKey.Recordactivatedsuccessfully;
-                        Action = "A";
                     }                        
                     else
                     {
                         message = objMessageKey.Recorddeactivatedsuccessfully;
-                        Action = "DA";
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
                     }
 
                     try
                     {
+                        objLanguage.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Inserted_By));
+                        objLanguage.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Last_Action_By));
+                        objLanguage.Language_Group_Details.ToList().ForEach(f => f.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Language_Code)).Language_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objLanguage.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objLanguage.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForLanguageGroup;
+                        objAuditLog.intCode = objLanguage.Language_Group_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objLanguage.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -195,14 +216,13 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveLanguage_Group(int Language_Group_Code, string Language_Group_Name, string[] LanguageCodes, int Record_Code)
         {
-            string Action = "C";
-            string status = "S", message = "Record {ACTION} successfully";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             Language_Group_Service objService = new Language_Group_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Language_Group objL = new RightsU_Entities.Language_Group();
             if (Language_Group_Code > 0)
             {
                 objL = objService.GetById(Language_Group_Code);
-                objL.EntityState = State.Modified;
+                objL.EntityState = State.Modified;             
             }
             else
             {
@@ -211,7 +231,6 @@ namespace RightsU_Plus.Controllers
                 objL.Inserted_On = DateTime.Now;
                 objL.Inserted_By = objLoginUser.Users_Code;
             }
-            objL.Last_Updated_Time = System.DateTime.Now;
 
             ICollection<RightsU_Entities.Language_Group_Details> BuisnessUnitList = new HashSet<RightsU_Entities.Language_Group_Details>();
             if (LanguageCodes != null)
@@ -219,9 +238,12 @@ namespace RightsU_Plus.Controllers
                 // string[] arrBuisnessCode = LanguageCodes[0].s
                 foreach (string BuisnessUnitCode in LanguageCodes)
                 {
+                    int Language_Code = Convert.ToInt32(BuisnessUnitCode);
+
                     RightsU_Entities.Language_Group_Details objTR = new Language_Group_Details();
                     objTR.EntityState = State.Added;
                     objTR.Language_Code = Convert.ToInt32(BuisnessUnitCode);
+                    objTR.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Language_Code == Language_Code).Select(x => x.Language_Name).FirstOrDefault();
                     BuisnessUnitList.Add(objTR);
                 }
             }
@@ -277,7 +299,7 @@ namespace RightsU_Plus.Controllers
                     {
                         message = objMessageKey.Recordupdatedsuccessfully;
                         //message = message.Replace("{ACTION}", "updated");
-                        Action = "U";
+                        Action = Convert.ToString(ActionType.U); // U = "Update";
                     }
                 }
                 else
@@ -290,7 +312,6 @@ namespace RightsU_Plus.Controllers
                     {
                         message = objMessageKey.Recordsavedsuccessfully;
                         //message = message.Replace("{ACTION}", "saved");
-                        Action = "C";
                     }
                 }
 
@@ -298,8 +319,27 @@ namespace RightsU_Plus.Controllers
                 {
                     try
                     {
+                        objL.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objL.Inserted_By));
+                        objL.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objL.Last_Action_By));
+                        objL.Language_Group_Details.ToList().ForEach(f => f.Language_Name = new Language_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Language_Code)).Language_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objL);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objL.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(Convert.ToInt32(GlobalParams.ModuleCodeForLanguageGroup), Convert.ToInt32(objL.Language_Group_Code), LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForLanguageGroup;
+                        objAuditLog.intCode = objL.Language_Group_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objL.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {

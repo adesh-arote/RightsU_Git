@@ -12,6 +12,7 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Country
     {
@@ -39,24 +40,44 @@ namespace RightsU_Entities
 
         [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Country_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Country_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public string Is_Domestic_Territory { get; set; }
+        [JsonProperty(Order = 3)]
         public string Is_Theatrical_Territory { get; set; }
-        [JsonIgnore]
+        [JsonProperty(Order = 4)]
         public string Is_Ref_Acq { get; set; }
-        [JsonIgnore]
+        [JsonProperty(Order = 5)]
         public string Is_Ref_Syn { get; set; }
-        public Nullable<int> Parent_Country_Code { get; set; }
         [JsonIgnore]
+        public Nullable<int> Parent_Country_Code { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 6)]
+        public string Parent_Country_Name { get; set; }
+        [JsonProperty(Order = 7)]
         public string Applicable_For_Asrun_Schedule { get; set; }
+        [JsonProperty(Order = 8)]
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 9)]
+        public string Inserted_By_User { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 10)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 11)]
+        public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 12)]
         public string Is_Active { get; set; }
+        [JsonProperty(Order = 13)]
         public int Base_Country_Count { get; set; }
 
         [JsonIgnore]
@@ -67,6 +88,7 @@ namespace RightsU_Entities
         public virtual ICollection<Acq_Deal_Rights_Territory> Acq_Deal_Rights_Territory { get; set; }
         [JsonIgnore]
         public virtual ICollection<Channel_Territory> Channel_Territory { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Country_Language> Country_Language { get; set; }
         [JsonIgnore]
         public virtual ICollection<Syn_Deal_Rights_Blackout_Territory> Syn_Deal_Rights_Blackout_Territory { get; set; }

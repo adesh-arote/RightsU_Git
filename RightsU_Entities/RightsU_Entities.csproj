@@ -204,6 +204,7 @@
     <Compile Include="Master_Entities\AL_Vendor_Rule_Criteria.cs" />
     <Compile Include="Master_Entities\AL_Vendor_TnC.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
+    <Compile Include="Master_Entities\MasterAuditLogInput.cs" />
     <Compile Include="Master_Entities\Digital.cs" />
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />

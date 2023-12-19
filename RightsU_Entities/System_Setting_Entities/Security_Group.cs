@@ -12,7 +12,8 @@ namespace RightsU_Entities
     using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public partial class Security_Group
     {
         public Security_Group()
@@ -25,20 +26,35 @@ namespace RightsU_Entities
             this.Workflow_BU_Role = new HashSet<Workflow_BU_Role>();
             this.Workflow_Module_BU_Role = new HashSet<Workflow_Module_BU_Role>();
         }
-        
+        [JsonIgnore]
         public State EntityState { get; set; }
+        [JsonProperty(Order = -1)]
         public int Security_Group_Code { get; set; }
+        [JsonProperty(Order = 1)]
         public string Security_Group_Name { get; set; }
+        [JsonProperty(Order = 2)]
         public System.DateTime Inserted_On { get; set; }
+        [JsonIgnore]
         public int Inserted_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 3)]
+        public string Inserted_By_User { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonProperty(Order = 4)]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [NotMapped]
+        [JsonProperty(Order = 5)]
+        public string Last_Action_By_User { get; set; }
+        [JsonProperty(Order = 6)]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail { get; set; }
         [JsonIgnore]
         public virtual ICollection<Module_Workflow_Detail> Module_Workflow_Detail1 { get; set; }
+        [JsonProperty(Order = 7)]
         public virtual ICollection<Security_Group_Rel> Security_Group_Rel { get; set; }
         [JsonIgnore]
         public virtual ICollection<User> Users { get; set; }

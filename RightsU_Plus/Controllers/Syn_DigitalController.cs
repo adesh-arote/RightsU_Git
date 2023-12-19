@@ -426,7 +426,7 @@ namespace RightsU_Plus.Controllers
             strtableHeader = strtableHeader.Replace("UTOsplTag", "");
             if (ViewOperation != "VIEW")
             {
-                strtableHeader = strtableHeader + "<th style=\"width:" + viewWidth + "%\"> Action </th>";
+                strtableHeader = strtableHeader + "<th style=\"width:" + viewWidth + "%\"> "+ objMessageKey.Action + " </th>";
             }
             strtableHeader = strtableHeader + "</tr>";
 

@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using RightsU_Entities;
 using RightsU_BLL;
 using UTOFrameWork.FrameworkClasses;
+using Newtonsoft.Json;
 
 namespace RightsU_Plus.Controllers
 {
@@ -153,7 +154,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveTalent(int talentCode, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(talentCode, GlobalParams.ModuleCodeForTalent, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -162,6 +163,8 @@ namespace RightsU_Plus.Controllers
                 Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Talent objTalent = objService.GetById(talentCode);
                 objTalent.Is_Active = doActive;
+                objTalent.Last_Updated_Time = DateTime.Now;
+                objTalent.Last_Action_By = objLoginUser.Users_Code;
                 objTalent.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objTalent, out resultSet);
@@ -170,15 +173,38 @@ namespace RightsU_Plus.Controllers
                     lstTalent.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
                     lstTalent_Searched.Where(w => w.Talent_Code == talentCode).First().Is_Active = doActive;
 
-                    if (doActive == "Y")
-                        Action = "A"; // A = "Active";
-                    else
-                        Action = "DA"; // DA = "Deactivate";
+                    foreach (var items in objTalent.Talent_Role)
+                    {
+                        int Role_Code = Convert.ToInt32(items.Role_Code);
+                        items.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Code).Select(x => x.Role_Name).FirstOrDefault();
+                    }
+
+                    if (doActive != "Y")
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
 
                     try
                     {
+                        objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
+                        objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                        objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTalent;
+                        objAuditLog.intCode = objTalent.Talent_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTalent.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -241,7 +267,7 @@ namespace RightsU_Plus.Controllers
             //  int recordCode = Convert.ToInt32(help["Record_Code"]);
             string talentname = help["Talent_Name"].ToString();
             string gender = help["Gender"].ToString();
-            string status = "S", message = "Record {ACTION} successfully", Action = "U"; // U = "Update";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.U); // U = "Update";
 
             Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Talent objTalent = objService.GetById(talentcode);
@@ -256,9 +282,11 @@ namespace RightsU_Plus.Controllers
                 string[] arrRoleCodes = help["Talent_Role"].Split(',');
                 foreach (string roleCode in arrRoleCodes)
                 {
+                    int Role_Code = Convert.ToInt32(roleCode);
                     Talent_Role objTR = new Talent_Role();
                     objTR.EntityState = State.Added;
                     objTR.Role_Code = Convert.ToInt32(roleCode);
+                    objTR.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Code).Select(x => x.Role_Name).FirstOrDefault();
                     talentRoleList.Add(objTR);
                 }
             }
@@ -299,8 +327,27 @@ namespace RightsU_Plus.Controllers
 
                     try
                     {
+                        objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
+                        objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                        objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTalent;
+                        objAuditLog.intCode = objTalent.Talent_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTalent.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -348,19 +395,19 @@ namespace RightsU_Plus.Controllers
             string talentname = help["Talent_Name"].ToString();
             string gender = help["Gender"].ToString();
             string Role_Code = help["Talent_Role"].ToString();
-            string status = "S", message = "Record {ACTION} successfully", Action = "C"; // C = "Create";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
 
             Talent_Service objService = new Talent_Service(objLoginEntity.ConnectionStringName);
             RightsU_Entities.Talent objTalent = new RightsU_Entities.Talent();
 
             objTalent.Gender = gender;
-            // objTalent.
             objTalent.Is_Active = "Y";
             objTalent.Talent_Name = talentname;
             objTalent.Inserted_By = objLoginUser.Users_Code;
             objTalent.Inserted_On = System.DateTime.Now;
-            objTalent.EntityState = State.Added;
             objTalent.Last_Updated_Time = System.DateTime.Now;
+            objTalent.Last_Action_By = objLoginUser.Users_Code;
+            objTalent.EntityState = State.Added;     
 
             #region --- Talent Role List ---
             ICollection<Talent_Role> talentRoleList = new HashSet<Talent_Role>();
@@ -369,9 +416,11 @@ namespace RightsU_Plus.Controllers
                 string[] arrRoleCodes = help["Talent_Role"].Split(',');
                 foreach (string roleCode in arrRoleCodes)
                 {
+                    int Role_Codes = Convert.ToInt32(roleCode);
                     Talent_Role objTR = new Talent_Role();
                     objTR.EntityState = State.Added;
                     objTR.Role_Code = Convert.ToInt32(roleCode);
+                    objTR.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).SearchFor(s => s.Role_Code == Role_Codes).Select(x => x.Role_Name).FirstOrDefault();
                     talentRoleList.Add(objTR);
                 }
             }
@@ -392,8 +441,27 @@ namespace RightsU_Plus.Controllers
 
                 try
                 {
+                    objTalent.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Inserted_By));
+                    objTalent.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objTalent.Last_Action_By));
+                    objTalent.Talent_Role.ToList().ForEach(f => f.Role_Name = new Role_Service(objLoginEntity.ConnectionStringName).GetById(Convert.ToInt32(f.Role_Code)).Role_Name);
+
                     string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objTalent);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForTalent, objTalent.Talent_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForTalent;
+                    objAuditLog.intCode = objTalent.Talent_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objTalent.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {

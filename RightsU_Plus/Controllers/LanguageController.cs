@@ -1,4 +1,5 @@
-﻿using RightsU_BLL;
+﻿using Newtonsoft.Json;
+using RightsU_BLL;
 using RightsU_Entities;
 using System;
 using System.Collections.Generic;
@@ -167,7 +168,7 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult ActiveDeactiveLanguage(int Language_Code, string doActive)
         {
-            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", strMessage = "", Action = Convert.ToString(ActionType.A); // A = "Active";
             int RLCode = 0;
             CommonUtil objCommonUtil = new CommonUtil();
             bool isLocked = objCommonUtil.Lock_Record(Language_Code, GlobalParams.ModuleCodeForLanguage, objLoginUser.Users_Code, out RLCode, out strMessage, objLoginEntity.ConnectionStringName);
@@ -176,6 +177,8 @@ namespace RightsU_Plus.Controllers
                 Language_Service objService = new Language_Service(objLoginEntity.ConnectionStringName);
                 RightsU_Entities.Language objLanguage = objService.GetById(Language_Code);
                 objLanguage.Is_Active = doActive;
+                objLanguage.Last_Updated_Time = DateTime.Now;
+                objLanguage.Last_Action_By = objLoginUser.Users_Code;
                 objLanguage.EntityState = State.Modified;
                 dynamic resultSet;
                 bool isValid = objService.Save(objLanguage, out resultSet);
@@ -184,15 +187,31 @@ namespace RightsU_Plus.Controllers
                     lstLanguage.Where(w => w.Language_Code == Language_Code).First().Is_Active = doActive;
                     lstLanguage_Searched.Where(w => w.Language_Code == Language_Code).First().Is_Active = doActive;
 
-                    if (doActive == "Y")
-                        Action = "A"; // A = "Active";
-                    else
-                        Action = "DA"; // DA = "Deactivate";
+                    if (doActive != "Y")
+                        Action = Convert.ToString(ActionType.D); // D = "Deactive";
 
                     try
                     {
+                        objLanguage.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Inserted_By));
+                        objLanguage.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Last_Action_By));
+
                         string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
-                        bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objLanguage.Language_Code, LogData, Action, objLoginUser.Users_Code);
+                        //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objLanguage.Language_Code, LogData, Action, objLoginUser.Users_Code);
+
+                        MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForLanguage;
+                        objAuditLog.intCode = objLanguage.Language_Code;
+                        objAuditLog.logData = LogData;
+                        objAuditLog.actionBy = objLoginUser.Login_Name;
+                        objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objLanguage.Last_Updated_Time));
+                        objAuditLog.actionType = Action;
+                        var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                        var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                        if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                        {
+
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -232,40 +251,56 @@ namespace RightsU_Plus.Controllers
 
         public JsonResult SaveLanguage(int Language_Code, string Language_Name, int Record_Code)
         {
-            string status = "S", message = "Record {ACTION} successfully", Action = "";
+            string status = "S", message = "Record {ACTION} successfully", Action = Convert.ToString(ActionType.C); // C = "Create";
             Language_Service objService = new Language_Service(objLoginEntity.ConnectionStringName);
-            RightsU_Entities.Language objGenre = null;
+            RightsU_Entities.Language objLanguage = null;
 
             if (Language_Code > 0)
             {
-                objGenre = objService.GetById(Language_Code);
-                objGenre.EntityState = State.Modified;
+                objLanguage = objService.GetById(Language_Code);
+                objLanguage.EntityState = State.Modified;
             }
             else
             {
-                objGenre = new RightsU_Entities.Language();
-                objGenre.EntityState = State.Added;
-                objGenre.Inserted_On = DateTime.Now;
-                objGenre.Inserted_By = objLoginUser.Users_Code;
+                objLanguage = new RightsU_Entities.Language();
+                objLanguage.EntityState = State.Added;
+                objLanguage.Inserted_On = DateTime.Now;
+                objLanguage.Inserted_By = objLoginUser.Users_Code;
             }
 
-            objGenre.Last_Updated_Time = DateTime.Now;
-            objGenre.Last_Action_By = objLoginUser.Users_Code;
-            objGenre.Is_Active = "Y";
-            objGenre.Language_Name = Language_Name;
+            objLanguage.Last_Updated_Time = DateTime.Now;
+            objLanguage.Last_Action_By = objLoginUser.Users_Code;
+            objLanguage.Is_Active = "Y";
+            objLanguage.Language_Name = Language_Name;
             dynamic resultSet;
-            bool isValid = objService.Save(objGenre, out resultSet);
+            bool isValid = objService.Save(objLanguage, out resultSet);
             if (isValid)
             {
                 if (Language_Code > 0)
-                    Action = "U"; // U = "Update";
-                else
-                    Action = "C"; // C = "Create";
+                    Action = Convert.ToString(ActionType.U); // U = "Update";
 
                 try
                 {
-                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objGenre);
-                    bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objGenre.Language_Code, LogData, Action, objLoginUser.Users_Code);
+                    objLanguage.Inserted_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Inserted_By));
+                    objLanguage.Last_Action_By_User = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetUserName(Convert.ToInt32(objLanguage.Last_Action_By));
+
+                    string LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().ConvertObjectToJson(objLanguage);
+                    //bool isLogSave = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().SaveMasterLogData(GlobalParams.ModuleCodeForLanguage, objLanguage.Language_Code, LogData, Action, objLoginUser.Users_Code);
+
+                    MasterAuditLogInput objAuditLog = new MasterAuditLogInput();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForLanguage;
+                    objAuditLog.intCode = objLanguage.Language_Code;
+                    objAuditLog.logData = LogData;
+                    objAuditLog.actionBy = objLoginUser.Login_Name;
+                    objAuditLog.actionOn = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().CalculateSeconds(Convert.ToDateTime(objLanguage.Last_Updated_Time));
+                    objAuditLog.actionType = Action;
+                    var strCheck = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().PostAuditLogAPI(objAuditLog, "");
+
+                    var LogDetail = JsonConvert.DeserializeObject<JsonData>(strCheck);
+                    if (Convert.ToString(LogDetail.ErrorMessage) == "Error")
+                    {
+
+                    }
                 }
                 catch (Exception ex)
                 {
