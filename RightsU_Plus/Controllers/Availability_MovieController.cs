@@ -2026,8 +2026,8 @@ namespace RightsU_Plus.Controllers
                 parm[33] = new ReportParameter("Report_Type", Report_Type);
                 parm[34] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
                 parm[35] = new ReportParameter("IncludeMetadata", chkMetaData);
-                parm[35] = new ReportParameter("EpisodeFrom", episodeFrom.ToString());
-                parm[36] = new ReportParameter("EpisodeTo", episodeTo.ToString());
+                parm[36] = new ReportParameter("EpisodeFrom", episodeFrom.ToString());
+                parm[37] = new ReportParameter("EpisodeTo", episodeTo.ToString());
 
             }
 
