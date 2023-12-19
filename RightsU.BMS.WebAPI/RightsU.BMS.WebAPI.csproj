@@ -170,13 +170,16 @@
     <Compile Include="Controllers\loginController.cs" />
     <Compile Include="Controllers\scheduleuploadController.cs" />
     <Compile Include="Controllers\titleController.cs" />
+    <Compile Include="Filters\AssetsLogFilter.cs" />
     <Compile Include="Filters\AuthorizationFilter.cs" />
+    <Compile Include="Filters\CustomExceptionFilter.cs" />
     <Compile Include="Filters\FileOperationFilter.cs" />
     <Compile Include="Filters\HideInDocsAttribute.cs" />
     <Compile Include="Filters\HideInDocsFilter.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Logging\UTOLogger.cs" />
     <Compile Include="Produces.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SwaggerConsumesAttribute.cs" />
