@@ -5989,7 +5989,8 @@
                 </TablixMember>
                 <TablixMember>
                   <Visibility>
-                    <Hidden>=IIF(First(Fields!TL_15.Value) = "Public Domain", false, true)</Hidden>
+                    <Hidden>= IIF(((Fields!TL_15.Value) = "") OR
+( Parameters!Extended_Meta_Data.Value = "N") ,True , False)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>
