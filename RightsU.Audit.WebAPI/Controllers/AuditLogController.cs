@@ -4,6 +4,7 @@ using RightsU.Audit.Entities.FrameworkClasses;
 using RightsU.Audit.Entities.HTTP;
 using RightsU.Audit.Entities.HttpModel;
 using RightsU.Audit.Entities.InputEntities;
+using RightsU.Audit.Entities.MasterEntities;
 using RightsU.Audit.WebAPI.Filters;
 using RightsU.Audit.WebAPI.Models;
 using Swashbuckle.Swagger.Annotations;
@@ -101,7 +102,7 @@ namespace RightsU.Audit.WebAPI.Controllers
         /// <param name="userAction">Specific User action, search with multiple actions like "C,X,A" allowed.</param>
         /// <param name="includePrevAuditVesion">Default "N"-Values "Y"/"N" pass "Y" to include the previous 1 version of data even if not fall into the provided period bracket.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(GenericReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(AuditLogReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]

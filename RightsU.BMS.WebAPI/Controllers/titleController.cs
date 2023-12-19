@@ -372,8 +372,6 @@ namespace RightsU.BMS.WebAPI.Controllers
                 return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
             }
 
-            var abc = Convert.ToInt32("hello");
-
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
