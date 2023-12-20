@@ -99,7 +99,10 @@ BEGIN
 					DECLARE @DatabaseEmail_Profile varchar(200)	
 					SELECT @DatabaseEmail_Profile = parameter_value FROM system_parameter_new WHERE parameter_name = 'DatabaseEmail_Profile'
 
-					
+					DECLARE @Email_Config_Code INT
+					SELECT @Email_Config_Code= Email_Config_Code FROM Email_Config (NOLOCK) WHERE [Key]='SCE'
+
+					DECLARE @Email_Config_Users_UDT Email_Config_Users_UDT
 					
 
 					DECLARE cur_on_Userwise_File_Data CURSOR
@@ -331,12 +334,15 @@ BEGIN
 						
 							--select  @Emailbody1=Email_body from #Users_Data where users_code = @cur_user_code
 						
-							EXEC msdb.dbo.sp_send_dbmail 
-							@profile_name = @DatabaseEmail_Profile,
-							@recipients =  @cur_email_id,
-							@subject = @MailSubjectCr,
-							@body = @Emailbody1, 
-							@body_format = 'HTML';  
+							--EXEC msdb.dbo.sp_send_dbmail 
+							--@profile_name = @DatabaseEmail_Profile,
+							--@recipients =  @cur_email_id,
+							--@subject = @MailSubjectCr,
+							--@body = @Emailbody1, 
+							--@body_format = 'HTML';
+							
+							INSERT INTO @Email_Config_Users_UDT(Email_Config_Code, Email_Body, To_User_Mail_Id, [Subject])
+							SELECT @Email_Config_Code, @Emailbody1, ISNULL(@cur_email_id ,''), @MailSubjectCr
 						
 							--insert into Email_Check values (@DatabaseEmail_Profile, @cur_email_id,@MailSubjectCr,@Emailbody1,'HTML' )
 							PRINT 'Email sent to ' + @cur_email_id
@@ -376,6 +382,7 @@ BEGIN
 		CLOSE cur_on_Update_Data
 		DEALLOCATE cur_on_Update_Data	
 	
+	EXEC USP_Insert_Email_Notification_Log @Email_Config_Users_UDT
 	
 	END		
 
