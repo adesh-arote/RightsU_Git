@@ -16,7 +16,7 @@ BEGIN
 	if(@Loglevel<2)Exec [USPLogSQLSteps] '[USP_PopulateContent]', 'Step 1', 0, 'Started Procedure', 0, ''
 	
 		DECLARE @dealTypeCodeForAllowAssignMusic VARCHAR(150) = ''
-		SELECT TOP 1 @dealTypeCodeForAllowAssignMusic = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'DealTypeCodeFor_AllowAssignMusic'
+		SELECT TOP 1 @dealTypeCodeForAllowAssignMusic = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'DealTypeCodeFor_TitleContentList'--'DealTypeCodeFor_AllowAssignMusic'
 
 		SELECT DISTINCT ISNULL(TC.Episode_Title, T.Title_Name) AS Content_Name , TC.Title_Code
 		FROM Title_Content TC (NOLOCK)
