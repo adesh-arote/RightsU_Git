@@ -25,7 +25,7 @@ namespace RightsU.Audit.WebAPI.Logging
             request.Method = "POST";
             request.Headers.Add("ContentType", "application/json");
             request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "False");
+            request.Headers.Add("Service", "false");
             if (obj.RequestContent == null)
             {
                 obj.RequestContent = "";

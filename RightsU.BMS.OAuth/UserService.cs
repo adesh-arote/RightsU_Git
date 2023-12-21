@@ -2,6 +2,7 @@
 using IdentityServer3.Core.Services.Default;
 using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities;
+using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;

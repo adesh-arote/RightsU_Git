@@ -273,14 +273,26 @@ namespace RightsU.BMS.BLL.Services
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.Response = _TitleReturn;
-                return _objRet;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //_objRet.StatusCode = HttpStatusCode.InternalServerError;
+                //_objRet.Response = new title();// _TitleReturn;
+                //return _objRet;
+                throw;
             }
 
             _objRet.Response = _TitleReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn PostTitle()
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
 
             return _objRet;
         }

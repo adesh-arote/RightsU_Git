@@ -25,7 +25,7 @@ namespace RightsU.BMS.WebAPI.Logging
             request.Method = "POST";
             request.Headers.Add("ContentType", "application/json");
             request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "False");
+            request.Headers.Add("Service", "false");
             if (obj.RequestContent == null)
             {
                 obj.RequestContent = "";
@@ -51,6 +51,7 @@ namespace RightsU.BMS.WebAPI.Logging
                 request.Abort();
                 //LogService("Not able to post to Log Service");
                 LogService(JsonConvert.SerializeObject(obj));
+                //LogService(ex.Message);
             }
             if (result != "")
             {
