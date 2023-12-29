@@ -10,6 +10,12 @@ namespace RightsU.BMS.DAL.Repository
 {
     public class TitleRepositories : MainRepository<title>
     {
+        public Title GetById(Int32? Id)
+        {
+            var obj = new { Title_Code = Id.Value };
+            return base.GetById<Title,Title_Country,Title_Talent,Title_Geners>(obj);
+        }
+
         public TitleReturn GetTitle_List(string order, Int32 page, string search_value, Int32 size, string sort,string Date_GT,string Date_LT,Int32 id)
         {
             TitleReturn ObjTitleReturn = new TitleReturn();
@@ -24,18 +30,18 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTitleReturn.assets = base.ExecuteSQLProcedure<title>("USP_API_Title_List", param).ToList();
+            ObjTitleReturn.assets = base.ExecuteSQLProcedure<title_List>("USPAPI_Title_List", param).ToList();
             ObjTitleReturn.paging.total= param.Get<Int64>("@RecordCount");
             return ObjTitleReturn;
         }
 
-        public List<USP_Bind_Extend_Column_Grid_Result> USP_Bind_Extend_Column_Grid(Nullable<int> title_Code)
+        public List<USPAPI_Title_Bind_Extend_Data> USPAPI_Title_Bind_Extend_Data(Nullable<int> title_Code)
         {
-            List<USP_Bind_Extend_Column_Grid_Result> ObjExtended = new List<USP_Bind_Extend_Column_Grid_Result>();
+            List<USPAPI_Title_Bind_Extend_Data> ObjExtended = new List<USPAPI_Title_Bind_Extend_Data>();
 
             var param = new DynamicParameters();
             param.Add("@Title_Code", title_Code);
-            ObjExtended = base.ExecuteSQLProcedure<USP_Bind_Extend_Column_Grid_Result>("USP_API_Bind_Extend_Column_Grid", param).ToList();            
+            ObjExtended = base.ExecuteSQLProcedure<USPAPI_Title_Bind_Extend_Data>("USPAPI_Title_Bind_Extend_Data", param).ToList();            
             return ObjExtended;
         }
 
@@ -55,8 +61,17 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@date_lt", "");
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTitleReturn = base.ExecuteSQLProcedure<title>("USP_API_Title_List", param).FirstOrDefault();            
+            ObjTitleReturn = base.ExecuteSQLProcedure<title>("USPAPI_Title_List", param).FirstOrDefault();            
             return ObjTitleReturn;
+        }
+
+        public Title_Validations Title_Validation(string InputValue,string InputType)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@InputValue", InputValue);
+            param.Add("@InputType", InputType);
+            return base.ExecuteSQLProcedure<Title_Validations>("USPAPI_Title_Validations", param).FirstOrDefault();
         }
     }
 

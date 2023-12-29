@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    public partial class USP_Bind_Extend_Column_Grid_Result
+    public partial class USPAPI_Title_Bind_Extend_Data
     {
         public string Columns_Name { get; set; }
         public int Columns_Code { get; set; }

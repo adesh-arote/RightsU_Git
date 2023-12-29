@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USP_API_Title_List]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Title_List]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,
@@ -148,8 +148,8 @@ print @size
 	Declare @Sql_1  NVARCHAR(MAX) ,@Sql_2 NVARCHAR(MAX)      
 		
 	Set @Sql_1 = '      
-				SELECT Title_Name as Name, Original_Title as OriginalName, Title_Code as Id, Language_Name as Language, Year_Of_Production as ProductionYear, Program_Name as Program, CountryName as Country, Original_Language as OriginalLanguage, TalentName as StarCast, Producer, Director, Title_Image      
-				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType, Synopsis, Genre,Duration_In_Min as DurationInMin      
+				SELECT Title_Name as Name, Original_Title as OriginalName, Title_Code as Id, Language_Name as Language, Year_Of_Production as ProductionYear, Program_Name as Program, CountryName as Country1, Original_Language as OriginalLanguage, TalentName as StarCast1, Producer as Producer1, Director as Director1, Title_Image      
+				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType, Synopsis, Genre as Genre1,Duration_In_Min as DurationInMin      
 				FROM (      
 					SELECT distinct T.Title_Name,T.Original_Title,T.Title_Code,T.Synopsis ,L.Language_Name , OL.Language_Name AS ''Original_Language''    
 				   ,T.Year_Of_Production,p.Program_Name,T.Duration_In_Min      

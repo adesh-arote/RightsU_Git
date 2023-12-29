@@ -201,9 +201,9 @@ namespace RightsU.BMS.BLL.Services
         {
             return objSystemModuleRepositories.SearchFor(param);
         }
-        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        public List<System_Module> USP_GetModule(Int32 Security_Group_Code, Int32 Users_Code)
         {
-            return objSystemModuleRepositories.USP_GetModule(Module_Code, Users_Code);
+            return objSystemModuleRepositories.USP_GetModule(Security_Group_Code, Users_Code);
         }
 
         public bool hasModuleRights(Int32 Module_Code, string authenticationToken, string RefreshToken)

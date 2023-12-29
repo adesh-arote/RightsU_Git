@@ -156,12 +156,12 @@ namespace RightsU.BMS.DAL
         {
             return base.GetAll<System_Module>();
         }
-        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        public List<System_Module> USP_GetModule(Int32 Security_Group_Code, Int32 Users_Code)
         {
             List<System_Module> ObjModule = new List<System_Module>();
 
             var param = new DynamicParameters();
-            param.Add("@SecurityGroupCode", Module_Code);
+            param.Add("@SecurityGroupCode", Security_Group_Code);
             param.Add("@IsSuperAdmin", "Y");
             param.Add("@Users_Code", Users_Code);
             ObjModule = base.ExecuteSQLProcedure<System_Module>("USP_GetMenu", param).ToList();

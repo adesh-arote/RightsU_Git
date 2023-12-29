@@ -519,10 +519,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpGet]
+        [HttpPost]
         [Route("api/title/Post")]
-        public async Task<HttpResponseMessage> PostTitle(string strInput)
-        {
+        public async Task<HttpResponseMessage> PostTitle(title Input)
+        {            
             string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
             string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
@@ -536,7 +536,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTitleServices.PostTitle();
+            GenericReturn objReturn = objTitleServices.PostTitle(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
