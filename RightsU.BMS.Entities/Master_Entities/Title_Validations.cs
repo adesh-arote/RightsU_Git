@@ -8,7 +8,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 {
     public partial class Title_Validations
     {
-        public string InputValueCode { get; set; }
+        public Int32 InputValueCode { get; set; }
         public string InvalidValue { get; set; }
     }
 }

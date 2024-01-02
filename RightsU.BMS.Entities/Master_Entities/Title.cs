@@ -23,10 +23,12 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string Title_Name { get; set; }
         public string Title_Code_Id { get; set; }
         public string Synopsis { get; set; }
-        [ForeignKeyReference(typeof(Language))]
-        public Nullable<int> Original_Language_Code { get; set; }
-        [ForeignKeyReference(typeof(Language))]
-        public Nullable<int> Title_Language_Code { get; set; }
+        [OneToOne]
+        [ForeignKeyReference(typeof(Language))]                
+        public Language Original_Language_Code { get; set; }
+        //[OneToOne]
+        //[ForeignKeyReference(typeof(Language))]        
+        //public Language Title_Language_Code { get; set; }
         public Nullable<int> Year_Of_Production { get; set; }
         public Nullable<decimal> Duration_In_Min { get; set; }
         [ForeignKeyReference(typeof(Deal_Type))]

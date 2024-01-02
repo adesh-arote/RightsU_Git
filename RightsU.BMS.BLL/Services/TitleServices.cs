@@ -1,6 +1,7 @@
 ﻿using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities;
 using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -286,7 +287,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn PostTitle(title objInput)
+        public GenericReturn PostTitle(TitleInput objInput)
         {
 
             //var T1 = objTitleRepositories.GetById(49138);
@@ -314,57 +315,31 @@ namespace RightsU.BMS.BLL.Services
             //    return _objRet;
             //}
 
-            if (string.IsNullOrEmpty(objInput.Language))
+            if (objInput.TitleLanguageId <= 0)
             {
-                _objRet.Message = "Input Paramater 'Language' is mandatory";
+                _objRet.Message = "Input Paramater 'TitleLanguageId' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
             }
             else
             {
-                var Language = objTitleRepositories.Title_Validation(objInput.Language, "Language");
-                try
+                var Language = objTitleRepositories.Title_Validation(Convert.ToString(objInput.TitleLanguageId), "Language");
+
+                if (Language.InputValueCode == 0)
                 {
-                    if (Convert.ToInt32(Language.InputValueCode) > 0)
-                    {
-                        objInput.Language = Language.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Language :'" + Language.InvalidValue + " is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'Language :'" + Language.InvalidValue + " is not Valid";
+                    _objRet.Message = "Input Paramater 'TitleLanguageId :'" + Language.InvalidValue + " is not Valid";
                     _objRet.IsSuccess = false;
                     _objRet.StatusCode = HttpStatusCode.BadRequest;
                     return _objRet;
                 }
             }
 
-            if (!string.IsNullOrEmpty(objInput.Program))
+            if (objInput.Program > 0)
             {
-                var Program = objTitleRepositories.Title_Validation(objInput.Program, "Program");
-                try
-                {
-                    if (Convert.ToInt32(Program.InputValueCode) > 0)
-                    {
-                        objInput.Program = Program.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Program :'" + Program.InvalidValue + " is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
+                var Program = objTitleRepositories.Title_Validation(Convert.ToString(objInput.Program), "Program");
+
+                if (Program.InputValueCode == 0)
                 {
                     _objRet.Message = "Input Paramater 'Program :'" + Program.InvalidValue + " is not Valid";
                     _objRet.IsSuccess = false;
@@ -373,24 +348,13 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (!string.IsNullOrEmpty(objInput.Country))
+            if (objInput.Country.Count() > 0)
             {
-                var Country = objTitleRepositories.Title_Validation(objInput.Country, "Country");
-                try
-                {
-                    if (Country.InputValueCode != "0")
-                    {
-                        objInput.Country = Country.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Country :" + Country.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
+                string strCountry = String.Join(",", objInput.Country.Select(x => x.CountryId.ToString()).ToArray());
+
+                var Country = objTitleRepositories.Title_Validation(strCountry, "Country");
+
+                if (Country.InputValueCode == 0)
                 {
                     _objRet.Message = "Input Paramater 'Country :" + Country.InvalidValue + "' is not Valid";
                     _objRet.IsSuccess = false;
@@ -399,130 +363,50 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (!string.IsNullOrEmpty(objInput.StarCast))
+            if (objInput.TitleTalent.Count() > 0)
             {
-                var starCast = objTitleRepositories.Title_Validation(objInput.StarCast, "starcast");
-                try
+                string strTitleTalent = String.Join(",", objInput.TitleTalent.Select(x => String.Format("{0}:{1}", x.TalentId.ToString(), x.RoleId.ToString())).ToArray());
+
+                var talent = objTitleRepositories.Title_Validation(strTitleTalent, "talent");
+
+                if (talent.InputValueCode == 0)
                 {
-                    if (starCast.InputValueCode != "0")
-                    {
-                        objInput.StarCast = starCast.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'StarCast :" + starCast.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'StarCast :" + starCast.InvalidValue + "' is not Valid";
+                    _objRet.Message = "Input Paramater 'TitleTalent :" + talent.InvalidValue + "' is not Valid";
                     _objRet.IsSuccess = false;
                     _objRet.StatusCode = HttpStatusCode.BadRequest;
                     return _objRet;
                 }
             }
 
-            if (!string.IsNullOrEmpty(objInput.Producer))
+            if (objInput.AssetTypeId <= 0)
             {
-                var Producer = objTitleRepositories.Title_Validation(objInput.Producer, "producer");
-                try
+                _objRet.Message = "Input Paramater 'AssetTypeId' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            else
+            {
+                var AssetType = objTitleRepositories.Title_Validation(Convert.ToString(objInput.AssetTypeId), "assettype");
+
+                if (AssetType.InputValueCode == 0)
                 {
-                    if (Producer.InputValueCode != "0")
-                    {
-                        objInput.Producer = Producer.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Producer :" + Producer.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'Producer :" + Producer.InvalidValue + "' is not Valid";
+                    _objRet.Message = "Input Paramater 'AssetTypeId :" + AssetType.InvalidValue + "' is not Valid";
                     _objRet.IsSuccess = false;
                     _objRet.StatusCode = HttpStatusCode.BadRequest;
                     return _objRet;
                 }
             }
 
-            if (!string.IsNullOrEmpty(objInput.Director))
+            if (objInput.TitleGenre.Count() > 0)
             {
-                var Director = objTitleRepositories.Title_Validation(objInput.Director, "director");
-                try
-                {
-                    if (Director.InputValueCode != "0")
-                    {
-                        objInput.Director = Director.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Director :" + Director.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'Director :" + Director.InvalidValue + "' is not Valid";
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
-                    return _objRet;
-                }
-            }
+                string strGenre = String.Join(",", objInput.TitleGenre.Select(x => x.GenreId.ToString()).ToArray());
 
-            if (!string.IsNullOrEmpty(objInput.AssetType))
-            {
-                var AssetType = objTitleRepositories.Title_Validation(objInput.AssetType, "assettype");
-                try
-                {
-                    if (AssetType.InputValueCode != "0")
-                    {
-                        objInput.AssetType = AssetType.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'AssetType :" + AssetType.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'AssetType :" + AssetType.InvalidValue + "' is not Valid";
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
-                    return _objRet;
-                }
-            }
+                var Genres = objTitleRepositories.Title_Validation(strGenre, "Genres");
 
-            if (!string.IsNullOrEmpty(objInput.Genre))
-            {
-                var Genres = objTitleRepositories.Title_Validation(objInput.Genre, "Genres");
-                try
+                if (Genres.InputValueCode == 0)
                 {
-                    if (Genres.InputValueCode != "0")
-                    {
-                        objInput.Genre = Genres.InputValueCode;
-                    }
-                    else
-                    {
-                        _objRet.Message = "Input Paramater 'Genres :" + Genres.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _objRet.Message = "Input Paramater 'Genres :" + Genres.InvalidValue + "' is not Valid";
+                    _objRet.Message = "Input Paramater 'TitleGenre :" + Genres.InvalidValue + "' is not Valid";
                     _objRet.IsSuccess = false;
                     _objRet.StatusCode = HttpStatusCode.BadRequest;
                     return _objRet;
@@ -533,48 +417,63 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.MetaData.Count(); i++)
                 {
-                    var ExtendedGroup = objTitleRepositories.Title_Validation(objInput.MetaData.ElementAt(i).Key, "ExtendedGroup");
+                    string strMetadata = string.Empty;
+                    string strExtendedType = string.Empty;
 
-                    if (ExtendedGroup.InputValueCode != "0")
+                    if (objInput.MetaData[i].Value.GetType() == typeof(List<ExtendedColumnDetails>))
                     {
-                        foreach (var EColumn in objInput.MetaData.ElementAt(i).Value)
-                        {
-                            var ExtendedColumns = objTitleRepositories.Title_Validation(ExtendedGroup.InputValueCode + "|" + EColumn.Key, "ExtendedColumns");
+                        var ExtendedObject = (List<ExtendedColumnDetails>)objInput.MetaData[i].Value;
+                        strExtendedType = String.Join(",", ExtendedObject.Select(x => x.ColumnValueId.ToString()));
 
-                            if (ExtendedColumns.InputValueCode != "0")
-                            {
-                                var ExtendedColumnValue = objTitleRepositories.Title_Validation(ExtendedColumns.InputValueCode + "|" + EColumn.Value, "ExtendedColumnValue");
-
-                                if (ExtendedColumnValue.InputValueCode != "0" || ExtendedColumnValue.InputValueCode != "True")
-                                {
-
-                                }
-                                else if (ExtendedColumnValue.InputValueCode == "0")
-                                {
-                                    _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + EColumn.Key + " : " + ExtendedColumnValue.InvalidValue + "' is not Valid";
-                                    _objRet.IsSuccess = false;
-                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
-                                    return _objRet;
-                                }
-
-                            }
-                            else
-                            {
-                                _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + ExtendedColumns.InvalidValue + "' is not Valid";
-                                _objRet.IsSuccess = false;
-                                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                                return _objRet;
-                            }
-
-                        }
+                        strMetadata = String.Join(":", objInput.MetaData[i].Key, strExtendedType);
                     }
                     else
                     {
-                        _objRet.Message = "Input Paramater 'MetaData :" + ExtendedGroup.InvalidValue + "' is not Valid";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
+                        //strExtendedType
                     }
+
+                    var ExtendedGroup = objTitleRepositories.Title_Validation(Convert.ToString(objInput.MetaData.ElementAt(i).Key), "ExtendedGroup");
+
+                    //if (ExtendedGroup.InputValueCode != "0")
+                    //{
+                    //    foreach (var EColumn in objInput.MetaData.ElementAt(i).Value)
+                    //    {
+                    //        var ExtendedColumns = objTitleRepositories.Title_Validation(ExtendedGroup.InputValueCode + "|" + EColumn.Key, "ExtendedColumns");
+
+                    //        if (ExtendedColumns.InputValueCode != "0")
+                    //        {
+                    //            var ExtendedColumnValue = objTitleRepositories.Title_Validation(ExtendedColumns.InputValueCode + "|" + EColumn.Value, "ExtendedColumnValue");
+
+                    //            if (ExtendedColumnValue.InputValueCode != "0" || ExtendedColumnValue.InputValueCode != "True")
+                    //            {
+
+                    //            }
+                    //            else if (ExtendedColumnValue.InputValueCode == "0")
+                    //            {
+                    //                _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + EColumn.Key + " : " + ExtendedColumnValue.InvalidValue + "' is not Valid";
+                    //                _objRet.IsSuccess = false;
+                    //                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //                return _objRet;
+                    //            }
+
+                    //        }
+                    //        else
+                    //        {
+                    //            _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + ExtendedColumns.InvalidValue + "' is not Valid";
+                    //            _objRet.IsSuccess = false;
+                    //            _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //            return _objRet;
+                    //        }
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    _objRet.Message = "Input Paramater 'MetaData :" + ExtendedGroup.InvalidValue + "' is not Valid";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
                 }
             }
 

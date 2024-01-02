@@ -5,143 +5,168 @@ AS
 BEGIN
 	If(LOWER(@InputType) = 'language')
 	BEGIN
-		IF EXISTS(SELECT Language_Code FROM Language (Nolock) WHERE Language_Name = @InputValue AND Is_Active='Y')
+		IF EXISTS(SELECT Language_Code FROM Language (Nolock) WHERE Language_Code = CAST(@InputValue as INT) AND Is_Active='Y')
 		BEGIN
-			SELECT TOP 1 Language_Code as 'InputValueCode','' AS 'InvalidValue' FROM Language (Nolock) WHERE Language_Name = @InputValue AND Is_Active='Y'
+			--SELECT TOP 1 Language_Code as 'InputValueCode','' AS 'InvalidValue' FROM Language (Nolock) WHERE Language_Code = CAST(@InputValue as INT) AND Is_Active='Y'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'
 		END
 		ELSE
-		SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		BEGIN
+			SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		END
 	END
 
 	If(LOWER(@InputType) = 'program')
 	BEGIN
-		IF EXISTS(SELECT Program_Code FROM Program (Nolock) WHERE Program_Name = @InputValue AND Is_Active='Y')
+		IF EXISTS(SELECT Program_Code FROM Program (Nolock) WHERE Program_Code = CAST(@InputValue as INT) AND Is_Active='Y')
 		BEGIN
-			SELECT TOP 1 Program_Code as 'InputValueCode','' AS 'InvalidValue' FROM Program (Nolock) WHERE Program_Name = @InputValue AND Is_Active='Y'
+			--SELECT TOP 1 Program_Code as 'InputValueCode','' AS 'InvalidValue' FROM Program (Nolock) WHERE Program_Name = @InputValue AND Is_Active='Y'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'
 		END
 		ELSE
-		SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		BEGIN
+			SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		END
 	END
 
 	If(LOWER(@InputType) = 'country')
 	BEGIN
-		DECLARE @TempCountry TABLE(Country_Name VARCHAR(255),Country_Code INT);
+		DECLARE @TempCountry TABLE(Country_Code INT);
+
+		--INSERT INTO @TempCountry
+		--SELECT RTRIM(LTRIM(d.number)) as Country_Code,c.Country_Name from country c
+		--RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=c.Country_Code AND c.Is_Active='Y'		
 
 		INSERT INTO @TempCountry
-		SELECT RTRIM(LTRIM(d.number)) as Country_Name,c.Country_Code from country c
-		RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=c.Country_Name 
-		WHERE c.Is_Active='Y'
+		SELECT RTRIM(LTRIM(d.number)) FROM dbo.fn_Split_withdelemiter(@InputValue,',') d WHERE RTRIM(LTRIM(d.number)) NOT IN (
+			SELECT C.Country_Code FROM Country C (NOLOCK) WHERE  c.Is_Active='Y'
+		)
 
-		IF EXISTS(SELECT * FROM @TempCountry WHERE Country_Code IS NULL)
+		IF EXISTS(SELECT * FROM @TempCountry)
 		BEGIN
 			SELECT  0 as 'InputValueCode',
 					STUFF(
-					(SELECT ',' + CAST(t2.Country_Name As VARCHAR)
-						FROM @TempCountry t2
-						WHERE t2.Country_Code IS NULL
+					(SELECT ',' + CAST(t2.Country_Code AS VARCHAR)
+						FROM @TempCountry t2						
 						FOR XML PATH (''))
 						, 1, 1, '')  AS 'InvalidValue'
 		END
 		ELSE
 		BEGIN
-
-			SELECT STUFF(
-					(SELECT ',' + CAST(t2.Country_Code As VARCHAR)
-						FROM @TempCountry t2						
-						FOR XML PATH (''))
-						, 1, 1, '')  AS 'InputValueCode','' AS 'InvalidValue'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'			
 		END
 	END
 
-	If(Lower(@InputType) = 'starcast' OR Lower(@InputType) = 'producer' OR Lower(@InputType) = 'director')
+	If(Lower(@InputType) = 'talent')
 	BEGIN
-		DECLARE @TempTalent TABLE(Talent_Name VARCHAR(255),Talent_Code INT);
+		DECLARE @TempTalent TABLE(Talent_Roles VARCHAR(255));
+		DECLARE @TempTalentRaw TABLE(Talent_Codes VARCHAR(255), ID INT, Number INT);
+		DECLARE @TempTalentRole TABLE(Talent_Code INT, Role_Code INT);
+		DECLARE @TempInvalidTalent TABLE(Talent_Code INT);
+		
+		--DECLARE @InputValue VARCHAR(50) = '154:2,3:2,155:1,121212:2,154:120'
+		INSERT INTO @TempTalent(Talent_Roles)
+		SELECT RTRIM(LTRIM(number)) FROM dbo.fn_Split_withdelemiter(@InputValue,',')
 
-		IF(Lower(@InputType) = 'starcast')
-		BEGIN
-			INSERT INTO @TempTalent
-			SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
-			INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 2 --for Star Cast
-			RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
-			WHERE T.Is_Active='Y'
-		END
-		ELSE IF(Lower(@InputType) = 'producer')
-		BEGIN
-			INSERT INTO @TempTalent
-			SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
-			INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 4 --for Producer
-			RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
-			WHERE T.Is_Active='Y'
-		END
-		ELSE IF(Lower(@InputType) = 'director')
-		BEGIN
-			INSERT INTO @TempTalent
-			SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
-			INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 1 --for Director
-			RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
-			WHERE T.Is_Active='Y'
-		END
+		INSERT INTO @TempTalentRaw(Talent_Codes, id, number)
+		SELECT Talent_Roles, id, number FROM @TempTalent a
+		CROSS APPLY dbo.fn_Split_withdelemiter(a.Talent_Roles, ':')
+		WHERE ISNULL(a.Talent_Roles, '') NOT IN ('', '0')
+
+		INSERT INTO @TempTalentRole(Talent_Code, Role_Code)
+		SELECT 
+		(SELECT TOP 1 outr.Number FROM @TempTalentRaw outr WHERE outr.Talent_Codes = a.Talent_Codes AND outr.ID = 1), 
+		(SELECT TOP 1 outr.Number FROM @TempTalentRaw outr WHERE outr.Talent_Codes = a.Talent_Codes AND outr.ID = 2) 
+		FROM (
+			SELECT DISTINCT intr.Talent_Codes FROM @TempTalentRaw intr
+		)AS a
+				
+		INSERT INTO @TempInvalidTalent(Talent_Code)
+		SELECT ttr.Talent_Code FROM @TempTalentRole ttr WHERE ttr.Talent_Code NOT IN (
+			SELECT ISNULL(tr.Talent_Code, 0) FROM Talent_Role tr (NOLOCK) WHERE tr.Role_Code = ttr.Role_Code
+		)
+		
+		--IF(Lower(@InputType) = 'starcast')
+		--BEGIN
+		--	INSERT INTO @TempTalent
+		--	SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
+		--	INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 2 --for Star Cast
+		--	RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
+		--	WHERE T.Is_Active='Y'
+		--END
+		--ELSE IF(Lower(@InputType) = 'producer')
+		--BEGIN
+		--	INSERT INTO @TempTalent
+		--	SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
+		--	INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 4 --for Producer
+		--	RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
+		--	WHERE T.Is_Active='Y'
+		--END
+		--ELSE IF(Lower(@InputType) = 'director')
+		--BEGIN
+		--	INSERT INTO @TempTalent
+		--	SELECT RTRIM(LTRIM(d.number)) as 'Talent_Name',T.Talent_Code from Talent (NOLOCK) T
+		--	INNER JOIN Talent_Role (NOLOCK) TR ON TR.Talent_Code = T.Talent_Code AND TR.Role_Code = 1 --for Director
+		--	RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=T.Talent_Name 
+		--	WHERE T.Is_Active='Y'
+		--END
 
 
-		IF EXISTS(SELECT * FROM @TempTalent WHERE Talent_Code IS NULL)
+		IF EXISTS(SELECT * FROM @TempInvalidTalent)
 		BEGIN
 			SELECT  0 as 'InputValueCode',
 					STUFF(
-					(SELECT ',' + CAST(t2.Talent_Name As VARCHAR)
-						FROM @TempTalent t2
-						WHERE t2.Talent_Code IS NULL
+					(SELECT ',' + CAST(t2.Talent_Code As VARCHAR)
+						FROM @TempInvalidTalent t2						
 						FOR XML PATH (''))
 						, 1, 1, '')  AS 'InvalidValue'
 		END
 		ELSE
 		BEGIN
-
-			SELECT STUFF(
-					(SELECT ',' + CAST(t2.Talent_Code As VARCHAR)
-						FROM @TempTalent t2						
-						FOR XML PATH (''))
-						, 1, 1, '')  AS 'InputValueCode','' AS 'InvalidValue'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'						
 		END
 	END
 
 	If(Lower(@InputType) = 'assettype')
 	BEGIN
-		IF EXISTS(SELECT Deal_Type_Code FROM Deal_Type (Nolock) WHERE Deal_Type_Name = @InputValue AND Is_Active='Y')
+		IF EXISTS(SELECT Deal_Type_Code FROM Deal_Type (Nolock) WHERE Deal_Type_Code = CAST(@InputValue as INT) AND Is_Active='Y')
 		BEGIN
-			SELECT TOP 1 Deal_Type_Code as 'InputValueCode','' AS 'InvalidValue' FROM Deal_Type (Nolock) WHERE Deal_Type_Name = @InputValue AND Is_Active='Y'
+			--SELECT TOP 1 Deal_Type_Code as 'InputValueCode','' AS 'InvalidValue' FROM Deal_Type (Nolock) WHERE Deal_Type_Name = @InputValue AND Is_Active='Y'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'
 		END
 		ELSE
-		SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		BEGIN
+			SELECT  0 as 'InputValueCode',@InputValue AS 'InvalidValue'
+		END
 
 	END
 
 	If(LOWER(@InputType) = 'genres')
 	BEGIN
-		DECLARE @TempGenres TABLE(Genres_Name VARCHAR(255),Genres_Code INT);
+		DECLARE @TempGenres TABLE(Genres_Code INT);
+
+		--INSERT INTO @TempGenres
+		--SELECT RTRIM(LTRIM(d.number)) as Genres_Name,g.Genres_Code from Genres g
+		--RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=g.Genres_Name 
+		--WHERE g.Is_Active='Y'
 
 		INSERT INTO @TempGenres
-		SELECT RTRIM(LTRIM(d.number)) as Genres_Name,g.Genres_Code from Genres g
-		RIGHT JOIN dbo.fn_Split_withdelemiter(@InputValue,',') d ON RTRIM(LTRIM(d.number))=g.Genres_Name 
-		WHERE g.Is_Active='Y'
+		SELECT RTRIM(LTRIM(d.number)) FROM dbo.fn_Split_withdelemiter(@InputValue,',') d WHERE RTRIM(LTRIM(d.number)) NOT IN (
+			SELECT G.Genres_Code FROM Genres G (NOLOCK) WHERE  G.Is_Active='Y'
+		)
 
-		IF EXISTS(SELECT * FROM @TempGenres WHERE Genres_Code IS NULL)
+		IF EXISTS(SELECT * FROM @TempGenres)
 		BEGIN
 			SELECT  0 as 'InputValueCode',
 					STUFF(
-					(SELECT ',' + CAST(t2.Genres_Name As VARCHAR)
-						FROM @TempGenres t2
-						WHERE t2.Genres_Code IS NULL
+					(SELECT ',' + CAST(t2.Genres_Code As VARCHAR)
+						FROM @TempGenres t2						
 						FOR XML PATH (''))
 						, 1, 1, '')  AS 'InvalidValue'
 		END
 		ELSE
 		BEGIN
-
-			SELECT STUFF(
-					(SELECT ',' + CAST(t2.Genres_Code As VARCHAR)
-						FROM @TempGenres t2						
-						FOR XML PATH (''))
-						, 1, 1, '')  AS 'InputValueCode','' AS 'InvalidValue'
+			SELECT 1 as 'InputValueCode','' AS 'InvalidValue'			
 		END
 	END
 

@@ -28,10 +28,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string Is_Active { get; set; }
 
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        //[SimpleLoadIgnore]
         public virtual ICollection<Title> Title_Languages { get; set; }
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        //[SimpleLoadIgnore]
         public virtual ICollection<Title> Original_Languages { get; set; }        
     }
 }

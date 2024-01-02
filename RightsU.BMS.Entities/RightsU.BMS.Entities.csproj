@@ -74,7 +74,8 @@
     <Compile Include="FrameworkClasses\LoginDetails.cs" />
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="HttpModel\HttpResponses.cs" />
-    <Compile Include="InputClasses\TitlePostInput.cs" />
+    <Compile Include="InputClasses\PutInput.cs" />
+    <Compile Include="InputClasses\TitleInput.cs" />
     <Compile Include="LogClasses\Error.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
