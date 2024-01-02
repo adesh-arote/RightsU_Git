@@ -1744,6 +1744,7 @@
     <Build Include="dbo\Stored Procedures\USPAPI_Title_List.sql" />
     <Build Include="dbo\Functions\UFN_Calculate_PartyId.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Title_Validations.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetDrillDownGenreWiseTitle_Details.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
