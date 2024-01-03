@@ -1,6 +1,7 @@
 ﻿using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities;
 using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -151,45 +152,46 @@ namespace RightsU.BMS.BLL.Services
                 {
                     _TitleReturn = objTitleRepositories.GetTitle_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
 
-                    for (int i = 0; i < _TitleReturn.assets.Count(); i++)
-                    {
-                        List<USP_Bind_Extend_Column_Grid_Result> lstExtended = new List<USP_Bind_Extend_Column_Grid_Result>();
-                        lstExtended = USP_Bind_Extend_Column_Grid(_TitleReturn.assets[i].Id);
+                    //for (int i = 0; i < _TitleReturn.assets.Count(); i++)
+                    //{
+                    //    List<USPAPI_Title_Bind_Extend_Data> lstExtended = new List<USPAPI_Title_Bind_Extend_Data>();
+                    //    lstExtended = USPAPI_Title_Bind_Extend_Data(_TitleReturn.assets[i].Id);
 
-                        if (lstExtended.Count() > 0)
-                        {
-                            var objGroupCode = lstExtended.Where(x => x.Extended_Group_Code != null).Select(x => x.Extended_Group_Code).Distinct().ToList();
+                    //    if (lstExtended.Count() > 0)
+                    //    {
+                    //        var objGroupCode = lstExtended.Where(x => x.Extended_Group_Code != null).Select(x => x.Extended_Group_Code).Distinct().ToList();
 
-                            foreach (Int32 item in objGroupCode)
-                            {
-                                string strGroupName = lstExtended.Where(x => x.Extended_Group_Code == item).Select(x => x.Group_Name).Distinct().FirstOrDefault();
-                                Dictionary<string, string> objDictionary = new Dictionary<string, string>();
-                                lstExtended.Where(x => x.Extended_Group_Code == item).ToList().ForEach(x =>
-                                {
-                                    if (string.IsNullOrEmpty(x.Column_Value))
-                                    {
-                                        objDictionary.Add(x.Columns_Name, x.Name);
-                                    }
-                                    else
-                                    {
-                                        objDictionary.Add(x.Columns_Name, x.Column_Value);
-                                    }
+                    //        foreach (Int32 item in objGroupCode)
+                    //        {
+                    //            string strGroupName = lstExtended.Where(x => x.Extended_Group_Code == item).Select(x => x.Group_Name).Distinct().FirstOrDefault();
+                    //            Dictionary<string, string> objDictionary = new Dictionary<string, string>();
+                    //            lstExtended.Where(x => x.Extended_Group_Code == item).ToList().ForEach(x =>
+                    //            {
+                    //                if (string.IsNullOrEmpty(x.Column_Value))
+                    //                {
+                    //                    objDictionary.Add(x.Columns_Name, x.Name);
+                    //                }
+                    //                else
+                    //                {
+                    //                    objDictionary.Add(x.Columns_Name, x.Column_Value);
+                    //                }
 
-                                });
+                    //            });
 
-                                _TitleReturn.assets[i].MetaData.Add(strGroupName, objDictionary);
-                            }
-                        }
-                    }
+                    //            _TitleReturn.assets[i].MetaData.Add(strGroupName, objDictionary);
+                    //        }
+                    //    }
+                    //}
                 }
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.Response = _TitleReturn;
-                return _objRet;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //_objRet.StatusCode = HttpStatusCode.InternalServerError;
+                //_objRet.Response = _TitleReturn;
+                //return _objRet;
+                throw;
             }
 
             _TitleReturn.paging.page = page;
@@ -200,10 +202,9 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public List<USP_Bind_Extend_Column_Grid_Result> USP_Bind_Extend_Column_Grid(Nullable<int> title_Code)
+        public List<USPAPI_Title_Bind_Extend_Data> USPAPI_Title_Bind_Extend_Data(Nullable<int> title_Code)
         {
-
-            return objTitleRepositories.USP_Bind_Extend_Column_Grid(title_Code);
+            return objTitleRepositories.USPAPI_Title_Bind_Extend_Data(title_Code);
         }
 
         //public title GetById(Int32? id)
@@ -241,8 +242,8 @@ namespace RightsU.BMS.BLL.Services
 
                     if (_TitleReturn != null)
                     {
-                        List<USP_Bind_Extend_Column_Grid_Result> lstExtended = new List<USP_Bind_Extend_Column_Grid_Result>();
-                        lstExtended = USP_Bind_Extend_Column_Grid(_TitleReturn.Id);
+                        List<USPAPI_Title_Bind_Extend_Data> lstExtended = new List<USPAPI_Title_Bind_Extend_Data>();
+                        lstExtended = USPAPI_Title_Bind_Extend_Data(_TitleReturn.id);
 
                         if (lstExtended.Count() > 0)
                         {
@@ -273,14 +274,211 @@ namespace RightsU.BMS.BLL.Services
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.Response = _TitleReturn;
-                return _objRet;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //_objRet.StatusCode = HttpStatusCode.InternalServerError;
+                //_objRet.Response = new title();// _TitleReturn;
+                //return _objRet;
+                throw;
             }
 
             _objRet.Response = _TitleReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn PostTitle(TitleInput objInput)
+        {
+
+            //var T1 = objTitleRepositories.GetById(49138);
+
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (string.IsNullOrEmpty(objInput.Name))
+            {
+                _objRet.Message = "Input Paramater 'Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            //if (objInput.DurationInMin <= 0)
+            //{
+            //    _objRet.Message = "Input Paramater 'DurationInMin' is mandatory";
+            //    _objRet.IsSuccess = false;
+            //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+            //    return _objRet;
+            //}
+
+            if (objInput.TitleLanguageId <= 0)
+            {
+                _objRet.Message = "Input Paramater 'TitleLanguageId' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            else
+            {
+                var Language = objTitleRepositories.Title_Validation(Convert.ToString(objInput.TitleLanguageId), "Language");
+
+                if (Language.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'TitleLanguageId :'" + Language.InvalidValue + " is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.Program > 0)
+            {
+                var Program = objTitleRepositories.Title_Validation(Convert.ToString(objInput.Program), "Program");
+
+                if (Program.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'Program :'" + Program.InvalidValue + " is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.Country.Count() > 0)
+            {
+                string strCountry = String.Join(",", objInput.Country.Select(x => x.CountryId.ToString()).ToArray());
+
+                var Country = objTitleRepositories.Title_Validation(strCountry, "Country");
+
+                if (Country.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'Country :" + Country.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.TitleTalent.Count() > 0)
+            {
+                string strTitleTalent = String.Join(",", objInput.TitleTalent.Select(x => String.Format("{0}:{1}", x.TalentId.ToString(), x.RoleId.ToString())).ToArray());
+
+                var talent = objTitleRepositories.Title_Validation(strTitleTalent, "talent");
+
+                if (talent.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'TitleTalent :" + talent.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.AssetTypeId <= 0)
+            {
+                _objRet.Message = "Input Paramater 'AssetTypeId' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            else
+            {
+                var AssetType = objTitleRepositories.Title_Validation(Convert.ToString(objInput.AssetTypeId), "assettype");
+
+                if (AssetType.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'AssetTypeId :" + AssetType.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.TitleGenre.Count() > 0)
+            {
+                string strGenre = String.Join(",", objInput.TitleGenre.Select(x => x.GenreId.ToString()).ToArray());
+
+                var Genres = objTitleRepositories.Title_Validation(strGenre, "Genres");
+
+                if (Genres.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'TitleGenre :" + Genres.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            if (objInput.MetaData.Count() > 0)
+            {
+                for (int i = 0; i < objInput.MetaData.Count(); i++)
+                {
+                    string strMetadata = string.Empty;
+                    string strExtendedType = string.Empty;
+
+                    if (objInput.MetaData[i].Value.GetType() == typeof(List<ExtendedColumnDetails>))
+                    {
+                        var ExtendedObject = (List<ExtendedColumnDetails>)objInput.MetaData[i].Value;
+                        strExtendedType = String.Join(",", ExtendedObject.Select(x => x.ColumnValueId.ToString()));
+
+                        strMetadata = String.Join(":", objInput.MetaData[i].Key, strExtendedType);
+                    }
+                    else
+                    {
+                        //strExtendedType
+                    }
+
+                    var ExtendedGroup = objTitleRepositories.Title_Validation(Convert.ToString(objInput.MetaData.ElementAt(i).Key), "ExtendedGroup");
+
+                    //if (ExtendedGroup.InputValueCode != "0")
+                    //{
+                    //    foreach (var EColumn in objInput.MetaData.ElementAt(i).Value)
+                    //    {
+                    //        var ExtendedColumns = objTitleRepositories.Title_Validation(ExtendedGroup.InputValueCode + "|" + EColumn.Key, "ExtendedColumns");
+
+                    //        if (ExtendedColumns.InputValueCode != "0")
+                    //        {
+                    //            var ExtendedColumnValue = objTitleRepositories.Title_Validation(ExtendedColumns.InputValueCode + "|" + EColumn.Value, "ExtendedColumnValue");
+
+                    //            if (ExtendedColumnValue.InputValueCode != "0" || ExtendedColumnValue.InputValueCode != "True")
+                    //            {
+
+                    //            }
+                    //            else if (ExtendedColumnValue.InputValueCode == "0")
+                    //            {
+                    //                _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + EColumn.Key + " : " + ExtendedColumnValue.InvalidValue + "' is not Valid";
+                    //                _objRet.IsSuccess = false;
+                    //                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //                return _objRet;
+                    //            }
+
+                    //        }
+                    //        else
+                    //        {
+                    //            _objRet.Message = "Input Paramater 'MetaData : " + objInput.MetaData.ElementAt(i).Key + " : " + ExtendedColumns.InvalidValue + "' is not Valid";
+                    //            _objRet.IsSuccess = false;
+                    //            _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //            return _objRet;
+                    //        }
+
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    _objRet.Message = "Input Paramater 'MetaData :" + ExtendedGroup.InvalidValue + "' is not Valid";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
+                }
+            }
+
+            #endregion
+
 
             return _objRet;
         }

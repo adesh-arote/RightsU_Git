@@ -1740,11 +1740,15 @@
     <Build Include="dbo\User Defined Types\Booking_Sheet_Import_Utility.sql" />
     <Build Include="dbo\User Defined Types\Acq_Deal_Rights.sql" />
     <Build Include="dbo\Tables\Master_Log.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Title_Bind_Extend_Data.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Title_List.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Bind_Extend_Column_Grid.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Title_List.sql" />
     <Build Include="dbo\Stored Procedures\USP_Validate_LP.sql" />
     <Build Include="dbo\Tables\Acq_Deal_Run_LP.sql" />
     <Build Include="dbo\Functions\UFN_Calculate_PartyId.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Title_Validations.sql" />
+    <Build Include="dbo\Stored Procedures\USPITGetDrillDownGenreWiseTitle_Details.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
