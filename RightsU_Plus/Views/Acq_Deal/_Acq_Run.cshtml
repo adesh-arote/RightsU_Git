@@ -11,7 +11,7 @@
     {
         objMessageKey = (MessageKey)Session["objMessageKey"];
     }
-    
+
 }
 
 <link type="text/css" rel="stylesheet" href="~/CSS/jquery.timeentry.css">
@@ -92,7 +92,8 @@
     var URL_CheckSubLicen= '@Url.Action("CheckSubLicen", "Acq_Run")';
     var URL_ChannelCategory_Changed= '@Url.Action("ChannelCategory_Changed", "Acq_Run")';
     var URL_ChannelChanged= '@Url.Action("ChannelChanged", "Acq_Run")';
-    var URL_ChanelCateogyChanged= '@Url.Action("ChannelCategoryChanged", "Acq_Run")';
+    var URL_ChanelCateogyChanged = '@Url.Action("ChannelCategoryChanged", "Acq_Run")';
+    var URL_CalcRunLP= '@Url.Action("CalcRunLP", "Acq_Run")';
     var ShowMessage = {
         "MsgForLinked": '@objMessageKey.CannotremovechannelIthasshowsthatarealreadylinked',
         "lblForAssignor": '@objMessageKey.Assignor',
@@ -356,13 +357,27 @@
                                     <td class='bold' width="20%">@objMessageKey.Title </td>
                                     <td id="tdTitleCodes" colspan="3">
                                         <div id="divddlPTitle">
-                                            <select id="ddlPTitle" name="ddlPTitle" multiple="multiple" onchange="return CheckSubLicen()"></select>
+                                            <select id="ddlPTitle" name="ddlPTitle" multiple="multiple" onchange="return CheckSubLicen('TI')"></select>
                                         </div>
                                         @Html.Hidden("hdnTitleList")
                                         @Html.HiddenFor(m => m.Acq_Deal_Run_Code)
                                         <input type="hidden" id="hdnTabName" name="hdnTabName" />
                                     </td>
                                 </tr>
+                                @if (ViewBag.AllowPeriodInRunDefinition == "Y")
+                                {
+                                    <tr>
+                                        <td class='bold' width="15%" id="lblPeriod"> Period </td>
+                                        <td id="tdPeriod">
+                                            <div id="divddlPeriod">
+                                                <select id="ddlPeriod" name="ddlPeriod" multiple="multiple"></select>
+                                            </div>
+                                            @Html.Hidden("hdnTitleList")
+                                            @Html.HiddenFor(m => m.Acq_Deal_Run_Code)
+                                            <input type="hidden" id="hdnTabName" name="hdnTabName" />
+                                        </td>
+                                    </tr>
+                                }
                                 <tr>
                                     <td class='bold'>@objMessageKey.NoofExhibition</td>
                                     <td colspan="3">
@@ -798,8 +813,7 @@
                         railBorderRadius: '7px'
                     };
                 }
-                else
-                {
+                else {
                     var defaults = {
 
                         // width in pixels of the visible scroll area
@@ -876,10 +890,10 @@
                 this.each(function () {
 
                     var isOverPanel, isOverBar, isDragg, queueHide, touchDif,
-                      barHeight, percentScroll, lastScroll,
-                      divS = '<div></div>',
-                      minBarHeight = 30,
-                      releaseScroll = false;
+                        barHeight, percentScroll, lastScroll,
+                        divS = '<div></div>',
+                        minBarHeight = 30,
+                        releaseScroll = false;
 
                     // used in event handlers and for better minification
                     var me = $(this);
@@ -943,13 +957,13 @@
 
                     // wrap content
                     var wrapper = $(divS)
-                      .addClass(o.wrapperClass)
-                      .css({
-                          position: 'relative',
-                          overflow: 'hidden',
-                          width: o.width,
-                          height: o.height
-                      });
+                        .addClass(o.wrapperClass)
+                        .css({
+                            position: 'relative',
+                            overflow: 'hidden',
+                            width: o.width,
+                            height: o.height
+                        });
 
                     // update style for the div
                     me.css({
@@ -960,35 +974,35 @@
 
                     // create scrollbar rail
                     var rail = $(divS)
-                      .addClass(o.railClass)
-                      .css({
-                          width: o.size,
-                          height: '100%',
-                          position: 'absolute',
-                          top: 0,
-                          display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
-                          'border-radius': o.railBorderRadius,
-                          background: o.railColor,
-                          opacity: o.railOpacity,
-                          zIndex: 90
-                      });
+                        .addClass(o.railClass)
+                        .css({
+                            width: o.size,
+                            height: '100%',
+                            position: 'absolute',
+                            top: 0,
+                            display: (o.alwaysVisible && o.railVisible) ? 'block' : 'none',
+                            'border-radius': o.railBorderRadius,
+                            background: o.railColor,
+                            opacity: o.railOpacity,
+                            zIndex: 90
+                        });
 
                     // create scrollbar
                     var bar = $(divS)
-                      .addClass(o.barClass)
-                      .css({
-                          background: o.color,
-                          width: o.size,
-                          position: 'absolute',
-                          top: 0,
-                          opacity: o.opacity,
-                          display: o.alwaysVisible ? 'block' : 'none',
-                          'border-radius': o.borderRadius,
-                          BorderRadius: o.borderRadius,
-                          MozBorderRadius: o.borderRadius,
-                          WebkitBorderRadius: o.borderRadius,
-                          zIndex: 99
-                      });
+                        .addClass(o.barClass)
+                        .css({
+                            background: o.color,
+                            width: o.size,
+                            position: 'absolute',
+                            top: 0,
+                            opacity: o.opacity,
+                            display: o.alwaysVisible ? 'block' : 'none',
+                            'border-radius': o.borderRadius,
+                            BorderRadius: o.borderRadius,
+                            MozBorderRadius: o.borderRadius,
+                            WebkitBorderRadius: o.borderRadius,
+                            zIndex: 99
+                        });
 
                     // set position
                     var posCss = (o.position == 'right') ? { right: o.distance } : { left: o.distance };

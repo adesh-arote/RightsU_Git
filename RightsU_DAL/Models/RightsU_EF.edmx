@@ -764,6 +764,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Last_updated_Time" Type="datetime" />
           <Property Name="Channel_Type" Type="char" MaxLength="1" />
           <Property Name="Channel_Category_Code" Type="int" />
+          <Property Name="Start_Date" Type="datetime" />
+          <Property Name="End_Date" Type="datetime" />
         </EntityType>
         <EntityType Name="Acq_Deal_Run_Channel">
           <Key>
@@ -782,6 +784,15 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Inserted_On" Type="datetime" />
           <Property Name="Last_action_By" Type="int" />
           <Property Name="Last_updated_Time" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Acq_Deal_Run_LP">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Run_MultiYear_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Run_MultiYear_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Acq_Deal_Run_Code" Type="int" />
+          <Property Name="Year_Start" Type="datetime" />
+          <Property Name="Year_End" Type="datetime" />
         </EntityType>
         <EntityType Name="Acq_Deal_Run_Repeat_On_Day">
           <Key>
@@ -6690,6 +6701,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Acq_Deal_Rights_Promoter_Remarks">
               <PropertyRef Name="Acq_Deal_Rights_Promoter_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__Acq_Deal___Acq_D__5888AE08">
+          <End Role="Acq_Deal_Run" Type="Self.Acq_Deal_Run" Multiplicity="0..1" />
+          <End Role="Acq_Deal_Run_LP" Type="Self.Acq_Deal_Run_LP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Run">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Run_LP">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -15674,6 +15697,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Parameter Name="Episode_To" Type="int" Mode="In" />
           <Parameter Name="CheckFor" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="USP_Validate_LP" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Deal_Code" Type="int" Mode="In" />
+          <Parameter Name="Title_Code" Type="varchar(max)" Mode="In" />
+          <Parameter Name="EpsFrom" Type="int" Mode="In" />
+          <Parameter Name="EpsTo" Type="int" Mode="In" />
+          <Parameter Name="Module_Code" Type="int" Mode="In" />
+        </Function>
         <Function Name="USP_Validate_RIGHT_FOR_RUN" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ACQ_DEAL_CODE" Type="int" Mode="In" />
         </Function>
@@ -15976,6 +16006,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Acq_Deal_Rights_Title" EntityType="Self.Acq_Deal_Rights_Title" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Run" EntityType="Self.Acq_Deal_Run" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Run_Channel" EntityType="Self.Acq_Deal_Run_Channel" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Acq_Deal_Run_LP" EntityType="Self.Acq_Deal_Run_LP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Run_Repeat_On_Day" EntityType="Self.Acq_Deal_Run_Repeat_On_Day" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Run_Shows" EntityType="Self.Acq_Deal_Run_Shows" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Run_Title" EntityType="Self.Acq_Deal_Run_Title" Schema="dbo" store:Type="Tables" />
@@ -16953,6 +16984,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK__Acq_Deal___Acq_D__548D349B" Association="Self.FK__Acq_Deal___Acq_D__548D349B">
             <End Role="Acq_Deal_Rights_Promoter" EntitySet="Acq_Deal_Rights_Promoter" />
             <End Role="Acq_Deal_Rights_Promoter_Remarks" EntitySet="Acq_Deal_Rights_Promoter_Remarks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__Acq_Deal___Acq_D__5888AE08" Association="Self.FK__Acq_Deal___Acq_D__5888AE08">
+            <End Role="Acq_Deal_Run" EntitySet="Acq_Deal_Run" />
+            <End Role="Acq_Deal_Run_LP" EntitySet="Acq_Deal_Run_LP" />
           </AssociationSet>
           <AssociationSet Name="FK__Acq_Deal___Promo__51B0C7F0" Association="Self.FK__Acq_Deal___Promo__51B0C7F0">
             <End Role="Promoter_Group" EntitySet="Promoter_Group" />
@@ -23758,6 +23793,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Poster_Status" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Master_Log" EntityType="RightsU_NeoModel.Master_Log" />
+          <EntitySet Name="Acq_Deal_Run_LP" EntityType="RightsU_NeoModel.Acq_Deal_Run_LP" />
+          <AssociationSet Name="FK__Acq_Deal___Acq_D__5888AE08" Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08">
+            <End Role="Acq_Deal_Run" EntitySet="Acq_Deal_Run" />
+            <End Role="Acq_Deal_Run_LP" EntitySet="Acq_Deal_Run_LP" />
+          </AssociationSet>
+          <FunctionImport Name="USP_Validate_LP" ReturnType="Collection(RightsU_NeoModel.USP_Validate_LP_Result)">
+            <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="String" />
+            <Parameter Name="EpsFrom" Mode="In" Type="Int32" />
+            <Parameter Name="EpsTo" Mode="In" Type="Int32" />
+            <Parameter Name="Module_Code" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -24203,6 +24250,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Last_updated_Time" Type="DateTime" Precision="3" />
           <Property Name="Channel_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Channel_Category_Code" Type="Int32" />
+          <NavigationProperty Name="Acq_Deal_Run_LP" Relationship="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" FromRole="Acq_Deal_Run" ToRole="Acq_Deal_Run_LP" />
+          <Property Name="Start_Date" Type="DateTime" Precision="3" />
+          <Property Name="End_Date" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Acq_Deal_Run_Channel">
           <Key>
@@ -40735,6 +40785,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Action_On" Type="DateTime" Precision="3" />
           <Property Name="Action_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Acq_Deal_Run_LP">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Run_MultiYear_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Run_MultiYear_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acq_Deal_Run_Code" Type="Int32" />
+          <Property Name="Year_Start" Type="DateTime" Precision="3" />
+          <Property Name="Year_End" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Acq_Deal_Run" Relationship="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" FromRole="Acq_Deal_Run_LP" ToRole="Acq_Deal_Run" />
+        </EntityType>
+        <Association Name="FK__Acq_Deal___Acq_D__5888AE08">
+          <End Type="RightsU_NeoModel.Acq_Deal_Run" Role="Acq_Deal_Run" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Run_LP" Role="Acq_Deal_Run_LP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Run">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Run_LP">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_Validate_LP_Result">
+          <Property Type="Int32" Name="RowID" Nullable="false" />
+          <Property Type="Int32" Name="Acq_Deal_Rights_Code" Nullable="false" />
+          <Property Type="DateTime" Name="RightsStartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="RightsEndDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="DtDiff" Nullable="false" />
+          <Property Type="String" Name="DtType" Nullable="false" MaxLength="1" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -41242,6 +41322,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Acq_Deal_Run">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Run">
               <MappingFragment StoreEntitySet="Acq_Deal_Run">
+                <ScalarProperty Name="End_Date" ColumnName="End_Date" />
+                <ScalarProperty Name="Start_Date" ColumnName="Start_Date" />
                 <ScalarProperty Name="Channel_Category_Code" ColumnName="Channel_Category_Code" />
                 <ScalarProperty Name="Channel_Type" ColumnName="Channel_Type" />
                 <ScalarProperty Name="Last_updated_Time" ColumnName="Last_updated_Time" />
@@ -51393,6 +51475,28 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Acq_Deal_Run_LP">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Run_LP">
+              <MappingFragment StoreEntitySet="Acq_Deal_Run_LP">
+                <ScalarProperty Name="Year_End" ColumnName="Year_End" />
+                <ScalarProperty Name="Year_Start" ColumnName="Year_Start" />
+                <ScalarProperty Name="Acq_Deal_Run_Code" ColumnName="Acq_Deal_Run_Code" />
+                <ScalarProperty Name="Acq_Deal_Run_MultiYear_Code" ColumnName="Acq_Deal_Run_MultiYear_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Validate_LP" FunctionName="RightsU_NeoModel.Store.USP_Validate_LP">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Validate_LP_Result">
+                <ScalarProperty Name="RowID" ColumnName="RowID" />
+                <ScalarProperty Name="Acq_Deal_Rights_Code" ColumnName="Acq_Deal_Rights_Code" />
+                <ScalarProperty Name="RightsStartDate" ColumnName="RightsStartDate" />
+                <ScalarProperty Name="RightsEndDate" ColumnName="RightsEndDate" />
+                <ScalarProperty Name="DtDiff" ColumnName="DtDiff" />
+                <ScalarProperty Name="DtType" ColumnName="DtType" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -51407,8 +51511,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="False" />
-        <DesignerProperty Name="IncludeForeignKeysInModel" Value="False" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />
       </DesignerInfoPropertySet>

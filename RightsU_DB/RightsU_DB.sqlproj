@@ -1742,6 +1742,8 @@
     <Build Include="dbo\Tables\Master_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Bind_Extend_Column_Grid.sql" />
     <Build Include="dbo\Stored Procedures\USP_API_Title_List.sql" />
+    <Build Include="dbo\Stored Procedures\USP_Validate_LP.sql" />
+    <Build Include="dbo\Tables\Acq_Deal_Run_LP.sql" />
     <Build Include="dbo\Functions\UFN_Calculate_PartyId.sql" />
   </ItemGroup>
   <ItemGroup>
@@ -1761,5 +1763,6 @@
     <None Include="Database Scripts\DBSchema_v5.0.14.sql" />
     <None Include="Database Scripts\DBConfig_v5.0.14.sql" />
     <None Include="Database Scripts\Script1.sql" />
+    <None Include="Database Scripts\Script2.sql" />
   </ItemGroup>
 </Project>

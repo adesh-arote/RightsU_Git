@@ -104,6 +104,17 @@ namespace RightsU_Plus.Controllers
             set { Session[RightsU_Session.ACQ_DEAL_SCHEMA] = value; }
         }
 
+        private List<MatrixData> lstMatrixDataFinal
+        {
+            get
+            {
+                if (Session["lstMatrixDataFinal"] == null)
+                    Session["lstMatrixDataFinal"] = new List<MatrixData>();
+                return (List<MatrixData>)Session["lstMatrixDataFinal"];
+            }
+            set { Session["lstMatrixDataFinal"] = value; }
+        }
+
         //public string Message
         //{
         //    get
@@ -154,6 +165,8 @@ namespace RightsU_Plus.Controllers
                 if (id > 0)
                 {
                     objAcq_Deal_Run = objADRS.GetById(id);
+
+                    var a = objAcq_Deal_Run.Acq_Deal_Run_LP.ToList();
                     objDealMovieRightsRun_PageLevel.Acq_Deal_Run_Yearwise_Run = objAcq_Deal_Run.Acq_Deal_Run_Yearwise_Run;
 
                     if (objAcq_Deal_Run.Prime_Run > 0)
@@ -197,6 +210,8 @@ namespace RightsU_Plus.Controllers
                     ViewBag.Record_Locking_Code = objDeal_Schema.Record_Locking_Code;
                 else
                     ViewBag.Record_Locking_Code = 0;
+
+                ViewBag.AllowPeriodInRunDefinition =  new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AllowPeriodInRunDefinition").Select(x => x.Parameter_Value).FirstOrDefault();
 
                 Session["FileName"] = "";
                 Session["FileName"] = "acq_RunDefinition.html";
@@ -833,10 +848,154 @@ namespace RightsU_Plus.Controllers
 
             Deleted_Acq_Deal_Run_Title.ToList<Acq_Deal_Run_Title>().ForEach(t => t.EntityState = State.Deleted);
         }
-        public JsonResult Save(Acq_Deal_Run objRun, List<Acq_Deal_Run_Yearwise_Run> lstYearwiseRun, string[] lbChannel, string lbChannelCluster, string ddlPrimaryChannel, string ddlPrimaryChannelCluster, string[] ddlPTitle,
-           string Is_Prime_OffPrime_Defn, string Prime_Start_Time, string Prime_End_Time, string Prime_Run, string Off_Prime_Start_Time, string Off_Prime_End_Time, string Off_Prime_Run
-            , string txtTimeLag, string hdnDays, string hdnIs_Channel_Definition_Rights, string hdnIs_Yearwise_Definition, string hdnTabName = "")
+        public JsonResult Save(Acq_Deal_Run objRun, FormCollection objFormCollection, List<Acq_Deal_Run_Yearwise_Run> lstYearwiseRun, string[] lbChannel, string lbChannelCluster, string ddlPrimaryChannel, string ddlPrimaryChannelCluster, string[] ddlPTitle,
+          string Is_Prime_OffPrime_Defn, string Prime_Start_Time, string Prime_End_Time, string Prime_Run, string Off_Prime_Start_Time, string Off_Prime_End_Time, string Off_Prime_Run
+           , string txtTimeLag, string hdnDays, string hdnIs_Channel_Definition_Rights, string hdnIs_Yearwise_Definition, string hdnTabName = "")
         {
+            bool IsValidRunPeriod = true;
+            string Deal_Type_Condition = GlobalUtil.GetDealTypeCondition(objAcq_Deal.Deal_Type_Code.Value);
+            DateTime MinStartDate = DateTime.Now, MaxEndDate = DateTime.Now;
+            string MinMaxPeriod = objFormCollection["ddlPeriod"];
+            if (MinMaxPeriod != null)
+            {
+                IsValidRunPeriod = ValidateRunPeriod(MinMaxPeriod);
+
+                string[] lstMinMaxPeriod = MinMaxPeriod.Split(',');
+                var lstPeriodRange = lstMinMaxPeriod.Select(s => s.Split('~')).ToList();
+
+                List<DateTime> DT = new List<DateTime>();
+                foreach (var item in lstPeriodRange)
+                {
+                    foreach (var it in item)
+                    {
+                        DT.Add(Convert.ToDateTime(it));
+                    }
+                }
+
+
+                MinStartDate = DT.Min();
+                MaxEndDate = DT.Max();
+            }
+            else if (hdnIs_Yearwise_Definition == "Y")
+            {
+                List<DateTime> DTNew = new List<DateTime>();
+
+                MinStartDate = lstYearwiseRun.Select(s => Convert.ToDateTime(s.Start_Date_Str)).Min();
+                MaxEndDate = lstYearwiseRun.Select(s => Convert.ToDateTime(s.End_Date_Str)).Max();
+                //foreach (var item in lstYearwiseRun)
+                //{
+                //    DTNew.Add();
+                //}
+            }
+            else
+            {
+                if (Deal_Type_Condition == GlobalParams.Deal_Program || Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    arrobjAcqDealRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == objAcq_Deal.Acq_Deal_Code).ToList();
+                    string[] arrayCodes = ddlPTitle;
+                    string dtSDate =
+                                           (
+                                              from Acq_Deal_Rights objDMR in arrobjAcqDealRights
+                                              from Acq_Deal_Movie objTL in objAcq_Deal.Acq_Deal_Movie
+                                              from Acq_Deal_Rights_Title objDMRT in objDMR.Acq_Deal_Rights_Title
+                                              where arrayCodes.Contains(objTL.Acq_Deal_Movie_Code.ToString()) && objTL.Title_Code == objDMRT.Title_Code
+                                              && objTL.Episode_Starts_From == objDMRT.Episode_From && objTL.Episode_End_To == objDMRT.Episode_To
+                                              select objDMR.Right_Start_Date
+                                          ).Min().ToString();
+
+                    string dtEDate =
+                                       (
+                                           from Acq_Deal_Rights objDMR in arrobjAcqDealRights
+                                           from Acq_Deal_Movie objTL in objAcq_Deal.Acq_Deal_Movie
+                                           from Acq_Deal_Rights_Title objDMRT in objDMR.Acq_Deal_Rights_Title
+                                           where arrayCodes.Contains(objTL.Acq_Deal_Movie_Code.ToString()) && objTL.Title_Code == objDMRT.Title_Code
+                                           && objTL.Episode_Starts_From == objDMRT.Episode_From && objTL.Episode_End_To == objDMRT.Episode_To
+                                           select objDMR.Right_End_Date
+                                      ).Max().ToString();
+
+                    MinStartDate = Convert.ToDateTime(dtSDate);
+                    MaxEndDate = Convert.ToDateTime(dtEDate);
+
+                    string JoinTitCode = String.Join(",", ddlPTitle);
+                    IsValidRunPeriod = ValidateTitles(JoinTitCode);
+                }
+                else
+                {
+                    arrobjAcqDealRights = new Acq_Deal_Rights_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Acq_Deal_Code == objAcq_Deal.Acq_Deal_Code).ToList();
+                    string[] arrayCodes = ddlPTitle;
+                    string dtSDate =
+                                               (
+                                                   from Acq_Deal_Rights objDMR in arrobjAcqDealRights
+                                                   from Acq_Deal_Rights_Title objDMRT in objDMR.Acq_Deal_Rights_Title
+                                                   from Acq_Deal_Rights_Platform objDMRP in objDMR.Acq_Deal_Rights_Platform
+                                                   where arrayCodes.Contains(objDMRT.Title_Code.ToString()) && CheckPlatformForRun(objDMRP.Platform_Code.Value)
+                                                   select objDMR.Right_Start_Date
+                                               ).Min().ToString();
+
+                    string dtEDate =
+                                        (
+                                                  from Acq_Deal_Rights objDMR in arrobjAcqDealRights
+                                                  from Acq_Deal_Rights_Title objDMRT in objDMR.Acq_Deal_Rights_Title
+                                                  from Acq_Deal_Rights_Platform objDMRP in objDMR.Acq_Deal_Rights_Platform
+                                                  where arrayCodes.Contains(objDMRT.Title_Code.ToString()) && CheckPlatformForRun(objDMRP.Platform_Code.Value)
+                                                  select objDMR.Right_End_Date
+                                              ).Max().ToString();
+                    MinStartDate = Convert.ToDateTime(dtSDate);
+                    MaxEndDate = Convert.ToDateTime(dtEDate);
+
+                    string JoinTitCode = String.Join(",", ddlPTitle);
+                    IsValidRunPeriod = ValidateTitles(JoinTitCode);
+                }
+            }
+
+
+            string RunDefType = objFormCollection["Run_Definition_Type"];
+
+            if (RunDefType == "S" || RunDefType == "N")
+            {
+                lstMatrixDataFinal.Clear();
+            }
+
+            string validMatrix = "", validChannelYear = "";
+            if (hdnIs_Yearwise_Definition == "Y" && objRun.Acq_Deal_Run_Channel.ToList().Count > 0)
+            {
+
+                if (lstMatrixDataFinal.Count == 0 && objRun.Acq_Deal_Run_Code == 0 && RunDefType == "C")
+                {
+                    validMatrix = "M";
+                }
+                //if (lstMatrixDataFinal.Count == 0 && objRun.Acq_Deal_Run_Code > 0)
+                //{
+                //    validMatrix = "Edit";
+                //}
+            }
+            if (hdnIs_Yearwise_Definition == "Y" && objRun.Acq_Deal_Run_Channel.ToList().Count > 0 && RunDefType == GlobalParams.CHANNEL_WISE && lstMatrixDataFinal.Count == 0)
+            {
+                validMatrix = "M";
+            }
+            else if (hdnIs_Yearwise_Definition == "Y" && objRun.Acq_Deal_Run_Channel.ToList().Count > 0)
+            {
+                validChannelYear = ValidateRunWithMatrix(lstYearwiseRun, objRun.Acq_Deal_Run_Channel.ToList(), lstMatrixDataFinal);
+            }
+            else
+            {
+                validChannelYear = "true";
+
+            }
+            if (objDeal_Schema.Deal_Type_Condition == "SPORTSTYPE")
+            {
+                List<RightsU_Entities.Channel> lstChannel = new Channel_Service(objLoginEntity.ConnectionStringName).SearchFor(c => lbChannel.Contains(c.Channel_Code.ToString())).ToList();
+
+                foreach (RightsU_Entities.Channel objChannel in lstChannel)
+                {
+                    Acq_Deal_Run_Channel objDRRunChannel = new Acq_Deal_Run_Channel();
+                    objDRRunChannel.Channel_Code = objChannel.Channel_Code;
+                    objDRRunChannel.ChannelNames = objChannel.Channel_Name;
+                    objDRRunChannel.EntityState = State.Added;
+                    objRun.Acq_Deal_Run_Channel.Add(objDRRunChannel);
+                }
+            }
+
             List<USP_Validate_Run_UDT> lstUSP_Validate_Run_UDT = ValidateRunWithScheduleRun(ddlPTitle, hdnIs_Yearwise_Definition, lstYearwiseRun, hdnIs_Channel_Definition_Rights, objRun.Acq_Deal_Run_Channel.ToList());
 
             if (lstUSP_Validate_Run_UDT.Count == 0)
@@ -851,7 +1010,7 @@ namespace RightsU_Plus.Controllers
                     objAcq_Deal_Run = objADRS.GetById(objRun.Acq_Deal_Run_Code);
                 }
 
-                string Deal_Type_Condition = GlobalUtil.GetDealTypeCondition(((Deal_Schema)Session[RightsU_Session.ACQ_DEAL_SCHEMA]).Deal_Type_Code);
+                //string Deal_Type_Condition = GlobalUtil.GetDealTypeCondition(((Deal_Schema)Session[RightsU_Session.ACQ_DEAL_SCHEMA]).Deal_Type_Code);
                 List<string> strTitleCodes = ddlPTitle.ToList();
 
                 int Count = 0;
@@ -944,6 +1103,9 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Run.Channel_Category_Code = Convert.ToInt32(lbChannelCluster);
                     else
                         objAcq_Deal_Run.Channel_Category_Code = null;
+
+                    objAcq_Deal_Run.Start_Date = MinStartDate;
+                    objAcq_Deal_Run.End_Date = MaxEndDate;
 
                     #region -- SAVE PRIME/OFF-PRIME DETAILS
 
@@ -1231,7 +1393,69 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Run.Acq_Deal_Run_Channel.ToList().ForEach(t => t.EntityState = State.Deleted);
                     }
 
+                    #region ---- Acq_Deal_Run_LP
 
+                   
+
+                    string period = objFormCollection["ddlPeriod"];
+                    ICollection<Acq_Deal_Run_LP> selectedLP = new HashSet<Acq_Deal_Run_LP>();
+                    if (period != null)
+                    {
+                        string[] lstPeriod = period.Split(',');
+                        foreach (string item in lstPeriod)
+                        {
+                            Acq_Deal_Run_LP objRunLP = new Acq_Deal_Run_LP();
+                            string[] SDED = item.Split('~');
+                            DateTime SDATE = Convert.ToDateTime(SDED[0]);
+                            DateTime EDATE = Convert.ToDateTime(SDED[1]);
+                            objRunLP.Acq_Deal_Run_Code = objRun.Acq_Deal_Run_Code;
+                            objRunLP.Year_Start = SDATE;
+                            objRunLP.Year_End = EDATE;
+                            objRunLP.EntityState = State.Added;
+                            selectedLP.Add(objRunLP);
+                        }
+                    }
+                    else
+                    {
+                        if (lstYearwiseRun != null)
+                            foreach (Acq_Deal_Run_Yearwise_Run objRunYearWise in lstYearwiseRun)
+                            {
+                                Acq_Deal_Run_LP objRunLPN = new Acq_Deal_Run_LP();
+                                if (objRunYearWise.Start_Date_Str != null)
+                                    objRunLPN.Year_Start = Convert.ToDateTime(objRunYearWise.Start_Date_Str);
+                                if (objRunYearWise.End_Date_Str != null)
+                                    objRunLPN.Year_End = Convert.ToDateTime(objRunYearWise.End_Date_Str);
+                                objRunLPN.Acq_Deal_Run_Code = objRun.Acq_Deal_Run_Code;
+                                objRunLPN.EntityState = State.Added;
+                                selectedLP.Add(objRunLPN);
+                            }
+                        else
+                        {
+                            string TITCODE = String.Join(",", ddlPTitle);
+                            var PDATE = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_LP(objDeal_Schema.Deal_Code, TITCODE, 1, 1, 30).ToList();
+
+                            foreach (var item in PDATE)
+                            {
+                                Acq_Deal_Run_LP objRunLPD = new Acq_Deal_Run_LP();
+                                objRunLPD.Year_Start = Convert.ToDateTime(item.RightsStartDate);
+                                objRunLPD.Year_End = Convert.ToDateTime(item.RightsEndDate);
+                                objRunLPD.Acq_Deal_Run_Code = objRun.Acq_Deal_Run_Code;
+                                objRunLPD.EntityState = State.Added;
+                                selectedLP.Add(objRunLPD);
+                            }
+
+                        }
+
+                    }
+                    IEqualityComparer<Acq_Deal_Run_LP> ComparerLP = new LambdaComparer<Acq_Deal_Run_LP>((x, y) => x.Year_Start == y.Year_Start && x.Year_End == y.Year_End && x.EntityState != State.Deleted);
+                    var Deleted_Deal_Run_LP = new List<Acq_Deal_Run_LP>();
+                    var Updated_Deal_Run_LP = new List<Acq_Deal_Run_LP>();
+                    var Added_Deal_Run_LP = CompareLists<Acq_Deal_Run_LP>(selectedLP.ToList(), objAcq_Deal_Run.Acq_Deal_Run_LP.ToList(), ComparerLP, ref Deleted_Deal_Run_LP, ref Updated_Deal_Run_LP);
+
+                    Added_Deal_Run_LP.ToList<Acq_Deal_Run_LP>().ForEach(t => objAcq_Deal_Run.Acq_Deal_Run_LP.Add(t));
+                    Deleted_Deal_Run_LP.ToList<Acq_Deal_Run_LP>().ForEach(t => t.EntityState = State.Deleted);
+
+                    #endregion --- Acq_Deal_Run_LP
 
                     if (objAcq_Deal_Run.Acq_Deal_Run_Code > 0)
                     {
@@ -1246,6 +1470,14 @@ namespace RightsU_Plus.Controllers
                         objAcq_Deal_Run.Inserted_By = objLoginUser.Users_Code;
                         objAcq_Deal_Run.EntityState = State.Added;
                         Message = objMessageKey.RunDefinitionAddedSuccessfully;
+                    }
+
+                    string IsPeriodAllowedInRunDef = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AllowPeriodInRunDefinition").Select(x => x.Parameter_Value).FirstOrDefault().ToString();
+
+                    if (IsPeriodAllowedInRunDef == "N")
+                    {
+                        objAcq_Deal_Run.Start_Date = null;
+                        objAcq_Deal_Run.End_Date = null;
                     }
 
                     objADRS.Save(objAcq_Deal_Run, out resultSet);
@@ -1276,7 +1508,7 @@ namespace RightsU_Plus.Controllers
                     List<USP_List_Acq_Linear_Title_Status_Result> lst = new USP_Service(objLoginEntity.ConnectionStringName)
                                                                  .USP_List_Acq_Linear_Title_Status(objDeal_Schema.Deal_Code).ToList();
 
-                    int RunPending = DealCompleteFlag.Replace(" ","") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
+                    int RunPending = DealCompleteFlag.Replace(" ", "") == "R,R" || DealCompleteFlag.Replace(" ", "") == "R,R,C" ? lst.Where(x => x.Title_Added == "Yes~").Count() : 0;
                     int RightsPending = lst.Where(x => x.Title_Added == "No").Count();
 
                     if (RunPending > 0 && RightsPending > 0)
@@ -1436,6 +1668,108 @@ namespace RightsU_Plus.Controllers
             return true;
         }
 
+        public string ValidateRunWithMatrix(List<Acq_Deal_Run_Yearwise_Run> lstYearwiseRun, List<Acq_Deal_Run_Channel> lstChannel, List<MatrixData> lstMatrix)
+        {
+            string channelValid = "", yearValid = "", valid = "true";
+            #region Fill Run Yearwise UDT
+            List<Deal_Run_Yearwise_Run_UDT> lstDeal_Run_Yearwise_Run = new List<Deal_Run_Yearwise_Run_UDT>();
+
+            if (lstYearwiseRun != null)
+            {
+                lstYearwiseRun.ForEach(y =>
+                {
+                    if (y.Start_Date_Str != null && y.End_Date_Str != null)
+                    {
+                        Deal_Run_Yearwise_Run_UDT objYRun = new Deal_Run_Yearwise_Run_UDT();
+                        objYRun.Start_Date = Convert.ToDateTime(y.Start_Date_Str);
+                        objYRun.End_Date = Convert.ToDateTime(y.End_Date_Str);
+                        objYRun.No_Of_Runs = y.No_Of_Runs;
+                        objYRun.Deal_Run_Code = y.Acq_Deal_Run_Code;
+                        lstDeal_Run_Yearwise_Run.Add(objYRun);
+                    }
+                });
+            }
+
+            #endregion
+            #region Fill Run Channel UDT
+            List<Deal_Run_Channel_UDT> lstDeal_Run_Channel = new List<Deal_Run_Channel_UDT>();
+
+            lstChannel.ForEach(c =>
+            {
+                Deal_Run_Channel_UDT objDRunChnl = new Deal_Run_Channel_UDT();
+                objDRunChnl.Channel_Code = c.Channel_Code;
+                objDRunChnl.Min_Runs = c.Min_Runs;
+                objDRunChnl.Inserted_By = c.Inserted_By;
+                objDRunChnl.Last_action_By = c.Last_action_By;
+                objDRunChnl.Deal_Run_Code = objAcq_Deal_Run.Acq_Deal_Run_Code;
+                lstDeal_Run_Channel.Add(objDRunChnl);
+            });
+
+
+            #endregion
+            #region Fill Matrix Data
+            List<MatrixData> lstMatrixRun = new List<MatrixData>();
+            lstMatrix.ForEach(m =>
+            {
+                MatrixData objData = new MatrixData();
+                objData.acqDealRunCode = m.acqDealRunCode;
+                objData.Start_Date = m.Start_Date;
+                objData.End_Date = m.End_Date;
+                objData.Channel_Code = m.Channel_Code;
+                objData.Channel_Name = m.Channel_Name;
+                objData.Runs = m.Runs;
+                lstMatrixRun.Add(objData);
+
+            });
+            #endregion
+
+            List<MatrixData> result = lstMatrixDataFinal.GroupBy(l => l.Channel_Code).Select(cl => new MatrixData
+            {
+                Channel_Code = cl.First().Channel_Code,
+                Runs = cl.Sum(c => c.Runs),
+            }).ToList();
+
+            List<MatrixData> resultYear = lstMatrixDataFinal.GroupBy(l => l.Start_Date).Select(cl => new MatrixData
+            {
+                Start_Date = cl.First().Start_Date,
+                Runs = cl.Sum(c => c.Runs),
+            }).ToList();
+            foreach (var item in result)
+            {
+                foreach (var channel in lstDeal_Run_Channel)
+                {
+                    if (channel.Channel_Code == item.Channel_Code)
+                    {
+                        if (channel.Min_Runs != item.Runs)
+                        {
+                            valid = "C";
+                            channelValid = "C";
+                        }
+                    }
+                }
+            }
+            foreach (var item in resultYear)
+            {
+                foreach (var year in lstYearwiseRun)
+                {
+                    if (year.Start_Date_Str == item.Start_Date.ToString("dd/MM/yyyy"))
+                    {
+                        if (year.No_Of_Runs != item.Runs)
+                        {
+                            valid = "Y";
+                            yearValid = "Y";
+                        }
+                    }
+                }
+            }
+            if (channelValid != "" && yearValid != "")
+            {
+                valid = "CY";
+            }
+
+            return valid;
+
+        }
         public JsonResult ValidateTitleOnSave(int Acq_Deal_Run_Code, string titleCodes)
         {
             string invalidMessage = "Valid";
@@ -1613,6 +1947,127 @@ namespace RightsU_Plus.Controllers
             {
             }
             return "";
+        }
+
+        public JsonResult CalcRunLP(string TitleCode)
+        {
+            string selectedValue = "";
+            string Deal_Type_Condition = GlobalUtil.GetDealTypeCondition(objAcq_Deal.Deal_Type_Code.Value);
+            if (TitleCode == "0" && objDeal_Schema.Mode != "A")
+            {
+                if (Deal_Type_Condition == GlobalParams.Deal_Program || Deal_Type_Condition == GlobalParams.Deal_Music)
+                {
+                    TitleCode = (from objTitle in objAcq_Deal_Run.Acq_Deal_Run_Title
+                                 from objDealMovie in objAcq_Deal.Acq_Deal_Movie
+                                 where objDealMovie.Title_Code == objTitle.Title_Code && objDealMovie.Episode_Starts_From == objTitle.Episode_From
+                                 && objDealMovie.Episode_End_To == objTitle.Episode_To
+                                 select objDealMovie.Acq_Deal_Movie_Code.ToString()).FirstOrDefault();
+                }
+                //else if (Deal_Type_Condition == GlobalParams.SPORTSTYPE)
+                //{
+                //    TitleCode = objAcq_Deal_Run.Acq_Deal_Run_Title.Select(s => s.Acq_Deal_Movie_Code.ToString()).FirstOrDefault();
+                //}
+                else
+                    TitleCode = objAcq_Deal_Run.Acq_Deal_Run_Title.Select(s => s.Title_Code.ToString()).FirstOrDefault();
+            }
+            //int titleCd = Convert.ToInt32(TitleCode);
+            var PeriodRange = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_LP(objDeal_Schema.Deal_Code, TitleCode, 1, 1, 30).ToList();
+            Dictionary<string, object> obj = new Dictionary<string, object>();
+            List<PeriodRange> lstPeriodRanges = new List<PeriodRange>();
+            foreach (var item in PeriodRange)
+            {
+                PeriodRange objPR = new PeriodRange();
+
+                string startDT = item.RightsStartDate.ToString("dd-MMM-yyyy");
+                string endDT = item.RightsEndDate.ToString("dd-MMM-yyyy");
+                //DateTime d = DateTime.Now;
+                //string s = d.ToString("dd/MM/yyyy");
+                objPR.PeriodCode = item.RightsStartDate + "~" + item.RightsEndDate;
+                objPR.PeriodText = startDT + " - " + endDT;
+                lstPeriodRanges.Add(objPR);
+            }
+            if (objAcq_Deal_Run.Acq_Deal_Run_Code > 0)
+            {
+                string YearStart = ""; string YearEnd = "";
+                List<string> SelectedPeriod = new List<string>();
+                List<Acq_Deal_Run_LP> objADRL = objAcq_Deal_Run.Acq_Deal_Run_LP.ToList();
+                List<Acq_Deal_Run_Yearwise_Run> objADRYR = objAcq_Deal_Run.Acq_Deal_Run_Yearwise_Run.ToList();
+                if (objAcq_Deal_Run.Is_Yearwise_Definition == "Y")
+                {
+                    selectedValue = String.Join(",", objADRYR.Select(s => s.Start_Date).Min() + "~" + objADRYR.Select(w => w.End_Date).Max());
+                }
+                else
+                {
+                    foreach (var item in objADRL)
+                    {
+                        selectedValue += String.Join(",", item.Year_Start + "~" + item.Year_End) + ",";
+                    }
+                }
+            }
+            //PeriodRange.Select(s => s.RightsStartDate);
+
+            obj.Add("Period_List", new SelectList(lstPeriodRanges, "PeriodCode", "PeriodText"));
+            obj.Add("SelectedPeriod", selectedValue);
+
+            return Json(obj);
+        }
+
+        public bool ValidateRunPeriod(string MinMaxPeriods)
+        {
+            bool ReturnString = true; int Diff = 0;
+            DateTime PrevDate, NextDate;
+            string[] lstMinMaxPeriods = MinMaxPeriods.Split(',');
+            var lstPeriodRanges = lstMinMaxPeriods.Select(s => s.Split('~')).ToList();
+
+            List<DateValidation> lstDV = new List<DateValidation>();
+            for (int i = 0; i < lstPeriodRanges.Count(); i++)
+            {
+                DateValidation DV = new DateValidation();
+                DV.startDate = Convert.ToDateTime(lstPeriodRanges[i][0]);
+                DV.endDate = Convert.ToDateTime(lstPeriodRanges[i][1]);
+                lstDV.Add(DV);
+            }
+            int CNT = 0;
+
+            for (int i = 0; i < lstDV.Count(); i++)
+            {
+                if (CNT > 0)
+                {
+                    PrevDate = lstDV[i - 1].endDate;
+                    NextDate = lstDV[i].startDate;
+                    Diff = Convert.ToInt32((NextDate - PrevDate).TotalDays);
+                    if (Diff > 1)
+                    {
+                        ReturnString = false;
+                        break;
+                    }
+                }
+                CNT++;
+            }
+            return ReturnString;
+        }
+        public class MatrixData
+        {
+            public int acqDealRunCode { get; set; }
+            public DateTime Start_Date { get; set; }
+            public DateTime End_Date { get; set; }
+            public string Channel_Name { get; set; }
+            public int Channel_Code { get; set; }
+            public string Yearwise { get; set; }
+            public int Runs { get; set; }
+
+        }
+        public class PeriodRange
+        {
+            public string PeriodCode { get; set; }
+            public string PeriodText { get; set; }
+        }
+        public class DateValidation
+        {
+            public DateTime startDate { get; set; }
+            public DateTime endDate { get; set; }
+            public int DateDiff { get; set; }
+            public string Flag { get; set; }
         }
 
     }
