@@ -7267,18 +7267,28 @@ namespace RightsU_BLL
         }
         public override bool Validate(Attrib_Group objToValidate, out dynamic resultSet)
         {
-            resultSet = "";
-            return true;
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Attrib_Group objToValidate, out dynamic resultSet)
         {
-            resultSet = "";
-            return true;
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Attrib_Group objToValidate, out dynamic resultSet)
         {
+            resultSet = "";
+            return true;
+        }
+     
+        private bool ValidateDuplicate(Attrib_Group objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Attrib_Group_Name.ToUpper().Trim() == objToValidate.Attrib_Group_Name.ToUpper().Trim() && s.Attrib_Group_Code != objToValidate.Attrib_Group_Code).Count() > 0)
+            {
+                resultSet = "Attrib Group Name already exists";
+                return false;
+            }
+
             resultSet = "";
             return true;
         }

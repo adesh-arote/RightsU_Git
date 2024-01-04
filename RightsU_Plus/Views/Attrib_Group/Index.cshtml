@@ -1,0 +1,483 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+    var IsCall = 'Y', sort_Type = "NA", isMultiSelect = "N";
+    var URL_BindAttribGroupList = '@Url.Action("BindAttribGroup_List", "Attrib_Group")';
+    var URL_SearchAttribGroup = '@Url.Action("SearchAttribGroup", "Attrib_Group")';
+    var URL_SaveAttribGroup = '@Url.Action("SaveAttribGroup", "Attrib_Group")';
+    var URL_EditAttribGroup = '@Url.Action("EditAttribGroup", "Attrib_Group")';
+    var URL_ActiveDeactiveAttribGroup = '@Url.Action("ActiveDeactiveAttribGroup", "Attrib_Group")';
+
+    $(document).ready(function () {
+        if (LayoutDirection_G == "RTL") {
+            $('#btnUser').css("float", "right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+            $('#btnUser').css("float", "left");
+            $('#txtSort').css("text-align", "right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $("#ddlSortType").change(function () {
+            if (!checkCurrentAction()) {
+                $('#ddlSortType').val(sort_Type).trigger("chosen:updated")
+                return false;
+            }
+            $('#hdnPageNo').val(1);
+            sort_Type = $('#ddlSortType').val();
+            SearchAttribGroup($('#searchCommon').val());
+        });
+        $('.checkMultiSelect').on("click", function () {
+            debugger;
+            if ($(this).prop("checked")) {
+                isMultiSelect = "Y";
+            }
+            else {
+                isMultiSelect = "N";
+            }
+        });
+        addNumeric();
+        SearchAttribGroup("");
+    });
+
+    function checkCurrentAction() {
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+
+    function addNumeric() {
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function SetPaging() {
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index) {
+        if (checkCurrentAction()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                AttribGroupList(0, "");
+            else
+                IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!checkCurrentAction())
+            return false;
+
+        if (!ValidatePageSize())
+            return false;
+
+        AttribGroupList(0, "")
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function pageBinding() {
+        AttribGroupList(0, "")
+        SetPaging();
+    }
+
+    function AttribGroupList(attribCode, commandName) {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindAttribGroupList,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                sortType: sort_Type,
+                attribCode: attribCode,
+                commandName: commandName,
+            }),
+            success: function (result) {
+                debugger;
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#lblRecordCount').text(result.RecordCount);
+                    $('#divAttribGroupList').empty();
+                    $('#divAttribGroupList').html(result);
+                }
+            }
+        })
+    }
+
+    function SearchAttribGroup(searchText) {
+        debugger;
+        $("#searchCommon").val(searchText);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchAttribGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchText
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#hdnPageNo').text(1);
+                    $('#lblRecordCount').text(result.Record_Count);
+                    $("#hdnRecordCount").val(result.Record_Count);
+                    Highlight_Search = result.Highlighted_Text;
+                    SetPaging()
+                    AttribGroupList(0, "");
+                    hideLoading();
+                }
+            },
+            error: function (result) {
+               // alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function btnSearch_OnClick() {
+        if (!checkCurrentAction())
+            return false;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        $('#hdnPageNo').val(1);
+        var searchText = $.trim($('#searchCommon').val());
+        if (searchText == '') {
+            $('#searchCommon').val('')
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchAttribGroup(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        if (!checkCurrentAction())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+
+        sort_Type= "NA";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('NA').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').attr('required', false);
+        $('#searchCommon').val('');
+        SearchAttribGroup("");
+    }
+
+    function AddEditAttribGroup(attribCode, commandName) {
+        debugger;
+        if (checkCurrentAction() && ValidatePageSize()) {
+            AttribGroupList(attribCode, commandName);
+            $('#hdnAction').val(commandName)
+        }
+    }
+
+    function Cancel() {
+        $('#hdnAction').val("")
+        AttribGroupList(0, "");
+    }
+
+    function SaveAttribGroup(attribCode) {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        if (!ValidatePageSize())
+            return false;
+
+        var AttribGroupName = $.trim($('#txtAttribGroupName').val());
+        var attribeType = $("#ddlAttribeType").val();
+        var ischecked = $('#chkMultiselect').prop("checked");
+        var isMultiSelect = (ischecked) ? "Y" : "N";
+        if (AttribGroupName == '') {
+            $('#txtAttribGroupName').val('')
+            $('#txtAttribGroupName').attr('required', true)
+            return false;
+        }
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SaveAttribGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                attribCode: attribCode,
+                AttribGroupName: AttribGroupName,
+                attribeType: attribeType,
+                isMultiSelect: isMultiSelect
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    hideLoading();
+                    if (result.Status == "S") {
+                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#hdnAction').val("")
+                        showAlert("S", result.Message);
+                        if ($("#searchCommon").val() != "") {
+                            SearchAttribGroup($("#searchCommon").val())
+                        }
+                        else {
+                            AttribGroupList(0, "");
+                        }
+                        SetPaging();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            },
+            error: function (result) {
+               // alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function EditAttribGroup(attribCode, commandName) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_EditAttribGroup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                attribCode: attribCode,
+                commandName: commandName
+            }),
+            async: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    AddEditAttribGroup(attribCode, commandName);
+                }
+            },
+            error: function (result) {
+               // alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function ActiveDeactiveAttribGroup(Attrib_Code, doActive) {
+        if (checkCurrentAction()) {
+            $.ajax({
+                type: "POST",
+                url: URL_ActiveDeactiveAttribGroup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Attrib_Code: Attrib_Code,
+                    doActive: doActive
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            showAlert("S", result.Message);
+                            if ($("#searchCommon").val() != "") {
+                                Searchprogram($("#searchCommon").val())
+                            }
+                            else {
+                                AttribGroupList(0, "");
+                            }
+                        }
+                    }
+                },
+                error: function (result) {
+                    hideLoading();
+                }
+
+            });
+        }
+    }
+
+</script>
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+
+    #btnSearch, #btnShowAll {
+        margin-top: 1%
+    }
+
+    .chosen-container {
+        width: 75% !important;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        AttribGroup List
+                        <span></span>
+                    </h2>
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                <a class="btn btn-primary" onclick="AddEditAttribGroup(0, 'ADD')">ADD</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="search_area">
+                    <table class="table">
+                        <tr>
+                            <td style="width:12%; vertical-align: middle;text-align:center;">
+                                Attrib Group Name :
+                            </td>
+                            <td style="width:25%; vertical-align:middle;">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Attrib Group Name" maxlength="100" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="Search" onclick="btnSearch_OnClick()">&nbsp;
+                                <input type="button" id="btnShowAll" class="button" value="ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td style="width:50%" id="txtSort" class="pull-right">
+                               Sort By :
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">Total Records: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                           PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10"
+                                   onchange="txtPageSize_OnChange()" onfocus="checkCurrentAction()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <div id="divAttribGroupList" class="deal clearfix">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -54,9 +54,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AjaxControlToolkit, Version=1.0.20229.21394, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\AjaxControlToolkit.dll</HintPath>
+    <Reference Include="AjaxControlToolkit, Version=4.1.50508.0, Culture=neutral, PublicKeyToken=28f01b0e84b6d53e, processorArchitecture=MSIL">
+      <HintPath>..\packages\AjaxControlToolkit.4.1.50508\lib\40\AjaxControlToolkit.dll</HintPath>
     </Reference>
     <Reference Include="Anthem.AutoSuggest, Version=1.0.0.5, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -226,6 +225,7 @@
     <Compile Include="Controllers\Acq_DigitalController.cs" />
     <Compile Include="Controllers\AL_LabController.cs" />
     <Compile Include="Controllers\AL_OemController.cs" />
+    <Compile Include="Controllers\Attrib_GroupController.cs" />
     <Compile Include="Controllers\BookingSheetController.cs" />
     <Compile Include="Controllers\DeliveryTrackingController.cs" />
     <Compile Include="Controllers\Extended_GroupController.cs" />
@@ -1437,6 +1437,8 @@
     <Content Include="Views\supplementry_Config\_SuppConfigGridView.cshtml" />
     <Content Include="Views\supplementry_Config\_AddEditSuppConfig.cshtml" />
     <Content Include="Views\supplementry_Config\_TConfigDetailsList.cshtml" />
+    <Content Include="Views\Attrib_Group\Index.cshtml" />
+    <Content Include="Views\Attrib_Group\_AttribGroupList.cshtml" />
     <!-- <Content Include="UploadFolder\BookingSheet\638168158002973682~EpisodeTitle_Import.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638168216183881734~EpisodeTitle_Import %281%29.xlsx" /> -->
     <!-- <Content Include="UploadFolder\BookingSheet\638169264219574161~TitleList.xls" /> -->
