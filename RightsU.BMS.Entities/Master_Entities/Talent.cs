@@ -18,7 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Talent_Code { get; set; }
+        public int? Talent_Code { get; set; }
         public string Talent_Name { get; set; }
         public string Gender { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }

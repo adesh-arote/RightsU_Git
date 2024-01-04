@@ -167,6 +167,153 @@ namespace RightsU.BMS.DAL
             ObjModule = base.ExecuteSQLProcedure<System_Module>("USP_GetMenu", param).ToList();
             return ObjModule;
         }
+
+        public List<USPAPI_GetModuleRights> USPAPI_GetModuleRights(Int32 Security_Group_Code)
+        {
+            List<USPAPI_GetModuleRights> ObjModule = new List<USPAPI_GetModuleRights>();
+
+            var param = new DynamicParameters();
+            param.Add("@SecurityGroupCode", Security_Group_Code);
+            ObjModule = base.ExecuteSQLProcedure<USPAPI_GetModuleRights>("USPAPI_GetModuleRights", param).ToList();
+            return ObjModule;
+        }
+    }
+    #endregion
+
+    #region -------- Extended_Columns -----------
+    public class Extended_ColumnsRepositories : MainRepository<Extended_Columns>
+    {
+        public Extended_Columns Get(int Id)
+        {
+            var obj = new { Columns_Code = Id };
+
+            return base.GetById<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Extended_Columns> GetAll()
+        {
+            return base.GetAll<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>();
+        }
+        public void Update(Extended_Columns entity)
+        {
+            Extended_Columns oldObj = Get(entity.Columns_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<Extended_Columns> SearchFor(object param)
+        {
+            return base.SearchForEntity<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Extended_Columns> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Extended_Columns_Value -----------
+    public class Extended_Columns_ValueRepositories : MainRepository<Extended_Columns_Value>
+    {
+        public Extended_Columns_Value Get(int Id)
+        {
+            var obj = new { Columns_Value_Code = Id };
+
+            return base.GetById<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Extended_Columns_Value> GetAll()
+        {
+            return base.GetAll<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>();
+        }
+        public void Update(Extended_Columns_Value entity)
+        {
+            Extended_Columns_Value oldObj = Get(entity.Columns_Value_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<Extended_Columns_Value> SearchFor(object param)
+        {
+            return base.SearchForEntity<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Extended_Columns_Value> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Map_Extended_Columns -----------
+    public class Map_Extended_ColumnsRepositories : MainRepository<Map_Extended_Columns>
+    {
+        public Map_Extended_Columns Get(int Id)
+        {
+            var obj = new { Map_Extended_Columns_Code = Id };
+
+            return base.GetById<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(obj);
+        }
+        public IEnumerable<Map_Extended_Columns> GetAll()
+        {
+            return base.GetAll<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>();
+        }
+        public void Add(Map_Extended_Columns entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Map_Extended_Columns entity)
+        {
+            Map_Extended_Columns oldObj = Get(entity.Map_Extended_Columns_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Map_Extended_Columns entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Map_Extended_Columns> SearchFor(object param)
+        {
+            return base.SearchForEntity<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(param);
+        }
+
+        public IEnumerable<Map_Extended_Columns> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Map_Extended_Columns>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Map_Extended_Columns_Details -----------
+    public class Map_Extended_Columns_DetailsRepositories : MainRepository<Map_Extended_Columns_Details>
+    {
+        public Map_Extended_Columns_Details Get(int Id)
+        {
+            var obj = new { Map_Extended_Columns_Details_Code = Id };
+
+            return base.GetById<Map_Extended_Columns_Details, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Map_Extended_Columns_Details> GetAll()
+        {
+            return base.GetAll<Map_Extended_Columns_Details, Map_Extended_Columns>();
+        }
+        public void Add(Map_Extended_Columns_Details entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Map_Extended_Columns_Details entity)
+        {
+            Map_Extended_Columns_Details oldObj = Get(entity.Map_Extended_Columns_Details_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Map_Extended_Columns_Details entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Map_Extended_Columns_Details> SearchFor(object param)
+        {
+            return base.SearchForEntity<Map_Extended_Columns_Details, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Map_Extended_Columns_Details> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Map_Extended_Columns_Details>(strSQL);
+        }
     }
     #endregion
 }

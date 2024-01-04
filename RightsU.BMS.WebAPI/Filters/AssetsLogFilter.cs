@@ -42,16 +42,15 @@ namespace RightsU.BMS.WebAPI.Filters
                     logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
                     if (actionExecutedContext.Request.Method.Method == "GET")
                     {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
-                        logObj.IsSuccess = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                        logObj.TimeTaken = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                        
                     }
                     else
                     {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);
-                        logObj.IsSuccess = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                        logObj.TimeTaken = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                        
                     }
+
+                    logObj.IsSuccess = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
+                    logObj.TimeTaken = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
 
                     logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
                     logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -72,16 +71,8 @@ namespace RightsU.BMS.WebAPI.Filters
                     HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);
 
                     actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
-                    if (logObj.Method == "GET")
-                    {
-                        actionExecutedContext.Response.Headers.Add("message", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
-                    }
-                    else
-                    {
-                        actionExecutedContext.Response.Headers.Add("message", ((RightsU.BMS.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.BMS.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
-                    }
+                    actionExecutedContext.Response.Headers.Add("message", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                    actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());                    
                 }
                 catch (Exception ex)
                 {

@@ -1,5 +1,7 @@
-﻿using Dapper.SimpleLoad;
+﻿using Dapper.Contrib.Extensions;
+using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    [Table("Title_Geners")]
+    [Dapper.SimpleSave.Table("Title_Geners")]
     public partial class Title_Geners
     {
         [PrimaryKey]
-        public int Title_Geners_Code { get; set; }
+        public int? Title_Geners_Code { get; set; }
         [ForeignKeyReference(typeof(Title))]
         public Nullable<int> Title_Code { get; set; }
         [ForeignKeyReference(typeof(Genre))]
@@ -24,5 +26,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Title Title { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public State EntityState { get; set; }
     }
 }

@@ -26,18 +26,6 @@ namespace RightsU.BMS.WebAPI.Controllers
     [CustomExceptionFilter]
     public class titleController : ApiController
     {
-        public enum Order
-        {
-            Asc = 1,
-            Desc = 2
-        }
-        public enum SortColumn
-        {
-            CreatedDate = 1,
-            UpdatedDate = 2,
-            TitleName = 3
-        }
-
         private readonly TitleServices objTitleServices = new TitleServices();
         private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
 
@@ -553,8 +541,8 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            //GenericReturn objReturn = objTitleServices.PostTitle(Input);
-            GenericReturn objReturn = new GenericReturn();
+            GenericReturn objReturn = objTitleServices.PostTitle(Input);
+            
             objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
@@ -566,7 +554,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -617,8 +605,9 @@ namespace RightsU.BMS.WebAPI.Controllers
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-                        
-            GenericReturn objReturn = new GenericReturn();
+
+            GenericReturn objReturn = objTitleServices.PutTitle(Input);
+
             objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
@@ -630,7 +619,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -672,8 +661,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = new GenericReturn();
-            objReturn.StatusCode = HttpStatusCode.OK;
+            GenericReturn objReturn = objTitleServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -684,7 +672,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)

@@ -206,9 +206,14 @@ namespace RightsU.BMS.BLL.Services
             return objSystemModuleRepositories.USP_GetModule(Security_Group_Code, Users_Code);
         }
 
-        public bool hasModuleRights(Int32 Module_Code, string authenticationToken, string RefreshToken)
+        public List<USPAPI_GetModuleRights> USPAPI_GetModuleRights(Int32 Security_Group_Code)
         {
-            bool hasRights = true;
+            return objSystemModuleRepositories.USPAPI_GetModuleRights(Security_Group_Code);
+        }
+
+        public int hasModuleRights(string Module_Url, string Rights_Name, string authenticationToken, string RefreshToken)
+        {
+            int hasRights = 0;
 
             LoggedInUsersServices objLoggedInUsersServices = new LoggedInUsersServices();
             UserServices objUserServices = new UserServices();
@@ -220,16 +225,47 @@ namespace RightsU.BMS.BLL.Services
                 User objUser = new User();
                 objUser = objUserServices.SearchForUser(new { Login_Name = objUserDetails.LoginName }).FirstOrDefault();
 
-                var UserModuleRights = USP_GetModule(objUser.Security_Group_Code.Value, objUser.Users_Code.Value);
+                var UserModuleRights = USPAPI_GetModuleRights(objUser.Security_Group_Code.Value);
 
-                if (UserModuleRights.Where(x => x.Module_Code == Module_Code).ToList().Count() > 0)
+                var lstModuleUrl = Module_Url.Split(new[] { '/' },StringSplitOptions.RemoveEmptyEntries);
+
+                var objModuleRights = UserModuleRights.Where(x => x.Module_Name.ToLower() == lstModuleUrl[1].ToLower()).ToList();
+
+                if (objModuleRights.Count() > 0)
                 {
-                    hasRights = true;
+                    if (lstModuleUrl.Count() > 2)
+                    {
+                        if (objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[2].ToLower()))
+                        {
+                            hasRights = objUser.Users_Code.Value;
+                        }
+                        else
+                        {
+                            hasRights = 0;
+                        }
+                    }
+                    else if(objModuleRights.Any(x => x.Right_Name == Rights_Name))
+                    {
+                        hasRights = objUser.Users_Code.Value;
+                    }
+                    else
+                    {
+                        hasRights = 0;
+                    }
                 }
                 else
                 {
-                    hasRights = false;
+                    hasRights = 0;
                 }
+
+                //if (UserModuleRights.Where(x => x.Module_Code == Module_Code).ToList().Count() > 0)
+                //{
+                //    hasRights = true;
+                //}
+                //else
+                //{
+                //    hasRights = false;
+                //}
             }
 
             return hasRights;

@@ -18,7 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Role_Code { get; set; }
+        public int? Role_Code { get; set; }
         public string Role_Name { get; set; }
         public string Role_Type { get; set; }
         public string Is_Rate_Card { get; set; }

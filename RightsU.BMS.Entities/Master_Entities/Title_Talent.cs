@@ -1,4 +1,5 @@
-﻿using Dapper.SimpleLoad;
+﻿using Dapper.Contrib.Extensions;
+using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
 using System;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    [Table("Title_Talent")]
+    [Dapper.SimpleSave.Table("Title_Talent")]
     public partial class Title_Talent
     {
         [PrimaryKey]
-        public int Title_Talent_Code { get; set; }
+        public int? Title_Talent_Code { get; set; }
         [ForeignKeyReference(typeof(Title))]
         public Nullable<int> Title_Code { get; set; }
         [ForeignKeyReference(typeof(Talent))]
@@ -29,5 +30,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Title Title { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public State EntityState { get; set; }
     }
 }

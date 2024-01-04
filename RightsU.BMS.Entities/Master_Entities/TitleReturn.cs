@@ -13,14 +13,14 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public TitleReturn()
         {
-            assets = new List<title>();
+            content = new List<title>();
             paging = new paging();
         }
 
         /// <summary>
         /// Title Details
         /// </summary>
-        public override object assets { get; set; }
+        public override object content { get; set; }
     }
 
     public class title_List

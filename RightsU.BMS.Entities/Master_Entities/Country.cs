@@ -17,7 +17,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
         
         [PrimaryKey]
-        public int Country_Code { get; set; }
+        public int? Country_Code { get; set; }
         public string Country_Name { get; set; }
         public string Is_Domestic_Territory { get; set; }
         public string Is_Theatrical_Territory { get; set; }

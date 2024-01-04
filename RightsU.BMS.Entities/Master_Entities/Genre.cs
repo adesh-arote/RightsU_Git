@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Genres_Code { get; set; }
+        public int? Genres_Code { get; set; }
         public string Genres_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
         public Nullable<int> Inserted_By { get; set; }

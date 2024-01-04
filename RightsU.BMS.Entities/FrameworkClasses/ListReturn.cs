@@ -22,7 +22,7 @@ namespace RightsU.BMS.Entities.FrameworkClasses
         /// <summary>
         /// Title Details
         /// </summary>
-        public abstract object assets { get; set; }
+        public abstract object content { get; set; }
     }
 
     public class paging

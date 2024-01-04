@@ -18,17 +18,15 @@ namespace RightsU.BMS.Entities.Master_Entities
             this.Title_Talent = new HashSet<Title_Talent>();
         }
         [PrimaryKey]
-        public int Title_Code { get; set; }
+        public int? Title_Code { get; set; }
         public string Original_Title { get; set; }
         public string Title_Name { get; set; }
         public string Title_Code_Id { get; set; }
-        public string Synopsis { get; set; }
-        [OneToOne]
+        public string Synopsis { get; set; }        
         [ForeignKeyReference(typeof(Language))]                
-        public Language Original_Language_Code { get; set; }
-        //[OneToOne]
-        //[ForeignKeyReference(typeof(Language))]        
-        //public Language Title_Language_Code { get; set; }
+        public Nullable<int> Original_Language_Code { get; set; }        
+        [ForeignKeyReference(typeof(Language))]
+        public Nullable<int> Title_Language_Code { get; set; }
         public Nullable<int> Year_Of_Production { get; set; }
         public Nullable<decimal> Duration_In_Min { get; set; }
         [ForeignKeyReference(typeof(Deal_Type))]
@@ -47,17 +45,11 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Music_Label_Code { get; set; }
         public Nullable<int> Program_Code { get; set; }
         public Nullable<int> Original_Title_Code { get; set; }
-                
-        [SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
+        
         [OneToMany]
         public virtual ICollection<Title_Country> Title_Country { get; set; }
-        [SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
         [OneToMany]
         public virtual ICollection<Title_Geners> Title_Geners { get; set; }
-        [SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
         [OneToMany]
         public virtual ICollection<Title_Talent> Title_Talent { get; set; }               
     }

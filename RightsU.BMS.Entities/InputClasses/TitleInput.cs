@@ -49,6 +49,7 @@ namespace RightsU.BMS.Entities.InputClasses
     {
         public Int32 id { get; set; }
         public Int32 Key { get; set; }
+        public Int32 Row_No { get; set; }
         public object Value { get; set; }
     }
 

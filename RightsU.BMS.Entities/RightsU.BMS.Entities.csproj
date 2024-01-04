@@ -36,6 +36,9 @@
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.2.1.24\lib\net461\Dapper.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper.Contrib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.Contrib.2.0.78\lib\net461\Dapper.Contrib.dll</HintPath>
+    </Reference>
     <Reference Include="Dapper.SimpleLoad, Version=2.0.140.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.SimpleLoad.2.0.140\lib\net451\Dapper.SimpleLoad.dll</HintPath>
     </Reference>
@@ -86,13 +89,17 @@
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
     <Compile Include="Master_Entities\Deal_Type.cs" />
+    <Compile Include="Master_Entities\Enums.cs" />
     <Compile Include="Master_Entities\Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Extended_Columns_Value.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\Genre.cs" />
     <Compile Include="Master_Entities\Grade_Master.cs" />
     <Compile Include="Master_Entities\Language.cs" />
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\Role.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
@@ -109,6 +116,7 @@
     <Compile Include="Master_Entities\Upload_Files.cs" />
     <Compile Include="Master_Entities\User.cs" />
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />
+    <Compile Include="Master_Entities\USPAPI_GetModuleRights.cs" />
     <Compile Include="Master_Entities\USPAPI_Title_Bind_Extend_Data.cs" />
     <Compile Include="Master_Entities\UTOLogInput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

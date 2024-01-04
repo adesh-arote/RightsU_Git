@@ -47,14 +47,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("scheduleuploadtxt")]
         public HttpResponseMessage scheduleuploadtxt(string ChannelName = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Txt, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Txt, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";
@@ -513,14 +513,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("scheduleuploadcsv")]
         public HttpResponseMessage scheduleuploadcsv(string ChannelName = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Csv, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.ScheduleUpload_Csv, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";
