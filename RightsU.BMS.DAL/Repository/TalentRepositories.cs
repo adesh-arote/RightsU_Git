@@ -1,0 +1,42 @@
+﻿using Dapper;
+using RightsU.BMS.Entities.Master_Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RightsU.BMS.DAL.Repository
+{
+    public class TalentRepositories : MainRepository<Talent>
+    {
+        public Talent GetById(Int32? Id)
+        {
+            var obj = new { Talent_Code = Id.Value };
+            return base.GetById<Talent>(obj);
+        }
+        public void Update(Talent entity)
+        {
+            Talent oldObj = GetById(entity.Talent_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public TalentReturn GetTalent_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            TalentReturn ObjTalentReturn = new TalentReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent_List>("USPAPI_Talent_List", param).ToList();
+            ObjTalentReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjTalentReturn;
+        }
+    }
+}

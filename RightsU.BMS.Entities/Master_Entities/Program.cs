@@ -1,5 +1,7 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
+using RightsU.BMS.Entities.FrameworkClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Program_Code { get; set; }
+        public int? Program_Code { get; set; }
         public string Program_Name { get; set; }
         public Nullable<int> Inserted_By { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -37,5 +39,35 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Genre Genre { get; set; }
+    }
+
+    public class ProgramReturn : ListReturn
+    {
+        public ProgramReturn()
+        {
+            content = new List<Program>();
+            paging = new paging();
+        }
+
+        /// <summary>
+        /// Program Details
+        /// </summary>
+        public override object content { get; set; }
+    }
+
+    public class Program_List
+    {
+        public Program_List()
+        {
+            //StarCast = new List<string>();
+        }
+        /// <summary>
+        /// This is Program Code ,Example:RUBMSA11
+        /// </summary>
+        public int id { get; set; }
+        public string ProgramName { get; set; }
+        public string DealType { get; set; }
+        public string Genre { get; set; }
+        public string IsActive { get; set; }
     }
 }

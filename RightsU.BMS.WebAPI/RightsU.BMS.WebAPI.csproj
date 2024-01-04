@@ -166,9 +166,12 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Consumes.cs" />
     <Compile Include="Controllers\bmsController.cs" />
+    <Compile Include="Controllers\GenreController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\loginController.cs" />
+    <Compile Include="Controllers\programController.cs" />
     <Compile Include="Controllers\scheduleuploadController.cs" />
+    <Compile Include="Controllers\talentController.cs" />
     <Compile Include="Controllers\titleController.cs" />
     <Compile Include="Filters\AssetsLogFilter.cs" />
     <Compile Include="Filters\AuthorizationFilter.cs" />
