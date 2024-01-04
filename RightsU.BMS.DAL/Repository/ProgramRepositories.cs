@@ -10,6 +10,14 @@ namespace RightsU.BMS.DAL.Repository
 {
     public class ProgramRepositories : MainRepository<Program>
     {
+        public void Add(Program entity)
+        {
+            base.AddEntity(entity);
+        }
+        public IEnumerable<Program> GetAll()
+        {
+            return base.GetAll<Program>();
+        }
         public Program GetById(Int32? Id)
         {
             var obj = new { Program_Code = Id.Value };
@@ -19,6 +27,14 @@ namespace RightsU.BMS.DAL.Repository
         {
             Program oldObj = GetById(entity.Program_Code.Value);
             base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<Program> SearchFor(object param)
+        {
+            return base.SearchForEntity<Program>(param);
+        }
+        public void Delete(Program entity)
+        {
+            base.DeleteEntity(entity);
         }
         public ProgramReturn GetProgram_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {

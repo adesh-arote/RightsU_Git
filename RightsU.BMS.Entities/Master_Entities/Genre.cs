@@ -40,30 +40,4 @@ namespace RightsU.BMS.Entities.Master_Entities
         //public virtual ICollection<Program> Programs { get; set; }        
     }
 
-    public class GenreReturn : ListReturn
-    {
-        public GenreReturn()
-        {
-            content = new List<Genre>();
-            paging = new paging();
-        }
-
-        /// <summary>
-        /// Program Details
-        /// </summary>
-        public override object content { get; set; }
-    }
-    public class Genre_List
-    {
-        public Genre_List()
-        {
-            //StarCast = new List<string>();
-        }
-        /// <summary>
-        /// This is Genre Code ,Example:RUBMSA11
-        /// </summary>
-        public int id { get; set; }
-        public string GenreName { get; set; }
-        public string IsActive { get; set; }
-    }
 }

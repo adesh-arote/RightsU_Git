@@ -10,15 +10,31 @@ namespace RightsU.BMS.DAL.Repository
 {
     public class TalentRepositories : MainRepository<Talent>
     {
+        public void Add(Talent entity)
+        {
+            base.AddEntity(entity);
+        }
+        public IEnumerable<Talent> GetAll()
+        {
+            return base.GetAll<Talent>();
+        }
         public Talent GetById(Int32? Id)
         {
             var obj = new { Talent_Code = Id.Value };
             return base.GetById<Talent>(obj);
         }
+        public IEnumerable<Talent> SearchFor(object param)
+        {
+            return base.SearchForEntity<Talent>(param);
+        }
         public void Update(Talent entity)
         {
             Talent oldObj = GetById(entity.Talent_Code.Value);
             base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Talent entity)
+        {
+            base.DeleteEntity(entity);
         }
         public TalentReturn GetTalent_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {

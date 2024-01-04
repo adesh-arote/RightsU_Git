@@ -87,6 +87,52 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
+        /// Save Genre Details
+        /// </summary>
+        /// <remarks>Create / Save New Genre</remarks>
+        /// <param name="Input">Input data object for Create/Save New Genre</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpPost]
+        [Route("api/genre")]
+        public async Task<HttpResponseMessage> PostGenre(GenreInput Input)
+        {            
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = objGenreServices.PostGenre(Input);
+
+            objReturn.StatusCode = HttpStatusCode.OK;
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+
+            return response;
+        }
+
+        /// <summary>
         /// Modify Genre details
         /// </summary>
         /// <remarks>Update / Modify Genre details by id</remarks>

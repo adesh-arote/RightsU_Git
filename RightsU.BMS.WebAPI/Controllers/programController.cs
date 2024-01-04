@@ -87,6 +87,100 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             return response;
         }
+
+        /// <summary>
+        /// Save Program Details
+        /// </summary>
+        /// <remarks>Create / Save New Program</remarks>
+        /// <param name="Input">Input data object for Create/Save New Program</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpPost]
+        [Route("api/program")]
+        public async Task<HttpResponseMessage> PostProgram(ProgramInput Input)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+
+            GenericReturn objReturn = objProgramServices.PostProgram(Input);
+
+            objReturn.StatusCode = HttpStatusCode.OK;
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Modify Program details
+        /// </summary>
+        /// <remarks>Update / Modify Program details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Program</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpPut]
+        [Route("api/program")]
+        public async Task<HttpResponseMessage> PutProgram(ProgramInput Input)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = new GenericReturn();
+            objReturn = objProgramServices.PutProgram(Input);
+            objReturn.StatusCode = HttpStatusCode.OK;
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+
+            return response;
+        }
+
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>

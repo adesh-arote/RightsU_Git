@@ -159,7 +159,112 @@ namespace RightsU.BMS.BLL.Services
 
             return _objRet;
         }
+        public GenericReturn PostProgram(ProgramInput objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
 
+            #region Input Validation
+
+            if (string.IsNullOrEmpty(objInput.ProgramName))
+            {
+                _objRet.Message = "Input Paramater 'Program Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            var CheckDuplicate = objProgramRepositories.SearchFor(new { Program_Name = objInput.ProgramName }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Program name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Program objProgram = new Program();
+
+                objProgram.Program_Name = objInput.ProgramName;
+                objProgram.Deal_Type_Code = objInput.DealTypeCode;
+                objProgram.Genres_Code = objInput.GenresCode;
+                objProgram.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objProgram.Inserted_On = DateTime.Now;
+                objProgram.Last_UpDated_Time = DateTime.Now;
+                objProgram.Is_Active = "Y";
+
+                objProgramRepositories.Add(objProgram);
+
+                _objRet.Response = new { id = objProgram.Program_Code };
+
+            }
+
+            return _objRet;
+        }
+        public GenericReturn PutProgram(ProgramInput objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.id <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            if (string.IsNullOrEmpty(objInput.ProgramName))
+            {
+                _objRet.Message = "Input Paramater 'Program Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            var CheckDuplicate = objProgramRepositories.SearchFor(new { Program_Name = objInput.ProgramName }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Program name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Program objProgram = new Program();
+
+                objProgram = objProgramRepositories.GetById(objInput.id);
+
+                objProgram.Program_Name = objInput.ProgramName;
+                objProgram.Deal_Type_Code = objInput.DealTypeCode;
+                objProgram.Genres_Code = objInput.GenresCode;
+                objProgram.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objProgram.Last_UpDated_Time = DateTime.Now;
+                objProgram.Is_Active = "Y";
+
+                objProgramRepositories.AddEntity(objProgram);
+
+                _objRet.Response = new { id = objProgram.Program_Code };
+            }
+
+            return _objRet;
+        }
         public GenericReturn ChangeActiveStatus(PutInput objInput)
         {
             GenericReturn _objRet = new GenericReturn();

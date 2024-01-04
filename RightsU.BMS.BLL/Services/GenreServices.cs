@@ -158,6 +158,52 @@ namespace RightsU.BMS.BLL.Services
 
             return _objRet;
         }
+        public GenericReturn PostGenre(GenreInput objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (string.IsNullOrEmpty(objInput.GenreName))
+            {
+                _objRet.Message = "Input Paramater 'Genre Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.GenreName }).ToList();
+
+            if(CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Genre name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Genre objGenre = new Genre();
+
+                objGenre.Genres_Name = objInput.GenreName;
+                objGenre.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objGenre.Inserted_On = DateTime.Now;
+                objGenre.Last_Updated_Time = DateTime.Now;
+                objGenre.Is_Active = "Y";
+
+                objGenreRepositories.Add(objGenre);
+                _objRet.Response = new { id = objGenre.Genres_Code };
+                
+            }
+
+            return _objRet;
+        }
         public GenericReturn PutGenre(GenreInput objInput)
         {
             GenericReturn _objRet = new GenericReturn();
@@ -183,6 +229,15 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
+            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.GenreName }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Genre name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
             #endregion
 
             if (_objRet.IsSuccess)
