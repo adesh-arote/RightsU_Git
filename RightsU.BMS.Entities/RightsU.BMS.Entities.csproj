@@ -80,6 +80,7 @@
     <Compile Include="InputClasses\GenreInput.cs" />
     <Compile Include="InputClasses\ProgramInput.cs" />
     <Compile Include="InputClasses\PutInput.cs" />
+    <Compile Include="InputClasses\TalentInput.cs" />
     <Compile Include="InputClasses\TitleInput.cs" />
     <Compile Include="LogClasses\Error.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="Master_Entities\Talent.cs" />
     <Compile Include="Master_Entities\TalentReturn.cs" />
     <Compile Include="Master_Entities\Talent_Role.cs" />
+    <Compile Include="Master_Entities\Talent_Validations.cs" />
     <Compile Include="Master_Entities\Title.cs" />
     <Compile Include="Master_Entities\TitleReturn.cs" />
     <Compile Include="Master_Entities\Title_Country.cs" />

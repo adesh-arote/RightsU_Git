@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -16,6 +17,7 @@ namespace RightsU.BMS.BLL.Services
     public class TalentServices
     {
         private readonly TalentRepositories objTalentRepositories = new TalentRepositories();
+        private readonly Talent_RoleRepositories objTalent_RoleRepositories = new Talent_RoleRepositories();        
 
         public GenericReturn GetTalentList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
         {
@@ -156,6 +158,157 @@ namespace RightsU.BMS.BLL.Services
             _TalentReturn.paging.size = size;
 
             _objRet.Response = _TalentReturn;
+
+            return _objRet;
+        }
+        public GenericReturn PostTalent(TalentInput objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (string.IsNullOrEmpty(objInput.TalentName))
+            {
+                _objRet.Message = "Input Paramater 'Talent Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            if (objInput.Role.Count() > 0)
+            {
+                string strRole = String.Join(",", objInput.Role.Select(x => x.RoleId.ToString()).ToArray());
+
+                var Role = objTalentRepositories.Talent_Validation(strRole, "Role");
+
+                if (Role.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'Role :" + Role.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Talent objTalent = new Talent();
+
+                objTalent.Talent_Name = objInput.TalentName;
+                objTalent.Gender = objInput.Gender;
+                objTalent.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objTalent.Inserted_On = DateTime.Now;
+                objTalent.Last_Updated_Time = DateTime.Now;
+                objTalent.Is_Active = "Y";
+
+                foreach (var item in objInput.Role)
+                {
+                    Talent_Role objTalent_Role = new Talent_Role();
+                    objTalent_Role.Role_Code = item.RoleId;
+                    objTalent.Talent_Role.Add(objTalent_Role);
+                }
+
+                objTalentRepositories.Add(objTalent);
+                _objRet.Response = new { id = objTalent.Talent_Code };
+            }
+
+            return _objRet;
+        }
+        public GenericReturn PutTalent(TalentInput objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.id <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            if (string.IsNullOrEmpty(objInput.TalentName))
+            {
+                _objRet.Message = "Input Paramater 'Talent Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }            
+
+            if (objInput.Role.Count() > 0)
+            {
+                string strRole = String.Join(",", objInput.Role.Select(x => x.RoleId.ToString()).ToArray());
+
+                var Role = objTalentRepositories.Talent_Validation(strRole, "Role");
+
+                if (Role.InputValueCode == 0)
+                {
+                    _objRet.Message = "Input Paramater 'Role :" + Role.InvalidValue + "' is not Valid";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    return _objRet;
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Talent objTalent = new Talent();
+
+                objTalent = objTalentRepositories.GetById(objInput.id);
+
+                objTalent.Talent_Name = objInput.TalentName;
+                objTalent.Gender = objInput.Gender;
+                objTalent.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objTalent.Last_Updated_Time = DateTime.Now;
+                objTalent.Is_Active = "Y";
+
+                #region Talent_Role
+
+                objTalent.Talent_Role.ToList().ForEach(i => i.EntityState = State.Deleted);
+
+                foreach (var item in objInput.Role)
+                {
+                    Talent_Role objT = (Talent_Role)objTalent.Talent_Role.Where(t => t.Role_Code == item.RoleId).Select(i => i).FirstOrDefault();
+
+                    if (objT == null)
+                        objT = new Talent_Role();
+                    if (objT.Talent_Role_Code > 0)
+                        objT.EntityState = State.Unchanged;
+                    else
+                    {
+                        objT.EntityState = State.Added;
+                        objT.Talent_Code = objInput.id;
+                        objT.Role_Code = item.RoleId;
+                        objTalent.Talent_Role.Add(objT);
+                    }
+                }
+
+                foreach (var item in objTalent.Talent_Role.ToList().Where(x => x.EntityState == State.Deleted))
+                {
+                    objTalent_RoleRepositories.Delete(item);
+                }
+
+                var objRole = objTalent.Talent_Role.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                objRole.ForEach(i => objTalent.Talent_Role.Remove(i));
+
+                #endregion
+               
+
+                objTalentRepositories.AddEntity(objTalent);
+
+                _objRet.Response = new { id = objTalent.Talent_Code };
+            }
 
             return _objRet;
         }

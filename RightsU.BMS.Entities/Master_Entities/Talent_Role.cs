@@ -12,7 +12,7 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Talent_Role
     {
         [PrimaryKey]
-        public int Talent_Role_Code { get; set; }
+        public int? Talent_Role_Code { get; set; }
         [ForeignKeyReference(typeof(Talent))]
         public Nullable<int> Talent_Code { get; set; }
         [ForeignKeyReference(typeof(Role))]
@@ -23,5 +23,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public virtual Talent Talent { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public State EntityState { get; set; }
     }
 }

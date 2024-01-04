@@ -54,5 +54,54 @@ namespace RightsU.BMS.DAL.Repository
             ObjTalentReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjTalentReturn;
         }
+        public Talent_Validations Talent_Validation(string InputValue, string InputType)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@InputValue", InputValue);
+            param.Add("@InputType", InputType);
+            return base.ExecuteSQLProcedure<Talent_Validations>("USPAPI_Talent_Validations", param).FirstOrDefault();
+        }
     }
+
+    #region -------- Talent_Role -----------
+    public class Talent_RoleRepositories : MainRepository<Talent_Role>
+    {
+        public Talent_Role Get(int Id)
+        {
+            var obj = new { Talent_Role_Code = Id };
+
+            return base.GetById<Talent_Role>(obj);
+        }
+        public IEnumerable<Talent_Role> GetAll()
+        {
+            return base.GetAll<Talent_Role>();
+        }
+        public void Add(Talent_Role entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Talent_Role entity)
+        {
+            Talent_Role oldObj = Get(entity.Talent_Role_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(Talent_Role entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Talent_Role> SearchFor(object param)
+        {
+            return base.SearchForEntity<Talent_Role>(param);
+        }
+
+        public IEnumerable<Talent_Role> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Talent_Role>(strSQL);
+        }
+    }
+    #endregion
 }

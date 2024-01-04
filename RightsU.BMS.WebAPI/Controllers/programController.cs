@@ -111,8 +111,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = objProgramServices.PostProgram(Input);
 
-            objReturn.StatusCode = HttpStatusCode.OK;
-
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
@@ -157,7 +155,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = new GenericReturn();
             objReturn = objProgramServices.PutProgram(Input);
-            objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -203,7 +200,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = new GenericReturn();
             objReturn = objProgramServices.ChangeActiveStatus(Input);
-            objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

@@ -108,8 +108,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = objGenreServices.PostGenre(Input);
 
-            objReturn.StatusCode = HttpStatusCode.OK;
-
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
@@ -154,7 +152,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = new GenericReturn();
             objReturn = objGenreServices.PutGenre(Input);
-            objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -200,7 +197,6 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             GenericReturn objReturn = new GenericReturn();
             objReturn = objGenreServices.ChangeActiveStatus(Input);
-            objReturn.StatusCode = HttpStatusCode.OK;
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

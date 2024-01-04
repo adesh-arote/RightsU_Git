@@ -29,8 +29,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public string Is_Active { get; set; }
 
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        //[SimpleSaveIgnore]
+        //[SimpleLoadIgnore]
+        [OneToMany]
         public virtual ICollection<Talent_Role> Talent_Role { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
