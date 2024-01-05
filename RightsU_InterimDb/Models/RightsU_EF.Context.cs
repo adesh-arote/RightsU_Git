@@ -331,7 +331,6 @@ namespace RightsU_InterimDb.Models
         public DbSet<DM_Title> DM_Title { get; set; }
         public DbSet<Title_Content> Title_Content { get; set; }
         public DbSet<Title_Content_Version> Title_Content_Version { get; set; }
-        public DbSet<BV_Schedule_Transaction> BV_Schedule_Transaction { get; set; }
         public DbSet<Music_Schedule_Exception> Music_Schedule_Exception { get; set; }
         public DbSet<BV_HouseId_Data> BV_HouseId_Data { get; set; }
         public DbSet<Program> Programs { get; set; }
@@ -479,6 +478,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Syn_Deal_Digital> Syn_Deal_Digital { get; set; }
         public DbSet<Syn_Deal_Digital_Detail> Syn_Deal_Digital_Detail { get; set; }
         public DbSet<Master_Log> Master_Log { get; set; }
+        public DbSet<BV_Schedule_Transaction> BV_Schedule_Transaction { get; set; }
     
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
