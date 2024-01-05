@@ -134,29 +134,82 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public title()
         {
-            MetaData = new Dictionary<string, Dictionary<string, string>>();
+            MetaData = new List<TitleMetadata>();
+            Country = new List<TitleCountry>();
+            TitleTalent = new List<TitleTalent>();
+            Genre = new List<TitleGenre>();
         }
         /// <summary>
         /// This is Title Code ,Example:RUBMSA11
         /// </summary>
         public int id { get; set; }
         public string Name { get; set; }
-        public string Language { get; set; }
+        public TitleGeneric TitleLanguage { get; set; }
         public string OriginalName { get; set; }
-        public string OriginalLanguage { get; set; }
-        public string ProductionYear { get; set; }
+        public TitleGeneric OriginalLanguage { get; set; }
+        public int ProductionYear { get; set; }
         public decimal DurationInMin { get; set; }
-        public string Program { get; set; }
-        public string Country { get; set; }
-        public string StarCast { get; set; }
-        public string Producer { get; set; }
-        public string Director { get; set; }
-        [JsonIgnore]
-        public Int32 Deal_Type_Code { get; set; }
-        public string AssetType { get; set; }
+        public TitleGeneric Program { get; set; }
+        public List<TitleCountry> Country { get; set; }
+        public List<TitleTalent> TitleTalent { get; set; }                
+        public TitleGeneric AssetType { get; set; }
         public string Synopsis { get; set; }
-        public string Genre { get; set; }
+        public List<TitleGenre> Genre { get; set; }
 
-        public Dictionary<string, Dictionary<string, string>> MetaData { get; set; }
+        public List<TitleMetadata> MetaData { get; set; }
+    }
+
+    public class TitleGeneric
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class TitleCountry
+    {
+        public int id { get; set; }
+        public int CountryId { get; set; }
+        public string Name { get; set; }
+    }
+    public class TitleTalent
+    {
+        public int id { get; set; }        
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public int TalentId { get; set; }
+        public int RoleId { get; set; }
+    }
+
+    public class TitleGenre
+    {
+        public int id { get; set; }        
+        public string Name { get; set; }
+        public int GenreId { get; set; }
+    }
+
+    public class TitleMetadata
+    {
+        public TitleMetadata()
+        {
+            Value = new List<TitleMetadataValue>();
+        }
+
+        public string Key { get; set; }
+        public List<TitleMetadataValue> Value { get; set; }
+    }
+
+    public class TitleMetadataValue
+    {
+        public int id { get; set; }
+        public int ColumnId { get; set; }
+        public string Key { get; set; }
+        public object Value { get; set; }
+    }
+
+    public class TitleMetadataDetail
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+        public int ColumnValueId { get; set; }        
     }
 }

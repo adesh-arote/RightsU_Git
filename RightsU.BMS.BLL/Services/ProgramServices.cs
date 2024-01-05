@@ -1,4 +1,5 @@
-﻿using RightsU.BMS.DAL.Repository;
+﻿using RightsU.BMS.DAL;
+using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
@@ -249,7 +250,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Program objProgram = new Program();
 
-                objProgram = objProgramRepositories.GetById(objInput.id);
+                objProgram = objProgramRepositories.Get(objInput.id);
 
                 objProgram.Program_Name = objInput.ProgramName;
                 objProgram.Deal_Type_Code = objInput.DealTypeCode;
@@ -303,7 +304,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Program objProgram = new Program();
 
-                objProgram = objProgramRepositories.GetById(objInput.id);
+                objProgram = objProgramRepositories.Get(objInput.id);
 
                 objProgram.Last_UpDated_Time = DateTime.Now;
                 objProgram.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);

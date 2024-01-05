@@ -18,7 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Language_Code { get; set; }
+        public int? Language_Code { get; set; }
         public string Language_Name { get; set; }
         public Nullable<System.DateTime> Inserted_On { get; set; }
         public Nullable<int> Inserted_By { get; set; }

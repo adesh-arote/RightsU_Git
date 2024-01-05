@@ -1,4 +1,5 @@
-﻿using RightsU.BMS.BLL.Miscellaneous;
+﻿using Newtonsoft.Json;
+using RightsU.BMS.BLL.Miscellaneous;
 using RightsU.BMS.DAL;
 using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities;
@@ -25,6 +26,9 @@ namespace RightsU.BMS.BLL.Services
         private readonly Extended_ColumnsRepositories objExtendedColumnsRepositories = new Extended_ColumnsRepositories();
         private readonly Map_Extended_ColumnsRepositories objMap_Extended_ColumnsRepositories = new Map_Extended_ColumnsRepositories();
         private readonly Map_Extended_Columns_DetailsRepositories objMap_Extended_Columns_DetailsRepositories = new Map_Extended_Columns_DetailsRepositories();
+        private readonly LanguageRepositories objLanguageRepositories = new LanguageRepositories();
+        private readonly ProgramRepositories objProgramRepositories = new ProgramRepositories();
+        private readonly CountryRepositories objCountryRepositories = new CountryRepositories();
 
         //public TitleReturn List_Titles(string order, Int32? page, string search_value, Int32? size, string sort, string Date_GT, string Date_LT, Int32? id)
         //{
@@ -242,43 +246,109 @@ namespace RightsU.BMS.BLL.Services
 
             #endregion
 
-            title _TitleReturn = new title();
+
 
             try
             {
                 if (_objRet.IsSuccess)
                 {
-                    _TitleReturn = objTitleRepositories.GetTitleById(id);
+                    title _TitleReturn = new title();
+                    Title objTitle = new Title();
+
+                    objTitle = objTitleRepositories.GetById(id);
+
+                    _TitleReturn.id = objTitle.Title_Code.Value;
+                    _TitleReturn.Name = objTitle.Title_Name;
+
+                    #region Title Language
+
+                    TitleGeneric objTitleLanguage = new TitleGeneric();
+
+                    var titleLanguage = objLanguageRepositories.Get(objTitle.Title_Language_Code.Value);
+
+                    objTitleLanguage.id = titleLanguage.Language_Code.Value;
+                    objTitleLanguage.Name = titleLanguage.Language_Name;
+                    _TitleReturn.TitleLanguage = objTitleLanguage;
+
+                    #endregion
+
+                    _TitleReturn.OriginalName = objTitle.Original_Title;
+
+                    #region OriginalLanguage
+
+                    TitleGeneric objOriginalLanguage = new TitleGeneric();
+
+                    var originalLanguage = objLanguageRepositories.Get(objTitle.Original_Language_Code.Value);
+
+                    objOriginalLanguage.id = originalLanguage.Language_Code.Value;
+                    objOriginalLanguage.Name = originalLanguage.Language_Name;
+                    _TitleReturn.OriginalLanguage = objOriginalLanguage;
+
+                    #endregion
+
+                    _TitleReturn.ProductionYear = objTitle.Year_Of_Production.Value;
+                    _TitleReturn.DurationInMin = objTitle.Duration_In_Min.Value;
+
+                    #region Program
+
+                    TitleGeneric objProgram = new TitleGeneric();
+
+                    var program = objProgramRepositories.Get(objTitle.Program_Code.Value);
+
+                    objProgram.id = program.Program_Code.Value;
+                    objProgram.Name = program.Program_Name;
+                    _TitleReturn.Program = objProgram;
+
+                    #endregion
+
+                    #region Country
+
+                    List<TitleCountry> lstTitleCountry = new List<TitleCountry>();
+
+                    foreach (var country in objTitle.Title_Country)
+                    {
+                        var objcountry = objCountryRepositories.Get(country.Country_Code.Value);
+
+                        lstTitleCountry.Add(new TitleCountry() { id = country.Title_Country_Code.Value, CountryId = country.Country_Code.Value, Name = objcountry.Country_Name });
+                    }
+
+                    _TitleReturn.Country = lstTitleCountry;
+
+                    #endregion
+
+                    var abc = JsonConvert.SerializeObject(_TitleReturn);
+
+                    //_TitleReturn = objTitleRepositories.GetTitleById(id);
 
                     if (_TitleReturn != null)
                     {
-                        List<USPAPI_Title_Bind_Extend_Data> lstExtended = new List<USPAPI_Title_Bind_Extend_Data>();
-                        lstExtended = USPAPI_Title_Bind_Extend_Data(_TitleReturn.id);
+                        //List<USPAPI_Title_Bind_Extend_Data> lstExtended = new List<USPAPI_Title_Bind_Extend_Data>();
+                        //lstExtended = USPAPI_Title_Bind_Extend_Data(_TitleReturn.id);
 
-                        if (lstExtended.Count() > 0)
-                        {
-                            var objGroupCode = lstExtended.Select(x => x.Extended_Group_Code).Distinct().ToList();
+                        //if (lstExtended.Count() > 0)
+                        //{
+                        //    var objGroupCode = lstExtended.Select(x => x.Extended_Group_Code).Distinct().ToList();
 
-                            foreach (Int32 item in objGroupCode)
-                            {
-                                string strGroupName = lstExtended.Where(x => x.Extended_Group_Code == item).Select(x => x.Group_Name).Distinct().FirstOrDefault();
-                                Dictionary<string, string> objDictionary = new Dictionary<string, string>();
-                                lstExtended.Where(x => x.Extended_Group_Code == item).ToList().ForEach(x =>
-                                {
-                                    if (string.IsNullOrEmpty(x.Column_Value))
-                                    {
-                                        objDictionary.Add(x.Columns_Name, x.Name);
-                                    }
-                                    else
-                                    {
-                                        objDictionary.Add(x.Columns_Name, x.Column_Value);
-                                    }
+                        //    foreach (Int32 item in objGroupCode)
+                        //    {
+                        //        string strGroupName = lstExtended.Where(x => x.Extended_Group_Code == item).Select(x => x.Group_Name).Distinct().FirstOrDefault();
+                        //        Dictionary<string, string> objDictionary = new Dictionary<string, string>();
+                        //        lstExtended.Where(x => x.Extended_Group_Code == item).ToList().ForEach(x =>
+                        //        {
+                        //            if (string.IsNullOrEmpty(x.Column_Value))
+                        //            {
+                        //                objDictionary.Add(x.Columns_Name, x.Name);
+                        //            }
+                        //            else
+                        //            {
+                        //                objDictionary.Add(x.Columns_Name, x.Column_Value);
+                        //            }
 
-                                });
+                        //        });
 
-                                _TitleReturn.MetaData.Add(strGroupName, objDictionary);
-                            }
-                        }
+                        //        _TitleReturn.MetaData.Add(strGroupName, objDictionary);
+                        //    }
+                        //}
                     }
                 }
             }
@@ -292,7 +362,7 @@ namespace RightsU.BMS.BLL.Services
                 throw;
             }
 
-            _objRet.Response = _TitleReturn;
+            //_objRet.Response = _TitleReturn;
 
             return _objRet;
         }

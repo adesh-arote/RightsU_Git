@@ -316,4 +316,137 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Language -----------
+    public class LanguageRepositories : MainRepository<Language>
+    {
+        public Language Get(int Id)
+        {
+            var obj = new { Language_Code = Id };
+
+            return base.GetById<Language>(obj);
+        }
+        public IEnumerable<Language> GetAll()
+        {
+            return base.GetAll<Language>();
+        }
+        public void Add(Language entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Language entity)
+        {
+            Language oldObj = Get(entity.Language_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Language entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Language> SearchFor(object param)
+        {
+            return base.SearchForEntity<Language>(param);
+        }
+
+        public IEnumerable<Language> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Language>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Program -----------
+    public class ProgramRepositories : MainRepository<Program>
+    {
+        public Program Get(int Id)
+        {
+            var obj = new { Program_Code = Id };
+
+            return base.GetById<Program>(obj);
+        }
+        public IEnumerable<Program> GetAll()
+        {
+            return base.GetAll<Program>();
+        }
+        public void Add(Program entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Program entity)
+        {
+            Program oldObj = Get(entity.Program_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Program entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Program> SearchFor(object param)
+        {
+            return base.SearchForEntity<Program>(param);
+        }
+
+        public IEnumerable<Program> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Program>(strSQL);
+        }
+
+        public ProgramReturn GetProgram_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            ProgramReturn ObjProgramReturn = new ProgramReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program_List>("USPAPI_Program_List", param).ToList();
+            ObjProgramReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjProgramReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Country -----------
+    public class CountryRepositories : MainRepository<Country>
+    {
+        public Country Get(int Id)
+        {
+            var obj = new { Country_Code = Id };
+
+            return base.GetById<Country>(obj);
+        }
+        public IEnumerable<Country> GetAll()
+        {
+            return base.GetAll<Country>();
+        }
+        public void Add(Country entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Country entity)
+        {
+            Country oldObj = Get(entity.Country_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Country entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Country> SearchFor(object param)
+        {
+            return base.SearchForEntity<Country>(param);
+        }
+
+        public IEnumerable<Country> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Country>(strSQL);
+        }
+    }
+    #endregion
 }
