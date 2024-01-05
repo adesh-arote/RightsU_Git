@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace RightsU.BMS.Entities.Master_Entities
 {
     [Table("Genres")]
-    public partial class Genre
+    public partial class Genres
     {        
-        public Genre()
+        public Genres()
         {
             this.Title_Geners = new HashSet<Title_Geners>();
             //this.Channels = new HashSet<Channel>();

@@ -449,4 +449,316 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Talent -----------
+    public class TalentRepositories : MainRepository<Talent>
+    {
+        public Talent Get(int Id)
+        {
+            var obj = new { Talent_Code = Id };
+
+            return base.GetById<Talent,Talent_Role>(obj);
+        }
+        public IEnumerable<Talent> GetAll()
+        {
+            return base.GetAll<Talent, Talent_Role>();
+        }
+        public void Add(Talent entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Talent entity)
+        {
+            Talent oldObj = Get(entity.Talent_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Talent entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Talent> SearchFor(object param)
+        {
+            return base.SearchForEntity<Talent>(param);
+        }
+
+        public IEnumerable<Talent> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Talent>(strSQL);
+        }
+
+        public TalentReturn GetTalent_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            TalentReturn ObjTalentReturn = new TalentReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent_List>("USPAPI_Talent_List", param).ToList();
+            ObjTalentReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjTalentReturn;
+        }
+        public Talent_Validations Talent_Validation(string InputValue, string InputType)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@InputValue", InputValue);
+            param.Add("@InputType", InputType);
+            return base.ExecuteSQLProcedure<Talent_Validations>("USPAPI_Talent_Validations", param).FirstOrDefault();
+        }
+    }
+    #endregion
+
+    #region -------- Talent_Role -----------
+    public class Talent_RoleRepositories : MainRepository<Talent_Role>
+    {
+        public Talent_Role Get(int Id)
+        {
+            var obj = new { Talent_Role_Code = Id };
+
+            return base.GetById<Talent_Role>(obj);
+        }
+        public IEnumerable<Talent_Role> GetAll()
+        {
+            return base.GetAll<Talent_Role>();
+        }
+        public void Add(Talent_Role entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Talent_Role entity)
+        {
+            Talent_Role oldObj = Get(entity.Talent_Role_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Talent_Role entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Talent_Role> SearchFor(object param)
+        {
+            return base.SearchForEntity<Talent_Role>(param);
+        }
+
+        public IEnumerable<Talent_Role> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Talent_Role>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Role -----------
+    public class RoleRepositories : MainRepository<Role>
+    {
+        public Role Get(int Id)
+        {
+            var obj = new { Role_Code = Id };
+
+            return base.GetById<Role>(obj);
+        }
+        public IEnumerable<Role> GetAll()
+        {
+            return base.GetAll<Role>();
+        }
+        public void Add(Role entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Role entity)
+        {
+            Role oldObj = Get(entity.Role_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Role entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Role> SearchFor(object param)
+        {
+            return base.SearchForEntity<Role>(param);
+        }
+
+        public IEnumerable<Role> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Role>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Deal_Type -----------
+    public class Deal_TypeRepositories : MainRepository<Deal_Type>
+    {
+        public Deal_Type Get(int Id)
+        {
+            var obj = new { Deal_Type_Code = Id };
+
+            return base.GetById<Deal_Type>(obj);
+        }
+        public IEnumerable<Deal_Type> GetAll()
+        {
+            return base.GetAll<Deal_Type>();
+        }
+        public void Add(Deal_Type entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Deal_Type entity)
+        {
+            Deal_Type oldObj = Get(entity.Deal_Type_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Deal_Type entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Deal_Type> SearchFor(object param)
+        {
+            return base.SearchForEntity<Deal_Type>(param);
+        }
+
+        public IEnumerable<Deal_Type> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Deal_Type>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Genres -----------
+    public class GenresRepositories : MainRepository<Genres>
+    {
+        public Genres Get(int Id)
+        {
+            var obj = new { Genres_Code = Id };
+
+            return base.GetById<Genres>(obj);
+        }
+        public IEnumerable<Genres> GetAll()
+        {
+            return base.GetAll<Genres>();
+        }
+        public void Add(Genres entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Genres entity)
+        {
+            Genres oldObj = Get(entity.Genres_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Genres entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Genres> SearchFor(object param)
+        {
+            return base.SearchForEntity<Genres>(param);
+        }
+
+        public IEnumerable<Genres> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Genres>(strSQL);
+        }
+
+        public GenreReturn GetGenre_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            GenreReturn ObjGenreReturn = new GenreReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjGenreReturn.content = base.ExecuteSQLProcedure<Genre_List>("USPAPI_Genres_List", param).ToList();
+            ObjGenreReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjGenreReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Banner -----------
+    public class BannerRepositories : MainRepository<Banner>
+    {
+        public Banner Get(int Id)
+        {
+            var obj = new { Banner_Code = Id };
+
+            return base.GetById<Banner>(obj);
+        }
+        public IEnumerable<Banner> GetAll()
+        {
+            return base.GetAll<Banner>();
+        }
+        public void Add(Banner entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Banner entity)
+        {
+            Banner oldObj = Get(entity.Banner_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Banner entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Banner> SearchFor(object param)
+        {
+            return base.SearchForEntity<Banner>(param);
+        }
+
+        public IEnumerable<Banner> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Banner>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- AL_Lab -----------
+    public class AL_LabRepositories : MainRepository<AL_Lab>
+    {
+        public AL_Lab Get(int Id)
+        {
+            var obj = new { AL_Lab_Code = Id };
+
+            return base.GetById<AL_Lab>(obj);
+        }
+        public IEnumerable<AL_Lab> GetAll()
+        {
+            return base.GetAll<AL_Lab>();
+        }
+        public void Add(AL_Lab entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(AL_Lab entity)
+        {
+            AL_Lab oldObj = Get(entity.AL_Lab_id.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(AL_Lab entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<AL_Lab> SearchFor(object param)
+        {
+            return base.SearchForEntity<AL_Lab>(param);
+        }
+
+        public IEnumerable<AL_Lab> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<AL_Lab>(strSQL);
+        }
+    }
+    #endregion
 }

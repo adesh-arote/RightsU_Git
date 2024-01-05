@@ -83,7 +83,9 @@
     <Compile Include="InputClasses\TalentInput.cs" />
     <Compile Include="InputClasses\TitleInput.cs" />
     <Compile Include="LogClasses\Error.cs" />
+    <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
+    <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
     <Compile Include="Master_Entities\BMS_Schedule_Import_Config.cs" />
     <Compile Include="Master_Entities\Channel.cs" />
@@ -97,7 +99,7 @@
     <Compile Include="Master_Entities\Extended_Columns_Value.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
-    <Compile Include="Master_Entities\Genre.cs" />
+    <Compile Include="Master_Entities\Genres.cs" />
     <Compile Include="Master_Entities\GenreReturn.cs" />
     <Compile Include="Master_Entities\Grade_Master.cs" />
     <Compile Include="Master_Entities\Language.cs" />

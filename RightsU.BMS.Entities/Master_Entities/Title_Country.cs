@@ -15,12 +15,13 @@ namespace RightsU.BMS.Entities.Master_Entities
         [PrimaryKey]
         public int? Title_Country_Code { get; set; }
         [ForeignKeyReference(typeof(Title))]
-        public Nullable<int> Title_Code { get; set; }
-        [ForeignKeyReference(typeof(Country))]
+        public Nullable<int> Title_Code { get; set; }        
         public Nullable<int> Country_Code { get; set; }
 
-        [SimpleSaveIgnore]
+        [ForeignKeyReference(typeof(Country))]
         [SimpleLoadIgnore]
+        [OneToOne]
+        [Column("Country_Code")]
         public virtual Country Country { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

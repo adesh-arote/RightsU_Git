@@ -1,4 +1,5 @@
-﻿using RightsU.BMS.DAL.Repository;
+﻿using RightsU.BMS.DAL;
+using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
@@ -15,7 +16,7 @@ namespace RightsU.BMS.BLL.Services
 {
     public class GenreServices
     {
-        private readonly GenreRepositories objGenreRepositories = new GenreRepositories();
+        private readonly GenresRepositories objGenreRepositories = new GenresRepositories();
         public GenericReturn GetGenreList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
         {
             GenericReturn _objRet = new GenericReturn();
@@ -189,7 +190,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-                Genre objGenre = new Genre();
+                Genres objGenre = new Genres();
 
                 objGenre.Genres_Name = objInput.GenreName;
                 objGenre.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
@@ -242,9 +243,9 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-                Genre objGenre = new Genre();
+                Genres objGenre = new Genres();
 
-                objGenre = objGenreRepositories.GetById(objInput.id);
+                objGenre = objGenreRepositories.Get(objInput.id);
 
                 objGenre.Genres_Name = objInput.GenreName;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
@@ -294,9 +295,9 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-                Genre objGenre = new Genre();
+                Genres objGenre = new Genres();
 
-                objGenre = objGenreRepositories.GetById(objInput.id);
+                objGenre = objGenreRepositories.Get(objInput.id);
 
                 objGenre.Last_Updated_Time = DateTime.Now;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);

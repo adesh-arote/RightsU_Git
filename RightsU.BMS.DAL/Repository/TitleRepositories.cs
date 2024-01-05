@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace RightsU.BMS.DAL.Repository
         public Title GetById(Int32? Id)
         {
             var obj = new { Title_Code = Id.Value };
-            return base.GetById<Title, Title_Country, Title_Talent, Title_Geners>(obj);
+            return base.GetById<Title, Title_Country, Title_Talent, Title_Geners, Language, Program, Deal_Type>(obj);
         }
 
         public IEnumerable<Title> GetAll()
@@ -61,7 +62,116 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTitleReturn.content = base.ExecuteSQLProcedure<title_List>("USPAPI_Title_List", param).ToList();
+            var entity = base.ExecuteSQLProcedure<TitleInput>("USPAPI_Title_List", param).ToList();
+            entity.ForEach(i =>
+            {
+                if (!string.IsNullOrEmpty(i.Language))
+                {
+                    var arrLang = i.Language.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrLang.Length > 0)
+                    {
+                        i.TitleLanguage.id = Convert.ToInt32(arrLang[0]);
+                        i.TitleLanguage.Name = arrLang[1];
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.OriginalLanguage1))
+                {
+                    var arrOGLang = i.OriginalLanguage1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrOGLang.Length > 0)
+                    {
+                        i.OriginalLanguage.id = Convert.ToInt32(arrOGLang[0]);
+                        i.OriginalLanguage.Name = arrOGLang[1];
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.Program1))
+                {
+                    var arrProgram = i.Program1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrProgram.Length > 0)
+                    {
+                        i.Program.id = Convert.ToInt32(arrProgram[0]);
+                        i.Program.Name = arrProgram[1];
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.Country1))
+                {
+                    var arrCountryGrp = i.Country1.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrCountryGrp.Length > 0)
+                    {
+                        foreach (var CountryGroup in arrCountryGrp)
+                        {
+                            var arrCountry = CountryGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (arrCountry.Length > 0)
+                            {
+                                Entities.InputClasses.TitleCountry objCountry = new Entities.InputClasses.TitleCountry();
+                                objCountry.id = Convert.ToInt32(arrCountry[0]);
+                                objCountry.CountryId = Convert.ToInt32(arrCountry[1]);
+                                objCountry.Name = arrCountry[2];
+
+                                i.Country.Add(objCountry);
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.TitleTalent1))
+                {
+                    var arrTalentGrp = i.TitleTalent1.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrTalentGrp.Length > 0)
+                    {
+                        foreach (var TalentGroup in arrTalentGrp)
+                        {
+                            var arrTalent = TalentGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (arrTalent.Length > 0)
+                            {
+                                Entities.InputClasses.TitleTalent objTalent = new Entities.InputClasses.TitleTalent();
+                                objTalent.id = Convert.ToInt32(arrTalent[0]);
+                                objTalent.Name = arrTalent[1];
+                                objTalent.Role = arrTalent[2];
+                                objTalent.TalentId = Convert.ToInt32(arrTalent[3]);
+                                objTalent.RoleId = Convert.ToInt32(arrTalent[4]);
+
+                                i.TitleTalent.Add(objTalent);
+                            }
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.AssetType1))
+                {
+                    var arrAssetType = i.AssetType1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrAssetType.Length > 0)
+                    {
+                        i.AssetType.id = Convert.ToInt32(arrAssetType[0]);
+                        i.AssetType.Name = arrAssetType[1];
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(i.Genre1))
+                {
+                    var arrGenreGrp = i.Genre1.Split(new char[] { '@' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrGenreGrp.Length > 0)
+                    {
+                        foreach (var GenreGroup in arrGenreGrp)
+                        {
+                            var arrGenre = GenreGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (arrGenre.Length > 0)
+                            {
+                                Entities.InputClasses.TitleGenre objGenre = new Entities.InputClasses.TitleGenre();
+                                objGenre.id = Convert.ToInt32(arrGenre[0]);
+                                objGenre.GenreId = Convert.ToInt32(arrGenre[1]);
+                                objGenre.Name = arrGenre[2];
+
+
+                                i.Genre.Add(objGenre);
+                            }
+                        }
+                    }
+                }
+            });
+            ObjTitleReturn.content = entity;
             ObjTitleReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjTitleReturn;
         }
@@ -76,9 +186,9 @@ namespace RightsU.BMS.DAL.Repository
             return ObjExtended;
         }
 
-        public title GetTitleById(Int32 id)
+        public TitleInput GetTitleById(Int32 id)
         {
-            title ObjTitleReturn = new title();
+            TitleInput ObjTitleReturn = new TitleInput();
 
             var param = new DynamicParameters();
             //param.Add("@id", id);
@@ -92,7 +202,7 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@date_lt", "");
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTitleReturn = base.ExecuteSQLProcedure<title>("USPAPI_Title_List", param).FirstOrDefault();
+            ObjTitleReturn = base.ExecuteSQLProcedure<TitleInput>("USPAPI_Title_List", param).FirstOrDefault();
             return ObjTitleReturn;
         }
 

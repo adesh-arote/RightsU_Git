@@ -1,4 +1,5 @@
-﻿using RightsU.BMS.DAL.Repository;
+﻿using RightsU.BMS.DAL;
+using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
@@ -17,7 +18,7 @@ namespace RightsU.BMS.BLL.Services
     public class TalentServices
     {
         private readonly TalentRepositories objTalentRepositories = new TalentRepositories();
-        private readonly Talent_RoleRepositories objTalent_RoleRepositories = new Talent_RoleRepositories();        
+        private readonly Talent_RoleRepositories objTalent_RoleRepositories = new Talent_RoleRepositories();
 
         public GenericReturn GetTalentList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
         {
@@ -265,7 +266,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Talent objTalent = new Talent();
 
-                objTalent = objTalentRepositories.GetById(objInput.id);
+                objTalent = objTalentRepositories.Get(objInput.id);
 
                 objTalent.Talent_Name = objInput.TalentName;
                 objTalent.Gender = objInput.Gender;
@@ -350,7 +351,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Talent objTalent = new Talent();
 
-                objTalent = objTalentRepositories.GetById(objInput.id);
+                objTalent = objTalentRepositories.Get(objInput.id);
 
                 objTalent.Last_Updated_Time = DateTime.Now;
                 objTalent.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);

@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int Deal_Type_Code { get; set; }
+        public int? Deal_Type_Code { get; set; }
         public string Deal_Type_Name { get; set; }
         public string Is_Default { get; set; }
         public string Is_Grid_Required { get; set; }

@@ -11,7 +11,7 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public GenreReturn()
         {
-            content = new List<Genre>();
+            content = new List<Genres>();
             paging = new paging();
         }
 

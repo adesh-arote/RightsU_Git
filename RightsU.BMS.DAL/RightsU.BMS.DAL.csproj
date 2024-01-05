@@ -74,9 +74,7 @@
     <Compile Include="Repository\BMSDealContentRightsRepositories.cs" />
     <Compile Include="Repository\BMSDealRepositories.cs" />
     <Compile Include="Repository\BMSScheduleImportRepositories.cs" />
-    <Compile Include="Repository\GenreRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
-    <Compile Include="Repository\TalentRepositories.cs" />
     <Compile Include="Repository\TitleRepositories.cs" />
   </ItemGroup>
   <ItemGroup>

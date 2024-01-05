@@ -22,14 +22,12 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string Original_Title { get; set; }
         public string Title_Name { get; set; }
         public string Title_Code_Id { get; set; }
-        public string Synopsis { get; set; }        
-        [ForeignKeyReference(typeof(Language))]                
-        public Nullable<int> Original_Language_Code { get; set; }        
+        public string Synopsis { get; set; }                
+        public Nullable<int> Original_Language_Code { get; set; }
         [ForeignKeyReference(typeof(Language))]
         public Nullable<int> Title_Language_Code { get; set; }
         public Nullable<int> Year_Of_Production { get; set; }
-        public Nullable<decimal> Duration_In_Min { get; set; }
-        [ForeignKeyReference(typeof(Deal_Type))]
+        public Nullable<decimal> Duration_In_Min { get; set; }        
         public Nullable<int> Deal_Type_Code { get; set; }
         [ForeignKeyReference(typeof(Grade_Master))]
         public Nullable<int> Grade_Code { get; set; }
@@ -43,6 +41,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string Title_Image { get; set; }
         public Nullable<int> Music_Label_Code { get; set; }
+        //[ForeignKeyReference(typeof(Program))]
         public Nullable<int> Program_Code { get; set; }
         public Nullable<int> Original_Title_Code { get; set; }
         
@@ -51,6 +50,26 @@ namespace RightsU.BMS.Entities.Master_Entities
         [OneToMany]
         public virtual ICollection<Title_Geners> Title_Geners { get; set; }
         [OneToMany]
-        public virtual ICollection<Title_Talent> Title_Talent { get; set; }               
+        public virtual ICollection<Title_Talent> Title_Talent { get; set; }
+
+        [ForeignKeyReference(typeof(Program))]
+        [OneToOne]
+        [Column("Program_Code")]
+        public virtual Program Program { get; set; }
+
+        [ForeignKeyReference(typeof(Language))]
+        [ManyToOne]
+        [Column("Title_Language_Code")]
+        public virtual Language Title_Languages { get; set; }
+
+        [ForeignKeyReference(typeof(Language))]
+        [ManyToOne]
+        [Column("Original_Language_Code")]
+        public virtual Language Original_Languages { get; set; }
+
+        [ForeignKeyReference(typeof(Deal_Type))]
+        [OneToOne]
+        [Column("Deal_Type_Code")]
+        public virtual Deal_Type AssetType { get; set; }
     }
 }

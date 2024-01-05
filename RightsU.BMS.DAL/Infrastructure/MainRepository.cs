@@ -115,6 +115,17 @@ namespace RightsU.BMS.DAL
                 return obj;
             }
         }
+        public T1 GetById<T1, T2, T3, T4, T5, T6, T7,T8>(object param)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                T1 obj = connection.AutoQuery<T1, T2, T3, T4, T5, T6, T7,T8>(param).FirstOrDefault();
+                connection.Close();
+                return obj;
+            }
+        }
+        
         public IEnumerable<T> GetAll<T1>()
         {
             using (var connection = dbConnection.Connection())

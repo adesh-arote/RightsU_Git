@@ -21,7 +21,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Record_Code { get; set; }
         public string Table_Name { get; set; }   
         [ForeignKeyReference(typeof(Extended_Columns))]  
-        [ManyToOne]
+        [ManyToOne]        
         public Extended_Columns Columns_Code { get; set; }        
         //public string Column_Name { get; set; }
         [ForeignKeyReference(typeof(Extended_Columns_Value))]        
