@@ -156,16 +156,296 @@ namespace RightsU.BMS.DAL
         {
             return base.GetAll<System_Module>();
         }
-        public List<System_Module> USP_GetModule(Int32 Module_Code, Int32 Users_Code)
+        public List<System_Module> USP_GetModule(Int32 Security_Group_Code, Int32 Users_Code)
         {
             List<System_Module> ObjModule = new List<System_Module>();
 
             var param = new DynamicParameters();
-            param.Add("@SecurityGroupCode", Module_Code);
+            param.Add("@SecurityGroupCode", Security_Group_Code);
             param.Add("@IsSuperAdmin", "Y");
             param.Add("@Users_Code", Users_Code);
             ObjModule = base.ExecuteSQLProcedure<System_Module>("USP_GetMenu", param).ToList();
             return ObjModule;
+        }
+
+        public List<USPAPI_GetModuleRights> USPAPI_GetModuleRights(Int32 Security_Group_Code)
+        {
+            List<USPAPI_GetModuleRights> ObjModule = new List<USPAPI_GetModuleRights>();
+
+            var param = new DynamicParameters();
+            param.Add("@SecurityGroupCode", Security_Group_Code);
+            ObjModule = base.ExecuteSQLProcedure<USPAPI_GetModuleRights>("USPAPI_GetModuleRights", param).ToList();
+            return ObjModule;
+        }
+    }
+    #endregion
+
+    #region -------- Extended_Columns -----------
+    public class Extended_ColumnsRepositories : MainRepository<Extended_Columns>
+    {
+        public Extended_Columns Get(int Id)
+        {
+            var obj = new { Columns_Code = Id };
+
+            return base.GetById<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Extended_Columns> GetAll()
+        {
+            return base.GetAll<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>();
+        }
+        public void Update(Extended_Columns entity)
+        {
+            Extended_Columns oldObj = Get(entity.Columns_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<Extended_Columns> SearchFor(object param)
+        {
+            return base.SearchForEntity<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Extended_Columns> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Extended_Columns_Value -----------
+    public class Extended_Columns_ValueRepositories : MainRepository<Extended_Columns_Value>
+    {
+        public Extended_Columns_Value Get(int Id)
+        {
+            var obj = new { Columns_Value_Code = Id };
+
+            return base.GetById<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Extended_Columns_Value> GetAll()
+        {
+            return base.GetAll<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>();
+        }
+        public void Update(Extended_Columns_Value entity)
+        {
+            Extended_Columns_Value oldObj = Get(entity.Columns_Value_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public IEnumerable<Extended_Columns_Value> SearchFor(object param)
+        {
+            return base.SearchForEntity<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Extended_Columns_Value> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Map_Extended_Columns -----------
+    public class Map_Extended_ColumnsRepositories : MainRepository<Map_Extended_Columns>
+    {
+        public Map_Extended_Columns Get(int Id)
+        {
+            var obj = new { Map_Extended_Columns_Code = Id };
+
+            return base.GetById<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(obj);
+        }
+        public IEnumerable<Map_Extended_Columns> GetAll()
+        {
+            return base.GetAll<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>();
+        }
+        public void Add(Map_Extended_Columns entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Map_Extended_Columns entity)
+        {
+            Map_Extended_Columns oldObj = Get(entity.Map_Extended_Columns_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Map_Extended_Columns entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Map_Extended_Columns> SearchFor(object param)
+        {
+            return base.SearchForEntity<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(param);
+        }
+
+        public IEnumerable<Map_Extended_Columns> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Map_Extended_Columns>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Map_Extended_Columns_Details -----------
+    public class Map_Extended_Columns_DetailsRepositories : MainRepository<Map_Extended_Columns_Details>
+    {
+        public Map_Extended_Columns_Details Get(int Id)
+        {
+            var obj = new { Map_Extended_Columns_Details_Code = Id };
+
+            return base.GetById<Map_Extended_Columns_Details, Map_Extended_Columns>(obj);
+        }
+        public IEnumerable<Map_Extended_Columns_Details> GetAll()
+        {
+            return base.GetAll<Map_Extended_Columns_Details, Map_Extended_Columns>();
+        }
+        public void Add(Map_Extended_Columns_Details entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Map_Extended_Columns_Details entity)
+        {
+            Map_Extended_Columns_Details oldObj = Get(entity.Map_Extended_Columns_Details_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Map_Extended_Columns_Details entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Map_Extended_Columns_Details> SearchFor(object param)
+        {
+            return base.SearchForEntity<Map_Extended_Columns_Details, Map_Extended_Columns>(param);
+        }
+
+        public IEnumerable<Map_Extended_Columns_Details> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Map_Extended_Columns_Details>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Language -----------
+    public class LanguageRepositories : MainRepository<Language>
+    {
+        public Language Get(int Id)
+        {
+            var obj = new { Language_Code = Id };
+
+            return base.GetById<Language>(obj);
+        }
+        public IEnumerable<Language> GetAll()
+        {
+            return base.GetAll<Language>();
+        }
+        public void Add(Language entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Language entity)
+        {
+            Language oldObj = Get(entity.Language_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Language entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Language> SearchFor(object param)
+        {
+            return base.SearchForEntity<Language>(param);
+        }
+
+        public IEnumerable<Language> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Language>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Program -----------
+    public class ProgramRepositories : MainRepository<Program>
+    {
+        public Program Get(int Id)
+        {
+            var obj = new { Program_Code = Id };
+
+            return base.GetById<Program>(obj);
+        }
+        public IEnumerable<Program> GetAll()
+        {
+            return base.GetAll<Program>();
+        }
+        public void Add(Program entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Program entity)
+        {
+            Program oldObj = Get(entity.Program_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Program entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Program> SearchFor(object param)
+        {
+            return base.SearchForEntity<Program>(param);
+        }
+
+        public IEnumerable<Program> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Program>(strSQL);
+        }
+
+        public ProgramReturn GetProgram_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            ProgramReturn ObjProgramReturn = new ProgramReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program_List>("USPAPI_Program_List", param).ToList();
+            ObjProgramReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjProgramReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Country -----------
+    public class CountryRepositories : MainRepository<Country>
+    {
+        public Country Get(int Id)
+        {
+            var obj = new { Country_Code = Id };
+
+            return base.GetById<Country>(obj);
+        }
+        public IEnumerable<Country> GetAll()
+        {
+            return base.GetAll<Country>();
+        }
+        public void Add(Country entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Country entity)
+        {
+            Country oldObj = Get(entity.Country_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Country entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<Country> SearchFor(object param)
+        {
+            return base.SearchForEntity<Country>(param);
+        }
+
+        public IEnumerable<Country> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Country>(strSQL);
         }
     }
     #endregion

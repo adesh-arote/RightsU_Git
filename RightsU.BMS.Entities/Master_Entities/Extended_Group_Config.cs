@@ -12,7 +12,9 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         [PrimaryKey]
         public int Extended_Group_Config_Code { get; set; }
+        [ForeignKeyReference(typeof(Extended_Group))]
         public Nullable<int> Extended_Group_Code { get; set; }
+        [ForeignKeyReference(typeof(Extended_Columns))]
         public Nullable<int> Columns_Code { get; set; }
         public Nullable<int> Group_Control_Order { get; set; }
         public string Validations { get; set; }

@@ -176,6 +176,9 @@ namespace RightsU_Plus.Controllers
             objDeal_Schema.Run_PageNo = PageNumber;
             objDeal_Schema.Run_PageSize = PageSize;
             objDeal_Schema.Run_Titles = hdnTitleCode;
+
+            ViewBag.AllowPeriodInRunDefinition = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Parameter_Name == "AllowPeriodInRunDefinition").Select(x => x.Parameter_Value).FirstOrDefault();
+
             return PartialView("~/Views/Acq_Deal/_List_Run.cshtml", list);
         }
         #endregion
