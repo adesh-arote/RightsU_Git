@@ -187,11 +187,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Columns_Code = Id };
 
-            return base.GetById<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(obj);
+            return base.GetById<Extended_Columns, Extended_Group_Config>(obj);
         }
         public IEnumerable<Extended_Columns> GetAll()
         {
-            return base.GetAll<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>();
+            return base.GetAll<Extended_Columns, Extended_Group_Config>();
         }
         public void Update(Extended_Columns entity)
         {
@@ -200,7 +200,7 @@ namespace RightsU.BMS.DAL
         }
         public IEnumerable<Extended_Columns> SearchFor(object param)
         {
-            return base.SearchForEntity<Extended_Columns, Extended_Group_Config, Extended_Columns_Value, Map_Extended_Columns>(param);
+            return base.SearchForEntity<Extended_Columns, Extended_Group_Config>(param);
         }
 
         public IEnumerable<Extended_Columns> GetDataWithSQLStmt(string strSQL)

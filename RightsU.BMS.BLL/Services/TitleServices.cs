@@ -516,22 +516,27 @@ namespace RightsU.BMS.BLL.Services
                 }
                 objInput.title_country = lstTitle_Country;
 
-                //foreach (var item in objInput.TitleTalent)
-                //{
-                //    Title_Talent objTitle_Talent = new Title_Talent();
-                //    objTitle_Talent.talent_id = item.TalentId;
-                //    objTitle_Talent.role_id = item.RoleId;
-                //    objTitle.title_talent.Add(objTitle_Talent);
-                //}
+                List<Title_Talent> lstTitle_Talent = new List<Title_Talent>();
+                foreach (var item in objInput.title_talent)
+                {
+                    Title_Talent objTitle_Talent = new Title_Talent();
+                    objTitle_Talent.talent_id = item.talent_id;
+                    objTitle_Talent.role_id = item.role_id;
+                    lstTitle_Talent.Add(objTitle_Talent);
+                }
+                objInput.title_talent = lstTitle_Talent;
 
-                //foreach (var item in objInput.Genre)
-                //{
-                //    Title_Geners objTitleGeners = new Title_Geners();
-                //    objTitleGeners.genres_id = item.GenreId;
-                //    objTitle.title_genres.Add(objTitleGeners);
-                //}
+                List<Title_Geners> lstTitle_Geners = new List<Title_Geners>();
+                foreach (var item in objInput.title_genres)
+                {
+                    Title_Geners objTitleGeners = new Title_Geners();
+                    objTitleGeners.genres_id = item.genres_id;
+                    lstTitle_Geners.Add(objTitleGeners);
+                }
+                objInput.title_genres = lstTitle_Geners;
 
                 objTitleRepositories.Add(objInput);
+
                 _objRet.Response = new { id = objInput.title_id };
 
                 if (objInput.title_id != null && objInput.title_id > 0)
@@ -540,18 +545,18 @@ namespace RightsU.BMS.BLL.Services
                     {
                         //Map_Extended_Columns objMapExtendedColumn = new Map_Extended_Columns();
 
-                        var objExtendedColumn = objExtendedColumnsRepositories.Get(Metadata.columns_id.Value);
+                        Metadata.extended_columns = objExtendedColumnsRepositories.Get(Metadata.extended_columns.columns_id.Value);
 
                         Metadata.title_id = objInput.title_id;
                         Metadata.Table_Name = "TITLE";                        
-                        Metadata.Is_Multiple_Select = objExtendedColumn.Is_Multiple_Select;
+                        Metadata.Is_Multiple_Select = Metadata.extended_columns.Is_Multiple_Select;
                         Metadata.row_no = Metadata.row_no > 0 ? Metadata.row_no : (int?)null;
-
-                        if (objExtendedColumn.Is_Ref == "N" && objExtendedColumn.Is_Defined_Values == "N" && objExtendedColumn.Is_Multiple_Select == "N")
+                        
+                        if (Metadata.extended_columns.Is_Ref == "N" && Metadata.extended_columns.Is_Defined_Values == "N" && Metadata.extended_columns.Is_Multiple_Select == "N")
                         {
                             if (!string.IsNullOrEmpty(Convert.ToString(Metadata.columns_value)))
                             {
-                                if (objExtendedColumn.Control_Type == "DATE")
+                                if (Metadata.extended_columns.Control_Type == "DATE")
                                 {
                                     Metadata.columns_value = GlobalTool.LinuxToDate(Convert.ToDouble(Metadata.columns_value)).ToString("dd-MMM-yyyy");
                                 }
