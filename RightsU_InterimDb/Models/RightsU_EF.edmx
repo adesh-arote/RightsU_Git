@@ -40776,6 +40776,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Action_On" Type="DateTime" Precision="3" />
           <Property Name="Action_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Acq_Deal_Run_LP">
+          <Key>
+            <PropertyRef Name="Acq_Deal_Run_MultiYear_Code" />
+          </Key>
+          <Property Name="Acq_Deal_Run_MultiYear_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Acq_Deal_Run_Code" Type="Int32" />
+          <Property Name="Year_Start" Type="DateTime" Precision="3" />
+          <Property Name="Year_End" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Acq_Deal_Run" Relationship="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" FromRole="Acq_Deal_Run_LP" ToRole="Acq_Deal_Run" />
+        </EntityType>
+        <Association Name="FK__Acq_Deal___Acq_D__5888AE08">
+          <End Type="RightsU_NeoModel.Acq_Deal_Run" Role="Acq_Deal_Run" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Acq_Deal_Run_LP" Role="Acq_Deal_Run_LP" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Acq_Deal_Run">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
+            </Principal>
+            <Dependent Role="Acq_Deal_Run_LP">
+              <PropertyRef Name="Acq_Deal_Run_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <ComplexType Name="USP_Validate_LP_Result">
+          <Property Type="Int32" Name="RowID" Nullable="false" />
+          <Property Type="Int32" Name="Acq_Deal_Rights_Code" Nullable="false" />
+          <Property Type="DateTime" Name="RightsStartDate" Nullable="false" Precision="23" />
+          <Property Type="DateTime" Name="RightsEndDate" Nullable="false" Precision="23" />
+          <Property Type="Int32" Name="DtDiff" Nullable="false" />
+          <Property Type="String" Name="DtType" Nullable="false" MaxLength="1" />
+        </ComplexType>
         <EntityType Name="BV_Schedule_Transaction">
           <Key>
             <PropertyRef Name="BV_Schedule_Transaction_Code" />
@@ -51455,6 +51485,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Acq_Deal_Run_LP">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Run_LP">
+              <MappingFragment StoreEntitySet="Acq_Deal_Run_LP">
+                <ScalarProperty Name="Year_End" ColumnName="Year_End" />
+                <ScalarProperty Name="Year_Start" ColumnName="Year_Start" />
+                <ScalarProperty Name="Acq_Deal_Run_Code" ColumnName="Acq_Deal_Run_Code" />
+                <ScalarProperty Name="Acq_Deal_Run_MultiYear_Code" ColumnName="Acq_Deal_Run_MultiYear_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="BV_Schedule_Transaction">
             <EntityTypeMapping TypeName="RightsU_NeoModel.BV_Schedule_Transaction">
               <MappingFragment StoreEntitySet="BV_Schedule_Transaction">
@@ -51505,6 +51545,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_Validate_LP" FunctionName="RightsU_NeoModel.Store.USP_Validate_LP">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_Validate_LP_Result">
+                <ScalarProperty Name="RowID" ColumnName="RowID" />
+                <ScalarProperty Name="Acq_Deal_Rights_Code" ColumnName="Acq_Deal_Rights_Code" />
+                <ScalarProperty Name="RightsStartDate" ColumnName="RightsStartDate" />
+                <ScalarProperty Name="RightsEndDate" ColumnName="RightsEndDate" />
+                <ScalarProperty Name="DtDiff" ColumnName="DtDiff" />
+                <ScalarProperty Name="DtType" ColumnName="DtType" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
