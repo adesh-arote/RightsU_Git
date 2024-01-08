@@ -30,8 +30,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-        [JsonIgnore]
-        public string Is_Active { get; set; }
+        [Column("Is_Active")]
+        public string is_active { get; set; }
 
     }
 

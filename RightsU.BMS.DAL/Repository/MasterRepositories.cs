@@ -679,7 +679,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjGenreReturn.content = base.ExecuteSQLProcedure<Genre_List>("USPAPI_Genres_List", param).ToList();
+            ObjGenreReturn.content = base.ExecuteSQLProcedure<Genres>("USPAPI_Genres_List", param).ToList();
             ObjGenreReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjGenreReturn;
         }

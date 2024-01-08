@@ -55,7 +55,6 @@
     <Compile Include="Miscellaneous\GlobalTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BMSServices.cs" />
-    <Compile Include="Services\GenreServices.cs" />
     <Compile Include="Services\MasterServices.cs" />
     <Compile Include="Services\ProgramServices.cs" />
     <Compile Include="Services\TalentServices.cs" />

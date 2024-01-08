@@ -100,7 +100,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
         [Route("api/genre")]
-        public async Task<HttpResponseMessage> PostGenre(GenreInput Input)
+        public async Task<HttpResponseMessage> PostGenre(Genres Input)
         {            
             var response = new HttpResponseMessage();
             DateTime startTime;
@@ -144,7 +144,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/genre")]
-        public async Task<HttpResponseMessage> PutGenre(GenreInput Input)
+        public async Task<HttpResponseMessage> PutGenre(Genres Input)
         {  
             var response = new HttpResponseMessage();
             DateTime startTime;
@@ -189,7 +189,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/genre/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PutInput Input)
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Genres Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
