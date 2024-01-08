@@ -1,5 +1,7 @@
-﻿using Dapper.SimpleLoad;
+﻿using Dapper.Contrib.Extensions;
+using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,21 +10,28 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    [Table("Title_Country")]
+    [Dapper.SimpleSave.Table("Title_Country")]
     public partial class Title_Country
-    {   
+    {
         [PrimaryKey]
-        public int Title_Country_Code { get; set; }
+        [Column("Title_Country_Code")]
+        public int? title_country_id { get; set; }
+
         [ForeignKeyReference(typeof(Title))]
-        public Nullable<int> Title_Code { get; set; }
+        [Column("Title_Code")]
+        public Nullable<int> title_id { get; set; }
+
         [ForeignKeyReference(typeof(Country))]
-        public Nullable<int> Country_Code { get; set; }
+        [Column("Country_Code")]
+        public Nullable<int> country_id { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Country Country { get; set; }
+        public virtual Country country { get; set; }
+
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual Title Title { get; set; }
+        [JsonIgnore]
+        public State EntityState { get; set; }
     }
 }

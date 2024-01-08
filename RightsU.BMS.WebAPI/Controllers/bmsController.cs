@@ -39,14 +39,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("getassets")]
         public HttpResponseMessage GetAssets(string since = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetAssets, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetAssets, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";
@@ -159,14 +159,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("getdeals")]
         public HttpResponseMessage GetDeals(string since = null, string assetId = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDeals, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDeals, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";
@@ -328,14 +328,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("getdealcontent")]
         public HttpResponseMessage GetDealContent(string since = null, string assetId = null, string dealId = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealContent, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealContent, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";
@@ -531,14 +531,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [ActionName("getdealrights")]
         public HttpResponseMessage GetDealRights(string since = null, string assetId = null, string dealId = null)
         {
-            string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
+            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
 
-            if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealRights, authenticationToken, RefreshToken))
-            {
-                HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-                return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            }
+            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealRights, authenticationToken, RefreshToken))
+            //{
+            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+            //}
 
             Return _objRet = new Return();
             _objRet.Message = "Success";

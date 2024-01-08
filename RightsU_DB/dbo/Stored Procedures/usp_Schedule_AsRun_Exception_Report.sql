@@ -5,7 +5,9 @@
 	@TitleType varchar(10),	
 	@TitleCode varchar(8000),
 	@StartDate varchar(20),
-	@EndDate varchar(20)
+	@EndDate varchar(20),
+	@EpisodeFrom NVARCHAR(10),
+	@EpisodeTo NVARCHAR(10)
 	--@Business_Unit_Code INT
 	--@StartDate Datetime,
 	--@EndDate Datetime
@@ -83,6 +85,14 @@ BEGIN
 				IF( @IsShowAll = 'Y')
 				BEGIN
 					SET @filter = ' '
+				END
+
+				IF(@TitleType = 'SHOW' OR @TitleType = 'ALL')
+				BEGIN
+					IF((@EpisodeFrom != '') AND (@EpisodeTo != ''))
+					BEGIN
+						SET @filter = @filter + ' AND ENS.Program_Episode_Number BETWEEN ''' + CAST(@EpisodeFrom AS varchar(MAX)) + ''' AND ''' + CAST(@EpisodeTo AS varchar(MAX)) + ''' '
+					END		
 				END
 		
 				IF(@TitleType = 'MOVIE' OR @TitleType = 'ALL')

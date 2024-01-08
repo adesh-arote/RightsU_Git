@@ -3817,4 +3817,11 @@ namespace RightsU_DAL
         }
     }
     #endregion
+
+    public class BV_Schedule_Transaction_Repository : RightsU_Repository<BV_Schedule_Transaction>
+    {
+        public BV_Schedule_Transaction_Repository(string conStr) : base(conStr) { }
+    }
+
+    
 }

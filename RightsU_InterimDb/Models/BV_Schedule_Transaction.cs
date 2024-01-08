@@ -38,5 +38,25 @@ namespace RightsU_InterimDb.Models
     	    public string IsException { get; set; }
     	    public string IsDealApproved { get; set; }
     	    public string IsIgnore { get; set; }
+    	    public string Record_Type { get; set; }
+    	    public Nullable<int> Play_Day { get; set; }
+    	    public Nullable<int> Play_Run { get; set; }
+    	    public Nullable<int> Acq_Deal_Run_Code { get; set; }
+    	    public Nullable<int> Timeline_ID { get; set; }
+    	    public Nullable<bool> Delete_Flag { get; set; }
+    	    public Nullable<int> SYSLookupId_PlayCountError { get; set; }
+    	    public Nullable<int> Acq_Deal_Code { get; set; }
+    	    public Nullable<int> DealContent_RightId { get; set; }
+    	    public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+    	    public Nullable<int> Content_Channel_Run_Code { get; set; }
+    	    public string IsPrime { get; set; }
+    	    public Nullable<int> Ref_Timeline_ID { get; set; }
+    	    public string Deal_Type { get; set; }
+    	    public Nullable<int> Deal_Code { get; set; }
+    	    public string Is_Permier { get; set; }
+    	    public Nullable<System.DateTime> Schedule_Item_Log_DateTime { get; set; }
+    	    public Nullable<int> BMS_Deal_Content_Rights_Code { get; set; }
+    	    public string IsInRightsPeriod { get; set; }
+    	    public string IsInValidChannel { get; set; }
     }
 }

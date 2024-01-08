@@ -1903,6 +1903,26 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.BV_HouseId_Data_Temp' does not
           <Property Name="IsException" Type="char" MaxLength="1" />
           <Property Name="IsDealApproved" Type="char" MaxLength="1" />
           <Property Name="IsIgnore" Type="char" MaxLength="1" />
+          <Property Name="Record_Type" Type="char" MaxLength="1" />
+          <Property Name="Play_Day" Type="int" />
+          <Property Name="Play_Run" Type="int" />
+          <Property Name="Acq_Deal_Run_Code" Type="int" />
+          <Property Name="Timeline_ID" Type="int" />
+          <Property Name="Delete_Flag" Type="bit" />
+          <Property Name="SYSLookupId_PlayCountError" Type="int" />
+          <Property Name="Acq_Deal_Code" Type="int" />
+          <Property Name="DealContent_RightId" Type="int" />
+          <Property Name="Last_Updated_Time" Type="datetime" />
+          <Property Name="Content_Channel_Run_Code" Type="int" />
+          <Property Name="IsPrime" Type="char" MaxLength="1" />
+          <Property Name="Ref_Timeline_ID" Type="int" />
+          <Property Name="Deal_Type" Type="char" MaxLength="1" />
+          <Property Name="Deal_Code" Type="int" />
+          <Property Name="Is_Permier" Type="char" MaxLength="1" />
+          <Property Name="Schedule_Item_Log_DateTime" Type="datetime" />
+          <Property Name="BMS_Deal_Content_Rights_Code" Type="int" />
+          <Property Name="IsInRightsPeriod" Type="char" MaxLength="1" />
+          <Property Name="IsInValidChannel" Type="char" MaxLength="1" />
         </EntityType>
         <EntityType Name="BV_Schedule_Transaction_Show">
           <Key>
@@ -22115,7 +22135,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Title_Codes" Mode="In" Type="String" />
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
           </FunctionImport>
-          <EntitySet Name="BV_Schedule_Transaction" EntityType="RightsU_NeoModel.BV_Schedule_Transaction" />
           <EntitySet Name="Music_Schedule_Exception" EntityType="RightsU_NeoModel.Music_Schedule_Exception" />
           <EntitySet Name="BV_HouseId_Data" EntityType="RightsU_NeoModel.BV_HouseId_Data" />
           <FunctionImport Name="USP_UpdateContentHouseID">
@@ -23805,6 +23824,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="EpsTo" Mode="In" Type="Int32" />
             <Parameter Name="Module_Code" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="BV_Schedule_Transaction" EntityType="RightsU_NeoModel.BV_Schedule_Transaction" />
         </EntityContainer>
         <EntityType Name="Acq_Deal">
           <Key>
@@ -34783,35 +34803,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="BV_Schedule_Transaction">
-          <Key>
-            <PropertyRef Name="BV_Schedule_Transaction_Code" />
-          </Key>
-          <Property Name="BV_Schedule_Transaction_Code" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Program_Episode_ID" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="Program_Version_ID" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="Program_Episode_Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Program_Episode_Number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Program_Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Program_Category" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="Schedule_Item_Log_Date" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Schedule_Item_Log_Time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Schedule_Item_Duration" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Scheduled_Version_House_Number_List" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="Found_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="File_Code" Type="Int64" />
-          <Property Name="Channel_Code" Type="Int32" />
-          <Property Name="IsProcessed" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Inserted_By" Type="Int32" />
-          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
-          <Property Name="Title_Code" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Deal_Movie_Code" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Deal_Movie_Rights_Code" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="IsRevertCnt_OnAsRunLoad" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="IsException" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="IsDealApproved" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="IsIgnore" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-        </EntityType>
         <EntityType Name="Music_Schedule_Exception">
           <Key>
             <PropertyRef Name="Music_Schedule_Exception_Code" />
@@ -40815,6 +40806,55 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="DtDiff" Nullable="false" />
           <Property Type="String" Name="DtType" Nullable="false" MaxLength="1" />
         </ComplexType>
+        <EntityType Name="BV_Schedule_Transaction">
+          <Key>
+            <PropertyRef Name="BV_Schedule_Transaction_Code" />
+          </Key>
+          <Property Name="BV_Schedule_Transaction_Code" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Program_Episode_ID" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Program_Version_ID" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Program_Episode_Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Program_Episode_Number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Program_Title" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Program_Category" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Schedule_Item_Log_Date" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Schedule_Item_Log_Time" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Schedule_Item_Duration" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Scheduled_Version_House_Number_List" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Found_Status" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="File_Code" Type="Int64" />
+          <Property Name="Channel_Code" Type="Int32" />
+          <Property Name="IsProcessed" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Inserted_By" Type="Int32" />
+          <Property Name="Inserted_On" Type="DateTime" Precision="3" />
+          <Property Name="Title_Code" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Deal_Movie_Code" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Deal_Movie_Rights_Code" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="IsRevertCnt_OnAsRunLoad" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsException" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsDealApproved" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsIgnore" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Record_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Play_Day" Type="Int32" />
+          <Property Name="Play_Run" Type="Int32" />
+          <Property Name="Acq_Deal_Run_Code" Type="Int32" />
+          <Property Name="Timeline_ID" Type="Int32" />
+          <Property Name="Delete_Flag" Type="Boolean" />
+          <Property Name="SYSLookupId_PlayCountError" Type="Int32" />
+          <Property Name="Acq_Deal_Code" Type="Int32" />
+          <Property Name="DealContent_RightId" Type="Int32" />
+          <Property Name="Last_Updated_Time" Type="DateTime" Precision="3" />
+          <Property Name="Content_Channel_Run_Code" Type="Int32" />
+          <Property Name="IsPrime" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Ref_Timeline_ID" Type="Int32" />
+          <Property Name="Deal_Type" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Deal_Code" Type="Int32" />
+          <Property Name="Is_Permier" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Schedule_Item_Log_DateTime" Type="DateTime" Precision="3" />
+          <Property Name="BMS_Deal_Content_Rights_Code" Type="Int32" />
+          <Property Name="IsInRightsPeriod" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="IsInValidChannel" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -47387,36 +47427,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="USP_Generate_Title_Content" FunctionName="RightsU_NeoModel.Store.USP_Generate_Title_Content" />
-          <EntitySetMapping Name="BV_Schedule_Transaction">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.BV_Schedule_Transaction">
-              <MappingFragment StoreEntitySet="BV_Schedule_Transaction">
-                <ScalarProperty Name="IsIgnore" ColumnName="IsIgnore" />
-                <ScalarProperty Name="IsDealApproved" ColumnName="IsDealApproved" />
-                <ScalarProperty Name="IsException" ColumnName="IsException" />
-                <ScalarProperty Name="IsRevertCnt_OnAsRunLoad" ColumnName="IsRevertCnt_OnAsRunLoad" />
-                <ScalarProperty Name="Deal_Movie_Rights_Code" ColumnName="Deal_Movie_Rights_Code" />
-                <ScalarProperty Name="Deal_Movie_Code" ColumnName="Deal_Movie_Code" />
-                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
-                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
-                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
-                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
-                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
-                <ScalarProperty Name="File_Code" ColumnName="File_Code" />
-                <ScalarProperty Name="Found_Status" ColumnName="Found_Status" />
-                <ScalarProperty Name="Scheduled_Version_House_Number_List" ColumnName="Scheduled_Version_House_Number_List" />
-                <ScalarProperty Name="Schedule_Item_Duration" ColumnName="Schedule_Item_Duration" />
-                <ScalarProperty Name="Schedule_Item_Log_Time" ColumnName="Schedule_Item_Log_Time" />
-                <ScalarProperty Name="Schedule_Item_Log_Date" ColumnName="Schedule_Item_Log_Date" />
-                <ScalarProperty Name="Program_Category" ColumnName="Program_Category" />
-                <ScalarProperty Name="Program_Title" ColumnName="Program_Title" />
-                <ScalarProperty Name="Program_Episode_Number" ColumnName="Program_Episode_Number" />
-                <ScalarProperty Name="Program_Episode_Title" ColumnName="Program_Episode_Title" />
-                <ScalarProperty Name="Program_Version_ID" ColumnName="Program_Version_ID" />
-                <ScalarProperty Name="Program_Episode_ID" ColumnName="Program_Episode_ID" />
-                <ScalarProperty Name="BV_Schedule_Transaction_Code" ColumnName="BV_Schedule_Transaction_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Music_Schedule_Exception">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Schedule_Exception">
               <MappingFragment StoreEntitySet="Music_Schedule_Exception">
@@ -51482,6 +51492,56 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Year_Start" ColumnName="Year_Start" />
                 <ScalarProperty Name="Acq_Deal_Run_Code" ColumnName="Acq_Deal_Run_Code" />
                 <ScalarProperty Name="Acq_Deal_Run_MultiYear_Code" ColumnName="Acq_Deal_Run_MultiYear_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BV_Schedule_Transaction">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.BV_Schedule_Transaction">
+              <MappingFragment StoreEntitySet="BV_Schedule_Transaction">
+                <ScalarProperty Name="IsInValidChannel" ColumnName="IsInValidChannel" />
+                <ScalarProperty Name="IsInRightsPeriod" ColumnName="IsInRightsPeriod" />
+                <ScalarProperty Name="BMS_Deal_Content_Rights_Code" ColumnName="BMS_Deal_Content_Rights_Code" />
+                <ScalarProperty Name="Schedule_Item_Log_DateTime" ColumnName="Schedule_Item_Log_DateTime" />
+                <ScalarProperty Name="Is_Permier" ColumnName="Is_Permier" />
+                <ScalarProperty Name="Deal_Code" ColumnName="Deal_Code" />
+                <ScalarProperty Name="Deal_Type" ColumnName="Deal_Type" />
+                <ScalarProperty Name="Ref_Timeline_ID" ColumnName="Ref_Timeline_ID" />
+                <ScalarProperty Name="IsPrime" ColumnName="IsPrime" />
+                <ScalarProperty Name="Content_Channel_Run_Code" ColumnName="Content_Channel_Run_Code" />
+                <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
+                <ScalarProperty Name="DealContent_RightId" ColumnName="DealContent_RightId" />
+                <ScalarProperty Name="Acq_Deal_Code" ColumnName="Acq_Deal_Code" />
+                <ScalarProperty Name="SYSLookupId_PlayCountError" ColumnName="SYSLookupId_PlayCountError" />
+                <ScalarProperty Name="Delete_Flag" ColumnName="Delete_Flag" />
+                <ScalarProperty Name="Timeline_ID" ColumnName="Timeline_ID" />
+                <ScalarProperty Name="Acq_Deal_Run_Code" ColumnName="Acq_Deal_Run_Code" />
+                <ScalarProperty Name="Play_Run" ColumnName="Play_Run" />
+                <ScalarProperty Name="Play_Day" ColumnName="Play_Day" />
+                <ScalarProperty Name="Record_Type" ColumnName="Record_Type" />
+                <ScalarProperty Name="IsIgnore" ColumnName="IsIgnore" />
+                <ScalarProperty Name="IsDealApproved" ColumnName="IsDealApproved" />
+                <ScalarProperty Name="IsException" ColumnName="IsException" />
+                <ScalarProperty Name="IsRevertCnt_OnAsRunLoad" ColumnName="IsRevertCnt_OnAsRunLoad" />
+                <ScalarProperty Name="Deal_Movie_Rights_Code" ColumnName="Deal_Movie_Rights_Code" />
+                <ScalarProperty Name="Deal_Movie_Code" ColumnName="Deal_Movie_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
+                <ScalarProperty Name="File_Code" ColumnName="File_Code" />
+                <ScalarProperty Name="Found_Status" ColumnName="Found_Status" />
+                <ScalarProperty Name="Scheduled_Version_House_Number_List" ColumnName="Scheduled_Version_House_Number_List" />
+                <ScalarProperty Name="Schedule_Item_Duration" ColumnName="Schedule_Item_Duration" />
+                <ScalarProperty Name="Schedule_Item_Log_Time" ColumnName="Schedule_Item_Log_Time" />
+                <ScalarProperty Name="Schedule_Item_Log_Date" ColumnName="Schedule_Item_Log_Date" />
+                <ScalarProperty Name="Program_Category" ColumnName="Program_Category" />
+                <ScalarProperty Name="Program_Title" ColumnName="Program_Title" />
+                <ScalarProperty Name="Program_Episode_Number" ColumnName="Program_Episode_Number" />
+                <ScalarProperty Name="Program_Episode_Title" ColumnName="Program_Episode_Title" />
+                <ScalarProperty Name="Program_Version_ID" ColumnName="Program_Version_ID" />
+                <ScalarProperty Name="Program_Episode_ID" ColumnName="Program_Episode_ID" />
+                <ScalarProperty Name="BV_Schedule_Transaction_Code" ColumnName="BV_Schedule_Transaction_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

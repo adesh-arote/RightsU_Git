@@ -1,5 +1,6 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,30 +12,25 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Role")]
     public partial class Role
     {
-        public Role()
-        {
-            this.Talent_Role = new HashSet<Talent_Role>();
-            this.Title_Talent = new HashSet<Title_Talent>();            
-        }
-
         [PrimaryKey]
-        public int Role_Code { get; set; }
-        public string Role_Name { get; set; }
+        [Column("Role_Code")]
+        public int? role_id { get; set; }
+
+        [Column("Role_Name")]
+        public string role_name { get; set; }
+
+        [JsonIgnore]
         public string Role_Type { get; set; }
+        [JsonIgnore]
         public string Is_Rate_Card { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Last_Action_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]       
         [ForeignKeyReference(typeof(Deal_Type))]
         public Nullable<int> Deal_Type_Code { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual Deal_Type Deal_Type { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual ICollection<Talent_Role> Talent_Role { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual ICollection<Title_Talent> Title_Talent { get; set; }        
     }
 }
