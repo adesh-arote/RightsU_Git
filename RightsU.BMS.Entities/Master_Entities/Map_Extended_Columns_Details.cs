@@ -1,5 +1,6 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,23 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Map_Extended_Columns_Details
     {
         [PrimaryKey]
-        public int? Map_Extended_Columns_Details_Code { get; set; } 
-        [ForeignKeyReference(typeof(Map_Extended_Columns))]        
-        public Nullable<int> Map_Extended_Columns_Code { get; set; }        
-        public Nullable<int> Columns_Value_Code { get; set; }
+        [Column("Map_Extended_Columns_Details_Code")]
+        public int? metadata_values_id { get; set; } 
+        
+        [ForeignKeyReference(typeof(Map_Extended_Columns))]
+        [Column("Map_Extended_Columns_Code")]
+        public Nullable<int> metadata_id { get; set; }
+
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        public string name { get; set; }
+
+        [Column("Columns_Value_Code")]
+        public Nullable<int> column_value_id { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
+        [JsonIgnore]
         public State EntityState { get; set; }
-
-        //public virtual Extended_Columns_Value Extended_Columns_Value { get; set; }
-
-        //public virtual Map_Extended_Columns Map_Extended_Columns { get; set; }
     }
 }

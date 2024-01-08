@@ -12,7 +12,7 @@ namespace RightsU.BMS.Entities.FrameworkClasses
     public class Return
     {
         public string Message { get; set; }
-        public bool IsSuccess { get; set; }        
+        public bool IsSuccess { get; set; }
         public int LogId { get; set; }
         public string Token { get; set; }
         public Nullable<int> SecurityGroupCode { get; set; }
@@ -33,13 +33,13 @@ namespace RightsU.BMS.Entities.FrameworkClasses
         public object Response { get; set; }
     }
 
-    public class PostReturn
-    {
-        public string Message { get; set; }
-        public bool IsSuccess { get; set; }
-        [JsonIgnore]
-        public double TimeTaken { get; set; }
-        [JsonIgnore]
-        public HttpStatusCode StatusCode { get; set; }
-    }
+    //public class PostReturn
+    //{
+    //    public string Message { get; set; }
+    //    public bool IsSuccess { get; set; }
+    //    [JsonIgnore]
+    //    public double TimeTaken { get; set; }
+    //    [JsonIgnore]
+    //    public HttpStatusCode StatusCode { get; set; }
+    //}
 }

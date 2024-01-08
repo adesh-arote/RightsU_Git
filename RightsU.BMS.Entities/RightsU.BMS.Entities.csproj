@@ -128,6 +128,7 @@
     <Compile Include="Master_Entities\USPAPI_GetModuleRights.cs" />
     <Compile Include="Master_Entities\USPAPI_Title_Bind_Extend_Data.cs" />
     <Compile Include="Master_Entities\UTOLogInput.cs" />
+    <Compile Include="Master_Entities\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using RightsU.BMS.Entities.FrameworkClasses;
 using System;
 using System.Collections.Generic;
@@ -19,22 +20,33 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        public int? Talent_Code { get; set; }
-        public string Talent_Name { get; set; }
+        [Column("Talent_Code")]
+        public int? talent_id { get; set; }
+
+        [Column("Talent_Name")]
+        public string talent_name { get; set; }
+
+        [JsonIgnore]
         public string Gender { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
         public string Is_Active { get; set; }
 
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
         [OneToMany]
+        [JsonIgnore]
         public virtual ICollection<Talent_Role> Talent_Role { get; set; }
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
+        [JsonIgnore]
         public virtual ICollection<Title_Talent> Title_Talent { get; set; }        
     }
     

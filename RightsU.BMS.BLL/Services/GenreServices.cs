@@ -192,14 +192,14 @@ namespace RightsU.BMS.BLL.Services
             {
                 Genres objGenre = new Genres();
 
-                objGenre.Genres_Name = objInput.GenreName;
+                objGenre.genres_name = objInput.GenreName;
                 objGenre.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objGenre.Inserted_On = DateTime.Now;
                 objGenre.Last_Updated_Time = DateTime.Now;
                 objGenre.Is_Active = "Y";
 
                 objGenreRepositories.Add(objGenre);
-                _objRet.Response = new { id = objGenre.Genres_Code };
+                _objRet.Response = new { id = objGenre.genres_id };
                 
             }
 
@@ -247,14 +247,14 @@ namespace RightsU.BMS.BLL.Services
 
                 objGenre = objGenreRepositories.Get(objInput.id);
 
-                objGenre.Genres_Name = objInput.GenreName;
+                objGenre.genres_name = objInput.GenreName;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objGenre.Last_Updated_Time = DateTime.Now;
                 objGenre.Is_Active = "Y";
 
                 objGenreRepositories.AddEntity(objGenre);
 
-                _objRet.Response = new { id = objGenre.Genres_Code };
+                _objRet.Response = new { id = objGenre.genres_id };
             }
 
             return _objRet;
@@ -304,7 +304,7 @@ namespace RightsU.BMS.BLL.Services
                 objGenre.Is_Active = objInput.Status.ToUpper();
 
                 objGenreRepositories.Update(objGenre);
-                _objRet.Response = new { id = objGenre.Genres_Code };
+                _objRet.Response = new { id = objGenre.genres_id };
 
             }
 

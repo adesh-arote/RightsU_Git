@@ -10,26 +10,15 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Extended_Columns_Value")]
     public partial class Extended_Columns_Value
     {
-        public Extended_Columns_Value()
-        {
-            //this.Map_Extended_Columns_Details = new HashSet<Map_Extended_Columns_Details>();
-            this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();
-        }
         [PrimaryKey]
-        public int? Columns_Value_Code { get; set; }
-        [ForeignKeyReference(typeof(Extended_Columns))]
-        [OneToOne]
-        public Extended_Columns Columns_Code { get; set; }
-        
-        //public string Columns_Name { get; set; }
-        
-        public string Columns_Value { get; set; }
+        [Column("Columns_Value_Code")]
+        public int? columns_value_id { get; set; }
 
-        
-        //public virtual Extended_Columns Extended_Columns { get; set; }
-        //[OneToMany]
-        //public virtual ICollection<Map_Extended_Columns_Details> Map_Extended_Columns_Details { get; set; }
-        [OneToMany]
-        public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
+        [Column("Columns_Code")]
+        public Nullable<int> columns_id { get; set; }
+
+        [Column("Columns_Value")]
+        public string columns_value { get; set; }
+
     }
 }

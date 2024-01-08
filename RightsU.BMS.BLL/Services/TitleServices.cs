@@ -36,6 +36,7 @@ namespace RightsU.BMS.BLL.Services
         private readonly GenresRepositories objGenresRepositories = new GenresRepositories();
         private readonly BannerRepositories objBannerRepositories = new BannerRepositories();
         private readonly AL_LabRepositories objAL_LabRepositories = new AL_LabRepositories();
+        private readonly VersionRepositories objVersionRepositories = new VersionRepositories();
 
         //public TitleReturn List_Titles(string order, Int32? page, string search_value, Int32? size, string sort, string Date_GT, string Date_LT, Int32? id)
         //{
@@ -214,278 +215,152 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                    TitleInput _TitleReturn = new TitleInput();
+                    Title objTitle = new Title();
 
-                    var objTitle = objTitleRepositories.GetById(id);
+                    objTitle = objTitleRepositories.GetById(id);
 
-                    _TitleReturn.id = objTitle.Title_Code.Value;
-                    _TitleReturn.Name = objTitle.Title_Name;
-
-                    #region Title Language
-
-                    TitleGeneric objTitleLanguage = new TitleGeneric();
-
-                    var titleLanguage = objLanguageRepositories.Get(objTitle.Title_Language_Code.Value);
-
-                    objTitleLanguage.id = titleLanguage.Language_Code.Value;
-                    objTitleLanguage.Name = titleLanguage.Language_Name;
-                    _TitleReturn.TitleLanguage = objTitleLanguage;
-
-                    #endregion
-
-                    _TitleReturn.OriginalName = objTitle.Original_Title;
-
-                    #region OriginalLanguage
-
-                    TitleGeneric objOriginalLanguage = new TitleGeneric();
-
-                    var originalLanguage = objLanguageRepositories.Get(objTitle.Original_Language_Code.Value);
-
-                    objOriginalLanguage.id = originalLanguage.Language_Code.Value;
-                    objOriginalLanguage.Name = originalLanguage.Language_Name;
-                    _TitleReturn.OriginalLanguage = objOriginalLanguage;
-
-                    #endregion
-
-                    _TitleReturn.ProductionYear = objTitle.Year_Of_Production.Value;
-                    _TitleReturn.DurationInMin = objTitle.Duration_In_Min.Value;
-
-                    #region Program
-
-                    TitleGeneric objProgram = new TitleGeneric();
-
-                    var program = objProgramRepositories.Get(objTitle.Program_Code.Value);
-
-                    objProgram.id = program.Program_Code.Value;
-                    objProgram.Name = program.Program_Name;
-                    _TitleReturn.Program = objProgram;
-
-                    #endregion
-
-                    #region Country
-
-                    List<TitleCountry> lstTitleCountry = new List<TitleCountry>();
-
-                    foreach (var country in objTitle.Title_Country)
-                    {
-                        var objcountry = objCountryRepositories.Get(country.Country_Code.Value);
-
-                        lstTitleCountry.Add(new TitleCountry() { id = country.Title_Country_Code.Value, CountryId = country.Country_Code.Value, Name = objcountry.Country_Name });
-                    }
-
-                    _TitleReturn.Country = lstTitleCountry;
-
-                    #endregion
-
-                    #region Title Talent
-
-                    List<TitleTalent> lstTitleTalent = new List<TitleTalent>();
-
-                    foreach (var talent in objTitle.Title_Talent)
-                    {
-                        var objTalent = objTalentRepositories.Get(talent.Talent_Code.Value);
-                        var objRole = objRoleRepositories.Get(talent.Role_Code.Value);
-
-                        lstTitleTalent.Add(new TitleTalent()
-                        {
-                            id = talent.Title_Talent_Code.Value,
-                            Name = objTalent.Talent_Name,
-                            Role = objRole.Role_Name,
-                            RoleId = talent.Role_Code.Value,
-                            TalentId = talent.Talent_Code.Value
-                        });
-                    }
-
-                    _TitleReturn.TitleTalent = lstTitleTalent;
-
-                    #endregion
-
-                    #region Asset Type
-
-                    TitleGeneric objAssetType = new TitleGeneric();
-
-                    var assetType = objDeal_TypeRepositories.Get(objTitle.Deal_Type_Code.Value);
-
-                    objAssetType.id = assetType.Deal_Type_Code.Value;
-                    objAssetType.Name = assetType.Deal_Type_Name;
-                    _TitleReturn.AssetType = objAssetType;
-
-                    #endregion
-
-                    _TitleReturn.Synopsis = objTitle.Synopsis;
-
-                    #region Title Genre
-
-                    List<TitleGenre> lstTitleGeners = new List<TitleGenre>();
-
-                    foreach (var genres in objTitle.Title_Geners)
-                    {
-                        var objgenres = objGenresRepositories.Get(genres.Genres_Code.Value);
-
-                        lstTitleGeners.Add(new TitleGenre() { id = genres.Title_Geners_Code.Value, GenreId = genres.Genres_Code.Value, Name = objgenres.Genres_Name });
-                    }
-
-                    _TitleReturn.Genre = lstTitleGeners;
-
-                    #endregion
-
-                    var abc = JsonConvert.SerializeObject(_TitleReturn);
-
-                    var alLab = objAL_LabRepositories.Get(1013);
-
-                    //_TitleReturn = objTitleRepositories.GetTitleById(id);
-
-                    var objMapExtended = objMap_Extended_ColumnsRepositories.SearchFor(new { Record_Code = _TitleReturn.id });
-
-                    List<ExtendedColumns> objExtended = new List<ExtendedColumns>();
+                    var objMapExtended = objMap_Extended_ColumnsRepositories.SearchFor(new { Record_Code = objTitle.title_id });
 
                     if (objMapExtended.Count() > 0)
                     {
                         foreach (var item in objMapExtended)
                         {
-                            if (item.Columns_Code.Is_Ref == "N" && item.Columns_Code.Is_Defined_Values == "N" && item.Columns_Code.Is_Multiple_Select == "N")
+                            if (item.extended_columns.Is_Ref == "N" && item.extended_columns.Is_Defined_Values == "N" && item.extended_columns.Is_Multiple_Select == "N")
                             {
                                 string strColumnValue = string.Empty;
 
-                                if (item.Columns_Code.Control_Type == "DATE")
+                                if (item.extended_columns.Control_Type == "DATE")
                                 {
-                                    if (!string.IsNullOrEmpty(item.Column_Value))
+                                    if (!string.IsNullOrEmpty(item.columns_value))
                                     {
-                                        strColumnValue = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(item.Column_Value)));
+                                        item.columns_value = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(item.columns_value)));
                                     }
                                 }
-                                else
-                                {
-                                    strColumnValue = item.Column_Value;
-                                }
-
-                                objExtended.Add(new ExtendedColumns()
-                                {
-                                    id = item.Map_Extended_Columns_Code.Value,
-                                    ColumnId = item.Columns_Code.Columns_Code.Value,
-                                    Key = item.Columns_Code.Columns_Name,
-                                    Row_No = item.Row_No == null ? 0 : item.Row_No.Value,
-                                    Value = strColumnValue
-                                });
                             }
-                            else if (item.Columns_Code.Is_Ref == "Y" && item.Columns_Code.Is_Multiple_Select == "N")
+                            else if (item.extended_columns.Is_Ref == "Y" && item.extended_columns.Is_Multiple_Select == "N")
                             {
-                                if (item.Columns_Code.Is_Defined_Values == "Y")
+                                if (item.extended_columns.Is_Defined_Values == "Y")
                                 {
-                                    var objExtendedValue = objExtended_Columns_ValueRepositories.Get(item.Columns_Value_Code.Value);
+                                    var objExtendedValue = objExtended_Columns_ValueRepositories.Get(item.columns_value_id.Value);
 
                                     if (objExtendedValue != null)
                                     {
-                                        objExtended.Add(new ExtendedColumns()
-                                        {
-                                            id = item.Map_Extended_Columns_Code.Value,
-                                            ColumnId = item.Columns_Code.Columns_Code.Value,
-                                            Key = item.Columns_Code.Columns_Name,
-                                            Row_No = item.Row_No == null ? 0 : item.Row_No.Value,
-                                            Value = new TitleGeneric()
-                                            {
-                                                id = objExtendedValue.Columns_Value_Code.Value,
-                                                Name = objExtendedValue.Columns_Value
-                                            }
-                                        });
+                                        item.columns_value = objExtendedValue.columns_value;
                                     }
                                 }
                                 else
                                 {
-                                    TitleGeneric objGeneric = new TitleGeneric();
-
-                                    if (item.Columns_Code.Ref_Table.ToLower() == "Banner".ToLower())
+                                    if (item.extended_columns.Ref_Table.ToLower() == "Banner".ToLower())
                                     {
-                                        var banner = objBannerRepositories.Get(item.Columns_Value_Code.Value);
+                                        var banner = objBannerRepositories.Get(item.columns_value_id.Value);
                                         if (banner != null)
                                         {
-                                            objGeneric.id = banner.Banner_Code.Value;
-                                            objGeneric.Name = banner.Banner_Name;
+                                            item.columns_value = banner.Banner_Name;
                                         }
                                     }
-                                    else if (item.Columns_Code.Ref_Table.ToLower() == "Language".ToLower())
+                                    else if (item.extended_columns.Ref_Table.ToLower() == "Language".ToLower())
                                     {
-                                        var language = objLanguageRepositories.Get(item.Columns_Value_Code.Value);
+                                        var language = objLanguageRepositories.Get(item.columns_value_id.Value);
                                         if (language != null)
                                         {
-                                            objGeneric.id = language.Language_Code.Value;
-                                            objGeneric.Name = language.Language_Name;
+                                            item.columns_value = language.language_name;
                                         }
                                     }
-                                    else if (item.Columns_Code.Ref_Table.ToLower() == "Talent".ToLower())
+                                    else if (item.extended_columns.Ref_Table.ToLower() == "Talent".ToLower())
                                     {
-                                        var talent = objTalentRepositories.Get(item.Columns_Value_Code.Value);
+                                        var talent = objTalentRepositories.Get(item.columns_value_id.Value);
                                         if (talent != null)
                                         {
-                                            objGeneric.id = talent.Talent_Code.Value;
-                                            objGeneric.Name = talent.Talent_Name;
+                                            item.columns_value = talent.talent_name;
                                         }
                                     }
-                                    else if (item.Columns_Code.Ref_Table.ToLower() == "version".ToLower())
+                                    else if (item.extended_columns.Ref_Table.ToLower() == "version".ToLower())
                                     {
-                                        var talent = objTalentRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (talent != null)
+                                        var version = objVersionRepositories.Get(item.columns_value_id.Value);
+                                        if (version != null)
                                         {
-                                            objGeneric.id = talent.Talent_Code.Value;
-                                            objGeneric.Name = talent.Talent_Name;
+                                            item.columns_value = version.version_name;
                                         }
                                     }
-                                    else if (item.Columns_Code.Ref_Table.ToLower() == "AL_Lab".ToLower())
+                                    else if (item.extended_columns.Ref_Table.ToLower() == "AL_Lab".ToLower())
                                     {
-                                        //var alLab = objAL_LabRepositories.Get(1013);
-                                        //if (alLab != null)
-                                        //{
-                                        //    objGeneric.id = alLab.AL_Lab_id.Value;
-                                        //    objGeneric.Name = alLab.AL_Lab_Name;
-                                        //}
+                                        var alLab = objAL_LabRepositories.Get(item.columns_value_id.Value);
+                                        if (alLab != null)
+                                        {
+                                            item.columns_value = alLab.AL_Lab_Name;
+                                        }
                                     }
                                 }
                             }
-                            //else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "Y")
-                            //{
-                            //    foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
-                            //    {
-                            //        Map_Extended_Columns_Details objMapExtendedColumnDetails = new Map_Extended_Columns_Details();
-                            //        objMapExtendedColumnDetails.Columns_Value_Code = details.ColumnValueId;
-                            //        objMapExtendedColumn.Map_Extended_Columns_Details.Add(objMapExtendedColumnDetails);
-                            //    }
-                            //}
+                            else if (item.extended_columns.Is_Ref == "Y" && item.extended_columns.Is_Multiple_Select == "Y")
+                            {
+                                if (item.extended_columns.Is_Defined_Values == "Y")
+                                {
+                                    item.metadata_values.ToList().ForEach(i =>
+                                    {
+                                        var objExtendedValue = objExtended_Columns_ValueRepositories.Get(i.column_value_id.Value);
+
+                                        if (objExtendedValue != null)
+                                        {
+                                            i.name = objExtendedValue.columns_value;
+                                        }
+
+                                    });
+                                }
+                                else
+                                {
+                                    item.metadata_values.ToList().ForEach(i =>
+                                    {
+                                        if (item.extended_columns.Ref_Table.ToLower() == "Banner".ToLower())
+                                        {
+                                            var banner = objBannerRepositories.Get(i.column_value_id.Value);
+                                            if (banner != null)
+                                            {
+                                                i.name = banner.Banner_Name;
+                                            }
+                                        }
+                                        else if (item.extended_columns.Ref_Table.ToLower() == "Language".ToLower())
+                                        {
+                                            var language = objLanguageRepositories.Get(i.column_value_id.Value);
+                                            if (language != null)
+                                            {
+                                                i.name = language.language_name;
+                                            }
+                                        }
+                                        else if (item.extended_columns.Ref_Table.ToLower() == "Talent".ToLower())
+                                        {
+                                            var talent = objTalentRepositories.Get(i.column_value_id.Value);
+                                            if (talent != null)
+                                            {
+                                                i.name = talent.talent_name;
+                                            }
+                                        }
+                                        else if (item.extended_columns.Ref_Table.ToLower() == "version".ToLower())
+                                        {
+                                            var version = objVersionRepositories.Get(i.column_value_id.Value);
+                                            if (version != null)
+                                            {
+                                                i.name = version.version_name;
+                                            }
+                                        }
+                                        else if (item.extended_columns.Ref_Table.ToLower() == "AL_Lab".ToLower())
+                                        {
+                                            var alLab = objAL_LabRepositories.Get(i.column_value_id.Value);
+                                            if (alLab != null)
+                                            {
+                                                i.name = alLab.AL_Lab_Name;
+                                            }
+                                        }
+                                    });
+                                }
+                            }
 
                         }
 
-                        _TitleReturn.MetaData = objExtended;
+                        objTitle.MetaData = objMapExtended.ToList();
                     }
 
-                    if (_TitleReturn != null)
-                    {
-                        //List<USPAPI_Title_Bind_Extend_Data> lstExtended = new List<USPAPI_Title_Bind_Extend_Data>();
-                        //lstExtended = USPAPI_Title_Bind_Extend_Data(_TitleReturn.id);
-
-                        //if (lstExtended.Count() > 0)
-                        //{
-                        //    var objGroupCode = lstExtended.Select(x => x.Extended_Group_Code).Distinct().ToList();
-
-                        //    foreach (Int32 item in objGroupCode)
-                        //    {
-                        //        string strGroupName = lstExtended.Where(x => x.Extended_Group_Code == item).Select(x => x.Group_Name).Distinct().FirstOrDefault();
-                        //        Dictionary<string, string> objDictionary = new Dictionary<string, string>();
-                        //        lstExtended.Where(x => x.Extended_Group_Code == item).ToList().ForEach(x =>
-                        //        {
-                        //            if (string.IsNullOrEmpty(x.Column_Value))
-                        //            {
-                        //                objDictionary.Add(x.Columns_Name, x.Name);
-                        //            }
-                        //            else
-                        //            {
-                        //                objDictionary.Add(x.Columns_Name, x.Column_Value);
-                        //            }
-
-                        //        });
-
-                        //        _TitleReturn.MetaData.Add(strGroupName, objDictionary);
-                        //    }
-                        //}
-                    }
+                    _objRet.Response = objTitle;
                 }
             }
             catch (Exception ex)
@@ -493,12 +368,10 @@ namespace RightsU.BMS.BLL.Services
                 throw;
             }
 
-            //_objRet.Response = _TitleReturn;
-
             return _objRet;
         }
 
-        public GenericReturn PostTitle(TitleInput objInput)
+        public GenericReturn PostTitle(Title objInput)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -507,17 +380,17 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (string.IsNullOrEmpty(objInput.Name))
+            if (string.IsNullOrEmpty(objInput.title_name))
             {
-                _objRet.Message = "Input Paramater 'Name' is mandatory";
+                _objRet.Message = "Input Paramater 'title_name' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
             }
 
-            if (objInput.TitleLanguage == null || objInput.TitleLanguage.id <= 0)
+            if (objInput.title_language_id <= 0)
             {
-                _objRet.Message = "Input Paramater 'TitleLanguage' is mandatory";
+                _objRet.Message = "Input Paramater 'title_language_id' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -578,9 +451,9 @@ namespace RightsU.BMS.BLL.Services
             //    }
             //}
 
-            if (objInput.AssetType == null || objInput.AssetType.id <= 0)
+            if (objInput.deal_type_id <= 0)
             {
-                _objRet.Message = "Input Paramater 'AssetTypeId' is mandatory";
+                _objRet.Message = "Input Paramater 'deal_type_id' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -617,93 +490,87 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-                Title objTitle = new Title();
 
-                objTitle.Original_Title = objInput.OriginalName;
-                objTitle.Title_Name = objInput.Name;
-                objTitle.Synopsis = objInput.Synopsis;
-                objTitle.Original_Language_Code = (objInput.OriginalLanguage == null || objInput.OriginalLanguage.id <= 0) ? (int?)null : objInput.OriginalLanguage.id;
-                objTitle.Title_Language_Code = (objInput.TitleLanguage == null || objInput.TitleLanguage.id <= 0) ? (int?)null : objInput.TitleLanguage.id;
-                objTitle.Year_Of_Production = objInput.ProductionYear <= 0 ? (int?)null : objInput.ProductionYear;
-                objTitle.Duration_In_Min = objInput.DurationInMin;
-                objTitle.Deal_Type_Code = (objInput.AssetType == null || objInput.AssetType.id <= 0) ? (int?)null : objInput.AssetType.id;
-                objTitle.Program_Code = (objInput.Program == null || objInput.Program.id <= 0) ? (int?)null : objInput.Program.id;
-                objTitle.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                objTitle.Inserted_On = DateTime.Now;
-                objTitle.Last_UpDated_Time = DateTime.Now;
-                objTitle.Is_Active = "Y";
 
-                foreach (var item in objInput.Country)
-                {
-                    Title_Country objTitle_Country = new Title_Country();
-                    objTitle_Country.Country_Code = item.CountryId;
-                    objTitle.Title_Country.Add(objTitle_Country);
-                }
+                //objTitle.Original_Title = objInput.OriginalName;
+                //objTitle.Title_Name = objInput.Name;
+                //objTitle.Synopsis = objInput.Synopsis;
+                //objTitle.Original_Language_Code = (objInput.OriginalLanguage == null || objInput.OriginalLanguage.id <= 0) ? (int?)null : objInput.OriginalLanguage.id;
+                //objTitle.Title_Language_Code = (objInput.TitleLanguage == null || objInput.TitleLanguage.id <= 0) ? (int?)null : objInput.TitleLanguage.id;
+                //objTitle.Year_Of_Production = objInput.ProductionYear <= 0 ? (int?)null : objInput.ProductionYear;
+                //objTitle.Duration_In_Min = objInput.DurationInMin;
+                //objTitle.Deal_Type_Code = (objInput.AssetType == null || objInput.AssetType.id <= 0) ? (int?)null : objInput.AssetType.id;
+                //objTitle.Program_Code = (objInput.Program == null || objInput.Program.id <= 0) ? (int?)null : objInput.Program.id;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Last_UpDated_Time = DateTime.Now;
+                objInput.Is_Active = "Y";
 
-                foreach (var item in objInput.TitleTalent)
-                {
-                    Title_Talent objTitle_Talent = new Title_Talent();
-                    objTitle_Talent.Talent_Code = item.TalentId;
-                    objTitle_Talent.Role_Code = item.RoleId;
-                    objTitle.Title_Talent.Add(objTitle_Talent);
-                }
+                //foreach (var item in objInput.title_country)
+                //{
+                //    Title_Country objTitle_Country = new Title_Country();
+                //    objTitle_Country.country_id = item.CountryId;
+                //    objTitle.title_country.Add(objTitle_Country);
+                //}
 
-                foreach (var item in objInput.Genre)
-                {
-                    Title_Geners objTitleGeners = new Title_Geners();
-                    objTitleGeners.Genres_Code = item.GenreId;
-                    objTitle.Title_Geners.Add(objTitleGeners);
-                }
+                //foreach (var item in objInput.TitleTalent)
+                //{
+                //    Title_Talent objTitle_Talent = new Title_Talent();
+                //    objTitle_Talent.talent_id = item.TalentId;
+                //    objTitle_Talent.role_id = item.RoleId;
+                //    objTitle.title_talent.Add(objTitle_Talent);
+                //}
 
-                objTitleRepositories.Add(objTitle);
-                _objRet.Response = new { id = objTitle.Title_Code };
+                //foreach (var item in objInput.Genre)
+                //{
+                //    Title_Geners objTitleGeners = new Title_Geners();
+                //    objTitleGeners.genres_id = item.GenreId;
+                //    objTitle.title_genres.Add(objTitleGeners);
+                //}
 
-                if (objTitle.Title_Code != null && objTitle.Title_Code > 0)
+                objTitleRepositories.Add(objInput);
+                _objRet.Response = new { id = objInput.title_id };
+
+                if (objInput.title_id != null && objInput.title_id > 0)
                 {
                     foreach (var Metadata in objInput.MetaData)
                     {
-                        Map_Extended_Columns objMapExtendedColumn = new Map_Extended_Columns();
+                        //Map_Extended_Columns objMapExtendedColumn = new Map_Extended_Columns();
 
-                        var objExtendedColumn = objExtendedColumnsRepositories.Get(Metadata.ColumnId);
+                        var objExtendedColumn = objExtendedColumnsRepositories.Get(Metadata.columns_id.Value);
 
-                        objMapExtendedColumn.Record_Code = objTitle.Title_Code;
-                        objMapExtendedColumn.Table_Name = "TITLE";
-                        objMapExtendedColumn.Columns_Code = new Extended_Columns() { Columns_Code = Metadata.ColumnId };
-                        objMapExtendedColumn.Is_Multiple_Select = objExtendedColumn.Is_Multiple_Select;
-                        objMapExtendedColumn.Row_No = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
+                        Metadata.title_id = objInput.title_id;
+                        Metadata.Table_Name = "TITLE";                        
+                        Metadata.Is_Multiple_Select = objExtendedColumn.Is_Multiple_Select;
+                        Metadata.row_no = Metadata.row_no > 0 ? Metadata.row_no : (int?)null;
 
                         if (objExtendedColumn.Is_Ref == "N" && objExtendedColumn.Is_Defined_Values == "N" && objExtendedColumn.Is_Multiple_Select == "N")
                         {
-                            string strColumnValue = string.Empty;
-
-                            if (!string.IsNullOrEmpty(Convert.ToString(Metadata.Value)))
+                            if (!string.IsNullOrEmpty(Convert.ToString(Metadata.columns_value)))
                             {
-                                strColumnValue = Convert.ToString(Metadata.Value);
-
                                 if (objExtendedColumn.Control_Type == "DATE")
                                 {
-                                    strColumnValue = GlobalTool.LinuxToDate(Convert.ToDouble(strColumnValue)).ToString("dd-MMM-yyyy");
+                                    Metadata.columns_value = GlobalTool.LinuxToDate(Convert.ToDouble(Metadata.columns_value)).ToString("dd-MMM-yyyy");
                                 }
-                            }
-                            objMapExtendedColumn.Column_Value = strColumnValue;
+                            }                            
                         }
-                        else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "N")
-                        {
-                            foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
-                            {
-                                objMapExtendedColumn.Columns_Value_Code = details.ColumnValueId;
-                            }
-                        }
-                        else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "Y")
-                        {
-                            foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
-                            {
-                                Map_Extended_Columns_Details objMapExtendedColumnDetails = new Map_Extended_Columns_Details();
-                                objMapExtendedColumnDetails.Columns_Value_Code = details.ColumnValueId;
-                                objMapExtendedColumn.Map_Extended_Columns_Details.Add(objMapExtendedColumnDetails);
-                            }
-                        }
-                        objMap_Extended_ColumnsRepositories.Add(objMapExtendedColumn);
+                        //else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "N")
+                        //{
+                        //    foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
+                        //    {
+                        //        objMapExtendedColumn.columns_value_id = details.ColumnValueId;
+                        //    }
+                        //}
+                        //else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "Y")
+                        //{
+                        //    foreach (var details in Metadata.metadata_values)
+                        //    {
+                        //        Map_Extended_Columns_Details objMapExtendedColumnDetails = new Map_Extended_Columns_Details();
+                        //        objMapExtendedColumnDetails.column_value_id = details.ColumnValueId;
+                        //        objMapExtendedColumn.metadata_values.Add(objMapExtendedColumnDetails);
+                        //    }
+                        //}
+                        objMap_Extended_ColumnsRepositories.Add(Metadata);
                     }
                 }
             }
@@ -761,137 +628,137 @@ namespace RightsU.BMS.BLL.Services
 
                 objTitle = objTitleRepositories.GetById(objInput.id);
 
-                objTitle.Original_Title = objInput.OriginalName;
-                objTitle.Title_Name = objInput.Name;
-                objTitle.Synopsis = objInput.Synopsis;
-                objTitle.Original_Language_Code = (objInput.OriginalLanguage == null || objInput.OriginalLanguage.id <= 0) ? (int?)null : objInput.OriginalLanguage.id;
-                objTitle.Title_Language_Code = (objInput.TitleLanguage == null || objInput.TitleLanguage.id <= 0) ? (int?)null : objInput.TitleLanguage.id;
-                objTitle.Year_Of_Production = objInput.ProductionYear <= 0 ? (int?)null : objInput.ProductionYear;
-                objTitle.Duration_In_Min = objInput.DurationInMin;
-                objTitle.Deal_Type_Code = (objInput.AssetType == null || objInput.AssetType.id <= 0) ? (int?)null : objInput.AssetType.id;
-                objTitle.Program_Code = (objInput.Program == null || objInput.Program.id <= 0) ? (int?)null : objInput.Program.id;
+                //objTitle.Original_Title = objInput.OriginalName;
+                //objTitle.Title_Name = objInput.Name;
+                //objTitle.Synopsis = objInput.Synopsis;
+                //objTitle.Original_Language_Code = (objInput.OriginalLanguage == null || objInput.OriginalLanguage.id <= 0) ? (int?)null : objInput.OriginalLanguage.id;
+                //objTitle.Title_Language_Code = (objInput.TitleLanguage == null || objInput.TitleLanguage.id <= 0) ? (int?)null : objInput.TitleLanguage.id;
+                //objTitle.Year_Of_Production = objInput.ProductionYear <= 0 ? (int?)null : objInput.ProductionYear;
+                //objTitle.Duration_In_Min = objInput.DurationInMin;
+                //objTitle.Deal_Type_Code = (objInput.AssetType == null || objInput.AssetType.id <= 0) ? (int?)null : objInput.AssetType.id;
+                //objTitle.Program_Code = (objInput.Program == null || objInput.Program.id <= 0) ? (int?)null : objInput.Program.id;
                 objTitle.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objTitle.Last_UpDated_Time = DateTime.Now;
                 objTitle.Is_Active = "Y";
 
                 #region Title_Country
 
-                objTitle.Title_Country.ToList().ForEach(i => i.EntityState = State.Deleted);
+                objTitle.title_country.ToList().ForEach(i => i.EntityState = State.Deleted);
 
                 foreach (var item in objInput.Country)
                 {
-                    Title_Country objT = (Title_Country)objTitle.Title_Country.Where(t => t.Country_Code == item.CountryId).Select(i => i).FirstOrDefault();
+                    Title_Country objT = (Title_Country)objTitle.title_country.Where(t => t.country_id == item.CountryId).Select(i => i).FirstOrDefault();
 
                     if (objT == null)
                         objT = new Title_Country();
-                    if (objT.Title_Country_Code > 0)
+                    if (objT.title_country_id > 0)
                         objT.EntityState = State.Unchanged;
                     else
                     {
                         objT.EntityState = State.Added;
-                        objT.Title_Code = objInput.id;
-                        objT.Country_Code = item.CountryId;
-                        objTitle.Title_Country.Add(objT);
+                        objT.title_id = objInput.id;
+                        objT.country_id = item.CountryId;
+                        objTitle.title_country.Add(objT);
                     }
                 }
 
-                foreach (var item in objTitle.Title_Country.ToList().Where(x => x.EntityState == State.Deleted))
+                foreach (var item in objTitle.title_country.ToList().Where(x => x.EntityState == State.Deleted))
                 {
                     objTitle_CountryRepositories.Delete(item);
                 }
 
-                var objCountry = objTitle.Title_Country.ToList().Where(x => x.EntityState == State.Deleted).ToList();
-                objCountry.ForEach(i => objTitle.Title_Country.Remove(i));
+                var objCountry = objTitle.title_country.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                objCountry.ForEach(i => objTitle.title_country.Remove(i));
                 //objTitle.Title_Country.ToList().Remove(obj);
 
                 #endregion
 
                 #region Title_Talent
 
-                objTitle.Title_Talent.ToList().ForEach(i => i.EntityState = State.Deleted);
+                objTitle.title_talent.ToList().ForEach(i => i.EntityState = State.Deleted);
 
                 foreach (var item in objInput.TitleTalent)
                 {
-                    Title_Talent objT = (Title_Talent)objTitle.Title_Talent.Where(t => t.Talent_Code == item.TalentId).Select(i => i).FirstOrDefault();
+                    Title_Talent objT = (Title_Talent)objTitle.title_talent.Where(t => t.talent_id == item.TalentId).Select(i => i).FirstOrDefault();
 
                     if (objT == null)
                         objT = new Title_Talent();
-                    if (objT.Title_Talent_Code > 0)
+                    if (objT.title_talent_id > 0)
                         objT.EntityState = State.Unchanged;
                     else
                     {
                         objT.EntityState = State.Added;
-                        objT.Title_Code = objInput.id;
-                        objT.Talent_Code = item.TalentId;
-                        objT.Role_Code = item.RoleId;
-                        objTitle.Title_Talent.Add(objT);
+                        objT.title_id = objInput.id;
+                        objT.talent_id = item.TalentId;
+                        objT.role_id = item.RoleId;
+                        objTitle.title_talent.Add(objT);
                     }
                 }
 
-                foreach (var item in objTitle.Title_Talent.ToList().Where(x => x.EntityState == State.Deleted))
+                foreach (var item in objTitle.title_talent.ToList().Where(x => x.EntityState == State.Deleted))
                 {
                     objTitle_TalentRepositories.Delete(item);
                 }
 
-                var objTalent = objTitle.Title_Talent.ToList().Where(x => x.EntityState == State.Deleted).ToList();
-                objTalent.ForEach(i => objTitle.Title_Talent.Remove(i));
+                var objTalent = objTitle.title_talent.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                objTalent.ForEach(i => objTitle.title_talent.Remove(i));
 
                 #endregion
 
                 #region Title_Geners
 
-                objTitle.Title_Geners.ToList().ForEach(i => i.EntityState = State.Deleted);
+                objTitle.title_genres.ToList().ForEach(i => i.EntityState = State.Deleted);
 
                 foreach (var item in objInput.Genre)
                 {
-                    Title_Geners objT = (Title_Geners)objTitle.Title_Geners.Where(t => t.Genres_Code == item.GenreId).Select(i => i).FirstOrDefault();
+                    Title_Geners objT = (Title_Geners)objTitle.title_genres.Where(t => t.genres_id == item.GenreId).Select(i => i).FirstOrDefault();
 
                     if (objT == null)
                         objT = new Title_Geners();
-                    if (objT.Title_Geners_Code > 0)
+                    if (objT.title_genres_id > 0)
                         objT.EntityState = State.Unchanged;
                     else
                     {
                         objT.EntityState = State.Added;
-                        objT.Title_Code = objInput.id;
-                        objT.Genres_Code = item.GenreId;
-                        objTitle.Title_Geners.Add(objT);
+                        objT.title_id = objInput.id;
+                        objT.genres_id = item.GenreId;
+                        objTitle.title_genres.Add(objT);
                     }
                 }
 
-                foreach (var item in objTitle.Title_Geners.ToList().Where(x => x.EntityState == State.Deleted))
+                foreach (var item in objTitle.title_genres.ToList().Where(x => x.EntityState == State.Deleted))
                 {
                     objTitle_GenersRepositories.Delete(item);
                 }
 
-                var objGeners = objTitle.Title_Geners.ToList().Where(x => x.EntityState == State.Deleted).ToList();
-                objGeners.ForEach(i => objTitle.Title_Geners.Remove(i));
+                var objGeners = objTitle.title_genres.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                objGeners.ForEach(i => objTitle.title_genres.Remove(i));
 
                 #endregion
 
                 objTitleRepositories.AddEntity(objTitle);
 
-                _objRet.Response = new { id = objTitle.Title_Code };
+                _objRet.Response = new { id = objTitle.title_id };
 
-                if (objTitle.Title_Code != null && objTitle.Title_Code > 0)
+                if (objTitle.title_id != null && objTitle.title_id > 0)
                 {
-                    var MapExtendedData = objMap_Extended_ColumnsRepositories.SearchFor(new { Record_Code = objTitle.Title_Code }).ToList();
+                    var MapExtendedData = objMap_Extended_ColumnsRepositories.SearchFor(new { Record_Code = objTitle.title_id }).ToList();
 
                     MapExtendedData.ForEach(i => i.EntityState = State.Deleted);
 
                     foreach (var Metadata in objInput.MetaData)
                     {
-                        Map_Extended_Columns objT = (Map_Extended_Columns)MapExtendedData.Where(t => t.Columns_Code.Columns_Code == Metadata.ColumnId && t.EntityState != State.Added && t.EntityState != State.Unchanged).Select(i => i).FirstOrDefault();
+                        Map_Extended_Columns objT = (Map_Extended_Columns)MapExtendedData.Where(t => t.extended_columns.columns_id == Metadata.ColumnId && t.EntityState != State.Added && t.EntityState != State.Unchanged).Select(i => i).FirstOrDefault();
 
                         if (objT == null)
                             objT = new Map_Extended_Columns();
-                        if (objT.Map_Extended_Columns_Code > 0)
+                        if (objT.metadata_id > 0)
                         {
                             objT.EntityState = State.Unchanged;
 
-                            objT.Row_No = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
+                            objT.row_no = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
 
-                            if (objT.Columns_Code.Is_Ref == "N" && objT.Columns_Code.Is_Defined_Values == "N" && objT.Columns_Code.Is_Multiple_Select == "N")
+                            if (objT.extended_columns.Is_Ref == "N" && objT.extended_columns.Is_Defined_Values == "N" && objT.extended_columns.Is_Multiple_Select == "N")
                             {
                                 string strColumnValue = string.Empty;
 
@@ -899,51 +766,51 @@ namespace RightsU.BMS.BLL.Services
                                 {
                                     strColumnValue = Convert.ToString(Metadata.Value);
 
-                                    if (objT.Columns_Code.Control_Type == "DATE")
+                                    if (objT.extended_columns.Control_Type == "DATE")
                                     {
                                         strColumnValue = GlobalTool.LinuxToDate(Convert.ToDouble(strColumnValue)).ToString("dd-MMM-yyyy");
                                     }
                                 }
-                                objT.Column_Value = strColumnValue;
+                                objT.columns_value = strColumnValue;
                             }
-                            else if (objT.Columns_Code.Is_Ref == "Y" && objT.Columns_Code.Is_Multiple_Select == "N")
+                            else if (objT.extended_columns.Is_Ref == "Y" && objT.extended_columns.Is_Multiple_Select == "N")
                             {
                                 foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
                                 {
-                                    objT.Columns_Value_Code = details.ColumnValueId;
+                                    objT.columns_value_id = details.ColumnValueId;
                                 }
                             }
-                            else if (objT.Columns_Code.Is_Ref == "Y" && objT.Columns_Code.Is_Multiple_Select == "Y")
+                            else if (objT.extended_columns.Is_Ref == "Y" && objT.extended_columns.Is_Multiple_Select == "Y")
                             {
-                                objT.Map_Extended_Columns_Details.ToList().ForEach(i => i.EntityState = State.Deleted);
+                                objT.metadata_values.ToList().ForEach(i => i.EntityState = State.Deleted);
 
                                 foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
                                 {
-                                    Map_Extended_Columns_Details objMECD = (Map_Extended_Columns_Details)objT.Map_Extended_Columns_Details.Where(t => t.Columns_Value_Code == details.ColumnValueId).Select(i => i).FirstOrDefault();
+                                    Map_Extended_Columns_Details objMECD = (Map_Extended_Columns_Details)objT.metadata_values.Where(t => t.column_value_id == details.ColumnValueId).Select(i => i).FirstOrDefault();
 
                                     if (objMECD == null)
                                         objMECD = new Map_Extended_Columns_Details();
-                                    if (objMECD.Map_Extended_Columns_Details_Code > 0)
+                                    if (objMECD.metadata_values_id > 0)
                                         objMECD.EntityState = State.Unchanged;
                                     else
                                     {
                                         objT.EntityState = State.Added;
-                                        objMECD.Columns_Value_Code = details.ColumnValueId;
-                                        objMECD.Map_Extended_Columns_Code = objT.Map_Extended_Columns_Code;
+                                        objMECD.column_value_id = details.ColumnValueId;
+                                        objMECD.metadata_id = objT.metadata_id;
 
-                                        objT.Map_Extended_Columns_Details.Add(objMECD);
+                                        objT.metadata_values.Add(objMECD);
                                     }
                                 }
 
-                                foreach (var item in objT.Map_Extended_Columns_Details.ToList().Where(x => x.EntityState == State.Deleted))
+                                foreach (var item in objT.metadata_values.ToList().Where(x => x.EntityState == State.Deleted))
                                 {
                                     objMap_Extended_Columns_DetailsRepositories.Delete(item);
                                 }
 
-                                var objdetails = objT.Map_Extended_Columns_Details.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                                var objdetails = objT.metadata_values.ToList().Where(x => x.EntityState == State.Deleted).ToList();
                                 foreach (var deleted in objdetails)
                                 {
-                                    objT.Map_Extended_Columns_Details.Remove(deleted);
+                                    objT.metadata_values.Remove(deleted);
                                 }
                             }
                         }
@@ -952,11 +819,11 @@ namespace RightsU.BMS.BLL.Services
                             var objExtendedColumn = objExtendedColumnsRepositories.Get(Metadata.ColumnId);
 
                             objT.EntityState = State.Added;
-                            objT.Record_Code = objInput.id;
+                            objT.title_id = objInput.id;
                             objT.Table_Name = "TITLE";
-                            objT.Columns_Code = objExtendedColumn;
+                            objT.extended_columns = objExtendedColumn;
                             objT.Is_Multiple_Select = objExtendedColumn.Is_Multiple_Select;
-                            objT.Row_No = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
+                            objT.row_no = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
 
                             if (objExtendedColumn.Is_Ref == "N" && objExtendedColumn.Is_Defined_Values == "N" && objExtendedColumn.Is_Multiple_Select == "N")
                             {
@@ -971,13 +838,13 @@ namespace RightsU.BMS.BLL.Services
                                         strColumnValue = GlobalTool.LinuxToDate(Convert.ToDouble(strColumnValue)).ToString("dd-MMM-yyyy");
                                     }
                                 }
-                                objT.Column_Value = strColumnValue;
+                                objT.columns_value = strColumnValue;
                             }
                             else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "N")
                             {
                                 foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
                                 {
-                                    objT.Columns_Value_Code = details.ColumnValueId;
+                                    objT.columns_value_id = details.ColumnValueId;
                                 }
                             }
                             else if (objExtendedColumn.Is_Ref == "Y" && objExtendedColumn.Is_Multiple_Select == "Y")
@@ -985,8 +852,8 @@ namespace RightsU.BMS.BLL.Services
                                 foreach (var details in (List<ExtendedColumnDetails>)Metadata.Value)
                                 {
                                     Map_Extended_Columns_Details objMapExtendedColumnDetails = new Map_Extended_Columns_Details();
-                                    objMapExtendedColumnDetails.Columns_Value_Code = details.ColumnValueId;
-                                    objT.Map_Extended_Columns_Details.Add(objMapExtendedColumnDetails);
+                                    objMapExtendedColumnDetails.column_value_id = details.ColumnValueId;
+                                    objT.metadata_values.Add(objMapExtendedColumnDetails);
                                 }
                             }
 
@@ -1060,7 +927,7 @@ namespace RightsU.BMS.BLL.Services
                 objTitle.Is_Active = objInput.Status.ToUpper();
 
                 objTitleRepositories.Update(objTitle);
-                _objRet.Response = new { id = objTitle.Title_Code };
+                _objRet.Response = new { id = objTitle.title_id };
 
             }
 

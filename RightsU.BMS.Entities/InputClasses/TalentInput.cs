@@ -11,9 +11,9 @@ namespace RightsU.BMS.Entities.InputClasses
         public Int32 id { get; set; }
         public string TalentName { get; set; }
         public string Gender { get; set; }
-        public List<Role> Role { get; set; }
+        public List<Role1> Role { get; set; }
     }
-    public class Role
+    public class Role1
     {
         public Int32 id { get; set; }
         public Int32 RoleId { get; set; }

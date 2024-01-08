@@ -195,7 +195,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Extended_Columns entity)
         {
-            Extended_Columns oldObj = Get(entity.Columns_Code.Value);
+            Extended_Columns oldObj = Get(entity.columns_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public IEnumerable<Extended_Columns> SearchFor(object param)
@@ -217,20 +217,20 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Columns_Value_Code = Id };
 
-            return base.GetById<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(obj);
+            return base.GetById<Extended_Columns_Value>(obj);
         }
         public IEnumerable<Extended_Columns_Value> GetAll()
         {
-            return base.GetAll<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>();
+            return base.GetAll<Extended_Columns_Value>();
         }
         public void Update(Extended_Columns_Value entity)
         {
-            Extended_Columns_Value oldObj = Get(entity.Columns_Value_Code.Value);
+            Extended_Columns_Value oldObj = Get(entity.columns_value_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public IEnumerable<Extended_Columns_Value> SearchFor(object param)
         {
-            return base.SearchForEntity<Extended_Columns_Value, Map_Extended_Columns_Details, Map_Extended_Columns>(param);
+            return base.SearchForEntity<Extended_Columns_Value>(param);
         }
 
         public IEnumerable<Extended_Columns_Value> GetDataWithSQLStmt(string strSQL)
@@ -247,11 +247,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Map_Extended_Columns_Code = Id };
 
-            return base.GetById<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(obj);
+            return base.GetById<Map_Extended_Columns, Extended_Columns, Map_Extended_Columns_Details>(obj);
         }
         public IEnumerable<Map_Extended_Columns> GetAll()
         {
-            return base.GetAll<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>();
+            return base.GetAll<Map_Extended_Columns, Extended_Columns, Map_Extended_Columns_Details>();
         }
         public void Add(Map_Extended_Columns entity)
         {
@@ -259,7 +259,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Map_Extended_Columns entity)
         {
-            Map_Extended_Columns oldObj = Get(entity.Map_Extended_Columns_Code.Value);
+            Map_Extended_Columns oldObj = Get(entity.metadata_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Map_Extended_Columns entity)
@@ -269,7 +269,7 @@ namespace RightsU.BMS.DAL
 
         public IEnumerable<Map_Extended_Columns> SearchFor(object param)
         {
-            return base.SearchForEntity<Map_Extended_Columns, Extended_Columns, Extended_Columns_Value, Map_Extended_Columns_Details>(param);
+            return base.SearchForEntity<Map_Extended_Columns, Extended_Columns, Map_Extended_Columns_Details>(param);
         }
 
         public IEnumerable<Map_Extended_Columns> GetDataWithSQLStmt(string strSQL)
@@ -298,7 +298,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Map_Extended_Columns_Details entity)
         {
-            Map_Extended_Columns_Details oldObj = Get(entity.Map_Extended_Columns_Details_Code.Value);
+            Map_Extended_Columns_Details oldObj = Get(entity.metadata_values_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Map_Extended_Columns_Details entity)
@@ -336,7 +336,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Language entity)
         {
-            Language oldObj = Get(entity.Language_Code.Value);
+            Language oldObj = Get(entity.language_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Language entity)
@@ -374,7 +374,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Program entity)
         {
-            Program oldObj = Get(entity.Program_Code.Value);
+            Program oldObj = Get(entity.program_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Program entity)
@@ -431,7 +431,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Country entity)
         {
-            Country oldObj = Get(entity.Country_Code.Value);
+            Country oldObj = Get(entity.country_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Country entity)
@@ -469,7 +469,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Talent entity)
         {
-            Talent oldObj = Get(entity.Talent_Code.Value);
+            Talent oldObj = Get(entity.talent_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Talent entity)
@@ -572,7 +572,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Role entity)
         {
-            Role oldObj = Get(entity.Role_Code.Value);
+            Role oldObj = Get(entity.role_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Role entity)
@@ -610,7 +610,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Deal_Type entity)
         {
-            Deal_Type oldObj = Get(entity.Deal_Type_Code.Value);
+            Deal_Type oldObj = Get(entity.deal_type_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Deal_Type entity)
@@ -648,7 +648,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Genres entity)
         {
-            Genres oldObj = Get(entity.Genres_Code.Value);
+            Genres oldObj = Get(entity.genres_id.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Genres entity)
@@ -758,6 +758,44 @@ namespace RightsU.BMS.DAL
         public IEnumerable<AL_Lab> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<AL_Lab>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Version -----------
+    public class VersionRepositories : MainRepository<RightsU.BMS.Entities.Master_Entities.Version>
+    {
+        public RightsU.BMS.Entities.Master_Entities.Version Get(int Id)
+        {
+            var obj = new { Version_Code = Id };
+
+            return base.GetById<RightsU.BMS.Entities.Master_Entities.Version>(obj);
+        }
+        public IEnumerable<RightsU.BMS.Entities.Master_Entities.Version> GetAll()
+        {
+            return base.GetAll<RightsU.BMS.Entities.Master_Entities.Version>();
+        }
+        public void Add(RightsU.BMS.Entities.Master_Entities.Version entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(RightsU.BMS.Entities.Master_Entities.Version entity)
+        {
+            RightsU.BMS.Entities.Master_Entities.Version oldObj = Get(entity.version_id.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(RightsU.BMS.Entities.Master_Entities.Version entity)
+        {
+            base.DeleteEntity(entity);
+        }
+        public IEnumerable<RightsU.BMS.Entities.Master_Entities.Version> SearchFor(object param)
+        {
+            return base.SearchForEntity<RightsU.BMS.Entities.Master_Entities.Version>(param);
+        }
+
+        public IEnumerable<RightsU.BMS.Entities.Master_Entities.Version> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<RightsU.BMS.Entities.Master_Entities.Version>(strSQL);
         }
     }
     #endregion

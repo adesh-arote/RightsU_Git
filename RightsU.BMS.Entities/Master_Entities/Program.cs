@@ -13,32 +13,29 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Program")]
     public partial class Program
     {
-        public Program()
-        {
-            this.Titles = new HashSet<Title>();
-        }
-
         [PrimaryKey]
-        public int? Program_Code { get; set; }
-        public string Program_Name { get; set; }
+        [Column("Program_Code")]
+        public int? program_id { get; set; }
+
+        [Column("Program_Name")]
+        public string program_name { get; set; }
+
+        [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonIgnore]
         public Nullable<int> Deal_Type_Code { get; set; }
-        [ForeignKeyReference(typeof(Genres))]
+        [JsonIgnore]        
         public Nullable<int> Genres_Code { get; set; }
-        public string Is_Active { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual ICollection<Title> Titles { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual Deal_Type Deal_Type { get; set; }
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        public virtual Genres Genre { get; set; }
+        [JsonIgnore]
+        public string Is_Active { get; set; }        
     }
     
 }

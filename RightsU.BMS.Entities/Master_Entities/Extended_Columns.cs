@@ -1,4 +1,5 @@
 ﻿using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +13,36 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Extended_Columns()
         {
-            this.Extended_Columns_Value = new HashSet<Extended_Columns_Value>();
-            this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();            
             this.Extended_Group_Config = new HashSet<Extended_Group_Config>();            
         }
                 
         [PrimaryKey]
-        public int? Columns_Code { get; set; }
-        public string Columns_Name { get; set; }
+        [Column("Columns_Code")]
+        public int? columns_id { get; set; }
+
+        [Column("Columns_Name")]
+        public string columns_name { get; set; }
+
+        [JsonIgnore]
         public string Control_Type { get; set; }
+        [JsonIgnore]
         public string Is_Ref { get; set; }
+        [JsonIgnore]
         public string Is_Defined_Values { get; set; }
+        [JsonIgnore]
         public string Is_Multiple_Select { get; set; }
+        [JsonIgnore]
         public string Ref_Table { get; set; }
+        [JsonIgnore]
         public string Ref_Display_Field { get; set; }
+        [JsonIgnore]
         public string Ref_Value_Field { get; set; }
+        [JsonIgnore]
         public string Additional_Condition { get; set; }
+        [JsonIgnore]
         public string Is_Add_OnScreen { get; set; }
 
-        [OneToMany]
-        [SimpleSaveIgnore]
-        public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
-        [OneToMany]
-        [SimpleSaveIgnore]
-        public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
+        [JsonIgnore]
         [OneToMany]
         [SimpleSaveIgnore]
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }        

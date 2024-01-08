@@ -1,5 +1,6 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,63 +14,117 @@ namespace RightsU.BMS.Entities.Master_Entities
     {        
         public Title()
         {
-            this.Title_Country = new HashSet<Title_Country>();
-            this.Title_Geners = new HashSet<Title_Geners>();
-            this.Title_Talent = new HashSet<Title_Talent>();
+            this.title_country = new HashSet<Title_Country>();
+            this.title_genres = new HashSet<Title_Geners>();
+            this.title_talent = new HashSet<Title_Talent>();
+            this.MetaData = new HashSet<Map_Extended_Columns>();
         }
-        [PrimaryKey]
-        public int? Title_Code { get; set; }
-        public string Original_Title { get; set; }
-        public string Title_Name { get; set; }
-        public string Title_Code_Id { get; set; }
-        public string Synopsis { get; set; }                
-        public Nullable<int> Original_Language_Code { get; set; }
-        [ForeignKeyReference(typeof(Language))]
-        public Nullable<int> Title_Language_Code { get; set; }
-        public Nullable<int> Year_Of_Production { get; set; }
-        public Nullable<decimal> Duration_In_Min { get; set; }        
-        public Nullable<int> Deal_Type_Code { get; set; }
-        [ForeignKeyReference(typeof(Grade_Master))]
-        public Nullable<int> Grade_Code { get; set; }
-        public Nullable<int> Reference_Key { get; set; }
-        public string Reference_Flag { get; set; }
-        public string Is_Active { get; set; }
-        public Nullable<int> Inserted_By { get; set; }
-        public Nullable<System.DateTime> Inserted_On { get; set; }
-        public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
-        public Nullable<int> Last_Action_By { get; set; }
-        public Nullable<System.DateTime> Lock_Time { get; set; }
-        public string Title_Image { get; set; }
-        public Nullable<int> Music_Label_Code { get; set; }
-        //[ForeignKeyReference(typeof(Program))]
-        public Nullable<int> Program_Code { get; set; }
-        public Nullable<int> Original_Title_Code { get; set; }
-        
-        [OneToMany]
-        public virtual ICollection<Title_Country> Title_Country { get; set; }
-        [OneToMany]
-        public virtual ICollection<Title_Geners> Title_Geners { get; set; }
-        [OneToMany]
-        public virtual ICollection<Title_Talent> Title_Talent { get; set; }
 
-        [ForeignKeyReference(typeof(Program))]
-        [OneToOne]
-        [Column("Program_Code")]
-        public virtual Program Program { get; set; }
+        [PrimaryKey]
+        [Column("Title_Code")]
+        public int? title_id { get; set; }
+
+        [Column("Title_Name")]
+        public string title_name { get; set; }
+
+        //[ForeignKeyReference(typeof(Language))]
+        [Column("Title_Language_Code")]        
+        public Nullable<int> title_language_id { get; set; }
 
         [ForeignKeyReference(typeof(Language))]
         [ManyToOne]
         [Column("Title_Language_Code")]
-        public virtual Language Title_Languages { get; set; }
+        public virtual Language title_language { get; set; }
+
+        [Column("Original_Title")]
+        public string original_title_name { get; set; }
+
+        //[ForeignKeyReference(typeof(Language))]
+        [Column("Original_Language_Code")]
+        public Nullable<int> original_language_id { get; set; }
 
         [ForeignKeyReference(typeof(Language))]
         [ManyToOne]
         [Column("Original_Language_Code")]
-        public virtual Language Original_Languages { get; set; }
+        public virtual Language original_language { get; set; }
 
         [ForeignKeyReference(typeof(Deal_Type))]
-        [OneToOne]
         [Column("Deal_Type_Code")]
-        public virtual Deal_Type AssetType { get; set; }
+        public Nullable<int> deal_type_id { get; set; }
+
+        [ForeignKeyReference(typeof(Deal_Type))]
+        [ManyToOne]
+        [Column("Deal_Type_Code")]
+        public virtual Deal_Type deal_type { get; set; }
+
+        [Column("Year_Of_Production")]
+        public Nullable<int> year_of_production { get; set; }
+
+        [Column("Duration_In_Min")]
+        public Nullable<decimal> duration_in_min { get; set; }
+
+        [Column("Synopsis")]
+        public string synopsis { get; set; }
+
+        [ForeignKeyReference(typeof(Program))]
+        [Column("Program_Code")]
+        public Nullable<int> program_id { get; set; }
+
+        [ForeignKeyReference(typeof(Program))]
+        [ManyToOne]
+        [Column("Program_Code")]
+        public virtual Program Program { get; set; }
+
+        [ManyToMany]        
+        public virtual ICollection<Title_Country> title_country { get; set; }
+
+        [ManyToMany]        
+        public virtual ICollection<Title_Talent> title_talent { get; set; }
+
+        [ManyToMany]        
+        public virtual ICollection<Title_Geners> title_genres { get; set; }
+
+        [JsonIgnore]
+        public string Title_Code_Id { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Grade_Code { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Reference_Key { get; set; }
+        [JsonIgnore]
+        public string Reference_Flag { get; set; }
+        [JsonIgnore]
+        public string Is_Active { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Inserted_By { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Lock_Time { get; set; }
+        [JsonIgnore]
+        public string Title_Image { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Music_Label_Code { get; set; }        
+        [JsonIgnore]
+        public Nullable<int> Original_Title_Code { get; set; }
+
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        public virtual ICollection<Map_Extended_Columns> MetaData { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }
