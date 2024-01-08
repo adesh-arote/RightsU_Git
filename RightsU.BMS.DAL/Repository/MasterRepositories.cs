@@ -169,4 +169,98 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Role -----------
+    public class RoleRepositories : MainRepository<Role>
+    {
+        public RoleReturn GetRole_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            RoleReturn ObjRoleReturn = new RoleReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjRoleReturn.assets = base.ExecuteSQLProcedure<Role>("USPAPI_Role_List", param).ToList();
+            ObjRoleReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjRoleReturn;
+        }
+    }
+    #endregion
+
+    #region -------- DealType -----------
+    public class DealTypeRepositories : MainRepository<dealType>
+    {
+        public Deal_TypeReturn GetDealType_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            Deal_TypeReturn ObjDealTypeReturn = new Deal_TypeReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjDealTypeReturn.assets = base.ExecuteSQLProcedure<dealType>("[USPAPI_Deal_Type]", param).ToList();
+            ObjDealTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjDealTypeReturn;
+        }
+    }
+    #endregion
+
+    #region -------- ChannelCategory -----------
+    public class ChannelCategoryRepositories : MainRepository<channelCategory>
+    {
+        public Channel_CategoryReturn GetChannelCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            Channel_CategoryReturn ObjChannelCategoryReturn = new Channel_CategoryReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjChannelCategoryReturn.assets = base.ExecuteSQLProcedure<channelCategory>("[USPAPI_Channel_Category]", param).ToList();
+            ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjChannelCategoryReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Platform -----------
+    public class PlatformRepositories : MainRepository<platforms>
+    {
+        public PlatformReturn GetPlatform_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            PlatformReturn ObjPlatformReturn = new PlatformReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjPlatformReturn.assets = base.ExecuteSQLProcedure<platforms>("[USPAPI_Platform]", param).ToList();
+            ObjPlatformReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjPlatformReturn;
+        }
+    }
+    #endregion
 }

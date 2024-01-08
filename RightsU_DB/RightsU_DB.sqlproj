@@ -1749,6 +1749,10 @@
     <Build Include="dbo\Functions\UFN_Calculate_PartyId.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Title_Validations.sql" />
     <Build Include="dbo\Stored Procedures\USPITGetDrillDownGenreWiseTitle_Details.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Role_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Deal_Type.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Channel_Category.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Platform.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

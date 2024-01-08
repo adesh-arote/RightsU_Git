@@ -81,11 +81,13 @@
     <Compile Include="Master_Entities\BMS_Log.cs" />
     <Compile Include="Master_Entities\BMS_Schedule_Import_Config.cs" />
     <Compile Include="Master_Entities\Channel.cs" />
+    <Compile Include="Master_Entities\Channel_CategoryReturn.cs" />
     <Compile Include="Master_Entities\Country.cs" />
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
     <Compile Include="Master_Entities\Deal_Type.cs" />
+    <Compile Include="Master_Entities\Deal_TypeReturn.cs" />
     <Compile Include="Master_Entities\Extended_Columns.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
@@ -93,8 +95,10 @@
     <Compile Include="Master_Entities\Grade_Master.cs" />
     <Compile Include="Master_Entities\Language.cs" />
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
+    <Compile Include="Master_Entities\PlatformReturn.cs" />
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\Role.cs" />
+    <Compile Include="Master_Entities\RoleReturn.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
