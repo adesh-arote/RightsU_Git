@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USP_API_Title_List]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Title_List]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,
@@ -148,21 +148,35 @@ print @size
 	Declare @Sql_1  NVARCHAR(MAX) ,@Sql_2 NVARCHAR(MAX)      
 		
 	Set @Sql_1 = '      
-				SELECT Title_Name as Name, Original_Title as OriginalName, Title_Code as Id, Language_Name as Language, Year_Of_Production as ProductionYear, Program_Name as Program, CountryName as Country, Original_Language as OriginalLanguage, TalentName as StarCast, Producer, Director, Title_Image      
-				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType, Synopsis, Genre,Duration_In_Min as DurationInMin      
+				SELECT Title_Name as Name, Original_Title as OriginalName, Title_Code as Id, Language_Name as Language, Year_Of_Production as ProductionYear, Program_Name as Program1, CountryName as Country1, Original_Language as OriginalLanguage1,TitleTalent1, TalentName as StarCast1, Producer as Producer1, Director as Director1, Title_Image      
+				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType1, Synopsis, Genre as Genre1,Duration_In_Min as DurationInMin      
 				FROM (      
-					SELECT distinct T.Title_Name,T.Original_Title,T.Title_Code,T.Synopsis ,L.Language_Name , OL.Language_Name AS ''Original_Language''    
-				   ,T.Year_Of_Production,p.Program_Name,T.Duration_In_Min      
+					SELECT distinct T.Title_Name,T.Original_Title,T.Title_Code,T.Synopsis ,CONCAT(CAST(L.Language_Code AS VARCHAR),'':'',L.Language_Name) as Language_Name ,CONCAT(CAST(OL.Language_Code AS VARCHAR),'':'',OL.Language_Name) as Original_Language    
+				   ,T.Year_Of_Production
+				   ,CONCAT(CAST(p.Program_Code AS VARCHAR),'':'',p.Program_Name) as Program_Name
+				   ,T.Duration_In_Min      
 				   ,REVERSE(stuff(reverse(stuff(      
 								(         
-									select cast(C.Country_Name  as NVARCHAR(MAX)) + '', '' from Title_Country TC  (NOLOCK)     
+									select cast(CONCAT(CAST(TC.Title_Country_Code AS VARCHAR),'':'',CAST(C.Country_Code AS VARCHAR),'':'', C.Country_Name)  as NVARCHAR(MAX)) + ''@ '' from Title_Country TC  (NOLOCK)     
 									inner join Country C (NOLOCK) on C.Country_Code = TC.Country_Code      
 									where TC.Title_Code = T.Title_Code      
 									FOR XML PATH(''''), root(''CountryName''), type      
 								).value(''/CountryName[1]'',''Nvarchar(max)''      
 								),2,0, ''''      
 							)      
-				   ),1,2,'''')) as CountryName      
+				   ),1,2,'''')) as CountryName
+				   ,REVERSE(stuff(reverse(  stuff(      
+								(         
+									select cast(CONCAT(CAST(TT.Title_Talent_Code AS VARCHAR),'':'',Tal.Talent_Name,'':'',R.Role_Name,'':'',CAST(Tal.Talent_Code AS VARCHAR),'':'',CAST(TT.Role_Code AS VARCHAR))  as NVARCHAR(MAX)) + ''@ '' from Title_Talent TT    (NOLOCK)   
+									inner join Role R  (NOLOCK) on R.Role_Code = TT.Role_Code      
+									inner join Talent Tal  (NOLOCK) on tal.talent_Code = TT.Talent_code      
+									where TT.Title_Code = T.Title_Code --AND R.Role_Code in (2)      
+      
+									FOR XML PATH(''''), root(''TalentName''), type      
+								).value(''/TalentName[1]'',''NVARCHAR(max)''      
+								),2,0, ''''      
+							)      
+				   ),1,2,'''')) as TitleTalent1
 				   ,REVERSE(stuff(reverse(  stuff(      
 								(         
 									select cast(Tal.Talent_Name  as NVARCHAR(MAX)) + '', '' from Title_Talent TT    (NOLOCK)   
@@ -199,8 +213,22 @@ print @size
 								),1,0, ''''      
 							)      
 				   ),1,2,'''')) as Director      
-				   , [dbo].[UFN_Get_Title_Genre](T.Title_Code) as Genre, ISNULL(T.Title_Image,'' '') As Title_Image, T.Last_UpDated_Time, T.Inserted_On      
-				   ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code, DT.Deal_Type_Name, Tmp.Row_Num'
+				   --, [dbo].[UFN_Get_Title_Genre](T.Title_Code) as Genre
+				   ,REVERSE(stuff(reverse(stuff(      
+								(         
+									select cast(CONCAT(CAST(TG.Title_Geners_Code AS VARCHAR),'':'',CAST(G.Genres_Code AS VARCHAR),'':'', G.Genres_Name)  as NVARCHAR(MAX)) + ''@ '' from Title_Geners TG  (NOLOCK)     
+									inner join Genres G (NOLOCK) on G.Genres_Code = TG.Genres_Code      
+									where TG.Title_Code = T.Title_Code      
+									FOR XML PATH(''''), root(''GenresName''), type      
+								).value(''/GenresName[1]'',''Nvarchar(max)''      
+								),2,0, ''''      
+							)      
+				   ),1,2,'''')) as Genre
+				   
+				   , ISNULL(T.Title_Image,'' '') As Title_Image, T.Last_UpDated_Time, T.Inserted_On      
+				   ,Case When T.Is_Active=''Y'' then ''Active'' Else ''Deactive'' END AS Is_Active, T.Deal_Type_Code
+				   ,CONCAT(CAST(DT.Deal_Type_Code AS VARCHAR),'':'',DT.Deal_Type_Name) as Deal_Type_Name				   
+				   , Tmp.Row_Num'
 	SET @Sql_2 ='	        
 			from Title T   (NOLOCK)  
 			INNER join Deal_Type DT (NOLOCK) on DT.Deal_Type_Code = T.Deal_Type_Code     

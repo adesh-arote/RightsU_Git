@@ -23,8 +23,9 @@ namespace RightsU.Audit.WebAPI.Controllers
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
     [HideInDocs]
-    //[AuthAttribute]
-    //[CustomExceptionFilter]
+    [AuthAttribute]
+    [CustomExceptionFilter]
+    [LogFilter]
     public class AuditLogController : ApiController
     {
         public enum order

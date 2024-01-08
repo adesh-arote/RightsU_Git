@@ -17,6 +17,45 @@
     var URL_BindChannel = '@Url.Action("BindChannelForRunUtlization","Reports")';
     var URL_BindReport = '@Url.Action("BindRunUtilizationReport","Reports")';
     var URL_ShowHideCluster = '@Url.Action("CountChannelRegion", "Reports")';
+    var TitleType = "M";
+
+    $(document).ready(function () {
+        $('.TitleTypeCls').on("change", function () {
+            debugger;
+            if ($(".TitleTypeCls:checked").val() == "M") {
+                $('#changeLabel').html("Movie Title :");
+                TitleType = "M";
+                $('#txtTitle').val('');
+                $('#txtTitle').attr('placeholder', 'Movie Title');
+                Clear();
+            }
+            else if ($(".TitleTypeCls:checked").val() == "S") {
+                $('#changeLabel').html("Program Title :");
+                TitleType = "S";
+                $('#txtTitle').val('');
+                $('#txtTitle').attr('placeholder', 'Program Title');
+                Clear();
+            }
+            //else if ($(".TitleTypeCls:checked").val() == "A") {
+            //    $('#changeLabel').html("Album Title :");
+            //    TitleType = "A";
+            //    $('#txtTitle').val('');
+            //    $('#txtTitle').attr('placeholder', 'Album Title');
+            //}
+        });
+        //$('#txtTitle').on("change", function () {
+        //    debugger;
+        //    $('#txtTitle').val('');
+        //    $('#hdnTitleCode').val(0);
+        //    $('#txtTitle').removeClass('loader');
+        //    if (TitleType == "M") {
+        //        $('#txtTitle').attr('placeholder', 'Movie Title');
+        //    }
+        //    else {
+        //        $('#txtTitle').attr('placeholder', 'Program Title');
+        //    }
+        //});
+    })
 
     $(function () {
         $("#ddlBusinessUnit").change(function () {
@@ -266,8 +305,8 @@
                 source: function (request, response) {
                     var param = {
                         BU_Code: $('#ddlBusinessUnit').val(),
-                        keyword: $('#txtTitle').val()
-
+                        keyword: $('#txtTitle').val(),
+                        TitleType: TitleType
                     };
                     $.ajax({
                         url: URL_BindTitle,
@@ -377,53 +416,64 @@
                                 <table align="center" border="0" cellpadding="2" cellspacing="0" style="width: 100%; vertical-align: top;">
                                     <tr>
                                         <td class="searchborder" style="width: 10%;">
-                                            @objMessageKey.BusinessUnit
+                                            <b>@objMessageKey.BusinessUnit</b>
                                         </td>
                                         <td class="searchborder" style="width:25%;">
                                             @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
                                         </td>
-                                        <td class="searchborder" style="width: 10%;"> @objMessageKey.Title</td>
+                                        <td class="searchborder" style="width: 10%;">
+                                            @*@objMessageKey.Title*@
+                                            <b id="changeLabel">Movie Title</b>
+                                        </td>
                                         <td class="searchborder" style="width: 28%;">
-                                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:295px" placeholder="Movie Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
                                             <input type="hidden" id="hdnTitleCode" value="0" />
                                         </td>
 
                                         <td style="width: 30%;">
-                                            <input type="checkbox" id="chkExpiryDeal" name="ExpiryDeal" /> <text>@objMessageKey.ExcludeExpiredDeal</text>
+                                            <input type="radio" value="M" id="TitleType" class="TitleTypeCls" name="TitleTypeName" checked /> <b>@objMessageKey.Movie</b> &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <input type="radio" value="S" id="TitleType" class="TitleTypeCls" name="TitleTypeName" /> <b>Program</b> &nbsp;&nbsp;&nbsp;&nbsp;
+
+                                            @*<input type="checkbox" id="chkExpiryDeal" name="ExpiryDeal" /> <text>@objMessageKey.ExcludeExpiredDeal</text>
+                                                <span style="padding-left:2%;"></span>
+                                                <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
+                                                <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />*@
+                                        </td>
+                                    </tr>
+                                    <tr>
+
+                                        <td class="searchborder">
+                                            <b>@objMessageKey.RunType</b>
+                                        </td>
+                                        <td>
+                                            @Html.DropDownList("RunType", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunType", @class = "form_input chosen-select" })
+                                        </td>
+                                        <td><b>@objMessageKey.Channel</b></td>
+                                        <td>
+                                            <input type="text" id="txtChannel" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Channel" onkeyup="PopulateChannel(event)" autocomplete="on" />
+                                            <input type="hidden" id="hdnChannelCode" value="0" />
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" id="chkExpiryDeal" name="ExpiryDeal" /> <text><b>@objMessageKey.ExcludeExpiredDeal</b></text>
                                             <span style="padding-left:2%;"></span>
                                             <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
                                             <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
                                         </td>
                                     </tr>
                                     <tr>
-
-                                        <td class="searchborder">
-                                            @objMessageKey.RunType
-                                        </td>
-                                        <td>
-                                            @Html.DropDownList("RunType", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunType", @class = "form_input chosen-select" })
-                                        </td>
-                                        <td>@objMessageKey.Channel</td>
-                                        <td>
-                                            <input type="text" id="txtChannel" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Channel" onkeyup="PopulateChannel(event)" autocomplete="on" />
-                                            <input type="hidden" id="hdnChannelCode" value="0" />
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
                                         @if (@ViewBag.count != 0)
                                         {
                                             <td>
-                                                <label id="lblCluster">@objMessageKey.Cluster</label>
+                                                <label id="lblCluster"><b>@objMessageKey.Cluster</b></label>
                                             </td>
                                             <td>
                                                 @Html.DropDownList("ClusterList", (List<SelectListItem>)ViewBag.ClusterList, "Please Select", new { @id = "ddlCluster", @class = "form_input chosen-select" })
                                             </td>
                                         }
                                         <td colspan="2">
-                                            <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; @objMessageKey.CurrentYear &nbsp;&nbsp;</text>
-                                            <input type="radio" name="year" id="rbExpandAll" value="EA" /><text>&nbsp;&nbsp; Expand All &nbsp;&nbsp;</text>
-                                            <input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; @objMessageKey.NA &nbsp;&nbsp;
+                                            <input type="radio" name="year" id="rbCurrentYear" value="CY" /><text>&nbsp;&nbsp; <b>@objMessageKey.CurrentYear</b> &nbsp;&nbsp;</text>
+                                            <input type="radio" name="year" id="rbExpandAll" value="EA" /><text>&nbsp;&nbsp; <b>Expand All</b> &nbsp;&nbsp;</text>
+                                            <input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; <b>@objMessageKey.NA</b> &nbsp;&nbsp;
                                         </td>
                                     </tr>
 
@@ -439,3 +489,5 @@
         </div>
     </section>
 </div>
+
+

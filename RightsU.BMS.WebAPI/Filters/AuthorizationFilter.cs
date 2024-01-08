@@ -41,10 +41,11 @@ namespace RightsU.BMS.WebAPI.Filters
                     //UserCode = UserCode.Replace("Bearer ", "");
                     //User user = new User();
                     //user.Users_Code = Convert.ToInt32(UserCode);
-                                        
+
                     LoggedInUsersServices objLoggedInUsersServices = new LoggedInUsersServices();
-                                        
-                    LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken= authenticationToken ,RefreshToken= RefreshToken }).ToList().FirstOrDefault();
+                    System_Module_Service objSystemModuleServices = new System_Module_Service();
+
+                    LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken, RefreshToken = RefreshToken }).ToList().FirstOrDefault();
 
                     if (objUserDetails != null)
                     {
@@ -71,6 +72,17 @@ namespace RightsU.BMS.WebAPI.Filters
                         actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid Token");
                         return;
                     }
+
+                    var userId = objSystemModuleServices.hasModuleRights(actionContext.Request.RequestUri.AbsolutePath, actionContext.Request.Method.Method, authenticationToken, RefreshToken);
+                    
+                    if (userId == 0)
+                    {
+                        HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
+                        actionContext.Response = actionContext.Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
+                        return;
+                    }
+
+                    HttpContext.Current.Request.Headers.Add("UserId", userId.ToString());
 
                     HttpContext.Current.Response.AddHeader("Authorization", authenticationToken);
                     HttpContext.Current.Response.AddHeader("AuthenticationStatus", "Authorized");

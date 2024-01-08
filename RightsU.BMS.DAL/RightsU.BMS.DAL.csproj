@@ -31,17 +31,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper">
-      <HintPath>bin\Dapper.dll</HintPath>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.24\lib\net461\Dapper.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper.SimpleLoad">
-      <HintPath>bin\Dapper.SimpleLoad.dll</HintPath>
+    <Reference Include="Dapper.SimpleLoad, Version=2.0.140.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.SimpleLoad.2.0.140\lib\net451\Dapper.SimpleLoad.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper.SimpleSave">
-      <HintPath>bin\Dapper.SimpleSave.dll</HintPath>
+    <Reference Include="Dapper.SimpleSave, Version=1.0.187.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.SimpleSave.1.0.187\lib\net451\Dapper.SimpleSave.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>bin\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
       <HintPath>bin\NLog.dll</HintPath>
@@ -71,17 +74,22 @@
     <Compile Include="Repository\BMSDealContentRightsRepositories.cs" />
     <Compile Include="Repository\BMSDealRepositories.cs" />
     <Compile Include="Repository\BMSScheduleImportRepositories.cs" />
+    <Compile Include="Repository\DealTypeRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
+    <Compile Include="Repository\RoleRepositories.cs" />
     <Compile Include="Repository\TitleRepositories.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RightsU.BMS.Entities\RightsU.BMS.Entities.csproj">
       <Project>{be5330d0-36e5-4a59-a17c-a4534f034458}</Project>
       <Name>RightsU.BMS.Entities</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

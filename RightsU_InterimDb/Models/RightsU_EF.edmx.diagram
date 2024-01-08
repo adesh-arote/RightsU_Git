@@ -772,7 +772,6 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Content_Status_History_Acq_Deal_Movie_Contents1" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Title" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Title_Content_Version_Title_Content" />
-        <EntityTypeShape EntityType="RightsU_NeoModel.BV_Schedule_Transaction" Width="1.5" PointX="37" PointY="35" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Music_Schedule_Exception" Width="1.5" PointX="34" PointY="1" />
         <EntityTypeShape EntityType="RightsU_NeoModel.BV_HouseId_Data" Width="1.5" PointX="36.625" PointY="29.125" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Program" Width="1.5" PointX="37.375" PointY="21.75" />
@@ -1110,6 +1109,9 @@
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Detail_Syn_Deal_Digital" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Digital_Title" />
         <EntityTypeShape EntityType="RightsU_NeoModel.Master_Log" Width="1.5" PointX="37" PointY="47.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Acq_Deal_Run_LP" Width="1.5" PointX="11.5" PointY="134.625" />
+        <AssociationConnector Association="RightsU_NeoModel.FK__Acq_Deal___Acq_D__5888AE08" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.BV_Schedule_Transaction" Width="1.5" PointX="48.375" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

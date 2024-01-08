@@ -57,7 +57,7 @@
             selectAll: true,             // to display select all button in multiselect mode.|| also select all will not be available on mobile devices.
 
             search: true,                // to display input for filtering content. selectAlltext will be input text placeholder
-            searchText:'Search...',      // placeholder for search input
+            searchText: 'Search...',      // placeholder for search input
             noMatch: 'No matches for "{0}"',
             prefix: '',                   // some prefix usually the field name. eg. '<b>Hello</b>'
             locale: ['OK', 'Cancel', 'Select All'],  // all text that is used. don't change the index.
@@ -67,7 +67,7 @@
 
 
         var ret = this.each(function () {
-      
+
             settings.selectAll = selectAll_dummy;
             var selObj = this; // the original select object.
             if (this.sumo || !$(this).is('select')) return; //already initialized
@@ -151,15 +151,15 @@
                 },
 
                 prepItems: function (opts, d) {
-                   
+
                     var lis = [], O = this;
                     $(opts).each(function (i, opt) {       // parsing options to li
                         opt = $(opt);
                         lis.push(opt.is('optgroup') ?
                             $('<li class="group ' + (opt[0].disabled ? 'disabled' : '') + '"><label>' + opt.attr('label') + '</label><ul></ul></li>')
-                            .find('ul')
-                            .append(O.prepItems(opt.children(), opt[0].disabled))
-                            .end()
+                                .find('ul')
+                                .append(O.prepItems(opt.children(), opt[0].disabled))
+                                .end()
                             :
                             O.createLi(opt, d)
                         );
@@ -170,7 +170,7 @@
                 //## Creates a LI element from a given option and binds events to it
                 //## returns the jquery instance of li (not inserted in dom)
                 createLi: function (opt, d) {
-              
+
                     var O = this;
 
                     if (!opt.attr('value')) opt.attr('value', opt.val());
@@ -199,7 +199,7 @@
 
                 //## Returns the selected items as string in a Multiselect.
                 getSelStr: function () {
-                    
+
                     // get the pre selected items.
                     sopt = [];
                     this.E.find('option:selected').each(function () { sopt.push($(this).val()); });
@@ -208,7 +208,7 @@
 
                 //## THOSE OK/CANCEL BUTTONS ON MULTIPLE SELECT.
                 multiSelelect: function () {
-                   
+
                     var O = this;
                     O.optDiv.addClass('multiple');
                     O.okbtn = $('<p tabindex="0" class="btnOk">' + settings.locale[0] + '</p>').click(function () {
@@ -243,7 +243,7 @@
 
                     // handling keyboard navigation on ok cancel buttons.
                     btns.on('keydown.sumo', function (e) {
-                        
+
                         var el = $(this);
                         switch (e.which) {
                             case 32: // space
@@ -264,7 +264,7 @@
                 },
 
                 _cnbtn: function () {
-                    
+
                     var O = this;
                     //remove all selections
                     O.E.find('option:selected').each(function () { this.selected = false; });
@@ -279,14 +279,35 @@
                 },
 
                 SelAll: function () {
+                    debugger;
                     var O = this;
                     if (!O.is_multi) return;
+
                     O.selAll = $('<p class="select-all"><span><i></i></span><label>' + settings.locale[2] + '</label></p>');
+                    if (settings.selectAll && O.is_multi) {
+                        var sc = 0, vc = 0;
+                        O.optDiv.find('li.opt').not('.hidden').each(function (ix, e) {
+                            if ($(e).hasClass('selected')) { sc++; }
+                            if (!$(e).hasClass('disabled')) {
+                                vc++;
+                                // O.itemClicked($(e), true);
+                            }
+
+                            //if ($(e).hasClass('selected')) { O.itemClicked($(e), false); }
+                            //else {
+                            //    O.itemClicked($(e), true);
+                            //}
+                        });
+
+                        if (sc == vc) {
+                            O.selAll = $('<p class="select-all selected"><span><i></i></span><label>' + settings.locale[2] + '</label></p>');
+                        }
+                    }
                     O.optDiv.addClass('selall');
                     O.selAll.on('click', function () {
                         O.selAll.toggleClass('selected');
                         O.toggSelAll(O.selAll.hasClass('selected'), 1);
-                         //O.selAllState();
+                        //O.selAllState();
                     });
 
                     O.optDiv.prepend(O.selAll);
@@ -297,9 +318,9 @@
                     var O = this,
                         cc = O.CaptionCont.addClass('search'),
                         P = $('<p class="no-match">');
-                        O.ftxt = $('<input type="text" class="search-txt" value="" placeholder="' + ShowMessage.MsgPlaceSearch + '">')
+                    O.ftxt = $('<input type="text" class="search-txt" value="" placeholder="' + ShowMessage.MsgPlaceSearch + '">')
                         //O.ftxt = $('<input type="text" class="search-txt" value="" placeholder="' + settings.searchText + '">')
-                    
+
                         .on('click', function (e) {
                             e.stopPropagation();
                         });
@@ -307,23 +328,24 @@
                     O.optDiv.children('ul').after(P);
 
                     O.ftxt.on('keyup.sumo', function () {
-              
+
                         var vc = 0, sc = 0;
                         var hid = O.optDiv.find('ul.options li.opt').each(function (ix, e) {
                             e = $(e);
-                            if (e.text().toLowerCase().indexOf(O.ftxt.val().toLowerCase()) > -1) 
+                            if (e.text().toLowerCase().indexOf(O.ftxt.val().toLowerCase()) > -1)
                                 e.removeClass('hidden');
                             else
                                 e.addClass('hidden');
                         }).not('.hidden');
 
-                      
+
                         if (vc == 0) {
                             $('.select-all').css('display', 'none');
                         }
                         else if (vc > 0) {
                             $('.select-all').css('display', 'block');
                         }
+
                         //alert(O.optDiv.find('li.opt').not('.hidden').length);
                         if (O.optDiv.find('li.opt').not('.hidden').length > 2 && O.optDiv.find('li.opt').not('.hidden').length < 500) {
                             selectAll_dummy = true;
@@ -331,7 +353,7 @@
                             O.SelAll();
                             vc++;
                         }
-                  
+
                         P.html(settings.noMatch.replace(/\{0\}/g, '<em></em>')).toggle(!hid.length);
                         P.find('em').text(O.ftxt.val());
                         O.selAllState();
@@ -339,12 +361,12 @@
                 },
 
                 selAllState: function () {
+                    debugger;
                     var O = this;
                     if (settings.selectAll && O.is_multi) {
                         var sc = 0, vc = 0;
                         O.optDiv.find('li.opt').not('.hidden').each(function (ix, e) {
-                            if ($(e).hasClass('selected'))
-                            { sc++; }
+                            if ($(e).hasClass('selected')) { sc++; }
                             if (!$(e).hasClass('disabled')) {
                                 vc++;
                                 // O.itemClicked($(e), true);
@@ -433,7 +455,7 @@
                 },
 
                 hideOpts: function () {
-                    
+
                     var O = this;
                     if (O.is_opened) {
                         O.E.trigger('sumo:closing', O);
@@ -453,7 +475,7 @@
                     }
                 },
                 setOnOpen: function () {
-            
+
                     var O = this,
                         li = O.optDiv.find('li.opt:not(.hidden)').eq(settings.search ? 0 : O.E[0].selectedIndex);
                     if (li.hasClass('disabled')) {
@@ -466,9 +488,9 @@
                 },
                 nav: function (up) {
                     var O = this, c,
-                    s = O.ul.find('li.opt:not(.disabled, .hidden)'),
-                    sel = O.ul.find('li.opt.sel:not(.hidden)'),
-                    idx = s.index(sel);
+                        s = O.ul.find('li.opt:not(.disabled, .hidden)'),
+                        sel = O.ul.find('li.opt.sel:not(.hidden)'),
+                        idx = s.index(sel);
                     if (O.is_opened && sel.length) {
 
                         if (up && idx > 0)
@@ -676,7 +698,7 @@
 
                 //toggles selection on c as boolean.
                 toggSel: function (c, i) {
-                    
+
                     var O = this;
                     var opt;
                     if (typeof (i) === "number") {
@@ -702,7 +724,7 @@
 
                 //toggles disabled on c as boolean.
                 toggDis: function (c, i) {
-                    
+
                     var O = this.vRange(i);
                     O.E.find('option')[i].disabled = c;
                     if (c) O.E.find('option')[i].selected = false;
@@ -712,7 +734,7 @@
 
                 // toggle disable/enable on complete select control
                 toggSumo: function (val) {
-                   
+
                     var O = this;
                     O.enabled = val;
                     O.select.toggleClass('disabled', val);
@@ -732,21 +754,21 @@
                 // toggles all option on c as boolean.
                 // set direct=false/0 bypasses okCancelInMulti behaviour.
                 toggSelAll: function (c, direct) {
-                   
+
                     var O = this;
                     O.optDiv.find('li.opt:not(.hidden,.disabled)')
-                    .each(function (ix, e) {
-                        var e = $(e),
-                            is_selected = e.hasClass('selected');
-                        if (!!c) {
-                            if (!is_selected) O.itemClicked(e, false);
-                        }
-                        else {
-                            if (is_selected) {
-                                O.itemClicked(e, false);
+                        .each(function (ix, e) {
+                            var e = $(e),
+                                is_selected = e.hasClass('selected');
+                            if (!!c) {
+                                if (!is_selected) O.itemClicked(e, false);
                             }
-                        }
-                    });
+                            else {
+                                if (is_selected) {
+                                    O.itemClicked(e, false);
+                                }
+                            }
+                        });
 
                     if (!direct) {
                         if (!O.mob && O.selAll) O.selAll.removeClass('partial').toggleClass('selected', !!c);
@@ -765,14 +787,14 @@
                  which can be accessed from the element instance.
                  */
                 reload: function () {
-              
+
                     var elm = this.unload();
 
                     return $(elm).SumoSelect(settings);
                 },
 
                 unload: function () {
-                  
+
                     var O = this;
                     O.select.before(O.E);
                     O.E.show();

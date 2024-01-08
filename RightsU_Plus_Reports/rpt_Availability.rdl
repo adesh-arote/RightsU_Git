@@ -34802,7 +34802,7 @@ IIF(Parameters!DateType.Value="FL","Flexi Date - Start Date: "&amp; Parameters!S
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=IIF(UCase(Parameters!IsTitleLanguage.Value)="T",
+                                  <Value>=IIF(UCase(Parameters!IsTitleLanguage.Value)="TRUE",
 IIF(Fields!TitleLanguage_Names.Value="","Yes", Fields!TitleLanguage_Names.Value) 
 ,"No")</Value>
                                   <Style>

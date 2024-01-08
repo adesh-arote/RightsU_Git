@@ -33,18 +33,23 @@
     <DocumentationFile>\bin\RightsU.BMS.Entities.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Dapper">
-      <HintPath>bin\Dapper.dll</HintPath>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.1.24\lib\net461\Dapper.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper.SimpleSave">
-      <HintPath>bin\Dapper.SimpleSave.dll</HintPath>
+    <Reference Include="Dapper.Contrib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.Contrib.2.0.78\lib\net461\Dapper.Contrib.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>bin\log4net.dll</HintPath>
+    <Reference Include="Dapper.SimpleLoad, Version=2.0.140.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.SimpleLoad.2.0.140\lib\net451\Dapper.SimpleLoad.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Dapper.SimpleSave, Version=1.0.187.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.SimpleSave.1.0.187\lib\net451\Dapper.SimpleSave.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog">
       <HintPath>bin\NLog.dll</HintPath>
@@ -67,35 +72,74 @@
     <Compile Include="Class1.cs" />
     <Compile Include="FrameworkClasses\Encryption.cs" />
     <Compile Include="FrameworkClasses\GlobalParams.cs" />
+    <Compile Include="FrameworkClasses\ListReturn.cs" />
     <Compile Include="FrameworkClasses\Logging.cs" />
     <Compile Include="FrameworkClasses\LoginDetails.cs" />
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="HttpModel\HttpResponses.cs" />
+    <Compile Include="InputClasses\GenreInput.cs" />
+    <Compile Include="InputClasses\ProgramInput.cs" />
+    <Compile Include="InputClasses\PutInput.cs" />
+    <Compile Include="InputClasses\TalentInput.cs" />
+    <Compile Include="InputClasses\TitleInput.cs" />
     <Compile Include="LogClasses\Error.cs" />
+    <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
+    <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
     <Compile Include="Master_Entities\BMS_Schedule_Import_Config.cs" />
     <Compile Include="Master_Entities\Channel.cs" />
+    <Compile Include="Master_Entities\Channel_CategoryReturn.cs" />
+    <Compile Include="Master_Entities\Country.cs" />
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\Deal_Type.cs" />
+    <Compile Include="Master_Entities\Deal_TypeReturn.cs" />
+    <Compile Include="Master_Entities\Enums.cs" />
     <Compile Include="Master_Entities\Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Extended_Columns_Value.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
+    <Compile Include="Master_Entities\Genres.cs" />
+    <Compile Include="Master_Entities\GenreReturn.cs" />
+    <Compile Include="Master_Entities\Grade_Master.cs" />
+    <Compile Include="Master_Entities\Language.cs" />
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
+    <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
+    <Compile Include="Master_Entities\PlatformReturn.cs" />
+    <Compile Include="Master_Entities\Program.cs" />
+    <Compile Include="Master_Entities\ProgramReturn.cs" />
+    <Compile Include="Master_Entities\Role.cs" />
+    <Compile Include="Master_Entities\RoleReturn.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
+    <Compile Include="Master_Entities\Talent.cs" />
+    <Compile Include="Master_Entities\TalentReturn.cs" />
+    <Compile Include="Master_Entities\Talent_Role.cs" />
+    <Compile Include="Master_Entities\Talent_Validations.cs" />
+    <Compile Include="Master_Entities\Title.cs" />
     <Compile Include="Master_Entities\TitleReturn.cs" />
+    <Compile Include="Master_Entities\Title_Country.cs" />
+    <Compile Include="Master_Entities\Title_Geners.cs" />
+    <Compile Include="Master_Entities\Title_Talent.cs" />
+    <Compile Include="Master_Entities\Title_Validations.cs" />
     <Compile Include="Master_Entities\Upload_Files.cs" />
     <Compile Include="Master_Entities\User.cs" />
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />
-    <Compile Include="Master_Entities\USP_Bind_Extend_Column_Grid_Result.cs" />
+    <Compile Include="Master_Entities\USPAPI_GetModuleRights.cs" />
+    <Compile Include="Master_Entities\USPAPI_Title_Bind_Extend_Data.cs" />
     <Compile Include="Master_Entities\UTOLogInput.cs" />
+    <Compile Include="Master_Entities\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -227,7 +227,7 @@ namespace RightsU.BMS.WebAPI
                         // Specify which HTTP operations will have the 'Try it out!' option. An empty paramter list disables
                         // it for all operations.
                         //
-                        c.SupportedSubmitMethods("POST","GET");
+                        c.SupportedSubmitMethods("POST","GET","PUT");
                         
                         // Use the CustomAsset option to provide your own version of assets used in the swagger-ui.
                         // It's typically used to instruct Swashbuckle to return your version instead of the default

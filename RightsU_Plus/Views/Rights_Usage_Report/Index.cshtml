@@ -13,12 +13,15 @@
 <link type="text/css" rel="stylesheet" href="~/css/ui.fancytree.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <script type="text/javascript" src="~/JS_Core/jquery.fancytree.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
 <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <link href="~/CSS/sumoselect.css" rel="stylesheet" />
 <script src="~/JS_Core/jquery.sumoselect.js"></script>
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+
 
 <script>
 
+    var ContentType = "M";
     var URL_BindMusicUsageReport = '@Url.Action("BindMusicUsageReport", "Reports")';
     var URL_BindTitleList = '@Url.Action("BindTitle", "Rights_Usage_Report")';
 
@@ -76,8 +79,27 @@
             $('#ddlChannelList').SumoSelect({ selectAll: true });
         }
         addNumeric();
-        
+        $(".ddlSumo").SumoSelect();
+
+
     });
+
+    $(function () {
+        debugger;
+        $("#rbMovie , #rbProgram").change(function () {
+            debugger;
+            var checkedPrgram = $('#rbProgram').is(':checked');
+            var checkedMovie = $('#rbMovie').is(':checked');
+            if (checkedMovie == true)
+                ContentType = "M";
+            else
+                ContentType = "P";
+
+            $('#txtTitle').val('');
+            $('#hdnTitleCode').val('0');
+        });
+    });
+
 
     function btnShow_OnClick() {
         var str = "";
@@ -290,6 +312,7 @@
     ///-----------Rights Usage Report---------------------
 
     function btnSearch_OnClick() {
+        debugger;
         var txtfrom = $("#txtfrom").val();
         var txtto = $("#txtto").val();
         var expiredDeal = $('#chk_expiredDeals').is(":checked");
@@ -353,6 +376,7 @@
 
 
     function SearchRightsUsageReport() {
+        debugger;
         var txtfrom = $("#txtfrom").val();
         var txtto = $("#txtto").val();
         var expiredDeal = $('#chk_expiredDeals').is(":checked");
@@ -403,10 +427,12 @@
                 BUCode : $('#ddlBusinessUnit').val(),
                 pageNo: pageNo,
                 EpisodeFrom: episodeFrom,
-                EpisodeTo: episodeTo
+                EpisodeTo: episodeTo,
+                ContentType: ContentType
             }),
             async: false,
             success: function (result) {
+                debugger;
                 if (result == "true") {
                     redirectToLogin();
                 }
@@ -427,6 +453,7 @@
     }
 
     function BindRightsUsageReport() {
+        debugger;
         // $('#grd1').show();
         var pageNo = $('#hdnPageNo').val();
         var recordPerPage = $('#txtPageSize').val();
@@ -490,7 +517,7 @@
         if ($('#hdnTitleCode').val() == "") {
             TitleCode = 0;
         }
-       
+
         DealCode = 0;
         showLoading();
         $.ajax({
@@ -686,7 +713,7 @@
                 alert('Error: ' + result.responseText);
             }
         });
-        
+
         //window.location.href = URL_ExportToExcel + "?Title_Code=" + TitleCode + "&Deal_Code=" + DealCode + "&Deal_Type=" + DealType + "&episode_No=" + episodeNo
         //    + "&txtfrom=" + txtfrom + "&txtto=" + txtto + "&channelList=" + channelList + "&expiredDeal=" + expiredDeal + "&runType=" + runType + "&key=" + key +
         //    "&agreement=" + agreement + "&TitleName=" + TitleName + "&RightsPeriod=" + RightsPeriod;
@@ -748,15 +775,18 @@
         }
     }
     function PopulateTitle(keyword) {
+        debugger;
         var Type = "";
         if ($('#txtTitle').val().length == "0") {
             $('#hdnTitleCode').val(0);
         }
         var selectedtxt = $('#txtTitle').val()
         var txt = selectedtxt.split('﹐');
+
         var iscomplete = true;
         if (txt[txt.length - 1].trim() == "")
             iscomplete = false;
+
         if (iscomplete) {
             $("#txtTitle").autocomplete({
                 focus: function () {
@@ -768,8 +798,8 @@
                 source: function (request, response) {
                     var param = {
                         BU_Code : $('#ddlBusinessUnit').val(),
-                        keyword: $('#txtTitle').val()
-
+                        keyword: $('#txtTitle').val(),
+                        TitleType: ContentType
                     };
                     $.ajax({
                         url: URL_BindTitleList,
@@ -779,9 +809,11 @@
                         contentType: "application/json; charset=utf-8",
                         dataFilter: function (data) { return data; },
                         success: function (data) {
+                            debugger;
                             if (data.length == 0) {
                                 data[0] = 'Result Not Found';
                                 response($.map(data, function (v, i) {
+                                    debugger;
                                     $('#txtTitle').removeClass('loader');
                                     return {
                                         label: '@objMessageKey.ResultNotFound',
@@ -791,10 +823,11 @@
                             }
                             else {
                                 response($.map(data, function (v, i) {
+                                    debugger;
                                     $('#txtTitle').removeClass('loader');
                                     return {
-                                        label: v.Title_Name,
-                                        val: v.Title_Code
+                                        label: v.Text,
+                                        val: v.Value
                                     }
                                 }))
                             }
@@ -830,7 +863,7 @@
                 open: function (event, ui) {
                     $(".ui-autocomplete").css("position", "absolute");
                     $(".ui-autocomplete").css("max-height", "200px");
-                    $(".ui-autocomplete").css("max-width", "250px");
+                    $(".ui-autocomplete").css("max-width", "100%");
                     $(".ui-autocomplete").css("overflow-y", "auto");
                     $(".ui-autocomplete").css("overflow-x", "hidden");
                     $(".ui-autocomplete").css("z-index", "2147483647");
@@ -868,6 +901,10 @@
 
     #ddlChannelList_chosen {
         max-width: 83%;
+    }
+
+    .sumo_ChannelList {
+        width: 80%;
     }
 
     #popupFade {
@@ -911,13 +948,13 @@
 
     #popup {
         max-height: 500px;
-        overflow : auto;
+        overflow: auto;
     }
-    .scale_table_block{
-        max-height : 500px;
-        overflow-y : scroll;
+
+    .scale_table_block {
+        max-height: 500px;
+        overflow-y: scroll;
     }
-    
 </style>
 
 
@@ -934,66 +971,93 @@
 
                 </div>
 
-                <div class="search_area">
-                    <table class="table">
-                        <tr>
 
-                            <td style="text-align:left;width:11% !important">
-                                <b>@objMessageKey.BusinessUnit:</b>
-                            </td>
-                            <td style="width:10% !important">
-                                @Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
-                            </td>
-                            <td style="text-align:left; width: 11%!important">
+
+
+                <div class="search_area" style="display:grid;">
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="col-md-5">
+                                <b>@objMessageKey.RunType:</b>
+                            </div>
+                            <div class="col-md-7">
+                                @Html.DropDownList("RunTypeList", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunTypeList", @class = "form_input chosen-select" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-4">
                                 <b>@objMessageKey.ScheduleDate:</b>
-                            </td>
-                            <td style="width:24% !important">
+                            </div>
+                            <div class="col-md-8">
                                 <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealFrmDt_Search" id="txtfrom" placeholder="@objMessageKey.From" title="@objMessageKey.From" />
                                 &nbsp; <b>@objMessageKey.To</b> &nbsp;
                                 <input type="text" class="isDatepicker shortDate" value="@ViewBag.DealToDt_Search" id="txtto" placeholder="@objMessageKey.To" title="@objMessageKey.To" />
-                            </td>
-                            <td style="width: 10% !important">
-                                <b style="padding-right:16px;">@objMessageKey.RunType: </b>
-                            </td>
-                            <td style="width: 12% !important">
-                                @Html.DropDownList("RunTypeList", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunTypeList", @class = "form_input chosen-select" })
-                            </td>
-                            <td style="width:15%">
-                                <input type="checkbox" id="chk_expiredDeals" /> @objMessageKey.ShowExpiredDeals
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:left;width:7% !important">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="col-md-4">
+                                <b>@objMessageKey.BusinessUnit:</b>
+                            </div>
+                            <div class="col-md-8">
+                                @Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @style = "width:100% !important;" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="col-md-5">
+                                <b>Title Type:</b>
+                            </div>
+                            <div class="col-md-7">
+                                <input type="radio" id="rbMovie" name="titleType" checked="checked" /> <text>@objMessageKey.Movie</text>
+                                <span style="padding-left:4%;"></span>
+                                <input type="radio" id="rbProgram" name="titleType" /> <text>Program</text>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-3">
                                 <b>@objMessageKey.TitleList:</b>
-                            </td>
-                            <td style="width:10% !important">
-                                <input type="text" id="txtTitle" class="search" maxlength="100" style="width:210px" placeholder="@objMessageKey.Content" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                            </div>
+                            <div class="col-md-9">
+                                <input type="text" id="txtTitle" class="search" maxlength="100" style="width:100%;" placeholder="@objMessageKey.Content" onkeyup="PopulateTitle(event)" autocomplete="on" />
                                 <input type="hidden" id="hdnTitleCode" value="0" />
-                            </td>
-                            @*<td style="text-align:left;width:7% !important">
-                                <b>@objMessageKey.EpisodeFrom:</b>
-                            </td>
-                            <td style="width:17% !important">
-                                <input type="text" id="txtEpFrom" class="episodeRange" placeholder="@objMessageKey.From" title="@objMessageKey.From" style="width:84px" />
-                                &nbsp; <b>@objMessageKey.To</b> &nbsp;
-                                <input type="text" id="txtEpTo" class="episodeRange" placeholder="@objMessageKey.To" title="@objMessageKey.To" style="width:84px" />
-                            </td>*@
-                            <td style="text-align:left; width:7% !important;">
+                            </div>
+                        </div>
+
+                        <div class="col-md-5">
+                            <div class="col-md-4">
                                 <b>@objMessageKey.ChannelList:</b>
-                            </td>
-                            <td style="width:15% !important">
-                                @Html.DropDownList("ChannelList", ViewBag.ChannelList as MultiSelectList, new { @id = "ddlChannelList", @multiple = "multiple" })
-                            </td>
-                            <td style="width:10% !important" colspan="2">
-                                &nbsp;&nbsp;
-                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">&nbsp;
-                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.Reset" onclick="ClearAll()">
-                            </td>
+                            </div>
+                            <div class="col-md-8">
+                                @Html.DropDownList("ChannelList", ViewBag.ChannelList as MultiSelectList, new { @class = "ddlSumo", @id = "ddlChannelList", @multiple = "multiple" })
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="row">
+                        <div class="col-md-4">
 
+                            <div class="col-md-12">
+                                <input type="checkbox" id="chk_expiredDeals" /> <b>@objMessageKey.ShowExpiredDeals</b>
+                            </div>
+                        </div>
 
-                        </tr>
-                    </table>
+                        <div class="col-md-4">
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="col-md-12" style="text-align: end;">
+                                <input type="button" id="btnSearch" class="btn btn-primary" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">&nbsp;
+                                <input type="button" id="btnShowAll" class="btn btn-primary" value="@objMessageKey.Reset" onclick="ClearAll()">
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="grid_area">
                     <div style="border-bottom: 1px dotted #777; display:none;"></div>
