@@ -75,13 +75,13 @@ namespace RightsU.BMS.Entities.Master_Entities
         [Column("Program_Code")]
         public virtual Program Program { get; set; }
 
-        [ManyToMany]        
+        [OneToMany]        
         public virtual ICollection<Title_Country> title_country { get; set; }
 
-        [ManyToMany]        
+        [OneToMany]        
         public virtual ICollection<Title_Talent> title_talent { get; set; }
 
-        [ManyToMany]        
+        [OneToMany]        
         public virtual ICollection<Title_Geners> title_genres { get; set; }
 
         [JsonIgnore]

@@ -506,12 +506,15 @@ namespace RightsU.BMS.BLL.Services
                 objInput.Last_UpDated_Time = DateTime.Now;
                 objInput.Is_Active = "Y";
 
-                //foreach (var item in objInput.title_country)
-                //{
-                //    Title_Country objTitle_Country = new Title_Country();
-                //    objTitle_Country.country_id = item.CountryId;
-                //    objTitle.title_country.Add(objTitle_Country);
-                //}
+                List<Title_Country> lstTitle_Country = new List<Title_Country>();
+                foreach (var item in objInput.title_country)
+                {
+                    Title_Country objTitle_Country = new Title_Country();
+
+                    objTitle_Country.country_id = item.country_id;
+                    lstTitle_Country.Add(objTitle_Country);
+                }
+                objInput.title_country = lstTitle_Country;
 
                 //foreach (var item in objInput.TitleTalent)
                 //{
