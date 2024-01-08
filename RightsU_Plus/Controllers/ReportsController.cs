@@ -1229,12 +1229,33 @@ namespace RightsU_Plus.Controllers
                 List<string> terms = keyword.Split('﹐').ToList();
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
-                RightsU_Entities.Deal_Type objDT = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == dealType).FirstOrDefault();
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Deal_Type.Deal_Type_Code == objDT.Deal_Type_Code && x.Reference_Flag != "T").Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList().Distinct();
+                //RightsU_Entities.Deal_Type objDT = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == dealType).FirstOrDefault();
+                //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Deal_Type.Deal_Type_Code == objDT.Deal_Type_Code && x.Reference_Flag != "T").Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList().Distinct();
+
+                List<string> lstTitleTypeCode = new List<string>();
+                if (dealType == "M")
+                {
+                    System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                    lstTitleTypeCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+                else
+                {
+                    System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+                    lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+
+                result =
+                    new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                    select new
+                                    {
+                                        x.Title_Name,
+                                        x.Title_Code
+                                    }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
             }
             return Json(result);
         }
-        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType, string datetimeformat, string dateformat)
+
+        public PartialViewResult BindRunExceptionReport(string TitleCodes, string FromDate, string ToDate, string TitleType, string datetimeformat, string dateformat, string EpisodeFrom, string EpisodeTo)
         {
             string ReportType = "S";
             string from = "";
@@ -1245,7 +1266,12 @@ namespace RightsU_Plus.Controllers
             if (ToDate != "")
                 to = GlobalUtil.MakedateFormat(ToDate);
 
-            ReportParameter[] parm = new ReportParameter[11];
+            if (TitleType == "M")
+                TitleType = "MOVIE";
+            else
+                TitleType = "SHOW";
+
+            ReportParameter[] parm = new ReportParameter[13];
             parm[0] = new ReportParameter("ReportType", ReportType);
             parm[1] = new ReportParameter("IsShowAll", "'N'");
             parm[2] = new ReportParameter("TitleType", TitleType);
@@ -1257,6 +1283,8 @@ namespace RightsU_Plus.Controllers
             parm[8] = new ReportParameter("CreatedBy", objLoginUser.First_Name + " " + objLoginUser.Last_Name);
             parm[9] = new ReportParameter("SysLanguageCode", objLoginUser.System_Language_Code.ToString());
             parm[10] = new ReportParameter("Module_Code", objLoginUser.moduleCode.ToString());
+            parm[11] = new ReportParameter("EpisodeFrom", EpisodeFrom);
+            parm[12] = new ReportParameter("EpisodeTo", EpisodeTo);
             ReportViewer rptViewer = BindReport(parm, "Runs_Exception_Report");
             ViewBag.ReportViewer = rptViewer;
             return PartialView("~/Views/Shared/ReportViewer.cshtml");
@@ -1633,7 +1661,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.count = cnt;
             return View();
         }
-        public JsonResult BindTitleForRunUtilization(int BU_Code, string keyword = "")
+        public JsonResult BindTitleForRunUtilization(int BU_Code, string keyword = "", string TitleType = "")
         {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
@@ -1641,7 +1669,22 @@ namespace RightsU_Plus.Controllers
                 List<string> terms = keyword.Split('﹐').ToList();
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Acq_Deal_Movie
+
+                List<string> lstTitleTypeCode = new List<string>();
+
+                if (TitleType == "M")
+                {
+                    System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                    lstTitleTypeCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+                else
+                {
+                    System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+                    lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+                    //lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) &&
+                }
+
+                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper()) && x.Acq_Deal_Movie
                                                                        .Any(ADM => ADM.Title.Title_Code == x.Title_Code) && x.Acq_Deal_Movie
                                                                        .Any(AD => AD.Acq_Deal.Business_Unit_Code == BU_Code)).Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList().Distinct();
             }
@@ -3330,14 +3373,14 @@ namespace RightsU_Plus.Controllers
             int moduleCode = Convert.ToInt32(SrchMaster), size = recordPerPage, page = pageNo;
             string searchValue = SrchLog, user = SrchUsers, userAction = SrchActionType, includePrevAuditVesion = "", AuthKey = "", OrderBy = "asc";
 
-            if(SrchOrderBy!="")
+            if (SrchOrderBy != "")
                 OrderBy = SrchOrderBy;
 
             var LogData = DependencyResolver.Current.GetService<RightsU_Plus.Controllers.GlobalController>().GetAuditLogAPI(OrderBy, Convert.ToString(sort.IntCode), requestFrom, requestTo, moduleCode, size, page, searchValue, user, userAction, includePrevAuditVesion = "", AuthKey = "");
-                        
+
             var LogDetail = JsonConvert.DeserializeObject<JsonData>(LogData);
 
-            if(Convert.ToString(LogDetail.ErrorMessage) == "Success")
+            if (Convert.ToString(LogDetail.ErrorMessage) == "Success")
             {
                 var temp = JsonConvert.DeserializeObject<AuditLogReturn>(Convert.ToString(LogDetail.Data));
                 if (temp.auditData.Count > 0)
@@ -3351,7 +3394,7 @@ namespace RightsU_Plus.Controllers
                     {
                         result = result.Remove(result.Length - 1);
                         ret = "[" + result.Replace("\r\n", "") + "]";
-                    }                                       
+                    }
                 }
                 else
                 {
@@ -3366,7 +3409,7 @@ namespace RightsU_Plus.Controllers
             {
                 ErrMsg = "Error";
             }
-            
+
             var obj = new
             {
                 Record_Count = TotalRecord,

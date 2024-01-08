@@ -19,7 +19,7 @@ BEGIN
 			DROP TABLE #Temp
 
 	 DECLARE @dealTypeCodeForAllowAssignMusic VARCHAR(150) = ''  
-	 SELECT TOP 1 @dealTypeCodeForAllowAssignMusic = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'DealTypeCodeFor_AllowAssignMusic'  
+	 SELECT TOP 1 @dealTypeCodeForAllowAssignMusic = Parameter_Value FROM System_Parameter_New WHERE Parameter_Name = 'DealTypeCodeFor_TitleContentList'--'DealTypeCodeFor_AllowAssignMusic'  
     
 		IF  (@searchText = '' AND (@episodeFrom = 0 AND @episodeTo = 0))  
 		BEGIN 

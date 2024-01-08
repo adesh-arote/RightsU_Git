@@ -9039,10 +9039,30 @@ namespace RightsU_BLL
             return ValidateDuplicate(objToValidate, out resultSet);
         }
         private bool ValidateDuplicate(Master_Log objToValidate, out dynamic resultSet)
-        {            
+        {
             resultSet = "";
             return true;
         }
     }
     #endregion
+
+    public class BV_Schedule_Transaction_Service
+    {
+        private readonly BV_Schedule_Transaction_Repository objRepository;
+
+        public BV_Schedule_Transaction_Service(string Connection_Str)
+        {
+            this.objRepository = new BV_Schedule_Transaction_Repository(Connection_Str);
+        }
+        public IQueryable<BV_Schedule_Transaction> SearchFor(Expression<Func<BV_Schedule_Transaction, bool>> predicate)
+        {
+            return objRepository.SearchFor(predicate);
+        }
+
+        public BV_Schedule_Transaction GetById(int id)
+        {
+            return objRepository.GetById(id);
+        }
+
+    }
 }

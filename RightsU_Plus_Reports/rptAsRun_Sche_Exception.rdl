@@ -31,8 +31,14 @@
           <QueryParameter Name="@EndDate">
             <Value>=Parameters!EndDate.Value</Value>
           </QueryParameter>
+          <QueryParameter Name="@EpisodeFrom">
+            <Value>=Parameters!EpisodeFrom.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@EpisodeTo">
+            <Value>=Parameters!EpisodeTo.Value</Value>
+          </QueryParameter>
         </QueryParameters>
-        <CommandText>usp_Schedule_AsRun_Exception_Report  @ReportType, @IsShowAll,@TitleType, @TitleCode, @StartDate,@EndDate</CommandText>
+        <CommandText>usp_Schedule_AsRun_Exception_Report  @ReportType, @IsShowAll, @TitleType, @TitleCode, @StartDate, @EndDate, @EpisodeFrom, @EpisodeTo</CommandText>
         <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
       </Query>
       <Fields>
@@ -40,8 +46,8 @@
           <DataField>title_code</DataField>
           <rd:TypeName>System.Int32</rd:TypeName>
         </Field>
-        <Field Name="english_title">
-          <DataField>english_title</DataField>
+        <Field Name="title_name">
+          <DataField>title_name</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="File_Episode_Title">
@@ -63,6 +69,10 @@
         <Field Name="File_Schedule_Item_Log_Date">
           <DataField>File_Schedule_Item_Log_Date</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="LogDate">
+          <DataField>LogDate</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="File_Schedule_Item_Log_Time">
           <DataField>File_Schedule_Item_Log_Time</DataField>
@@ -417,6 +427,9 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                   <Width>1.41146in</Width>
                 </TablixColumn>
                 <TablixColumn>
+                  <Width>1.60417in</Width>
+                </TablixColumn>
+                <TablixColumn>
                   <Width>1.89063in</Width>
                 </TablixColumn>
                 <TablixColumn>
@@ -494,6 +507,43 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox12</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=First(Fields!BGColor.Value, "DS_Filter")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox7">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Episode No</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>=First(Fields!FontColor.Value, "DS_Filter")</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -669,7 +719,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!english_title.Value</Value>
+                                  <Value>=Fields!title_name.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -712,6 +762,38 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>File_Program_Title</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!File_Program_Episode_Number.Value</Value>
+                                  <Style>
+                                    <FontFamily>Calibri</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -862,7 +944,16 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             <TablixColumnHierarchy>
               <TablixMembers>
                 <TablixMember />
-                <TablixMember />
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>= iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
@@ -892,7 +983,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DS_Exception</DataSetName>
             <Height>0.48208in</Height>
-            <Width>9.03126in</Width>
+            <Width>10.63543in</Width>
             <Visibility>
               <Hidden>=IIF(First(Fields!Layout_Direction.Value, "DS_Direction") = "LTR", False, True)</Hidden>
             </Visibility>
@@ -1793,7 +1884,6 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
             <Top>1.10305in</Top>
-            <Left>0cm</Left>
             <Height>2in</Height>
             <Width>9.03126in</Width>
             <ZIndex>1</ZIndex>
@@ -2068,7 +2158,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!english_title.Value</Value>
+                                  <Value>=Fields!title_name.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -2302,7 +2392,6 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
             <NoRowsMessage>No Records Found</NoRowsMessage>
             <DataSetName>DS_Exception</DataSetName>
             <Top>1.40087cm</Top>
-            <Left>0cm</Left>
             <Height>0.48208in</Height>
             <Width>9.03126in</Width>
             <ZIndex>2</ZIndex>
@@ -3247,7 +3336,6 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
               <BreakLocation>Start</BreakLocation>
             </PageBreak>
             <Top>3.20284in</Top>
-            <Left>0cm</Left>
             <Height>2in</Height>
             <Width>9.03126in</Width>
             <ZIndex>3</ZIndex>
@@ -3264,7 +3352,7 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
         <Height>5.56743in</Height>
         <Style />
       </Body>
-      <Width>9.03126in</Width>
+      <Width>10.76043in</Width>
       <Page>
         <LeftMargin>1in</LeftMargin>
         <RightMargin>1in</RightMargin>
@@ -3432,6 +3520,16 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
       <Prompt>Call From</Prompt>
       <Hidden>true</Hidden>
     </ReportParameter>
+    <ReportParameter Name="EpisodeFrom">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>EpisodeFrom</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="EpisodeTo">
+      <DataType>String</DataType>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>EpisodeTo</Prompt>
+    </ReportParameter>
   </ReportParameters>
   <ReportParametersLayout>
     <GridLayoutDefinition>
@@ -3567,6 +3665,16 @@ CDate(IIF(String.IsNullOrEmpty(Parameters!EndDate.Value), "01-JAN-2000",Paramete
           <ColumnIndex>5</ColumnIndex>
           <RowIndex>5</RowIndex>
           <ParameterName>CallFrom</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>6</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>EpisodeFrom</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>7</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>EpisodeTo</ParameterName>
         </CellDefinition>
       </CellDefinitions>
     </GridLayoutDefinition>

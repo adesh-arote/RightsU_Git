@@ -111,10 +111,11 @@ namespace RightsU.Audit.BLL.Services
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                return _objRet;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //_objRet.StatusCode = HttpStatusCode.InternalServerError;
+                //return _objRet;
+                throw;
             }
 
             return _objRet;
@@ -227,11 +228,12 @@ namespace RightsU.Audit.BLL.Services
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.InternalServerError;
-                _objRet.Response = _AuditLogReturn;
-                return _objRet;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //_objRet.StatusCode = HttpStatusCode.InternalServerError;
+                //_objRet.Response = _AuditLogReturn;
+                //return _objRet;
+                throw;
             }
 
             _AuditLogReturn.paging.page = page;

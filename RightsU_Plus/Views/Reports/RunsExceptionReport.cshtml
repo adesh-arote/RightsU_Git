@@ -12,33 +12,51 @@
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <style>
     #ddlDateTimeFormat_chosen{
-        width:163px!important;
+        width:200px!important;
     }
 </style>
 <script>
     var URL_BindTitle = '@Url.Action("BindTitleForRunException", "Reports")';
     var URL_BindRunsExceptionReport = '@Url.Action("BindRunExceptionReport", "Reports")';
-    var dealType = "";
-    $(document).ready(function () {
+    var dealType = "M";
 
-        dealType = "Movie";
+    $(document).ready(function () {
+        debugger;
+        dealType = "M";
+        if (dealType == "M") {
+            debugger;
+            $("#txtEpFrom").prop("disabled", true);
+            $('#txtEpTo').prop('disabled', true);
+        }
         if ('RTL' == '@objMessageKey.LayoutDirection') {
             $('.white').css("text-align", "right");
             $('.txtBoxCs').css("text-align", "right");
-           }
+        }
+        addNumeric();
     });
-    $(function () {    
+
+    $(function () {
         $("#rbMovie , #rbProgram").change(function () {
+            debugger;
             var checkedPrgram = $('#rbProgram').is(':checked');
             var checkedMovie = $('#rbMovie').is(':checked');
-            if (checkedMovie == true)
-                dealType = "Movie";
-            else
-                dealType = "Program";
+            if (checkedMovie == true) {
+                dealType = "M";
+                $("#txtEpFrom").prop("disabled", true);
+                $('#txtEpTo').prop('disabled', true);
+            }
+            else {
+                dealType = "P";
+                $("#txtEpFrom").prop("disabled", false);
+                $('#txtEpTo').prop('disabled', false);
+            }
 
+            $('#txtEpFrom').val('');
+            $('#txtEpTo').val('');
             $('#txtTitle').val('');
             $('#hdnTitleCode').val('0');
         });
+
         $('#txtfrom').change(function () {
             SetMinDt();
         });
@@ -47,13 +65,28 @@
             SetMaxDt();
         });
     });
+
+    function addNumeric() {
+        debugger;
+        $(".episodeRange").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 100,
+            min: 1
+        });
+    }
+
     function SetMaxDt() {
         setMinMaxDates('txtfrom', '', $('#txtto').val());
     }
+
     function SetMinDt() {
         setMinMaxDates('txtto', $('#txtfrom').val(), '');
     }
+
     function Clear() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         $('#txtfrom').val('');
@@ -61,19 +94,24 @@
         $('#txtTitle').val('');
         $('#hdnTitleCode').val('0');
     }
+
     function btnShow_OnClick() {
+        debugger;
         $('.required').removeClass('required');
         $("[required='required']").removeAttr("required");
         var str = "";
         var returnVal = true;
         var titleList = $('#txtTitle').val();
-        var checkedPrgram = $('#rbProgram').is(':checked');
-        var checkedMovie = $('#rbMovie').is(':checked');
-        var dealType = "";
-        if (checkedMovie == true)
-            dealType = "Movie";
-        else
-            dealType = "Show";
+        //var checkedPrgram = $('#rbProgram').is(':checked');
+        //var checkedMovie = $('#rbMovie').is(':checked');
+        //var EpisodeFrom = $('#txtEpFrom').val();
+        //var EpisodeTo = $('#txtEpTo').val();
+
+        //var dealType = "";
+        //if (checkedMovie == true)
+        //    dealType = "M";
+        //else
+        //    dealType = "P";
         if ($('#txtfrom').val() == '' && $('#txtto').val() != '') {
             showAlert('E', '@objMessageKey.FromPeriodcannotbeblank');
             return false;
@@ -84,10 +122,21 @@
             return false;
         }
         if ($('#hdnTitleCode').val() == '0' && $('#txtfrom').val() == '' && $('#txtto').val() == '') {
-            showAlert('E', '@objMessageKey.PleaseSelectatleastonesearchcriteria');
+            showAlert('E', 'Please Select atleast one search criteria');
             returnVal = false;
-    }
-   
+        }
+        if (!$('.episodeRange').is('[disabled=disabled]')) {
+            if ($('#txtEpFrom').val() == '' && $('#txtEpTo').val() != '' || $('#txtEpTo').val() == '' && $('#txtEpFrom').val() != '') {
+                showAlert('E', 'Plesae fill episode number fields properly');
+                return false;
+            }
+            if ($('#txtEpFrom').val() > $('#txtEpTo').val()) {
+                showAlert('E', 'Episode From number should not be greater than Episode To');
+                return false;
+            }
+        };
+
+       
         if (titleList == 0) {
             titleList = "";
         }
@@ -104,7 +153,9 @@
                     ToDate: $('#txtto').val(),
                     TitleType: dealType,
                     datetimeformat: $('#ddlDateTimeFormat').val(),
-                    dateformat: $('#ddlDateFormat').val()
+                    dateformat: $('#ddlDateFormat').val(),
+                    EpisodeFrom: $('#txtEpFrom').val(),
+                    EpisodeTo: $('#txtEpTo').val()
                 }),
                 async: false,
                 success: function (result) {
@@ -122,7 +173,9 @@
             });
         }
     }
+
     function PopulateTitleNameForRunsEx(keyword) {
+        debugger;
         if ($('#txtTitle').val().length == "0") {
             $('#hdnTitleCode').val(0);
         }
@@ -167,8 +220,8 @@
                                 response($.map(data, function (v, i) {
                                     $('#txtTitle').removeClass('loader');
                                     return {
-                                        label: v.Title_Name,
-                                        val: v.Title_Code
+                                        label: v.Text,
+                                        val: v.Value
                                     }
                                 }))
                             }
@@ -216,7 +269,9 @@
         else
             return false;
     }
+
 </script>
+
 <style>
      #divFilter {
         background: #eee;
@@ -228,78 +283,122 @@
         max-width: 60%;
     }
 </style>
+
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
             <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.RunsExceptionReport</h2>
-            <div id="divFilter">
-                <table>
-                    <tr>
-                        <td>
-                            <div>
-                                <table align="center" border="0" cellpadding="2" cellspacing="0" style="width: 100%; vertical-align: top;">
-                                    <tr>
-                                        <td class="searchborder" style="width: 10%;">
-                                            <b>@objMessageKey.Type:</b>
-                                        </td>
-                                        <td class="searchborder" style="width:15%;">
-                                           <input type="radio" id="rbSchedule" name="Schedule" checked="checked"/> &nbsp; @objMessageKey.Schedule
-                                        </td>
-                                        @*<td class="searchborder" style="width: 5%;">
-                                           
-                                        </td>*@
-                                        <td class="searchborder" style="width: 8%;">
-                                            <b>@objMessageKey.FromDate:</b>
-                                        </td>
-                                        <td class="txtBoxCs" style="width:10%; vertical-align:middle;text-align:left;">
-                                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:59%;" placeholder="DD/MM/YYYY"/>
-                                        </td>
-                                        <td class="searchborder" style="width: 6%;">
-                                            <b>@objMessageKey.ToDate:</b>
-                                        </td>
-                                        <td class="txtBoxCs" style="width:10%; vertical-align:middle;text-align:left;">
-                                            <input  type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:65%;" placeholder="DD/MM/YYYY" />
-                                        </td>
-                                        <td style="width:8%"><b>@objMessageKey.DateFormat:</b></td>
-                                        <td style="width:15%">
-                                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                    
-                                        <td class="searchborder">
-                                            <b>@objMessageKey.TitleType:</b>
-                                        </td>                                     
-                                       
-                                        <td class="white" align="left">
-                                            <input type="radio" id="rbMovie" name="titleType" checked="checked" /> <text>@objMessageKey.Movie</text>
-                                            <span style="padding-left:10%;"></span>
-                                            <input type="radio" id="rbProgram" name="titleType" /> <text>@objMessageKey.Program</text>
-                                        </td>
-                                        <td class="searchborder" style="width:5%"><b>@objMessageKey.Title:</b></td>
-                                      
-                                        <td class="" style="width:17%">
-                                            <input type="text" id="txtTitle" class="search" maxlength="100"  placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForRunsEx(event)" autocomplete="on" />
-                                            <input type="hidden" id="hdnTitleCode" value="0" />
-                                        <td style="width:11%"><b>@objMessageKey.DateTimeFormat:</b></td>
-                                        <td style="width:15%">
-                                            @Html.DropDownList("DateTimeFormat",(List<SelectListItem>)ViewBag.DateTimeFormat, new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
-                                    </td>
-                                       
-                                        <td style="width:6%">
-                                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
-                                          
-                                        </td>
-                                        <td style="width:6%">
-                                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
-                                        </td>
-                                    </tr>
-                                    
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
+            <div id="divFilter" style="display:grid;">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="col-md-3">
+                            <b>@objMessageKey.Type:</b>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="radio" id="rbSchedule" name="Schedule" checked="checked" /> &nbsp; @objMessageKey.Schedule
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-5">
+                            <b>@objMessageKey.TitleType:</b>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="radio" id="rbMovie" name="titleType" checked="checked" /> <text>@objMessageKey.Movie</text>
+                            <span style="padding-left:10%;"></span>
+                            <input type="radio" id="rbProgram" name="titleType" /> <text>@objMessageKey.Program</text>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="col-md-2">
+                            <b>@objMessageKey.Title:</b>
+                        </div>
+                        <div class="col-md-10">
+                            <input type="text" id="txtTitle" class="search" maxlength="100" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForRunsEx(event)" autocomplete="on" style="width:100%;" />
+                            <input type="hidden" id="hdnTitleCode" value="0" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-3">
+                            <b>@objMessageKey.episode#</b>
+                        </div>
+                        <div class="col-md-9">
+                            <input type="text" id="txtEpFrom" class="episodeRange" placeholder="@objMessageKey.From" style="width:84px" />
+                            <input type="text" id="txtEpTo" class="episodeRange" placeholder="@objMessageKey.To" style="width:84px" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="col-md-6">
+                            <b>@objMessageKey.FromDate:</b>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:115%;" placeholder="DD/MM/YYYY" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-5">
+                            <b>@objMessageKey.ToDate:</b>
+                        </div>
+                        <div class="col-md-7">
+                            <input type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:75%;" placeholder="DD/MM/YYYY" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-4">
+                            <b>@objMessageKey.DateFormat:</b>
+                        </div>
+                        <div class="col-md-8">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select"})
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="col-md-5">
+                            <b>@objMessageKey.DateTimeFormat:</b>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.DropDownList("DateTimeFormat", (List<SelectListItem>)ViewBag.DateTimeFormat, new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        @*<div class="col-md-5">
+                            <b>@objMessageKey.DateTimeFormat:</b>
+                        </div>
+                        <div class="col-md-7">
+                            @Html.DropDownList("DateTimeFormat", (List<SelectListItem>)ViewBag.DateTimeFormat, new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
+                        </div>*@
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-12" style="text-align: end;">
+                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
+                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="divResult">
 

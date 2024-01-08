@@ -264,5 +264,6 @@
     <Build Include="dbo\Stored Procedures\USPAcqRightsTabData.sql" />
     <Build Include="dbo\Stored Procedures\usp_GetUserEMail_Body.sql" />
     <Build Include="dbo\User Defined Types\Email_Config_Users_UDT.sql" />
+    <Build Include="dbo\Stored Procedures\USPGetDrillDownData_Details.sql" />
   </ItemGroup>
 </Project>
