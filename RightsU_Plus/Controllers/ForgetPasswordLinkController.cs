@@ -140,7 +140,7 @@ namespace RightsU_Plus.Controllers
             objUPD_Service = null;
 
             Dictionary<string, object> dicobj = new Dictionary<string, object>();
-            LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entypes).FirstOrDefault();
+            LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entypes.ToString().Replace("%20", " ")).FirstOrDefault();
             if (objLoginEntity == null)
                 objLoginEntity = new LoginEntity();
             ViewBag.MesageKey = Session["objMessageKey"];
@@ -266,7 +266,7 @@ namespace RightsU_Plus.Controllers
         }
         public JsonResult GetPWDPolicyDetailList(string Entypes, string Linkids)
         {
-            LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entypes.ToString()).FirstOrDefault();
+            LoginEntity objLoginEntity = lstLoginEntities.Where(w => w.ShortName == Entypes.ToString().Replace("%20"," ")).FirstOrDefault();
             if (objLoginEntity == null)
                 objLoginEntity = new LoginEntity();
 
@@ -318,7 +318,7 @@ namespace RightsU_Plus.Controllers
                 objLE.ReportingServerFolder = dRow["ReportingServerFolder"].ToString();
                 lstLoginEntities.Add(objLE);
             }
-            string SelectedEntity = Convert.ToString(code);
+            string SelectedEntity = Convert.ToString(code.ToString().Replace("%20", " "));
             return new SelectList(lstLoginEntities, "ShortName", "ShortName", SelectedEntity);
         }
         public static void LogErr(string moduleName, string methodName, string msg, string path)

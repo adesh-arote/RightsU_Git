@@ -29,6 +29,7 @@ BEGIN
 		--@DMContentCodes VARCHAR(5000) = NULL,
 		--@Channel_Region int = 0,
 		--@IsDealExpire char(1) = 'N'
+
 		PRINT 'Process Started'
 		PRINT '  Drop all temp table, if exists'
    		IF OBJECT_ID('TEMPDB..#ChannelWiseConsumption') IS NOT NULL
@@ -75,7 +76,7 @@ BEGIN
 			)
 			PRINT '  Created Temp Table'		
 
-			SELECT Title_Code, Title_Name INTO #TempTitles FROM Title T (NOLOCK)
+			SELECT Title_Code, Title_Name,Title_Language_Code,Deal_Type_Code INTO #TempTitles FROM Title T (NOLOCK)
 			WHERE Title_Code IN(Select number AS TitleCode FROM fn_Split_withdelemiter(@TitleCodes,',') where number <> '')
 
 			IF (@ChannelCodes<>'') 
@@ -93,8 +94,8 @@ BEGIN
 				SELECT Channel_Code, Channel_Name, Channel_Id, Order_For_schedule FROM Channel (NOLOCK)
 			END
 
-			SELECT X.Agreement_No, 
-			X.Title_Name, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
+			SELECT X.Agreement_No,X.Business_Unit,X.ModeOfAcq,X.Deal_Type_Name,X.Genres_Name,X.Language_Name, 
+			X.Title_Name,X.Episode_No, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
 			X.Right_Rule_Name, CONVERT(VARCHAR(25),MIN(X.Rights_Start_Date),106) +' To '+ CONVERT(VARCHAR(25),MAX(Rights_End_Date), 106) Rights_Period, SUM(Defined_Runs) NoOfRuns, SUM(Provision_Runs) Provision_Runs,
 			SUM(Defined_Runs) - SUM(Provision_Runs) Balance_Runs, X.Deal_Type, Consume_Runs
 			FROM
@@ -104,6 +105,11 @@ BEGIN
 					(SELECT PD.Agreement_No FROM Provisional_Deal PD (NOLOCK) WHERE CCR.Provisional_Deal_Code = PD.Provisional_Deal_Code)
 					ELSE (SELECT AD.Agreement_No FROM Acq_Deal AD (NOLOCK) WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND CCR.Acq_Deal_Code = AD.Acq_Deal_Code)
 				END Agreement_No,
+				
+				CASE WHEN ISNULL(CCR.Acq_Deal_Code,0) = 0 THEN
+					(select Business_Unit_Name from Business_Unit where Business_Unit_Code =(SELECT PD.Business_Unit_Code FROM Provisional_Deal PD (NOLOCK) WHERE CCR.Provisional_Deal_Code = PD.Provisional_Deal_Code))
+					ELSE (select Business_Unit_Name from Business_Unit where Business_Unit_Code =(SELECT AD.Business_Unit_Code FROM Acq_Deal AD (NOLOCK) WHERE AD.Deal_Workflow_Status NOT IN ('AR', 'WA') AND CCR.Acq_Deal_Code = AD.Acq_Deal_Code))
+				END Business_Unit,
 				TT.Title_Name,
 				ISNULL(CCR.Acq_Deal_Code, CCR.Provisional_Deal_Code) Deal_Code,
 				CCR.Title_Content_Code,
@@ -127,17 +133,26 @@ BEGIN
 				) AS Consume_Runs,
 				CCR.Rights_Start_Date,
 				CCR.Rights_End_Date,
-				CCR.Deal_Type
+				CCR.Deal_Type,
+				TC.Episode_No,
+				L.Language_Name,
+				DT.Deal_Type_Name,
+				G.Genres_Name,
+				CASE WHEN ISNULL(CCR.Acq_Deal_Code,0) = 0 THEN '' ELSE 'Acquisition' END as ModeOfAcq
 				FROM Content_Channel_Run CCR (NOLOCK)
 				INNER JOIN #TempTitles TT ON CCR.Title_Code = TT.Title_Code
 				INNER JOIN Title_Content TC (NOLOCK) ON TC.Title_Content_Code = CCR.Title_Content_Code
 				INNER JOIN #TempChannels TempC ON TempC.Channel_Code = CCR.Channel_Code
 				LEFT  JOIN Right_Rule RR (NOLOCK) on RR.Right_Rule_Code = CCR.Right_Rule_Code 
+				LEFT JOIN Language L (NOLOCK) on L.Language_Code = TT.Title_Language_Code
+				LEFT JOIN Deal_Type DT (NOLOCK) on DT.Deal_Type_Code = TT.Deal_Type_Code
+				LEFT JOIN Title_Geners TG (NOLOCK) on TG.Title_Code = TT.Title_Code
+				LEFT JOIN Genres G (NOLOCK) on G.Genres_Code = TG.Genres_Code
 				Where ISNULL(CCR.Is_Archive, 'N') = 'N'
 			) AS X
 			GROUP BY X.Agreement_No, 
 			X.Title_Name, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
-			X.Right_Rule_Name, X.Deal_Type,Consume_Runs
+			X.Right_Rule_Name, X.Deal_Type,Consume_Runs,X.Business_Unit,X.Episode_No,X.Language_Name,X.Deal_Type_Name,X.Genres_Name,X.ModeOfAcq
 		END
 		ELSE
 		BEGIN

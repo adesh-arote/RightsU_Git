@@ -1,11 +1,11 @@
-﻿CREATE PROCEDURE [dbo].[USP_API_Bind_Extend_Column_Grid]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Title_Bind_Extend_Data]
 	@Title_Code INT
 AS
 	Declare @Loglevel int;
 
 	select @Loglevel = Parameter_Value from System_Parameter_New where Parameter_Name='loglevel'
 
-	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_API_Bind_Extend_Column_Grid]', 'Step 1', 0, 'Started Procedure', 0, ''
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USPAPI_Title_Bind_Extend_Data]', 'Step 1', 0, 'Started Procedure', 0, ''
 		SET NOCOUNT ON;
 		select distinct 
 				EC.Columns_Name
@@ -50,7 +50,7 @@ AS
 		LEFT join Extended_Columns_Value ECV (NOLOCK) on EC.Columns_Code = ECV.Columns_Code
 		LEFT JOIN Map_Extended_Columns_Details MECD (NOLOCK) on MEC.Map_Extended_Columns_Code = MECD.Map_Extended_Columns_Code
 	
-	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_API_Bind_Extend_Column_Grid]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
+	if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USPAPI_Title_Bind_Extend_Data]', 'Step 2', 0, 'Procedure Excution Completed', 0, ''
 
 
 	

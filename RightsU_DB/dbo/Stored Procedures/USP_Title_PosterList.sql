@@ -64,6 +64,6 @@ Declare @Where Nvarchar(MAX)= '',@Genre_Code Nvarchar(MAX)= '';
 		  from title T
 		Inner Join Deal_Type DT On DT.Deal_Type_Code = T.Deal_Type_Code
         Inner Join Language LT On LT.Language_Code = T.Title_Language_Code
-		Inner Join Title_Geners TG1 On TG1.Title_code = T.Title_Code
+		left Join Title_Geners TG1 On TG1.Title_code = T.Title_Code
 		left Join Title_Talent TL On TL.Title_Code = T.Title_Code' + @where+' Order by T.Title_Code Desc')
 END

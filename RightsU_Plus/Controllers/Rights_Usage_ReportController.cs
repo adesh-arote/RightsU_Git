@@ -28,7 +28,6 @@ namespace RightsU_Plus.Controllers
         //
         // GET: /Rights_Usage_Report/
 
-
         private List<USP_Schedule_AsRun_Report_Result> schedule_AsRun_ReportList
         {
             get
@@ -68,7 +67,7 @@ namespace RightsU_Plus.Controllers
             return View();
         }
 
-        public JsonResult BindTitle(int BU_Code, string keyword = "")
+        public JsonResult BindTitle(int BU_Code, string keyword = "", string TitleType = "")
         {
             dynamic result = "";
             if (!string.IsNullOrEmpty(keyword))
@@ -76,15 +75,40 @@ namespace RightsU_Plus.Controllers
                 List<string> terms = keyword.Split('﹐').ToList();
                 terms = terms.Select(s => s.Trim()).ToList();
                 string searchString = terms.LastOrDefault().ToString().Trim();
-                result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())
-                && x.Reference_Flag != "T" && x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == BU_Code))
-                .Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList().Distinct();
+
+                //---  Commented by sachin shelar ----
+                //result = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Title_Name.ToUpper().Contains(searchString.ToUpper())
+                //&& x.Reference_Flag != "T" && x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == BU_Code))
+                //.Select(x => new { Title_Name = x.Title_Name, Title_Code = x.Title_Code }).ToList().Distinct();
+                //------------------------------------
                 //result = objUSP_Service.USP_Get_BUWise_Title(BU_Code, searchString).ToList();
+
+                List<string> lstTitleTypeCode = new List<string>();
+                if (TitleType == "M")
+                {
+                    System_Parameter_New Movies_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Movies").FirstOrDefault();
+                    lstTitleTypeCode = Movies_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+                else
+                {
+                    System_Parameter_New Show_system_Parameter = new System_Parameter_New_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Parameter_Name == "AL_DealType_Show").FirstOrDefault();
+                    lstTitleTypeCode = Show_system_Parameter.Parameter_Value.Split(',').ToList();
+                }
+
+                result =
+                    new SelectList((from x in new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => lstTitleTypeCode.Any(a => x.Deal_Type_Code.ToString() == a) && x.Title_Name.ToUpper().Contains(searchString.ToUpper())).ToList()
+                                    select new
+                                    {
+                                        x.Title_Name,
+                                        x.Title_Code
+                                    }).Distinct(), "Title_Code", "Title_Name").OrderBy(x => x.Text).ToList();
             }
+            //DataTable dt = ToDataTable(result);
             return Json(result);
         }
+
         public JsonResult SearchRightsUsageReport(string IsShowAll, string txtfrom, string txtto, string expiredDeal, string titleList, string[] channelList,
-            string runType, int BUCode, int EpisodeFrom = 0, int EpisodeTo = 0)
+            string runType, string ContentType, int BUCode, int EpisodeFrom = 0, int EpisodeTo = 0)
         {
             string title_names = TitleAutosuggest(titleList, BUCode);
 
@@ -121,7 +145,7 @@ namespace RightsU_Plus.Controllers
             if (expiredDeal == "False")
                 IsExpired = false;
 
-            schedule_AsRun_ReportList = objUSP_Service.USP_Schedule_AsRun_Report(title_names, EpisodeFrom, EpisodeTo, IsShowAll, txtfrom, txtto, channelArray, IsExpired, runType).ToList();
+            schedule_AsRun_ReportList = objUSP_Service.USP_Schedule_AsRun_Report(title_names, EpisodeFrom, EpisodeTo, IsShowAll, txtfrom, txtto, channelArray, IsExpired, runType, ContentType).ToList();
 
             //   lstUpload_Files_Searched = lstUpload_Files;
 
@@ -138,6 +162,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.UserModuleRights = GetUserModuleRights();
             return PartialView("~/Views/Rights_Usage_Report/_List.cshtml", schedule_AsRun_ReportList);
         }
+
         private string GetUserModuleRights()
         {
             List<string> lstRights = objUSP_Service.USP_MODULE_RIGHTS(Convert.ToInt32(UTOFrameWork.FrameworkClasses.GlobalParams.RightCodeForView), objLoginUser.Security_Group_Code, objLoginUser.Users_Code).ToList();
@@ -180,7 +205,6 @@ namespace RightsU_Plus.Controllers
 
         }
 
-
         public JsonResult SearchScheduleRunReport(string AcqDMCode, string episode_Nos, string Deal_Type, string txtfrom,
             string txtto, string[] channelList, bool expiredDeal, string runType, string Title_Codes, int Deal_Code = 0)
         {
@@ -214,6 +238,7 @@ namespace RightsU_Plus.Controllers
             ViewBag.DealType = DealType;
             return PartialView("~/Views/Rights_Usage_Report/_List_ScheduleRun.cshtml", scheduleRunList);
         }
+
         public string TitleAutosuggest(string Title, int BUCode)
         {
             Title = Title.Trim().Trim('﹐').Trim();
@@ -221,14 +246,18 @@ namespace RightsU_Plus.Controllers
             if (Title != "")
             {
                 string[] terms = Title.Split('﹐');
-                string[] Title_Codes = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => terms.Contains(x.Title_Name) && x.Reference_Flag != "T"
-                && x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == BUCode)).Select(s => s.Title_Code.ToString()).ToArray();
+                //---  Commented by sachin shelar ----
+                //string[] Title_Codes = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => terms.Contains(x.Title_Name) && x.Reference_Flag != "T"
+                //&& x.Acq_Deal_Movie.Any(AM => AM.Acq_Deal.Business_Unit_Code == BUCode)).Select(s => s.Title_Code.ToString()).ToArray();
+                //------------------------------------
+                string[] Title_Codes = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => terms.Contains(x.Title_Name)).Select(s => s.Title_Code.ToString()).ToArray();
                 title_names = string.Join(", ", Title_Codes);
                 if (title_names == "")
                     title_names = "-1";
             }
             return title_names;
         }
+
         //public JsonResult ExportToExcel(List<SearchTitle> lstTitle, string txtfrom, string txtto, string[] channelList, string expiredDeal, string runType)
         //{
         //    string status = "S", message = "Export successfully";
@@ -376,7 +405,7 @@ namespace RightsU_Plus.Controllers
                     t.RightsPeriod
                 }).ToList();
 
-                ScheduleAsRunList = objUSP.USP_Schedule_ShowDetails_Sche_Report(DMCode,0,0,0,"", txtfrom, txtto, channelArray, false, runType).Select(t => new
+                ScheduleAsRunList = objUSP.USP_Schedule_ShowDetails_Sche_Report(DMCode, 0, 0, 0, "", txtfrom, txtto, channelArray, false, runType).Select(t => new
                 {
                     t.Program_Title,
                     t.Program_Category,
@@ -433,9 +462,10 @@ namespace RightsU_Plus.Controllers
 
             }
         }
+
         public DataTable ToDataTable<T>(IEnumerable<T> collection)
         {
-                DataTable dataTable = new DataTable();
+            DataTable dataTable = new DataTable();
             PropertyDescriptorCollection propertyDescriptorCollection =
                 TypeDescriptor.GetProperties(typeof(T));
             for (int i = 0; i < propertyDescriptorCollection.Count; i++)
@@ -468,8 +498,6 @@ namespace RightsU_Plus.Controllers
         public string Deal_Code { get; set; }
         public string episode_No { get; set; }
         public string Deal_Type { get; set; }
-
-
     }
 
 }

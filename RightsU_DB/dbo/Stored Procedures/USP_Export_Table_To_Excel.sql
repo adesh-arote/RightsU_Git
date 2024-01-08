@@ -1474,39 +1474,41 @@ BEGIN
 		IF(@Module_Code = 115)                      
 		BEGIN     
 		 DECLARE @SQL NVARCHAR(4000)  
-		SELECT     
-	   @Col_Head01 = CASE WHEN  SM.Message_Key = 'FirstName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head01 END,    
-	   @Col_Head02 = CASE WHEN  SM.Message_Key = 'MiddleName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END,    
-	   @Col_Head03 = CASE WHEN  SM.Message_Key = 'LastName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,    
-	   @Col_Head04 = CASE WHEN  SM.Message_Key = 'LoginName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,    
-	   @Col_Head05 = CASE WHEN  SM.Message_Key = 'LoginTime' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
-	   @Col_Head06 = CASE WHEN  SM.Message_Key = 'LogoutTime' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
-	   @Col_Head07 = CASE WHEN  SM.Message_Key = 'SecurityGroupName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head07 END,    
-	   @Col_Head08 = CASE WHEN  SM.Message_Key = 'Duration' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END    
+		SELECT
+		@Col_Head01 = 'User Code', 
+		@Col_Head02 = CASE WHEN  SM.Message_Key = 'FirstName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head02 END,    
+		@Col_Head03 = CASE WHEN  SM.Message_Key = 'MiddleName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head03 END,    
+		@Col_Head04 = CASE WHEN  SM.Message_Key = 'LastName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head04 END,    
+		@Col_Head05 = CASE WHEN  SM.Message_Key = 'LoginName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head05 END,    
+		@Col_Head06 = CASE WHEN  SM.Message_Key = 'LoginTime' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head06 END,    
+		@Col_Head07 = CASE WHEN  SM.Message_Key = 'LogoutTime' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head07 END,    
+		@Col_Head08 = CASE WHEN  SM.Message_Key = 'SecurityGroupName' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head08 END,    
+		@Col_Head09 = CASE WHEN  SM.Message_Key = 'Duration' AND ISNULL(SLM.Message_Desc,'') <> '' THEN SLM.Message_Desc ELSE @Col_Head09 END    
         
-	   FROM System_Message SM    (NOLOCK) 
-	   INNER JOIN System_Module_Message SMM (NOLOCK) ON SMM.System_Message_Code = SM.System_Message_Code AND (SMM.Module_Code = @Module_Code OR ISNULL(@Module_Code, 0)= 0)    
-	   AND SM.Message_Key IN ('FirstName','MiddleName', 'LastName','LoginName','LoginTime','LogoutTime','SecurityGroupName','Duration')    
-	   INNER JOIN System_Language_Message SLM (NOLOCK) ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode    
+		FROM System_Message SM    (NOLOCK) 
+		INNER JOIN System_Module_Message SMM (NOLOCK) ON SMM.System_Message_Code = SM.System_Message_Code AND (SMM.Module_Code = @Module_Code OR ISNULL(@Module_Code, 0)= 0)    
+		AND SM.Message_Key IN ('FirstName','MiddleName', 'LastName','LoginName','LoginTime','LogoutTime','SecurityGroupName','Duration')    
+		INNER JOIN System_Language_Message SLM (NOLOCK) ON SLM.System_Module_Message_Code = SMM.System_Module_Message_Code AND SLM.System_Language_Code = @SysLanguageCode    
      
-	   SET @SQL = 'INSERT INTO #tmpExportToExcel (Col01, Col02, Col03, Col04, Col05,Col06,Col07,Col08)    
-	  SELECT [first_name], [middle_Name],[last_name],[login_name], [LoginTime],[LogoutTime],[Security Group Name], [duration] FROM (    
-	  SELECT    
-	  Sorter = 1,     
-	  first_name,middle_Name,last_name    
-	  ,login_name,CONVERT(VARCHAR,LD.Login_Time,113) AS LoginTime, CONVERT(VARCHAR,LD.Logout_Time,113) AS LogoutTime,SG.security_group_name AS [Security Group Name]    
-	  ,CAST(DATEDIFF(MI,Login_Time,Logout_Time) AS NVARCHAR(500)) AS duration, Login_Time    
-	  FROM Login_Details LD  (NOLOCK)   
-	  INNER JOIN Users U (NOLOCK) ON U.users_code = LD.Users_Code    
-	  INNER JOIN Security_Group SG (NOLOCK) ON U.security_group_code = SG.security_group_code      
-	  WHERE 1 =1 '+ @StrSearchCriteria + '  
-	  ) X               
-	  ORDER BY  Login_Time DESC'       
+		SET @SQL = 'INSERT INTO #tmpExportToExcel (Col01, Col02, Col03, Col04, Col05,Col06,Col07,Col08,Col09)    
+			SELECT [UserCode], [first_name], [middle_Name],[last_name],[login_name], [LoginTime],[LogoutTime],[Security Group Name], [duration] FROM (    
+			SELECT    
+			Sorter = 1,
+			U.Users_Code as UserCode,
+			first_name,middle_Name,last_name    
+			,login_name,CONVERT(VARCHAR,LD.Login_Time,113) AS LoginTime, CONVERT(VARCHAR,LD.Logout_Time,113) AS LogoutTime,SG.security_group_name AS [Security Group Name]    
+			,CAST(DATEDIFF(MI,Login_Time,Logout_Time) AS NVARCHAR(500)) AS duration, Login_Time    
+			FROM Login_Details LD  (NOLOCK)   
+			INNER JOIN Users U (NOLOCK) ON U.users_code = LD.Users_Code    
+			INNER JOIN Security_Group SG (NOLOCK) ON U.security_group_code = SG.security_group_code      
+			WHERE 1 =1 '+ @StrSearchCriteria + '  
+			) X               
+			ORDER BY  Login_Time DESC'       
   
-	  EXEC (@SQL)  
+		EXEC (@SQL)  
   
-	  INSERT INTO #tmpMulExportToExcel    
-	   SELECT  @Col_Head01 as Col01 ,@Col_Head02 as Col02 ,@Col_Head03 as Col03,@Col_Head04 as Col04,@Col_Head05 as Col05,@Col_Head06 as Col06,@Col_Head07 as Col07,@Col_Head08 as Col08,''as Col09  
+		INSERT INTO #tmpMulExportToExcel    
+		SELECT  @Col_Head01 as Col01 ,@Col_Head02 as Col02 ,@Col_Head03 as Col03,@Col_Head04 as Col04,@Col_Head05 as Col05,@Col_Head06 as Col06,@Col_Head07 as Col07,@Col_Head08 as Col08,@Col_Head09 as Col09  
 		,''as Col10,''as Col11,''as Col12,''as Col13,''as Col14,''as Col15,''as Col16,''as Col17,''as Col18,''as Col19,''as Col20,''as Col21,''as Col22,''as Col23,''as Col24,  
 		''as Col25,''as Col26,''as Col27,''as Col28,''as Col29,''as Col30  
 		 UNION ALL  
@@ -2010,14 +2012,9 @@ BEGIN
 		(                              
 		SELECT top 1 * FROM #tmpExportToExcel                                
 		) AS A   
-		IF(@Module_Code = 10)
-			BEGIN
-				Select * from #tmpMulExportToExcel order by case when Col01 = 'Party Code' then '0' else Col01 end asc
-			END
-		ELSE
-			BEGIN
-				SELECT * FROM #tmpMulExportToExcel order by case when ISNUMERIC(Col01) = 0 then '0' else Col01 end asc
-			END
+		
+		SELECT * FROM #tmpMulExportToExcel order by case when ISNUMERIC(Col01) = 0 then '0' else Col01 end asc
+
 	  --SELECT * FROM #tmpMulExportToExcel  
 	   --DROP TABLE #tmpExportToExcel     
 	   -- DROP TABLE #tmpMulExportToExcel     

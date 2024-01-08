@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Dapper.SimpleSave;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,33 +8,43 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
+    [Table("Extended_Columns")]
     public partial class Extended_Columns
     {
         public Extended_Columns()
         {
-            //this.Extended_Columns_Value = new HashSet<Extended_Columns_Value>();
-            //this.Map_Extended_Columns = new HashSet<Map_Extended_Columns>();
-            //this.AL_Vendor_Rule_Criteria = new HashSet<AL_Vendor_Rule_Criteria>();
-            this.Extended_Group_Config = new HashSet<Extended_Group_Config>();
-            //this.AL_Booking_Sheet_Details = new HashSet<AL_Booking_Sheet_Details>();
+            this.Extended_Group_Config = new HashSet<Extended_Group_Config>();            
         }
                 
-        public int Columns_Code { get; set; }
-        public string Columns_Name { get; set; }
+        [PrimaryKey]
+        [Column("Columns_Code")]
+        public int? columns_id { get; set; }
+
+        [Column("Columns_Name")]
+        public string columns_name { get; set; }
+
+        [JsonIgnore]
         public string Control_Type { get; set; }
+        [JsonIgnore]
         public string Is_Ref { get; set; }
+        [JsonIgnore]
         public string Is_Defined_Values { get; set; }
+        [JsonIgnore]
         public string Is_Multiple_Select { get; set; }
+        [JsonIgnore]
         public string Ref_Table { get; set; }
+        [JsonIgnore]
         public string Ref_Display_Field { get; set; }
+        [JsonIgnore]
         public string Ref_Value_Field { get; set; }
+        [JsonIgnore]
         public string Additional_Condition { get; set; }
+        [JsonIgnore]
         public string Is_Add_OnScreen { get; set; }
 
-        //public virtual ICollection<Extended_Columns_Value> Extended_Columns_Value { get; set; }
-        //public virtual ICollection<Map_Extended_Columns> Map_Extended_Columns { get; set; }
-        //public virtual ICollection<AL_Vendor_Rule_Criteria> AL_Vendor_Rule_Criteria { get; set; }
-        public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }
-        //public virtual ICollection<AL_Booking_Sheet_Details> AL_Booking_Sheet_Details { get; set; }
+        [JsonIgnore]
+        [OneToMany]
+        [SimpleSaveIgnore]
+        public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }        
     }
 }

@@ -8,7 +8,8 @@
 	 @EndDate varchar(30),
 	 @Channel VARCHAR(MAX),
 	 @ExcludeExpiredDeal bit,
-	 @RunType varchar(1)
+	 @RunType varchar(1),
+	 @ContentType CHAR(1)
 )  
 AS  
 BEGIN  
@@ -88,28 +89,45 @@ BEGIN
 			Actual_Run  INT,
 			Deal_Code INT,
 			Deal_Type CHAR(1),
-			Episode_No INT
+			Episode_No INT,
+			T_Name NVARCHAR(MAX)
 		)  
    
 		IF( @IsShowAll = 'Y')
 		BEGIN
 			SET @filter = ' '
 		END
+
+		DECLARE @TitleName VARCHAR(MAX)
+		SET @TitleName=' '
+
+		IF (@ContentType = 'M')
+		BEGIN
+			SET @TitleName = @TitleName + 'T.Title_Name AS Title_Name,'
+		END
+		ELSE
+		BEGIN
+			SET @TitleName = @TitleName + 'T.Title_Name + '' EP. No. '' + CAST(ttc.Episode_No AS NVARCHAR) AS Title_Name,' 
+		END
+
 		SET @strSql = '
 		INSERT INTO #tmpRightsUsage
 		(
-			Agreement_No, title_code, Acq_Deal_movie_code, Title_Name, Rights_Period, Provision_Run, Actual_Run
+			Agreement_No, title_code, Acq_Deal_movie_code, Title_Name, Rights_Period, Provision_Run, Actual_Run, Episode_No, T_Name
 		)
 
 		SELECT distinct
-		D.Agreement_No, DM.title_code, DM.Acq_Deal_movie_code, 
-		DBO.UFN_GetTitleNameInFormat( dbo.UFN_GetDealTypeCondition(D.Deal_Type_Code), T.Title_Name, DM.Episode_Starts_From, DM.Episode_End_To) AS Title_Name, 
+		D.Agreement_No, DM.title_code, DM.Acq_Deal_movie_code,
+		' + @TitleName + '
+		--DBO.UFN_GetTitleNameInFormat( dbo.UFN_GetDealTypeCondition(D.Deal_Type_Code), T.Title_Name, DM.Episode_Starts_From, DM.Episode_End_To) AS Title_Name, 
 		( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''RP'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),
 		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''PR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0),
-		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0)
+		ISNULL(( select dbo.UFN_Get_DataFor_RightsUsageReport_New(DM.Acq_Deal_movie_code, ''AR'','''+@StartDate+''','''+@EndDate+''','''+@Channel+''','''+@RunType+''')),0), ttc.Episode_No, T.Title_Name
 		FROM Acq_Deal D   (NOLOCK)
-		INNER JOIN Acq_Deal_Movie DM (NOLOCK) ON DM.Acq_Deal_code = D.Acq_Deal_code  
-		INNER JOIN Title T (NOLOCK) ON T.title_code = DM.title_code 
+		INNER JOIN Acq_Deal_Movie DM (NOLOCK) ON DM.Acq_Deal_code = D.Acq_Deal_code
+		INNER JOIN Title_Content ttc (NOLOCK) ON ttc.Title_Code = DM.Title_Code 
+		INNER JOIN Title T (NOLOCK) ON T.title_code = ttc.title_code 
+		--INNER JOIN Title T (NOLOCK) ON T.title_code = DM.title_code 
 		--INNER JOIN Acq_Deal_Rights_Title ADRT (NOLOCK) on ADRT.Title_Code = T.Title_Code
 		WHERE 1=1 and  D.Deal_Workflow_Status NOT IN (''AR'', ''WA'')
 		AND D.Deal_Type_Code in (select deal_type_code from Deal_Type (NOLOCK) WHERE deal_type_name in (select Deal_Type_Name from Deal_Type (NOLOCK) where isnull(Is_Active,''N'') = ''Y'' AND  isnull(Is_Master_Deal,''N'') =''Y'' )) 
@@ -124,7 +142,8 @@ BEGIN
 	 --  print 'ad 2'
 		EXEC(@strSql)
 	 --  print 'ad 1'
-		SELECT * FROM #tmpRightsUsage order by Title_Name asc, CAST (Agreement_No   as VARCHAR) desc
+		--SELECT * FROM #tmpRightsUsage order by Title_Name asc, CAST (Agreement_No   as VARCHAR) desc
+		SELECT * FROM #tmpRightsUsage order by T_Name asc, Episode_No asc, CAST (Agreement_No   as VARCHAR) desc
 	
 		------------------------------------------- DELETE TEMP TABLES -------------------------------------------	
 		IF OBJECT_ID('tempdb..#tmpRightsUsage') IS NOT NULL

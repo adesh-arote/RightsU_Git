@@ -2,7 +2,7 @@
     debugger
     showLoading();
     
-    $('#ddlPTitle,#lbChannel').SumoSelect();
+    $('#ddlPTitle,#lbChannel,#ddlPeriod').SumoSelect();
     if (recordLockingCode_G > 0)
         Call_RefreshRecordReleaseTime(recordLockingCode_G, URL_Global_Refresh_Lock);
     debugger;
@@ -314,6 +314,11 @@
     PrimeRunKeyUp();
     debugger;
     BindAllPreReq_Async();
+    if (($('#ddlPTitle').val() == "" || $('#ddlPTitle').val() == null) && acqDealRunCode_G > 0) {
+        var TitCode = '0';
+        CalcRunLP(TitCode);
+    }
+
     if (channelType == "G") {
         $('#divChannelCategory').show();
         $('#addChannel_edit').hide();
@@ -420,8 +425,24 @@ function showLimited2(obj2) {
         $("#hdnIs_Yearwise_Definition").val('N');
     }
 }
-function CheckSubLicen() {
+function CheckSubLicen(callFrom) {
     debugger;
+    var TitCodes = $("#ddlPTitle").val();
+    var TCode = "";
+    if (TitCodes.length > 0 && callFrom == "TI") {
+        TCode = TitCodes.join(',');
+        CalcRunLP(TCode);
+    }
+    else {
+        if (callFrom != "SL") {
+            $('#ddlPeriod').empty();
+            $('#ddlPeriod')[0].sumo.reload();
+            //$('#lblPeriod').hide();
+            //$('#divddlPeriod').hide();
+        }
+    }
+
+
     if ($('input[name=Run_Type]:checked').val() == 'C') {
         var titleCodes = '';
         if ($("#ddlPTitle").val() != null)
@@ -464,6 +485,42 @@ function CheckSubLicen() {
             });
     }
 }
+
+function CalcRunLP(TitleCode) {
+    debugger;
+    if (TitleCode != '') {
+        $.ajax({
+            type: "POST",
+            url: URL_CalcRunLP,
+            traditional: true,
+            async: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                TitleCode: TitleCode
+            }),
+            success: function (result) {
+                debugger;
+                $("#ddlPeriod").empty();
+                $.each(result.Period_List, function () {
+                    $("#ddlPeriod").append($("<option />").val(this.Value).text(this.Text));
+                });
+                if (result.SelectedPeriod != '') {
+                    $("#ddlPeriod").val(result.SelectedPeriod.split(','));
+                }
+
+                $('#ddlPeriod')[0].sumo.reload();
+                $('#lblPeriod').show();
+                $('#ddlPeriod').show();
+                $('#divddlPeriod').show();
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+}
+
 function CalculateActualRun() {
     debugger;
     var addNoRun = 0;

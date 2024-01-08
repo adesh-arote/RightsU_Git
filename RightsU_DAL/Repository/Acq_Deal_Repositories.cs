@@ -697,6 +697,7 @@ namespace RightsU_DAL
                 objADR.Acq_Deal_Run_Yearwise_Run = (objADR.Acq_Deal_Run_Yearwise_Run != null) ? new Save_Entitiy_Lists_Generic<Acq_Deal_Run_Yearwise_Run>().SetListFlagsCUD(objADR.Acq_Deal_Run_Yearwise_Run, dbContext) : null;
 
                 objADR.Acq_Deal_Run_Shows = new Save_Entitiy_Lists_Generic<Acq_Deal_Run_Shows>().SetListFlagsCUD(objADR.Acq_Deal_Run_Shows, dbContext);
+                objADR.Acq_Deal_Run_LP = new Save_Entitiy_Lists_Generic<Acq_Deal_Run_LP>().SetListFlagsCUD(objADR.Acq_Deal_Run_LP, dbContext);
 
             }
 
@@ -717,6 +718,7 @@ namespace RightsU_DAL
                 }
                 dbContext.Acq_Deal_Run_Yearwise_Run.RemoveRange(objADR.Acq_Deal_Run_Yearwise_Run);
                 dbContext.Acq_Deal_Run_Shows.RemoveRange(objADR.Acq_Deal_Run_Shows);
+                dbContext.Acq_Deal_Run_LP.RemoveRange(objADR.Acq_Deal_Run_LP);
             }
             dbContext.Acq_Deal_Run.RemoveRange(deleteList);
         }

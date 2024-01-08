@@ -1119,8 +1119,6 @@ namespace RightsU_Plus.Controllers
                     {
                         returnVal = false;
                     }
-
-
                 }
             }
             #endregion
@@ -1144,12 +1142,10 @@ namespace RightsU_Plus.Controllers
             {
                 //-------------------Check syndicated Titles and Episodes start-----------------------------
 
-
                 if (Deal_Type_Condition == GlobalParams.Deal_Program)
                 {
                     List<int> lstSynDealCode = new List<int>();
                     lstSynDealCode = new Syn_Acq_Mapping_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Code == objAD_Session.Acq_Deal_Code).Select(x => x.Syn_Deal_Code).ToList();
-
 
                     if (lstSynDealCode.Count() > 0)
                     {
@@ -1174,14 +1170,11 @@ namespace RightsU_Plus.Controllers
                                     List<int> lstIntegers = new List<int>();
                                     if (lst.Count() > 0)
                                     {
-
-
                                         foreach (var range in lst)
                                         {
 
                                             lstIntegers.AddRange(Enumerable.Range(Convert.ToInt32(range.Episode_Starts_From), Convert.ToInt32(range.Episode_End_To)).ToList());
                                         }
-
 
                                         int First = lstIntegers.OrderBy(x => x).First();
                                         int Last = lstIntegers.OrderBy(x => x).Last();
@@ -1222,6 +1215,55 @@ namespace RightsU_Plus.Controllers
                     }
 
 
+                    #region ---------------------------- Validating titles in deal are scheduled or not in BV -------------------------------
+                    List<BV_Schedule_Transaction> lstBV_Schedule = new BV_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Deal_Code == objAD_MVC.Acq_Deal_Code).ToList(); 
+
+                    if (lstBV_Schedule.Count > 0)
+                    {
+                        List<int?> DistinctTitleCode = objAD_MVC.Acq_Deal_Movie.Select(s => s.Title_Code).Distinct().ToList(); // fetching distinct title code from deal
+
+                        foreach (int TitleCode in DistinctTitleCode)   // loop to validate data for each title in BV schedule
+                        {
+                            var minMaxScheduledEps = lstBV_Schedule.Where(x => x.Title_Code == TitleCode).GroupBy(y => y.Title_Code).Select(
+                                        g => new { minEps = g.Min(p => Convert.ToInt32(p.Program_Episode_Number)), maxEps = g.Max(p => Convert.ToInt32(p.Program_Episode_Number)), SchEpRange = g.Select(p => Convert.ToInt32(p.Program_Episode_Number)).ToList() }).FirstOrDefault();
+
+                            var DealObjEps = objAD_MVC.Acq_Deal_Movie.Where(x => x.Title_Code == TitleCode).GroupBy(y => y.Title_Code).Select(
+                                        s => new { minEpFrom = s.Min(e => e.Episode_Starts_From), maxEpTo = s.Max(e => e.Episode_End_To), EpNoFromRange = s.Select(e => e.Episode_Starts_From).ToList(), EpNoToRange = s.Select(e => e.Episode_End_To).ToList(), ecount = s.Count() }).FirstOrDefault();
+
+                            if (minMaxScheduledEps != null)
+                            {
+                                int IfNotExist = 0;
+                                foreach (var item in minMaxScheduledEps.SchEpRange)
+                                {
+                                    for (int i = 0; i < DealObjEps.ecount; i++)
+                                    {
+                                        if ((DealObjEps.EpNoFromRange[i] <= item) && (DealObjEps.EpNoToRange[i] >= item))
+                                        {
+                                            IfNotExist = 0;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            IfNotExist = IfNotExist + 1;
+                                            continue;
+                                        }
+                                    }
+
+                                    if (IfNotExist >= DealObjEps.ecount)
+                                    {
+                                        strMessage = "Can not reduce episodes as title is already scheduled in BV";
+                                        returnVal = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!returnVal)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    #endregion
                 }
 
                 //-------------------Check syndicated Titles and Episodes end-------------------------------
@@ -1260,7 +1302,6 @@ namespace RightsU_Plus.Controllers
                             strMessage = "Please enter No. of Appearances for " + strTitleNames;
                         returnVal = false;
                     }
-
 
                     if (returnVal)
                     {
@@ -1303,6 +1344,8 @@ namespace RightsU_Plus.Controllers
                         }
                     }
                 }
+
+                #region----commented region---
                 //if (Deal_Type_Condition == GlobalParams.Deal_Program)
                 //{
                 //    List<int> lstSynDealCode = new List<int>();
@@ -1375,9 +1418,8 @@ namespace RightsU_Plus.Controllers
                 //            }
                 //        }
                 //    }
-
-
                 //}
+                #endregion
 
                 if (returnVal)
                 {
@@ -1959,7 +2001,7 @@ namespace RightsU_Plus.Controllers
             if (objADM.Acq_Deal_Movie_Code > 0)
             {
                 //int Flag = new USP_Service().USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").ElementAt(0).Value;
-                StatusMessage objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();
+                StatusMessage objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();         
                 if (objStatusMessage.Status == "E")
                 {
                     status = objStatusMessage.Status;
@@ -1978,7 +2020,7 @@ namespace RightsU_Plus.Controllers
                 //if (status.Equals("S"))
                 //{
                 //    objADM.EntityState = State.Deleted;
-                //}
+                //}   
             }
             else
                 objAD_Session.Acq_Deal_Movie.Remove(objADM);

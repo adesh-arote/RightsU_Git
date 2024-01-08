@@ -28,7 +28,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Last_Action_By { get; set; }
         public Nullable<System.DateTime> Lock_Time { get; set; }
         public string IsActive { get; set; }
-
+        [OneToMany]
         public virtual ICollection<Extended_Group_Config> Extended_Group_Config { get; set; }        
     }
 }

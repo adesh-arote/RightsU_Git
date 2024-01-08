@@ -35,6 +35,8 @@
     [Last_updated_Time]                    DATETIME    NULL,
     [Channel_Type]                         CHAR (1)    NULL,
     [Channel_Category_Code]                INT         NULL,
+    [Start_Date] DATETIME NULL, 
+    [End_Date] DATETIME NULL, 
     CONSTRAINT [PK_Acq_Deal_Run] PRIMARY KEY CLUSTERED ([Acq_Deal_Run_Code] ASC),
     CONSTRAINT [FK_Acq_Deal_Run_Acq_Deal_Run] FOREIGN KEY ([Acq_Deal_Code]) REFERENCES [dbo].[Acq_Deal] ([Acq_Deal_Code]),
     CONSTRAINT [FK_Acq_Deal_Run_Channel] FOREIGN KEY ([Primary_Channel_Code]) REFERENCES [dbo].[Channel] ([Channel_Code]),
