@@ -11,14 +11,14 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public PlatformReturn()
         {
-            assets = new List<platforms>();
+            content = new List<platforms>();
             paging = new paging();
         }
 
         /// <summary>
         /// DealType Details
         /// </summary>
-        public override object assets { get; set; }
+        public override object content { get; set; }
     }
 
     public class platforms

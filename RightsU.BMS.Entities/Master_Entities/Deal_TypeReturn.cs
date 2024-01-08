@@ -11,14 +11,14 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Deal_TypeReturn()
         {
-            assets = new List<dealType>();
+            content = new List<dealType>();
             paging = new paging();
         }
 
         /// <summary>
         /// DealType Details
         /// </summary>
-        public override object assets { get; set; }
+        public override object content { get; set; }
     }
 
     public class dealType

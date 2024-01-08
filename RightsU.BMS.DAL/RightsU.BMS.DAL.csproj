@@ -85,5 +85,11 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RightsU.BMS.Entities\RightsU.BMS.Entities.csproj">
+      <Project>{be5330d0-36e5-4a59-a17c-a4534f034458}</Project>
+      <Name>RightsU.BMS.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

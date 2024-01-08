@@ -8,14 +8,14 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public RoleReturn()
         {
-            assets = new List<Role>();
+            content = new List<Role>();
             paging = new paging();
         }
 
         /// <summary>
         /// Role Details
         /// </summary>
-        public override object assets { get; set; }
+        public override object content { get; set; }
     }
  
     //public class roles

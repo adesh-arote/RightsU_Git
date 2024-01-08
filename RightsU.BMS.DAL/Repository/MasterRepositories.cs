@@ -588,6 +588,23 @@ namespace RightsU.BMS.DAL
         {
             return base.ExecuteSQLStmt<Role>(strSQL);
         }
+
+        public RoleReturn GetRole_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            RoleReturn ObjRoleReturn = new RoleReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjRoleReturn.content = base.ExecuteSQLProcedure<Role>("USPAPI_Role_List", param).ToList();
+            ObjRoleReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjRoleReturn;
+        }
     }
     #endregion
 
@@ -799,29 +816,7 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
-
-    #region -------- Role -----------
-    public class RoleRepositories : MainRepository<Role>
-    {
-        public RoleReturn GetRole_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
-        {
-            RoleReturn ObjRoleReturn = new RoleReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjRoleReturn.assets = base.ExecuteSQLProcedure<Role>("USPAPI_Role_List", param).ToList();
-            ObjRoleReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjRoleReturn;
-        }
-    }
-    #endregion
-
+        
     #region -------- DealType -----------
     public class DealTypeRepositories : MainRepository<dealType>
     {
@@ -839,7 +834,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjDealTypeReturn.assets = base.ExecuteSQLProcedure<dealType>("[USPAPI_Deal_Type]", param).ToList();
+            ObjDealTypeReturn.content = base.ExecuteSQLProcedure<dealType>("[USPAPI_Deal_Type]", param).ToList();
             ObjDealTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjDealTypeReturn;
         }
@@ -863,7 +858,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjChannelCategoryReturn.assets = base.ExecuteSQLProcedure<channelCategory>("[USPAPI_Channel_Category]", param).ToList();
+            ObjChannelCategoryReturn.content = base.ExecuteSQLProcedure<channelCategory>("[USPAPI_Channel_Category]", param).ToList();
             ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjChannelCategoryReturn;
         }
@@ -887,7 +882,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjPlatformReturn.assets = base.ExecuteSQLProcedure<platforms>("[USPAPI_Platform]", param).ToList();
+            ObjPlatformReturn.content = base.ExecuteSQLProcedure<platforms>("[USPAPI_Platform]", param).ToList();
             ObjPlatformReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjPlatformReturn;
         }
