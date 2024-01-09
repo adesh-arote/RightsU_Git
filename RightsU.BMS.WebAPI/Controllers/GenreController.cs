@@ -21,11 +21,6 @@ namespace RightsU.BMS.WebAPI.Controllers
     [CustomExceptionFilter]
     public class genreController : ApiController
     {
-        public enum Order
-        {
-            Asc = 1,
-            Desc = 2
-        }
         public enum SortColumn
         {
             CreatedDate = 1,
@@ -48,7 +43,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Genres))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(GenreReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]

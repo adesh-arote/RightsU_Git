@@ -1004,7 +1004,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (string.IsNullOrEmpty(objInput.Genres_Name))
             {
-                _objRet.Message = "Input Paramater 'Genre Name' is mandatory";
+                _objRet.Message = "Input Paramater 'genre_name' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1014,7 +1014,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'Genre name already exists.";
+                _objRet.Message = "'genre_name' already exists.";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1058,7 +1058,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (string.IsNullOrEmpty(objInput.Genres_Name))
             {
-                _objRet.Message = "Input Paramater 'Genre Name' is mandatory";
+                _objRet.Message = "Input Paramater 'genre_name' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1068,7 +1068,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'Genre name already exists.";
+                _objRet.Message = "'genre_name' already exists.";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1084,7 +1084,7 @@ namespace RightsU.BMS.BLL.Services
                 objGenre.Genres_Name = objInput.Genres_Name;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objGenre.Last_Updated_Time = DateTime.Now;
-                objGenre.Is_Active = "Y";
+                //objGenre.Is_Active = "Y";
 
                 objGenreRepositories.AddEntity(objGenre);
 
@@ -1119,7 +1119,7 @@ namespace RightsU.BMS.BLL.Services
             }
             else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
             {
-                _objRet.Message = "Input Paramater 'Status' is invalid";
+                _objRet.Message = "Input Paramater 'is_active' is invalid";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1341,7 +1341,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (string.IsNullOrEmpty(objInput.Program_Name))
             {
-                _objRet.Message = "Input Paramater 'Program Name' is mandatory";
+                _objRet.Message = "Input Paramater 'program_name' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1351,7 +1351,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'Program name already exists.";
+                _objRet.Message = "'program_name' already exists.";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1398,7 +1398,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (string.IsNullOrEmpty(objInput.Program_Name))
             {
-                _objRet.Message = "Input Paramater 'Program Name' is mandatory";
+                _objRet.Message = "Input Paramater 'program_name' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1408,7 +1408,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'Program name already exists.";
+                _objRet.Message = "'program_name' already exists.";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -1427,7 +1427,7 @@ namespace RightsU.BMS.BLL.Services
                 objProgram.Genres_Code = objInput.Genres_Code;
                 objProgram.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objProgram.Last_UpDated_Time = DateTime.Now;
-                objProgram.Is_Active = "Y";
+                //objProgram.Is_Active = "Y";
 
                 objProgramRepositories.AddEntity(objProgram);
 
