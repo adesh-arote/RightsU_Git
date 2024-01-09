@@ -469,7 +469,7 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Talent_Code = Id };
 
-            return base.GetById<Talent,Talent_Role>(obj);
+            return base.GetById<Talent, Talent_Role>(obj);
         }
         public IEnumerable<Talent> GetAll()
         {
@@ -512,7 +512,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent_List>("USPAPI_Talent_List", param).ToList();
+            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent>("USPAPI_Talent_List", param).ToList();
             ObjTalentReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjTalentReturn;
         }
