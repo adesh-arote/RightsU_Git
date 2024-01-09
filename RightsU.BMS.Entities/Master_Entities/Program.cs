@@ -14,11 +14,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Program
     {
         [PrimaryKey]
-        [Column("Program_Code")]
-        public int? program_id { get; set; }
+        //[Column("Program_Code")]
+        [JsonProperty(PropertyName = "program_id")]
+        public int? Program_Code { get; set; }
 
-        [Column("Program_Name")]
-        public string program_name { get; set; }
+        //[Column("Program_Name")]
+        [JsonProperty(PropertyName = "program_name")]
+        public string Program_Name { get; set; }
 
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
@@ -31,10 +33,26 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         public Nullable<System.DateTime> Lock_Time { get; set; }
         [JsonIgnore]
+        [ForeignKeyReference(typeof(Deal_Type))]
         public Nullable<int> Deal_Type_Code { get; set; }
+        
+        //[ManyToOne]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "deal_type_name")]
+        public virtual string Deal_Type_Name { get; set; }
+
+        [ForeignKeyReference(typeof(Genres))]
         [JsonIgnore]        
         public Nullable<int> Genres_Code { get; set; }
-        [JsonIgnore]
+        
+        //[ManyToOne]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "genres_name")]
+        public virtual string Genres_Name { get; set; }
+
+        [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }        
     }
     

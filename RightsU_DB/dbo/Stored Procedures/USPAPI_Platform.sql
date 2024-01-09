@@ -53,7 +53,7 @@ Declare @Loglevel int;
 	BEGIN
 	   IF(ISNULL(@search_value,'')<>'')
 	   BEGIN
-			SET @SQL_Condition ='AND (Platform_Code IN (select Platform_Code from Platform where Platform_Name Like N''%' + @search_value+ '%'')'
+			SET @SQL_Condition ='AND (Platform_Code IN (select Platform_Code from Platform where Platform_Name Like N''%' + @search_value+ '%''))'
 		END
 	END
 	ELSE
@@ -89,9 +89,8 @@ Declare @Loglevel int;
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
 
-	select Platform_Code AS id, Platform_Name AS PlatformName, Is_No_Of_Run AS IsNoOfRun, Applicable_For_Holdback AS ApplicableForHoldback, Applicable_For_Demestic_Territory AS ApplicableForDemesticTerritory,
-	Applicable_For_Asrun_Schedule AS ApplicableForAsrunSchedule,Parent_Platform_Code AS ParentPlatformCode,Is_Last_Level AS IsLastLevel,Module_Position AS ModulePosition,Base_Platform_Code AS BasePlatformCode,
-	Platform_Hiearachy AS PlatformHiearachy,Is_Sport_Right AS IsSportRight,Is_Applicable_Syn_Run AS IsApplicableSynRun,Is_Active AS IsActive from #Temp
+	select Platform_Code, Platform_Name, Is_No_Of_Run, Applicable_For_Holdback, Applicable_For_Demestic_Territory,Applicable_For_Asrun_Schedule,Parent_Platform_Code,Is_Last_Level,Module_Position,Base_Platform_Code,
+	Platform_Hiearachy,Is_Sport_Right,Is_Applicable_Syn_Run,Is_Active from #Temp
 
     if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Platform]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 END

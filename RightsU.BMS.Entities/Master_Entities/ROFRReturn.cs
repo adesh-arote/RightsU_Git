@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    public class Deal_TypeReturn : ListReturn
+    public class ROFRReturn : ListReturn
     {
-        public Deal_TypeReturn()
+        public ROFRReturn()
         {
-            content = new List<Deal_Type>();
+            content = new List<ROFR>();
             paging = new paging();
         }
 
         /// <summary>
-        /// DealType Details
+        /// ROFR Details 
         /// </summary>
         public override object content { get; set; }
     }

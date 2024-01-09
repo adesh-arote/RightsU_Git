@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    public class Deal_TypeReturn : ListReturn
+    public class SubLicenseReturn : ListReturn
     {
-        public Deal_TypeReturn()
+        public SubLicenseReturn()
         {
-            content = new List<Deal_Type>();
+            content = new List<Sub_License>();
             paging = new paging();
         }
 
         /// <summary>
-        /// DealType Details
+        /// Sub License Details 
         /// </summary>
         public override object content { get; set; }
     }

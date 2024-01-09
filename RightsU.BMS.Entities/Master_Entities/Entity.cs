@@ -8,16 +8,15 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
-    [Table("Deal_Tag")]
+    [Table("Entity")]
 
     public partial class Entity
     {
         [PrimaryKey]
-        [Column("Entity_Code")]
-        public int? entity_id { get; set; }
-        [Column("Entity_Name")]
-
-        public string entity_name { get; set; }
+        [JsonProperty(PropertyName = "entity_id")]
+        public int? Entity_Code { get; set; }
+        [JsonProperty(PropertyName = "entity_name")]
+        public string Entity_Name { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }
         [JsonIgnore]
@@ -28,17 +27,18 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
         [JsonIgnore]
         public string Logo_Path { get; set; }
         [JsonIgnore]
         public string Logo_Name { get; set; }
-        [Column("ParentEntityCode")]
+        [JsonProperty(PropertyName = "parentEntityCode")]
 
-        public int parentEntityCode { get; set; }
+        public int ParentEntityCode { get; set; }
 
-        [Column("Ref_Entity_Key")]
-        public int ref_entity_key { get; set; }
+      
+        [JsonProperty(PropertyName = "ref_entity_key")]
+        public int Ref_Entity_Key { get; set; }
     }
 }

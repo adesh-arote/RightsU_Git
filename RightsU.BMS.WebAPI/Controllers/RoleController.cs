@@ -19,12 +19,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [CustomExceptionFilter]
 
     public class RoleController : ApiController
-    {
-        public enum Order
-        {
-            Asc = 1,
-            Desc = 2
-        }
+    {        
         public enum SortColumn
         {
             RoleName = 1
@@ -34,9 +29,9 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
 
         /// <summary>
-        /// Asset List 
+        /// Role List 
         /// </summary>
-        /// <remarks>Retrieves all available Assets</remarks>
+        /// <remarks>Retrieves all available Role</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
         /// <param name="searchValue">The value of the search across the role</param>

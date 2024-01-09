@@ -11,7 +11,7 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public PlatformReturn()
         {
-            content = new List<platforms>();
+            content = new List<Platform>();
             paging = new paging();
         }
 
@@ -21,21 +21,4 @@ namespace RightsU.BMS.Entities.Master_Entities
         public override object content { get; set; }
     }
 
-    public class platforms
-    {
-        public int id { get; set; }
-        public string PlatformName { get; set; }
-        public string IsNoOfRun{ get; set; }
-        public string ApplicableForHoldback { get; set; }
-        public string ApplicableForDemesticTerritory { get; set; }
-        public string ApplicableForAsrunSchedule { get; set; }
-        public int ParentPlatformCode { get; set; }
-        public string IsLastLevel { get; set; }
-        public string ModulePosition { get; set; }
-        public int BasePlatformCode { get; set; }
-        public string PlatformHiearachy { get; set; }
-        public string IsSportRight { get; set; }
-        public string IsApplicableSynRun { get; set; }
-        public string IsActive { get; set; }
-    }
 }

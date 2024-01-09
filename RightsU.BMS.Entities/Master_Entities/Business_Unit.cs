@@ -12,13 +12,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Business_Unit
     {
         [PrimaryKey]
-        [Column("Business_Unit_Code")]
-        public int? business_unit_id { get; set; }
+        [JsonProperty(PropertyName = "business_unit_id")]
+        public int? Business_Unit_Code { get; set; }
 
-        [Column("Business_Unit_Name")]
-        public string business_unit_name { get; set; }
+        [JsonProperty(PropertyName = "business_unit_name")]
+        public string Business_Unit_Name { get; set; }
 
-        [Column("Is_Active")]
-        public string is_active { get; set; }
+        [JsonProperty(PropertyName = "is_Active")]
+        public string Is_Active { get; set; }
     }
 }

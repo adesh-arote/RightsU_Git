@@ -12,13 +12,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Deal_Tag
     {
         [PrimaryKey]
-        [Column("Business_Unit_Code")]
-        public int? business_unit_id { get; set; }
+        [JsonProperty(PropertyName = "deal_tag_id")]
+        public int? Deal_Tag_Code { get; set; }
 
-        [Column("Deal_Tag_Description")]
-        public string deal_tag_description { get; set; }
+        [JsonProperty(PropertyName = "deal_tag_description")]
+        public string Deal_Tag_Description { get; set; }
 
-        [Column("Deal_Flag")]
-        public string deal_flag { get; set; }
+        [JsonProperty(PropertyName = "deal_flag")]
+        public string Deal_Flag { get; set; }
     }
 }
