@@ -243,11 +243,11 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (lstModuleUrl.Count() > 2)
                     {
-                        if (Rights_Name.ToLower() == "get" && objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[1].ToLower()))
+                        if (Rights_Name.ToLower() == "get" && objModuleRights.Any(x => x.Right_Name.ToLower() == Rights_Name.ToLower()))
                         {
                             hasRights = objUser.Users_Code.Value;
                         }
-                        if (objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[2].ToLower()))
+                        else if (objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[2].ToLower()))
                         {
                             hasRights = objUser.Users_Code.Value;
                         }
@@ -954,6 +954,42 @@ namespace RightsU.BMS.BLL.Services
             _GenreReturn.paging.size = size;
 
             _objRet.Response = _GenreReturn;
+
+            return _objRet;
+        }
+        public GenericReturn GetGenreById(Int32 id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Genres objGenre = new Genres();
+
+                    objGenre = objGenreRepositories.GetById(id);
+
+                    _objRet.Response = objGenre;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
 
             return _objRet;
         }

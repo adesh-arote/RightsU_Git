@@ -659,6 +659,13 @@ namespace RightsU.BMS.DAL
         {
             return base.GetAll<Genres>();
         }
+        public Genres GetById(Int32? Id)
+        {
+            var obj = new { Genres_Code = Id.Value };
+            var entity = base.GetById<Genres>(obj);
+
+            return entity;
+        }
         public void Add(Genres entity)
         {
             base.AddEntity(entity);
