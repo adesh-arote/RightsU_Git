@@ -245,17 +245,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/title/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PutInput Input)
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Title Input)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
-
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.Assets_Title_Post, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;

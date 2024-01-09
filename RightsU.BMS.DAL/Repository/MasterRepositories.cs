@@ -237,6 +237,11 @@ namespace RightsU.BMS.DAL
         {
             return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL);
         }
+
+        public List<Extended_Columns_Value> GetScalarDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL).ToList();
+        }
     }
     #endregion
 
@@ -438,7 +443,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Country entity)
         {
-            Country oldObj = Get(entity.country_id.Value);
+            Country oldObj = Get(entity.Country_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Country entity)

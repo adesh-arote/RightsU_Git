@@ -18,7 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
             this.title_country = new HashSet<Title_Country>();
             this.title_genres = new HashSet<Title_Geners>();
             this.title_talent = new HashSet<Title_Talent>();
-            this.MetaData = new HashSet<Map_Extended_Columns>();
+            this.MetaData = new HashSet<Map_Extended_Columns>();            
         }
 
         [PrimaryKey]
@@ -106,7 +106,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Reference_Key { get; set; }
         [JsonIgnore]
         public string Reference_Flag { get; set; }
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "is_active")]        
         public string Is_Active { get; set; }
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }
@@ -129,7 +129,34 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         public virtual ICollection<Map_Extended_Columns> MetaData { get; set; }
 
-
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string Language1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string OriginalLanguage1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string Program1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string Country1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string TitleTalent1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string AssetType1 { get; set; }
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string Genre1 { get; set; }
 
 
 

@@ -148,8 +148,8 @@ print @size
 	Declare @Sql_1  NVARCHAR(MAX) ,@Sql_2 NVARCHAR(MAX)      
 		
 	Set @Sql_1 = '      
-				SELECT Title_Name as Name, Original_Title as OriginalName, Title_Code as Id, Language_Name as Language, Year_Of_Production as ProductionYear, Program_Name as Program1, CountryName as Country1, Original_Language as OriginalLanguage1,TitleTalent1, TalentName as StarCast1, Producer as Producer1, Director as Director1, Title_Image      
-				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType1, Synopsis, Genre as Genre1,Duration_In_Min as DurationInMin      
+				SELECT Title_Name, Original_Title, Title_Code, Language_Name as Language1, Year_Of_Production, Program_Name as Program1, CountryName as Country1, Original_Language as OriginalLanguage1,TitleTalent1, TalentName as StarCast1, Producer as Producer1, Director as Director1, Title_Image      
+				,Is_Active, Deal_Type_Code, Deal_Type_Name as AssetType1, Synopsis, Genre as Genre1,Duration_In_Min      
 				FROM (      
 					SELECT distinct T.Title_Name,T.Original_Title,T.Title_Code,T.Synopsis ,CONCAT(CAST(L.Language_Code AS VARCHAR),'':'',L.Language_Name) as Language_Name ,CONCAT(CAST(OL.Language_Code AS VARCHAR),'':'',OL.Language_Name) as Original_Language    
 				   ,T.Year_Of_Production

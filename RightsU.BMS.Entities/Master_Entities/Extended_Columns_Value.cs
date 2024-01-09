@@ -18,6 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         //[Column("Columns_Code")]
         [JsonProperty(PropertyName = "columns_id")]
+        [JsonIgnore]
         public Nullable<int> Columns_Code { get; set; }
 
         //[Column("Columns_Value")]
