@@ -13,11 +13,9 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Language
     {
         [PrimaryKey]
-        //[Column("Language_Code")]
-        [JsonProperty(PropertyName = "language_id")]
+        [JsonProperty(PropertyName = "language_code")]
         public int? Language_Code { get; set; }
 
-        [Column("Language_Name")]
         [JsonProperty(PropertyName = "language_name")]
         public string Language_Name { get; set; }
 
@@ -31,7 +29,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-        [JsonIgnore]
+        //[JsonIgnore]
+     
+         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
         
     }

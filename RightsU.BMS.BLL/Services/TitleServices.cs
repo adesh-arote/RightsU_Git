@@ -241,54 +241,24 @@ namespace RightsU.BMS.BLL.Services
                             {
                                 if (item.extended_columns.Is_Defined_Values == "Y")
                                 {
-                                    var objExtendedValue = objExtended_Columns_ValueRepositories.Get(item.Columns_Value_Code.Value);
+                                    string strQuery = "SELECT * FROM Extended_Columns_Value WHERE Columns_Value_Code=" + item.Columns_Value_Code.Value;
 
-                                    if (objExtendedValue != null)
+                                    var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
+
+                                    if (Extended_Columns_Value.Count() > 0)
                                     {
-                                        item.Column_Value = objExtendedValue.Columns_Value;
+                                        item.extended_columns_value = Extended_Columns_Value[0];
                                     }
                                 }
                                 else
                                 {
-                                    if (item.extended_columns.Ref_Table.ToLower() == "Banner".ToLower())
+                                    string strQuery = "SELECT " + item.extended_columns.Ref_Display_Field + " as Columns_Value," + item.extended_columns.Ref_Value_Field + " as Columns_Value_Code FROM " + item.extended_columns.Ref_Table + " WHERE " + item.extended_columns.Ref_Value_Field + "=" + item.Columns_Value_Code.Value;
+
+                                    var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
+
+                                    if (Extended_Columns_Value.Count() > 0)
                                     {
-                                        var banner = objBannerRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (banner != null)
-                                        {
-                                            item.Column_Value = banner.Banner_Name;
-                                        }
-                                    }
-                                    else if (item.extended_columns.Ref_Table.ToLower() == "Language".ToLower())
-                                    {
-                                        var language = objLanguageRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (language != null)
-                                        {
-                                            item.Column_Value = language.Language_Name;
-                                        }
-                                    }
-                                    else if (item.extended_columns.Ref_Table.ToLower() == "Talent".ToLower())
-                                    {
-                                        var talent = objTalentRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (talent != null)
-                                        {
-                                            item.Column_Value = talent.Talent_Name;
-                                        }
-                                    }
-                                    else if (item.extended_columns.Ref_Table.ToLower() == "version".ToLower())
-                                    {
-                                        var version = objVersionRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (version != null)
-                                        {
-                                            item.Column_Value = version.Version_Name;
-                                        }
-                                    }
-                                    else if (item.extended_columns.Ref_Table.ToLower() == "AL_Lab".ToLower())
-                                    {
-                                        var alLab = objAL_LabRepositories.Get(item.Columns_Value_Code.Value);
-                                        if (alLab != null)
-                                        {
-                                            item.Column_Value = alLab.AL_Lab_Name;
-                                        }
+                                        item.extended_columns_value = Extended_Columns_Value[0];
                                     }
                                 }
                             }
@@ -298,58 +268,27 @@ namespace RightsU.BMS.BLL.Services
                                 {
                                     item.metadata_values.ToList().ForEach(i =>
                                     {
-                                        var objExtendedValue = objExtended_Columns_ValueRepositories.Get(i.Columns_Value_Code.Value);
+                                        string strQuery = "SELECT * FROM Extended_Columns_Value WHERE Columns_Value_Code=" + i.Columns_Value_Code.Value;
 
-                                        if (objExtendedValue != null)
+                                        var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
+
+                                        if (Extended_Columns_Value.Count() > 0)
                                         {
-                                            i.name = objExtendedValue.Columns_Value;
+                                            i.name = Extended_Columns_Value[0].Columns_Value;
                                         }
-
                                     });
                                 }
                                 else
                                 {
                                     item.metadata_values.ToList().ForEach(i =>
                                     {
-                                        if (item.extended_columns.Ref_Table.ToLower() == "Banner".ToLower())
+                                        string strQuery = "SELECT " + item.extended_columns.Ref_Display_Field + " as Columns_Value," + item.extended_columns.Ref_Value_Field + " as Columns_Value_Code FROM " + item.extended_columns.Ref_Table + " WHERE " + item.extended_columns.Ref_Value_Field + "=" + i.Columns_Value_Code.Value;
+
+                                        var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
+
+                                        if (Extended_Columns_Value.Count() > 0)
                                         {
-                                            var banner = objBannerRepositories.Get(i.Columns_Value_Code.Value);
-                                            if (banner != null)
-                                            {
-                                                i.name = banner.Banner_Name;
-                                            }
-                                        }
-                                        else if (item.extended_columns.Ref_Table.ToLower() == "Language".ToLower())
-                                        {
-                                            var language = objLanguageRepositories.Get(i.Columns_Value_Code.Value);
-                                            if (language != null)
-                                            {
-                                                i.name = language.Language_Name;
-                                            }
-                                        }
-                                        else if (item.extended_columns.Ref_Table.ToLower() == "Talent".ToLower())
-                                        {
-                                            var talent = objTalentRepositories.Get(i.Columns_Value_Code.Value);
-                                            if (talent != null)
-                                            {
-                                                i.name = talent.Talent_Name;
-                                            }
-                                        }
-                                        else if (item.extended_columns.Ref_Table.ToLower() == "version".ToLower())
-                                        {
-                                            var version = objVersionRepositories.Get(i.Columns_Value_Code.Value);
-                                            if (version != null)
-                                            {
-                                                i.name = version.Version_Name;
-                                            }
-                                        }
-                                        else if (item.extended_columns.Ref_Table.ToLower() == "AL_Lab".ToLower())
-                                        {
-                                            var alLab = objAL_LabRepositories.Get(i.Columns_Value_Code.Value);
-                                            if (alLab != null)
-                                            {
-                                                i.name = alLab.AL_Lab_Name;
-                                            }
+                                            i.name = Extended_Columns_Value[0].Columns_Value;
                                         }
                                     });
                                 }
@@ -617,7 +556,7 @@ namespace RightsU.BMS.BLL.Services
             #endregion
 
             if (_objRet.IsSuccess)
-            {               
+            {
 
                 var objTitle = objTitleRepositories.GetById(objInput.Title_Code);
 
@@ -764,7 +703,7 @@ namespace RightsU.BMS.BLL.Services
                             }
                             else if (objT.extended_columns.Is_Ref == "Y" && objT.extended_columns.Is_Multiple_Select == "N")
                             {
-                                objT.Columns_Value_Code = Metadata.Columns_Value_Code;                                
+                                objT.Columns_Value_Code = Metadata.Columns_Value_Code;
                             }
                             else if (objT.extended_columns.Is_Ref == "Y" && objT.extended_columns.Is_Multiple_Select == "Y")
                             {
@@ -807,6 +746,7 @@ namespace RightsU.BMS.BLL.Services
                             objT.EntityState = State.Added;
                             objT.Record_Code = objInput.Title_Code;
                             objT.Table_Name = "TITLE";
+                            objT.Columns_Code = Metadata.Columns_Code;
                             objT.extended_columns = objExtendedColumn;
                             objT.Is_Multiple_Select = objExtendedColumn.Is_Multiple_Select;
                             objT.Row_No = Metadata.Row_No > 0 ? Metadata.Row_No : (int?)null;
@@ -868,7 +808,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn ChangeActiveStatus(PutInput objInput)
+        public GenericReturn ChangeActiveStatus(Title objInput)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -877,24 +817,24 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.id <= 0)
+            if (objInput.Title_Code <= 0)
             {
-                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.Message = "Input Paramater 'title_id' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
             }
 
-            if (string.IsNullOrEmpty(objInput.Status))
+            if (string.IsNullOrEmpty(objInput.Is_Active))
             {
-                _objRet.Message = "Input Paramater 'Status' is mandatory";
+                _objRet.Message = "Input Paramater 'is_active' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
             }
-            else if (objInput.Status.ToUpper() != "Y" && objInput.Status.ToUpper() != "N")
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
             {
-                _objRet.Message = "Input Paramater 'Status' is invalid";
+                _objRet.Message = "Input Paramater 'is_active' is invalid";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
@@ -906,11 +846,11 @@ namespace RightsU.BMS.BLL.Services
             {
                 Title objTitle = new Title();
 
-                objTitle = objTitleRepositories.GetById(objInput.id);
+                objTitle = objTitleRepositories.GetById(objInput.Title_Code);
 
                 objTitle.Last_UpDated_Time = DateTime.Now;
                 objTitle.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                objTitle.Is_Active = objInput.Status.ToUpper();
+                objTitle.Is_Active = objInput.Is_Active.ToUpper();
 
                 objTitleRepositories.Update(objTitle);
                 _objRet.Response = new { id = objTitle.Title_Code };

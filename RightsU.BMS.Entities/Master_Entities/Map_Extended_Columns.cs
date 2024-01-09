@@ -47,7 +47,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
-        public virtual object extended_columns_value { get; set; }
+        public virtual Extended_Columns_Value extended_columns_value { get; set; }
 
         //[Column("Row_No")]
         [JsonProperty(PropertyName = "row_no")]

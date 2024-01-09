@@ -237,6 +237,11 @@ namespace RightsU.BMS.DAL
         {
             return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL);
         }
+
+        public List<Extended_Columns_Value> GetScalarDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Extended_Columns_Value>(strSQL).ToList();
+        }
     }
     #endregion
 
@@ -320,6 +325,24 @@ namespace RightsU.BMS.DAL
     #region -------- Language -----------
     public class LanguageRepositories : MainRepository<Language>
     {
+        public LanguageReturn GetLanguage_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            LanguageReturn objLanguageReturn = new LanguageReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objLanguageReturn.content = base.ExecuteSQLProcedure<Language>("USPAPI_Language_List", param).ToList();
+            objLanguageReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objLanguageReturn;
+        }
         public Language Get(int Id)
         {
             var obj = new { Language_Code = Id };
@@ -368,6 +391,13 @@ namespace RightsU.BMS.DAL
         {
             return base.GetAll<Program>();
         }
+        public Program GetById(Int32? Id)
+        {
+            var obj = new { Program_Code = Id.Value };
+            var entity = base.GetById<Program>(obj);
+
+            return entity;
+        }
         public void Add(Program entity)
         {
             base.AddEntity(entity);
@@ -405,7 +435,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program_List>("USPAPI_Program_List", param).ToList();
+            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program>("USPAPI_Program_List", param).ToList();
             ObjProgramReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjProgramReturn;
         }
@@ -431,7 +461,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Country entity)
         {
-            Country oldObj = Get(entity.country_id.Value);
+            Country oldObj = Get(entity.Country_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Country entity)
@@ -457,7 +487,7 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Talent_Code = Id };
 
-            return base.GetById<Talent,Talent_Role>(obj);
+            return base.GetById<Talent, Talent_Role>(obj);
         }
         public IEnumerable<Talent> GetAll()
         {
@@ -500,7 +530,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent_List>("USPAPI_Talent_List", param).ToList();
+            ObjTalentReturn.content = base.ExecuteSQLProcedure<Talent>("USPAPI_Talent_List", param).ToList();
             ObjTalentReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjTalentReturn;
         }
@@ -658,6 +688,13 @@ namespace RightsU.BMS.DAL
         public IEnumerable<Genres> GetAll()
         {
             return base.GetAll<Genres>();
+        }
+        public Genres GetById(Int32? Id)
+        {
+            var obj = new { Genres_Code = Id.Value };
+            var entity = base.GetById<Genres>(obj);
+
+            return entity;
         }
         public void Add(Genres entity)
         {
@@ -888,4 +925,137 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Business Unit -----------
+    public class BusinessUnitRepositories : MainRepository<Business_Unit>
+    {
+        public BusinessUnitReturn GetBusinessUnit_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            BusinessUnitReturn objBusinessUnitReturn = new BusinessUnitReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objBusinessUnitReturn.content = base.ExecuteSQLProcedure<Business_Unit>("USPAPI_BusinessUnit_List", param).ToList();
+            objBusinessUnitReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objBusinessUnitReturn;
+        }
+    }
+    #endregion
+    #region -------- Sub License -----------
+    public class SubLicenseRepositories : MainRepository<Business_Unit>
+    {
+        public SubLicenseReturn GetSub_License(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            SubLicenseReturn objSubLicenseReturn = new SubLicenseReturn();
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objSubLicenseReturn.content = base.ExecuteSQLProcedure<Sub_License>("USPAPI_Sub_License", param).ToList();
+            objSubLicenseReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objSubLicenseReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Entity -----------
+    public class EntityRepositories : MainRepository<Entity>
+    {
+        public EntityReturn GetEntity_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            EntityReturn ObjEntityReturn = new EntityReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjEntityReturn.content = base.ExecuteSQLProcedure<Entity>("USPAPI_Entity_List", param).ToList();
+            ObjEntityReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjEntityReturn;
+
+        }
+    }
+    #endregion
+
+    #region -------- Deal Tag -----------
+    public class DealTagRepositories : MainRepository<Deal_Tag>
+    {
+        public DealTagReturn GetDealTag_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            DealTagReturn objDealTagReturn = new DealTagReturn();
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objDealTagReturn.content = base.ExecuteSQLProcedure<Deal_Tag>("USPAPI_Deal_Tag", param).ToList();
+            objDealTagReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objDealTagReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Milestone Type -----------
+    public class MilestoneTypeRepositories : MainRepository<Milestone_Type>
+    {
+        public MilestoneTypeReturn GetMilestoneType_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            MilestoneTypeReturn objMilestoneTypeReturn = new MilestoneTypeReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objMilestoneTypeReturn.content = base.ExecuteSQLProcedure<Milestone_Type>("USPAPI_MilestoneType_List", param).ToList();
+            objMilestoneTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objMilestoneTypeReturn;
+        }
+    }
+    #endregion
+
+    #region -------- ROFR -----------
+    public class ROFRRepositories : MainRepository<ROFR>
+    {
+        public ROFRReturn GetROFR_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
+        {
+            ROFRReturn objROFRReturn = new ROFRReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            objROFRReturn.content = base.ExecuteSQLProcedure<ROFR>("USPAPI_ROFR_List", param).ToList();
+            objROFRReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return objROFRReturn;
+        }
+    }
+    #endregion
+   
 }
