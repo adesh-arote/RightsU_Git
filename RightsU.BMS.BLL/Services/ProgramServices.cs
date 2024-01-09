@@ -193,7 +193,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Program objProgram = new Program();
 
-                objProgram.program_name = objInput.ProgramName;
+                objProgram.Program_Name = objInput.ProgramName;
                 objProgram.Deal_Type_Code = objInput.DealTypeCode;
                 objProgram.Genres_Code = objInput.GenresCode;
                 objProgram.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
@@ -203,7 +203,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objProgramRepositories.Add(objProgram);
 
-                _objRet.Response = new { id = objProgram.program_id };
+                _objRet.Response = new { id = objProgram.Program_Code };
 
             }
 
@@ -252,7 +252,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objProgram = objProgramRepositories.Get(objInput.id);
 
-                objProgram.program_name = objInput.ProgramName;
+                objProgram.Program_Name = objInput.ProgramName;
                 objProgram.Deal_Type_Code = objInput.DealTypeCode;
                 objProgram.Genres_Code = objInput.GenresCode;
                 objProgram.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
@@ -261,7 +261,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objProgramRepositories.AddEntity(objProgram);
 
-                _objRet.Response = new { id = objProgram.program_id };
+                _objRet.Response = new { id = objProgram.Program_Code };
             }
 
             return _objRet;
@@ -311,7 +311,7 @@ namespace RightsU.BMS.BLL.Services
                 objProgram.Is_Active = objInput.Status.ToUpper();
 
                 objProgramRepositories.Update(objProgram);
-                _objRet.Response = new { id = objProgram.program_id };
+                _objRet.Response = new { id = objProgram.Program_Code };
 
             }
 

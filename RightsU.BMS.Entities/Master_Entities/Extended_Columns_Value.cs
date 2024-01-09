@@ -1,4 +1,5 @@
 ﻿using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +12,17 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Extended_Columns_Value
     {
         [PrimaryKey]
-        [Column("Columns_Value_Code")]
-        public int? columns_value_id { get; set; }
+        //[Column("Columns_Value_Code")]
+        [JsonProperty(PropertyName = "columns_value_id")]
+        public int? Columns_Value_Code { get; set; }
 
-        [Column("Columns_Code")]
-        public Nullable<int> columns_id { get; set; }
+        //[Column("Columns_Code")]
+        [JsonProperty(PropertyName = "columns_id")]
+        public Nullable<int> Columns_Code { get; set; }
 
-        [Column("Columns_Value")]
-        public string columns_value { get; set; }
+        //[Column("Columns_Value")]
+        [JsonProperty(PropertyName = "columns_value")]
+        public string Columns_Value { get; set; }
 
     }
 }

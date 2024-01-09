@@ -14,16 +14,19 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Title_Geners
     {
         [PrimaryKey]
-        [Column("Title_Geners_Code")]
-        public int? title_genres_id { get; set; }
+        //[Column("Title_Geners_Code")]
+        [JsonProperty(PropertyName = "title_genres_id")]
+        public int? Title_Geners_Code { get; set; }
 
         [ForeignKeyReference(typeof(Title))]
-        [Column("Title_Code")]
-        public Nullable<int> title_id { get; set; }
+        //[Column("Title_Code")]
+        [JsonProperty(PropertyName = "title_id")]
+        public Nullable<int> Title_Code { get; set; }
 
         [ForeignKeyReference(typeof(Genres))]
-        [Column("Genres_Code")]
-        public Nullable<int> genres_id { get; set; }
+        //[Column("Genres_Code")]
+        [JsonProperty(PropertyName = "genres_id")]
+        public Nullable<int> Genres_Code { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

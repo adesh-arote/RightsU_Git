@@ -200,7 +200,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 Talent objTalent = new Talent();
 
-                objTalent.talent_name = objInput.TalentName;
+                objTalent.Talent_Name = objInput.TalentName;
                 objTalent.Gender = objInput.Gender;
                 objTalent.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objTalent.Inserted_On = DateTime.Now;
@@ -215,7 +215,7 @@ namespace RightsU.BMS.BLL.Services
                 }
 
                 objTalentRepositories.Add(objTalent);
-                _objRet.Response = new { id = objTalent.talent_id };
+                _objRet.Response = new { id = objTalent.Talent_Code };
             }
 
             return _objRet;
@@ -268,7 +268,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objTalent = objTalentRepositories.Get(objInput.id);
 
-                objTalent.talent_name = objInput.TalentName;
+                objTalent.Talent_Name = objInput.TalentName;
                 objTalent.Gender = objInput.Gender;
                 objTalent.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objTalent.Last_Updated_Time = DateTime.Now;
@@ -308,7 +308,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objTalentRepositories.AddEntity(objTalent);
 
-                _objRet.Response = new { id = objTalent.talent_id };
+                _objRet.Response = new { id = objTalent.Talent_Code };
             }
 
             return _objRet;
@@ -358,7 +358,7 @@ namespace RightsU.BMS.BLL.Services
                 objTalent.Is_Active = objInput.Status.ToUpper();
 
                 objTalentRepositories.Update(objTalent);
-                _objRet.Response = new { id = objTalent.talent_id };
+                _objRet.Response = new { id = objTalent.Talent_Code };
 
             }
 

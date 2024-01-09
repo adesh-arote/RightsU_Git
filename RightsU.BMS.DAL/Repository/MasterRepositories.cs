@@ -225,7 +225,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Extended_Columns_Value entity)
         {
-            Extended_Columns_Value oldObj = Get(entity.columns_value_id.Value);
+            Extended_Columns_Value oldObj = Get(entity.Columns_Value_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public IEnumerable<Extended_Columns_Value> SearchFor(object param)
@@ -259,7 +259,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Map_Extended_Columns entity)
         {
-            Map_Extended_Columns oldObj = Get(entity.metadata_id.Value);
+            Map_Extended_Columns oldObj = Get(entity.Map_Extended_Columns_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Map_Extended_Columns entity)
@@ -298,7 +298,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Map_Extended_Columns_Details entity)
         {
-            Map_Extended_Columns_Details oldObj = Get(entity.metadata_values_id.Value);
+            Map_Extended_Columns_Details oldObj = Get(entity.Map_Extended_Columns_Details_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Map_Extended_Columns_Details entity)
@@ -336,7 +336,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Language entity)
         {
-            Language oldObj = Get(entity.language_id.Value);
+            Language oldObj = Get(entity.Language_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Language entity)
@@ -374,7 +374,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Program entity)
         {
-            Program oldObj = Get(entity.program_id.Value);
+            Program oldObj = Get(entity.Program_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Program entity)
@@ -469,7 +469,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Talent entity)
         {
-            Talent oldObj = Get(entity.talent_id.Value);
+            Talent oldObj = Get(entity.Talent_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Talent entity)
@@ -572,7 +572,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Role entity)
         {
-            Role oldObj = Get(entity.role_id.Value);
+            Role oldObj = Get(entity.Role_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Role entity)
@@ -627,7 +627,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Deal_Type entity)
         {
-            Deal_Type oldObj = Get(entity.deal_type_id.Value);
+            Deal_Type oldObj = Get(entity.Deal_Type_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Deal_Type entity)
@@ -665,7 +665,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(Genres entity)
         {
-            Genres oldObj = Get(entity.genres_id.Value);
+            Genres oldObj = Get(entity.Genres_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(Genres entity)
@@ -798,7 +798,7 @@ namespace RightsU.BMS.DAL
         }
         public void Update(RightsU.BMS.Entities.Master_Entities.Version entity)
         {
-            RightsU.BMS.Entities.Master_Entities.Version oldObj = Get(entity.version_id.Value);
+            RightsU.BMS.Entities.Master_Entities.Version oldObj = Get(entity.Version_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
         public void Delete(RightsU.BMS.Entities.Master_Entities.Version entity)

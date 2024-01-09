@@ -19,10 +19,12 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        [Column("Deal_Type_Code")]
-        public int? deal_type_id { get; set; }
-        [Column("Deal_Type_Name")]
-        public string deal_type_name { get; set; }
+        //[Column("Deal_Type_Code")]
+        [JsonProperty(PropertyName = "deal_type_id")]
+        public int? Deal_Type_Code { get; set; }
+        //[Column("Deal_Type_Name")]
+        [JsonProperty(PropertyName = "deal_type_name")]
+        public string Deal_Type_Name { get; set; }
         [JsonIgnore]
         public string Is_Default { get; set; }
         [JsonIgnore]

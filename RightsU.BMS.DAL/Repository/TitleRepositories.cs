@@ -18,7 +18,7 @@ namespace RightsU.BMS.DAL.Repository
 
             if (entity.title_language == null)
             {
-                entity.title_language = new LanguageRepositories().Get(entity.title_language_id.Value);
+                entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
             }
 
             if (entity.title_country.Count() > 0)
@@ -27,7 +27,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.country == null)
                     {
-                        i.country = new CountryRepositories().Get(i.country_id.Value);
+                        i.country = new CountryRepositories().Get(i.Country_Code.Value);
                     }
                 });
             }
@@ -38,12 +38,12 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.talent == null)
                     {
-                        i.talent = new TalentRepositories().Get(i.talent_id.Value);
+                        i.talent = new TalentRepositories().Get(i.Talent_Code.Value);
                     }
 
                     if (i.role == null)
                     {
-                        i.role = new RoleRepositories().Get(i.role_id.Value);
+                        i.role = new RoleRepositories().Get(i.Role_Code.Value);
                     }
                 });
             }
@@ -54,7 +54,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.genres == null)
                     {
-                        i.genres = new GenresRepositories().Get(i.genres_id.Value);
+                        i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
                     }
 
                 });
@@ -75,7 +75,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title entity)
         {
-            Title oldObj = GetById(entity.title_id.Value);
+            Title oldObj = GetById(entity.Title_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -282,7 +282,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Country entity)
         {
-            Title_Country oldObj = Get(entity.title_country_id.Value);
+            Title_Country oldObj = Get(entity.Title_Country_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -323,7 +323,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Talent entity)
         {
-            Title_Talent oldObj = Get(entity.title_talent_id.Value);
+            Title_Talent oldObj = Get(entity.Title_Talent_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -364,7 +364,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Geners entity)
         {
-            Title_Geners oldObj = Get(entity.title_genres_id.Value);
+            Title_Geners oldObj = Get(entity.Title_Geners_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 

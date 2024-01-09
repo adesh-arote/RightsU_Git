@@ -13,11 +13,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Role
     {
         [PrimaryKey]
-        [Column("Role_Code")]
-        public int? role_id { get; set; }
+        //[Column("Role_Code")]
+        [JsonProperty(PropertyName = "role_id")]
+        public int? Role_Code { get; set; }
 
-        [Column("Role_Name")]
-        public string role_name { get; set; }
+        //[Column("Role_Name")]
+        [JsonProperty(PropertyName = "role_name")]
+        public string Role_Name { get; set; }
 
         [JsonIgnore]
         public string Role_Type { get; set; }

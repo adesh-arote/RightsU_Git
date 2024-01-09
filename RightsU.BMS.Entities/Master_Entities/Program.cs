@@ -14,11 +14,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Program
     {
         [PrimaryKey]
-        [Column("Program_Code")]
-        public int? program_id { get; set; }
+        //[Column("Program_Code")]
+        [JsonProperty(PropertyName = "program_id")]
+        public int? Program_Code { get; set; }
 
-        [Column("Program_Name")]
-        public string program_name { get; set; }
+        //[Column("Program_Name")]
+        [JsonProperty(PropertyName = "program_name")]
+        public string Program_Name { get; set; }
 
         [JsonIgnore]
         public Nullable<int> Inserted_By { get; set; }

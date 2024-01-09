@@ -20,11 +20,13 @@ namespace RightsU.BMS.Entities.Master_Entities
         }
 
         [PrimaryKey]
-        [Column("Talent_Code")]
-        public int? talent_id { get; set; }
+        //[Column("Talent_Code")]
+        [JsonProperty(PropertyName = "talent_id")]
+        public int? Talent_Code { get; set; }
 
-        [Column("Talent_Name")]
-        public string talent_name { get; set; }
+        //[Column("Talent_Name")]
+        [JsonProperty(PropertyName = "talent_name")]
+        public string Talent_Name { get; set; }
 
         [JsonIgnore]
         public string Gender { get; set; }

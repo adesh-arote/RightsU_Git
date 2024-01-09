@@ -13,11 +13,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Language
     {
         [PrimaryKey]
-        [Column("Language_Code")]
-        public int? language_id { get; set; }
+        //[Column("Language_Code")]
+        [JsonProperty(PropertyName = "language_id")]
+        public int? Language_Code { get; set; }
 
         [Column("Language_Name")]
-        public string language_name { get; set; }
+        [JsonProperty(PropertyName = "language_name")]
+        public string Language_Name { get; set; }
 
         [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }

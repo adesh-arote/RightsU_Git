@@ -235,7 +235,7 @@ namespace RightsU.BMS.BLL.Services
 
                 var UserModuleRights = USPAPI_GetModuleRights(objUser.Security_Group_Code.Value);
 
-                var lstModuleUrl = Module_Url.Split(new[] { '/' },StringSplitOptions.RemoveEmptyEntries);
+                var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
                 var objModuleRights = UserModuleRights.Where(x => x.Module_Name.ToLower() == lstModuleUrl[1].ToLower()).ToList();
 
@@ -243,6 +243,10 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (lstModuleUrl.Count() > 2)
                     {
+                        if (Rights_Name.ToLower() == "get" && objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[1].ToLower()))
+                        {
+                            hasRights = objUser.Users_Code.Value;
+                        }
                         if (objModuleRights.Any(x => x.Right_Name.ToLower() == lstModuleUrl[2].ToLower()))
                         {
                             hasRights = objUser.Users_Code.Value;
@@ -252,7 +256,7 @@ namespace RightsU.BMS.BLL.Services
                             hasRights = 0;
                         }
                     }
-                    else if(objModuleRights.Any(x => x.Right_Name == Rights_Name))
+                    else if (objModuleRights.Any(x => x.Right_Name == Rights_Name))
                     {
                         hasRights = objUser.Users_Code.Value;
                     }
@@ -784,7 +788,7 @@ namespace RightsU.BMS.BLL.Services
 
             #endregion
 
-           PlatformReturn _PlatformReturn = new PlatformReturn();
+            PlatformReturn _PlatformReturn = new PlatformReturn();
 
             try
             {
@@ -962,7 +966,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (string.IsNullOrEmpty(objInput.genres_name))
+            if (string.IsNullOrEmpty(objInput.Genres_Name))
             {
                 _objRet.Message = "Input Paramater 'Genre Name' is mandatory";
                 _objRet.IsSuccess = false;
@@ -970,7 +974,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.genres_name }).ToList();
+            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.Genres_Name }).ToList();
 
             if (CheckDuplicate.Count > 0)
             {
@@ -986,14 +990,14 @@ namespace RightsU.BMS.BLL.Services
             {
                 Genres objGenre = new Genres();
 
-                objGenre.genres_name = objInput.genres_name;
+                objGenre.Genres_Name = objInput.Genres_Name;
                 objGenre.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objGenre.Inserted_On = DateTime.Now;
                 objGenre.Last_Updated_Time = DateTime.Now;
-                objGenre.is_active = "Y";
+                objGenre.Is_Active = "Y";
 
                 objGenreRepositories.Add(objGenre);
-                _objRet.Response = new { id = objGenre.genres_id };
+                _objRet.Response = new { id = objGenre.Genres_Code };
 
             }
 
@@ -1008,7 +1012,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.genres_id <= 0)
+            if (objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1016,7 +1020,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (string.IsNullOrEmpty(objInput.genres_name))
+            if (string.IsNullOrEmpty(objInput.Genres_Name))
             {
                 _objRet.Message = "Input Paramater 'Genre Name' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1024,7 +1028,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.genres_name }).ToList();
+            var CheckDuplicate = objGenreRepositories.SearchFor(new { Genres_Name = objInput.Genres_Name }).ToList();
 
             if (CheckDuplicate.Count > 0)
             {
@@ -1039,16 +1043,16 @@ namespace RightsU.BMS.BLL.Services
             {
                 Genres objGenre = new Genres();
 
-                objGenre = objGenreRepositories.Get(objInput.genres_id.Value);
+                objGenre = objGenreRepositories.Get(objInput.Genres_Code.Value);
 
-                objGenre.genres_name = objInput.genres_name;
+                objGenre.Genres_Name = objInput.Genres_Name;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objGenre.Last_Updated_Time = DateTime.Now;
-                objGenre.is_active = "Y";
+                objGenre.Is_Active = "Y";
 
                 objGenreRepositories.AddEntity(objGenre);
 
-                _objRet.Response = new { id = objGenre.genres_id };
+                _objRet.Response = new { id = objGenre.Genres_Code };
             }
 
             return _objRet;
@@ -1062,7 +1066,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.genres_id <= 0)
+            if (objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1070,14 +1074,14 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (string.IsNullOrEmpty(objInput.is_active))
+            if (string.IsNullOrEmpty(objInput.Is_Active))
             {
                 _objRet.Message = "Input Paramater 'is_active' is mandatory";
                 _objRet.IsSuccess = false;
                 _objRet.StatusCode = HttpStatusCode.BadRequest;
                 return _objRet;
             }
-            else if (objInput.is_active.ToUpper() != "Y" && objInput.is_active.ToUpper() != "N")
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
             {
                 _objRet.Message = "Input Paramater 'Status' is invalid";
                 _objRet.IsSuccess = false;
@@ -1091,14 +1095,14 @@ namespace RightsU.BMS.BLL.Services
             {
                 Genres objGenre = new Genres();
 
-                objGenre = objGenreRepositories.Get(objInput.genres_id.Value);
+                objGenre = objGenreRepositories.Get(objInput.Genres_Code.Value);
 
                 objGenre.Last_Updated_Time = DateTime.Now;
                 objGenre.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                objGenre.is_active = objInput.is_active.ToUpper();
+                objGenre.Is_Active = objInput.Is_Active.ToUpper();
 
                 objGenreRepositories.Update(objGenre);
-                _objRet.Response = new { id = objGenre.genres_id };
+                _objRet.Response = new { id = objGenre.Genres_Code };
 
             }
 

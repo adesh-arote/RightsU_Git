@@ -138,7 +138,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [HttpPost]
         [Route("api/title")]
         public async Task<HttpResponseMessage> PostTitle(Title Input)
-        {            
+        {
             //Input.MetaData.ForEach(x =>
             //{
             //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
@@ -191,17 +191,17 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/title")]
-        public async Task<HttpResponseMessage> PutTitle(TitleInput Input)
+        public async Task<HttpResponseMessage> PutTitle(Title Input)
         {            
-            Input.MetaData.ForEach(x =>
-            {
-                if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-                {
-                    var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-                    x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-                }
+            //Input.MetaData.ForEach(x =>
+            //{
+            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
+            //    {
+            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
+            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
+            //    }
 
-            });
+            //});
 
             var response = new HttpResponseMessage();
             DateTime startTime;
