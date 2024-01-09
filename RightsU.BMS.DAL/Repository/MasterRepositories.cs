@@ -368,6 +368,13 @@ namespace RightsU.BMS.DAL
         {
             return base.GetAll<Program>();
         }
+        public Program GetById(Int32? Id)
+        {
+            var obj = new { Program_Code = Id.Value };
+            var entity = base.GetById<Program>(obj);
+
+            return entity;
+        }
         public void Add(Program entity)
         {
             base.AddEntity(entity);
@@ -405,7 +412,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program_List>("USPAPI_Program_List", param).ToList();
+            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program>("USPAPI_Program_List", param).ToList();
             ObjProgramReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjProgramReturn;
         }
