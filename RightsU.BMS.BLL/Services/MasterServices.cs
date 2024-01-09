@@ -1842,4 +1842,951 @@ namespace RightsU.BMS.BLL.Services
         }
     }
     #endregion
+
+    #region -------- Business Unit -----------
+    public class BusinessUnitService
+    {
+        private readonly BusinessUnitRepositories objBusinessUnitRepositories = new BusinessUnitRepositories();
+        public GenericReturn GetBusinessUnit(string order, string sort, Int32 size, Int32 page, string search_value, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "BusinessUnitName".ToLower())
+                {
+                    sort = "Business_Unit_Name";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+            BusinessUnitReturn _BusinessUnitReturn = new BusinessUnitReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _BusinessUnitReturn = objBusinessUnitRepositories.GetBusinessUnit_List(order, page, search_value, size, sort, Convert.ToInt32(id));
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _BusinessUnitReturn.paging.page = page;
+            _BusinessUnitReturn.paging.size = size;
+
+            _objRet.Response = _BusinessUnitReturn;
+
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Sub License -----------
+    public class SubLicenseService
+    {
+
+        private readonly SubLicenseRepositories objSubLicenseRepositories = new SubLicenseRepositories();
+
+        public GenericReturn GetSubLicense(string order, string sort, Int32 size, Int32 page, string search_value, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "SubLicenseName".ToLower())
+                {
+                    sort = "Sub_License_Name";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+
+
+            SubLicenseReturn _SubLicenseReturn = new SubLicenseReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _SubLicenseReturn = objSubLicenseRepositories.GetSub_License(order, page, search_value, size, sort, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _SubLicenseReturn.paging.page = page;
+            _SubLicenseReturn.paging.size = size;
+
+            _objRet.Response = _SubLicenseReturn;
+
+            return _objRet;
+        }
+    }
+
+    #endregion
+    #region -------- Entity -----------
+    public class EntityServices
+    {
+        private readonly EntityRepositories objEntityRepositories = new EntityRepositories();
+        public GenericReturn GetEntityList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_UpDated_Time";
+                }
+                else if (sort.ToLower() == "EntityName".ToLower())
+                {
+                    sort = "Entity_Name";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+
+                }
+                if (!string.IsNullOrEmpty(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' should not be less than 'dateGt'";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = "Input Paramater 'dateLt' or 'dateGt' is not in valid format";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            EntityReturn _entityReturn = new EntityReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _entityReturn = objEntityRepositories.GetEntity_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            _entityReturn.paging.page = page;
+            _entityReturn.paging.size = size;
+
+            _objRet.Response = _entityReturn;
+
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Deal Tag -----------
+    public class DealTagService
+    {
+        public readonly DealTagRepositories objDealTagRepositories = new DealTagRepositories();
+        public GenericReturn GetDealTag(string order, string sort, Int32 size, Int32 page, string search_value, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "Deal_Flag".ToLower())
+                {
+                    sort = "Deal_Flag";
+                }
+                else if (sort.ToLower() == "IsActive".ToLower())
+                {
+                    sort = "Is_Active";
+                }
+                else if (sort.ToLower() == "Deal_Tag_Description".ToLower())
+                {
+                    sort = "Deal_Tag_Description";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+
+            DealTagReturn _DealTagReturn = new DealTagReturn();
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _DealTagReturn = objDealTagRepositories.GetDealTag_List(order, page, search_value, size, sort, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _DealTagReturn.paging.page = page;
+            _DealTagReturn.paging.size = size;
+
+            _objRet.Response = _DealTagReturn;
+
+            return _objRet;
+        }
+
+
+    }
+    #endregion
+
+    #region -------- Milestone Type -----------
+    public class MilestoneTypeService
+    {
+        public readonly MilestoneTypeRepositories ObjMilestoneTypeRepositories = new MilestoneTypeRepositories();
+
+        public GenericReturn GetMilestoneType(string order, string sort, Int32 size, Int32 page, string search_value, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "MilestoneTypeName".ToLower())
+                {
+                    sort = "Milestone_Type_Name";
+                }
+                else if (sort.ToLower() == "IsAutomated".ToLower())
+                {
+                    sort = "Is_Automated";
+                }
+                //else if (sort.ToLower() == "IsActive".ToLower())
+                //{
+                //    sort = "IsActive";
+                //}
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+            #endregion
+            MilestoneTypeReturn _MilestoneTypeReturn = new MilestoneTypeReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _MilestoneTypeReturn = ObjMilestoneTypeRepositories.GetMilestoneType_List(order, page, search_value, size, sort, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _MilestoneTypeReturn.paging.page = page;
+            _MilestoneTypeReturn.paging.size = size;
+
+            _objRet.Response = _MilestoneTypeReturn;
+
+            return _objRet;
+
+        }
+    }
+    #endregion
+    #region -------- ROFR -----------
+    public class ROFRService
+    {
+        private readonly ROFRRepositories objROFRRepositories = new ROFRRepositories();
+
+        public GenericReturn GetROFR(string order, string sort, Int32 size, Int32 page, string search_value, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "ROFRType".ToLower())
+                {
+                    sort = "ROFR_Type";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+            ROFRReturn _ROFRReturn = new ROFRReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _ROFRReturn = objROFRRepositories.GetROFR_List(order, page, search_value, size, sort, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _ROFRReturn.paging.page = page;
+            _ROFRReturn.paging.size = size;
+
+            _objRet.Response = _ROFRReturn;
+
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Language -----------
+    public class LanguageServices
+    {
+        private readonly LanguageRepositories objLanguageRepositories = new LanguageRepositories();
+        public GenericReturn GetLanguageList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_UpDated_Time";
+                }
+                else if (sort.ToLower() == "LanguageName".ToLower())
+                {
+                    sort = "Language_Name";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+
+                }
+                if (!string.IsNullOrEmpty(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' should not be less than 'dateGt'";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = "Input Paramater 'dateLt' or 'dateGt' is not in valid format";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+            #endregion
+
+            LanguageReturn _LanguageReturn = new LanguageReturn();
+
+            try
+            {
+                _LanguageReturn = objLanguageRepositories.GetLanguage_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _LanguageReturn.paging.page = page;
+            _LanguageReturn.paging.size = size;
+
+            _objRet.Response = _LanguageReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetLanguageById(Int32 id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            Language _language = new Language();
+
+            try
+            {
+                _language = objLanguageRepositories.Get(id);
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            _objRet.Response = _language;
+
+            return _objRet;
+        }
+
+        public GenericReturn PostLanguage(Language objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (string.IsNullOrEmpty(objInput.Language_Name))
+            {
+                _objRet.Message = "Input Paramater 'Language Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            var CheckDuplicate = objLanguageRepositories.SearchFor(new { Language_Name = objInput.Language_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Language Name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Language objlanguage = new Language();
+
+                objlanguage.Language_Name = objInput.Language_Name;
+                objlanguage.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objlanguage.Inserted_On = DateTime.Now;
+                objlanguage.Last_Updated_Time = DateTime.Now;
+                objlanguage.Is_Active = "Y";
+
+                objLanguageRepositories.Add(objlanguage);
+
+                _objRet.Response = new { id = objlanguage.Language_Code };
+
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PutLanguage(Language objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.Language_Code <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            if (string.IsNullOrEmpty(objInput.Language_Name))
+            {
+                _objRet.Message = "Input Paramater 'Language Name' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            var CheckDuplicate = objLanguageRepositories.SearchFor(new { Language_Name = objInput.Language_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'Language name already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Language objlanguage = new Language();
+
+                // int language_id = Convert.ToInt32(objInput.language_id);
+                objlanguage = objLanguageRepositories.Get(Convert.ToInt32(objInput.Language_Code));
+
+                objlanguage.Language_Name = objInput.Language_Name;
+                objlanguage.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objlanguage.Last_Updated_Time = DateTime.Now;
+                objlanguage.Is_Active = "Y";
+
+                objLanguageRepositories.Update(objlanguage);
+
+                _objRet.Response = new { id = objlanguage.Language_Code };
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Language objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.Language_Code <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet.Message = "Input Paramater 'is_active' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet.Message = "Input Paramater 'is_active' is invalid";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                return _objRet;
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Language objLanguage = new Language();
+                // int language_id = Convert.ToInt32(objInput.language_id);
+                objLanguage = objLanguageRepositories.Get(Convert.ToInt32(objInput.Language_Code));
+
+                objLanguage.Last_Updated_Time = DateTime.Now;
+                objLanguage.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objLanguage.Is_Active = objInput.Is_Active.ToUpper();
+
+                objLanguageRepositories.Update(objLanguage);
+                _objRet.Response = new { language_id = objLanguage.Language_Code };
+
+            }
+            return _objRet;
+        }
+    }
+
+
+    #endregion
 }
