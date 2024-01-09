@@ -21,7 +21,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "role_name")]
         public string Role_Name { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "role_type")]
         public string Role_Type { get; set; }
         [JsonIgnore]
         public string Is_Rate_Card { get; set; }
@@ -34,5 +34,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]       
         [ForeignKeyReference(typeof(Deal_Type))]
         public Nullable<int> Deal_Type_Code { get; set; }
+
+        [JsonProperty(PropertyName = "deal_type")]
+        public string Deal_Type { get; set; }
     }
 }

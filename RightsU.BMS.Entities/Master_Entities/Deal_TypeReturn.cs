@@ -11,7 +11,7 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Deal_TypeReturn()
         {
-            content = new List<dealType>();
+            content = new List<Deal_Type>();
             paging = new paging();
         }
 
@@ -20,19 +20,4 @@ namespace RightsU.BMS.Entities.Master_Entities
         /// </summary>
         public override object content { get; set; }
     }
-
-    public class dealType
-    {
-        public int id { get; set; }
-        public string DealTypeName { get; set; }
-        public string IsDefault { get; set; }
-        public string IsGridRequired { get; set; }
-        public string IsActive { get; set; }
-        public string IsMasterDeal { get; set; }
-        public int? ParentCode { get; set; }
-        public string DealOrTitle { get; set; }
-        public int DealTitleMappingCode { get; set; }
-    }
-
-   
 }

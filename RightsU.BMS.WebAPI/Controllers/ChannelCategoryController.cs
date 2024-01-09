@@ -19,11 +19,6 @@ namespace RightsU.BMS.WebAPI.Controllers
     [CustomExceptionFilter]
     public class ChannelCategoryController : ApiController
     {
-        public enum Order
-        {
-            Asc = 1,
-            Desc = 2
-        }
         public enum SortColumn
         {
             CreatedDate = 1,
@@ -35,9 +30,9 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
 
         /// <summary>
-        /// Asset List 
+        /// ChannelCategory List 
         /// </summary>
-        /// <remarks>Retrieves all available Assets</remarks>
+        /// <remarks>Retrieves all available ChannelCategory</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
         /// <param name="searchValue">The value of the search across the channelCategory</param>

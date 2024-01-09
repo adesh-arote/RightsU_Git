@@ -78,8 +78,6 @@ BEGIN
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
 
-	--SELECT Role_Code AS id,RTRIM(Role_Name) AS RoleName,Role_Type AS RoleType ,Deal_Type  AS DealType FROM #Temp
-
 	SELECT Role_Code,RTRIM(Role_Name)  AS Role_Name,Role_Type,Deal_Type FROM #Temp
 
     IF(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Role_List]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 

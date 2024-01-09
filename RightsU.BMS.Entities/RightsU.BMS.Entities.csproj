@@ -91,6 +91,7 @@
     <Compile Include="Master_Entities\BusinessUnitReturn.cs" />
     <Compile Include="Master_Entities\Business_Unit.cs" />
     <Compile Include="Master_Entities\Channel.cs" />
+    <Compile Include="Master_Entities\Channel_Category.cs" />
     <Compile Include="Master_Entities\Channel_CategoryReturn.cs" />
     <Compile Include="Master_Entities\Country.cs" />
     <Compile Include="Master_Entities\DealContentResult.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
+    <Compile Include="Master_Entities\Platform.cs" />
     <Compile Include="Master_Entities\PlatformReturn.cs" />
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\ProgramReturn.cs" />

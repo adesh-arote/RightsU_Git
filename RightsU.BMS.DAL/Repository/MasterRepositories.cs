@@ -818,7 +818,7 @@ namespace RightsU.BMS.DAL
     #endregion
         
     #region -------- DealType -----------
-    public class DealTypeRepositories : MainRepository<dealType>
+    public class DealTypeRepositories : MainRepository<Deal_Type>
     {
         public Deal_TypeReturn GetDealType_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {
@@ -834,7 +834,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjDealTypeReturn.content = base.ExecuteSQLProcedure<dealType>("[USPAPI_Deal_Type]", param).ToList();
+            ObjDealTypeReturn.content = base.ExecuteSQLProcedure<Deal_Type>("[USPAPI_Deal_Type]", param).ToList();
             ObjDealTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjDealTypeReturn;
         }
@@ -842,7 +842,7 @@ namespace RightsU.BMS.DAL
     #endregion
 
     #region -------- ChannelCategory -----------
-    public class ChannelCategoryRepositories : MainRepository<channelCategory>
+    public class ChannelCategoryRepositories : MainRepository<Channel_Category>
     {
         public Channel_CategoryReturn GetChannelCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {
@@ -858,7 +858,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjChannelCategoryReturn.content = base.ExecuteSQLProcedure<channelCategory>("[USPAPI_Channel_Category]", param).ToList();
+            ObjChannelCategoryReturn.content = base.ExecuteSQLProcedure<Channel_Category>("[USPAPI_Channel_Category]", param).ToList();
             ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjChannelCategoryReturn;
         }
@@ -866,7 +866,7 @@ namespace RightsU.BMS.DAL
     #endregion
 
     #region -------- Platform -----------
-    public class PlatformRepositories : MainRepository<platforms>
+    public class PlatformRepositories : MainRepository<Platform>
     {
         public PlatformReturn GetPlatform_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {
@@ -882,7 +882,7 @@ namespace RightsU.BMS.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjPlatformReturn.content = base.ExecuteSQLProcedure<platforms>("[USPAPI_Platform]", param).ToList();
+            ObjPlatformReturn.content = base.ExecuteSQLProcedure<Platform>("[USPAPI_Platform]", param).ToList();
             ObjPlatformReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjPlatformReturn;
         }
