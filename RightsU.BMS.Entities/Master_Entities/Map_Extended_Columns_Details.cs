@@ -13,19 +13,22 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Map_Extended_Columns_Details
     {
         [PrimaryKey]
-        [Column("Map_Extended_Columns_Details_Code")]
-        public int? metadata_values_id { get; set; } 
+        //[Column("Map_Extended_Columns_Details_Code")]
+        [JsonProperty(PropertyName = "metadata_values_id")]
+        public int? Map_Extended_Columns_Details_Code { get; set; } 
         
         [ForeignKeyReference(typeof(Map_Extended_Columns))]
-        [Column("Map_Extended_Columns_Code")]
-        public Nullable<int> metadata_id { get; set; }
+        //[Column("Map_Extended_Columns_Code")]
+        [JsonProperty(PropertyName = "metadata_id")]
+        public Nullable<int> Map_Extended_Columns_Code { get; set; }
 
         [SimpleLoadIgnore]
         [SimpleSaveIgnore]
         public string name { get; set; }
 
-        [Column("Columns_Value_Code")]
-        public Nullable<int> column_value_id { get; set; }
+        //[Column("Columns_Value_Code")]
+        [JsonProperty(PropertyName = "column_value_id")]
+        public Nullable<int> Columns_Value_Code { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPAPI_Role_List]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Role_List]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,
@@ -77,8 +77,6 @@ BEGIN
 	EXEC(@UpdateRowNum)
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
-
-	--SELECT Role_Code AS id,RTRIM(Role_Name) AS RoleName,Role_Type AS RoleType ,Deal_Type  AS DealType FROM #Temp
 
 	SELECT Role_Code,RTRIM(Role_Name)  AS Role_Name,Role_Type,Deal_Type FROM #Temp
 

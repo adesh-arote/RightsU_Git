@@ -138,7 +138,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [HttpPost]
         [Route("api/title")]
         public async Task<HttpResponseMessage> PostTitle(Title Input)
-        {            
+        {
             //Input.MetaData.ForEach(x =>
             //{
             //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
@@ -191,17 +191,17 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/title")]
-        public async Task<HttpResponseMessage> PutTitle(TitleInput Input)
+        public async Task<HttpResponseMessage> PutTitle(Title Input)
         {            
-            Input.MetaData.ForEach(x =>
-            {
-                if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-                {
-                    var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-                    x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-                }
+            //Input.MetaData.ForEach(x =>
+            //{
+            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
+            //    {
+            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
+            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
+            //    }
 
-            });
+            //});
 
             var response = new HttpResponseMessage();
             DateTime startTime;
@@ -245,17 +245,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/title/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PutInput Input)
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Title Input)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
-
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.Assets_Title_Post, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;

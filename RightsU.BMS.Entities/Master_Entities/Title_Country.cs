@@ -14,16 +14,19 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Title_Country
     {
         [PrimaryKey]
-        [Column("Title_Country_Code")]
-        public int? title_country_id { get; set; }
+        //[Column("Title_Country_Code")]
+        [JsonProperty(PropertyName = "title_country_id")]
+        public int? Title_Country_Code { get; set; }
 
         [ForeignKeyReference(typeof(Title))]
-        [Column("Title_Code")]
-        public Nullable<int> title_id { get; set; }
+        //[Column("Title_Code")]
+        [JsonProperty(PropertyName = "title_id")]
+        public Nullable<int> Title_Code { get; set; }
 
         [ForeignKeyReference(typeof(Country))]
-        [Column("Country_Code")]
-        public Nullable<int> country_id { get; set; }
+        //[Column("Country_Code")]
+        [JsonProperty(PropertyName = "country_id")]
+        public Nullable<int> Country_Code { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]

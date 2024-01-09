@@ -18,7 +18,7 @@ namespace RightsU.BMS.DAL.Repository
 
             if (entity.title_language == null)
             {
-                entity.title_language = new LanguageRepositories().Get(entity.title_language_id.Value);
+                entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
             }
 
             if (entity.title_country.Count() > 0)
@@ -27,7 +27,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.country == null)
                     {
-                        i.country = new CountryRepositories().Get(i.country_id.Value);
+                        i.country = new CountryRepositories().Get(i.Country_Code.Value);
                     }
                 });
             }
@@ -38,12 +38,12 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.talent == null)
                     {
-                        i.talent = new TalentRepositories().Get(i.talent_id.Value);
+                        i.talent = new TalentRepositories().Get(i.Talent_Code.Value);
                     }
 
                     if (i.role == null)
                     {
-                        i.role = new RoleRepositories().Get(i.role_id.Value);
+                        i.role = new RoleRepositories().Get(i.Role_Code.Value);
                     }
                 });
             }
@@ -54,7 +54,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     if (i.genres == null)
                     {
-                        i.genres = new GenresRepositories().Get(i.genres_id.Value);
+                        i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
                     }
 
                 });
@@ -75,7 +75,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title entity)
         {
-            Title oldObj = GetById(entity.title_id.Value);
+            Title oldObj = GetById(entity.Title_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -108,16 +108,15 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            var entity = base.ExecuteSQLProcedure<TitleInput>("USPAPI_Title_List", param).ToList();
+            var entity = base.ExecuteSQLProcedure<Title>("USPAPI_Title_List", param).ToList();
             entity.ForEach(i =>
             {
-                if (!string.IsNullOrEmpty(i.Language))
+                if (!string.IsNullOrEmpty(i.Language1))
                 {
-                    var arrLang = i.Language.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    var arrLang = i.Language1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (arrLang.Length > 0)
                     {
-                        i.TitleLanguage.id = Convert.ToInt32(arrLang[0]);
-                        i.TitleLanguage.Name = arrLang[1];
+                        i.title_language = new Language() { Language_Code = Convert.ToInt32(arrLang[0]), Language_Name = arrLang[1] };
                     }
                 }
 
@@ -126,8 +125,7 @@ namespace RightsU.BMS.DAL.Repository
                     var arrOGLang = i.OriginalLanguage1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (arrOGLang.Length > 0)
                     {
-                        i.OriginalLanguage.id = Convert.ToInt32(arrOGLang[0]);
-                        i.OriginalLanguage.Name = arrOGLang[1];
+                        i.original_language = new Language() { Language_Code = Convert.ToInt32(arrOGLang[0]), Language_Name = arrOGLang[1] };
                     }
                 }
 
@@ -136,8 +134,7 @@ namespace RightsU.BMS.DAL.Repository
                     var arrProgram = i.Program1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (arrProgram.Length > 0)
                     {
-                        i.Program.id = Convert.ToInt32(arrProgram[0]);
-                        i.Program.Name = arrProgram[1];
+                        i.Program = new Program() { Program_Code = Convert.ToInt32(arrProgram[0]), Program_Name = arrProgram[1] };
                     }
                 }
 
@@ -151,12 +148,13 @@ namespace RightsU.BMS.DAL.Repository
                             var arrCountry = CountryGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             if (arrCountry.Length > 0)
                             {
-                                Entities.InputClasses.TitleCountry objCountry = new Entities.InputClasses.TitleCountry();
-                                objCountry.id = Convert.ToInt32(arrCountry[0]);
-                                objCountry.CountryId = Convert.ToInt32(arrCountry[1]);
-                                objCountry.Name = arrCountry[2];
+                                Title_Country objTitle_Country = new Title_Country();
+                                objTitle_Country.Title_Country_Code = Convert.ToInt32(arrCountry[0]);
+                                objTitle_Country.Country_Code = Convert.ToInt32(arrCountry[1]);
+                                objTitle_Country.country = new Country() { Country_Code = Convert.ToInt32(arrCountry[1]), Country_Name = arrCountry[2] };
+                                objTitle_Country.Title_Code = i.Title_Code;
 
-                                i.Country.Add(objCountry);
+                                i.title_country.Add(objTitle_Country);
                             }
                         }
                     }
@@ -172,14 +170,15 @@ namespace RightsU.BMS.DAL.Repository
                             var arrTalent = TalentGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             if (arrTalent.Length > 0)
                             {
-                                Entities.InputClasses.TitleTalent objTalent = new Entities.InputClasses.TitleTalent();
-                                objTalent.id = Convert.ToInt32(arrTalent[0]);
-                                objTalent.Name = arrTalent[1];
-                                objTalent.Role = arrTalent[2];
-                                objTalent.TalentId = Convert.ToInt32(arrTalent[3]);
-                                objTalent.RoleId = Convert.ToInt32(arrTalent[4]);
+                                Title_Talent objTitle_Talent = new Title_Talent();
+                                objTitle_Talent.Title_Talent_Code = Convert.ToInt32(arrTalent[0]);
+                                objTitle_Talent.Title_Code = i.Title_Code;
+                                objTitle_Talent.Talent_Code = Convert.ToInt32(arrTalent[3]);
+                                objTitle_Talent.Role_Code = Convert.ToInt32(arrTalent[4]);
+                                objTitle_Talent.talent = new Talent() { Talent_Code = Convert.ToInt32(arrTalent[3]), Talent_Name = arrTalent[1] };
+                                objTitle_Talent.role = new Role() { Role_Code = Convert.ToInt32(arrTalent[4]), Role_Name = arrTalent[2] };
 
-                                i.TitleTalent.Add(objTalent);
+                                i.title_talent.Add(objTitle_Talent);
                             }
                         }
                     }
@@ -190,8 +189,7 @@ namespace RightsU.BMS.DAL.Repository
                     var arrAssetType = i.AssetType1.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                     if (arrAssetType.Length > 0)
                     {
-                        i.AssetType.id = Convert.ToInt32(arrAssetType[0]);
-                        i.AssetType.Name = arrAssetType[1];
+                        i.deal_type = new Deal_Type() { Deal_Type_Code = Convert.ToInt32(arrAssetType[0]), Deal_Type_Name = arrAssetType[1] };
                     }
                 }
 
@@ -205,18 +203,19 @@ namespace RightsU.BMS.DAL.Repository
                             var arrGenre = GenreGroup.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             if (arrGenre.Length > 0)
                             {
-                                Entities.InputClasses.TitleGenre objGenre = new Entities.InputClasses.TitleGenre();
-                                objGenre.id = Convert.ToInt32(arrGenre[0]);
-                                objGenre.GenreId = Convert.ToInt32(arrGenre[1]);
-                                objGenre.Name = arrGenre[2];
-
-
-                                i.Genre.Add(objGenre);
+                                Title_Geners objGenre = new Title_Geners();
+                                objGenre.Title_Geners_Code = Convert.ToInt32(arrGenre[0]);
+                                objGenre.Title_Code = i.Title_Code;
+                                objGenre.Genres_Code = Convert.ToInt32(arrGenre[1]);
+                                objGenre.genres = new Genres() { Genres_Code = Convert.ToInt32(arrGenre[1]), Genres_Name = arrGenre[2] };
+                                i.title_genres.Add(objGenre);
                             }
                         }
                     }
                 }
             });
+
+
             ObjTitleReturn.content = entity;
             ObjTitleReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjTitleReturn;
@@ -282,7 +281,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Country entity)
         {
-            Title_Country oldObj = Get(entity.title_country_id.Value);
+            Title_Country oldObj = Get(entity.Title_Country_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -323,7 +322,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Talent entity)
         {
-            Title_Talent oldObj = Get(entity.title_talent_id.Value);
+            Title_Talent oldObj = Get(entity.Title_Talent_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 
@@ -364,7 +363,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Title_Geners entity)
         {
-            Title_Geners oldObj = Get(entity.title_genres_id.Value);
+            Title_Geners oldObj = Get(entity.Title_Geners_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 

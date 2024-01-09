@@ -1,4 +1,5 @@
-﻿using Dapper.SimpleSave;
+﻿using Dapper.SimpleLoad;
+using Dapper.SimpleSave;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,18 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Version")]
     public partial class Version
     {
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonIgnore]
         public State EntityState { get; set; }
         [PrimaryKey]
-        [Column("Version_Code")]
-        public int? version_id { get; set; }
+        //[Column("Version_Code")]
+        [JsonProperty(PropertyName = "version_id")]
+        public int? Version_Code { get; set; }
 
-        [Column("Version_Name")]
-        public string version_name { get; set; }
+        //[Column("Version_Name")]
+        [JsonProperty(PropertyName = "version_name")]
+        public string Version_Name { get; set; }
 
         [JsonIgnore]
         public string BMS_Version_ID { get; set; }

@@ -11,21 +11,12 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Channel_CategoryReturn()
         {
-            content = new List<channelCategory>();
+            content = new List<Channel_Category>();
             paging = new paging();
         }
-
         /// <summary>
         /// ChannelCategory Details
         /// </summary>
         public override object content { get; set; }
-    }
-
-    public class channelCategory
-    {
-        public int id { get; set; }
-        public string ChannelCategoryName { get; set; }
-        public string Type { get; set; }
-        public string IsActive { get; set; }
     }
 }

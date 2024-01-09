@@ -13,11 +13,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Country
     {   
         [PrimaryKey]
-        [Column("Country_Code")]
-        public int? country_id { get; set; }
+        //[Column("Country_Code")]
+        [JsonProperty(PropertyName = "country_id")]
+        public int? Country_Code { get; set; }
 
-        [Column("Country_Name")]
-        public string country_name { get; set; }
+        //[Column("Country_Name")]
+        [JsonProperty(PropertyName = "country_name")]
+        public string Country_Name { get; set; }
 
         [JsonIgnore]
         public string Is_Domestic_Territory { get; set; }

@@ -52,7 +52,7 @@ Declare @Loglevel int;
 	BEGIN
 	   IF(ISNULL(@search_value,'')<>'')
 	   BEGIN
-			SET @SQL_Condition ='AND (Deal_Type_Code IN (select Deal_Type_Code from Deal_Type where Deal_Type_Name Like N''%' + @search_value+ '%'')'
+			SET @SQL_Condition ='AND (Deal_Type_Code IN (select Deal_Type_Code from Deal_Type where Deal_Type_Name Like N''%' + @search_value+ '%''))'
 		END
 	END
 	ELSE
@@ -88,7 +88,7 @@ Declare @Loglevel int;
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
 
-	select Deal_Type_Code AS id, Deal_Type_Name AS DealTypeName, Is_Default AS IsDefault, Is_Grid_Required AS IsGridRequired, Is_Active AS IsActive, Is_Master_Deal AS IsMasterDeal, Parent_Code AS ParentCode, Deal_Or_Title AS DealOrTitle, Deal_Title_Mapping_Code AS DealTitleMappingCode from #Temp
+	select Deal_Type_Code, Deal_Type_Name, Is_Default, Is_Grid_Required, Is_Active, Is_Master_Deal, Parent_Code, Deal_Or_Title, Deal_Title_Mapping_Code from #Temp
 
     if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Deal_Type]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 END

@@ -44,7 +44,7 @@ Declare @Loglevel int;
 	BEGIN
 	   IF(ISNULL(@search_value,'')<>'')
 	   BEGIN
-			SET @SQL_Condition ='AND (Channel_Category_Code IN (select Channel_Category_Code from Channel_Category where Channel_Category_Name Like N''%' + @search_value+ '%'')'
+			SET @SQL_Condition ='AND (Channel_Category_Code IN (select Channel_Category_Code from Channel_Category where Channel_Category_Name Like N''%' + @search_value+ '%''))'
 		END
 	END
 	ELSE
@@ -80,7 +80,7 @@ Declare @Loglevel int;
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
 
-	select Channel_Category_Code AS id, Channel_Category_Name AS ChannelCategoryName, Type,Is_Active AS IsActive from #Temp
+	select Channel_Category_Code, Channel_Category_Name, Type,Is_Active from #Temp
 
     if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Channel_Category]', 'Step 2', 0, 'Procedure Excuting Completed', 0, ''
 END
