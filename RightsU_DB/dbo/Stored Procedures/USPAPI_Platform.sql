@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPAPI_Platform]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Platform]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,

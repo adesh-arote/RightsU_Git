@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPAPI_Role_List]
+﻿CREATE PROCEDURE [dbo].[USPAPI_Role_List]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,
