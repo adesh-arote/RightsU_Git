@@ -235,7 +235,9 @@ namespace RightsU.BMS.BLL.Services
 
                 var UserModuleRights = USPAPI_GetModuleRights(objUser.Security_Group_Code.Value);
 
-                var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                var domainSubFolder = ConfigurationManager.AppSettings["DomainSubFolder"];
+
+                var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Where(x => x.ToLower() != domainSubFolder.ToLower()).ToArray();
 
                 var objModuleRights = UserModuleRights.Where(x => x.Module_Name.ToLower() == lstModuleUrl[1].ToLower()).ToList();
 
@@ -269,15 +271,6 @@ namespace RightsU.BMS.BLL.Services
                 {
                     hasRights = 0;
                 }
-
-                //if (UserModuleRights.Where(x => x.Module_Code == Module_Code).ToList().Count() > 0)
-                //{
-                //    hasRights = true;
-                //}
-                //else
-                //{
-                //    hasRights = false;
-                //}
             }
 
             return hasRights;
