@@ -35,6 +35,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         [ForeignKeyReference(typeof(Deal_Type))]
         public Nullable<int> Deal_Type_Code { get; set; }
 
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
         [JsonProperty(PropertyName = "deal_type")]
         public string Deal_Type { get; set; }
     }

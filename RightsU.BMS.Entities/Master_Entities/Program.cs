@@ -34,6 +34,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
         [JsonIgnore]
         [ForeignKeyReference(typeof(Deal_Type))]
+        [OneToOne]
         public Nullable<int> Deal_Type_Code { get; set; }
         
         //[ManyToOne]
