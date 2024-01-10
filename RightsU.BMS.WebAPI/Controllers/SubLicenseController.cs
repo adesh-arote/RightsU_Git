@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class SubLicenseController : ApiController
+    public class sublicenseController : ApiController
     {
 
        

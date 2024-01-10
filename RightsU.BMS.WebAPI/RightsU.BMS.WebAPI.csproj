@@ -181,7 +181,7 @@
     <Compile Include="Controllers\rofrController.cs" />
     <Compile Include="Controllers\roleController.cs" />
     <Compile Include="Controllers\scheduleuploadController.cs" />
-    <Compile Include="Controllers\SubLicenseController.cs" />
+    <Compile Include="Controllers\sublicenseController.cs" />
     <Compile Include="Controllers\talentController.cs" />
     <Compile Include="Controllers\titleController.cs" />
     <Compile Include="Filters\AssetsLogFilter.cs" />
