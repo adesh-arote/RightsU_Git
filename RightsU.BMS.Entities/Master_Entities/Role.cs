@@ -31,11 +31,23 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
-        [JsonIgnore]       
+      
         [ForeignKeyReference(typeof(Deal_Type))]
+        [JsonProperty(PropertyName = "deal_type_id")]
         public Nullable<int> Deal_Type_Code { get; set; }
 
-        [JsonProperty(PropertyName = "deal_type")]
-        public string Deal_Type { get; set; }
+        [ForeignKeyReference(typeof(Deal_Type))]
+        [ManyToOne]
+        [Column("Deal_Type_Code")]
+        [SimpleSaveIgnore]
+        public virtual Deal_Type deal_type { get; set; }
+
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string AssetType { get; set; }
+        //[JsonProperty(PropertyName = "deal_type")]
+        //public string Deal_Type { get; set; }
+
     }
 }

@@ -631,7 +631,19 @@ namespace RightsU.BMS.DAL
             param.Add("@sort", sort);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjRoleReturn.content = base.ExecuteSQLProcedure<Role>("USPAPI_Role_List", param).ToList();
+            var entity = base.ExecuteSQLProcedure<Role>("USPAPI_Role_List", param).ToList();
+            entity.ForEach(i =>
+            {
+                if (!string.IsNullOrEmpty(i.AssetType))
+                {
+                    var arrAssetValue = i.AssetType.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (arrAssetValue.Length > 0)
+                    {
+                        i.deal_type = new Deal_Type() { Deal_Type_Code = Convert.ToInt32(arrAssetValue[0]), Deal_Type_Name = arrAssetValue[1] };
+                    }
+                }
+            });
+            ObjRoleReturn.content = entity;
             ObjRoleReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjRoleReturn;
         }
