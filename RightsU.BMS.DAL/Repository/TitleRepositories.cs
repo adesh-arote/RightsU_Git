@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using RightsU.BMS.Entities.InputClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -229,26 +229,6 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@Title_Code", title_Code);
             ObjExtended = base.ExecuteSQLProcedure<USPAPI_Title_Bind_Extend_Data>("USPAPI_Title_Bind_Extend_Data", param).ToList();
             return ObjExtended;
-        }
-
-        public TitleInput GetTitleById(Int32 id)
-        {
-            TitleInput ObjTitleReturn = new TitleInput();
-
-            var param = new DynamicParameters();
-            //param.Add("@id", id);
-
-            param.Add("@order", "ASC");
-            param.Add("@page", 1);
-            param.Add("@search_value", "");
-            param.Add("@size", 1);
-            param.Add("@sort", "Last_UpDated_Time");
-            param.Add("@date_gt", "");
-            param.Add("@date_lt", "");
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjTitleReturn = base.ExecuteSQLProcedure<TitleInput>("USPAPI_Title_List", param).FirstOrDefault();
-            return ObjTitleReturn;
         }
 
         public Title_Validations Title_Validation(string InputValue, string InputType)

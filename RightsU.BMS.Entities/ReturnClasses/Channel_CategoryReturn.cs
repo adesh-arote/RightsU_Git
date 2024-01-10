@@ -1,22 +1,22 @@
 ﻿using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU.BMS.Entities.Master_Entities
+namespace RightsU.BMS.Entities.ReturnClasses
 {
-    public class DealTagReturn : ListReturn
+   public class Channel_CategoryReturn : ListReturn
     {
-        public DealTagReturn()
+        public Channel_CategoryReturn()
         {
-            content = new List<Deal_Tag>();
+            content = new List<Channel_Category>();
             paging = new paging();
         }
-
         /// <summary>
-        /// Deal Tag Details 
+        /// ChannelCategory Details
         /// </summary>
         public override object content { get; set; }
     }

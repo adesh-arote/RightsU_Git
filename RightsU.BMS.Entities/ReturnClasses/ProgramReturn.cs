@@ -1,37 +1,40 @@
 ﻿using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU.BMS.Entities.Master_Entities
+namespace RightsU.BMS.Entities.ReturnClasses
 {
-    public class TalentReturn : ListReturn
+    public class ProgramReturn : ListReturn
     {
-        public TalentReturn()
+        public ProgramReturn()
         {
-            content = new List<Talent>();
+            content = new List<Program>();
             paging = new paging();
         }
 
         /// <summary>
-        /// Talent Details
+        /// Program Details
         /// </summary>
         public override object content { get; set; }
     }
-    public class Talent_List
+
+    public class Program_List
     {
-        public Talent_List()
+        public Program_List()
         {
             //StarCast = new List<string>();
         }
         /// <summary>
-        /// This is Talent Code ,Example:RUBMSA11
+        /// This is Program Code ,Example:RUBMSA11
         /// </summary>
         public int id { get; set; }
-        public string TalentName { get; set; }
-        public string Gender { get; set; }
+        public string ProgramName { get; set; }
+        public string DealType { get; set; }
+        public string Genre { get; set; }
         public string IsActive { get; set; }
     }
 }

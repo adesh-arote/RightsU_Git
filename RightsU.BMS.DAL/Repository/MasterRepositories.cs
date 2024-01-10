@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;

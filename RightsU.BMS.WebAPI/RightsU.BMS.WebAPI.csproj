@@ -167,6 +167,7 @@
     <Compile Include="Consumes.cs" />
     <Compile Include="Controllers\bmsController.cs" />
     <Compile Include="Controllers\businessunitController.cs" />
+    <Compile Include="Controllers\dealgeneralController.cs" />
     <Compile Include="Controllers\dealtagController.cs" />
     <Compile Include="Controllers\entityController.cs" />
     <Compile Include="Controllers\genreController.cs" />
