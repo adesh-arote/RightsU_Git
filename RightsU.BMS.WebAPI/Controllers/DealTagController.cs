@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class DealTagController : ApiController
+    public class dealtagController : ApiController
     {
         public enum Order
         {

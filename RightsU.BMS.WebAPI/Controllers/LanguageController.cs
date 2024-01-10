@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class LanguageController : ApiController
+    public class languageController : ApiController
     {
       
         public enum SortColumn

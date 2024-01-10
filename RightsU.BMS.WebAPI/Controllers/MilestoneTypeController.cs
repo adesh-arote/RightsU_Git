@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class MilestoneTypeController : ApiController
+    public class milestonetypeController : ApiController
     {
         public enum Order
         {

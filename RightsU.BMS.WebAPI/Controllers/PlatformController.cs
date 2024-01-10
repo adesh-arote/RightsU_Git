@@ -12,7 +12,12 @@ using RightsU.BMS.Entities.Master_Entities;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
-    public class PlatformController : ApiController
+    [SwaggerConsumes("application/json")]
+    [SwaggerProduces("application/json")]
+    [HideInDocs]
+    [AssetsLogFilter]
+    [CustomExceptionFilter]
+    public class platformController : ApiController
     {
         public enum SortColumn
         {

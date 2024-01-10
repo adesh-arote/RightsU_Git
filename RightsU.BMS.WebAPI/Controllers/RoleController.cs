@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [AssetsLogFilter]
     [CustomExceptionFilter]
 
-    public class RoleController : ApiController
+    public class roleController : ApiController
     {        
         public enum SortColumn
         {

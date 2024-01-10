@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class ROFRController : ApiController
+    public class rofrController : ApiController
     {
         public enum Order
         {

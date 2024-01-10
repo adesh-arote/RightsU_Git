@@ -17,7 +17,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class ChannelCategoryController : ApiController
+    public class channelcategoryController : ApiController
     {
         public enum SortColumn
         {
