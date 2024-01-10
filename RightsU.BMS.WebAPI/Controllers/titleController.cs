@@ -1,8 +1,7 @@
 ﻿using Newtonsoft.Json;
 using RightsU.BMS.BLL.Services;
-using RightsU.BMS.Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.Entities.InputClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
@@ -85,7 +84,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <remarks>Retrieves Assets by Id</remarks>
         /// <param name="id">get specific asset data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(TitleInput))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Title))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]

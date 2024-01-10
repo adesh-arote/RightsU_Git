@@ -4,7 +4,7 @@ using RightsU.BMS.DAL;
 using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities;
 using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.Entities.InputClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -327,7 +327,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (objInput.Title_Language_Code <= 0)
+            if (objInput.Title_Language_Code == null || objInput.Title_Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'title_language_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -390,7 +390,7 @@ namespace RightsU.BMS.BLL.Services
             //    }
             //}
 
-            if (objInput.Deal_Type_Code <= 0)
+            if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'deal_type_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -520,7 +520,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Title_Code <= 0)
+            if (objInput.Title_Code == null || objInput.Title_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'title_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -536,7 +536,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (objInput.Title_Language_Code <= 0)
+            if (objInput.Title_Language_Code == null || objInput.Title_Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'title_language_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -544,7 +544,7 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (objInput.Deal_Type_Code <= 0)
+            if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'deal_type_id' is mandatory";
                 _objRet.IsSuccess = false;

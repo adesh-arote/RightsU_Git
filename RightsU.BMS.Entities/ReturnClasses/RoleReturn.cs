@@ -1,22 +1,20 @@
 ﻿using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace RightsU.BMS.Entities.Master_Entities
+namespace RightsU.BMS.Entities.ReturnClasses
 {
-    public class EntityReturn : ListReturn
+    public class RoleReturn : ListReturn
     {
-        public EntityReturn()
+        public RoleReturn()
         {
-            content = new List<Entity>();
+            content = new List<Role>();
             paging = new paging();
         }
 
         /// <summary>
-        /// Entity Details 
+        /// Role Details
         /// </summary>
         public override object content { get; set; }
     }

@@ -14,6 +14,7 @@ using RightsU.BMS.Entities.FrameworkClasses;
 using System.Net;
 using System.Configuration;
 using System.Web;
+using RightsU.BMS.Entities.ReturnClasses;
 
 namespace RightsU.BMS.BLL.Services
 {
@@ -1041,7 +1042,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Genres_Code <= 0)
+            if (objInput.Genres_Code == null || objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1095,7 +1096,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Genres_Code <= 0)
+            if (objInput.Genres_Code == null || objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1381,7 +1382,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Program_Code <= 0)
+            if (objInput.Program_Code == null || objInput.Program_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'program_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1438,7 +1439,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Program_Code <= 0)
+            if (objInput.Program_Code == null || objInput.Program_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'program_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1698,7 +1699,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Talent_Code <= 0)
+            if (objInput.Talent_Code == null || objInput.Talent_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1791,7 +1792,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Talent_Code <= 0)
+            if (objInput.Talent_Code == null || objInput.Talent_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -2682,7 +2683,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Language_Code <= 0)
+            if (objInput.Language_Code == null || objInput.Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -2738,7 +2739,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Language_Code <= 0)
+            if (objInput.Language_Code == null || objInput.Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;

@@ -1,6 +1,4 @@
-﻿using RightsU.BMS.BLL.Services;
-using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.Entities.ReturnClasses;
+﻿using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
@@ -11,6 +9,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.BLL.Services;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
@@ -19,27 +19,14 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class talentController : ApiController
+    public class dealgeneralController : ApiController
     {
-        public enum Order
-        {
-            Asc = 1,
-            Desc = 2
-        }
-        public enum SortColumn
-        {
-            CreatedDate = 1,
-            UpdatedDate = 2,
-            TalentName = 3
-        }
-
-        private readonly TalentServices objTalentServices = new TalentServices();
-        private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
+        private readonly TitleServices objTitleServices = new TitleServices();
 
         /// <summary>
-        /// Talent List 
+        /// Deal General List 
         /// </summary>
-        /// <remarks>Retrieves all available Talent</remarks>
+        /// <remarks>Retrieves all available Deal General</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
         /// <param name="searchValue">The value of the search across the title</param>
@@ -48,21 +35,21 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(TalentReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(TitleReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/talent")]
-        public async Task<HttpResponseMessage> GetTalentList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [Route("api/dealgeneral")]
+        public async Task<HttpResponseMessage> GetDealGeneralList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTalentServices.GetTalentList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -87,10 +74,54 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save Talent Details
+        /// Asset by id
         /// </summary>
-        /// <remarks>Create / Save New Talent</remarks>
-        /// <param name="Input">Input data object for Create/Save New Talent</param>
+        /// <remarks>Retrieves Assets by Id</remarks>
+        /// <param name="id">get specific asset data using id.</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Title))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpGet]
+        [Route("api/title/{id}")]
+        public async Task<HttpResponseMessage> GetTitleById(int? id)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = objTitleServices.GetTitleById(id.Value);
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Save Asset Details
+        /// </summary>
+        /// <remarks>Create / Save New Asset</remarks>
+        /// <param name="Input">Input data object for Create/Save New Asset</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -99,14 +130,24 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/talent")]
-        public async Task<HttpResponseMessage> PostTalent(Talent Input)
+        [Route("api/title")]
+        public async Task<HttpResponseMessage> PostTitle(Title Input)
         {
+            //Input.MetaData.ForEach(x =>
+            //{
+            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
+            //    {
+            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
+            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
+            //    }
+
+            //});
+
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTalentServices.PostTalent(Input);
+            GenericReturn objReturn = objTitleServices.PostTitle(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -131,10 +172,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Talent details
+        /// Modify Asset details
         /// </summary>
-        /// <remarks>Update / Modify Talent details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Talent</param>
+        /// <remarks>Update / Modify Asset details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Asset</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -143,14 +184,24 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/talent")]
-        public async Task<HttpResponseMessage> PutTalent(Talent Input)
+        [Route("api/title")]
+        public async Task<HttpResponseMessage> PutTitle(Title Input)
         {
+            //Input.MetaData.ForEach(x =>
+            //{
+            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
+            //    {
+            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
+            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
+            //    }
+
+            //});
+
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTalentServices.PutTalent(Input);
+            GenericReturn objReturn = objTitleServices.PutTitle(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -162,51 +213,6 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-
-            return response;
-        }
-
-        /// <summary>
-        /// Active/Deactive Status 
-        /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing Talent</remarks>
-        /// <param name="Input">Input data object for Modify existing talent Active/Deactive Status</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpPut]
-        [Route("api/talent/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(Talent Input)
-        {
-            var response = new HttpResponseMessage();
-            DateTime startTime;
-            startTime = DateTime.Now;
-
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objTalentServices.ChangeActiveStatus(Input);
-
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
