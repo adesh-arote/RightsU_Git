@@ -86,8 +86,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/title/{id}")]
-        public async Task<HttpResponseMessage> GetTitleById(int? id)
+        [Route("api/dealgeneral/{id}")]
+        public async Task<HttpResponseMessage> GetDealGeneralById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;

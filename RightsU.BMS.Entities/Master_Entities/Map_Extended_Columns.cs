@@ -17,8 +17,7 @@ namespace RightsU.BMS.Entities.Master_Entities
             this.metadata_values = new HashSet<Map_Extended_Columns_Details>();
         }
 
-        [PrimaryKey]
-        [Column("Map_Extended_Columns_Code")]
+        [PrimaryKey]        
         [JsonProperty(PropertyName = "metadata_id")]
         public int? Map_Extended_Columns_Code { get; set; }
 
