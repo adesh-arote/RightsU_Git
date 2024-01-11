@@ -1,11 +1,11 @@
 ﻿using Dapper.SimpleLoad;
 using Dapper.SimpleSave;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
@@ -18,14 +18,14 @@ namespace RightsU.BMS.Entities.Master_Entities
             this.DealTitles = new HashSet<Acq_Deal_Movie>();            
         }
 
-        [JsonIgnore]
+        [JsonIgnore]        
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         public State EntityState { get; set; }
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_id")]
-        public int Acq_Deal_Code { get; set; }
+        public int? Acq_Deal_Code { get; set; }
 
         [JsonProperty(PropertyName = "agreement_no")]
         public string Agreement_No { get; set; }
@@ -34,7 +34,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string Version { get; set; }
 
         [JsonProperty(PropertyName = "agreement_date")]
-        public Nullable<System.DateTime> Agreement_Date { get; set; }
+        public string Agreement_Date { get; set; }
 
         [JsonProperty(PropertyName = "deal_description")]
         public string Deal_Desc { get; set; }
@@ -43,9 +43,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "deal_tag_id")]
         public Nullable<int> Deal_Tag_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Deal_Tag))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]        
+        [Column("Deal_Tag_Code")]
         public virtual Deal_Tag deal_tag { get; set; }
 
         [JsonProperty(PropertyName = "master_sub_deal_type")]
@@ -55,37 +55,37 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "role_id")]
         public Nullable<int> Role_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Role))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]        
+        [Column("Role_Code")]
         public virtual Role role { get; set; }
 
         [ForeignKeyReference(typeof(Deal_Type))]
         [JsonProperty(PropertyName = "deal_type_id")]
         public Nullable<int> Deal_Type_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Deal_Type))]
-        [ManyToOne]
         [SimpleSaveIgnore]
-        public virtual Deal_Type Deal_Type { get; set; }
+        [ManyToOne]        
+        [Column("Deal_Type_Code")]        
+        public virtual Deal_Type deal_type { get; set; }
 
         [ForeignKeyReference(typeof(Entity))]
         [JsonProperty(PropertyName = "entity_id")]
         public Nullable<int> Entity_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Entity))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]        
+        [Column("Entity_Code")]
         public virtual Entity entity { get; set; }
 
         [ForeignKeyReference(typeof(Vendor))]
-        [JsonProperty(PropertyName = "primary_licensor_id")]
+        [JsonProperty(PropertyName = "primary_vendor_id")]
         public Nullable<int> Vendor_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Vendor))]
-        [ManyToOne]
         [SimpleSaveIgnore]
-        public virtual Vendor primary_licensor { get; set; }
+        [ManyToOne]        
+        [Column("Vendor_Code")]
+        public virtual Vendor primary_vendor { get; set; }
 
         [JsonProperty(PropertyName = "master_deal_id")]
         public Nullable<int> Parent_Deal_Code { get; set; }
@@ -100,9 +100,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "currency_id")]
         public Nullable<int> Currency_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Currency))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]        
+        [Column("Currency_Code")]
         public virtual Currency Currency { get; set; }
 
         [JsonProperty(PropertyName = "exchange_rate")]
@@ -112,18 +112,18 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "business_unit_id")]
         public Nullable<int> Business_Unit_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Business_Unit))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("Business_Unit_Code")]
         public virtual Business_Unit business_unit { get; set; }
 
         [ForeignKeyReference(typeof(Category))]
         [JsonProperty(PropertyName = "category_id")]
         public Nullable<int> Category_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Category))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]        
+        [Column("Category_Code")]
         public virtual Category category { get; set; }
 
         [JsonProperty(PropertyName = "reference_no")]
@@ -135,6 +135,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [SimpleSaveIgnore]
         [ManyToOne]
+        [Column("Vendor_Contacts_Code")]
         public virtual Vendor_Contacts vendor_contact { get; set; }
 
         [JsonProperty(PropertyName = "remarks")]
@@ -156,13 +157,13 @@ namespace RightsU.BMS.Entities.Master_Entities
         public virtual ICollection<Acq_Deal_Movie> DealTitles { get; set; }
 
         [JsonProperty(PropertyName = "inserted_on")]
-        public Nullable<System.DateTime> Inserted_On { get; set; }
+        public string Inserted_On { get; set; }
 
         [JsonProperty(PropertyName = "inserted_by")]
         public Nullable<int> Inserted_By { get; set; }
 
         [JsonProperty(PropertyName = "updated_on")]
-        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
+        public string Last_Updated_Time { get; set; }
 
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }

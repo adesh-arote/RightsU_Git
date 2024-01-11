@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "category_id")]
-        public int Category_Code { get; set; }
+        public int? Category_Code { get; set; }
 
         [JsonProperty(PropertyName = "category_name")]
         public string Category_Name { get; set; }

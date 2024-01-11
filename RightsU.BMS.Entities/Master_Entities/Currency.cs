@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         
         [PrimaryKey]
         [JsonProperty(PropertyName = "currency_id")]
-        public int Currency_Code { get; set; }
+        public int? Currency_Code { get; set; }
 
         [JsonProperty(PropertyName = "currency_name")]
         public string Currency_Name { get; set; }

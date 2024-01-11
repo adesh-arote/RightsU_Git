@@ -21,7 +21,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [CustomExceptionFilter]
     public class dealgeneralController : ApiController
     {
-        private readonly TitleServices objTitleServices = new TitleServices();
+        private readonly DealGeneralServices objDealGeneralServices = new DealGeneralServices();
 
         /// <summary>
         /// Deal General List 
@@ -48,8 +48,8 @@ namespace RightsU.BMS.WebAPI.Controllers
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-
-            GenericReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = new GenericReturn();
+            //GenericReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -74,12 +74,12 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Asset by id
+        /// Deal General by id
         /// </summary>
-        /// <remarks>Retrieves Assets by Id</remarks>
-        /// <param name="id">get specific asset data using id.</param>
+        /// <remarks>Retrieves Deal General by Id</remarks>
+        /// <param name="id">get specific deal data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Title))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
@@ -93,7 +93,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTitleServices.GetTitleById(id.Value);
+            GenericReturn objReturn = objDealGeneralServices.GetById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -118,10 +118,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save Asset Details
+        /// Save Deal General Details
         /// </summary>
-        /// <remarks>Create / Save New Asset</remarks>
-        /// <param name="Input">Input data object for Create/Save New Asset</param>
+        /// <remarks>Create / Save New Deal General</remarks>
+        /// <param name="Input">Input data object for Create/Save New Deal General</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -130,24 +130,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/title")]
-        public async Task<HttpResponseMessage> PostTitle(Title Input)
-        {
-            //Input.MetaData.ForEach(x =>
-            //{
-            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-            //    {
-            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-            //    }
-
-            //});
-
+        [Route("api/dealgeneral")]
+        public async Task<HttpResponseMessage> Post(Acq_Deal Input)
+        {            
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTitleServices.PostTitle(Input);
+            GenericReturn objReturn = objDealGeneralServices.Post(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -172,10 +162,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Asset details
+        /// Modify Deal General details
         /// </summary>
-        /// <remarks>Update / Modify Asset details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Asset</param>
+        /// <remarks>Update / Modify Deal General details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Deal General</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -185,23 +175,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/title")]
-        public async Task<HttpResponseMessage> PutTitle(Title Input)
+        public async Task<HttpResponseMessage> Put(Title Input)
         {
-            //Input.MetaData.ForEach(x =>
-            //{
-            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-            //    {
-            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-            //    }
-
-            //});
-
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTitleServices.PutTitle(Input);
+            GenericReturn objReturn = new GenericReturn();
+            //GenericReturn objReturn = objTitleServices.PutTitle(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

@@ -942,6 +942,39 @@ namespace RightsU.BMS.DAL
     #region -------- Business Unit -----------
     public class BusinessUnitRepositories : MainRepository<Business_Unit>
     {
+        public Business_Unit Get(int Id)
+        {
+            var obj = new { Business_Unit_Code = Id };
+
+            return base.GetById<Business_Unit>(obj);
+        }
+        public IEnumerable<Business_Unit> GetAll()
+        {
+            return base.GetAll<Business_Unit>();
+        }
+        public void Add(Business_Unit entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Business_Unit entity)
+        {
+            Business_Unit oldObj = Get(entity.Business_Unit_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Business_Unit entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Business_Unit> SearchFor(object param)
+        {
+            return base.SearchForEntity<Business_Unit>(param);
+        }
+
+        public IEnumerable<Business_Unit> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Business_Unit>(strSQL);
+        }
         public BusinessUnitReturn GetBusinessUnit_List(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
         {
             BusinessUnitReturn objBusinessUnitReturn = new BusinessUnitReturn();
@@ -960,6 +993,7 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
     #region -------- Sub License -----------
     public class SubLicenseRepositories : MainRepository<Business_Unit>
     {
@@ -1124,6 +1158,162 @@ namespace RightsU.BMS.DAL
             ObjPromoterReturnReturn.content = base.ExecuteSQLProcedure<PromoterRemark>("[USPAPI_Promoter_Remark]", param).ToList();
             ObjPromoterReturnReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjPromoterReturnReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Vendor -----------
+    public class VendorRepositories : MainRepository<Vendor>
+    {
+        public Vendor Get(int Id)
+        {
+            var obj = new { Vendor_Code = Id };
+
+            return base.GetById<Vendor>(obj);
+        }
+        public IEnumerable<Vendor> GetAll()
+        {
+            return base.GetAll<Vendor>();
+        }
+        public void Add(Vendor entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Vendor entity)
+        {
+            Vendor oldObj = Get(entity.Vendor_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Vendor entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Vendor> SearchFor(object param)
+        {
+            return base.SearchForEntity<Vendor>(param);
+        }
+
+        public IEnumerable<Vendor> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Vendor>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Currency -----------
+    public class CurrencyRepositories : MainRepository<Currency>
+    {
+        public Currency Get(int Id)
+        {
+            var obj = new { Currency_Code = Id };
+
+            return base.GetById<Currency>(obj);
+        }
+        public IEnumerable<Currency> GetAll()
+        {
+            return base.GetAll<Currency>();
+        }
+        public void Add(Currency entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Currency entity)
+        {
+            Currency oldObj = Get(entity.Currency_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Currency entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Currency> SearchFor(object param)
+        {
+            return base.SearchForEntity<Currency>(param);
+        }
+
+        public IEnumerable<Currency> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Currency>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Currency -----------
+    public class CategoryRepositories : MainRepository<Category>
+    {
+        public Category Get(int Id)
+        {
+            var obj = new { Category_Code = Id };
+
+            return base.GetById<Category>(obj);
+        }
+        public IEnumerable<Category> GetAll()
+        {
+            return base.GetAll<Category>();
+        }
+        public void Add(Category entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Category entity)
+        {
+            Category oldObj = Get(entity.Category_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Category entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Category> SearchFor(object param)
+        {
+            return base.SearchForEntity<Category>(param);
+        }
+
+        public IEnumerable<Category> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Category>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Currency -----------
+    public class Vendor_ContactsRepositories : MainRepository<Vendor_Contacts>
+    {
+        public Vendor_Contacts Get(int Id)
+        {
+            var obj = new { Vendor_Contacts_Code = Id };
+
+            return base.GetById<Vendor_Contacts>(obj);
+        }
+        public IEnumerable<Vendor_Contacts> GetAll()
+        {
+            return base.GetAll<Vendor_Contacts>();
+        }
+        public void Add(Vendor_Contacts entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Vendor_Contacts entity)
+        {
+            Vendor_Contacts oldObj = Get(entity.Vendor_Contacts_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Vendor_Contacts entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Vendor_Contacts> SearchFor(object param)
+        {
+            return base.SearchForEntity<Vendor_Contacts>(param);
+        }
+
+        public IEnumerable<Vendor_Contacts> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Vendor_Contacts>(strSQL);
         }
     }
     #endregion
