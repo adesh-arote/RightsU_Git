@@ -120,6 +120,7 @@
     <Compile Include="Master_Entities\Milestone_Type.cs" />
     <Compile Include="Master_Entities\Platform_Group.cs" />
     <Compile Include="Master_Entities\Program.cs" />
+    <Compile Include="Master_Entities\PromoterRemark.cs" />
     <Compile Include="Master_Entities\ROFR.cs" />
     <Compile Include="Master_Entities\Role.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="ReturnClasses\MilestoneTypeReturn.cs" />
     <Compile Include="ReturnClasses\PlatformReturn.cs" />
     <Compile Include="ReturnClasses\ProgramReturn.cs" />
+    <Compile Include="ReturnClasses\PromoterRemarkReturn.cs" />
     <Compile Include="ReturnClasses\ROFRReturn.cs" />
     <Compile Include="ReturnClasses\RoleReturn.cs" />
     <Compile Include="ReturnClasses\SubLicenseReturn.cs" />
