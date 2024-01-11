@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>\bin\RightsU.BMS.Entities.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -81,6 +82,12 @@
     <Compile Include="Master_Entities\Acq_Deal.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Platform.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Territory.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Title.cs" />
     <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
@@ -111,6 +118,7 @@
     <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
     <Compile Include="Master_Entities\Platform.cs" />
     <Compile Include="Master_Entities\Milestone_Type.cs" />
+    <Compile Include="Master_Entities\Platform_Group.cs" />
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\ROFR.cs" />
     <Compile Include="Master_Entities\Role.cs" />
@@ -121,6 +129,7 @@
     <Compile Include="Master_Entities\Talent.cs" />
     <Compile Include="Master_Entities\Talent_Role.cs" />
     <Compile Include="Master_Entities\Talent_Validations.cs" />
+    <Compile Include="Master_Entities\Territory.cs" />
     <Compile Include="Master_Entities\Title.cs" />
     <Compile Include="Master_Entities\Title_Country.cs" />
     <Compile Include="Master_Entities\Title_Geners.cs" />
