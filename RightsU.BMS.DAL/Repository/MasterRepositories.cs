@@ -1070,5 +1070,62 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
-   
+
+    #region -------- PromoterRemark -----------
+    public class PromoterRemarkRepositories : MainRepository<PromoterRemark>
+    {
+        public PromoterRemark Get(int Id)
+        {
+            var obj = new { Promoter_Remarks_Code = Id };
+
+            return base.GetById<PromoterRemark>(obj);
+        }
+
+        public PromoterRemark GetById(Int32? Id)
+        {
+            var obj = new { Promoter_Remarks_Code = Id.Value };
+            var entity = base.GetById<PromoterRemark>(obj);
+
+            return entity;
+        }
+        public IEnumerable<PromoterRemark> GetAll()
+        {
+            return base.GetAll<PromoterRemark>();
+        }
+        public IEnumerable<PromoterRemark> SearchFor(object param)
+        {
+            return base.SearchForEntity<PromoterRemark>(param);
+        }
+
+        public void Add(PromoterRemark entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(PromoterRemark entity)
+        {
+            PromoterRemark oldObj = Get(entity.Promoter_Remarks_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public PromoterRemarkReturn GetPromoterRemark_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            PromoterRemarkReturn ObjPromoterReturnReturn = new PromoterRemarkReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjPromoterReturnReturn.content = base.ExecuteSQLProcedure<PromoterRemark>("[USPAPI_Promoter_Remark]", param).ToList();
+            ObjPromoterReturnReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjPromoterReturnReturn;
+        }
+    }
+    #endregion
+
 }
