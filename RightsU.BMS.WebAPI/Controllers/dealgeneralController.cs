@@ -174,7 +174,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/title")]
+        [Route("api/dealgeneral")]
         public async Task<HttpResponseMessage> Put(Title Input)
         {
             var response = new HttpResponseMessage();
