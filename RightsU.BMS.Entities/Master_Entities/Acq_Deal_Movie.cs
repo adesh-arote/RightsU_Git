@@ -44,12 +44,15 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "public_notice")]
         public string Due_Diligence { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "inserted_on")]
         public string Inserted_On { get; set; }
-                
+
+        [JsonIgnore]
         [JsonProperty(PropertyName = "inserted_by")]
         public Nullable<int> Inserted_By { get; set; }
-                
+
+        [JsonIgnore]
         [JsonProperty(PropertyName = "updated_on")]
         public string Last_UpDated_Time { get; set; }
 

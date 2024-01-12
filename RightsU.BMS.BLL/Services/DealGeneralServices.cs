@@ -41,9 +41,9 @@ namespace RightsU.BMS.BLL.Services
 
                     objDealGeneral = objDealGeneralRepositories.GetById(id);
 
-                    objDealGeneral.Agreement_Date = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(objDealGeneral.Agreement_Date)));
-                    objDealGeneral.Inserted_On = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(objDealGeneral.Inserted_On)));
-                    objDealGeneral.Last_Updated_Time = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(objDealGeneral.Last_Updated_Time)));
+                    objDealGeneral.agreement_date = Convert.ToString(GlobalTool.DateToLinux(objDealGeneral.Agreement_Date.Value));
+                    objDealGeneral.inserted_on = Convert.ToString(GlobalTool.DateToLinux(objDealGeneral.Inserted_On.Value));
+                    objDealGeneral.updated_on = Convert.ToString(GlobalTool.DateToLinux(objDealGeneral.Last_Updated_Time.Value));
 
                     _objRet.Response = objDealGeneral;
                 }
@@ -65,7 +65,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (string.IsNullOrEmpty(objInput.Agreement_Date))
+            if (string.IsNullOrEmpty(objInput.agreement_date))
             {
                 _objRet.Message = "Input Paramater 'agreement_date' is mandatory";
                 _objRet.IsSuccess = false;
@@ -76,7 +76,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 try
                 {
-                    objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.Agreement_Date)).ToString("yyyy-MM-dd");
+                    objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.agreement_date));
                 }
                 catch (Exception ex)
                 {
@@ -220,13 +220,13 @@ namespace RightsU.BMS.BLL.Services
                 return _objRet;
             }
 
-            if (string.IsNullOrEmpty(objInput.Ref_BMS_Code))
-            {
-                _objRet.Message = "Input Paramater 'ref_system_id' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                return _objRet;
-            }
+            //if (string.IsNullOrEmpty(objInput.Ref_BMS_Code))
+            //{
+            //    _objRet.Message = "Input Paramater 'ref_system_id' is mandatory";
+            //    _objRet.IsSuccess = false;
+            //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+            //    return _objRet;
+            //}
 
             if (objInput.Licensors.Count() == 0)
             {
@@ -239,13 +239,13 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.Licensors.ToList().Count(); i++)
                 {
-                    if (objInput.Licensors.ToList()[i].Acq_Deal_Code == null || objInput.Licensors.ToList()[i].Acq_Deal_Code <= 0)
-                    {
-                        _objRet.Message = "Input Paramater 'Licensors.deal_id' is mandatory";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
+                    //if (objInput.Licensors.ToList()[i].Acq_Deal_Code == null || objInput.Licensors.ToList()[i].Acq_Deal_Code <= 0)
+                    //{
+                    //    _objRet.Message = "Input Paramater 'Licensors.deal_id' is mandatory";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
 
                     if (objInput.Licensors.ToList()[i].Vendor_Code == null || objInput.Licensors.ToList()[i].Vendor_Code <= 0)
                     {
@@ -268,13 +268,13 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.DealTitles.ToList().Count(); i++)
                 {
-                    if (objInput.DealTitles.ToList()[i].Acq_Deal_Code == null || objInput.DealTitles.ToList()[i].Acq_Deal_Code <= 0)
-                    {
-                        _objRet.Message = "Input Paramater 'DealTitles.deal_id' is mandatory";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
+                    //if (objInput.DealTitles.ToList()[i].Acq_Deal_Code == null || objInput.DealTitles.ToList()[i].Acq_Deal_Code <= 0)
+                    //{
+                    //    _objRet.Message = "Input Paramater 'DealTitles.deal_id' is mandatory";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
 
                     if (objInput.DealTitles.ToList()[i].Title_Code == null || objInput.DealTitles.ToList()[i].Title_Code <= 0)
                     {
@@ -316,39 +316,39 @@ namespace RightsU.BMS.BLL.Services
                         return _objRet;
                     }
 
-                    if (string.IsNullOrEmpty(objInput.DealTitles.ToList()[i].Inserted_On))
-                    {
-                        _objRet.Message = "Input Paramater 'DealTitles.inserted_on' is mandatory";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            objInput.DealTitles.ToList()[i].Inserted_On = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.DealTitles.ToList()[i].Inserted_On)).ToString("yyyy-MM-dd");
-                        }
-                        catch (Exception ex)
-                        {
-                            _objRet.Message = "Input Paramater 'DealTitles.inserted_on' is invalid";
-                            _objRet.IsSuccess = false;
-                            _objRet.StatusCode = HttpStatusCode.BadRequest;
-                            return _objRet;
-                        }
-                    }
+                    //if (string.IsNullOrEmpty(objInput.DealTitles.ToList()[i].Inserted_On))
+                    //{
+                    //    _objRet.Message = "Input Paramater 'DealTitles.inserted_on' is mandatory";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
+                    //else
+                    //{
+                    //    try
+                    //    {
+                    //        objInput.DealTitles.ToList()[i].Inserted_On = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.DealTitles.ToList()[i].Inserted_On)).ToString("yyyy-MM-dd");
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        _objRet.Message = "Input Paramater 'DealTitles.inserted_on' is invalid";
+                    //        _objRet.IsSuccess = false;
+                    //        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //        return _objRet;
+                    //    }
+                    //}
 
-                    if (objInput.DealTitles.ToList()[i].Inserted_By == null || objInput.DealTitles.ToList()[i].Inserted_By <= 0)
-                    {
-                        _objRet.Message = "Input Paramater 'DealTitles.inserted_by' is mandatory";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
-                        return _objRet;
-                    }
+                    //if (objInput.DealTitles.ToList()[i].Inserted_By == null || objInput.DealTitles.ToList()[i].Inserted_By <= 0)
+                    //{
+                    //    _objRet.Message = "Input Paramater 'DealTitles.inserted_by' is mandatory";
+                    //    _objRet.IsSuccess = false;
+                    //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    //    return _objRet;
+                    //}
                 }
             }
 
-            if (string.IsNullOrEmpty(objInput.Inserted_On))
+            if (string.IsNullOrEmpty(objInput.inserted_on))
             {
                 _objRet.Message = "Input Paramater 'inserted_on' is mandatory";
                 _objRet.IsSuccess = false;
@@ -359,7 +359,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 try
                 {
-                    objInput.Inserted_On = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.Inserted_On)).ToString("yyyy-MM-dd");
+                    objInput.Inserted_On = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.inserted_on));
                 }
                 catch (Exception ex)
                 {
@@ -384,6 +384,9 @@ namespace RightsU.BMS.BLL.Services
             if (_objRet.IsSuccess)
             {
                 objInput.Version = "0001";
+                objInput.Last_Updated_Time = objInput.Inserted_On;
+                objInput.Last_Action_By = objInput.Inserted_By;
+
 
                 List<Acq_Deal_Licensor> lstLicensors = new List<Acq_Deal_Licensor>();
                 foreach (var item in objInput.Licensors)
@@ -418,6 +421,45 @@ namespace RightsU.BMS.BLL.Services
                 objDealGeneralRepositories.Add(objInput);
 
                 _objRet.Response = new { id = objInput.Acq_Deal_Code };                
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn Delete(Int32 id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Acq_Deal objDealGeneral = new Acq_Deal();
+
+                    objDealGeneral = objDealGeneralRepositories.GetById(id);
+
+                    objDealGeneralRepositories.Delete(objDealGeneral);
+
+                    _objRet.Response = new { id = objDealGeneral.Acq_Deal_Code };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
 
             return _objRet;

@@ -14,7 +14,7 @@ namespace RightsU.BMS.DAL.Repository
         public Title GetById(Int32? Id)
         {
             var obj = new { Title_Code = Id.Value };
-            var entity = base.GetById<Title, Title_Country, Title_Talent, Title_Geners, Language, Program, Deal_Type>(obj);
+            var entity = base.GetById<Title, Title_Country, Title_Talent, Title_Geners, Language, Deal_Type, Program>(obj);
 
             if (entity.title_language == null)
             {

@@ -33,8 +33,13 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "version_no")]
         public string Version { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "agreement_date")]
-        public string Agreement_Date { get; set; }
+        public string agreement_date { get; set; }
+
+        [JsonIgnore]
+        public Nullable<System.DateTime> Agreement_Date { get; set; }
 
         [JsonProperty(PropertyName = "deal_description")]
         public string Deal_Desc { get; set; }
@@ -156,14 +161,24 @@ namespace RightsU.BMS.Entities.Master_Entities
         [OneToMany]
         public virtual ICollection<Acq_Deal_Movie> DealTitles { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "inserted_on")]
-        public string Inserted_On { get; set; }
+        public string inserted_on { get; set; }
 
+        [JsonIgnore]
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+                
         [JsonProperty(PropertyName = "inserted_by")]
         public Nullable<int> Inserted_By { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "updated_on")]
-        public string Last_Updated_Time { get; set; }
+        public string updated_on { get; set; }
+
+        [JsonIgnore]
+        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
 
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }

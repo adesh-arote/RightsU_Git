@@ -205,5 +205,49 @@ namespace RightsU.BMS.WebAPI.Controllers
 
             return response;
         }
+
+        /// <summary>
+        /// Delete Deal General details
+        /// </summary>
+        /// <remarks>Delete Deal General details by id</remarks>
+        /// <param name="id">delete specific deal data using id.</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpDelete]
+        [Route("api/dealgeneral/{id}")]
+        public async Task<HttpResponseMessage> Delete(int? id)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = objDealGeneralServices.Delete(id.Value);
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                return response;
+            }
+
+            return response;
+        }
     }
 }
