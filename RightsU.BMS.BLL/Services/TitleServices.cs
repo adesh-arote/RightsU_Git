@@ -471,7 +471,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     foreach (var Metadata in objInput.MetaData)
                     {
-                        Metadata.extended_columns = objExtendedColumnsRepositories.Get(Metadata.extended_columns.columns_id.Value);
+                        Metadata.extended_columns = objExtendedColumnsRepositories.Get(Metadata.Columns_Code.Value);
 
                         Metadata.Record_Code = objInput.Title_Code;
                         Metadata.Table_Name = "TITLE";

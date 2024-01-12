@@ -175,7 +175,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/dealgeneral")]
-        public async Task<HttpResponseMessage> Put(Title Input)
+        public async Task<HttpResponseMessage> Put(Acq_Deal Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
