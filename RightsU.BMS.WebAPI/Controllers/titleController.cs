@@ -29,9 +29,9 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
 
         /// <summary>
-        /// Asset List 
+        /// Title List 
         /// </summary>
-        /// <remarks>Retrieves all available Assets</remarks>
+        /// <remarks>Retrieves all available Titles</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
         /// <param name="searchValue">The value of the search across the title</param>
@@ -59,19 +59,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -79,10 +88,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Asset by id
+        /// Title by id
         /// </summary>
-        /// <remarks>Retrieves Assets by Id</remarks>
-        /// <param name="id">get specific asset data using id.</param>
+        /// <remarks>Retrieves Title by Id</remarks>
+        /// <param name="id">get specific title data using id.</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Title))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -103,19 +112,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;                
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -123,10 +141,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save Asset Details
+        /// Save Title Details
         /// </summary>
-        /// <remarks>Create / Save New Asset</remarks>
-        /// <param name="Input">Input data object for Create/Save New Asset</param>
+        /// <remarks>Create / Save New Title</remarks>
+        /// <param name="Input">Input data object for Create/Save New Title</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -137,17 +155,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [HttpPost]
         [Route("api/title")]
         public async Task<HttpResponseMessage> PostTitle(Title Input)
-        {
-            //Input.MetaData.ForEach(x =>
-            //{
-            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-            //    {
-            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-            //    }
-
-            //});
-
+        {            
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
@@ -158,18 +166,27 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -177,10 +194,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Asset details
+        /// Modify Title details
         /// </summary>
-        /// <remarks>Update / Modify Asset details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Asset</param>
+        /// <remarks>Update / Modify Title details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Title</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -191,17 +208,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [HttpPut]
         [Route("api/title")]
         public async Task<HttpResponseMessage> PutTitle(Title Input)
-        {            
-            //Input.MetaData.ForEach(x =>
-            //{
-            //    if (x.Value.GetType() == typeof(Newtonsoft.Json.Linq.JArray))
-            //    {
-            //        var objjArray = (Newtonsoft.Json.Linq.JArray)x.Value;
-            //        x.Value = objjArray.ToObject<List<ExtendedColumnDetails>>();
-            //    }
-
-            //});
-
+        {   
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
@@ -212,18 +219,27 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -233,8 +249,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing Asset</remarks>
-        /// <param name="Input">Input data object for Modify existing Asset Active/Deactive Status</param>
+        /// <remarks>Modify Active/Deactive Status of Existing Title</remarks>
+        /// <param name="Input">Input data object for Modify existing Title Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -256,50 +272,31 @@ namespace RightsU.BMS.WebAPI.Controllers
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
             return response;
         }
     }
-
-    //public class TitleInput
-    //{
-    //    /// <summary>
-    //    /// Defines how the results will be ordered
-    //    /// </summary>
-    //    /// <value>ASC</value>        
-    //    public string order { get; set; } = "ASC";
-    //    /// <summary>
-    //    /// The page number that should be retrieved
-    //    /// </summary>
-    //    public Int32 page { get; set; } = 1;
-    //    /// <summary>
-    //    /// The size (total records) of each page
-    //    /// </summary>
-    //    public Int32 size { get; set; } = 50;
-    //    /// <summary>
-    //    /// The value of the search across the plan name
-    //    /// </summary>
-    //    /// <summary>
-    //    /// Defines on which attribute the results should be sorted
-    //    /// </summary>
-    //    /// <example>CREATED_DATE</example>               
-    //    public string sort { get; set; } = "Last_UpDated_Time";
-    //    public string search { get; set; }
-    //    public string date_gt { get; set; }
-    //    public string date_lt { get; set; }
-    //}
 }

@@ -56,7 +56,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AcquisitionDealServices.cs" />
     <Compile Include="Services\BMSServices.cs" />
-    <Compile Include="Services\DealGeneralServices.cs" />
+    <Compile Include="Services\DealServices.cs" />
     <Compile Include="Services\MasterServices.cs" />
     <Compile Include="Services\TitleServices.cs" />
     <Compile Include="Services\UserManagementService.cs" />

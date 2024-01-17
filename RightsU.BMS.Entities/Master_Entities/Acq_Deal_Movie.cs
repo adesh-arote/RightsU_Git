@@ -46,7 +46,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "inserted_on")]
-        public string Inserted_On { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "inserted_by")]
@@ -54,7 +54,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "updated_on")]
-        public string Last_UpDated_Time { get; set; }
+        public Nullable<System.DateTime> Last_UpDated_Time { get; set; }
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "updated_by")]

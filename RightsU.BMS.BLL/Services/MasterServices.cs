@@ -3128,4 +3128,29 @@ namespace RightsU.BMS.BLL.Services
         }
     }
     #endregion
+
+    #region Error_Code_Master
+
+    public class Error_Code_MasterServices
+    {
+        private readonly Error_Code_MasterRepositories objError_Code_MasterRepositories;
+        public Error_Code_MasterServices()
+        {
+            this.objError_Code_MasterRepositories = new Error_Code_MasterRepositories();
+        }
+        public IEnumerable<Error_Code_Master> GetList()
+        {
+            return objError_Code_MasterRepositories.GetAll();
+        }
+        public IEnumerable<Error_Code_Master> SearchFor(object param)
+        {
+            return objError_Code_MasterRepositories.SearchFor(param);
+        }
+        public IEnumerable<Error_Code_Master> SearchBySql(string param)
+        {
+            return objError_Code_MasterRepositories.GetDataWithSQLStmt(param);
+        }
+    }
+
+    #endregion
 }
