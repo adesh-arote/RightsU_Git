@@ -26,12 +26,12 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Acq_Deal_Code { get; set; }
 
         [ForeignKeyReference(typeof(Vendor))]
-        [JsonProperty(PropertyName = "licensor_id")]
+        [JsonProperty(PropertyName = "vendor_id")]
         public Nullable<int> Vendor_Code { get; set; }
 
         [SimpleSaveIgnore]
         [ManyToOne]
         [Column("Vendor_Code")]
-        public virtual Vendor licensor { get; set; }
+        public virtual Vendor vendor { get; set; }
     }
 }

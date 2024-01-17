@@ -16,48 +16,51 @@ namespace RightsU.BMS.DAL.Repository
             var obj = new { Title_Code = Id.Value };
             var entity = base.GetById<Title, Title_Country, Title_Talent, Title_Geners, Language, Deal_Type, Program>(obj);
 
-            if (entity.title_language == null)
+            if (entity != null)
             {
-                entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
-            }
-
-            if (entity.title_country.Count() > 0)
-            {
-                entity.title_country.ToList().ForEach(i =>
+                if (entity.title_language == null)
                 {
-                    if (i.country == null)
-                    {
-                        i.country = new CountryRepositories().Get(i.Country_Code.Value);
-                    }
-                });
-            }
+                    entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
+                }
 
-            if (entity.title_talent.Count() > 0)
-            {
-                entity.title_talent.ToList().ForEach(i =>
+                if (entity.title_country.Count() > 0)
                 {
-                    if (i.talent == null)
+                    entity.title_country.ToList().ForEach(i =>
                     {
-                        i.talent = new TalentRepositories().Get(i.Talent_Code.Value);
-                    }
+                        if (i.country == null)
+                        {
+                            i.country = new CountryRepositories().Get(i.Country_Code.Value);
+                        }
+                    });
+                }
 
-                    if (i.role == null)
-                    {
-                        i.role = new RoleRepositories().Get(i.Role_Code.Value);
-                    }
-                });
-            }
-
-            if (entity.title_genres.Count() > 0)
-            {
-                entity.title_genres.ToList().ForEach(i =>
+                if (entity.title_talent.Count() > 0)
                 {
-                    if (i.genres == null)
+                    entity.title_talent.ToList().ForEach(i =>
                     {
-                        i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
-                    }
+                        if (i.talent == null)
+                        {
+                            i.talent = new TalentRepositories().Get(i.Talent_Code.Value);
+                        }
 
-                });
+                        if (i.role == null)
+                        {
+                            i.role = new RoleRepositories().Get(i.Role_Code.Value);
+                        }
+                    });
+                }
+
+                if (entity.title_genres.Count() > 0)
+                {
+                    entity.title_genres.ToList().ForEach(i =>
+                    {
+                        if (i.genres == null)
+                        {
+                            i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
+                        }
+
+                    });
+                }
             }
 
             return entity;

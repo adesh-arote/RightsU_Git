@@ -7,49 +7,51 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.DAL.Repository
 {
-    public class DealGeneralRepositories : MainRepository<Acq_Deal>
+    public class DealRepositories : MainRepository<Acq_Deal>
     {
         public Acq_Deal GetById(Int32? Id)
         {
             var obj = new { Acq_Deal_Code = Id.Value };
             var entity = base.GetById<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Deal_Type, Deal_Tag, Role, Entity>(obj);
 
-            if (entity.primary_vendor == null)
+            if (entity != null)
             {
-                entity.primary_vendor = new VendorRepositories().Get(entity.Vendor_Code.Value);
-            }
-
-            if (entity.Currency == null)
-            {
-                entity.Currency = new CurrencyRepositories().Get(entity.Currency_Code.Value);
-            }
-
-            if (entity.business_unit == null)
-            {
-                entity.business_unit = new BusinessUnitRepositories().Get(entity.Business_Unit_Code.Value);
-            }
-
-            if (entity.category == null)
-            {
-                entity.category = new CategoryRepositories().Get(entity.Category_Code.Value);
-            }
-
-            if (entity.vendor_contact == null)
-            {
-                entity.vendor_contact = new Vendor_ContactsRepositories().Get(entity.Vendor_Contacts_Code.Value);
-            }
-
-            if (entity.Licensors.Count() > 0)
-            {
-                entity.Licensors.ToList().ForEach(i =>
+                if (entity.primary_vendor == null)
                 {
-                    if (i.licensor == null)
-                    {
-                        i.licensor = new VendorRepositories().Get(i.Vendor_Code.Value);
-                    }
-                });
-            }
+                    entity.primary_vendor = new VendorRepositories().Get(entity.Vendor_Code.Value);
+                }
 
+                if (entity.Currency == null)
+                {
+                    entity.Currency = new CurrencyRepositories().Get(entity.Currency_Code.Value);
+                }
+
+                if (entity.business_unit == null)
+                {
+                    entity.business_unit = new BusinessUnitRepositories().Get(entity.Business_Unit_Code.Value);
+                }
+
+                if (entity.category == null)
+                {
+                    entity.category = new CategoryRepositories().Get(entity.Category_Code.Value);
+                }
+
+                if (entity.vendor_contact == null)
+                {
+                    entity.vendor_contact = new Vendor_ContactsRepositories().Get(entity.Vendor_Contacts_Code.Value);
+                }
+
+                if (entity.licensors.Count() > 0)
+                {
+                    entity.licensors.ToList().ForEach(i =>
+                    {
+                        if (i.vendor == null)
+                        {
+                            i.vendor = new VendorRepositories().Get(i.Vendor_Code.Value);
+                        }
+                    });
+                }
+            }
             //if (entity.DealTitles.Count() > 0)
             //{
             //    entity.DealTitles.ToList().ForEach(i =>
@@ -94,13 +96,13 @@ namespace RightsU.BMS.DAL.Repository
                     i.vendor_contact = new Vendor_ContactsRepositories().Get(i.Vendor_Contacts_Code.Value);
                 }
 
-                if (i.Licensors.Count() > 0)
+                if (i.licensors.Count() > 0)
                 {
-                    i.Licensors.ToList().ForEach(j =>
+                    i.licensors.ToList().ForEach(j =>
                     {
-                        if (j.licensor == null)
+                        if (j.vendor == null)
                         {
-                            j.licensor = new VendorRepositories().Get(j.Vendor_Code.Value);
+                            j.vendor = new VendorRepositories().Get(j.Vendor_Code.Value);
                         }
                     });
                 }
@@ -166,13 +168,13 @@ namespace RightsU.BMS.DAL.Repository
                     i.vendor_contact = new Vendor_ContactsRepositories().Get(i.Vendor_Contacts_Code.Value);
                 }
 
-                if (i.Licensors.Count() > 0)
+                if (i.licensors.Count() > 0)
                 {
-                    i.Licensors.ToList().ForEach(j =>
+                    i.licensors.ToList().ForEach(j =>
                     {
-                        if (j.licensor == null)
+                        if (j.vendor == null)
                         {
-                            j.licensor = new VendorRepositories().Get(j.Vendor_Code.Value);
+                            j.vendor = new VendorRepositories().Get(j.Vendor_Code.Value);
                         }
                     });
                 }
@@ -198,4 +200,86 @@ namespace RightsU.BMS.DAL.Repository
             return base.ExecuteSQLStmt<Acq_Deal>(strSQL);
         }
     }
+
+    #region -------- Acq_Deal_Licensor -----------
+    public class Acq_Deal_LicensorRepositories : MainRepository<Acq_Deal_Licensor>
+    {
+        public Acq_Deal_Licensor Get(int Id)
+        {
+            var obj = new { Acq_Deal_Licensor_Code = Id };
+
+            return base.GetById<Acq_Deal_Licensor>(obj);
+        }
+        public IEnumerable<Acq_Deal_Licensor> GetAll()
+        {
+            return base.GetAll<Acq_Deal_Licensor>();
+        }
+        public void Add(Acq_Deal_Licensor entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Acq_Deal_Licensor entity)
+        {
+            Acq_Deal_Licensor oldObj = Get(entity.Acq_Deal_Licensor_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(Acq_Deal_Licensor entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Acq_Deal_Licensor> SearchFor(object param)
+        {
+            return base.SearchForEntity<Acq_Deal_Licensor>(param);
+        }
+
+        public IEnumerable<Acq_Deal_Licensor> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Acq_Deal_Licensor>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Acq_Deal_Movie -----------
+    public class Acq_Deal_MovieRepositories : MainRepository<Acq_Deal_Movie>
+    {
+        public Acq_Deal_Movie Get(int Id)
+        {
+            var obj = new { Acq_Deal_Movie_Code = Id };
+
+            return base.GetById<Acq_Deal_Movie>(obj);
+        }
+        public IEnumerable<Acq_Deal_Movie> GetAll()
+        {
+            return base.GetAll<Acq_Deal_Movie>();
+        }
+        public void Add(Acq_Deal_Movie entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Acq_Deal_Movie entity)
+        {
+            Acq_Deal_Movie oldObj = Get(entity.Acq_Deal_Movie_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(Acq_Deal_Movie entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Acq_Deal_Movie> SearchFor(object param)
+        {
+            return base.SearchForEntity<Acq_Deal_Movie>(param);
+        }
+
+        public IEnumerable<Acq_Deal_Movie> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Acq_Deal_Movie>(strSQL);
+        }
+    }
+    #endregion
 }

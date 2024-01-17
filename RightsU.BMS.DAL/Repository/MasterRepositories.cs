@@ -1240,7 +1240,7 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
-    #region -------- Currency -----------
+    #region -------- Category -----------
     public class CategoryRepositories : MainRepository<Category>
     {
         public Category Get(int Id)
@@ -1279,7 +1279,7 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
-    #region -------- Currency -----------
+    #region -------- Vendor_Contacts -----------
     public class Vendor_ContactsRepositories : MainRepository<Vendor_Contacts>
     {
         public Vendor_Contacts Get(int Id)
@@ -1314,6 +1314,45 @@ namespace RightsU.BMS.DAL
         public IEnumerable<Vendor_Contacts> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<Vendor_Contacts>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Error_Code_Master -----------
+    public class Error_Code_MasterRepositories : MainRepository<Error_Code_Master>
+    {
+        public Error_Code_Master Get(int Id)
+        {
+            var obj = new { Error_Code = Id };
+
+            return base.GetById<Error_Code_Master>(obj);
+        }
+        public IEnumerable<Error_Code_Master> GetAll()
+        {
+            return base.GetAll<Error_Code_Master>();
+        }
+        public void Add(Error_Code_Master entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Error_Code_Master entity)
+        {
+            Error_Code_Master oldObj = Get(entity.Error_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Error_Code_Master entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Error_Code_Master> SearchFor(object param)
+        {
+            return base.SearchForEntity<Error_Code_Master>(param);
+        }
+
+        public IEnumerable<Error_Code_Master> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Error_Code_Master>(strSQL);
         }
     }
     #endregion
