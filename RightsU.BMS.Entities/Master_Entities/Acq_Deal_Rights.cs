@@ -17,11 +17,11 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Acq_Deal_Rights()
         {
-            this.Acq_Deal_Rights_Title = new HashSet<Acq_Deal_Rights_Title>();
-            this.Acq_Deal_Rights_Territory = new HashSet<Acq_Deal_Rights_Territory>();
-            this.Acq_Deal_Rights_Platform = new HashSet<Acq_Deal_Rights_Platform>();
-            this.Acq_Deal_Rights_Subtitling = new HashSet<Acq_Deal_Rights_Subtitling>();
-            this.Acq_Deal_Rights_Dubbing = new HashSet<Acq_Deal_Rights_Dubbing>();
+            this.Titles = new HashSet<Acq_Deal_Rights_Title>();
+            this.Region = new HashSet<Acq_Deal_Rights_Territory>();
+            this.Platform = new HashSet<Acq_Deal_Rights_Platform>();
+            this.Subtitling = new HashSet<Acq_Deal_Rights_Subtitling>();
+            this.Dubbing = new HashSet<Acq_Deal_Rights_Dubbing>();
         }
 
         [JsonIgnore]
@@ -31,7 +31,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_rights_id")]
-        public int Acq_Deal_Rights_Code { get; set; }
+        public int? Acq_Deal_Rights_Code { get; set; }
 
         [ForeignKeyReference(typeof(Acq_Deal))]
         [JsonProperty(PropertyName = "deal_id")]
@@ -43,16 +43,16 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "title_language_right")]
         public string Is_Title_Language_Right { get; set; }
 
-        [JsonProperty(PropertyName = "sub_license")]
+        [JsonProperty(PropertyName = "is_sub_license")]
         public string Is_Sub_License { get; set; }
 
         [JsonProperty(PropertyName = "sub_license_id")]
         [ForeignKeyReference(typeof(Sub_License))]
         public Nullable<int> Sub_License_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Sub_License))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("Sub_License_Code")]
         public virtual Sub_License sub_license { get; set; }
 
         [JsonProperty(PropertyName = "theatrical_right")]
@@ -74,9 +74,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [ForeignKeyReference(typeof(Milestone_Type))]
         public Nullable<int> Milestone_Type_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Milestone_Type))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("Milestone_Type_Code")]
         public virtual Milestone_Type milestone_type { get; set; }
 
         [JsonProperty(PropertyName = "milestone_unit")]
@@ -99,18 +99,40 @@ namespace RightsU.BMS.Entities.Master_Entities
 
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Title> Acq_Deal_Rights_Title { get; set; }
+        public virtual ICollection<Acq_Deal_Rights_Title> Titles { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Territory> Acq_Deal_Rights_Territory { get; set; }
+        public virtual ICollection<Acq_Deal_Rights_Territory> Region { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Platform> Acq_Deal_Rights_Platform { get; set; }
+        public virtual ICollection<Acq_Deal_Rights_Platform> Platform { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Subtitling> Acq_Deal_Rights_Subtitling { get; set; }
+        public virtual ICollection<Acq_Deal_Rights_Subtitling> Subtitling { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Dubbing> Acq_Deal_Rights_Dubbing { get; set; }
+        public virtual ICollection<Acq_Deal_Rights_Dubbing> Dubbing { get; set; }
+
+        //[SimpleSaveIgnore]
+        //[SimpleLoadIgnore]
+        //[JsonProperty(PropertyName = "inserted_on")]
+        //public string inserted_on { get; set; }
+
+        //[JsonIgnore]
+        //public Nullable<System.DateTime> Inserted_On { get; set; }
+
+        //[JsonProperty(PropertyName = "inserted_by")]
+        //public Nullable<int> Inserted_By { get; set; }
+
+        //[SimpleSaveIgnore]
+        //[SimpleLoadIgnore]
+        //[JsonProperty(PropertyName = "updated_on")]
+        //public string updated_on { get; set; }
+
+        //[JsonIgnore]
+        //public System.DateTime Last_Updated_Time { get; set; }
+
+        //[JsonProperty(PropertyName = "updated_by")]
+        //public Nullable<int> Last_Action_By { get; set; }
     }
 }

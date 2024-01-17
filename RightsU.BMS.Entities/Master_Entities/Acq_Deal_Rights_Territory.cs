@@ -21,29 +21,32 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_rights_region_id")]
-        public int Acq_Deal_Rights_Territory_Code { get; set; }
+        public int? Acq_Deal_Rights_Territory_Code { get; set; }
 
+        [ForeignKeyReference(typeof(Acq_Deal_Rights))]
         [JsonProperty(PropertyName = "deal_rights_id")] 
         public Nullable<int> Acq_Deal_Rights_Code { get; set; }
 
         [JsonProperty(PropertyName = "region_type")]
         public string Territory_Type { get; set; }
 
+        [ForeignKeyReference(typeof(Territory))]
         [JsonProperty(PropertyName = "territory_id")]
         public Nullable<int> Territory_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Territory))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("Territory_Code")]
         public virtual Territory Territory { get; set; }
 
         [JsonProperty(PropertyName = "country_id")]
         public Nullable<int> Country_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Country))]
-        [ManyToOne]
         [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("Country_Code")]
         public virtual Country Country { get; set; }
+
 
 
     }

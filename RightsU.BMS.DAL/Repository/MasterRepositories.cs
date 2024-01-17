@@ -918,6 +918,14 @@ namespace RightsU.BMS.DAL
     #region -------- Platform -----------
     public class PlatformRepositories : MainRepository<Platform>
     {
+
+        public Platform Get(int Id)
+        {
+            var obj = new { Platform_Code = Id };
+
+            return base.GetById<Platform>(obj);
+        }
+
         public PlatformReturn GetPlatform_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {
             PlatformReturn ObjPlatformReturn = new PlatformReturn();

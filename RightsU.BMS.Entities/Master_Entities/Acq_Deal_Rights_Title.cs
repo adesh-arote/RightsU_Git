@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_rights_title_id")]
-        public int Acq_Deal_Rights_Title_Code { get; set; }
+        public int? Acq_Deal_Rights_Title_Code { get; set; }
 
         [ForeignKeyReference(typeof(Acq_Deal_Rights))]
         [JsonProperty(PropertyName = "deal_rights_id")]
@@ -29,10 +29,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "title_id")]
         public Nullable<int> Title_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Title))]
-        [ManyToOne]
         [SimpleSaveIgnore]
-        public virtual Title title_code { get; set; }
+        [ManyToOne]
+        [Column("Title_Code")]
+        public virtual Title title { get; set; }
 
         [JsonProperty(PropertyName = "episode_from")] 
         public Nullable<int> Episode_From { get; set; }

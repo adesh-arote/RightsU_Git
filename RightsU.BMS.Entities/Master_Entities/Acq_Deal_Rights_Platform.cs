@@ -20,7 +20,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_rights_platform_id")]
-        public int Acq_Deal_Rights_Platform_Code { get; set; }
+        public int? Acq_Deal_Rights_Platform_Code { get; set; }
 
         [ForeignKeyReference(typeof(Acq_Deal_Rights))]
         [JsonProperty(PropertyName = "deal_rights_id")]
@@ -30,9 +30,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "platform_id")]
         public Nullable<int> Platform_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Platform))]
-        [ManyToOne]
         [SimpleSaveIgnore]
-        public virtual Platform Platform { get; set; }
+        [ManyToOne]
+        [Column("Platform_Code")]
+        public virtual Platform platform { get; set; }
     }
 }
