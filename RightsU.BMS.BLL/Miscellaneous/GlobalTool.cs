@@ -1,7 +1,9 @@
 ﻿using RightsU.BMS.BLL.Services;
+using RightsU.BMS.Entities.FrameworkClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,6 +36,18 @@ namespace RightsU.BMS.BLL.Miscellaneous
             strQuery = "SELECT Upload_Error_Code,Error_Description FROM Error_Code_Master WHERE Upload_Error_Code IN ('" + string.Join<string>("','", lstErrorCodes) + "')";
 
             return new Error_Code_MasterServices().SearchBySql(strQuery).Select(x => x.Upload_Error_Code + " : " + x.Error_Description).ToList();
+        }
+
+        public static GenericReturn SetError(string ErrorCode)
+        {
+            GenericReturn _objRet = new GenericReturn();
+
+            _objRet.Message = "Error";
+            _objRet.Errors.Add(ErrorCode);
+            _objRet.IsSuccess = false;
+            _objRet.StatusCode = HttpStatusCode.BadRequest;
+
+            return _objRet;
         }
     }
 }
