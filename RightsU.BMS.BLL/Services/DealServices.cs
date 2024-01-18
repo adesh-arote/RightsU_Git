@@ -30,10 +30,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (id == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR155");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR155");
             }
 
             #endregion
@@ -44,7 +41,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.GetById(id);
+                    objDealGeneral = objDealRepositories.Get(id);
 
                     if (objDealGeneral != null)
                     {
@@ -55,10 +52,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     else
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR183");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR183");
                     }
                     _objRet.Response = objDealGeneral;
                 }
@@ -83,22 +77,17 @@ namespace RightsU.BMS.BLL.Services
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
 
+            
             #region Input Validation
 
             if (objInput == null)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR154");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR154");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.agreement_date))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR156");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR156");
             }
             else
             {
@@ -108,35 +97,23 @@ namespace RightsU.BMS.BLL.Services
                 }
                 catch (Exception ex)
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR157");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR157");
                 }
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR158");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR158");
             }
 
             if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR159");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR159");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR160");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR160");
             }
             //else if (objInput.Is_Master_Deal.ToUpper() != "Y" && objInput.Is_Master_Deal.ToUpper() != "N")
             //{
@@ -148,35 +125,22 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput.Role_Code == null || objInput.Role_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR161");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR161");
             }
 
             if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR162");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR162");
             }
 
             if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR163");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                return _objRet;
+                _objRet = GlobalTool.SetError(_objRet,"ERR163");
             }
 
             if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR164");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR164");
             }
 
             //if (objInput.Is_Master_Deal.ToUpper() == "N")
@@ -194,27 +158,18 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR165");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR165");
                 }
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Year_Type))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR166");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR166");
             }
 
             if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR167");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR167");
             }
 
             //if (objInput.Exchange_Rate == null || objInput.Exchange_Rate <= 0)
@@ -227,18 +182,12 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR168");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR168");
             }
 
             if (objInput.Category_Code == null || objInput.Category_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR169");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR169");
             }
 
             //if (string.IsNullOrWhiteSpace(objInput.Deal_Workflow_Status))
@@ -251,10 +200,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput.licensors.Count() == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR170");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR170");
             }
             else
             {
@@ -262,20 +208,14 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR171");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR171");
                     }
                 }
             }
 
             if (objInput.titles.Count() == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR172");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR172");
             }
             else
             {
@@ -283,26 +223,17 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR173");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR173");
                     }
 
                     if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR174");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR174");
                     }
 
                     if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR175");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR175");
                     }
                 }
             }
@@ -373,26 +304,17 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput == null)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR154");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR154");
             }
 
             if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR178");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR178");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.agreement_date))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR156");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR156");
             }
             else
             {
@@ -402,118 +324,76 @@ namespace RightsU.BMS.BLL.Services
                 }
                 catch (Exception ex)
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR157");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR157");
                 }
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR158");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR158");
             }
 
             if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR159");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR159");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR160");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR160");
             }
 
             if (objInput.Role_Code == null || objInput.Role_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR161");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR161");
             }
 
             if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR162");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR162");
             }
 
             if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR163");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR163");
             }
 
             if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR164");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR164");
             }
 
             if (objInput.Is_Master_Deal != null && objInput.Is_Master_Deal.ToUpper() == "N")
             {
                 if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR165");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR165");
                 }
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Year_Type))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR166");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR166");
             }
 
             if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR167");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR167");
             }
 
             if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR168");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR168");
             }
 
             if (objInput.Category_Code == null || objInput.Category_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR169");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR169");
             }
 
             if (objInput.licensors.Count() == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR170");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR170");
             }
             else
             {
@@ -521,20 +401,14 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR171");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR171");
                     }
                 }
             }
 
             if (objInput.titles.Count() == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR172");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR172");
             }
             else
             {
@@ -542,26 +416,17 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR173");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR173");
                     }
 
                     if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR174");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR174");
                     }
 
                     if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR175");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR175");
                     }
                 }
             }
@@ -570,7 +435,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-                var objDeal = objDealRepositories.GetById(objInput.Acq_Deal_Code);
+                var objDeal = objDealRepositories.Get(objInput.Acq_Deal_Code.Value);
 
                 if (objDeal != null)
                 {
@@ -579,7 +444,6 @@ namespace RightsU.BMS.BLL.Services
 
                     objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objInput.Last_Updated_Time = DateTime.Now;
-                    //objInput.Is_Active = "Y";
 
                     #region Licensor
 
@@ -671,10 +535,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR183");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR183");
                 }
                 _objRet.id = objInput.Acq_Deal_Code;
             }
@@ -698,10 +559,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (id == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR155");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR155");
             }
 
             #endregion
@@ -712,7 +570,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.GetById(id);
+                    objDealGeneral = objDealRepositories.Get(id);
 
                     if (objDealGeneral != null)
                     {
@@ -722,10 +580,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     else
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR183");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR183");
                     }
                 }
 

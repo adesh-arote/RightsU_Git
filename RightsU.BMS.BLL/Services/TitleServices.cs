@@ -53,10 +53,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (order.ToUpper() != "DESC")
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR184");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR184");
                     }
                 }
             }
@@ -75,10 +72,7 @@ namespace RightsU.BMS.BLL.Services
                 var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
                 if (size > maxSize)
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR185");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR185");
                 }
             }
             else
@@ -102,10 +96,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR186");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR186");
                 }
             }
             else
@@ -123,10 +114,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR187");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR187");
                     }
 
                 }
@@ -138,10 +126,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR188");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR188");
                     }
                 }
 
@@ -149,19 +134,13 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR189");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR189");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR190");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR190");
             }
 
             #endregion
@@ -208,10 +187,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (id == 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR155");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR155");
             }
 
             #endregion
@@ -308,10 +284,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     else
                     {
-                        _objRet.Message = "Error";
-                        _objRet.Errors.Add("ERR191");
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet,"ERR191");
                     }
 
                     _objRet.Response = objTitle;
@@ -341,26 +314,17 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput == null)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR154");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR154");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Title_Name))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR192");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR192");
             }
 
             if (objInput.Title_Language_Code == null || objInput.Title_Language_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR193");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR193");
             }
             //else
             //{
@@ -420,10 +384,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR162");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR162");
             }
             //else
             //{
@@ -555,42 +516,27 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput == null)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR154");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR154");
             }
 
             if (objInput.Title_Code == null || objInput.Title_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR194");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR194");
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Title_Name))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR192");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR192");
             }
 
             if (objInput.Title_Language_Code == null || objInput.Title_Language_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR193");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR193");
             }
 
             if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR162");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR162");
             }
 
 
@@ -605,7 +551,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objInput.Last_UpDated_Time = DateTime.Now;
-                    objInput.Is_Active = "Y";
+                    objInput.Is_Active = objTitle.Is_Active;
 
                     #region Title_Country
 
@@ -847,10 +793,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR191");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR191");
                 }
 
                 _objRet.id = objInput.Title_Code;
@@ -875,26 +818,17 @@ namespace RightsU.BMS.BLL.Services
 
             if (objInput == null)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR154");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR154");
             }
 
             if (objInput.Title_Code <= 0)
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR194");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR194");
             }
 
             if (string.IsNullOrEmpty(objInput.Is_Active))
             {
-                _objRet.Message = "Error";
-                _objRet.Errors.Add("ERR195");
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet,"ERR195");
             }
             //else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
             //{
@@ -923,10 +857,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Message = "Error";
-                    _objRet.Errors.Add("ERR191");
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet,"ERR191");
                 }
             }
 

@@ -38,9 +38,9 @@ namespace RightsU.BMS.BLL.Miscellaneous
             return new Error_Code_MasterServices().SearchBySql(strQuery).Select(x => x.Upload_Error_Code + " : " + x.Error_Description).ToList();
         }
 
-        public static GenericReturn SetError(string ErrorCode)
+        public static GenericReturn SetError(GenericReturn _objRet, string ErrorCode)
         {
-            GenericReturn _objRet = new GenericReturn();
+            //GenericReturn _objRet = new GenericReturn();
 
             _objRet.Message = "Error";
             _objRet.Errors.Add(ErrorCode);

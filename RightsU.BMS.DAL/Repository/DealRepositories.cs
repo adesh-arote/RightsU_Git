@@ -9,48 +9,53 @@ namespace RightsU.BMS.DAL.Repository
 {
     public class DealRepositories : MainRepository<Acq_Deal>
     {
-        public Acq_Deal GetById(Int32? Id)
+        public Acq_Deal Get(int Id)
         {
-            var obj = new { Acq_Deal_Code = Id.Value };
-            var entity = base.GetById<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Deal_Type, Deal_Tag, Role, Entity>(obj);
+            var obj = new { Acq_Deal_Code = Id };
+            var entity = base.GetById<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Vendor, Deal_Type, Deal_Tag, Role>(obj);
 
             if (entity != null)
             {
-                if (entity.primary_vendor == null)
+                if (entity.primary_vendor == null && (entity.Vendor_Code != null || entity.Vendor_Code > 0))
                 {
                     entity.primary_vendor = new VendorRepositories().Get(entity.Vendor_Code.Value);
                 }
 
-                if (entity.Currency == null)
+                if (entity.Currency == null && (entity.Currency_Code != null || entity.Currency_Code > 0))
                 {
                     entity.Currency = new CurrencyRepositories().Get(entity.Currency_Code.Value);
                 }
 
-                if (entity.business_unit == null)
+                if (entity.business_unit == null && (entity.Business_Unit_Code != null || entity.Business_Unit_Code > 0))
                 {
                     entity.business_unit = new BusinessUnitRepositories().Get(entity.Business_Unit_Code.Value);
                 }
 
-                if (entity.category == null)
+                if (entity.category == null && (entity.Category_Code != null || entity.Category_Code > 0))
                 {
                     entity.category = new CategoryRepositories().Get(entity.Category_Code.Value);
                 }
 
-                if (entity.vendor_contact == null)
+                if (entity.vendor_contact == null && (entity.Vendor_Contacts_Code != null || entity.Vendor_Contacts_Code > 0))
                 {
                     entity.vendor_contact = new Vendor_ContactsRepositories().Get(entity.Vendor_Contacts_Code.Value);
                 }
 
-                if (entity.licensors.Count() > 0)
+                if (entity.entity == null && (entity.Entity_Code != null || entity.Entity_Code > 0))
                 {
-                    entity.licensors.ToList().ForEach(i =>
-                    {
-                        if (i.vendor == null)
-                        {
-                            i.vendor = new VendorRepositories().Get(i.Vendor_Code.Value);
-                        }
-                    });
+                    entity.entity = new EntityRepositories().Get(entity.Entity_Code.Value);
                 }
+
+                //if (entity.licensors.Count() > 0)
+                //{
+                //    entity.licensors.ToList().ForEach(i =>
+                //    {
+                //        if (i.vendor == null)
+                //        {
+                //            i.vendor = new VendorRepositories().Get(i.Vendor_Code.Value);
+                //        }
+                //    });
+                //}
             }
             //if (entity.DealTitles.Count() > 0)
             //{
@@ -68,44 +73,49 @@ namespace RightsU.BMS.DAL.Repository
 
         public IEnumerable<Acq_Deal> GetAll()
         {
-            var entity = base.GetAll<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Deal_Tag, Role, Deal_Type, Entity>();
+            var entity = base.GetAll<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Vendor, Deal_Type, Deal_Tag, Role>();
             entity.ToList().ForEach(i =>
             {
-                if (i.primary_vendor == null)
+                if (i.primary_vendor == null && (i.Vendor_Code != null || i.Vendor_Code > 0))
                 {
                     i.primary_vendor = new VendorRepositories().Get(i.Vendor_Code.Value);
                 }
 
-                if (i.Currency == null)
+                if (i.Currency == null && (i.Currency_Code != null || i.Currency_Code > 0))
                 {
                     i.Currency = new CurrencyRepositories().Get(i.Currency_Code.Value);
                 }
 
-                if (i.business_unit == null)
+                if (i.business_unit == null && (i.Business_Unit_Code != null || i.Business_Unit_Code > 0))
                 {
                     i.business_unit = new BusinessUnitRepositories().Get(i.Business_Unit_Code.Value);
                 }
 
-                if (i.category == null)
+                if (i.category == null && (i.Category_Code != null || i.Category_Code > 0))
                 {
                     i.category = new CategoryRepositories().Get(i.Category_Code.Value);
                 }
 
-                if (i.vendor_contact == null)
+                if (i.vendor_contact == null && (i.Vendor_Contacts_Code != null || i.Vendor_Contacts_Code > 0))
                 {
                     i.vendor_contact = new Vendor_ContactsRepositories().Get(i.Vendor_Contacts_Code.Value);
                 }
 
-                if (i.licensors.Count() > 0)
+                if (i.entity == null && (i.Entity_Code != null || i.Entity_Code > 0))
                 {
-                    i.licensors.ToList().ForEach(j =>
-                    {
-                        if (j.vendor == null)
-                        {
-                            j.vendor = new VendorRepositories().Get(j.Vendor_Code.Value);
-                        }
-                    });
+                    i.entity = new EntityRepositories().Get(i.Entity_Code.Value);
                 }
+
+                //if (i.licensors.Count() > 0)
+                //{
+                //    i.licensors.ToList().ForEach(j =>
+                //    {
+                //        if (j.vendor == null)
+                //        {
+                //            j.vendor = new VendorRepositories().Get(j.Vendor_Code.Value);
+                //        }
+                //    });
+                //}
 
                 //if (i.DealTitles.Count() > 0)
                 //{
@@ -129,7 +139,7 @@ namespace RightsU.BMS.DAL.Repository
 
         public void Update(Acq_Deal entity)
         {
-            Acq_Deal oldObj = GetById(entity.Acq_Deal_Code.Value);
+            Acq_Deal oldObj = Get(entity.Acq_Deal_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
 

@@ -33,12 +33,14 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "role_id")]
         public Nullable<int> Role_Code { get; set; }
 
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]        
+        [Column("Talent_Code")]
+        [ManyToOne]
         public virtual Talent talent { get; set; }
 
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        [Column("Role_Code")]
+        [ManyToOne]
         public virtual Role role { get; set; }
         
         [SimpleSaveIgnore]

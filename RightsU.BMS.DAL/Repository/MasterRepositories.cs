@@ -1026,6 +1026,39 @@ namespace RightsU.BMS.DAL
     #region -------- Entity -----------
     public class EntityRepositories : MainRepository<Entity>
     {
+        public Entity Get(int Id)
+        {
+            var obj = new { Entity_Code = Id };
+
+            return base.GetById<Entity>(obj);
+        }
+        public IEnumerable<Entity> GetAll()
+        {
+            return base.GetAll<Entity>();
+        }
+        public void Add(Entity entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Entity entity)
+        {
+            Entity oldObj = Get(entity.Entity_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Entity entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Entity> SearchFor(object param)
+        {
+            return base.SearchForEntity<Entity>(param);
+        }
+
+        public IEnumerable<Entity> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Entity>(strSQL);
+        }
         public EntityReturn GetEntity_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
         {
             EntityReturn ObjEntityReturn = new EntityReturn();
