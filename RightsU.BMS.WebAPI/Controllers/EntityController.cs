@@ -1,6 +1,7 @@
 ﻿using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -18,7 +19,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class EntityController : ApiController
+    public class entityController : ApiController
     {
        
         public enum SortColumn

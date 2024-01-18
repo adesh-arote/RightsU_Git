@@ -11,7 +11,12 @@ namespace RightsU.BMS.Entities.Master_Entities
 {
     [Table("Country")]
     public partial class Country
-    {   
+    {
+        [JsonIgnore]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public State EntityState { get; set; }
+
         [PrimaryKey]
         //[Column("Country_Code")]
         [JsonProperty(PropertyName = "country_id")]

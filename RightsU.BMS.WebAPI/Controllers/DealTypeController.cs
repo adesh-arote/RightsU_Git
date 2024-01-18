@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
@@ -17,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class DealTypeController : ApiController
+    public class dealtypeController : ApiController
     {
         public enum SortColumn
         {

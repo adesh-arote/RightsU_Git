@@ -55,12 +55,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         public virtual Language original_language { get; set; }
 
-        [ForeignKeyReference(typeof(Deal_Type))]
-        //[Column("Deal_Type_Code")]
+        [ForeignKeyReference(typeof(Deal_Type))]        
         [JsonProperty(PropertyName = "deal_type_id")]
         public Nullable<int> Deal_Type_Code { get; set; }
-
-        [ForeignKeyReference(typeof(Deal_Type))]
+                
         [ManyToOne]
         [Column("Deal_Type_Code")]
         [SimpleSaveIgnore]

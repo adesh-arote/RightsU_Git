@@ -166,6 +166,46 @@ namespace RightsU.BMS.DAL
                 return (IEnumerable<T>)list;
             }
         }
+        public IEnumerable<T> GetAll<T1, T2, T3, T4, T5>()
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5>(null).ToList();
+                connection.Close();
+                return (IEnumerable<T>)list;
+            }
+        }
+        public IEnumerable<T> GetAll<T1, T2, T3, T4, T5, T6>()
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6>(null).ToList();
+                connection.Close();
+                return (IEnumerable<T>)list;
+            }
+        }
+        public IEnumerable<T> GetAll<T1, T2, T3, T4, T5, T6, T7>()
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6, T7>(null).ToList();
+                connection.Close();
+                return (IEnumerable<T>)list;
+            }
+        }
+        public IEnumerable<T> GetAll<T1, T2, T3, T4,T5,T6,T7,T8>()
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6, T7, T8>(null).ToList();
+                connection.Close();
+                return (IEnumerable<T>)list;
+            }
+        }
         public IEnumerable<T1> SearchForEntity<T1>(object param)
         {
             using (var connection = dbConnection.Connection())
@@ -202,6 +242,46 @@ namespace RightsU.BMS.DAL
             {
                 connection.Open();
                 var list = connection.AutoQuery<T1, T2, T3, T4>(param).ToList();
+                connection.Close();
+                return (IEnumerable<T1>)list;
+            }
+        }
+        public IEnumerable<T1> SearchForEntity<T1, T2, T3, T4, T5>(object param)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5>(param).ToList();
+                connection.Close();
+                return (IEnumerable<T1>)list;
+            }
+        }
+        public IEnumerable<T1> SearchForEntity<T1, T2, T3, T4, T5, T6>(object param)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6>(param).ToList();
+                connection.Close();
+                return (IEnumerable<T1>)list;
+            }
+        }
+        public IEnumerable<T1> SearchForEntity<T1, T2, T3, T4, T5, T6, T7>(object param)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6, T7>(param).ToList();
+                connection.Close();
+                return (IEnumerable<T1>)list;
+            }
+        }
+        public IEnumerable<T1> SearchForEntity<T1, T2, T3, T4, T5, T6, T7, T8>(object param)
+        {
+            using (var connection = dbConnection.Connection())
+            {
+                connection.Open();
+                var list = connection.AutoQuery<T1, T2, T3, T4, T5, T6, T7, T8>(param).ToList();
                 connection.Close();
                 return (IEnumerable<T1>)list;
             }

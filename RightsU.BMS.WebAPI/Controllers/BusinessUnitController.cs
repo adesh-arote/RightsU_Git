@@ -10,6 +10,7 @@ using RightsU.BMS.Entities.Master_Entities;
 using System.Threading.Tasks;
 using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
@@ -18,7 +19,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class BusinessUnitController : ApiController
+    public class businessunitController : ApiController
     {
 
         public enum SortColumn

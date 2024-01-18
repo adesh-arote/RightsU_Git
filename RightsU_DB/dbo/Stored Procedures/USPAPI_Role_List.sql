@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USPAPI_Role_List]
+﻿ALTER PROCEDURE [dbo].[USPAPI_Role_List]
 	@order VARCHAR(10) = NULL,
 	@page INT = NULL,
 	@search_value NVARCHAR(MAX) = NULL,
@@ -29,7 +29,8 @@ BEGIN
 		Role_Code  VARCHAR(200), 
 		Role_Name  VARCHAR(200),  
 		Role_Type  VARCHAR(200),  
-		Deal_Type VARCHAR(200),  
+		Deal_Type_Code VARCHAR(200),  
+		Deal_Type_Name VARCHAR(200), 
 		Sort VARCHAR(10),  
 		Row_Num INT,  
 	);
@@ -51,7 +52,8 @@ BEGIN
 	END
 
 	Declare @SqlPageNo NVARCHAR(MAX) 
-	Set @SqlPageNo ='Insert InTo #Temp  select R.Role_Code,R.Role_Name,RTRIM(R.Role_Type) as Role_Type,dt.Deal_Type_Name,''1'','' '' from Role R INNER JOIN Deal_Type dt ON R.Deal_Type_Code = dt.Deal_Type_Code where 1=1 '+@SQL_Condition+' ';
+	Set @SqlPageNo = 'Insert InTo #Temp  select R.Role_Code,R.Role_Name,RTRIM(R.Role_Type) as Role_Type,dt.Deal_Type_Code,CONCAT(CAST(dt.Deal_Type_Code AS VARCHAR),'':'',dt.Deal_Type_Name) as Asset1,''1'','''' from Role R INNER JOIN Deal_Type dt ON R.Deal_Type_Code = dt.Deal_Type_Code   where 1=1'+@SQL_Condition+' ';
+
 	Exec(@SqlPageNo)
 
 	SET @search_value = '%'+@search_value+'%'  
@@ -78,7 +80,7 @@ BEGIN
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size   
 
-	SELECT Role_Code,RTRIM(Role_Name)  AS Role_Name,Role_Type,Deal_Type FROM #Temp
+	SELECT Role_Code,RTRIM(Role_Name)  AS Role_Name,Role_Type,Deal_Type_Code,Deal_Type_Name as AssetType FROM #Temp
 
     IF(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Role_List]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 

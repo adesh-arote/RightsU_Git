@@ -17,47 +17,53 @@ namespace RightsU.BMS.WebAPI.Logging
         {
             int timeout = 3600;
             string result = "";
-            string url = ConfigurationSettings.AppSettings["LogURL"];
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-            request.KeepAlive = false;
-            request.ProtocolVersion = HttpVersion.Version10;
-            request.ContentType = "application/Json";
-            request.Method = "POST";
-            request.Headers.Add("ContentType", "application/json");
-            request.Headers.Add("AuthKey", AuthKey);
-            request.Headers.Add("Service", "false");
-            if (obj.RequestContent == null)
-            {
-                obj.RequestContent = "";
-            }
-
-            using (var streamWriter = new StreamWriter(request.GetRequestStream()))
-            {
-                string logData = JsonConvert.SerializeObject(obj);
-                streamWriter.Write(logData);
-            }
 
             try
             {
-                var httpResponse = (HttpWebResponse)request.GetResponse();
+                string url = ConfigurationSettings.AppSettings["LogURL"];
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                try
                 {
-                    result = streamReader.ReadToEnd();
+                    request.KeepAlive = false;
+                    request.ProtocolVersion = HttpVersion.Version10;
+                    request.ContentType = "application/Json";
+                    request.Method = "POST";
+                    request.Headers.Add("ContentType", "application/json");
+                    request.Headers.Add("AuthKey", AuthKey);
+                    request.Headers.Add("Service", "false");
+                    if (obj.RequestContent == null)
+                    {
+                        obj.RequestContent = "";
+                    }
+
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        string logData = JsonConvert.SerializeObject(obj);
+                        streamWriter.Write(logData);
+                    }
+
+                    var httpResponse = (HttpWebResponse)request.GetResponse();
+
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        result = streamReader.ReadToEnd();
+                    }
                 }
+                catch (Exception ex)
+                {
+                    request.Abort();                    
+                    LogService(JsonConvert.SerializeObject(obj));                    
+                }
+                if (result != "")
+                {
+                    //request posted successfully;	
+                }                
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                request.Abort();
-                //LogService("Not able to post to Log Service");
                 LogService(JsonConvert.SerializeObject(obj));
-                //LogService(ex.Message);
             }
-            if (result != "")
-            {
-                //request posted successfully;	
-            }
-            //return Task.FromResult<string>(result);
             return result;
         }
 

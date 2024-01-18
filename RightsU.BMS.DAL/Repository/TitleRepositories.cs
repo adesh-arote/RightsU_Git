@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using RightsU.BMS.Entities.InputClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
 using System.Collections.Generic;
@@ -14,50 +14,41 @@ namespace RightsU.BMS.DAL.Repository
         public Title GetById(Int32? Id)
         {
             var obj = new { Title_Code = Id.Value };
-            var entity = base.GetById<Title, Title_Country, Title_Talent, Title_Geners, Language, Program, Deal_Type>(obj);
+            var entity = base.GetById<Title, Title_Country, Country, Title_Talent, Talent, Role, Title_Geners>(obj);
 
-            if (entity.title_language == null)
+            if (entity != null)
             {
-                entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
-            }
-
-            if (entity.title_country.Count() > 0)
-            {
-                entity.title_country.ToList().ForEach(i =>
+                if (entity.title_language == null && (entity.Title_Language_Code!=null || entity.Title_Language_Code>0))
                 {
-                    if (i.country == null)
-                    {
-                        i.country = new CountryRepositories().Get(i.Country_Code.Value);
-                    }
-                });
-            }
+                    entity.title_language = new LanguageRepositories().Get(entity.Title_Language_Code.Value);
+                }
 
-            if (entity.title_talent.Count() > 0)
-            {
-                entity.title_talent.ToList().ForEach(i =>
+                if (entity.original_language == null && (entity.Original_Language_Code != null || entity.Original_Language_Code > 0))
                 {
-                    if (i.talent == null)
-                    {
-                        i.talent = new TalentRepositories().Get(i.Talent_Code.Value);
-                    }
+                    entity.original_language = new LanguageRepositories().Get(entity.Original_Language_Code.Value);
+                }
 
-                    if (i.role == null)
-                    {
-                        i.role = new RoleRepositories().Get(i.Role_Code.Value);
-                    }
-                });
-            }
-
-            if (entity.title_genres.Count() > 0)
-            {
-                entity.title_genres.ToList().ForEach(i =>
+                if (entity.deal_type == null && (entity.Deal_Type_Code != null || entity.Deal_Type_Code > 0))
                 {
-                    if (i.genres == null)
-                    {
-                        i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
-                    }
+                    entity.deal_type = new Deal_TypeRepositories().Get(entity.Deal_Type_Code.Value);
+                }
 
-                });
+                if (entity.Program == null && (entity.Program_Code != null || entity.Program_Code > 0))
+                {
+                    entity.Program = new ProgramRepositories().Get(entity.Program_Code.Value);
+                }
+
+                if (entity.title_genres.Count() > 0)
+                {
+                    entity.title_genres.ToList().ForEach(i =>
+                    {
+                        if (i.genres == null && (i.Genres_Code != null || i.Genres_Code > 0))
+                        {
+                            i.genres = new GenresRepositories().Get(i.Genres_Code.Value);
+                        }
+
+                    });
+                }
             }
 
             return entity;
@@ -229,26 +220,6 @@ namespace RightsU.BMS.DAL.Repository
             param.Add("@Title_Code", title_Code);
             ObjExtended = base.ExecuteSQLProcedure<USPAPI_Title_Bind_Extend_Data>("USPAPI_Title_Bind_Extend_Data", param).ToList();
             return ObjExtended;
-        }
-
-        public TitleInput GetTitleById(Int32 id)
-        {
-            TitleInput ObjTitleReturn = new TitleInput();
-
-            var param = new DynamicParameters();
-            //param.Add("@id", id);
-
-            param.Add("@order", "ASC");
-            param.Add("@page", 1);
-            param.Add("@search_value", "");
-            param.Add("@size", 1);
-            param.Add("@sort", "Last_UpDated_Time");
-            param.Add("@date_gt", "");
-            param.Add("@date_lt", "");
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjTitleReturn = base.ExecuteSQLProcedure<TitleInput>("USPAPI_Title_List", param).FirstOrDefault();
-            return ObjTitleReturn;
         }
 
         public Title_Validations Title_Validation(string InputValue, string InputType)

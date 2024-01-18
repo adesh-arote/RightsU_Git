@@ -14,6 +14,7 @@ using RightsU.BMS.Entities.FrameworkClasses;
 using System.Net;
 using System.Configuration;
 using System.Web;
+using RightsU.BMS.Entities.ReturnClasses;
 
 namespace RightsU.BMS.BLL.Services
 {
@@ -235,7 +236,9 @@ namespace RightsU.BMS.BLL.Services
 
                 var UserModuleRights = USPAPI_GetModuleRights(objUser.Security_Group_Code.Value);
 
-                var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                var domainSubFolder = ConfigurationManager.AppSettings["DomainSubFolder"];
+
+                var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Where(x => x.ToLower() != domainSubFolder.ToLower()).ToArray();
 
                 var objModuleRights = UserModuleRights.Where(x => x.Module_Name.ToLower() == lstModuleUrl[1].ToLower()).ToList();
 
@@ -269,21 +272,13 @@ namespace RightsU.BMS.BLL.Services
                 {
                     hasRights = 0;
                 }
-
-                //if (UserModuleRights.Where(x => x.Module_Code == Module_Code).ToList().Count() > 0)
-                //{
-                //    hasRights = true;
-                //}
-                //else
-                //{
-                //    hasRights = false;
-                //}
             }
 
             return hasRights;
         }
     }
 
+    #region Role
     public class RoleService
     {
         private readonly RoleRepositories objRoleRepositories = new RoleRepositories();
@@ -366,7 +361,9 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
     }
+    #endregion
 
+    #region DealType
     public class DealTypeService
     {
         private readonly DealTypeRepositories objDealTypeRepositories = new DealTypeRepositories();
@@ -514,7 +511,9 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
     }
+    #endregion
 
+    #region ChannelCategory
     public class ChannelCategoryService
     {
         private readonly ChannelCategoryRepositories objChannelCategoryRepositories = new ChannelCategoryRepositories();
@@ -662,7 +661,9 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
     }
+    #endregion
 
+    #region Platform
     public class PlatformService
     {
         private readonly PlatformRepositories objPlatformRepositories = new PlatformRepositories();
@@ -810,6 +811,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
     }
+    #endregion
 
     #region Genres
     public class GenreServices
@@ -1048,7 +1050,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Genres_Code <= 0)
+            if (objInput.Genres_Code == null || objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1102,7 +1104,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Genres_Code <= 0)
+            if (objInput.Genres_Code == null || objInput.Genres_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'genres_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1388,7 +1390,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Program_Code <= 0)
+            if (objInput.Program_Code == null || objInput.Program_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'program_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1445,7 +1447,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Program_Code <= 0)
+            if (objInput.Program_Code == null || objInput.Program_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'program_id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1705,7 +1707,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Talent_Code <= 0)
+            if (objInput.Talent_Code == null || objInput.Talent_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -1798,7 +1800,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Talent_Code <= 0)
+            if (objInput.Talent_Code == null || objInput.Talent_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -2689,7 +2691,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Language_Code <= 0)
+            if (objInput.Language_Code == null || objInput.Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -2745,7 +2747,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Language_Code <= 0)
+            if (objInput.Language_Code == null || objInput.Language_Code <= 0)
             {
                 _objRet.Message = "Input Paramater 'id' is mandatory";
                 _objRet.IsSuccess = false;
@@ -2787,6 +2789,368 @@ namespace RightsU.BMS.BLL.Services
         }
     }
 
+
+    #endregion
+
+    #region PromoterRemark
+    public class PromoterRemarkService
+    {
+        private readonly PromoterRemarkRepositories objPromoterRemarkRepositories = new PromoterRemarkRepositories();
+
+        public GenericReturn GetPromoterRemarkList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet.Message = "Input Paramater 'order' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "PromoterRemarkName".ToLower())
+                {
+                    sort = "Promoter_Remark_Desc";
+                }
+                else
+                {
+                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
+                    _objRet.IsSuccess = false;
+                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrEmpty(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+
+                }
+                if (!string.IsNullOrEmpty(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' is not in valid format";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet.Message = "Input Paramater 'dateLt' should not be less than 'dateGt'";
+                        _objRet.IsSuccess = false;
+                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet.Message = "Input Paramater 'dateLt' or 'dateGt' is not in valid format";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            PromoterRemarkReturn _PromoterRemarkReturn = new PromoterRemarkReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _PromoterRemarkReturn = objPromoterRemarkRepositories.GetPromoterRemark_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _PromoterRemarkReturn.paging.page = page;
+            _PromoterRemarkReturn.paging.size = size;
+
+            _objRet.Response = _PromoterRemarkReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetPromoterRemarkById(Int32 id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet.Message = "Input Paramater 'promoter_remarks_id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    PromoterRemark objReturn = new PromoterRemark();
+
+                    objReturn = objPromoterRemarkRepositories.GetById(id);
+
+                    _objRet.Response = objReturn;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostPromoterRemark(PromoterRemark objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
+            {
+                _objRet.Message = "Input Paramater 'promoter_remark_desc' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'promoter_remark_desc' already exists";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                PromoterRemark objPromoterRemark = new PromoterRemark();
+                
+                objPromoterRemark.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
+                objPromoterRemark.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterRemark.Inserted_On = DateTime.Now;
+                objPromoterRemark.Last_Updated_Time = DateTime.Now;
+                objPromoterRemark.Is_Active = "Y";
+
+                objPromoterRemarkRepositories.Add(objPromoterRemark);
+
+                _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutPromoterRemark(PromoterRemark objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
+            {
+                _objRet.Message = "Input Paramater 'promoter_remark_desc' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet.Message = "'promoter_remark_desc' already exists.";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                PromoterRemark objPromoterRemark = new PromoterRemark();
+
+                objPromoterRemark = objPromoterRemarkRepositories.Get(objInput.Promoter_Remarks_Code.Value);
+                objPromoterRemark.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
+                objPromoterRemark.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterRemark.Last_Updated_Time = DateTime.Now;
+                objPromoterRemark.Is_Active = "Y";
+
+                objPromoterRemarkRepositories.Update(objPromoterRemark);
+
+                _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+              
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(PromoterRemark objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
+            {
+                _objRet.Message = "Input Paramater 'id' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet.Message = "Input Paramater 'is_active' is mandatory";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet.Message = "Input Paramater 'is_active' is invalid";
+                _objRet.IsSuccess = false;
+                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet.Response = new { _objRet.Message };
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                PromoterRemark objPromoterRemark = new PromoterRemark();
+                objPromoterRemark = objPromoterRemarkRepositories.Get(Convert.ToInt32(objInput.Promoter_Remarks_Code));
+
+                objPromoterRemark.Last_Updated_Time = DateTime.Now;
+                objPromoterRemark.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterRemark.Is_Active = objInput.Is_Active.ToUpper();
+
+                objPromoterRemarkRepositories.Update(objPromoterRemark);
+                _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region Error_Code_Master
+
+    public class Error_Code_MasterServices
+    {
+        private readonly Error_Code_MasterRepositories objError_Code_MasterRepositories;
+        public Error_Code_MasterServices()
+        {
+            this.objError_Code_MasterRepositories = new Error_Code_MasterRepositories();
+        }
+        public IEnumerable<Error_Code_Master> GetList()
+        {
+            return objError_Code_MasterRepositories.GetAll();
+        }
+        public IEnumerable<Error_Code_Master> SearchFor(object param)
+        {
+            return objError_Code_MasterRepositories.SearchFor(param);
+        }
+        public IEnumerable<Error_Code_Master> SearchBySql(string param)
+        {
+            return objError_Code_MasterRepositories.GetDataWithSQLStmt(param);
+        }
+    }
 
     #endregion
 }

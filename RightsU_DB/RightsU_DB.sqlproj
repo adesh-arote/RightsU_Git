@@ -1761,6 +1761,7 @@
     <Build Include="dbo\Stored Procedures\USPAPI_MilestoneType_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_ROFR_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Sub_License.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Promoter_Remark.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
