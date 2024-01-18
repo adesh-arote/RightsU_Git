@@ -54,11 +54,10 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Miscellaneous\GlobalTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AcquisitionDealServices.cs" />
     <Compile Include="Services\BMSServices.cs" />
-    <Compile Include="Services\DealTypeService.cs" />
+    <Compile Include="Services\DealServices.cs" />
     <Compile Include="Services\MasterServices.cs" />
-    <Compile Include="Services\TalentServices.cs" />
-    <Compile Include="Services\RoleService.cs" />
     <Compile Include="Services\TitleServices.cs" />
     <Compile Include="Services\UserManagementService.cs" />
   </ItemGroup>

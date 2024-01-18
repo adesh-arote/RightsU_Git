@@ -49,8 +49,10 @@ namespace RightsU.BMS.WebAPI.Filters
                         logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                        
                     }
 
-                    logObj.IsSuccess = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                    logObj.TimeTaken = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                    //logObj.IsSuccess = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
+                    //logObj.TimeTaken = Convert.ToString(((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                    logObj.IsSuccess = ((string[])actionExecutedContext.Response.Headers.Where(x => x.Key == "request_completion").Select(x => x.Value).FirstOrDefault())[0];
+                    logObj.TimeTaken = ((string[])actionExecutedContext.Response.Headers.Where(x => x.Key == "timetaken").Select(x => x.Value).FirstOrDefault())[0];
 
                     logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
                     logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -67,12 +69,14 @@ namespace RightsU.BMS.WebAPI.Filters
                     string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
                     logObj.AuthenticationKey = GlobalAuthKey;
 
-                    var logDetails = await UTOLogger.LogService(logObj, GlobalAuthKey);
-                    HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);
-
                     actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
-                    actionExecutedContext.Response.Headers.Add("message", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                    actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());                    
+                    actionExecutedContext.Response.Headers.Remove("timetaken");
+
+                    //actionExecutedContext.Response.Headers.Add("message", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                    //actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.BMS.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+
+                    var logDetails = await UTOLogger.LogService(logObj, GlobalAuthKey);
+                    HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);    
                 }
                 catch (Exception ex)
                 {
