@@ -1398,4 +1398,42 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
+    #region -------- Territory -----------
+    public class TerritoryRepositories : MainRepository<Territory>
+    {
+        public Territory Get(int Id)
+        {
+            var obj = new { Territory_Code = Id };
+
+            return base.GetById<Territory>(obj);
+        }
+        public IEnumerable<Territory> GetAll()
+        {
+            return base.GetAll<Territory>();
+        }
+        public void Add(Territory entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Territory entity)
+        {
+            Territory oldObj = Get(entity.Territory_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Territory entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Territory> SearchFor(object param)
+        {
+            return base.SearchForEntity<Territory>(param);
+        }
+
+        public IEnumerable<Territory> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Territory>(strSQL);
+        }
+    }
+    #endregion
 }

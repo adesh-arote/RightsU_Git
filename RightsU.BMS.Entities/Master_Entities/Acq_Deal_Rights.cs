@@ -113,26 +113,30 @@ namespace RightsU.BMS.Entities.Master_Entities
         [OneToMany]
         public virtual ICollection<Acq_Deal_Rights_Dubbing> Dubbing { get; set; }
 
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
-        //[JsonProperty(PropertyName = "inserted_on")]
-        //public string inserted_on { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "inserted_on")]
+        public string inserted_on { get; set; }
 
-        //[JsonIgnore]
-        //public Nullable<System.DateTime> Inserted_On { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Inserted_On { get; set; }
 
-        //[JsonProperty(PropertyName = "inserted_by")]
-        //public Nullable<int> Inserted_By { get; set; }
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "inserted_by")]
+        public Nullable<int> Inserted_By { get; set; }
 
-        //[SimpleSaveIgnore]
-        //[SimpleLoadIgnore]
-        //[JsonProperty(PropertyName = "updated_on")]
-        //public string updated_on { get; set; }
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "updated_on")]
+        public string updated_on { get; set; }
 
-        //[JsonIgnore]
-        //public System.DateTime Last_Updated_Time { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Last_Updated_Time { get; set; }
 
-        //[JsonProperty(PropertyName = "updated_by")]
-        //public Nullable<int> Last_Action_By { get; set; }
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "updated_by")]
+        public Nullable<int> Last_Action_By { get; set; }
     }
 }
