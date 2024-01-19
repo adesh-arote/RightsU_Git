@@ -157,5 +157,6 @@
     <Build Include="dbo\Stored Procedures\USPITGetAvailTitleAncillary.sql" />
     <Build Include="dbo\User Defined Types\Avail_Data_UDT.sql" />
     <Build Include="dbo\User Defined Types\TitleCriteria.sql" />
+    <Build Include="dbo\Stored Procedures\USPClusterDef.sql" />
   </ItemGroup>
 </Project>
