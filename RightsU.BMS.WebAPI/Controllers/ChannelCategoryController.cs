@@ -49,7 +49,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/channelCategory")]
+        [Route("api/channelcategory")]
         public async Task<HttpResponseMessage> GetChannelCategoryList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();

@@ -12,6 +12,11 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Currency")]
     public partial class Currency
     {
+        public Currency()
+        {
+            this.currency_exchange = new HashSet<CurrencyExchangeRate>();
+        }
+
         [JsonIgnore]
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
@@ -19,7 +24,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         
         [PrimaryKey]
         [JsonProperty(PropertyName = "currency_id")]
-        public int Currency_Code { get; set; }
+        public int ? Currency_Code { get; set; }
 
         [JsonProperty(PropertyName = "currency_name")]
         public string Currency_Name { get; set; }
@@ -48,5 +53,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         
         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
+
+        [OneToMany]
+        public ICollection<CurrencyExchangeRate> currency_exchange { get; set; }
     }
 }

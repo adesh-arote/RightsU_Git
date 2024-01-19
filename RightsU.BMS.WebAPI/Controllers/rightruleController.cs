@@ -13,52 +13,46 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
+
 namespace RightsU.BMS.WebAPI.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
-    [HideInDocs]
-    [AssetsLogFilter]
-    [CustomExceptionFilter]
-    public class promoterremarkController : ApiController
+    public class rightruleController : ApiController
     {
         public enum SortColumn
         {
             CreatedDate = 1,
             UpdatedDate = 2,
-            PromoterRemarkName = 3
+            RightRuleName = 3
         }
 
-        private readonly PromoterRemarkService objPromoterRemarkServices = new PromoterRemarkService();
-        private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
-
+        private readonly RightRuleService objRightRuleServices = new RightRuleService();
         /// <summary>
-        /// PromoterRemark List 
+        /// RightRule List 
         /// </summary>
-        /// <remarks>Retrieves all available PromoterRemark</remarks>
+        /// <remarks>Retrieves all available RightRule</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="searchValue">The value of the search across the promoterremark</param>
+        /// <param name="searchValue">The value of the search across the RightRule</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemarkReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(RightRule))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [System.Web.Http.Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [System.Web.Http.Route("api/rightrule")]
+        public async Task<HttpResponseMessage> GetRightRuleList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = objRightRuleServices.GetRightRuleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -83,26 +77,26 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// PromoterRemark by id
+        /// RightRule by id
         /// </summary>
-        /// <remarks>Retrieves PromoterRemark by Id</remarks>
-        /// <param name="id">get specific PromoterRemark data using id.</param>
+        /// <remarks>Retrieves RightRule by Id</remarks>
+        /// <param name="id">get specific RightRule data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemark))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(RightRule))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/promoterremark/{id}")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkById(int? id)
+        [Route("api/rightrule/{id}")]
+        public async Task<HttpResponseMessage> GetRightRuleById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkById(id.Value);
+            GenericReturn objReturn = objRightRuleServices.GetRightRuleById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -127,10 +121,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save PromoterRemark Details
+        /// Save RightRule Details
         /// </summary>
-        /// <remarks>Create / Save New PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Create/Save New PromoterRemark</param>
+        /// <remarks>Create / Save New RightRule</remarks>
+        /// <param name="Input">Input data object for Create/Save New RightRule</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -139,15 +133,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PostPromoterRemark(PromoterRemark Input)
+        [Route("api/rightrule")]
+        public async Task<HttpResponseMessage> PostRightRule(RightRule Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
 
-            GenericReturn objReturn = objPromoterRemarkServices.PostPromoterRemark(Input);
+            GenericReturn objReturn = objRightRuleServices.PostRightRule(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -172,10 +166,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify PromoterRemark details
+        /// Modify RightRule details
         /// </summary>
-        /// <remarks>Update / Modify PromoterRemark details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark</param>
+        /// <remarks>Update / Modify RightRule details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing RightRule</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -184,15 +178,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PutPromoterRemark(PromoterRemark Input)
+        [Route("api/rightrule")]
+        public async Task<HttpResponseMessage> PutRightRule(RightRule Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.PutPromoterRemark(Input);
+            objReturn = objRightRuleServices.PutRightRule(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -219,8 +213,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark Active/Deactive Status</param>
+        /// <remarks>Modify Active/Deactive Status of Existing RightRule</remarks>
+        /// <param name="Input">Input data object for Modify existing RightRule Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -229,15 +223,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PromoterRemark Input)
+        [Route("api/rightrule/ChangeActiveStatus")]
+        public async Task<HttpResponseMessage> ChangeActiveStatus(RightRule Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.ChangeActiveStatus(Input);
+            objReturn = objRightRuleServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -262,5 +256,3 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
     }
 }
-
-

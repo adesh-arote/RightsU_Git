@@ -450,12 +450,13 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Country_Code = Id };
 
-            return base.GetById<Country>(obj);
+            return base.GetById<Country,CountryLanguage, Language>(obj);
         }
         public IEnumerable<Country> GetAll()
         {
-            return base.GetAll<Country>();
+            return base.GetAll<Country, CountryLanguage,Language>();
         }
+        
         public void Add(Country entity)
         {
             base.AddEntity(entity);
@@ -477,6 +478,14 @@ namespace RightsU.BMS.DAL
         public IEnumerable<Country> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<Country>(strSQL);
+        }
+    }
+
+    public class CountryLanguageDetailsRepositories : MainRepository<CountryLanguage>
+    {
+        public void Delete(CountryLanguage entity)
+        {
+            base.DeleteEntity(entity);
         }
     }
     #endregion
@@ -866,7 +875,7 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
-        
+
     #region -------- DealType -----------
     public class DealTypeRepositories : MainRepository<Deal_Type>
     {
@@ -1124,6 +1133,216 @@ namespace RightsU.BMS.DAL
             ObjPromoterReturnReturn.content = base.ExecuteSQLProcedure<PromoterRemark>("[USPAPI_Promoter_Remark]", param).ToList();
             ObjPromoterReturnReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjPromoterReturnReturn;
+        }
+    }
+    #endregion
+
+    #region -------- Category -----------
+    public class CategoryRepositories : MainRepository<Category>
+    {
+        public Category Get(int Id)
+        {
+            var obj = new { Category_Code = Id };
+
+            return base.GetById<Category>(obj);
+        }
+
+        public Category GetById(Int32? Id)
+        {
+            var obj = new { Category_Code = Id.Value };
+            var entity = base.GetById<Category>(obj);
+
+            return entity;
+        }
+        public IEnumerable<Category> GetAll()
+        {
+            return base.GetAll<Category>();
+        }
+
+        public IEnumerable<Category> SearchFor(object param)
+        {
+            return base.SearchForEntity<Category>(param);
+        }
+
+        public void Add(Category entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Category entity)
+        {
+            Category oldObj = Get(entity.Category_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public CategoryReturn GetCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        {
+            CategoryReturn ObjCategorynReturn = new CategoryReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@order", order);
+            param.Add("@page", page);
+            param.Add("@search_value", search_value);
+            param.Add("@size", size);
+            param.Add("@sort", sort);
+            param.Add("@date_gt", Date_GT);
+            param.Add("@date_lt", Date_LT);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@id", id);
+            ObjCategorynReturn.content = base.ExecuteSQLProcedure<Category>("[USPAPI_Category]", param).ToList();
+            ObjCategorynReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjCategorynReturn;
+        }
+    }
+    #endregion
+
+    #region -------- RightRule -----------
+    public class RightRuleRepositories : MainRepository<RightRule>
+    {
+        public RightRule Get(int Id)
+        {
+            var obj = new { Right_Rule_Code = Id };
+
+            return base.GetById<RightRule>(obj);
+        }
+        public IEnumerable<RightRule> GetAllByQuery(string query)
+        {
+            return base.ExecuteSQLStmt<RightRule>(query);
+        }
+        public RightRule GetById(int Id)
+        {
+            var obj = new { Right_Rule_Code = Id };
+
+            return base.GetById<RightRule>(obj);
+        }
+        public IEnumerable<RightRule> GetAll()
+        {
+            return base.GetAll<RightRule>();
+        }
+
+        public IEnumerable<RightRule> SearchFor(object param)
+        {
+            return base.SearchForEntity<RightRule>(param);
+        }
+        public void Add(RightRule entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(RightRule entity)
+        {
+            RightRule oldObj = Get(entity.Right_Rule_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+    }
+    #endregion
+
+    #region -------- LanguageGroup -----------
+    public class LanguageGroupRepositories : MainRepository<LanguageGroup>
+    {
+        public LanguageGroup Get(int Id)
+        {
+            var obj = new { Language_Group_Code = Id };
+
+            return base.GetById<LanguageGroup>(obj);
+        }
+        public IEnumerable<LanguageGroup> GetAllByQuery(string query)
+        {
+            return base.ExecuteSQLStmt<LanguageGroup>(query);
+        }
+        public LanguageGroup GetById(int Id)
+        {
+            var obj = new { Language_Group_Code = Id };
+
+            return base.GetById<LanguageGroup, LanguageGroupDetails,Language>(obj);
+        }
+        public IEnumerable<LanguageGroup> GetAll()
+        {
+            return base.GetAll<LanguageGroup, LanguageGroupDetails, Language>();
+        }
+
+        public IEnumerable<LanguageGroup> SearchFor(object param)
+        {
+            return base.SearchForEntity<LanguageGroup>(param);
+        }
+
+        public void Add(LanguageGroup entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(LanguageGroup entity)
+        {
+            LanguageGroup oldObj = Get(entity.Language_Group_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(LanguageGroup entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+
+    public class LanguageGroupDetailsRepositories : MainRepository<LanguageGroupDetails>
+    {
+        public void Delete(LanguageGroupDetails entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+    #endregion
+
+    #region -------- Currency -----------
+    public class CurrencyRepositories : MainRepository<Currency>
+    {
+        public IEnumerable<Currency> GetAll()
+        {
+            return base.GetAll<Currency,CurrencyExchangeRate>();
+        }
+        public IEnumerable<Currency> GetAllByQuery(string query)
+        {
+            return base.ExecuteSQLStmt<Currency>(query);
+        }
+
+        public Currency Get(int Id)
+        {
+            var obj = new { Currency_Code = Id };
+
+            return base.GetById<Currency>(obj);
+        }
+
+        public Currency GetById(int Id)
+        {
+            var obj = new { Currency_Code = Id };
+
+            return base.GetById<Currency, CurrencyExchangeRate>(obj);
+        }
+
+        public IEnumerable<Currency> SearchFor(object param)
+        {
+            return base.SearchForEntity<Currency>(param);
+        }
+
+        public void Add(Currency entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Currency entity)
+        {
+            Currency oldObj = Get(entity.Currency_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(Currency entity)
+        {
+            base.DeleteEntity(entity);
+        }
+    }
+
+    public class CurrencyExchangeReturnRepositories : MainRepository<CurrencyExchangeRate>
+    {
+        public void Delete(CurrencyExchangeRate entity)
+        {
+            base.DeleteEntity(entity);
         }
     }
     #endregion

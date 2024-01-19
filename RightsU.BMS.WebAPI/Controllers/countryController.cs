@@ -15,50 +15,43 @@ using System.Web.Http;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
-    [HideInDocs]
-    [AssetsLogFilter]
-    [CustomExceptionFilter]
-    public class promoterremarkController : ApiController
+    public class countryController : ApiController
     {
         public enum SortColumn
         {
             CreatedDate = 1,
             UpdatedDate = 2,
-            PromoterRemarkName = 3
+            CountryName = 3
         }
 
-        private readonly PromoterRemarkService objPromoterRemarkServices = new PromoterRemarkService();
-        private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
-
+        private readonly CountryService objCountryServices = new CountryService();
         /// <summary>
-        /// PromoterRemark List 
+        /// Country List 
         /// </summary>
-        /// <remarks>Retrieves all available PromoterRemark</remarks>
+        /// <remarks>Retrieves all available Country</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="searchValue">The value of the search across the promoterremark</param>
+        /// <param name="searchValue">The value of the search across the Country</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemarkReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Country))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [System.Web.Http.Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [System.Web.Http.Route("api/country")]
+        public async Task<HttpResponseMessage> GetCountryList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = objCountryServices.GetCountryList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -83,26 +76,26 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// PromoterRemark by id
+        /// Country by id
         /// </summary>
-        /// <remarks>Retrieves PromoterRemark by Id</remarks>
-        /// <param name="id">get specific PromoterRemark data using id.</param>
+        /// <remarks>Retrieves Country by Id</remarks>
+        /// <param name="id">get specific Country data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemark))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Country))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/promoterremark/{id}")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkById(int? id)
+        [Route("api/country/{id}")]
+        public async Task<HttpResponseMessage> GetCountryById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkById(id.Value);
+            GenericReturn objReturn = objCountryServices.GetCountryById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -127,10 +120,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save PromoterRemark Details
+        /// Save Country Details
         /// </summary>
-        /// <remarks>Create / Save New PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Create/Save New PromoterRemark</param>
+        /// <remarks>Create / Save New Country</remarks>
+        /// <param name="Input">Input data object for Create/Save New Country</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -139,15 +132,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PostPromoterRemark(PromoterRemark Input)
+        [Route("api/country")]
+        public async Task<HttpResponseMessage> PostCountry(Country Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
 
-            GenericReturn objReturn = objPromoterRemarkServices.PostPromoterRemark(Input);
+            GenericReturn objReturn = objCountryServices.PostCountry(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -172,10 +165,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify PromoterRemark details
+        /// Modify Country details
         /// </summary>
-        /// <remarks>Update / Modify PromoterRemark details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark</param>
+        /// <remarks>Update / Modify Country details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Country</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -184,15 +177,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PutPromoterRemark(PromoterRemark Input)
+        [Route("api/country")]
+        public async Task<HttpResponseMessage> PutCountry(Country Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.PutPromoterRemark(Input);
+            objReturn = objCountryServices.PutCountry(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -219,8 +212,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark Active/Deactive Status</param>
+        /// <remarks>Modify Active/Deactive Status of Existing Country</remarks>
+        /// <param name="Input">Input data object for Modify existing Country Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -229,15 +222,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PromoterRemark Input)
+        [Route("api/country/ChangeActiveStatus")]
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Country Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.ChangeActiveStatus(Input);
+            objReturn = objCountryServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -262,5 +255,3 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
     }
 }
-
-
