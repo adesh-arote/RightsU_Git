@@ -921,6 +921,43 @@ namespace RightsU.BMS.DAL
             ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
             return ObjChannelCategoryReturn;
         }
+        public Channel_Category Get(int Id)
+        {
+            var obj = new { Channel_Category_Code = Id };
+
+            return base.GetById<Channel_Category>(obj);
+        }
+
+        public IEnumerable<Channel_Category> GetAll()
+        {
+            return base.GetAll<Channel_Category>();
+        }
+
+        public void Add(Channel_Category entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Channel_Category entity)
+        {
+            Channel_Category oldObj = Get(entity.Channel_Category_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public void Delete(Channel_Category entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Channel_Category> SearchFor(object param)
+        {
+            return base.SearchForEntity<Channel_Category>(param);
+        }
+
+        public IEnumerable<Channel_Category> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Channel_Category>(strSQL);
+        }
     }
     #endregion
 
@@ -1656,4 +1693,42 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
+    #region -------- Channel -----------
+    public class ChannelRepositories : MainRepository<Channel>
+    {
+        public Channel Get(int Id)
+        {
+            var obj = new { Channel_Code = Id };
+
+            return base.GetById<Channel>(obj);
+        }
+        public IEnumerable<Channel> GetAll()
+        {
+            return base.GetAll<Channel>();
+        }
+        public void Add(Channel entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Channel entity)
+        {
+            Channel oldObj = Get(entity.Channel_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Channel entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Channel> SearchFor(object param)
+        {
+            return base.SearchForEntity<Channel>(param);
+        }
+
+        public IEnumerable<Channel> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Channel>(strSQL);
+        }
+    }
+    #endregion
 }

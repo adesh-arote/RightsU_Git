@@ -1,4 +1,5 @@
 ﻿using Dapper.SimpleSave;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,10 @@ namespace RightsU.BMS.Entities.Master_Entities
     public class Channel
     {
         [PrimaryKey]
-        public int Channel_Code { get; set; }
+        [JsonProperty(PropertyName = "channel_id")]
+        public int? Channel_Code { get; set; }
+
+        [JsonProperty(PropertyName = "channel_name")]
         public string Channel_Name { get; set; }
         public string Channel_Id { get; set; }
         public Nullable<int> Genres_Code { get; set; }

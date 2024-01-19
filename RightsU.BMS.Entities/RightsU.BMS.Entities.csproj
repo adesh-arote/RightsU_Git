@@ -116,6 +116,11 @@
     <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Territory.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Channel.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Yearwise_Run.cs" />
     <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
