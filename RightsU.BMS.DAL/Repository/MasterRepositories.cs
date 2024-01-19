@@ -1251,83 +1251,83 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
-    #region -------- Currency -----------
-    public class CurrencyRepositories : MainRepository<Currency>
-    {
-        public Currency Get(int Id)
-        {
-            var obj = new { Currency_Code = Id };
+    //#region -------- Currency -----------
+    //public class CurrencyRepositories : MainRepository<Currency>
+    //{
+    //    public Currency Get(int Id)
+    //    {
+    //        var obj = new { Currency_Code = Id };
 
-            return base.GetById<Currency>(obj);
-        }
-        public IEnumerable<Currency> GetAll()
-        {
-            return base.GetAll<Currency>();
-        }
-        public void Add(Currency entity)
-        {
-            base.AddEntity(entity);
-        }
-        public void Update(Currency entity)
-        {
-            Currency oldObj = Get(entity.Currency_Code.Value);
-            base.UpdateEntity(oldObj, entity);
-        }
-        public void Delete(Currency entity)
-        {
-            base.DeleteEntity(entity);
-        }
+    //        return base.GetById<Currency>(obj);
+    //    }
+    //    public IEnumerable<Currency> GetAll()
+    //    {
+    //        return base.GetAll<Currency>();
+    //    }
+    //    public void Add(Currency entity)
+    //    {
+    //        base.AddEntity(entity);
+    //    }
+    //    public void Update(Currency entity)
+    //    {
+    //        Currency oldObj = Get(entity.Currency_Code.Value);
+    //        base.UpdateEntity(oldObj, entity);
+    //    }
+    //    public void Delete(Currency entity)
+    //    {
+    //        base.DeleteEntity(entity);
+    //    }
 
-        public IEnumerable<Currency> SearchFor(object param)
-        {
-            return base.SearchForEntity<Currency>(param);
-        }
+    //    public IEnumerable<Currency> SearchFor(object param)
+    //    {
+    //        return base.SearchForEntity<Currency>(param);
+    //    }
 
-        public IEnumerable<Currency> GetDataWithSQLStmt(string strSQL)
-        {
-            return base.ExecuteSQLStmt<Currency>(strSQL);
-        }
-    }
-    #endregion
+    //    public IEnumerable<Currency> GetDataWithSQLStmt(string strSQL)
+    //    {
+    //        return base.ExecuteSQLStmt<Currency>(strSQL);
+    //    }
+    //}
+    //#endregion
 
-    #region -------- Category -----------
-    public class CategoryRepositories : MainRepository<Category>
-    {
-        public Category Get(int Id)
-        {
-            var obj = new { Category_Code = Id };
+    //#region -------- Category -----------
+    //public class CategoryRepositories : MainRepository<Category>
+    //{
+    //    public Category Get(int Id)
+    //    {
+    //        var obj = new { Category_Code = Id };
 
-            return base.GetById<Category>(obj);
-        }
-        public IEnumerable<Category> GetAll()
-        {
-            return base.GetAll<Category>();
-        }
-        public void Add(Category entity)
-        {
-            base.AddEntity(entity);
-        }
-        public void Update(Category entity)
-        {
-            Category oldObj = Get(entity.Category_Code.Value);
-            base.UpdateEntity(oldObj, entity);
-        }
-        public void Delete(Category entity)
-        {
-            base.DeleteEntity(entity);
-        }
+    //        return base.GetById<Category>(obj);
+    //    }
+    //    public IEnumerable<Category> GetAll()
+    //    {
+    //        return base.GetAll<Category>();
+    //    }
+    //    public void Add(Category entity)
+    //    {
+    //        base.AddEntity(entity);
+    //    }
+    //    public void Update(Category entity)
+    //    {
+    //        Category oldObj = Get(entity.Category_Code.Value);
+    //        base.UpdateEntity(oldObj, entity);
+    //    }
+    //    public void Delete(Category entity)
+    //    {
+    //        base.DeleteEntity(entity);
+    //    }
 
-        public IEnumerable<Category> SearchFor(object param)
-        {
-            return base.SearchForEntity<Category>(param);
-        }
+    //    public IEnumerable<Category> SearchFor(object param)
+    //    {
+    //        return base.SearchForEntity<Category>(param);
+    //    }
 
-        public IEnumerable<Category> GetDataWithSQLStmt(string strSQL)
-        {
-            return base.ExecuteSQLStmt<Category>(strSQL);
-        }
-    }
-    #endregion
+    //    public IEnumerable<Category> GetDataWithSQLStmt(string strSQL)
+    //    {
+    //        return base.ExecuteSQLStmt<Category>(strSQL);
+    //    }
+    //}
+    //#endregion
 
     #region -------- Vendor_Contacts -----------
     public class Vendor_ContactsRepositories : MainRepository<Vendor_Contacts>
@@ -1364,6 +1364,84 @@ namespace RightsU.BMS.DAL
         public IEnumerable<Vendor_Contacts> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<Vendor_Contacts>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Error_Code_Master -----------
+    public class Error_Code_MasterRepositories : MainRepository<Error_Code_Master>
+    {
+        public Error_Code_Master Get(int Id)
+        {
+            var obj = new { Error_Code = Id };
+
+            return base.GetById<Error_Code_Master>(obj);
+        }
+        public IEnumerable<Error_Code_Master> GetAll()
+        {
+            return base.GetAll<Error_Code_Master>();
+        }
+        public void Add(Error_Code_Master entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Error_Code_Master entity)
+        {
+            Error_Code_Master oldObj = Get(entity.Error_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Error_Code_Master entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Error_Code_Master> SearchFor(object param)
+        {
+            return base.SearchForEntity<Error_Code_Master>(param);
+        }
+
+        public IEnumerable<Error_Code_Master> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Error_Code_Master>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Territory -----------
+    public class TerritoryRepositories : MainRepository<Territory>
+    {
+        public Territory Get(int Id)
+        {
+            var obj = new { Territory_Code = Id };
+
+            return base.GetById<Territory>(obj);
+        }
+        public IEnumerable<Territory> GetAll()
+        {
+            return base.GetAll<Territory>();
+        }
+        public void Add(Territory entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Territory entity)
+        {
+            Territory oldObj = Get(entity.Territory_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Territory entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Territory> SearchFor(object param)
+        {
+            return base.SearchForEntity<Territory>(param);
+        }
+
+        public IEnumerable<Territory> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Territory>(strSQL);
         }
     }
     #endregion
