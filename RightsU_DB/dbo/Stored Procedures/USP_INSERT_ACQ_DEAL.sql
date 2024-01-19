@@ -62,8 +62,8 @@ BEGIN
  select @Loglevel = Parameter_Value from System_Parameter_New  where Parameter_Name='loglevel'  
  if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_INSERT_ACQ_DEAL]', 'Step 1', 0, 'Started Procedure', 0, ''  
  INSERT INTO [Acq_Deal]  
-   ([Agreement_No]  
-   ,[Version]  
+   --([Agreement_No]  
+   ([Version]  
    ,[Agreement_Date]  
    ,[Deal_Desc]  
    ,[Deal_Type_Code]  
@@ -114,8 +114,9 @@ BEGIN
    ,[Revenue_Vertical_Code]  
    ,[Confirming_Party]
    ,[Material_Remarks])  
-  Select [dbo].[UFN_Auto_Genrate_Agreement_No]('A', @Agreement_Date, ISNULL(@Master_Deal_Movie_Code_ToLink, 0)) [Agreement_No]  
-   ,@Version  
+  --Select [dbo].[UFN_Auto_Genrate_Agreement_No]('A', @Agreement_Date, ISNULL(@Master_Deal_Movie_Code_ToLink, 0)) [Agreement_No]  
+  SELECT
+    @Version  
    ,@Agreement_Date  
    ,@Deal_Desc  
    ,@Deal_Type_Code  

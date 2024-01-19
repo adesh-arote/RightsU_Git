@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "vendor_contacts_id")]
-        public int Vendor_Contacts_Code { get; set; }
+        public int? Vendor_Contacts_Code { get; set; }
 
         [ForeignKeyReference(typeof(Vendor))]
         [JsonProperty(PropertyName = "vendor_id")]

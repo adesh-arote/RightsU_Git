@@ -18,19 +18,20 @@ namespace RightsU.BMS.Entities.Master_Entities
         public State EntityState { get; set; }
 
         [PrimaryKey]
-        [JsonProperty(PropertyName = "acq_deal_licensor_id")]
-        public int Acq_Deal_Licensor_Code { get; set; }
+        [JsonProperty(PropertyName = "deal_licensor_id")]
+        public int? Acq_Deal_Licensor_Code { get; set; }
 
         [ForeignKeyReference(typeof(Acq_Deal))]
         [JsonProperty(PropertyName = "deal_id")]
         public Nullable<int> Acq_Deal_Code { get; set; }
 
         [ForeignKeyReference(typeof(Vendor))]
-        [JsonProperty(PropertyName = "Primary_licensor_id")]
+        [JsonProperty(PropertyName = "vendor_id")]
         public Nullable<int> Vendor_Code { get; set; }
 
+        [SimpleSaveIgnore]
         [ManyToOne]
-        [JsonProperty(PropertyName = "Licensors")]
-        public virtual Vendor Vendor { get; set; }
+        [Column("Vendor_Code")]
+        public virtual Vendor vendor { get; set; }
     }
 }

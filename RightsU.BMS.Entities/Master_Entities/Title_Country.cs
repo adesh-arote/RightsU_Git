@@ -29,7 +29,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Country_Code { get; set; }
 
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        //[SimpleLoadIgnore]
+        [Column("Country_Code")]
+        [ManyToOne]
         public virtual Country country { get; set; }
 
         [SimpleSaveIgnore]

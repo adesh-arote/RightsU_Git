@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "vendor_id")]
-        public int Vendor_Code { get; set; }
+        public int? Vendor_Code { get; set; }
 
         [JsonProperty(PropertyName = "vendor_name")]
         public string Vendor_Name { get; set; }

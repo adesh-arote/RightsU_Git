@@ -103,9 +103,17 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RightsU.BMS.BLL\RightsU.BMS.BLL.csproj">
+      <Project>{5a9e4b8c-5fb3-484f-b6ce-78a5c547d5e0}</Project>
+      <Name>RightsU.BMS.BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RightsU.BMS.DAL\RightsU.BMS.DAL.csproj">
       <Project>{5b9e8a9b-0d41-40a1-97b4-5b34f9d6db75}</Project>
       <Name>RightsU.BMS.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RightsU.BMS.Entities\RightsU.BMS.Entities.csproj">
+      <Project>{be5330d0-36e5-4a59-a17c-a4534f034458}</Project>
+      <Name>RightsU.BMS.Entities</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

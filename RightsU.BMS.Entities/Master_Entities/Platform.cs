@@ -1,4 +1,5 @@
-﻿using Dapper.SimpleSave;
+﻿using Dapper.SimpleLoad;
+using Dapper.SimpleSave;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,12 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Platform")]
     public class Platform
     {
+
+        [JsonIgnore]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        public State EntityState { get; set; }
+
         [PrimaryKey]
         [JsonProperty(PropertyName = "platform_id")]
         public int? Platform_Code { get; set; }

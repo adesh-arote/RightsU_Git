@@ -19,7 +19,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [PrimaryKey]
         [JsonProperty(PropertyName = "deal_rights_dubbing_id")]
-        public int Acq_Deal_Rights_Dubbing_Code { get; set; }
+        public int? Acq_Deal_Rights_Dubbing_Code { get; set; }
 
         [ForeignKeyReference(typeof(Acq_Deal_Rights))]
         [JsonProperty(PropertyName = "deal_rights_id")]
@@ -35,9 +35,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [ForeignKeyReference(typeof(Language))]
         public Nullable<int> Language_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Language))]
-        [ManyToOne]
         [SimpleSaveIgnore]
-        public virtual Language Language { get; set; }
+        [ManyToOne]
+        [Column("Language_Code")]
+        public virtual Language language { get; set; }
     }
 }

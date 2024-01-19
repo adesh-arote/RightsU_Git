@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.Master_Entities
 {
+    [Table("Sub_License")]
     public partial class Sub_License
     {
         [PrimaryKey]
