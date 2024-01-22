@@ -49,5 +49,19 @@ namespace RightsU.BMS.BLL.Miscellaneous
 
             return _objRet;
         }
+
+        public static int GetPaging(int pageNo, int recordPerPage, int recordCount, out int noOfRecordSkip, out int noOfRecordTake)
+        {
+            noOfRecordSkip = noOfRecordTake = 0;
+            if (recordCount > 0)
+            {                
+                noOfRecordSkip = recordPerPage * (pageNo - 1);
+                if (recordCount < (noOfRecordSkip + recordPerPage))
+                    noOfRecordTake = recordCount - noOfRecordSkip;
+                else
+                    noOfRecordTake = recordPerPage;
+            }
+            return pageNo;
+        }
     }
 }

@@ -17,12 +17,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleLoadIgnore]
         public State EntityState { get; set; }
 
-        [PrimaryKey]
-        //[Column("Country_Code")]
+        [PrimaryKey]        
         [JsonProperty(PropertyName = "country_id")]
         public int? Country_Code { get; set; }
-
-        //[Column("Country_Name")]
+                
         [JsonProperty(PropertyName = "country_name")]
         public string Country_Name { get; set; }
 

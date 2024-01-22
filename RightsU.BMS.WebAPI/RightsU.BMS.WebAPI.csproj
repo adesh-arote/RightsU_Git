@@ -211,6 +211,7 @@
     <Compile Include="Controllers\languagegroupController.cs" />
     <Compile Include="Controllers\loginController.cs" />
     <Compile Include="Controllers\milestonetypeController.cs" />
+	<Compile Include="Controllers\partyController.cs" />
     <Compile Include="Controllers\programController.cs" />
     <Compile Include="Controllers\platformController.cs" />
     <Compile Include="Controllers\promoterremarkController.cs" />

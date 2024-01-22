@@ -244,6 +244,37 @@ namespace RightsU.BMS.BLL.Services
             {
                 objInput.Agreement_No = string.Empty;
                 objInput.Version = "0001";
+
+                #region Pending Columns
+
+                objInput.Attach_Workflow = null;
+                objInput.Work_Flow_Code = null;
+                objInput.Amendment_Date = null;
+                objInput.Is_Released = null;
+                objInput.Release_On = null;
+                objInput.Release_By = null;
+                objInput.Is_Completed = null;
+                objInput.Is_Active = "Y";
+                objInput.Content_Type = null;
+                objInput.Payment_Terms_Conditions = null;
+                objInput.Status = "O";
+                objInput.Is_Auto_Generated = "N";
+                objInput.Is_Migrated = "N";
+                objInput.Cost_Center_Id = null;
+                objInput.BudgetWise_Costing_Applicable = "N";
+                objInput.Validate_CostWith_Budget = "N";
+                objInput.Payment_Remarks = null;
+                objInput.Deal_Complete_Flag = new SystemParameterServices().GetSystemParameterList().Where(x => x.Parameter_Name.ToUpper() == "Deal_Complete_Flag".ToUpper()).FirstOrDefault().Parameter_Value;
+                objInput.All_Channel = null;
+                objInput.Channel_Cluster_Code = null;
+                objInput.Is_Auto_Push = "N";
+                objInput.Deal_Segment_Code = null;
+                objInput.Revenue_Vertical_Code = null;
+                objInput.Confirming_Party = null;
+                objInput.Material_Remarks = null;
+
+                #endregion
+
                 objInput.Inserted_On = DateTime.Now;
                 objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objInput.Last_Updated_Time = DateTime.Now;
@@ -442,8 +473,41 @@ namespace RightsU.BMS.BLL.Services
                     objInput.Agreement_No = objDeal.Agreement_No;
                     objInput.Version = objDeal.Version;
 
+                    #region Pending Columns
+
+                    objInput.Attach_Workflow = objDeal.Attach_Workflow;
+                    objInput.Work_Flow_Code = objDeal.Work_Flow_Code;
+                    objInput.Amendment_Date = objDeal.Amendment_Date;
+                    objInput.Is_Released = objDeal.Is_Released;
+                    objInput.Release_On = objDeal.Release_On;
+                    objInput.Release_By = objDeal.Release_By;
+                    objInput.Is_Completed = objDeal.Is_Completed;
+                    objInput.Is_Active = objDeal.Is_Active;
+                    objInput.Content_Type = objDeal.Content_Type;
+                    objInput.Payment_Terms_Conditions = objDeal.Payment_Terms_Conditions;
+                    objInput.Status = objDeal.Status;
+                    objInput.Is_Auto_Generated = objDeal.Is_Auto_Generated;
+                    objInput.Is_Migrated = objDeal.Is_Migrated;
+                    objInput.Cost_Center_Id = objDeal.Cost_Center_Id;
+                    objInput.BudgetWise_Costing_Applicable = objDeal.BudgetWise_Costing_Applicable;
+                    objInput.Validate_CostWith_Budget = objDeal.Validate_CostWith_Budget;
+                    objInput.Payment_Remarks = objDeal.Payment_Remarks;
+                    objInput.Deal_Complete_Flag = objDeal.Deal_Complete_Flag;
+                    objInput.All_Channel = objDeal.All_Channel;
+                    objInput.Channel_Cluster_Code = objDeal.Channel_Cluster_Code;
+                    objInput.Is_Auto_Push = objDeal.Is_Auto_Push;
+                    objInput.Deal_Segment_Code = objDeal.Deal_Segment_Code;
+                    objInput.Revenue_Vertical_Code = objDeal.Revenue_Vertical_Code;
+                    objInput.Confirming_Party = objDeal.Confirming_Party;
+                    objInput.Material_Remarks = objDeal.Material_Remarks;
+
+                    #endregion
+
+                    objInput.Inserted_On = objDeal.Inserted_On;
+                    objInput.Inserted_By = objDeal.Inserted_By;
                     objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objInput.Last_Updated_Time = DateTime.Now;
+                    objInput.Is_Active = objDeal.Is_Active;
 
                     #region Licensor
 
