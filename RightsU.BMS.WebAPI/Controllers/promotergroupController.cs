@@ -20,45 +20,43 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class promoterremarkController : ApiController
+    public class promotergroupController : ApiController
     {
         public enum SortColumn
         {
             CreatedDate = 1,
             UpdatedDate = 2,
-            PromoterRemarkName = 3
+            PromoterGroupName = 3
         }
-
-        private readonly PromoterRemarkService objPromoterRemarkServices = new PromoterRemarkService();
-        private readonly System_Module_Service objSystemModuleServices = new System_Module_Service();
+        private readonly PromoterGroupService objPromoterGroupServices = new PromoterGroupService();
 
         /// <summary>
-        /// PromoterRemark List 
+        /// PromoterGroup List 
         /// </summary>
-        /// <remarks>Retrieves all available PromoterRemark</remarks>
+        /// <remarks>Retrieves all available PromoterGroup</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="searchValue">The value of the search across the promoterremark</param>
+        /// <param name="searchValue">The value of the search across the PromoterGroup</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemarkReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterGroup))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [System.Web.Http.Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [System.Web.Http.Route("api/promotergroup")]
+        public async Task<HttpResponseMessage> GetPromoterGroupList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = objPromoterGroupServices.GetPromoterGroupList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -76,6 +74,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -92,26 +92,26 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// PromoterRemark by id
+        /// PromoterGroup by id
         /// </summary>
-        /// <remarks>Retrieves PromoterRemark by Id</remarks>
-        /// <param name="id">get specific PromoterRemark data using id.</param>
+        /// <remarks>Retrieves PromoterGroup by Id</remarks>
+        /// <param name="id">get specific PromoterGroup data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(PromoterRemark))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(RightRule))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/promoterremark/{id}")]
-        public async Task<HttpResponseMessage> GetPromoterRemarkById(int? id)
+        [Route("api/promotergroup/{id}")]
+        public async Task<HttpResponseMessage> GetPromoterGroupById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPromoterRemarkServices.GetPromoterRemarkById(id.Value);
+            GenericReturn objReturn = objPromoterGroupServices.GetPromoterGroupById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -129,6 +129,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -145,10 +147,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save PromoterRemark Details
+        /// Save PromoterGroup Details
         /// </summary>
-        /// <remarks>Create / Save New PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Create/Save New PromoterRemark</param>
+        /// <remarks>Create / Save New PromoterGroup</remarks>
+        /// <param name="Input">Input data object for Create/Save New PromoterGroup</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -157,15 +159,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PostPromoterRemark(PromoterRemark Input)
+        [Route("api/promotergroup")]
+        public async Task<HttpResponseMessage> PostPromoterGroup(PromoterGroup Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
 
-            GenericReturn objReturn = objPromoterRemarkServices.PostPromoterRemark(Input);
+            GenericReturn objReturn = objPromoterGroupServices.PostPromoterGroup(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -183,6 +185,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -199,10 +203,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify PromoterRemark details
+        /// Modify PromoterGroup details
         /// </summary>
-        /// <remarks>Update / Modify PromoterRemark details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark</param>
+        /// <remarks>Update / Modify PromoterGroup details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing PromoterGroup</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -211,15 +215,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark")]
-        public async Task<HttpResponseMessage> PutPromoterRemark(PromoterRemark Input)
+        [Route("api/promotergroup")]
+        public async Task<HttpResponseMessage> PutPromoterGroup(PromoterGroup Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.PutPromoterRemark(Input);
+            objReturn = objPromoterGroupServices.PutPromoterGroup(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -255,8 +259,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing PromoterRemark</remarks>
-        /// <param name="Input">Input data object for Modify existing PromoterRemark Active/Deactive Status</param>
+        /// <remarks>Modify Active/Deactive Status of Existing PromoterGroup</remarks>
+        /// <param name="Input">Input data object for Modify existing PromoterGroup Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -265,15 +269,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterremark/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PromoterRemark Input)
+        [Route("api/promotergroup/ChangeActiveStatus")]
+        public async Task<HttpResponseMessage> ChangeActiveStatus(PromoterGroup Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objPromoterRemarkServices.ChangeActiveStatus(Input);
+            objReturn = objPromoterGroupServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -306,6 +310,5 @@ namespace RightsU.BMS.WebAPI.Controllers
             return response;
         }
     }
+   
 }
-
-

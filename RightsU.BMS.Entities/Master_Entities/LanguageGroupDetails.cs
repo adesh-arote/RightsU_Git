@@ -32,10 +32,5 @@ namespace RightsU.BMS.Entities.Master_Entities
         [ManyToOne]
         public Language Language { get; set; }
 
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        [OneToOne]
-        [JsonIgnore]
-        public LanguageGroup LanguageGroup { get; set; }
     }
 }

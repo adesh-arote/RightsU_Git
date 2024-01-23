@@ -197,6 +197,7 @@
     <Compile Include="Controllers\bmsController.cs" />
     <Compile Include="Controllers\businessunitController.cs" />
     <Compile Include="Controllers\categoryController.cs" />
+    <Compile Include="Controllers\channelController.cs" />
     <Compile Include="Controllers\countryController.cs" />
     <Compile Include="Controllers\currencyController.cs" />
     <Compile Include="Controllers\dealController.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Controllers\milestonetypeController.cs" />
     <Compile Include="Controllers\programController.cs" />
     <Compile Include="Controllers\platformController.cs" />
+    <Compile Include="Controllers\promotergroupController.cs" />
     <Compile Include="Controllers\promoterremarkController.cs" />
     <Compile Include="Controllers\rightruleController.cs" />
     <Compile Include="Controllers\rofrController.cs" />
@@ -297,11 +299,13 @@
     <Folder Include="Uploads\TextFile\" />
     <Folder Include="Views\category\" />
     <Folder Include="Views\ChannelCategory\" />
+    <Folder Include="Views\Channel\" />
     <Folder Include="Views\country\" />
     <Folder Include="Views\currency\" />
     <Folder Include="Views\DealType\" />
     <Folder Include="Views\languagegroup\" />
     <Folder Include="Views\Platform\" />
+    <Folder Include="Views\promotergroup\" />
     <Folder Include="Views\promoterremarks\" />
     <Folder Include="Views\rightrule\" />
     <Folder Include="Views\Role\" />
