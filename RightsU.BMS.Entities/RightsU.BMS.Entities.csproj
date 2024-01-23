@@ -116,6 +116,11 @@
     <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Territory.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Channel.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Yearwise_Run.cs" />
     <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
@@ -150,6 +155,9 @@
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
+	<Compile Include="Master_Entities\Party.cs" />
+    <Compile Include="Master_Entities\Party_Category.cs" />
+    <Compile Include="Master_Entities\Party_Group.cs" />
     <Compile Include="Master_Entities\Platform.cs" />
     <Compile Include="Master_Entities\Milestone_Type.cs" />
     <Compile Include="Master_Entities\Platform_Group.cs" />
@@ -181,6 +189,8 @@
     <Compile Include="Master_Entities\UTOLogInput.cs" />
     <Compile Include="Master_Entities\Vendor.cs" />
     <Compile Include="Master_Entities\Vendor_Contacts.cs" />
+	<Compile Include="Master_Entities\Vendor_Country.cs" />
+    <Compile Include="Master_Entities\Vendor_Role.cs" />
     <Compile Include="Master_Entities\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReturnClasses\BusinessUnitReturn.cs" />
@@ -208,6 +218,7 @@
     <Compile Include="ReturnClasses\TalentReturn.cs" />
     <Compile Include="ReturnClasses\TerritoryReturn.cs" />
     <Compile Include="ReturnClasses\TitleReturn.cs" />
+	<Compile Include="ReturnClasses\PartyReturn.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

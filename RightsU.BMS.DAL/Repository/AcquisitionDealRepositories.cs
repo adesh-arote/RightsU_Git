@@ -16,6 +16,8 @@ namespace RightsU.BMS.DAL.Repository
             var entity = base.GetById<Acq_Deal_Rights, Sub_License, Acq_Deal_Rights_Title, Acq_Deal_Rights_Territory, Acq_Deal_Rights_Platform, Acq_Deal_Rights_Subtitling, Acq_Deal_Rights_Dubbing>(obj);
             //var entity = base.GetById<Acq_Deal_Rights, Sub_License, Acq_Deal_Rights_Title, Acq_Deal_Rights_Platform, Acq_Deal_Rights_Territory, Acq_Deal_Rights_Subtitling, Acq_Deal_Rights_Dubbing>(obj);
 
+            
+
             if (entity != null)
             {
                 if (entity.Titles.Count > 0)
@@ -44,22 +46,16 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     entity.Region.ToList().ForEach(i =>
                     {
-                        if (i.Territory == null)
+                        if (i.Territory == null && (i.Territory_Code != null || i.Territory_Code > 0))
                         {
                             i.Territory = new TerritoryRepositories().Get(i.Territory_Code.Value);
                         }
 
-
-                    });
-
-                    entity.Region.ToList().ForEach(i =>
-                    {
-                        if (i.Country == null)
+                        if (i.Country == null && (i.Country_Code != null || i.Country_Code > 0))
                         {
                             i.Country = new CountryRepositories().Get(i.Country_Code.Value);
                         }
                     });
-
                 }
 
                 if (entity.Subtitling.Count > 0)
@@ -110,6 +106,81 @@ namespace RightsU.BMS.DAL.Repository
         {
             Acq_Deal_Rights oldObj = GetById(entity.Acq_Deal_Rights_Code.Value);
             base.UpdateEntity(oldObj, entity);
+        }
+
+        public IEnumerable<Acq_Deal_Rights> SearchFor(object param)
+        {
+            var entity = base.SearchForEntity<Acq_Deal_Rights, Sub_License, Acq_Deal_Rights_Title, Acq_Deal_Rights_Territory, Acq_Deal_Rights_Platform, Acq_Deal_Rights_Subtitling, Acq_Deal_Rights_Dubbing>(param);
+            entity.ToList().ForEach(i =>
+            {
+                if (i.Titles.Count() > 0)
+                {
+                    i.Titles.ToList().ForEach(j =>
+                    {
+                        if (j.title == null)
+                        {
+                            j.title = new TitleRepositories().GetById(j.Title_Code);
+                        }
+                    });
+                }
+
+                if (i.Platform.Count > 0)
+                {
+                    i.Platform.ToList().ForEach(j =>
+                    {
+                        if (j.platform == null)
+                        {
+                            j.platform = new PlatformRepositories().Get(j.Platform_Code.Value);
+                        }
+                    });
+                }
+
+                if (i.Region.Count > 0)
+                {
+                    i.Region.ToList().ForEach(j =>
+                    {
+                        if (j.Territory == null && j.Territory_Code != null)
+                        {
+                            j.Territory = new TerritoryRepositories().Get(j.Territory_Code.Value);
+                        }
+
+                        if (j.Country == null && j.Country_Code != null)
+                        {
+                            j.Country = new CountryRepositories().Get(j.Country_Code.Value);
+                        }
+                    });
+                }
+
+                if (i.Subtitling.Count > 0)
+                {
+                    i.Subtitling.ToList().ForEach(j =>
+                    {
+                        if (j.language == null)
+                        {
+                            j.language = new LanguageRepositories().Get(j.Language_Code.Value);
+                        }
+                    });
+                }
+
+                if (i.Dubbing.Count > 0)
+                {
+                    i.Dubbing.ToList().ForEach(j =>
+                    {
+                        if (j.language == null)
+                        {
+                            j.language = new LanguageRepositories().Get(j.Language_Code.Value);
+                        }
+                    });
+                }
+
+            });
+
+            return entity;
+        }
+
+        public IEnumerable<Acq_Deal_Rights> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Acq_Deal_Rights>(strSQL);
         }
     }
 

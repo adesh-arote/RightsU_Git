@@ -69,6 +69,7 @@
     <Compile Include="Infrastructure\MainRepository.cs" />
     <Compile Include="Infrastructure\ProcRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\AcqDealRunRepositories.cs" />
     <Compile Include="Repository\AcquisitionDealRepositories.cs" />
     <Compile Include="Repository\BMSAssetRepositories.cs" />
     <Compile Include="Repository\BMSDealContentRepositories.cs" />

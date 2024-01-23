@@ -47,7 +47,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validations
 
-            if (!string.IsNullOrEmpty(order))
+            if (!string.IsNullOrWhiteSpace(order))
             {
                 if (order.ToUpper() != "ASC")
                 {
@@ -80,7 +80,7 @@ namespace RightsU.BMS.BLL.Services
                 size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
             }
 
-            if (!string.IsNullOrEmpty(sort.ToString()))
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
             {
                 if (sort.ToLower() == "CreatedDate".ToLower())
                 {
@@ -106,11 +106,12 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        //Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -118,11 +119,12 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        //Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -130,7 +132,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -155,7 +157,14 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors).Where(x => x.Contains("ERR185")).Select(x => x.Replace("{0}", ConfigurationManager.AppSettings["maxSize"])).ToList();
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -214,7 +223,7 @@ namespace RightsU.BMS.BLL.Services
 
                                     if (item.extended_columns.Control_Type == "DATE")
                                     {
-                                        if (!string.IsNullOrEmpty(item.Column_Value))
+                                        if (!string.IsNullOrWhiteSpace(item.Column_Value))
                                         {
                                             item.Column_Value = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(item.Column_Value)));
                                         }
@@ -420,7 +429,8 @@ namespace RightsU.BMS.BLL.Services
             {
                 objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objInput.Inserted_On = DateTime.Now;
-                objInput.Last_UpDated_Time = DateTime.Now;
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_UpDated_Time = DateTime.Now;                
                 objInput.Is_Active = "Y";
 
                 List<Title_Country> lstTitle_Country = new List<Title_Country>();
@@ -469,7 +479,7 @@ namespace RightsU.BMS.BLL.Services
 
                         if (Metadata.extended_columns.Is_Ref == "N" && Metadata.extended_columns.Is_Defined_Values == "N" && Metadata.extended_columns.Is_Multiple_Select == "N")
                         {
-                            if (!string.IsNullOrEmpty(Convert.ToString(Metadata.Column_Value)))
+                            if (!string.IsNullOrWhiteSpace(Convert.ToString(Metadata.Column_Value)))
                             {
                                 if (Metadata.extended_columns.Control_Type == "DATE")
                                 {
@@ -549,6 +559,8 @@ namespace RightsU.BMS.BLL.Services
 
                 if (objTitle != null)
                 {
+                    objInput.Inserted_On = objTitle.Inserted_On;
+                    objInput.Inserted_By = objTitle.Inserted_By;
                     objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objInput.Last_UpDated_Time = DateTime.Now;
                     objInput.Is_Active = objTitle.Is_Active;
@@ -677,7 +689,7 @@ namespace RightsU.BMS.BLL.Services
                                 {
                                     string strColumnValue = string.Empty;
 
-                                    if (!string.IsNullOrEmpty(Convert.ToString(Metadata.Column_Value)))
+                                    if (!string.IsNullOrWhiteSpace(Convert.ToString(Metadata.Column_Value)))
                                     {
                                         strColumnValue = Convert.ToString(Metadata.Column_Value);
 
@@ -742,7 +754,7 @@ namespace RightsU.BMS.BLL.Services
                                 {
                                     string strColumnValue = string.Empty;
 
-                                    if (!string.IsNullOrEmpty(Convert.ToString(Metadata.Column_Value)))
+                                    if (!string.IsNullOrWhiteSpace(Convert.ToString(Metadata.Column_Value)))
                                     {
                                         strColumnValue = Convert.ToString(Metadata.Column_Value);
 
@@ -826,7 +838,7 @@ namespace RightsU.BMS.BLL.Services
                 _objRet = GlobalTool.SetError(_objRet,"ERR194");
             }
 
-            if (string.IsNullOrEmpty(objInput.Is_Active))
+            if (string.IsNullOrWhiteSpace(objInput.Is_Active))
             {
                 _objRet = GlobalTool.SetError(_objRet,"ERR195");
             }

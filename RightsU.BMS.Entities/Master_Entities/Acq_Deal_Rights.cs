@@ -138,5 +138,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "right_status")]
+        public string Right_Status { get; set; }
     }
 }

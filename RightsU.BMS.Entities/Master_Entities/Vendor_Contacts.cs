@@ -18,11 +18,11 @@ namespace RightsU.BMS.Entities.Master_Entities
         public State EntityState { get; set; }
 
         [PrimaryKey]
-        [JsonProperty(PropertyName = "vendor_contacts_id")]
+        [JsonProperty(PropertyName = "party_contacts_id")]
         public int? Vendor_Contacts_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Vendor))]
-        [JsonProperty(PropertyName = "vendor_id")]
+        [ForeignKeyReference(typeof(Party))]
+        [JsonProperty(PropertyName = "party_id")]
         public Nullable<int> Vendor_Code { get; set; }
 
         [JsonProperty(PropertyName = "contact_name")]
@@ -36,8 +36,5 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonProperty(PropertyName = "department")]
         public string Department { get; set; }
-        
-        [ManyToOne]
-        public virtual Vendor Vendor { get; set; }
     }
 }
