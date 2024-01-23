@@ -153,27 +153,27 @@ namespace RightsU.BMS.DAL.Repository
             var entity = base.SearchForEntity<Acq_Deal, Acq_Deal_Licensor, Acq_Deal_Movie, Deal_Tag, Role, Deal_Type, Entity>(param);
             entity.ToList().ForEach(i =>
             {
-                if (i.primary_vendor == null)
+                if (i.primary_vendor == null && (i.Vendor_Code != null || i.Vendor_Code > 0))
                 {
                     i.primary_vendor = new VendorRepositories().Get(i.Vendor_Code.Value);
                 }
 
-                if (i.Currency == null)
+                if (i.Currency == null && (i.Currency_Code != null || i.Currency_Code > 0))
                 {
                     i.Currency = new CurrencyRepositories().Get(i.Currency_Code.Value);
                 }
 
-                if (i.business_unit == null)
+                if (i.business_unit == null && (i.Business_Unit_Code != null || i.Business_Unit_Code > 0))
                 {
                     i.business_unit = new BusinessUnitRepositories().Get(i.Business_Unit_Code.Value);
                 }
 
-                if (i.category == null)
+                if (i.category == null && (i.Category_Code != null || i.Category_Code > 0))
                 {
                     i.category = new CategoryRepositories().Get(i.Category_Code.Value);
                 }
 
-                if (i.vendor_contact == null)
+                if (i.vendor_contact == null && (i.Vendor_Contacts_Code != null || i.Vendor_Contacts_Code > 0))
                 {
                     i.vendor_contact = new Vendor_ContactsRepositories().Get(i.Vendor_Contacts_Code.Value);
                 }
@@ -182,7 +182,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.licensors.ToList().ForEach(j =>
                     {
-                        if (j.vendor == null)
+                        if (j.vendor == null && (j.Vendor_Code != null || j.Vendor_Code > 0))
                         {
                             j.vendor = new VendorRepositories().Get(j.Vendor_Code.Value);
                         }

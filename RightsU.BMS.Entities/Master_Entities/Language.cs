@@ -30,9 +30,15 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
         //[JsonIgnore]
-     
-         [JsonProperty(PropertyName = "is_active")]
+
+        [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
-        
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [OneToMany]
+        [JsonIgnore]
+        public ICollection<LanguageGroupDetails> LanguageGroupDetails { get; set; }
+
     }
 }

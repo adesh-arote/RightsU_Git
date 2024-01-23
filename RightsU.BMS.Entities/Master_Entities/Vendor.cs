@@ -98,6 +98,9 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "party_Id")]
-        public string Party_Id { get; set; }        
+        public string Party_Id { get; set; }
+
+        [OneToMany]
+        public virtual ICollection<Vendor_Role> vendor_role { get; set; }
     }
 }

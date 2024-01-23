@@ -174,5 +174,57 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }
+
+        //Pending Columns
+        [JsonIgnore]       
+        public string Attach_Workflow { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Work_Flow_Code { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Amendment_Date { get; set; }
+        [JsonIgnore]
+        public string Is_Released { get; set; }
+        [JsonIgnore]
+        public Nullable<System.DateTime> Release_On { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Release_By { get; set; }
+        [JsonIgnore]
+        public string Is_Completed { get; set; }
+        [JsonIgnore]
+        public string Is_Active { get; set; }
+        [JsonIgnore]
+        public string Content_Type { get; set; }
+        [JsonIgnore]
+        public string Payment_Terms_Conditions { get; set; }
+        [JsonIgnore]
+        public string Status { get; set; }
+        [JsonIgnore]
+        public string Is_Auto_Generated { get; set; }
+        [JsonIgnore]
+        public string Is_Migrated { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Cost_Center_Id { get; set; }
+        [JsonIgnore]
+        public string BudgetWise_Costing_Applicable { get; set; }
+        [JsonIgnore]
+        public string Validate_CostWith_Budget { get; set; }
+        [JsonIgnore]
+        public string Payment_Remarks { get; set; }
+        [JsonIgnore]
+        public string Deal_Complete_Flag { get; set; }
+        [JsonIgnore]
+        public string All_Channel { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Channel_Cluster_Code { get; set; }
+        [JsonIgnore]
+        public string Is_Auto_Push { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Deal_Segment_Code { get; set; }
+        [JsonIgnore]
+        public Nullable<int> Revenue_Vertical_Code { get; set; }
+        [JsonIgnore]
+        public string Confirming_Party { get; set; }
+        [JsonIgnore]
+        public string Material_Remarks { get; set; }
     }
 }

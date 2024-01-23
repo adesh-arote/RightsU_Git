@@ -41,8 +41,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
-
-        [JsonIgnore]
+        
         [JsonProperty(PropertyName = "is_system_generated")]
         public string Is_System_Generated { get; set; }
     }
