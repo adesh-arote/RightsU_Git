@@ -683,7 +683,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     Acq_Deal objDeal = new Acq_Deal();
-                    bool is_RightCompleted = true;                    
+                    bool is_RightCompleted = true;
 
                     objDeal = objDealRepositories.Get(objInput.Acq_Deal_Code.Value);
 
@@ -716,17 +716,17 @@ namespace RightsU.BMS.BLL.Services
 
                         #region Rights available in all titles Check
 
-                        List<int?> lstRightTitles = new List<int?>();
-                        List<int?> lstDealTitles = new List<int?>();
+                        List<string> lstRightTitles = new List<string>();
+                        List<string> lstDealTitles = new List<string>();
 
                         objDeal.titles.ToList().ForEach(i =>
                         {
-                            lstDealTitles.Add(i.Title_Code);
+                            lstDealTitles.Add(i.Title_Code + "~" + i.Episode_Starts_From + "~" + i.Episode_End_To);
                         });
 
                         lstdeal_rights.ForEach(i =>
                         {
-                            lstRightTitles.Add(i.Titles.Select(x => Convert.ToInt32(x.Title_Code)).Distinct().FirstOrDefault());
+                            lstRightTitles.Add(i.Titles.Select(x => x.Title_Code.Value + "~" + x.Episode_From + "~" + x.Episode_To).Distinct().FirstOrDefault());
                         });
 
                         lstRightTitles = lstRightTitles.Distinct().ToList();
@@ -741,7 +741,7 @@ namespace RightsU.BMS.BLL.Services
 
                         #region Checking Liner Rights for run defination
 
-                        List<int?> lstLinerTitle = new List<int?>();
+                        List<string> lstLinerTitle = new List<string>();
 
                         if (objDeal.Deal_Complete_Flag.Contains("R, R"))
                         {
@@ -749,15 +749,15 @@ namespace RightsU.BMS.BLL.Services
                             {
                                 if (i.Platform.Where(x => x.platform.Is_No_Of_Run == "Y").Count() > 0)
                                 {
-                                    lstLinerTitle.Add(i.Titles.Select(x => x.Title_Code.Value).Distinct().FirstOrDefault());
+                                    lstLinerTitle.Add(i.Titles.Select(x => x.Title_Code + "~" + x.Episode_From + "~" + x.Episode_To).Distinct().FirstOrDefault());
                                 }
                             });
 
-                            List<int?> lstRunTitle = new List<int?>();
+                            List<string> lstRunTitle = new List<string>();
 
                             var lstAcqDealRuns = new AcqDealRunRepositories().SearchFor(new { Acq_Deal_Code = objDeal.Acq_Deal_Code }).ToList();
 
-                            lstRunTitle = lstAcqDealRuns.Select(x => x.Titles.Select(c => c.Title_Code).FirstOrDefault()).ToList();
+                            lstRunTitle = lstAcqDealRuns.Select(x => x.Titles.Select(c => c.Title_Code + "~" + c.Episode_From + "~" + c.Episode_To).FirstOrDefault()).ToList();
 
                             int cntRunTitle = lstLinerTitle.Distinct().Except(lstRunTitle).Count();
 
@@ -767,7 +767,7 @@ namespace RightsU.BMS.BLL.Services
                             }
                         }
 
-                        
+
 
                         #endregion
 
