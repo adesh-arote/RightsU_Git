@@ -164,7 +164,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     sort = "Last_Updated_Time";
                 }
-                else if (sort.ToLower() == "PromoterRemarkName".ToLower())
+                else if (sort.ToLower() == "ChannelName".ToLower())
                 {
                     sort = "Channel_Name";
                 }
@@ -180,11 +180,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -192,11 +192,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -204,7 +204,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -227,20 +227,54 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     channels = objChannelDetailsRepositories.GetAll().ToList();
-                    _ChannelReturn.paging.total = channels.Count;
+                 
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         channels = channels.Where(w => w.Channel_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        channels = channels.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        channels = channels.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
 
                     GlobalTool.GetPaging(page, size, channels.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (sort.ToLower() == "Inserted_On".ToLower())
                     {
-                        channels = channels.OrderBy(o => o.Channel_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
-                    if (order.ToUpper() == "DESC")
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
                     {
-                        channels = channels.OrderByDescending(o => o.Channel_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Channel_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Channel_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Channel_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -255,7 +289,7 @@ namespace RightsU.BMS.BLL.Services
             _ChannelReturn.content = channels;
             _ChannelReturn.paging.page = page;
             _ChannelReturn.paging.size = size;
-
+            _ChannelReturn.paging.total = channels.Count;
             _objRet.Response = _ChannelReturn;
 
             return _objRet;
@@ -3300,7 +3334,7 @@ namespace RightsU.BMS.BLL.Services
                 size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
             }
 
-            if (!string.IsNullOrEmpty(sort.ToString()))
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
             {
                 if (sort.ToLower() == "CreatedDate".ToLower())
                 {
@@ -3326,11 +3360,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -3338,11 +3372,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -3350,7 +3384,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -3690,11 +3724,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -3702,11 +3736,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -3714,7 +3748,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -4015,7 +4049,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "RightRuleName".ToLower())
                 {
@@ -4033,11 +4067,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4045,11 +4079,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4057,7 +4091,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -4081,20 +4115,53 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     rightRules = objRightRuleRepositories.GetAll().ToList();
-                    _RightRuleReturn.paging.total = rightRules.Count;
-                    if (!string.IsNullOrEmpty(search_value))
+                  
+                    if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         rightRules = rightRules.Where(w => w.Right_Rule_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
-
-                    GlobalTool.GetPaging(page, size, rightRules.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        rightRules = rightRules.OrderBy(o => o.Right_Rule_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        rightRules = rightRules.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
                     }
-                    if (order.ToUpper() == "DESC")
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        rightRules = rightRules.OrderByDescending(o => o.Right_Rule_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        rightRules = rightRules.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, rightRules.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Right_Rule_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Right_Rule_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Right_Rule_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -4110,6 +4177,7 @@ namespace RightsU.BMS.BLL.Services
             _RightRuleReturn.content = rightRules;
             _RightRuleReturn.paging.page = page;
             _RightRuleReturn.paging.size = size;
+            _RightRuleReturn.paging.total = rightRules.Count;
 
             _objRet.Response = _RightRuleReturn;
 
@@ -4424,7 +4492,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "LanguageGroupName".ToLower())
                 {
@@ -4442,11 +4510,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4454,11 +4522,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4466,7 +4534,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -4490,20 +4558,53 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     languageGroups = objLanguageGroupRepositories.GetAll().ToList();
-                    _LanguageGroupReturn.paging.total = languageGroups.Count;
-                    if (!string.IsNullOrEmpty(search_value))
+                 
+                    if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         languageGroups = languageGroups.Where(w => w.Language_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
-
-                    GlobalTool.GetPaging(page, size, languageGroups.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        languageGroups = languageGroups.OrderBy(o => o.Language_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
                     }
-                    if (order.ToUpper() == "DESC")
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        languageGroups = languageGroups.OrderByDescending(o => o.Language_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, languageGroups.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Language_Group_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Language_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Language_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -4519,7 +4620,7 @@ namespace RightsU.BMS.BLL.Services
             _LanguageGroupReturn.content = languageGroups;
             _LanguageGroupReturn.paging.page = page;
             _LanguageGroupReturn.paging.size = size;
-
+            _LanguageGroupReturn.paging.total = languageGroups.Count;
             _objRet.Response = _LanguageGroupReturn;
 
             return _objRet;
@@ -4846,7 +4947,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "CurrencyName".ToLower())
                 {
@@ -4864,11 +4965,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4876,11 +4977,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -4888,7 +4989,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -4912,20 +5013,53 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     currencies = objCurrencyRepositories.GetAll().ToList();
-                    _CurrencyReturn.paging.total = currencies.Count;
-                    if (!string.IsNullOrEmpty(search_value))
+                  
+                    if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         currencies = currencies.Where(w => w.Currency_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
-
-                    GlobalTool.GetPaging(page, size, currencies.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        currencies = currencies.OrderBy(o => o.Currency_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        currencies = currencies.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
                     }
-                    if (order.ToUpper() == "DESC")
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        currencies = currencies.OrderByDescending(o => o.Currency_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        currencies = currencies.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, currencies.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Currency_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Currency_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Currency_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -4941,7 +5075,7 @@ namespace RightsU.BMS.BLL.Services
             _CurrencyReturn.content = currencies;
             _CurrencyReturn.paging.page = page;
             _CurrencyReturn.paging.size = size;
-
+            _CurrencyReturn.paging.total = currencies.Count;
             _objRet.Response = _CurrencyReturn;
 
             return _objRet;
@@ -5265,7 +5399,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "CountryName".ToLower())
                 {
@@ -5283,11 +5417,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -5295,11 +5429,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -5307,7 +5441,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -5341,20 +5475,54 @@ namespace RightsU.BMS.BLL.Services
                         }
                     });
 
-                    _countryReturn.paging.total = countries.Count;
+                   
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         countries = countries.Where(w => w.Country_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        countries = countries.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        countries = countries.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
 
                     GlobalTool.GetPaging(page, size, countries.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (sort.ToLower() == "Inserted_On".ToLower())
                     {
-                        countries = countries.OrderBy(o => o.Country_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
-                    if (order.ToUpper() == "DESC")
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
                     {
-                        countries = countries.OrderByDescending(o => o.Country_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Country_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Country_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Country_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -5370,7 +5538,7 @@ namespace RightsU.BMS.BLL.Services
             _countryReturn.content = countries;
             _countryReturn.paging.page = page;
             _countryReturn.paging.size = size;
-
+            _countryReturn.paging.total = countries.Count;
             _objRet.Response = _countryReturn;
 
             return _objRet;
@@ -5685,7 +5853,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "TerritoryName".ToLower())
                 {
@@ -5703,11 +5871,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -5715,11 +5883,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -5727,7 +5895,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -5751,21 +5919,55 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     territories = objTerritoryRepositories.GetAll().ToList();
-                    _TerritoryReturn.paging.total = territories.Count;
+                   
 
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         territories = territories.Where(w => w.Territory_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        territories = territories.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        territories = territories.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
 
                     GlobalTool.GetPaging(page, size, territories.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (sort.ToLower() == "Inserted_On".ToLower())
                     {
-                        territories = territories.OrderBy(o => o.Territory_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
-                    if (order.ToUpper() == "DESC")
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
                     {
-                        territories = territories.OrderByDescending(o => o.Territory_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Territory_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Territory_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Territory_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -5781,6 +5983,7 @@ namespace RightsU.BMS.BLL.Services
             _TerritoryReturn.content = territories;
             _TerritoryReturn.paging.page = page;
             _TerritoryReturn.paging.size = size;
+            _TerritoryReturn.paging.total = territories.Count;
 
             _objRet.Response = _TerritoryReturn;
 
@@ -6092,7 +6295,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else if (sort.ToLower() == "UpdatedDate".ToLower())
                 {
-                    sort = "Last_UpDated_Time";
+                    sort = "Last_Updated_Time";
                 }
                 else if (sort.ToLower() == "PromoterGroupName".ToLower())
                 {
@@ -6110,11 +6313,11 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -6122,11 +6325,11 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
@@ -6134,7 +6337,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
@@ -6158,20 +6361,54 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     promoterGroups = objPromoterGroupRepositories.GetAll().ToList();
-                    _PromoterGroupReturn.paging.total = promoterGroups.Count;
+                 
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         promoterGroups = promoterGroups.Where(w => w.Promoter_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
                     }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
 
                     GlobalTool.GetPaging(page, size, promoterGroups.Count, out noOfRecordSkip, out noOfRecordTake);
-                    if (order.ToUpper() == "ASC")
+                    if (sort.ToLower() == "Inserted_On".ToLower())
                     {
-                        promoterGroups = promoterGroups.OrderBy(o => o.Promoter_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
-                    if (order.ToUpper() == "DESC")
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
                     {
-                        promoterGroups = promoterGroups.OrderByDescending(o => o.Promoter_Group_Code).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Promoter_Group_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Promoter_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Promoter_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
                     }
                 }
                 if (!_objRet.IsSuccess)
@@ -6187,7 +6424,7 @@ namespace RightsU.BMS.BLL.Services
             _PromoterGroupReturn.content = promoterGroups;
             _PromoterGroupReturn.paging.page = page;
             _PromoterGroupReturn.paging.size = size;
-
+            _PromoterGroupReturn.paging.total = promoterGroups.Count;
             _objRet.Response = _PromoterGroupReturn;
 
             return _objRet;
