@@ -15,6 +15,7 @@ using System.Net;
 using System.Configuration;
 using System.Web;
 using RightsU.BMS.Entities.ReturnClasses;
+using RightsU.BMS.BLL.Miscellaneous;
 
 namespace RightsU.BMS.BLL.Services
 {
@@ -95,6 +96,8 @@ namespace RightsU.BMS.BLL.Services
     public class Channel_Service
     {
         private readonly Channel_Repositories objChannelRepositories;
+        private readonly ChannelRepositories objChannelDetailsRepositories = new ChannelRepositories();
+        private readonly ChannelCountryDetailsRepositories objChannelCountryDetailsRepositories = new ChannelCountryDetailsRepositories();
         public Channel_Service()
         {
             this.objChannelRepositories = new Channel_Repositories();
@@ -106,6 +109,496 @@ namespace RightsU.BMS.BLL.Services
         public IEnumerable<Channel> SearchFor(object param)
         {
             return objChannelRepositories.SearchFor(param);
+        }
+
+        public GenericReturn GetChannelDetailsList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "ChannelName".ToLower())
+                {
+                    sort = "Channel_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            ChannelReturn _ChannelReturn = new ChannelReturn();
+            List<Channel> channels = new List<Channel>();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    channels = objChannelDetailsRepositories.GetAll().ToList();
+                 
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        channels = channels.Where(w => w.Channel_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        channels = channels.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        channels = channels.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+
+                    GlobalTool.GetPaging(page, size, channels.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Channel_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            channels = channels.OrderBy(o => o.Channel_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            channels = channels.OrderByDescending(o => o.Channel_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            _ChannelReturn.content = channels;
+            _ChannelReturn.paging.page = page;
+            _ChannelReturn.paging.size = size;
+            _ChannelReturn.paging.total = channels.Count;
+            _objRet.Response = _ChannelReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetChannelDetailsById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR249");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Channel objReturn = new Channel();
+                    if (objReturn != null)
+                    {
+                        objReturn = objChannelDetailsRepositories.GetById(id);
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR251");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostChannel(Channel objInput)
+        {
+
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Channel_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR254");
+            }
+            if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR256");
+
+            }
+            if (string.IsNullOrEmpty(objInput.Schedule_Source_FilePath))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR257");
+            }
+            if (string.IsNullOrEmpty(objInput.Schedule_Source_FilePath_Pkg))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR258");
+            }
+            if (objInput.BV_Channel_Code == null || objInput.BV_Channel_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR259");
+
+            }
+            if (string.IsNullOrEmpty(objInput.OffsetTime_AsRun))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR261");
+            }
+            if (string.IsNullOrEmpty(objInput.OffsetTime_Schedule))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR260");
+            }
+            var CheckDuplicate = objChannelDetailsRepositories.SearchFor(new { Channel_Name = objInput.Channel_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR255");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Channel objChannel = new Channel();
+
+                    List<ChannelTerritory> lstChannelterritory_Details = new List<ChannelTerritory>();
+                    foreach (var item in objInput.country_details)
+                    {
+                        ChannelTerritory objChannelterritory_Details = new ChannelTerritory();
+
+                        objChannelterritory_Details.Country_Code = item.Country_Code;
+                        objChannelterritory_Details.Channel_Code = item.Channel_Code;
+                        lstChannelterritory_Details.Add(objChannelterritory_Details);
+                    }
+                    objChannel.country_details = lstChannelterritory_Details;
+                    objChannel.Entity_Code = objInput.Entity_Code;
+                    objChannel.Entity_Type = objInput.Entity_Type;
+                    objChannel.Channel_Name = objInput.Channel_Name;
+                    objChannel.Schedule_Source_FilePath = objInput.Schedule_Source_FilePath;
+                    objChannel.Schedule_Source_FilePath_Pkg = objInput.Schedule_Source_FilePath_Pkg;
+                    objChannel.BV_Channel_Code = objInput.BV_Channel_Code;
+                    objChannel.OffsetTime_Schedule = objInput.OffsetTime_Schedule;
+                    objChannel.OffsetTime_AsRun = objInput.OffsetTime_AsRun;
+                    objChannel.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objChannel.Inserted_On = DateTime.Now;
+                    objChannel.Last_Updated_Time = DateTime.Now;
+                    objChannel.Is_Active = "Y";
+
+                    objChannelDetailsRepositories.Add(objChannel);
+
+                    _objRet.Response = new { id = objChannel.Channel_Code };
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutChannel(Channel objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (string.IsNullOrEmpty(objInput.Channel_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR254");
+            }
+            if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR256");
+
+            }
+            if (string.IsNullOrEmpty(objInput.Schedule_Source_FilePath))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR257");
+            }
+            if (string.IsNullOrEmpty(objInput.Schedule_Source_FilePath_Pkg))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR258");
+            }
+            if (objInput.BV_Channel_Code == null || objInput.BV_Channel_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR259");
+
+            }
+            if (string.IsNullOrEmpty(objInput.OffsetTime_AsRun))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR261");
+            }
+            if (string.IsNullOrEmpty(objInput.OffsetTime_Schedule))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR260");
+            }
+            var CheckDuplicate = objChannelDetailsRepositories.SearchFor(new { Channel_Name = objInput.Channel_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR255");
+            }
+            #endregion
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    var objChannel = objChannelDetailsRepositories.GetById(objInput.Channel_Code.Value);
+
+                    objChannel.country_details.ToList().ForEach(f => f.EntityState = State.Deleted);
+
+                    foreach (var item in objInput.country_details)
+                    {
+                        ChannelTerritory objC = (ChannelTerritory)objChannel.country_details.Where(t => t.Country_Code == item.Country_Code).Select(i => i).FirstOrDefault();
+
+                        if (objC == null)
+                            objC = new ChannelTerritory();
+                        if (objC.Channel_Territory_Code > 0)
+                        {
+                            objC.EntityState = State.Unchanged;
+                        }
+                        else
+                        {
+                            objC.EntityState = State.Added;
+                            objC.Channel_Code = item.Channel_Code;
+                            objC.Country_Code = item.Country_Code;
+                            objChannel.country_details.Add(objC);
+                        }
+                    }
+
+                    foreach (var item in objChannel.country_details.ToList().Where(x => x.EntityState == State.Deleted))
+                    {
+                        objChannelCountryDetailsRepositories.Delete(item);
+                    }
+
+                    var dataDetails = objChannel.country_details.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                    dataDetails.ForEach(i => objChannel.country_details.Remove(i));
+
+                    objChannel.country_details = objInput.country_details;
+                    objChannel.Entity_Code = objInput.Entity_Code;
+                    objChannel.Entity_Type = objInput.Entity_Type;
+                    objChannel.Channel_Name = objInput.Channel_Name;
+                    objChannel.Schedule_Source_FilePath = objInput.Schedule_Source_FilePath;
+                    objChannel.Schedule_Source_FilePath_Pkg = objInput.Schedule_Source_FilePath_Pkg;
+                    objChannel.BV_Channel_Code = objInput.BV_Channel_Code;
+                    objChannel.OffsetTime_Schedule = objInput.OffsetTime_Schedule;
+                    objChannel.OffsetTime_AsRun = objInput.OffsetTime_AsRun;
+                    objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objInput.Inserted_On = DateTime.Now;
+                    objInput.Last_Updated_Time = DateTime.Now;
+                    objInput.Is_Active = "Y";
+
+                    objChannelDetailsRepositories.Update(objInput);
+
+                    _objRet.Response = new { id = objChannel.Channel_Code };
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+        public GenericReturn ChangeActiveStatus(Channel objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Channel_Code == null || objInput.Channel_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR249");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Channel objChannel = new Channel();
+                objChannel = objChannelDetailsRepositories.Get(Convert.ToInt32(objInput.Channel_Code));
+
+                objChannel.Last_Updated_Time = DateTime.Now;
+                objChannel.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objChannel.Is_Active = objInput.Is_Active.ToUpper();
+                objChannel.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objChannel.Inserted_On = DateTime.Now;
+                objChannelDetailsRepositories.Update(objChannel);
+
+                _objRet.Response = new { id = objChannel.Channel_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
         }
     }
 
@@ -2027,6 +2520,7 @@ namespace RightsU.BMS.BLL.Services
     }
 
     #endregion
+
     #region -------- Entity -----------
     public class EntityServices
     {
@@ -2371,6 +2865,7 @@ namespace RightsU.BMS.BLL.Services
         }
     }
     #endregion
+
     #region -------- ROFR -----------
     public class ROFRService
     {
@@ -2792,7 +3287,7 @@ namespace RightsU.BMS.BLL.Services
 
     #endregion
 
-    #region PromoterRemark
+    #region -------- PromoterRemark --------
     public class PromoterRemarkService
     {
         private readonly PromoterRemarkRepositories objPromoterRemarkRepositories = new PromoterRemarkRepositories();
@@ -2812,9 +3307,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (order.ToUpper() != "DESC")
                     {
-                        _objRet.Message = "Input Paramater 'order' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
                     }
                 }
             }
@@ -2833,9 +3326,7 @@ namespace RightsU.BMS.BLL.Services
                 var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
                 if (size > maxSize)
                 {
-                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
                 }
             }
             else
@@ -2843,7 +3334,7 @@ namespace RightsU.BMS.BLL.Services
                 size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
             }
 
-            if (!string.IsNullOrEmpty(sort.ToString()))
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
             {
                 if (sort.ToLower() == "CreatedDate".ToLower())
                 {
@@ -2859,9 +3350,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
                 }
             }
             else
@@ -2871,49 +3360,41 @@ namespace RightsU.BMS.BLL.Services
 
             try
             {
-                if (!string.IsNullOrEmpty(Date_GT))
+                if (!string.IsNullOrWhiteSpace(Date_GT))
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
                     }
 
                 }
-                if (!string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_LT))
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Input Paramater 'dateLt' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
                     }
                 }
 
-                if (!string.IsNullOrEmpty(Date_GT) && !string.IsNullOrEmpty(Date_LT))
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
-                        _objRet.Message = "Input Paramater 'dateLt' should not be less than 'dateGt'";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _objRet.Message = "Input Paramater 'dateLt' or 'dateGt' is not in valid format";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
             }
 
             #endregion
@@ -2925,6 +3406,10 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     _PromoterRemarkReturn = objPromoterRemarkRepositories.GetPromoterRemark_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
                 }
             }
             catch (Exception ex)
@@ -2951,9 +3436,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (id == 0)
             {
-                _objRet.Message = "Input Paramater 'promoter_remarks_id' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
             }
 
             #endregion
@@ -2964,9 +3447,21 @@ namespace RightsU.BMS.BLL.Services
                 {
                     PromoterRemark objReturn = new PromoterRemark();
 
-                    objReturn = objPromoterRemarkRepositories.GetById(id);
-
-                    _objRet.Response = objReturn;
+                    if (objReturn != null)
+                    {
+                        {
+                            objReturn = objPromoterRemarkRepositories.GetById(id);
+                            _objRet.Response = objReturn;
+                        }
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR210");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
                 }
             }
             catch (Exception ex)
@@ -2986,29 +3481,28 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
             if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
             {
-                _objRet.Message = "Input Paramater 'promoter_remark_desc' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR207");
             }
 
             var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'promoter_remark_desc' already exists";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR208");
             }
 
             #endregion
             if (_objRet.IsSuccess)
             {
                 PromoterRemark objPromoterRemark = new PromoterRemark();
-                
+
                 objPromoterRemark.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
                 objPromoterRemark.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objPromoterRemark.Inserted_On = DateTime.Now;
@@ -3019,6 +3513,10 @@ namespace RightsU.BMS.BLL.Services
 
                 _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
 
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
             }
             return _objRet;
         }
@@ -3032,30 +3530,26 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
             if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
             {
-                _objRet.Message = "Input Paramater 'id' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR209");
             }
 
             if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
             {
-                _objRet.Message = "Input Paramater 'promoter_remark_desc' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR207");
             }
 
             var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
 
             if (CheckDuplicate.Count > 0)
             {
-                _objRet.Message = "'promoter_remark_desc' already exists.";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR208");
             }
 
             #endregion
@@ -3073,7 +3567,11 @@ namespace RightsU.BMS.BLL.Services
                 objPromoterRemarkRepositories.Update(objPromoterRemark);
 
                 _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
-              
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
             }
             return _objRet;
         }
@@ -3087,27 +3585,23 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
             if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
             {
-                _objRet.Message = "Input Paramater 'id' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
             }
 
             if (string.IsNullOrEmpty(objInput.Is_Active))
             {
-                _objRet.Message = "Input Paramater 'is_active' is mandatory";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
             }
             else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
             {
-                _objRet.Message = "Input Paramater 'is_active' is invalid";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
-                _objRet.Response = new { _objRet.Message };
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
             }
 
             #endregion
@@ -3124,12 +3618,16 @@ namespace RightsU.BMS.BLL.Services
                 _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
 
             }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
             return _objRet;
         }
     }
     #endregion
 
-    #region Error_Code_Master
+    #region -------- Error_Code_Master --------
 
     public class Error_Code_MasterServices
     {
@@ -3152,5 +3650,3658 @@ namespace RightsU.BMS.BLL.Services
         }
     }
 
+    #endregion
+
+    #region -------- Category --------
+    public class CategoryService
+    {
+        private readonly CategoryRepositories objCategoryRepositories = new CategoryRepositories();
+        public GenericReturn GetCategoryList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "CategoryName".ToLower())
+                {
+                    sort = "Category_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            CategoryReturn _CategoryRemarkReturn = new CategoryReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    _CategoryRemarkReturn = objCategoryRepositories.GetCategory_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _CategoryRemarkReturn.paging.page = page;
+            _CategoryRemarkReturn.paging.size = size;
+
+            _objRet.Response = _CategoryRemarkReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetCategoryById(Int32 id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Category objReturn = new Category();
+
+                    if (objReturn != null)
+                    {
+                        objReturn = objCategoryRepositories.GetById(id);
+
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR212");
+                    }
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostCategory(Category objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+
+            if (string.IsNullOrEmpty(objInput.Category_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR213");
+            }
+
+            var CheckDuplicate = objCategoryRepositories.SearchFor(new { Category_Name = objInput.Category_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR214");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Category objCategory = new Category();
+
+                objCategory.Category_Name = objInput.Category_Name;
+                objCategory.Is_System_Generated = objInput.Is_System_Generated;
+                objCategory.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCategory.Inserted_On = DateTime.Now;
+                objCategory.Last_Updated_Time = DateTime.Now;
+                objCategory.Is_Active = "Y";
+
+                objCategoryRepositories.Add(objCategory);
+
+                _objRet.Response = new { id = objCategory.Category_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutCategory(Category objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Category_Code == null || objInput.Category_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR215");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Category_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR213");
+            }
+
+            var CheckDuplicate = objCategoryRepositories.SearchFor(new { Category_Name = objInput.Category_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR214");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Category objCategory = new Category();
+
+                objCategory = objCategoryRepositories.Get(objInput.Category_Code.Value);
+                objCategory.Category_Name = objInput.Category_Name;
+                objCategory.Is_System_Generated = objInput.Is_System_Generated;
+                objCategory.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCategory.Last_Updated_Time = DateTime.Now;
+                objCategory.Is_Active = "Y";
+
+                objCategoryRepositories.Update(objCategory);
+
+                _objRet.Response = new { id = objCategory.Category_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Category objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Category_Code == null || objInput.Category_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR215");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Category objCategory = new Category();
+                objCategory = objCategoryRepositories.Get(Convert.ToInt32(objInput.Category_Code));
+
+                objCategory.Last_Updated_Time = DateTime.Now;
+                objCategory.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCategory.Is_Active = objInput.Is_Active.ToUpper();
+                objCategoryRepositories.Update(objCategory);
+                _objRet.Response = new { id = objCategory.Category_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- RightRule --------
+    public class RightRuleService
+    {
+        private readonly RightRuleRepositories objRightRuleRepositories = new RightRuleRepositories();
+
+        public GenericReturn GetRightRuleList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "RightRuleName".ToLower())
+                {
+                    sort = "Right_Rule_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            RightRuleReturn _RightRuleReturn = new RightRuleReturn();
+            List<RightRule> rightRules = new List<RightRule>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    rightRules = objRightRuleRepositories.GetAll().ToList();
+                  
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        rightRules = rightRules.Where(w => w.Right_Rule_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        rightRules = rightRules.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        rightRules = rightRules.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, rightRules.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Right_Rule_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            rightRules = rightRules.OrderBy(o => o.Right_Rule_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            rightRules = rightRules.OrderByDescending(o => o.Right_Rule_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _RightRuleReturn.content = rightRules;
+            _RightRuleReturn.paging.page = page;
+            _RightRuleReturn.paging.size = size;
+            _RightRuleReturn.paging.total = rightRules.Count;
+
+            _objRet.Response = _RightRuleReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetRightRuleById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR216");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    RightRule objReturn = new RightRule();
+                    if (objReturn != null)
+                    {
+                        objReturn = objRightRuleRepositories.GetById(id);
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR217");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostRightRule(RightRule objInput)
+        {
+
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Right_Rule_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR218");
+            }
+            if (string.IsNullOrEmpty(objInput.Start_Time))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR219");
+            }
+            if (objInput.Play_Per_Day == null || objInput.Play_Per_Day <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR220");
+            }
+            if (objInput.Duration_Of_Day == null || objInput.Duration_Of_Day <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR221");
+            }
+            if (objInput.No_Of_Repeat == null || objInput.No_Of_Repeat <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR222");
+            }
+            if (string.IsNullOrEmpty(objInput.Short_Key))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR223");
+            }
+            var CheckDuplicate = objRightRuleRepositories.SearchFor(new { Right_Rule_Name = objInput.Right_Rule_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR224");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                RightRule objRightRule = new RightRule();
+
+                objRightRule.Right_Rule_Name = objInput.Right_Rule_Name;
+                objRightRule.Start_Time = objInput.Start_Time;
+                objRightRule.Play_Per_Day = objInput.Play_Per_Day;
+                objRightRule.Duration_Of_Day = objInput.Duration_Of_Day;
+                objRightRule.No_Of_Repeat = objInput.No_Of_Repeat;
+                objRightRule.Short_Key = objInput.Short_Key;
+                objRightRule.IS_First_Air = objInput.IS_First_Air;
+                objRightRule.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objRightRule.Inserted_On = DateTime.Now;
+                objRightRule.Last_Updated_Time = DateTime.Now;
+                objRightRule.Is_Active = "Y";
+
+                objRightRuleRepositories.Add(objRightRule);
+
+                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutRightRule(RightRule objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Right_Rule_Code == null || objInput.Right_Rule_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR216");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Right_Rule_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR218");
+            }
+            if (string.IsNullOrEmpty(objInput.Start_Time))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR219");
+            }
+            if (objInput.Play_Per_Day == null || objInput.Play_Per_Day <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR220");
+            }
+            if (objInput.Duration_Of_Day == null || objInput.Duration_Of_Day <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR221");
+            }
+            if (objInput.No_Of_Repeat == null || objInput.No_Of_Repeat <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR222");
+            }
+            if (string.IsNullOrEmpty(objInput.Short_Key))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR223");
+            }
+
+            var CheckDuplicate = objRightRuleRepositories.SearchFor(new { Right_Rule_Name = objInput.Right_Rule_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR224");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                RightRule objRightRule = new RightRule();
+
+                objRightRule = objRightRuleRepositories.Get(objInput.Right_Rule_Code.Value);
+                objRightRule.Right_Rule_Name = objInput.Right_Rule_Name;
+                objRightRule.Start_Time = objInput.Start_Time;
+                objRightRule.Play_Per_Day = objInput.Play_Per_Day;
+                objRightRule.Duration_Of_Day = objInput.Duration_Of_Day;
+                objRightRule.No_Of_Repeat = objInput.No_Of_Repeat;
+                objRightRule.Short_Key = objInput.Short_Key;
+                objRightRule.IS_First_Air = objInput.IS_First_Air;
+                objRightRule.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objRightRule.Last_Updated_Time = DateTime.Now;
+                objRightRule.Is_Active = "Y";
+
+                objRightRuleRepositories.Update(objRightRule);
+
+                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(RightRule objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Right_Rule_Code == null || objInput.Right_Rule_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR216");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                RightRule objRightRule = new RightRule();
+                objRightRule = objRightRuleRepositories.Get(Convert.ToInt32(objInput.Right_Rule_Code));
+
+                objRightRule.Last_Updated_Time = DateTime.Now;
+                objRightRule.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objRightRule.Is_Active = objInput.Is_Active.ToUpper();
+                objRightRuleRepositories.Update(objRightRule);
+                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+
+
+    #endregion
+
+    #region -------- LanguageGroup --------
+    public class LanguageGroupService
+    {
+        private readonly LanguageGroupDetailsRepositories objLanguageDetailsRepositories = new LanguageGroupDetailsRepositories();
+        private readonly LanguageGroupRepositories objLanguageGroupRepositories = new LanguageGroupRepositories();
+
+        public GenericReturn GetLanguageGroupList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "LanguageGroupName".ToLower())
+                {
+                    sort = "Language_Group_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            LanguageGroupReturn _LanguageGroupReturn = new LanguageGroupReturn();
+            List<LanguageGroup> languageGroups = new List<LanguageGroup>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    languageGroups = objLanguageGroupRepositories.GetAll().ToList();
+                 
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        languageGroups = languageGroups.Where(w => w.Language_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, languageGroups.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Language_Group_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            languageGroups = languageGroups.OrderBy(o => o.Language_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            languageGroups = languageGroups.OrderByDescending(o => o.Language_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _LanguageGroupReturn.content = languageGroups;
+            _LanguageGroupReturn.paging.page = page;
+            _LanguageGroupReturn.paging.size = size;
+            _LanguageGroupReturn.paging.total = languageGroups.Count;
+            _objRet.Response = _LanguageGroupReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetLanguageGroupById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    LanguageGroup objReturn = new LanguageGroup();
+                    if (objReturn != null)
+                    {
+                        objReturn = objLanguageGroupRepositories.GetById(id);
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR225");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostLanguageGroup(LanguageGroup objInput)
+        {
+
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Language_Group_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR226");
+            }
+            if (objInput.languagegroup_details.ToList().Count == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR227");
+            }
+            var CheckDuplicate = objLanguageGroupRepositories.SearchFor(new { Language_Group_Name = objInput.Language_Group_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR228");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                LanguageGroup objLanguageGroup = new LanguageGroup();
+
+                List<LanguageGroupDetails> lstLangGrp_Details = new List<LanguageGroupDetails>();
+                foreach (var item in objInput.languagegroup_details)
+                {
+                    LanguageGroupDetails objLangGrp_Details = new LanguageGroupDetails();
+
+                    objLangGrp_Details.Language_Code = item.Language_Code;
+                    objLangGrp_Details.Language_Group_Code = item.Language_Group_Code;
+                    lstLangGrp_Details.Add(objLangGrp_Details);
+                }
+                objLanguageGroup.languagegroup_details = lstLangGrp_Details;
+
+                objLanguageGroup.Language_Group_Name = objInput.Language_Group_Name;
+                objLanguageGroup.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objLanguageGroup.Inserted_On = DateTime.Now;
+                objLanguageGroup.Last_Updated_Time = DateTime.Now;
+                objLanguageGroup.Is_Active = "Y";
+
+                objLanguageGroupRepositories.Add(objLanguageGroup);
+
+                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutLanguageGroup(LanguageGroup objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Language_Group_Code == null || objInput.Language_Group_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR229");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Language_Group_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR226");
+            }
+            if (objInput.languagegroup_details.ToList().Count == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR227");
+            }
+
+            var CheckDuplicate = objLanguageGroupRepositories.SearchFor(new { Language_Group_Name = objInput.Language_Group_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR228");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                var objLanguageGroup = objLanguageGroupRepositories.GetById(objInput.Language_Group_Code.Value);
+
+                objLanguageGroup.languagegroup_details.ToList().ForEach(f => f.EntityState = State.Deleted);
+
+                foreach (var item in objInput.languagegroup_details)
+                {
+                    LanguageGroupDetails objL = (LanguageGroupDetails)objLanguageGroup.languagegroup_details.Where(t => t.Language_Code == item.Language_Code).Select(i => i).FirstOrDefault();
+
+                    if (objL == null)
+                        //{
+                        objL = new LanguageGroupDetails();
+                    if (objL.Language_Group_Details_Code > 0)
+                    {
+                        objL.EntityState = State.Unchanged;
+                    }
+                    else
+                    {
+                        objL.EntityState = State.Added;
+                        objL.Language_Group_Details_Code = item.Language_Group_Details_Code;
+                        objL.Language_Code = item.Language_Code;
+                        objL.Language_Group_Code = item.Language_Group_Code;
+                        objLanguageGroup.languagegroup_details.Add(objL);
+                    }
+                    // }
+                    if (objL.Language_Group_Details_Code > 0)
+                    {
+                        objL.EntityState = State.Unchanged;
+                    }
+                    else
+                    {
+                        objL.EntityState = State.Added;
+                        //objL.Language_Group_Details_Code = item.Language_Group_Details_Code;
+                        objL.Language_Code = item.Language_Code;
+                        objL.Language_Group_Code = item.Language_Group_Code;
+                        objLanguageGroup.languagegroup_details.Add(objL);
+                    }
+                    // }
+
+                }
+
+                foreach (var item in objLanguageGroup.languagegroup_details.ToList().Where(x => x.EntityState == State.Deleted))
+                {
+                    objLanguageDetailsRepositories.Delete(item);
+                }
+
+                var dataDetails = objLanguageGroup.languagegroup_details.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                dataDetails.ForEach(i => objLanguageGroup.languagegroup_details.Remove(i));
+
+                objLanguageGroup.languagegroup_details = objInput.languagegroup_details;
+                objLanguageGroup.Language_Group_Name = objInput.Language_Group_Name;
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Is_Active = "Y";
+
+                objLanguageGroupRepositories.Update(objInput);
+
+                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(LanguageGroup objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Language_Group_Code == null || objInput.Language_Group_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR229");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                LanguageGroup objLanguageGroup = new LanguageGroup();
+                objLanguageGroup = objLanguageGroupRepositories.Get(Convert.ToInt32(objInput.Language_Group_Code));
+
+                objLanguageGroup.Last_Updated_Time = DateTime.Now;
+                objLanguageGroup.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objLanguageGroup.Is_Active = objInput.Is_Active.ToUpper();
+                objLanguageGroup.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objLanguageGroup.Inserted_On = DateTime.Now;
+                objLanguageGroupRepositories.Update(objLanguageGroup);
+
+                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Currency --------
+    public class CurrencyService
+    {
+        private readonly CurrencyRepositories objCurrencyRepositories = new CurrencyRepositories();
+        private readonly CurrencyExchangeReturnRepositories objCurrencyExchangeReturnRepositories = new CurrencyExchangeReturnRepositories();
+        public GenericReturn GetCurrencyList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "CurrencyName".ToLower())
+                {
+                    sort = "Currency_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            CurrencyReturn _CurrencyReturn = new CurrencyReturn();
+            List<Currency> currencies = new List<Currency>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    currencies = objCurrencyRepositories.GetAll().ToList();
+                  
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        currencies = currencies.Where(w => w.Currency_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        currencies = currencies.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        currencies = currencies.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, currencies.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Currency_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            currencies = currencies.OrderBy(o => o.Currency_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            currencies = currencies.OrderByDescending(o => o.Currency_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _CurrencyReturn.content = currencies;
+            _CurrencyReturn.paging.page = page;
+            _CurrencyReturn.paging.size = size;
+            _CurrencyReturn.paging.total = currencies.Count;
+            _objRet.Response = _CurrencyReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetCurrencyById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Currency objReturn = new Currency();
+                    if (objReturn != null)
+                    {
+                        objReturn = objCurrencyRepositories.GetById(id);
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR230");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostCurrency(Currency objInput)
+        {
+
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (string.IsNullOrEmpty(objInput.Currency_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR231");
+            }
+            if (string.IsNullOrEmpty(objInput.Currency_Sign))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR232");
+            }
+            if (objInput.currency_exchange.ToList().Count == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR233");
+            }
+            var CheckDuplicate = objCurrencyRepositories.SearchFor(new { Currency_Name = objInput.Currency_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR234");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Currency objCurrrency = new Currency();
+
+                List<CurrencyExchangeRate> lstCurrencyExchange_Details = new List<CurrencyExchangeRate>();
+                foreach (var item in objInput.currency_exchange)
+                {
+                    CurrencyExchangeRate objCurrencyExchange_Details = new CurrencyExchangeRate();
+                    objCurrencyExchange_Details.Currency_Code = item.Currency_Code;
+                    objCurrencyExchange_Details.Effective_Start_Date = item.Effective_Start_Date;
+                    objCurrencyExchange_Details.Exchange_Rate = item.Exchange_Rate;
+                    lstCurrencyExchange_Details.Add(objCurrencyExchange_Details);
+                }
+                objCurrrency.currency_exchange = lstCurrencyExchange_Details;
+
+                objCurrrency.Currency_Name = objInput.Currency_Name;
+                objCurrrency.Currency_Sign = objInput.Currency_Sign;
+                objCurrrency.Is_Base_Currency = objInput.Is_Base_Currency;
+                objCurrrency.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCurrrency.Inserted_On = DateTime.Now;
+                objCurrrency.Last_Updated_Time = DateTime.Now;
+                objCurrrency.Is_Active = "Y";
+
+                objCurrencyRepositories.Add(objCurrrency);
+
+                _objRet.Response = new { id = objCurrrency.Currency_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutCurrency(Currency objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR235");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Currency_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR231");
+            }
+            if (string.IsNullOrEmpty(objInput.Currency_Sign))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR232");
+            }
+            if (objInput.currency_exchange.ToList().Count == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR233");
+            }
+
+            var CheckDuplicate = objCurrencyRepositories.SearchFor(new { Currency_Name = objInput.Currency_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR234");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                var objCurrency = objCurrencyRepositories.GetById(objInput.Currency_Code.Value);
+
+                objCurrency.currency_exchange.ToList().ForEach(f => f.EntityState = State.Deleted);
+
+                foreach (var item in objInput.currency_exchange)
+                {
+                    CurrencyExchangeRate objC = (CurrencyExchangeRate)objCurrency.currency_exchange.Where(t => t.Currency_Code == item.Currency_Code).Select(i => i).FirstOrDefault();
+
+                    if (objC == null)
+                        objC = new CurrencyExchangeRate();
+                    if (objC.Currency_Exchange_Rate_Code > 0)
+                    {
+                        objC.EntityState = State.Unchanged;
+                    }
+                    else
+                    {
+                        objC.EntityState = State.Added;
+                        // objC.Currency_Exchange_Rate_Code = item.Currency_Exchange_Rate_Code;
+                        objC.Currency_Code = item.Currency_Code;
+                        objC.Exchange_Rate = item.Exchange_Rate;
+                        objC.Effective_Start_Date = item.Effective_Start_Date;
+                        objCurrency.currency_exchange.Add(objC);
+                    }
+                }
+
+                foreach (var item in objCurrency.currency_exchange.ToList().Where(x => x.EntityState == State.Deleted))
+                {
+                    objCurrencyExchangeReturnRepositories.Delete(item);
+                }
+
+                var dataDetails = objCurrency.currency_exchange.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                dataDetails.ForEach(i => objCurrency.currency_exchange.Remove(i));
+
+                objCurrency.currency_exchange = objInput.currency_exchange;
+                objCurrency.Currency_Name = objInput.Currency_Name;
+                objCurrency.Currency_Sign = objInput.Currency_Sign;
+                objCurrency.Is_Base_Currency = objInput.Is_Base_Currency;
+
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Is_Active = "Y";
+
+                objCurrencyRepositories.Update(objInput);
+
+                _objRet.Response = new { id = objCurrency.Currency_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Currency objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR235");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Currency objCurrency = new Currency();
+                objCurrency = objCurrencyRepositories.Get(Convert.ToInt32(objInput.Currency_Code));
+
+                objCurrency.Last_Updated_Time = DateTime.Now;
+                objCurrency.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCurrency.Is_Active = objInput.Is_Active.ToUpper();
+                objCurrency.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCurrency.Inserted_On = DateTime.Now;
+                objCurrencyRepositories.Update(objCurrency);
+
+                _objRet.Response = new { id = objCurrency.Currency_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Country --------
+    public class CountryService
+    {
+        private readonly CountryRepositories objCountryRepositories = new CountryRepositories();
+        private readonly CountryLanguageDetailsRepositories objCountryLangDetails = new CountryLanguageDetailsRepositories();
+        public GenericReturn GetCountryList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "CountryName".ToLower())
+                {
+                    sort = "Country_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            CountryReturn _countryReturn = new CountryReturn();
+            List<Country> countries = new List<Country>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    countries = objCountryRepositories.GetAll().ToList();
+
+                    countries.ForEach(i =>
+                    {
+                        if (i.Parent_Country_Code != null || i.Parent_Country_Code > 0)
+                        {
+                            i.parent_country = new CountryRepositories().Get(i.Parent_Country_Code.Value);
+
+                        }
+                    });
+
+                   
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        countries = countries.Where(w => w.Country_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        countries = countries.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        countries = countries.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+
+                    GlobalTool.GetPaging(page, size, countries.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Country_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            countries = countries.OrderBy(o => o.Country_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            countries = countries.OrderByDescending(o => o.Country_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _countryReturn.content = countries;
+            _countryReturn.paging.page = page;
+            _countryReturn.paging.size = size;
+            _countryReturn.paging.total = countries.Count;
+            _objRet.Response = _countryReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetCountryById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Country objReturn = new Country();
+                    if (objReturn != null)
+                    {
+                        objReturn = objCountryRepositories.Get(id);
+                        if (objReturn.Parent_Country_Code != null || objReturn.Parent_Country_Code > 0)
+                        {
+                            objReturn.parent_country = new CountryRepositories().Get(objReturn.Parent_Country_Code.Value);
+
+                        }
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR236");
+                    }
+                    _objRet.Response = objReturn;
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostCountry(Country objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Country_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR237");
+            }
+
+            var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR238");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Country objCountry = new Country();
+
+                List<CountryLanguage> lstCountrylang_Details = new List<CountryLanguage>();
+                foreach (var item in objInput.country_language)
+                {
+                    CountryLanguage objCountry_Details = new CountryLanguage();
+
+                    objCountry_Details.Country_Code = item.Country_Code;
+                    objCountry_Details.Language_Code = item.Language_Code;
+                    lstCountrylang_Details.Add(objCountry_Details);
+                }
+                objCountry.country_language = lstCountrylang_Details;
+                objCountry.Parent_Country_Code = objInput.Parent_Country_Code;
+                objCountry.Country_Name = objInput.Country_Name;
+                objCountry.Is_Theatrical_Territory = objInput.Is_Theatrical_Territory;
+                objCountry.Is_Domestic_Territory = objInput.Is_Domestic_Territory;
+                objCountry.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCountry.Inserted_On = DateTime.Now;
+                objCountry.Last_Updated_Time = DateTime.Now;
+                objCountry.Is_Active = "Y";
+
+                objCountryRepositories.Add(objCountry);
+
+                _objRet.Response = new { id = objCountry.Country_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Country objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR239");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Country objCountry = new Country();
+                objCountry = objCountryRepositories.Get(Convert.ToInt32(objInput.Country_Code));
+
+                objCountry.Last_Updated_Time = DateTime.Now;
+                objCountry.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCountry.Is_Active = objInput.Is_Active.ToUpper();
+                objCountry.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objCountry.Inserted_On = DateTime.Now;
+                objCountryRepositories.Update(objCountry);
+
+                _objRet.Response = new { id = objCountry.Country_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn PutCountry(Country objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR239");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Country_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR237");
+            }
+
+            var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR238");
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                var objCountry = objCountryRepositories.Get(objInput.Country_Code.Value);
+
+                objCountry.country_language.ToList().ForEach(f => f.EntityState = State.Deleted);
+
+                foreach (var item in objInput.country_language)
+                {
+                    CountryLanguage objC = (CountryLanguage)objCountry.country_language.Where(t => t.Language_Code == item.Language_Code).Select(i => i).FirstOrDefault();
+
+                    if (objC == null)
+                        objC = new CountryLanguage();
+                    if (objC.Country_Language_Code > 0)
+                    {
+                        objC.EntityState = State.Unchanged;
+                    }
+                    else
+                    {
+                        objC.EntityState = State.Added;
+                        //objC.Country_Language_Code = item.Country_Language_Code;
+                        objC.Country_Code = item.Country_Code;
+                        objC.Language_Code = item.Language_Code;
+                        objCountry.country_language.Add(objC);
+                    }
+                }
+
+                foreach (var item in objCountry.country_language.ToList().Where(x => x.EntityState == State.Deleted))
+                {
+                    objCountryLangDetails.Delete(item);
+                }
+
+                var dataDetails = objCountry.country_language.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                dataDetails.ForEach(i => objCountry.country_language.Remove(i));
+
+                objCountry.country_language = objInput.country_language;
+                objCountry.Country_Name = objInput.Country_Name;
+                objCountry.Is_Domestic_Territory = objInput.Is_Domestic_Territory;
+                objCountry.Is_Theatrical_Territory = objInput.Is_Theatrical_Territory;
+                objCountry.Parent_Country_Code = objInput.Parent_Country_Code;
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Is_Active = "Y";
+
+                objCountryRepositories.Update(objInput);
+
+                _objRet.Response = new { id = objCountry.Country_Code };
+
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Territory --------
+    public class TerritoryService
+    {
+        private readonly TerritoryRepositories objTerritoryRepositories = new TerritoryRepositories();
+        private readonly TerritoryDetailsRepositories objTerritoryDetailsRepositories = new TerritoryDetailsRepositories();
+
+        public GenericReturn GetTerritoryList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "TerritoryName".ToLower())
+                {
+                    sort = "Territory_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            TerritoryReturn _TerritoryReturn = new TerritoryReturn();
+            List<Territory> territories = new List<Territory>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    territories = objTerritoryRepositories.GetAll().ToList();
+                   
+
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        territories = territories.Where(w => w.Territory_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        territories = territories.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        territories = territories.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+
+                    GlobalTool.GetPaging(page, size, territories.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Territory_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            territories = territories.OrderBy(o => o.Territory_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            territories = territories.OrderByDescending(o => o.Territory_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _TerritoryReturn.content = territories;
+            _TerritoryReturn.paging.page = page;
+            _TerritoryReturn.paging.size = size;
+            _TerritoryReturn.paging.total = territories.Count;
+
+            _objRet.Response = _TerritoryReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetTerritoryById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Territory objReturn = new Territory();
+                    if (objReturn != null)
+                    {
+                        objReturn = objTerritoryRepositories.Get(id);
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR183");
+                    }
+                    _objRet.Response = objReturn;
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostTerritory(Territory objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Territory_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR240");
+            }
+
+            if (objInput.territory_details.ToList().Count == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR242");
+            }
+
+            var CheckDuplicate = objTerritoryRepositories.SearchFor(new { Territory_Name = objInput.Territory_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR243");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Territory objTerritory = new Territory();
+
+                List<Territory_Details> lstTerritory_Details = new List<Territory_Details>();
+                foreach (var item in objInput.territory_details)
+                {
+                    Territory_Details objTerritory_Details = new Territory_Details();
+
+                    objTerritory_Details.Country_Code = item.Country_Code;
+                    objTerritory_Details.Territory_Code = item.Territory_Code;
+                    lstTerritory_Details.Add(objTerritory_Details);
+                }
+                objTerritory.territory_details = lstTerritory_Details;
+                objTerritory.Territory_Name = objInput.Territory_Name;
+                objTerritory.Is_Thetrical = objInput.Is_Thetrical;
+                objTerritory.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objTerritory.Inserted_On = DateTime.Now;
+                objTerritory.Last_Updated_Time = DateTime.Now;
+                objTerritory.Is_Active = "Y";
+
+                objTerritoryRepositories.Add(objTerritory);
+
+                _objRet.Response = new { id = objTerritory.Territory_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PutTerritory(Territory objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Territory_Code == null || objInput.Territory_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR241");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Territory_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR240");
+            }
+
+            var CheckDuplicate = objTerritoryRepositories.SearchFor(new { Territory_Name = objInput.Territory_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR243");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                var objTerritory = objTerritoryRepositories.Get(objInput.Territory_Code.Value);
+
+                objTerritory.territory_details.ToList().ForEach(f => f.EntityState = State.Deleted);
+
+                foreach (var item in objInput.territory_details)
+                {
+                    Territory_Details objT = (Territory_Details)objTerritory.territory_details.Where(t => t.Country_Code == item.Country_Code).Select(i => i).FirstOrDefault();
+
+                    if (objT == null)
+                        objT = new Territory_Details();
+                    if (objT.Territory_Details_Code > 0)
+                    {
+                        objT.EntityState = State.Unchanged;
+                    }
+                    else
+                    {
+                        objT.EntityState = State.Added;
+                        // objT.Territory_Details_Code = item.Territory_Details_Code;
+                        objT.Country_Code = item.Country_Code;
+                        objT.Territory_Code = item.Territory_Code;
+                        objTerritory.territory_details.Add(objT);
+                    }
+                }
+
+                foreach (var item in objTerritory.territory_details.ToList().Where(x => x.EntityState == State.Deleted))
+                {
+                    objTerritoryDetailsRepositories.Delete(item);
+                }
+
+                var dataDetails = objTerritory.territory_details.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                dataDetails.ForEach(i => objTerritory.territory_details.Remove(i));
+
+                objTerritory.territory_details = objInput.territory_details;
+                objTerritory.Territory_Name = objInput.Territory_Name;
+                objTerritory.Is_Thetrical = objInput.Is_Thetrical;
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Is_Active = "Y";
+
+                objTerritoryRepositories.Update(objInput);
+
+                _objRet.Response = new { id = objTerritory.Territory_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Territory objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            if (objInput.Territory_Code == null || objInput.Territory_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR241");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                Territory objTerritory = new Territory();
+                objTerritory = objTerritoryRepositories.Get(Convert.ToInt32(objInput.Territory_Code));
+
+                objTerritory.Last_Updated_Time = DateTime.Now;
+                objTerritory.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objTerritory.Is_Active = objInput.Is_Active.ToUpper();
+                objTerritory.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objTerritory.Inserted_On = DateTime.Now;
+                objTerritoryRepositories.Update(objTerritory);
+
+                _objRet.Response = new { id = objTerritory.Territory_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region Promoter Group
+    public class PromoterGroupService
+    {
+        private readonly PromoterGroupRepositories objPromoterGroupRepositories = new PromoterGroupRepositories();
+        public GenericReturn GetPromoterGroupList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "PromoterGroupName".ToLower())
+                {
+                    sort = "Promoter_Group_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            PromoterGroupReturn _PromoterGroupReturn = new PromoterGroupReturn();
+            List<PromoterGroup> promoterGroups = new List<PromoterGroup>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    promoterGroups = objPromoterGroupRepositories.GetAll().ToList();
+                 
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        promoterGroups = promoterGroups.Where(w => w.Promoter_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+
+                    GlobalTool.GetPaging(page, size, promoterGroups.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Promoter_Group_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            promoterGroups = promoterGroups.OrderBy(o => o.Promoter_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            promoterGroups = promoterGroups.OrderByDescending(o => o.Promoter_Group_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _PromoterGroupReturn.content = promoterGroups;
+            _PromoterGroupReturn.paging.page = page;
+            _PromoterGroupReturn.paging.size = size;
+            _PromoterGroupReturn.paging.total = promoterGroups.Count;
+            _objRet.Response = _PromoterGroupReturn;
+
+            return _objRet;
+
+        }
+
+        public GenericReturn GetPromoterGroupById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR244");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    PromoterGroup objReturn = new PromoterGroup();
+                    if (objReturn != null)
+                    {
+                        objReturn = objPromoterGroupRepositories.GetById(id);
+                        _objRet.Response = objReturn;
+                    }
+                    else
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR245");
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostPromoterGroup(PromoterGroup objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Promoter_Group_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR246");
+            }
+
+            var CheckDuplicate = objPromoterGroupRepositories.SearchFor(new { Promoter_Group_Name = objInput.Promoter_Group_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR247");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                PromoterGroup objPromoterGroup = new PromoterGroup();
+
+                objPromoterGroup.Promoter_Group_Name = objInput.Promoter_Group_Name;
+                objPromoterGroup.Is_Last_Level = objInput.Is_Last_Level;
+                objPromoterGroup.Hierarchy_Name = objInput.Hierarchy_Name;
+                objPromoterGroup.Parent_Group_Code = objInput.Parent_Group_Code;
+                objPromoterGroup.Display_Order = objInput.Display_Order;
+                objPromoterGroup.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterGroup.Inserted_On = DateTime.Now;
+                objPromoterGroup.Last_Updated_Time = DateTime.Now;
+                objPromoterGroup.Is_Active = "Y";
+
+                objPromoterGroupRepositories.Add(objPromoterGroup);
+
+                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+        public GenericReturn PutPromoterGroup(PromoterGroup objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Promoter_Group_Code == null || objInput.Promoter_Group_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR244");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Promoter_Group_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR246");
+            }
+
+            var CheckDuplicate = objPromoterGroupRepositories.SearchFor(new { Promoter_Group_Name = objInput.Promoter_Group_Name }).ToList();
+
+            if (CheckDuplicate.Count > 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR247");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                PromoterGroup objPromoterGroup = new PromoterGroup();
+
+                objPromoterGroup = objPromoterGroupRepositories.Get(objInput.Promoter_Group_Code.Value);
+                objPromoterGroup.Promoter_Group_Name = objInput.Promoter_Group_Name;
+                objPromoterGroup.Is_Last_Level = objInput.Is_Last_Level;
+                objPromoterGroup.Hierarchy_Name = objInput.Hierarchy_Name;
+                objPromoterGroup.Parent_Group_Code = objInput.Parent_Group_Code;
+                objPromoterGroup.Display_Order = objInput.Display_Order;
+                objPromoterGroup.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterGroup.Last_Updated_Time = DateTime.Now;
+                objPromoterGroup.Is_Active = "Y";
+
+                objPromoterGroupRepositories.Update(objPromoterGroup);
+
+                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(PromoterGroup objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Promoter_Group_Code == null || objInput.Promoter_Group_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            if (string.IsNullOrEmpty(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR211");
+            }
+
+            #endregion
+            if (_objRet.IsSuccess)
+            {
+                PromoterGroup objPromoterGroup = new PromoterGroup();
+                objPromoterGroup = objPromoterGroupRepositories.Get(Convert.ToInt32(objInput.Promoter_Group_Code));
+
+                objPromoterGroup.Last_Updated_Time = DateTime.Now;
+                objPromoterGroup.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objPromoterGroup.Is_Active = objInput.Is_Active.ToUpper();
+
+                objPromoterGroupRepositories.Update(objPromoterGroup);
+                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
+
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+        #endregion
+    }
+
+    #region -------- Party --------
+    public class PartyService
+    {
+        private readonly PartyRepositories objPartyRepositories = new PartyRepositories();
+        private readonly Vendor_RoleRepositories objVendor_RoleRepositories = new Vendor_RoleRepositories();
+        private readonly Vendor_CountryRepositories objVendor_CountryRepositories = new Vendor_CountryRepositories();
+        private readonly Vendor_ContactsRepositories objVendor_ContactsRepositories = new Vendor_ContactsRepositories();
+        public GenericReturn GetPartyList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            int noOfRecordSkip, noOfRecordTake;
+
+            #region Input Validations
+
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else if (sort.ToLower() == "PartyName".ToLower())
+                {
+                    sort = "Vendor_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        //Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        //Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            PartyReturn _partyReturn = new PartyReturn();
+            List<Party> parties = new List<Party>();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    parties = objPartyRepositories.SearchFor(new { Party_Type = "V" }).ToList();
+
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        parties = parties.Where(w => w.Vendor_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        parties = parties.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        parties = parties.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                    }
+
+                    GlobalTool.GetPaging(page, size, parties.Count, out noOfRecordSkip, out noOfRecordTake);
+
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            parties = parties.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            parties = parties.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            parties = parties.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            parties = parties.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Vendor_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            parties = parties.OrderBy(o => o.Vendor_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            parties = parties.OrderByDescending(o => o.Vendor_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _partyReturn.content = parties;
+            _partyReturn.paging.page = page;
+            _partyReturn.paging.size = size;
+            _partyReturn.paging.total = parties.Count;
+
+            _objRet.Response = _partyReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetById(int id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Party objParty = new Party();
+
+                    objParty = objPartyRepositories.Get(id);
+
+                    if (objParty == null)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR198");
+                    }
+
+                    _objRet.Response = objParty;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn Post(Party objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (string.IsNullOrWhiteSpace(objInput.Vendor_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR200");
+            }
+            else
+            {
+                var CheckDuplicate = objPartyRepositories.SearchFor(new { Vendor_Name = objInput.Vendor_Name }).ToList();
+
+                if (CheckDuplicate.Count > 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR205");
+                }
+            }
+
+            if (objInput.party_role.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
+                {
+                    if (objInput.party_role.ToList()[i].Role_Code == null || objInput.party_role.ToList()[i].Role_Code <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR201");
+                    }
+                }
+            }
+
+            if (objInput.party_country.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
+                {
+                    if (objInput.party_country.ToList()[i].Country_Code == null || objInput.party_country.ToList()[i].Country_Code <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR202");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(objInput.party_country.ToList()[i].Is_Theatrical))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR203");
+                    }
+                }
+            }
+
+            if (objInput.party_contact.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
+                {
+                    if (string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Contact_Name) &&
+                        string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Phone_No) &&
+                        string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Email) &&
+                            string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Department))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR204");
+                    }
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Is_Active = "Y";
+                objInput.Party_Type = "V";
+
+                #region Party_Type
+
+                List<Vendor_Role> lstPartyRole = new List<Vendor_Role>();
+                foreach (var item in objInput.party_role)
+                {
+                    Vendor_Role objPartyRole = new Vendor_Role();
+
+                    objPartyRole.Vendor_Code = item.Vendor_Code;
+                    objPartyRole.Role_Code = item.Role_Code;
+                    objPartyRole.Is_Active = "Y";
+                    lstPartyRole.Add(objPartyRole);
+                }
+                objInput.party_role = lstPartyRole;
+
+                #endregion
+
+                #region Party_Country
+
+                List<Vendor_Country> lstParty_Countries = new List<Vendor_Country>();
+                foreach (var item in objInput.party_country)
+                {
+                    Vendor_Country objParty_Country = new Vendor_Country();
+                    objParty_Country.Country_Code = item.Country_Code;
+                    objParty_Country.Is_Theatrical = item.Is_Theatrical;
+                    lstParty_Countries.Add(objParty_Country);
+                }
+                objInput.party_country = lstParty_Countries;
+
+                #endregion
+
+                #region Party_Contacts
+
+                List<Vendor_Contacts> lstParty_Contacts = new List<Vendor_Contacts>();
+                foreach (var item in objInput.party_contact)
+                {
+                    Vendor_Contacts objParty_Contact = new Vendor_Contacts();
+                    objParty_Contact.Contact_Name = item.Contact_Name;
+                    objParty_Contact.Phone_No = item.Phone_No;
+                    objParty_Contact.Email = item.Email;
+                    objParty_Contact.Department = item.Department;
+                    lstParty_Contacts.Add(objParty_Contact);
+                }
+                objInput.party_contact = lstParty_Contacts;
+
+                #endregion
+
+                objPartyRepositories.Add(objInput);
+
+                _objRet.id = objInput.Vendor_Code;
+            }
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn Put(Party objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR206");
+            }
+
+            if (string.IsNullOrWhiteSpace(objInput.Vendor_Name))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR200");
+            }
+            else
+            {
+                var CheckDuplicate = objPartyRepositories.SearchFor(new { Vendor_Name = objInput.Vendor_Name }).ToList();
+                if (CheckDuplicate.FirstOrDefault().Vendor_Code != objInput.Vendor_Code)
+                {
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR205");
+                    }
+                }
+            }
+
+            if (objInput.party_role.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
+                {
+                    if (objInput.party_role.ToList()[i].Role_Code == null || objInput.party_role.ToList()[i].Role_Code <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR201");
+                    }
+                }
+            }
+
+            if (objInput.party_country.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
+                {
+                    if (objInput.party_country.ToList()[i].Country_Code == null || objInput.party_country.ToList()[i].Country_Code <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR202");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(objInput.party_country.ToList()[i].Is_Theatrical))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR203");
+                    }
+                }
+            }
+
+            if (objInput.party_contact.Count() > 0)
+            {
+                for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
+                {
+                    if (string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Contact_Name) &&
+                        string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Phone_No) &&
+                        string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Email) &&
+                            string.IsNullOrWhiteSpace(objInput.party_contact.ToList()[i].Department))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR204");
+                    }
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                var objParty = objPartyRepositories.Get(objInput.Vendor_Code.Value);
+
+                if (objParty != null)
+                {
+                    objInput.Inserted_On = objParty.Inserted_On;
+                    objInput.Inserted_By = objParty.Inserted_By;
+                    objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objInput.Last_Updated_Time = DateTime.Now;
+                    objInput.Is_Active = objParty.Is_Active;
+                    objInput.Party_Type = objParty.Party_Type;
+
+                    #region Party_Type
+
+                    objParty.party_role.ToList().ForEach(i => i.EntityState = State.Deleted);
+
+                    foreach (var item in objInput.party_role)
+                    {
+                        Vendor_Role objT = (Vendor_Role)objParty.party_role.Where(t => t.Role_Code == item.Role_Code).Select(i => i).FirstOrDefault();
+
+                        if (objT == null)
+                            objT = new Vendor_Role();
+                        if (objT.Vendor_Role_Code > 0)
+                            objT.EntityState = State.Unchanged;
+                        else
+                        {
+                            objT.EntityState = State.Added;
+                            objT.Vendor_Code = objInput.Vendor_Code;
+                            objT.Role_Code = item.Role_Code;
+                            objT.Is_Active = "Y";
+                            objParty.party_role.Add(objT);
+                        }
+                    }
+
+                    foreach (var item in objParty.party_role.ToList().Where(x => x.EntityState == State.Deleted))
+                    {
+                        objVendor_RoleRepositories.Delete(item);
+                    }
+
+                    var objVendor_Role = objParty.party_role.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                    objVendor_Role.ForEach(i => objParty.party_role.Remove(i));
+
+                    objInput.party_role = objParty.party_role;
+
+                    #endregion
+
+                    #region Party_Country
+
+                    objParty.party_country.ToList().ForEach(i => i.EntityState = State.Deleted);
+
+                    foreach (var item in objInput.party_country)
+                    {
+                        Vendor_Country objT = (Vendor_Country)objParty.party_country.Where(t => t.Country_Code == item.Country_Code).Select(i => i).FirstOrDefault();
+
+                        if (objT == null)
+                            objT = new Vendor_Country();
+                        if (objT.Vendor_Country_Code > 0)
+                            objT.EntityState = State.Unchanged;
+                        else
+                        {
+                            objT.EntityState = State.Added;
+                            objT.Vendor_Code = objInput.Vendor_Code;
+                            objT.Country_Code = item.Country_Code;
+                            objT.Is_Theatrical = item.Is_Theatrical;
+                            objParty.party_country.Add(objT);
+                        }
+                    }
+
+                    foreach (var item in objParty.party_country.ToList().Where(x => x.EntityState == State.Deleted))
+                    {
+                        objVendor_CountryRepositories.Delete(item);
+                    }
+
+                    var objPartyCountry = objParty.party_country.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                    objPartyCountry.ForEach(i => objParty.party_country.Remove(i));
+
+                    objInput.party_country = objParty.party_country;
+
+                    #endregion
+
+                    #region Party_Contacts
+
+                    objParty.party_contact.ToList().ForEach(i => i.EntityState = State.Deleted);
+
+                    foreach (var item in objInput.party_contact)
+                    {
+                        Vendor_Contacts objT = (Vendor_Contacts)objParty.party_contact.Where(t => t.Vendor_Contacts_Code == item.Vendor_Contacts_Code).Select(i => i).FirstOrDefault();
+
+                        if (objT == null)
+                            objT = new Vendor_Contacts();
+                        if (objT.Vendor_Contacts_Code > 0)
+                        {
+                            objT.EntityState = State.Unchanged;
+                            objT.Vendor_Code = item.Vendor_Code;
+                            objT.Contact_Name = item.Contact_Name;
+                            objT.Phone_No = item.Phone_No;
+                            objT.Email = item.Email;
+                            objT.Department = item.Department;
+                        }
+                        else
+                        {
+                            objT.EntityState = State.Added;
+                            objT.Vendor_Code = objInput.Vendor_Code;
+                            objT.Contact_Name = item.Contact_Name;
+                            objT.Phone_No = item.Phone_No;
+                            objT.Email = item.Email;
+                            objT.Department = item.Department;
+                            objParty.party_contact.Add(objT);
+                        }
+                    }
+
+                    foreach (var item in objParty.party_contact.ToList().Where(x => x.EntityState == State.Deleted))
+                    {
+                        objVendor_ContactsRepositories.Delete(item);
+                    }
+
+                    var objPartyContact = objParty.party_contact.ToList().Where(x => x.EntityState == State.Deleted).ToList();
+                    objPartyContact.ForEach(i => objParty.party_contact.Remove(i));
+
+                    objInput.party_contact = objParty.party_contact;
+
+                    #endregion
+
+                    objPartyRepositories.Update(objInput);
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR198");
+                }
+                _objRet.id = objInput.Vendor_Code;
+            }
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Party objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+
+            if (objInput.Vendor_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR206");
+            }
+
+            if (string.IsNullOrWhiteSpace(objInput.Is_Active))
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Party objParty = new Party();
+
+                objParty = objPartyRepositories.Get(objInput.Vendor_Code.Value);
+
+                if (objParty != null)
+                {
+                    objParty.Last_Updated_Time = DateTime.Now;
+                    objParty.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objParty.Is_Active = objInput.Is_Active.ToUpper();
+
+                    objPartyRepositories.Update(objParty);
+                    _objRet.id = objParty.Vendor_Code;
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR198");
+                }
+            }
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+    }
     #endregion
 }

@@ -51,7 +51,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [System.Web.Http.Route("api/promoterRemark")]
+        [System.Web.Http.Route("api/promoterremark")]
         public async Task<HttpResponseMessage> GetPromoterRemarkList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
@@ -63,19 +63,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -95,7 +104,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/promoterRemark/{id}")]
+        [Route("api/promoterremark/{id}")]
         public async Task<HttpResponseMessage> GetPromoterRemarkById(int? id)
         {
             var response = new HttpResponseMessage();
@@ -107,19 +116,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -139,7 +157,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/promoterRemark")]
+        [Route("api/promoterremark")]
         public async Task<HttpResponseMessage> PostPromoterRemark(PromoterRemark Input)
         {
             var response = new HttpResponseMessage();
@@ -152,19 +170,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -184,7 +211,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterRemark")]
+        [Route("api/promoterremark")]
         public async Task<HttpResponseMessage> PutPromoterRemark(PromoterRemark Input)
         {
             var response = new HttpResponseMessage();
@@ -197,19 +224,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -229,7 +265,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/promoterRemark/ChangeActiveStatus")]
+        [Route("api/promoterremark/ChangeActiveStatus")]
         public async Task<HttpResponseMessage> ChangeActiveStatus(PromoterRemark Input)
         {
             var response = new HttpResponseMessage();
@@ -242,19 +278,28 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
