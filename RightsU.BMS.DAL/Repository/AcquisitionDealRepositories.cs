@@ -117,7 +117,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.Titles.ToList().ForEach(j =>
                     {
-                        if (j.title == null)
+                        if (j.title == null && (j.Title_Code != null || j.Title_Code > 0))
                         {
                             j.title = new TitleRepositories().GetById(j.Title_Code);
                         }
@@ -128,7 +128,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.Platform.ToList().ForEach(j =>
                     {
-                        if (j.platform == null)
+                        if (j.platform == null && (j.Platform_Code != null || j.Platform_Code > 0))
                         {
                             j.platform = new PlatformRepositories().Get(j.Platform_Code.Value);
                         }
@@ -139,12 +139,12 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.Region.ToList().ForEach(j =>
                     {
-                        if (j.Territory == null && j.Territory_Code != null)
+                        if (j.Territory == null && (j.Territory_Code != null || j.Territory_Code > 0))
                         {
                             j.Territory = new TerritoryRepositories().Get(j.Territory_Code.Value);
                         }
 
-                        if (j.Country == null && j.Country_Code != null)
+                        if (j.Country == null && (j.Country_Code != null || j.Country_Code > 0))
                         {
                             j.Country = new CountryRepositories().Get(j.Country_Code.Value);
                         }
@@ -155,7 +155,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.Subtitling.ToList().ForEach(j =>
                     {
-                        if (j.language == null)
+                        if (j.language == null && (j.Language_Code != null || j.Language_Code > 0))
                         {
                             j.language = new LanguageRepositories().Get(j.Language_Code.Value);
                         }
@@ -166,7 +166,7 @@ namespace RightsU.BMS.DAL.Repository
                 {
                     i.Dubbing.ToList().ForEach(j =>
                     {
-                        if (j.language == null)
+                        if (j.language == null && (j.Language_Code != null || j.Language_Code > 0))
                         {
                             j.language = new LanguageRepositories().Get(j.Language_Code.Value);
                         }
