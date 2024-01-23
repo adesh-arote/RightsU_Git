@@ -1851,7 +1851,7 @@ namespace RightsU.BMS.DAL
     #endregion
 
     #region -------- Channel -----------
-    public class ChannelDetailsRepositories : MainRepository<Channel>
+    public class ChannelRepositories : MainRepository<Channel>
     {
         public Channel Get(int Id)
         {
