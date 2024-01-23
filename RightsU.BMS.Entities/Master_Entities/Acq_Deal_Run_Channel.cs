@@ -25,13 +25,14 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "deal_run_id")]
         public Nullable<int> Acq_Deal_Run_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Channel))]
+        //[ForeignKeyReference(typeof(Channel))]
         [JsonProperty(PropertyName = "channel_id")]
         public Nullable<int> Channel_Code { get; set; }
 
         [SimpleSaveIgnore]
-        [ManyToOne]
-        [Column("Channel_Code")]
+        [SimpleLoadIgnore]
+        //[ManyToOne]
+        //[Column("Channel_Code")]
         public virtual Channel Channel { get; set; }
 
         [JsonProperty(PropertyName = "define_runs")]

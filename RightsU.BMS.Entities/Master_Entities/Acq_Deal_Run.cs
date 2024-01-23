@@ -31,7 +31,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [ForeignKeyReference(typeof(Acq_Deal))]
         [JsonProperty(PropertyName = "deal_id")]
-        public Nullable<int> Acq_Deal_Code { get; set; }
+        public int Acq_Deal_Code { get; set; }
 
         [JsonProperty(PropertyName = "run_type")]
         public string Run_Type { get; set; }
@@ -39,40 +39,46 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "define_runs")]
         public Nullable<int> No_Of_Runs { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "scheduled_define_runs")]
         public Nullable<int> No_Of_Runs_Sched { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "define_asruns")]
         public Nullable<int> No_Of_AsRuns { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "is_yearwise_definition")]
         public string Is_Yearwise_Definition { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "is_rule_right")]
         public string Is_Rule_Right { get; set; }
 
         [JsonProperty(PropertyName = "syndication_runs")]
         public Nullable<int> Syndication_Runs { get; set; }
 
-        //[ForeignKeyReference(typeof(Right_Rule))]
+        [ForeignKeyReference(typeof(RightRule))]
         [JsonProperty(PropertyName = "right_rule_id")]
         public Nullable<int> Right_Rule_Code { get; set; }
 
-        [JsonProperty(PropertyName = "no_of_days_hrs")]
-        public Nullable<int> No_Of_Days_Hrs { get; set; }
+        [ManyToOne]
+        [SimpleSaveIgnore]
+        [Column("Right_Rule_Code")]
+        public virtual RightRule right_rule { get; set; }
 
-        //[ManyToOne]
-        //[SimpleSaveIgnore]
-        //[Column("Right_Rule_Code")]
-        //public virtual Right_Rule right_rule { get; set; }
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "no_of_days_hrs")]
+        public Nullable<int> No_Of_Days_Hrs { get; set; } 
 
         [JsonProperty(PropertyName = "repeat_duration")]
         public string Repeat_Within_Days_Hrs { get; set; }
 
+        [JsonIgnore]
         [JsonProperty(PropertyName = "channel_type")]
         public string Channel_Type { get; set; }
 
-
+        [JsonIgnore]
         [JsonProperty(PropertyName = "is_channel_definition_rights")]
         public string Is_Channel_Definition_Rights { get; set; }
 
@@ -105,26 +111,52 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "all_channel")]
         public string All_Channel { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "prime_start_time")]
-        public int Prime_Start_Time { get; set; }
+        public int prime_start_time { get; set; }
 
+        [JsonIgnore]
+        public Nullable<System.TimeSpan> Prime_Start_Time { get; set; }
+
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "prime_end_time")]
-        public int Prime_End_Time { get; set; }
+        public int prime_end_time { get; set; }
+
+        [JsonIgnore]
+        public Nullable<System.TimeSpan> Prime_End_Time { get; set; }
 
         [JsonProperty(PropertyName = "prime_run")]
         public int Prime_Run { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "off_prime_start_time")]
-        public int Off_Prime_Start_Time { get; set; }
+        public int off_prime_start_time { get; set; }
 
+        [JsonIgnore]
+        public Nullable<System.TimeSpan> Off_Prime_Start_Time { get; set; }
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "off_prime_end_time")]
-        public int Off_Prime_End_Time { get; set; }
+        public int off_prime_end_time { get; set; }
+
+        [JsonIgnore]
+        public Nullable<System.TimeSpan> Off_Prime_End_Time { get; set; }
 
         [JsonProperty(PropertyName = "off_prime_run")]
         public int Off_Prime_Run { get; set; }
 
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "time_lag")]
-        public int Time_Lag_Simulcast { get; set; }
+        public int time_lag { get; set; }
+
+        [JsonIgnore]
+        public Nullable<System.TimeSpan> Time_Lag_Simulcast { get; set; }
 
         [JsonIgnore]
         [JsonProperty(PropertyName = "prime_time_provisional_run_count")]
@@ -151,11 +183,21 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Off_Prime_Time_Balance_Count { get; set; }
 
         [JsonIgnore]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "start_date")]
+        public string start_date { get; set; }
+
+        [JsonIgnore]
         public Nullable<System.DateTime> Start_Date { get; set; }
 
         [JsonIgnore]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "end_date")]
+        public string end_date { get; set; }
+
+        [JsonIgnore]
         public Nullable<System.DateTime> End_Date { get; set; }
 
         [JsonIgnore]

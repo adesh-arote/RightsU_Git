@@ -27,7 +27,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [ForeignKeyReference(typeof(Title))]
         [JsonProperty(PropertyName = "title_id")]
-        public Nullable<int> Title_Code { get; set; }
+        public int Title_Code { get; set; }
 
         [JsonProperty(PropertyName = "episode_from")]
         public Nullable<int> Episode_From { get; set; }
@@ -35,9 +35,5 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "episode_to")]
         public Nullable<int> Episode_To { get; set; }
 
-        //[ManyToOne]
-        //[SimpleSaveIgnore]
-        //[Column("Title_Code")]
-        //public virtual Title Title { get; set; }
     }
 }
