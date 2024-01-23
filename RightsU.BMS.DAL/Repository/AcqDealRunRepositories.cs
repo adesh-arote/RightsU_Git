@@ -12,18 +12,29 @@ namespace RightsU.BMS.DAL.Repository
         public Acq_Deal_Run Get(Int32? Id)
         {
             var obj = new { Acq_Deal_Run_Code = Id.Value };
-            var entity = base.GetById < Acq_Deal_Run, Acq_Deal_Run_Title, Acq_Deal_Run_Channel, Acq_Deal_Run_Yearwise_Run, Acq_Deal_Run_Repeat_On_Day, Channel_Category, Channel>(obj);
+            var entity = base.GetById < Acq_Deal_Run, Acq_Deal_Run_Title, Acq_Deal_Run_Channel, Acq_Deal_Run_Yearwise_Run, Acq_Deal_Run_Repeat_On_Day, Channel_Category>(obj);
 
             if (entity != null)
             {
-                //if (entity.right_rule == null)
-                //{
-                //    entity.right_rule = new RightRuleRepositories().GetById(entity.Right_Rule_Code.Value);
-                //}
+                if (entity.right_rule == null && (entity.Right_Rule_Code != null || entity.Right_Rule_Code > 0))
+                {
+                    entity.right_rule = new RightRuleRepositories().GetById(entity.Right_Rule_Code.Value);
+                }
                 
-                if (entity.primary_channel == null)
+                if (entity.primary_channel == null && (entity.Primary_Channel_Code != null || entity.Primary_Channel_Code > 0))
                 {
                     entity.primary_channel = new ChannelRepositories().Get(entity.Primary_Channel_Code.Value);
+                }
+
+                if (entity.Channels.Count() > 0)
+                {
+                    entity.Channels.ToList().ForEach(i =>
+                    {
+                        if (i.Channel == null)
+                        {
+                            i.Channel = new ChannelRepositories().Get(i.Channel_Code.Value);
+                        }
+                    });
                 }
             }
 
@@ -53,7 +64,32 @@ namespace RightsU.BMS.DAL.Repository
 
         public IEnumerable<Acq_Deal_Run> SearchFor(object param)
         {
-            return base.SearchForEntity<Acq_Deal_Run>(param);
+            var entity = base.SearchForEntity<Acq_Deal_Run, Acq_Deal_Run_Title, Acq_Deal_Run_Channel, Acq_Deal_Run_Yearwise_Run, Acq_Deal_Run_Repeat_On_Day, Channel_Category>(param);
+            entity.ToList().ForEach(i =>
+            {
+                if (i.right_rule == null && (i.Right_Rule_Code != null || i.Right_Rule_Code > 0))
+                {
+                    i.right_rule = new RightRuleRepositories().GetById(i.Right_Rule_Code.Value);
+                }
+
+                if (i.primary_channel == null && (i.Primary_Channel_Code != null || i.Primary_Channel_Code > 0))
+                {
+                    i.primary_channel = new ChannelRepositories().Get(i.Primary_Channel_Code.Value);
+                }
+
+                if (i.Channels.Count() > 0)
+                {
+                    i.Channels.ToList().ForEach(j =>
+                    {
+                        if (j.Channel == null)
+                        {
+                            j.Channel = new ChannelRepositories().Get(j.Channel_Code.Value);
+                        }
+                    });
+                }
+            });
+
+            return entity;
         }
 
         public IEnumerable<Acq_Deal_Run> GetDataWithSQLStmt(string strSQL)

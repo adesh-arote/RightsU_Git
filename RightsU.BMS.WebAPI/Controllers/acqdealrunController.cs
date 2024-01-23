@@ -24,7 +24,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         private readonly AcqDealRunServices objAcqDealRunServices = new AcqDealRunServices();
 
         /// <summary>
-        /// Acquisition Deal General by id
+        /// Acquisition Deal Run by id
         /// </summary>
         /// <remarks>Retrieves Acuisition Deal Run by Id</remarks>
         /// <param name="id">get specific deal run data using id.</param>
