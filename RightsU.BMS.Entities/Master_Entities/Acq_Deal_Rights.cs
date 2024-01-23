@@ -43,7 +43,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "title_language_right")]
         public string Is_Title_Language_Right { get; set; }
 
-        [JsonProperty(PropertyName = "is_sub_license")]
+        [JsonProperty(PropertyName = "sub_license_flag")]
         public string Is_Sub_License { get; set; }
 
         [JsonProperty(PropertyName = "sub_license_id")]
@@ -64,11 +64,23 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "tentative")]
         public string Is_Tentative { get; set; }
 
-        [JsonProperty(PropertyName = "right_start_date")]
+        //[JsonProperty(PropertyName = "right_start_date")]
+        [JsonIgnore]
         public Nullable<System.DateTime> Right_Start_Date { get; set; }
 
-        [JsonProperty(PropertyName = "right_end_date")]
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "right_start_date")]
+        public string right_start_date { get; set; }
+
+        //[JsonProperty(PropertyName = "right_end_date")]
+        [JsonIgnore]
         public Nullable<System.DateTime> Right_End_Date { get; set; }
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "right_end_date")]
+        public string right_end_date { get; set; }
 
         [JsonProperty(PropertyName = "milestone_type_id")]
         [ForeignKeyReference(typeof(Milestone_Type))]
@@ -88,8 +100,14 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "rofr_id")]
         public string Is_ROFR { get; set; }
 
-        [JsonProperty(PropertyName = "rofr_date")]
+        //[JsonProperty(PropertyName = "rofr_date")]
+        [JsonIgnore]
         public Nullable<System.DateTime> ROFR_Date { get; set; }
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "rofr_date")]
+        public string rofr_date { get; set; }
 
         [JsonProperty(PropertyName = "restriction_remarks")]
         public string Restriction_Remarks { get; set; }
@@ -139,8 +157,50 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }
 
+        //Pending columns
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "term")]
+        public string Term { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "effective_start_date")]
+        public Nullable<System.DateTime> Effective_Start_Date { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "actual_right_start_date")]
+        public Nullable<System.DateTime> Actual_Right_Start_Date { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "actual_right_end_date")]
+        public Nullable<System.DateTime> Actual_Right_End_Date { get; set; }
+
         [JsonIgnore]
         [JsonProperty(PropertyName = "right_status")]
         public string Right_Status { get; set; }
+
+        //public string Is_ROFR { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "is_Verified")]
+        public string Is_Verified { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "original_right_type")]
+        public string Original_Right_Type { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "promoter_flag")]
+        public string Promoter_Flag { get; set; }
+
+        //[JsonIgnore]
+        //[JsonProperty(PropertyName = "actual_right_end_date")]
+        //public string Is_Under_Production { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "buyback_syn_rights_code")]
+        public string Buyback_Syn_Rights_Code { get; set; }
+
+
     }
 }
