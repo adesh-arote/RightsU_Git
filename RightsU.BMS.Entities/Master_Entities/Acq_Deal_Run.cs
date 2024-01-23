@@ -31,7 +31,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [ForeignKeyReference(typeof(Acq_Deal))]
         [JsonProperty(PropertyName = "deal_id")]
-        public int Acq_Deal_Code { get; set; }
+        public Nullable<int> Acq_Deal_Code { get; set; }
 
         [JsonProperty(PropertyName = "run_type")]
         public string Run_Type { get; set; }
