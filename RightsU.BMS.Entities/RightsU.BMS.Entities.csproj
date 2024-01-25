@@ -109,6 +109,7 @@
     <Compile Include="LogClasses\Error.cs" />
     <Compile Include="Master_Entities\Acq_Deal.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_List.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Movie.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Dubbing.cs" />
@@ -155,7 +156,7 @@
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
-	<Compile Include="Master_Entities\Party.cs" />
+    <Compile Include="Master_Entities\Party.cs" />
     <Compile Include="Master_Entities\Party_Category.cs" />
     <Compile Include="Master_Entities\Party_Group.cs" />
     <Compile Include="Master_Entities\Platform.cs" />
@@ -189,7 +190,7 @@
     <Compile Include="Master_Entities\UTOLogInput.cs" />
     <Compile Include="Master_Entities\Vendor.cs" />
     <Compile Include="Master_Entities\Vendor_Contacts.cs" />
-	<Compile Include="Master_Entities\Vendor_Country.cs" />
+    <Compile Include="Master_Entities\Vendor_Country.cs" />
     <Compile Include="Master_Entities\Vendor_Role.cs" />
     <Compile Include="Master_Entities\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -199,7 +200,7 @@
     <Compile Include="ReturnClasses\Channel_CategoryReturn.cs" />
     <Compile Include="ReturnClasses\CountryReturn.cs" />
     <Compile Include="ReturnClasses\CurrencyReturn.cs" />
-    <Compile Include="ReturnClasses\DealGeneralReturm.cs" />
+    <Compile Include="ReturnClasses\DealReturn.cs" />
     <Compile Include="ReturnClasses\DealTagReturn.cs" />
     <Compile Include="ReturnClasses\Deal_TypeReturn.cs" />
     <Compile Include="ReturnClasses\EntityReturn.cs" />
@@ -218,7 +219,7 @@
     <Compile Include="ReturnClasses\TalentReturn.cs" />
     <Compile Include="ReturnClasses\TerritoryReturn.cs" />
     <Compile Include="ReturnClasses\TitleReturn.cs" />
-	<Compile Include="ReturnClasses\PartyReturn.cs" />
+    <Compile Include="ReturnClasses\PartyReturn.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

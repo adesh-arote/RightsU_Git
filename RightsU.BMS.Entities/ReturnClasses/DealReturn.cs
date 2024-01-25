@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.ReturnClasses
 {
-    public class DealGeneralReturm : ListReturn
+    public class DealReturn : ListReturn
     {
-        public DealGeneralReturm()
+        public DealReturn()
         {
             content = new List<Title>();
             paging = new paging();

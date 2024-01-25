@@ -13,7 +13,7 @@ namespace RightsU.BMS.BLL.Miscellaneous
     {
         public static double DateToLinux(DateTime dateTimeToConvert)
         {
-            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
             DateTime dtNow = dateTimeToConvert;
             TimeSpan result = dtNow.Subtract(dt);
@@ -23,7 +23,7 @@ namespace RightsU.BMS.BLL.Miscellaneous
 
         public static DateTime LinuxToDate(double LinuxTimestamp)
         {
-            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Local);
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 
             dt = dt.AddSeconds(LinuxTimestamp).ToLocalTime();
             return dt;

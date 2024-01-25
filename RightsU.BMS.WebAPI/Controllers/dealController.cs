@@ -23,6 +23,12 @@ namespace RightsU.BMS.WebAPI.Controllers
     {
         private readonly DealServices objDealServices = new DealServices();
 
+        public enum SortColumn
+        {
+            CreatedDate = 1,
+            UpdatedDate = 2
+        }
+
         /// <summary>
         /// Deal General List 
         /// </summary>
@@ -35,7 +41,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(TitleReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(DealReturn))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
@@ -43,13 +49,13 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
         [Route("api/deal")]
-        public async Task<HttpResponseMessage> GetDealGeneralList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        public async Task<HttpResponseMessage> GetDealList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-            GenericReturn objReturn = new GenericReturn();
-            //GenericReturn objReturn = objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+
+            GenericReturn objReturn = objDealServices.GetDealList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -300,7 +306,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// Deal Complete Status
         /// </summary>
         /// <remarks>Check Deal Complete Status</remarks>
-        /// <param name="Input">Input data object for Create/Save New Deal General</param>
+        /// <param name="Input">Input data object for get deal completion status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -317,6 +323,59 @@ namespace RightsU.BMS.WebAPI.Controllers
             startTime = DateTime.Now;
 
             GenericReturn objReturn = objDealServices.DealCompeteStatus(Input);
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Deal Rollback
+        /// </summary>
+        /// <remarks>Used for rollback the changes on deal since last approval</remarks>
+        /// <param name="Input">Input data object for rollback deal</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpPost]
+        [Route("api/deal/rollback")]
+        public async Task<HttpResponseMessage> rollback(Acq_Deal Input)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = objDealServices.rollback(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

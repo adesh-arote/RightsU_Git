@@ -1,4 +1,6 @@
-﻿using RightsU.BMS.Entities.Master_Entities;
+﻿using Dapper;
+using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,6 +210,44 @@ namespace RightsU.BMS.DAL.Repository
         public IEnumerable<Acq_Deal> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<Acq_Deal>(strSQL);
+        }
+
+        public DealReturn GetDeal_List(string StrSearch, Int32 page, string OrderByCndition, Int32 size, Int32 User_Code)
+        {
+            DealReturn ObjDealReturn = new DealReturn();
+
+            var param = new DynamicParameters();
+            param.Add("@StrSearch", StrSearch);
+            param.Add("@PageNo", page);
+            param.Add("@OrderByCndition", OrderByCndition);
+            param.Add("@IsPaging", "Y");
+            param.Add("@PageSize", size);
+            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
+            param.Add("@User_Code", User_Code);
+            //param.Add("@ExactMatch", Date_GT);
+
+            var entity = base.ExecuteSQLProcedure<Acq_Deal_List>("USPAPI_List_Acq", param).ToList();
+
+            ObjDealReturn.content = entity;
+            ObjDealReturn.paging.total = param.Get<Int64>("@RecordCount");
+            return ObjDealReturn;
+        }
+
+        public string validate_Rollback(Int32 Acq_Deal_Code, string type, Int32 User_Code)
+        {
+            string strMessage = string.Empty;
+
+            var param = new DynamicParameters();
+            param.Add("@Deal_Code", Acq_Deal_Code);
+            param.Add("@Type", type);
+            param.Add("@User_Code", User_Code);
+
+            var entity = base.ExecuteSQLProcedure<string>("USP_Validate_Rollback", param).ToList();
+            if (entity != null)
+            {
+                strMessage = entity.FirstOrDefault();
+            }
+            return strMessage;
         }
     }
 

@@ -227,7 +227,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     channels = objChannelDetailsRepositories.GetAll().ToList();
-                 
+
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         channels = channels.Where(w => w.Channel_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -4115,7 +4115,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     rightRules = objRightRuleRepositories.GetAll().ToList();
-                  
+
                     if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         rightRules = rightRules.Where(w => w.Right_Rule_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -4558,7 +4558,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     languageGroups = objLanguageGroupRepositories.GetAll().ToList();
-                 
+
                     if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         languageGroups = languageGroups.Where(w => w.Language_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -5013,7 +5013,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     currencies = objCurrencyRepositories.GetAll().ToList();
-                  
+
                     if (!string.IsNullOrWhiteSpace(search_value))
                     {
                         currencies = currencies.Where(w => w.Currency_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -5475,7 +5475,7 @@ namespace RightsU.BMS.BLL.Services
                         }
                     });
 
-                   
+
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         countries = countries.Where(w => w.Country_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -5919,7 +5919,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     territories = objTerritoryRepositories.GetAll().ToList();
-                   
+
 
                     if (!string.IsNullOrEmpty(search_value))
                     {
@@ -6361,7 +6361,7 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     promoterGroups = objPromoterGroupRepositories.GetAll().ToList();
-                 
+
                     if (!string.IsNullOrEmpty(search_value))
                     {
                         promoterGroups = promoterGroups.Where(w => w.Promoter_Group_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
@@ -6719,7 +6719,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                         //Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
@@ -6732,7 +6732,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                         //Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
                     }
                     catch (Exception ex)
@@ -6772,13 +6772,15 @@ namespace RightsU.BMS.BLL.Services
 
                     if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        parties = parties.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                        parties = parties.Where(w => (w.Last_Updated_Time.Value == null ? (w.Inserted_On.Value >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        parties = parties.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                        parties = parties.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On.Value <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
+
+                    _partyReturn.paging.total = parties.Count;
 
                     GlobalTool.GetPaging(page, size, parties.Count, out noOfRecordSkip, out noOfRecordTake);
 
@@ -6837,7 +6839,6 @@ namespace RightsU.BMS.BLL.Services
             _partyReturn.content = parties;
             _partyReturn.paging.page = page;
             _partyReturn.paging.size = size;
-            _partyReturn.paging.total = parties.Count;
 
             _objRet.Response = _partyReturn;
 
@@ -6918,7 +6919,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_role.Count() > 0)
+            if (objInput.party_role != null && objInput.party_role.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
                 {
@@ -6929,7 +6930,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_country.Count() > 0)
+            if (objInput.party_country != null && objInput.party_country.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
                 {
@@ -6945,7 +6946,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_contact.Count() > 0)
+            if (objInput.party_contact != null && objInput.party_contact.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
                 {
@@ -7055,16 +7056,16 @@ namespace RightsU.BMS.BLL.Services
             else
             {
                 var CheckDuplicate = objPartyRepositories.SearchFor(new { Vendor_Name = objInput.Vendor_Name }).ToList();
-                if (CheckDuplicate.FirstOrDefault().Vendor_Code != objInput.Vendor_Code)
+                if (CheckDuplicate.Count > 0)
                 {
-                    if (CheckDuplicate.Count > 0)
+                    if (CheckDuplicate.FirstOrDefault().Vendor_Code != objInput.Vendor_Code)
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR205");
                     }
                 }
             }
 
-            if (objInput.party_role.Count() > 0)
+            if (objInput.party_role != null && objInput.party_role.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
                 {
@@ -7075,7 +7076,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_country.Count() > 0)
+            if (objInput.party_country != null && objInput.party_country.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
                 {
@@ -7091,7 +7092,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_contact.Count() > 0)
+            if (objInput.party_contact != null && objInput.party_contact.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
                 {
