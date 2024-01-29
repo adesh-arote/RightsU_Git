@@ -365,3 +365,4 @@ MigrationBackup/
 /RightsU_Plus/UploadFolder
 *.dll
 *.xml
+/RightsU.BMS.WebAPI/ErrorLog

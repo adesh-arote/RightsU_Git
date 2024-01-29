@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.FrameworkClasses
@@ -22,14 +21,25 @@ namespace RightsU.BMS.Entities.FrameworkClasses
 
     public class GenericReturn
     {
-        [JsonIgnore]
+        public GenericReturn()
+        {
+            Errors = new List<string>();
+        }
+
+        public int? id { get; set; }
+
+        [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "completion_status")]
         public bool IsSuccess { get; set; }
+        [JsonProperty(PropertyName = "errors")]
+        public List<string> Errors { get; set; }
         [JsonIgnore]
         public double TimeTaken { get; set; }
         [JsonIgnore]
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode StatusCode { get; set; }                
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "response")]
         public object Response { get; set; }
     }
 

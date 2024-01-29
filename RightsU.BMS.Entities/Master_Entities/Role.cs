@@ -13,13 +13,15 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Role
     {
         [PrimaryKey]
-        [Column("Role_Code")]
-        public int? role_id { get; set; }
+        //[Column("Role_Code")]
+        [JsonProperty(PropertyName = "role_id")]
+        public int? Role_Code { get; set; }
 
-        [Column("Role_Name")]
-        public string role_name { get; set; }
+        //[Column("Role_Name")]
+        [JsonProperty(PropertyName = "role_name")]
+        public string Role_Name { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty(PropertyName = "role_type")]
         public string Role_Type { get; set; }
         [JsonIgnore]
         public string Is_Rate_Card { get; set; }
@@ -29,8 +31,23 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Lock_Time { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
-        [JsonIgnore]       
+      
         [ForeignKeyReference(typeof(Deal_Type))]
+        [JsonProperty(PropertyName = "deal_type_id")]
         public Nullable<int> Deal_Type_Code { get; set; }
+
+        [ForeignKeyReference(typeof(Deal_Type))]
+        [ManyToOne]
+        [Column("Deal_Type_Code")]
+        [SimpleSaveIgnore]
+        public virtual Deal_Type deal_type { get; set; }
+
+        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]
+        [JsonIgnore]
+        public string AssetType { get; set; }
+        //[JsonProperty(PropertyName = "deal_type")]
+        //public string Deal_Type { get; set; }
+
     }
 }

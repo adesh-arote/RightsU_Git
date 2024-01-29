@@ -1754,6 +1754,14 @@
     <Build Include="dbo\Stored Procedures\USPAPI_Deal_Type.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Channel_Category.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Platform.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_BusinessUnit_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Deal_Tag.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Entity_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Language_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_MilestoneType_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_ROFR_List.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Sub_License.sql" />
+    <Build Include="dbo\Stored Procedures\USPAPI_Promoter_Remark.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

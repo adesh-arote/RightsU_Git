@@ -14,27 +14,33 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Title_Talent
     {
         [PrimaryKey]
-        [Column("Title_Talent_Code")]
-        public int? title_talent_id { get; set; }
+        //[Column("Title_Talent_Code")]
+        [JsonProperty(PropertyName = "title_talent_id")]
+        public int? Title_Talent_Code { get; set; }
 
         [ForeignKeyReference(typeof(Title))]
-        [Column("Title_Code")]
-        public Nullable<int> title_id { get; set; }
+        //[Column("Title_Code")]
+        [JsonProperty(PropertyName = "title_id")]
+        public Nullable<int> Title_Code { get; set; }
 
         [ForeignKeyReference(typeof(Talent))]
-        [Column("Talent_Code")]
-        public Nullable<int> talent_id { get; set; }
+        //[Column("Talent_Code")]
+        [JsonProperty(PropertyName = "talent_id")]
+        public Nullable<int> Talent_Code { get; set; }
 
         [ForeignKeyReference(typeof(Role))]
-        [Column("Role_Code")]
-        public Nullable<int> role_id { get; set; }
+        //[Column("Role_Code")]
+        [JsonProperty(PropertyName = "role_id")]
+        public Nullable<int> Role_Code { get; set; }
 
-        [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        [SimpleSaveIgnore]        
+        [Column("Talent_Code")]
+        [ManyToOne]
         public virtual Talent talent { get; set; }
 
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
+        [Column("Role_Code")]
+        [ManyToOne]
         public virtual Role role { get; set; }
         
         [SimpleSaveIgnore]

@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>\bin\RightsU.BMS.Entities.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -48,6 +49,9 @@
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -55,9 +59,34 @@
       <HintPath>bin\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.8.0.1\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -77,51 +106,77 @@
     <Compile Include="FrameworkClasses\LoginDetails.cs" />
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="HttpModel\HttpResponses.cs" />
-    <Compile Include="InputClasses\GenreInput.cs" />
-    <Compile Include="InputClasses\ProgramInput.cs" />
-    <Compile Include="InputClasses\PutInput.cs" />
-    <Compile Include="InputClasses\TalentInput.cs" />
-    <Compile Include="InputClasses\TitleInput.cs" />
     <Compile Include="LogClasses\Error.cs" />
+    <Compile Include="Master_Entities\Acq_Deal.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Platform.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Territory.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Rights_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Channel.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Title.cs" />
+    <Compile Include="Master_Entities\Acq_Deal_Run_Yearwise_Run.cs" />
     <Compile Include="Master_Entities\AL_Lab.cs" />
     <Compile Include="Master_Entities\AssetsResult.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\BMS_Log.cs" />
     <Compile Include="Master_Entities\BMS_Schedule_Import_Config.cs" />
+    <Compile Include="Master_Entities\Business_Unit.cs" />
+    <Compile Include="Master_Entities\Category.cs" />
     <Compile Include="Master_Entities\Channel.cs" />
-    <Compile Include="Master_Entities\Channel_CategoryReturn.cs" />
+    <Compile Include="Master_Entities\ChannelTerritory.cs" />
+    <Compile Include="Master_Entities\Channel_Category.cs" />
     <Compile Include="Master_Entities\Country.cs" />
+    <Compile Include="Master_Entities\CountryLanguage.cs" />
+    <Compile Include="Master_Entities\Currency.cs" />
+    <Compile Include="Master_Entities\CurrencyExchangeRate.cs" />
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\Deal_Tag.cs" />
     <Compile Include="Master_Entities\Deal_Type.cs" />
-    <Compile Include="Master_Entities\Deal_TypeReturn.cs" />
+    <Compile Include="Master_Entities\Entity.cs" />
     <Compile Include="Master_Entities\Enums.cs" />
+    <Compile Include="Master_Entities\Error_Code_Master.cs" />
     <Compile Include="Master_Entities\Extended_Columns.cs" />
     <Compile Include="Master_Entities\Extended_Columns_Value.cs" />
     <Compile Include="Master_Entities\Extended_Group.cs" />
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\Genres.cs" />
-    <Compile Include="Master_Entities\GenreReturn.cs" />
     <Compile Include="Master_Entities\Grade_Master.cs" />
     <Compile Include="Master_Entities\Language.cs" />
+    <Compile Include="Master_Entities\LanguageGroup.cs" />
+    <Compile Include="Master_Entities\LanguageGroupDetails.cs" />
     <Compile Include="Master_Entities\LoggedInUsers.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns.cs" />
     <Compile Include="Master_Entities\Map_Extended_Columns_Details.cs" />
-    <Compile Include="Master_Entities\PlatformReturn.cs" />
+	<Compile Include="Master_Entities\Party.cs" />
+    <Compile Include="Master_Entities\Party_Category.cs" />
+    <Compile Include="Master_Entities\Party_Group.cs" />
+    <Compile Include="Master_Entities\Platform.cs" />
+    <Compile Include="Master_Entities\Milestone_Type.cs" />
+    <Compile Include="Master_Entities\Platform_Group.cs" />
     <Compile Include="Master_Entities\Program.cs" />
-    <Compile Include="Master_Entities\ProgramReturn.cs" />
+    <Compile Include="Master_Entities\PromoterGroup.cs" />
+    <Compile Include="Master_Entities\PromoterRemark.cs" />
+    <Compile Include="Master_Entities\RightRule.cs" />
+    <Compile Include="Master_Entities\ROFR.cs" />
     <Compile Include="Master_Entities\Role.cs" />
-    <Compile Include="Master_Entities\RoleReturn.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
+    <Compile Include="Master_Entities\Sub_License.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Master_Entities\Talent.cs" />
-    <Compile Include="Master_Entities\TalentReturn.cs" />
     <Compile Include="Master_Entities\Talent_Role.cs" />
     <Compile Include="Master_Entities\Talent_Validations.cs" />
+    <Compile Include="Master_Entities\Territory.cs" />
+    <Compile Include="Master_Entities\Territory_Details.cs" />
     <Compile Include="Master_Entities\Title.cs" />
-    <Compile Include="Master_Entities\TitleReturn.cs" />
     <Compile Include="Master_Entities\Title_Country.cs" />
     <Compile Include="Master_Entities\Title_Geners.cs" />
     <Compile Include="Master_Entities\Title_Talent.cs" />
@@ -132,8 +187,38 @@
     <Compile Include="Master_Entities\USPAPI_GetModuleRights.cs" />
     <Compile Include="Master_Entities\USPAPI_Title_Bind_Extend_Data.cs" />
     <Compile Include="Master_Entities\UTOLogInput.cs" />
+    <Compile Include="Master_Entities\Vendor.cs" />
+    <Compile Include="Master_Entities\Vendor_Contacts.cs" />
+	<Compile Include="Master_Entities\Vendor_Country.cs" />
+    <Compile Include="Master_Entities\Vendor_Role.cs" />
     <Compile Include="Master_Entities\Version.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReturnClasses\BusinessUnitReturn.cs" />
+    <Compile Include="ReturnClasses\CategoryReturn.cs" />
+    <Compile Include="ReturnClasses\ChannelReturn.cs" />
+    <Compile Include="ReturnClasses\Channel_CategoryReturn.cs" />
+    <Compile Include="ReturnClasses\CountryReturn.cs" />
+    <Compile Include="ReturnClasses\CurrencyReturn.cs" />
+    <Compile Include="ReturnClasses\DealGeneralReturm.cs" />
+    <Compile Include="ReturnClasses\DealTagReturn.cs" />
+    <Compile Include="ReturnClasses\Deal_TypeReturn.cs" />
+    <Compile Include="ReturnClasses\EntityReturn.cs" />
+    <Compile Include="ReturnClasses\GenreReturn.cs" />
+    <Compile Include="ReturnClasses\LanguageGroupReturn.cs" />
+    <Compile Include="ReturnClasses\LanguageReturn.cs" />
+    <Compile Include="ReturnClasses\MilestoneTypeReturn.cs" />
+    <Compile Include="ReturnClasses\PlatformReturn.cs" />
+    <Compile Include="ReturnClasses\ProgramReturn.cs" />
+    <Compile Include="ReturnClasses\PromoterGroupReturn.cs" />
+    <Compile Include="ReturnClasses\PromoterRemarkReturn.cs" />
+    <Compile Include="ReturnClasses\RightRuleReturn.cs" />
+    <Compile Include="ReturnClasses\ROFRReturn.cs" />
+    <Compile Include="ReturnClasses\RoleReturn.cs" />
+    <Compile Include="ReturnClasses\SubLicenseReturn.cs" />
+    <Compile Include="ReturnClasses\TalentReturn.cs" />
+    <Compile Include="ReturnClasses\TerritoryReturn.cs" />
+    <Compile Include="ReturnClasses\TitleReturn.cs" />
+	<Compile Include="ReturnClasses\PartyReturn.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
@@ -141,5 +226,6 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

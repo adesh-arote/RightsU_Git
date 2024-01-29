@@ -12,20 +12,18 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Deal_Type")]
     public partial class Deal_Type
     {
-        public Deal_Type()
-        {
-            this.roles = new HashSet<Role>();            
-            this.programs = new HashSet<Program>();            
-        }
-
         [PrimaryKey]
-        [Column("Deal_Type_Code")]
-        public int? deal_type_id { get; set; }
-        [Column("Deal_Type_Name")]
-        public string deal_type_name { get; set; }
-        [JsonIgnore]
+        //[Column("Deal_Type_Code")]
+        [JsonProperty(PropertyName = "deal_type_id")]
+        public int? Deal_Type_Code { get; set; }
+        //[Column("Deal_Type_Name")]
+        [JsonProperty(PropertyName = "deal_type_name")]
+        public string Deal_Type_Name { get; set; }
+
+        [JsonProperty(PropertyName = "is_default")]
         public string Is_Default { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "is_grid_required")]
         public string Is_Grid_Required { get; set; }
         [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -37,24 +35,20 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "is_master_deal")]
         public string Is_Master_Deal { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "parent_code")]
         public Nullable<int> Parent_Code { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "deal_or_title")]
         public string Deal_Or_Title { get; set; }
-        [JsonIgnore]
+
+        [JsonProperty(PropertyName = "deal_title_mapping_code")]
         public Nullable<int> Deal_Title_Mapping_Code { get; set; }
-        [SimpleSaveIgnore]        
-        [OneToMany]
-        [JsonIgnore]
-        public virtual ICollection<Role> roles { get; set; }
-        
-        [SimpleSaveIgnore]
-        [OneToMany]
-        [JsonIgnore]
-        public virtual ICollection<Program> programs { get; set; }        
     }
 }

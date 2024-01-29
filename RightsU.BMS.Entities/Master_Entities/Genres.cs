@@ -14,11 +14,13 @@ namespace RightsU.BMS.Entities.Master_Entities
     public partial class Genres
     {
         [PrimaryKey]
-        [Column("Genres_Code")]
-        public int? genres_id { get; set; }
+        //[Column("Genres_Code")]
+        [JsonProperty(PropertyName = "genres_id")]
+        public int? Genres_Code { get; set; }
 
-        [Column("Genres_Name")]
-        public string genres_name { get; set; }
+        //[Column("Genres_Name")]
+        [JsonProperty(PropertyName = "genres_name")]
+        public string Genres_Name { get; set; }
 
         [JsonIgnore]
         public Nullable<System.DateTime> Inserted_On { get; set; }
@@ -30,8 +32,9 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }
         [JsonIgnore]
         public Nullable<int> Last_Action_By { get; set; }
-        [Column("Is_Active")]
-        public string is_active { get; set; }
+        //[Column("Is_Active")]
+        [JsonProperty(PropertyName = "is_active")]
+        public string Is_Active { get; set; }
 
     }
 

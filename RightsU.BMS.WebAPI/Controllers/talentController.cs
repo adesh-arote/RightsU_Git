@@ -1,6 +1,6 @@
 ﻿using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.Entities.InputClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
@@ -100,7 +100,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
         [Route("api/talent")]
-        public async Task<HttpResponseMessage> PostTalent(TalentInput Input)
+        public async Task<HttpResponseMessage> PostTalent(Talent Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
@@ -144,7 +144,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/talent")]
-        public async Task<HttpResponseMessage> PutTalent(TalentInput Input)
+        public async Task<HttpResponseMessage> PutTalent(Talent Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
@@ -188,7 +188,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/talent/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(PutInput Input)
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Talent Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
