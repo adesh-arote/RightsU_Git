@@ -943,7 +943,7 @@ namespace RightsU.BMS.BLL.Services
 
                             var lstAcqDealRuns = new AcqDealRunRepositories().SearchFor(new { Acq_Deal_Code = objDeal.Acq_Deal_Code }).ToList();
 
-                            lstRunTitle = lstAcqDealRuns.Select(x => x.Titles.Select(c => c.Title_Code + "~" + c.Episode_From + "~" + c.Episode_To).FirstOrDefault()).ToList();
+                            lstRunTitle = lstAcqDealRuns.Select(x => x.titles.Select(c => c.Title_Code + "~" + c.Episode_From + "~" + c.Episode_To).FirstOrDefault()).ToList();
 
                             int cntRunTitle = lstLinerTitle.Distinct().Except(lstRunTitle).Count();
 

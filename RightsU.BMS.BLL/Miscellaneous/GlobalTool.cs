@@ -29,6 +29,12 @@ namespace RightsU.BMS.BLL.Miscellaneous
             return dt;
         }
 
+        public static TimeSpan LinuxToTime(double LinuxTimestamp)
+        {
+            TimeSpan result = TimeSpan.FromHours(LinuxTimestamp);
+            return result;
+        }
+
         public static List<string> GetErrorList(List<string> lstErrorCodes)
         {
             string strQuery = string.Empty;

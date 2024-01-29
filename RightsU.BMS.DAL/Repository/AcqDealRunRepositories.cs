@@ -12,7 +12,7 @@ namespace RightsU.BMS.DAL.Repository
         public Acq_Deal_Run Get(Int32? Id)
         {
             var obj = new { Acq_Deal_Run_Code = Id.Value };
-            var entity = base.GetById < Acq_Deal_Run, Acq_Deal_Run_Title, Acq_Deal_Run_Channel, Acq_Deal_Run_Yearwise_Run, Acq_Deal_Run_Repeat_On_Day, Channel_Category>(obj);
+            var entity = base.GetById < Acq_Deal_Run, Acq_Deal_Run_Title, Acq_Deal_Run_Channel, Acq_Deal_Run_Yearwise_Run, Acq_Deal_Run_Repeat_On_Day, Channel_Category, Channel>(obj);
 
             if (entity != null)
             {
@@ -26,16 +26,16 @@ namespace RightsU.BMS.DAL.Repository
                     entity.primary_channel = new ChannelRepositories().Get(entity.Primary_Channel_Code.Value);
                 }
 
-                if (entity.Channels.Count() > 0)
-                {
-                    entity.Channels.ToList().ForEach(i =>
-                    {
-                        if (i.Channel == null)
-                        {
-                            i.Channel = new ChannelRepositories().Get(i.Channel_Code.Value);
-                        }
-                    });
-                }
+                //if (entity.channels.Count() > 0)
+                //{
+                //    entity.channels.ToList().ForEach(i =>
+                //    {
+                //        if (i.chan == null)
+                //        {
+                //            i.Channel = new ChannelRepositories().Get(i.Channel_Code.Value);
+                //        }
+                //    });
+                //}
             }
 
             return entity;
@@ -77,9 +77,9 @@ namespace RightsU.BMS.DAL.Repository
                     i.primary_channel = new ChannelRepositories().Get(i.Primary_Channel_Code.Value);
                 }
 
-                if (i.Channels.Count() > 0)
+                if (i.channels.Count() > 0)
                 {
-                    i.Channels.ToList().ForEach(j =>
+                    i.channels.ToList().ForEach(j =>
                     {
                         if (j.Channel == null)
                         {

@@ -201,6 +201,7 @@
     <Compile Include="ReturnClasses\CountryReturn.cs" />
     <Compile Include="ReturnClasses\CurrencyReturn.cs" />
     <Compile Include="ReturnClasses\DealReturn.cs" />
+    <Compile Include="ReturnClasses\AcqDealRunReturn.cs" />
     <Compile Include="ReturnClasses\DealTagReturn.cs" />
     <Compile Include="ReturnClasses\Deal_TypeReturn.cs" />
     <Compile Include="ReturnClasses\EntityReturn.cs" />

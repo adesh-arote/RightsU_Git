@@ -14,10 +14,10 @@ namespace RightsU.BMS.Entities.Master_Entities
     {
         public Acq_Deal_Run()
         {
-            this.Titles = new HashSet<Acq_Deal_Run_Title>();
-            this.Channels = new HashSet<Acq_Deal_Run_Channel>();
-            this.YearDefinition = new HashSet<Acq_Deal_Run_Yearwise_Run>();
-            this.RepeatOn = new HashSet<Acq_Deal_Run_Repeat_On_Day>();
+            this.titles = new HashSet<Acq_Deal_Run_Title>();
+            this.channels = new HashSet<Acq_Deal_Run_Channel>();
+            this.yeardefinition = new HashSet<Acq_Deal_Run_Yearwise_Run>();
+            this.repeaton = new HashSet<Acq_Deal_Run_Repeat_On_Day>();
         }
 
         [JsonIgnore]
@@ -217,15 +217,15 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Last_action_By { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Run_Title> Titles { get; set; }
+        public virtual ICollection<Acq_Deal_Run_Title> titles { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Run_Channel> Channels { get; set; }
+        public virtual ICollection<Acq_Deal_Run_Channel> channels { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Run_Yearwise_Run> YearDefinition { get; set; }
+        public virtual ICollection<Acq_Deal_Run_Yearwise_Run> yeardefinition { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Run_Repeat_On_Day> RepeatOn { get; set; }
+        public virtual ICollection<Acq_Deal_Run_Repeat_On_Day> repeaton { get; set; }
     }
 }
