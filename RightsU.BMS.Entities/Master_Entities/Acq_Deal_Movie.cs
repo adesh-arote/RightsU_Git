@@ -59,7 +59,43 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         [JsonProperty(PropertyName = "updated_by")]
         public Nullable<int> Last_Action_By { get; set; }
-                
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "no_of_episodes")]
+        public Nullable<int> No_Of_Episodes { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "no_of_files")]
+        public Nullable<int> No_Of_Files { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "is_closed")]
+        public string Is_Closed { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "amort_type")]
+        public string Amort_Type { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "closing_remarks")]
+        public string Closing_Remarks { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "movie_closed_date")]
+        public Nullable<System.DateTime> Movie_Closed_Date { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "remark")]
+        public string Remark { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "ref_bms_movie_code")]
+        public string Ref_BMS_Movie_Code { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "duration_restriction")]
+        public Nullable<decimal> Duration_Restriction { get; set; }
+
         //[ManyToOne]
         //[SimpleSaveIgnore]
         //[Column("Title_Code")]

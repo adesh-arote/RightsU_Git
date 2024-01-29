@@ -383,7 +383,7 @@ namespace RightsU.BMS.BLL.Services
             //    return _objRet;
             //}
 
-            if (objInput.licensors == null && objInput.licensors.Count() == 0)
+            if (objInput.licensors == null || objInput.licensors.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR170");
             }
@@ -398,7 +398,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.titles == null && objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172");
             }
@@ -609,7 +609,7 @@ namespace RightsU.BMS.BLL.Services
                 _objRet = GlobalTool.SetError(_objRet, "ERR169");
             }
 
-            if (objInput.licensors == null && objInput.licensors.Count() == 0)
+            if (objInput.licensors == null || objInput.licensors.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR170");
             }
@@ -624,7 +624,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.titles == null && objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172");
             }
