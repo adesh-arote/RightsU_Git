@@ -509,16 +509,19 @@ namespace RightsU.BMS.BLL.Services
                 }
 
                 JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objInput));
-                string strUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
+                string strInsertedUserName = string.Empty;
+                string strUpdatedUserName = string.Empty;
 
                 if (objInput.Inserted_By != null || objInput.Inserted_By > 0)
                 {
-                    objJson["inserted_by_user"] = strUserName;
+                    strInsertedUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
+                    objJson["inserted_by_user"] = strInsertedUserName;
                 }
 
                 if (objInput.Last_Action_By != null || objInput.Last_Action_By > 0)
                 {
-                    objJson["last_action_by_user"] = strUserName;
+                    strUpdatedUserName = new UserRepositories().GetUserName(objInput.Last_Action_By.Value);
+                    objJson["last_action_by_user"] = strUpdatedUserName;
                 }
 
                 objJson["inserted_on"] = objInput.Inserted_On;
@@ -530,7 +533,7 @@ namespace RightsU.BMS.BLL.Services
                 objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
                 objAuditLog.intCode = objInput.Title_Code.Value;
                 objAuditLog.logData = objJson.ToString();
-                objAuditLog.actionBy = strUserName;
+                objAuditLog.actionBy = strInsertedUserName;
                 objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objInput.Inserted_On.Value));
                 objAuditLog.actionType = "C";
                 objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
@@ -839,16 +842,19 @@ namespace RightsU.BMS.BLL.Services
                     }
 
                     JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objInput));
-                    string strInsertedUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
-                    string strUpdatedUserName = new UserRepositories().GetUserName(objInput.Last_Action_By.Value);
+                    string strInsertedUserName = string.Empty;
+                    string strUpdatedUserName = string.Empty;
+
 
                     if (objInput.Inserted_By != null || objInput.Inserted_By > 0)
                     {
+                        strInsertedUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
                         objJson["inserted_by_user"] = strInsertedUserName;
                     }
 
                     if (objInput.Last_Action_By != null || objInput.Last_Action_By > 0)
                     {
+                        strUpdatedUserName = new UserRepositories().GetUserName(objInput.Last_Action_By.Value);
                         objJson["last_action_by_user"] = strUpdatedUserName;
                     }
 
@@ -1022,16 +1028,20 @@ namespace RightsU.BMS.BLL.Services
                     #endregion
 
                     JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objTitle));
-                    string strInsertedUserName = new UserRepositories().GetUserName(objTitle.Inserted_By.Value);
-                    string strUpdatedUserName = new UserRepositories().GetUserName(objTitle.Last_Action_By.Value);
+                    string strInsertedUserName = string.Empty;
+                    string strUpdatedUserName = string.Empty;
+
+                    
 
                     if (objTitle.Inserted_By != null || objTitle.Inserted_By > 0)
                     {
+                        strInsertedUserName = new UserRepositories().GetUserName(objTitle.Inserted_By.Value);
                         objJson["inserted_by_user"] = strInsertedUserName;
                     }
 
                     if (objTitle.Last_Action_By != null || objTitle.Last_Action_By > 0)
                     {
+                        strUpdatedUserName = new UserRepositories().GetUserName(objTitle.Last_Action_By.Value);
                         objJson["last_action_by_user"] = strUpdatedUserName;
                     }
 
