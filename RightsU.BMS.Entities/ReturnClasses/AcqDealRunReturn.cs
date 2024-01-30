@@ -12,7 +12,7 @@ namespace RightsU.BMS.Entities.ReturnClasses
     {
         public AcqDealRunReturn()
         {
-            content = new List<Acq_Deal_Run>();
+            content = new List<USP_Acq_List_Runs>();
             paging = new paging();
         }
 

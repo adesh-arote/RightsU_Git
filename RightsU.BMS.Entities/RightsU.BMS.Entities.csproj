@@ -187,6 +187,7 @@
     <Compile Include="Master_Entities\Users_Password_Detail.cs" />
     <Compile Include="Master_Entities\USPAPI_GetModuleRights.cs" />
     <Compile Include="Master_Entities\USPAPI_Title_Bind_Extend_Data.cs" />
+    <Compile Include="Master_Entities\USP_Acq_List_Runs.cs" />
     <Compile Include="Master_Entities\UTOLogInput.cs" />
     <Compile Include="Master_Entities\Vendor.cs" />
     <Compile Include="Master_Entities\Vendor_Contacts.cs" />

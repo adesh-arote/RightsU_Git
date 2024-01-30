@@ -3,8 +3,10 @@ using RightsU.BMS.DAL;
 using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -21,6 +23,150 @@ namespace RightsU.BMS.BLL.Services
         private readonly Acq_Deal_Run_Yearwise_Run_Repositories objAcq_Deal_Run_Yearwise_Run_Repositories = new Acq_Deal_Run_Yearwise_Run_Repositories();
         private readonly Acq_Deal_Run_Repeat_On_Day_Repositories objAcq_Deal_Run_Repeat_On_Day_Repositories = new Acq_Deal_Run_Repeat_On_Day_Repositories();
         private readonly TitleRepositories ObjTitle_Repositories = new TitleRepositories();
+
+        public GenericReturn GetDealRunList(string order, string sort, int deal_id, Int32 page = 0, Int32 size = 0, string deal_movie_ids = "", string channel_ids = "")
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            int noOfRecordSkip, noOfRecordTake;
+
+            #region Input Validations
+
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184"); // Input Paramater 'order' is not in valid format
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_updated_Time";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            if (deal_id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR295"); // Input Paramater 'deal_run_id' is mandatory
+            }
+
+            #endregion
+
+            AcqDealRunReturn _AcqDealRunReturn = new AcqDealRunReturn();
+            List<USP_Acq_List_Runs> Acq_Deal_Runs = new List<USP_Acq_List_Runs>();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Acq_Deal_Runs = objAcq_Deal_Run_Repositories.GetAcqDealRun_List(deal_id, deal_movie_ids, channel_ids);
+
+                    _AcqDealRunReturn.paging.total = Acq_Deal_Runs.Count;
+
+                    GlobalTool.GetPaging(page, size, Acq_Deal_Runs.Count, out noOfRecordSkip, out noOfRecordTake);
+
+                    //if (sort.ToLower() == "Inserted_On".ToLower())
+                    //{
+                    //    if (order.ToUpper() == "ASC")
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //    else
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //}
+                    //else if (sort.ToLower() == "Last_updated_Time".ToLower())
+                    //{
+                    //    if (order.ToUpper() == "ASC")
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Last_updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //    else
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //}
+                    //else if (sort.ToLower() == "Title_Name".ToLower())
+                    //{
+                    //    if (order.ToUpper() == "ASC")
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //    else
+                    //    {
+                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                    //    }
+                    //}
+                }
+                else
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _AcqDealRunReturn.content = Acq_Deal_Runs;
+            _AcqDealRunReturn.paging.page = page;
+            _AcqDealRunReturn.paging.size = size;
+
+            _objRet.Response = _AcqDealRunReturn;
+
+            return _objRet;
+        }
 
         public GenericReturn GetById(Int32 id)
         {
@@ -51,6 +197,11 @@ namespace RightsU.BMS.BLL.Services
                         //objAcq_Deal_Run.Inserted_On = Convert.ToString(GlobalTool.DateToLinux(objAcq_Deal_Run.Inserted_On.Value));
                         //objAcq_Deal_Run.Last_updated_Time = Convert.ToString(GlobalTool.DateToLinux(objAcq_Deal_Run.Last_updated_Time.Value));
                         //objAcq_Deal_Run.Last_action_By = objAcq_Deal_Run.Inserted_By != null || objAcq_Deal_Run.Inserted_By.Value > 0 ? objAcq_Deal_Run.Inserted_By : objAcq_Deal_Run.Last_action_By;
+
+                        //objAcq_Deal_Run.prime_start_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_Start_Time));
+                        //objAcq_Deal_Run.prime_end_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_End_Time));
+                        //objAcq_Deal_Run.off_prime_start_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_Start_Time));
+                        //objAcq_Deal_Run.off_prime_end_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_End_Time));
                     }
                     else
                     {
@@ -108,7 +259,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Title ---
 
-            if (objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172"); // Input Paramater 'Titles' is mandatory
             }
@@ -146,7 +297,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Channel ---
 
-            if (objInput.channels.Count() == 0)
+            if (objInput.channels == null || objInput.channels.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR280"); // Input Paramater 'channels' is mandatory
             }
@@ -172,7 +323,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Yearwise_Run ---
 
-            if (objInput.yeardefinition.Count() != 0)
+            if (objInput.yeardefinition != null || objInput.yeardefinition.Count() != 0)
             {
                 for (int i = 0; i < objInput.yeardefinition.ToList().Count(); i++)
                 {
@@ -219,7 +370,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Repeat_On_Day ---
 
-            if (objInput.repeaton.Count() != 0)
+            if (objInput.repeaton != null || objInput.repeaton.Count() != 0)
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
@@ -391,7 +542,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Title ---
 
-            if (objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172"); // Input Paramater 'titles' is mandatory
             }
@@ -427,7 +578,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Channel ---
 
-            if (objInput.channels.Count() == 0)
+            if (objInput.channels == null || objInput.channels.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR280"); // Input Paramater 'channels' is mandatory
             }
@@ -452,7 +603,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Yearwise_Run ---
 
-            if (objInput.yeardefinition.Count() != 0)
+            if (objInput.yeardefinition != null || objInput.yeardefinition.Count() != 0)
             {
                 for (int i = 0; i < objInput.yeardefinition.ToList().Count(); i++)
                 {
@@ -499,7 +650,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Repeat_On_Day ---
 
-            if (objInput.repeaton.Count() != 0)
+            if (objInput.repeaton != null || objInput.repeaton.Count() != 0)
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
@@ -528,12 +679,12 @@ namespace RightsU.BMS.BLL.Services
 
                     #region Pending Columns
 
-                    objInput.Run_Definition_Type = objInput.Run_Definition_Type != null ? objInput.Run_Definition_Type : "C";
+                    objInput.Run_Definition_Type = objDealRun.Run_Definition_Type;
                     objInput.No_Of_Runs_Sched = objDealRun.No_Of_Runs_Sched;
                     objInput.No_Of_AsRuns = objDealRun.No_Of_AsRuns;
-                    objInput.Is_Yearwise_Definition = objInput.yeardefinition.Count > 0 ? "Y" : "N";
-                    objInput.Is_Rule_Right = objInput.Right_Rule_Code != null || objInput.Right_Rule_Code.Value > 0 ? "Y" : "N";
-                    objInput.Channel_Type = objInput.Channel_Category_Code != null || objInput.Channel_Category_Code.Value > 0 ? "G" : "C"; ;
+                    objInput.Is_Yearwise_Definition = objDealRun.Is_Yearwise_Definition;
+                    objInput.Is_Rule_Right = objDealRun.Is_Rule_Right;
+                    objInput.Channel_Type = objDealRun.Channel_Type;
                     objInput.No_Of_Days_Hrs = objDealRun.No_Of_Days_Hrs;
                     objInput.Is_Channel_Definition_Rights = objDealRun.Is_Channel_Definition_Rights;
                     objInput.Run_Definition_Group_Code = objDealRun.Run_Definition_Group_Code;
@@ -747,7 +898,7 @@ namespace RightsU.BMS.BLL.Services
                 }
                 else
                 {
-                    _objRet = GlobalTool.SetError(_objRet, "ERR275");
+                    _objRet = GlobalTool.SetError(_objRet, "ERR275"); // deal_run_id not found
                 }
                 _objRet.id = objInput.Acq_Deal_Run_Code;
             }
@@ -771,7 +922,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (deal_Run_id == 0)
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR295");
+                _objRet = GlobalTool.SetError(_objRet, "ERR295"); // Input Paramater 'deal_run_id' is mandatory
             }
 
             #endregion
@@ -792,7 +943,7 @@ namespace RightsU.BMS.BLL.Services
                     }
                     else
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR275");
+                        _objRet = GlobalTool.SetError(_objRet, "ERR275"); // deal_run_id not found
                     }
                 }
 
@@ -808,5 +959,6 @@ namespace RightsU.BMS.BLL.Services
 
             return _objRet;
         }
+    
     }
 }

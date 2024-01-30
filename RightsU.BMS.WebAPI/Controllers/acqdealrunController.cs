@@ -24,64 +24,64 @@ namespace RightsU.BMS.WebAPI.Controllers
     {
         private readonly AcqDealRunServices objAcqDealRunServices = new AcqDealRunServices();
 
-        ///// <summary>
-        ///// Title List 
-        ///// </summary>
-        ///// <remarks>Retrieves available acquisition runs</remarks>
-        ///// <param name="order">Defines how the results will be ordered</param>
-        ///// <param name="page">The page number that should be retrieved</param>
-        ///// <param name="searchValue">The value of the search across the title</param>
-        ///// <param name="size">The size (total records) of each page</param>
-        ///// <param name="sort">Defines on which attribute the results should be sorted</param>
-        /////// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
-        /////// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
-        ///// <returns></returns>
-        //[SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(AcqDealRunReturn))]
-        //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        //[SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        //[SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        //[SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        //[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        //[HttpGet]
-        //[Route("api/dealrun")]
-        //public async Task<HttpResponseMessage> GetAcqDealRunList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
-        //{
-        //    var response = new HttpResponseMessage();
-        //    DateTime startTime;
-        //    startTime = DateTime.Now;
+        /// <summary>
+        /// Acuisition Deal Run List 
+        /// </summary>
+        /// <remarks>Retrieves available acquisition runs</remarks>
+        /// <param name="order">Defines how the results will be ordered</param>
+        /// <param name="page">The page number that should be retrieved</param>
+        /// <param name="size">The size (total records) of each page</param>
+        /// <param name="sort">Defines on which attribute the results should be sorted</param>
+        /// <param name="deal_id">The value of the search across the deals</param>
+        /// <param name="deal_movie_ids">The value of the search across the title</param>
+        /// <param name="channel_ids">The value of the search across the title</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(AcqDealRunReturn))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpGet]
+        [Route("api/dealrun")]
+        public async Task<HttpResponseMessage> GetAcqDealRunList(Order order, SortColumn sort, int deal_id, Int32 page = 0, Int32 size = 0, string deal_movie_ids = "", string channel_ids = "")
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
 
-        //    GenericReturn objReturn = null; //objTitleServices.GetTitleList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+            GenericReturn objReturn = objAcqDealRunServices.GetDealRunList(order.ToString(), sort.ToString(), deal_id, page, size, deal_movie_ids, channel_ids);
 
-        //    if (objReturn.StatusCode == HttpStatusCode.OK)
-        //    {
-        //        objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-        //        response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
-        //        response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-        //        response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-        //        response.Headers.Add("message", objReturn.Message);
-        //        return response;
-        //    }
-        //    else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-        //    {
-        //        objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-        //        response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-        //        response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-        //        response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-        //        response.Headers.Add("message", objReturn.Message);
-        //        return response;
-        //    }
-        //    else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-        //    {
-        //        objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-        //        response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-        //        response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-        //        response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-        //        response.Headers.Add("message", objReturn.Message);
-        //        return response;
-        //    }
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
 
-        //    return response;
-        //}
+            return response;
+        }
 
         /// <summary>
         /// Acquisition Deal Run by id

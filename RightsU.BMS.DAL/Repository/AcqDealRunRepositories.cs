@@ -1,4 +1,6 @@
-﻿using RightsU.BMS.Entities.Master_Entities;
+﻿using Dapper;
+using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,6 +97,21 @@ namespace RightsU.BMS.DAL.Repository
         public IEnumerable<Acq_Deal_Run> GetDataWithSQLStmt(string strSQL)
         {
             return base.ExecuteSQLStmt<Acq_Deal_Run>(strSQL);
+        }
+
+        public List<USP_Acq_List_Runs> GetAcqDealRun_List(Int32 Deal_Code, string Title_Codes, string Channel_Codes)
+        {
+            List<USP_Acq_List_Runs> lstAcqDealRuns = new List<USP_Acq_List_Runs>();
+
+            var param = new DynamicParameters();
+            param.Add("@Deal_Code", Deal_Code);
+            param.Add("@Title_Codes", Title_Codes);
+            param.Add("@Channel_Codes", Channel_Codes);
+            //param.Add("@Acq_Deal_Run_Codes", Acq_Deal_Run_Codes);
+
+            lstAcqDealRuns = base.ExecuteSQLProcedure<USP_Acq_List_Runs>("USP_Acq_List_Runs", param).ToList();
+
+            return lstAcqDealRuns;
         }
     }
 
