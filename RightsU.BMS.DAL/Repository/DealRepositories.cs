@@ -249,6 +249,20 @@ namespace RightsU.BMS.DAL.Repository
             }
             return strMessage;
         }
+
+        public USP_Validate_General_Delete_For_Title validate_General_Delete_For_Title(Int32 Acq_Deal_Code, Int32 Title_Code, Int32 Episode_From, Int32 Episode_To, string check_For)
+        {
+            List<USP_Validate_General_Delete_For_Title> objValidate = new List<USP_Validate_General_Delete_For_Title>();
+
+            var param = new DynamicParameters();
+            param.Add("@Syn_Deal_Code", Acq_Deal_Code);
+            param.Add("@Title_Code", Title_Code);
+            param.Add("@Episode_From", Episode_From);
+            param.Add("@Episode_To", Episode_To);
+            param.Add("@CheckFor", check_For);
+
+            return base.ExecuteSQLProcedure<USP_Validate_General_Delete_For_Title>("USP_Validate_General_Delete_For_Title", param).ToList().FirstOrDefault();            
+        }
     }
 
     #region -------- Acq_Deal_Licensor -----------

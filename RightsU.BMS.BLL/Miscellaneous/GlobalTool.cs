@@ -1,9 +1,14 @@
-﻿using RightsU.BMS.BLL.Services;
+﻿using Newtonsoft.Json;
+using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.LogClasses;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,7 +65,7 @@ namespace RightsU.BMS.BLL.Miscellaneous
         {
             noOfRecordSkip = noOfRecordTake = 0;
             if (recordCount > 0)
-            {                
+            {
                 noOfRecordSkip = recordPerPage * (pageNo - 1);
                 if (recordCount < (noOfRecordSkip + recordPerPage))
                     noOfRecordTake = recordCount - noOfRecordSkip;
@@ -68,6 +73,62 @@ namespace RightsU.BMS.BLL.Miscellaneous
                     noOfRecordTake = recordPerPage;
             }
             return pageNo;
+        }
+
+        public async static Task<string> AuditLog(MasterAuditLog obj, string AuthKey)
+        {
+            int timeout = 3600;
+            string result = "";
+
+            try
+            {
+                string url = ConfigurationSettings.AppSettings["AuditLogURL"];
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+
+                try
+                {
+                    request.KeepAlive = false;
+                    request.ProtocolVersion = HttpVersion.Version10;
+                    request.ContentType = "application/Json";
+                    request.Method = "POST";
+                    request.Headers.Add("ContentType", "application/json");
+                    request.Headers.Add("AuthKey", AuthKey);
+
+                    if (obj.logData == null)
+                    {
+                        obj.logData = "";
+                    }
+
+                    using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                    {
+                        string logData = JsonConvert.SerializeObject(obj);
+                        streamWriter.Write(logData);
+                    }
+
+                    var httpResponse = (HttpWebResponse)request.GetResponse();
+
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        result = streamReader.ReadToEnd();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                    //request.Abort();
+                    //LogService(JsonConvert.SerializeObject(obj));
+                }
+                if (result != "")
+                {
+                    //request posted successfully;	
+                }
+            }
+            catch (Exception ex)
+            {
+                //LogService(JsonConvert.SerializeObject(obj));
+                throw;
+            }
+            return result;
         }
     }
 }

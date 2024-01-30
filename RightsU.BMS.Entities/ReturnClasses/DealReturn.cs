@@ -12,7 +12,7 @@ namespace RightsU.BMS.Entities.ReturnClasses
     {
         public DealReturn()
         {
-            content = new List<Title>();
+            content = new List<Acq_Deal_List>();
             paging = new paging();
         }
 

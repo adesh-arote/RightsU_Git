@@ -147,7 +147,7 @@ namespace RightsU.BMS.BLL.Services
                                         + " or Acq_Deal_Code in (Select Acq_Deal_Code from Acq_Deal_Movie where Title_Code in (Select Title_Code from Title where Title_name  like N'%" + search_value + "%')))";
 
                         //strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
-                        strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=136)";//AND is_active='Y';
+                        strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
@@ -168,7 +168,7 @@ namespace RightsU.BMS.BLL.Services
                     strOrderbyCondition = sort + " " + order.ToUpper();
 
 
-                    _DealReturn = objDealRepositories.GetDeal_List(strSQL, page, strOrderbyCondition, size, 136);
+                    _DealReturn = objDealRepositories.GetDeal_List(strSQL, page, strOrderbyCondition, size, Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]));
 
                     var deallist = (List<Acq_Deal_List>)_DealReturn.content;
                     deallist.ForEach(i =>
@@ -202,7 +202,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetById(Int32 deal_id)
+        public GenericReturn GetById(Int32? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -211,7 +211,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (deal_id == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -224,7 +224,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.Get(deal_id);
+                    objDealGeneral = objDealRepositories.Get(deal_id.Value);
 
                     if (objDealGeneral != null)
                     {
@@ -799,7 +799,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn Delete(Int32 deal_id)
+        public GenericReturn Delete(Int32? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -808,7 +808,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (deal_id == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -821,7 +821,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.Get(deal_id);
+                    objDealGeneral = objDealRepositories.Get(deal_id.Value);
 
                     if (objDealGeneral != null)
                     {
@@ -848,7 +848,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn DealCompeteStatus(Acq_Deal objInput)
+        public GenericReturn DealCompeteStatus(int? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -857,7 +857,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Acq_Deal_Code == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -871,7 +871,7 @@ namespace RightsU.BMS.BLL.Services
                     Acq_Deal objDeal = new Acq_Deal();
                     bool is_RightCompleted = true;
 
-                    objDeal = objDealRepositories.Get(objInput.Acq_Deal_Code.Value);
+                    objDeal = objDealRepositories.Get(deal_id.Value);
 
                     if (objDeal != null)
                     {
@@ -987,7 +987,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Acq_Deal_Code == 0)
+            if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -997,20 +997,88 @@ namespace RightsU.BMS.BLL.Services
             try
             {
                 if (_objRet.IsSuccess)
-                {   
-                    var message = objDealRepositories.validate_Rollback(objInput.Acq_Deal_Code.Value,"A", Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]));
+                {
+                    var message = objDealRepositories.validate_Rollback(objInput.Acq_Deal_Code.Value, "A", Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]));
 
                     if (!string.IsNullOrWhiteSpace(message))
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR300");
                     }
-                    
+
                     _objRet.id = objInput.Acq_Deal_Code;
                 }
 
                 if (!_objRet.IsSuccess)
                 {
                     _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn candeletetitle(int? deal_id, int? title_id, int? episode_from, int? episode_to)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            string strValidationMessage = string.Empty;
+
+            #region Input Validation
+
+            if (deal_id == null || deal_id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR178");
+            }
+
+            if (title_id == null || title_id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR194");
+            }
+
+            if (episode_from == null || episode_from <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR301");
+            }
+
+            if (episode_to == null || episode_to <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR302");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    var message = objDealRepositories.validate_General_Delete_For_Title(deal_id.Value, title_id.Value, episode_from.Value, episode_to.Value, "A");
+
+                    if (message.Status.ToUpper() == "E")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR303");
+                        strValidationMessage = message.Message;
+                    }
+
+                    _objRet.id = deal_id;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR303"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{deal_candeletetitle}", strValidationMessage);
+                        }
+                    }
                 }
             }
             catch (Exception ex)

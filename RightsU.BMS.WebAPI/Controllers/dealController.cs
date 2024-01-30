@@ -108,7 +108,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.GetById(id.Value);
+            GenericReturn objReturn = objDealServices.GetById(id);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -158,7 +158,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [HttpPost]
         [Route("api/deal")]
         public async Task<HttpResponseMessage> Post(Acq_Deal Input)
-        {            
+        {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
@@ -262,14 +262,14 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpDelete]
-        [Route("api/deal/{id}")]
-        public async Task<HttpResponseMessage> Delete(int? id)
+        [Route("api/deal/{deal_id}")]
+        public async Task<HttpResponseMessage> Delete(int? deal_id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.Delete(id.Value);
+            GenericReturn objReturn = objDealServices.Delete(deal_id);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -314,15 +314,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpPost]
+        [HttpGet]
         [Route("api/deal/dealcompletestatus")]
-        public async Task<HttpResponseMessage> DealCompleteStatus(Acq_Deal Input)
-        {            
+        public async Task<HttpResponseMessage> DealCompleteStatus(int? deal_id)
+        {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.DealCompeteStatus(Input);
+            GenericReturn objReturn = objDealServices.DealCompeteStatus(deal_id);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -376,6 +376,59 @@ namespace RightsU.BMS.WebAPI.Controllers
             startTime = DateTime.Now;
 
             GenericReturn objReturn = objDealServices.rollback(Input);
+
+            if (objReturn.StatusCode == HttpStatusCode.OK)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
+            {
+                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                return response;
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Can Delete Title
+        /// </summary>
+        /// <remarks>Used for check can delete title from deal.</remarks>
+        /// <param name="Input">Input data object to check can delete title from deal</param>
+        /// <returns></returns>
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        [HttpGet]
+        [Route("api/deal/candeletetitle")]
+        public async Task<HttpResponseMessage> candeletetitle(int? deal_id, int? title_id, int? episode_from, int? episode_to)
+        {
+            var response = new HttpResponseMessage();
+            DateTime startTime;
+            startTime = DateTime.Now;
+
+            GenericReturn objReturn = objDealServices.candeletetitle(deal_id, title_id, episode_from, episode_to);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

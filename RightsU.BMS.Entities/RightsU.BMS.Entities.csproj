@@ -107,6 +107,7 @@
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="HttpModel\HttpResponses.cs" />
     <Compile Include="LogClasses\Error.cs" />
+	<Compile Include="LogClasses\MasterAuditLog.cs" />
     <Compile Include="Master_Entities\Acq_Deal.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
     <Compile Include="Master_Entities\Acq_Deal_List.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Master_Entities\Party.cs" />
     <Compile Include="Master_Entities\Party_Category.cs" />
     <Compile Include="Master_Entities\Party_Group.cs" />
+    <Compile Include="Master_Entities\Payment_Terms.cs" />	
     <Compile Include="Master_Entities\Platform.cs" />
     <Compile Include="Master_Entities\Milestone_Type.cs" />
     <Compile Include="Master_Entities\Platform_Group.cs" />

@@ -6845,7 +6845,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetById(int id)
+        public GenericReturn GetById(int? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -6854,7 +6854,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (id == 0)
+            if (id == null || id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR155");
             }
@@ -6867,7 +6867,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Party objParty = new Party();
 
-                    objParty = objPartyRepositories.Get(id);
+                    objParty = objPartyRepositories.Get(id.Value);
 
                     if (objParty == null)
                     {
@@ -6919,7 +6919,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_role != null && objInput.party_role.Count() > 0)
+            if (objInput.party_role != null || objInput.party_role.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
                 {
@@ -6930,7 +6930,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_country != null && objInput.party_country.Count() > 0)
+            if (objInput.party_country != null || objInput.party_country.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
                 {
@@ -6946,7 +6946,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_contact != null && objInput.party_contact.Count() > 0)
+            if (objInput.party_contact != null || objInput.party_contact.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
                 {
@@ -7065,7 +7065,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_role != null && objInput.party_role.Count() > 0)
+            if (objInput.party_role != null || objInput.party_role.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_role.ToList().Count(); i++)
                 {
@@ -7076,7 +7076,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_country != null && objInput.party_country.Count() > 0)
+            if (objInput.party_country != null || objInput.party_country.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_country.ToList().Count(); i++)
                 {
@@ -7092,7 +7092,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.party_contact != null && objInput.party_contact.Count() > 0)
+            if (objInput.party_contact != null || objInput.party_contact.Count() > 0)
             {
                 for (int i = 0; i < objInput.party_contact.ToList().Count(); i++)
                 {
@@ -7263,7 +7263,7 @@ namespace RightsU.BMS.BLL.Services
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
 
-            if (objInput.Vendor_Code <= 0)
+            if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR206");
             }
@@ -7303,6 +7303,59 @@ namespace RightsU.BMS.BLL.Services
 
             return _objRet;
         }
+    }
+    #endregion
+
+    #region -------- PaymentTerms --------
+    public class PaymentTermsService
+    {
+        private readonly PaymentTermsRepositories objPaymentTermsRepositories = new PaymentTermsRepositories();
+        
+        public GenericReturn GetById(int? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == null || id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Payment_Terms objPaymentTerms = new Payment_Terms();
+
+                    objPaymentTerms = objPaymentTermsRepositories.Get(id.Value);
+
+                    if (objPaymentTerms == null)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR304");
+                    }
+
+                    _objRet.Response = objPaymentTerms;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
     }
     #endregion
 }
