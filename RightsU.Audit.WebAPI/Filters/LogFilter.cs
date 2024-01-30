@@ -81,7 +81,7 @@ namespace RightsU.Audit.WebAPI.Filters
                     logObj.ResponseContent = JsonConvert.SerializeObject(((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value);
                     logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
                     logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-                    logObj.UserAgent = "AutidLog API";
+                    logObj.UserAgent = "AuditLog API";
                     logObj.Method = actionExecutedContext.Request.Method.Method;
                     logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
 
