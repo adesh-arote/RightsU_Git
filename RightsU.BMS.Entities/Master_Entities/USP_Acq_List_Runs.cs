@@ -46,5 +46,13 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonProperty(PropertyName = "deal_title_id")]
         public Nullable<int> Acq_Deal_Movie_Code { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "inserted_on")]
+        public Nullable<System.DateTime> Inserted_On { get; set; }
+
+        [JsonIgnore]
+        [JsonProperty(PropertyName = "updated_on")]
+        public Nullable<System.DateTime> Last_updated_Time { get; set; }
     }
 }

@@ -108,39 +108,49 @@ namespace RightsU.BMS.BLL.Services
 
                     GlobalTool.GetPaging(page, size, Acq_Deal_Runs.Count, out noOfRecordSkip, out noOfRecordTake);
 
-                    //if (sort.ToLower() == "Inserted_On".ToLower())
-                    //{
-                    //    if (order.ToUpper() == "ASC")
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //    else
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //}
-                    //else if (sort.ToLower() == "Last_updated_Time".ToLower())
-                    //{
-                    //    if (order.ToUpper() == "ASC")
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Last_updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //    else
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //}
-                    //else if (sort.ToLower() == "Title_Name".ToLower())
-                    //{
-                    //    if (order.ToUpper() == "ASC")
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //    else
-                    //    {
-                    //        Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                    //    }
-                    //}
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Last_updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Last_updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Title_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderBy(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            Acq_Deal_Runs = Acq_Deal_Runs.OrderByDescending(o => o.Title_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+
+                    var dealrunlist = (List<USP_Acq_List_Runs>)Acq_Deal_Runs;
+                    dealrunlist.ForEach(i =>
+                    {
+                        i.Run_Definition_Type = i.Run_Definition_Type.Trim() == "C" ? "Channel" : (i.Run_Definition_Type.Trim() == "S" ? "Shared" : "NA");
+                        i.Run_Type = i.Run_Type.Trim() == "U" ? "Unlimited" : "Limited";
+                        i.Is_Rule_Right = i.Is_Rule_Right.Trim() == "Y" ? "Yes" : "No";
+                        i.No_Of_Runs = i.No_Of_Runs!= null || i.No_Of_Runs.Value > 0 ? i.No_Of_Runs : 0;
+                        i.No_Of_Runs_Sched = i.No_Of_Runs_Sched != null || i.No_Of_Runs_Sched.Value > 0 ? i.No_Of_Runs_Sched : 0;
+                    });
                 }
                 else
                 {

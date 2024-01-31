@@ -40,6 +40,13 @@ namespace RightsU.BMS.BLL.Miscellaneous
             return result;
         }
 
+        public static double TimeToLinux(TimeSpan TimeToConvert)
+        {
+            TimeSpan ts = TimeSpan.Parse(Convert.ToString(TimeToConvert), System.Globalization.CultureInfo.InvariantCulture);
+            double seconds = ts.TotalSeconds;
+            return seconds;
+        }
+
         public static List<string> GetErrorList(List<string> lstErrorCodes)
         {
             string strQuery = string.Empty;
