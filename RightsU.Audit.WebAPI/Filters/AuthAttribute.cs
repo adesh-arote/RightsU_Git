@@ -35,7 +35,7 @@ namespace RightsU.Audit.WebAPI.Filters
                 };
                 throw new HttpResponseException(resp);
             }
-             
+
             var myListrequstAuthKey = requstAuthKey.ToList();
             //IEnumerable<string> requstService = context.Request.Headers.GetValues("Service");
             //var myListrequstService = requstService.ToList();
@@ -47,71 +47,25 @@ namespace RightsU.Audit.WebAPI.Filters
             {
                 var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
                 {
-                    ReasonPhrase = "Authentication Failed"                    
+                    ReasonPhrase = "Authentication Failed"
                 };
                 throw new HttpResponseException(resp);
             }
             else
             {
-                //if (myListrequstService[0] == "false")
-                //{
-                //    if (sKeys.Contains(myListrequstAuthKey[0].ToString()))
-                //    {
-                //        return Task.FromResult<object>(null);
-
-                //    }
-                //    else
-                //    {
-                //        var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
-                //        {
-                //            ReasonPhrase = "Not Authenticated"
-                //        };
-                //        throw new HttpResponseException(resp);
-                //    }
-                //}
-                //else
-                //{
-                    //* write Log on collected server ip address *//
-                    string ipAddress = System.Web.HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
-                    if (string.IsNullOrEmpty(ipAddress))
+                if (sKeys.Contains(myListrequstAuthKey[0].ToString()))
+                {
+                    return Task.FromResult<object>(null);
+                }
+                else
+                {
+                    var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
                     {
-                        ipAddress = System.Web.HttpContext.Current.Request.ServerVariables["REMOTE_ADDR"];
-                    }
-                    //WriteLog.Log(ipAddress, "AuthenticateAsync :IPAddress ", ipAddress);
+                        ReasonPhrase = "Authentication Failed"
+                    };
+                    throw new HttpResponseException(resp);
+                }
 
-                    //*  return ip; *//
-
-                    //string strHostName = "";
-                    //strHostName = Dns.GetHostName();
-                    //IPHostEntry ipEntry = Dns.GetHostEntry(strHostName);
-                    //IPAddress[] addr = ipEntry.AddressList;
-                    //string ipAddress = addr[addr.Length - 1].ToString();
-
-                    //* Encrypted *//
-
-                    string salt = ConfigurationManager.AppSettings["salt"].ToString();
-
-                    byte[] bytesToBeEncrypted = Encoding.UTF8.GetBytes(salt);
-                    byte[] passwordBytes = Encoding.UTF8.GetBytes(ipAddress);
-
-                    byte[] bytesEncrypted = AES_Encrypt(bytesToBeEncrypted, passwordBytes);
-
-                    string result = Convert.ToBase64String(bytesEncrypted);
-
-                    if (result == myListrequstAuthKey[0].ToString() && sKeys.Contains(myListrequstAuthKey[0].ToString()))
-                    {
-                        return Task.FromResult<object>(null);
-
-                    }
-                    else
-                    {
-                        var resp = new HttpResponseMessage(HttpStatusCode.Unauthorized)
-                        {
-                            ReasonPhrase = "Authentication Failed"
-                        };
-                        throw new HttpResponseException(resp);
-                    }
-                //}
             }
             throw new NotImplementedException();
 

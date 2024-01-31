@@ -27,6 +27,7 @@ Begin
 
 
 	--Set FMTONLY Off
+	IF(ISNULL(@OrderByCndition,'')='' OR @OrderByCndition='Acq_Deal_Code desc')
 	SET @OrderByCndition = N'Last_Updated_Time DESC'
 	--DECLARE
 	--@StrSearch Varchar(Max),
@@ -34,7 +35,7 @@ Begin
 	--@OrderByCndition Varchar(100),
 	--@IsPaging Varchar(2),
 	--@PageSize Int
-
+	
 	--SELECT
 	--@StrSearch = '',
 	--@PageNo = 1,
@@ -56,14 +57,15 @@ IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 		Entity_Name  Varchar(200),
 		Sort varchar(10),
 		Row_Num Int,
-		Last_Updated_Time datetime
+		Last_Updated_Time datetime,
+		Inserted_On datetime
 		);
 
 	Declare @SqlPageNo NVARCHAR(MAX)
 	
 	set @SqlPageNo = N'
 			WITH Y AS (
-						Select distinct x.Acq_Deal_Code,x.agreement_no, currentApproverCode, X.Vendor_Name,X.Entity_Name,X.Title_Name,Last_Updated_Time  From 
+						Select distinct x.Acq_Deal_Code,x.agreement_no, currentApproverCode, X.Vendor_Name,X.Entity_Name,X.Title_Name,Inserted_On,Last_Updated_Time  From 
 						(
 							select * from (
 								Select distinct AD.Acq_Deal_Code
@@ -72,7 +74,8 @@ IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 									,AD.[year_type],AD.[entity_code],AD.Deal_Type_Code
 									,AD.Vendor_Code
 									,AD.[attach_workflow]
-									,AD.[deal_workflow_status],AD.[parent_deal_code],AD.[work_flow_code] as [work_flow_code]
+									,AD.[deal_workflow_status],AD.[parent_deal_code],AD.[work_flow_code] as [work_flow_code]									
+									,AD.[Inserted_On]
 									,AD.[last_updated_time]										
 									,AD.[is_completed],AD.[is_active]
 									,AD.[status]										
@@ -90,7 +93,7 @@ IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 								'+ @StrSearch + '
 							)as X
 						)
-	Insert InTo #Temp Select Acq_Deal_Code,currentApproverCode,agreement_no,Vendor_Name,Title_name,Entity_Name,''1'','' '',Last_Updated_Time From Y'
+	Insert InTo #Temp Select Acq_Deal_Code,currentApproverCode,agreement_no,Vendor_Name,Title_name,Entity_Name,''1'','' '',Last_Updated_Time,Inserted_On From Y'
 	PRINT(@SqlPageNo)
 	EXEC (@SqlPageNo)
 	--select * from #Temp
@@ -112,13 +115,24 @@ IF OBJECT_ID('tempdb..#Temp') IS NOT NULL DROP TABLE #Temp
 	PRINT '3'
 	Select @RecordCount = Count(distinct (agreement_no )) From #Temp
 
-	Update a 
-		Set a.Row_Num = b.Row_Num
-		From #Temp a
-		Inner Join (
-			--Select Rank() over(order by Sort Asc, Last_Updated_Time desc, ID ASC) Row_Num, ID From #Temp
-			Select dense_Rank() over(order by Sort Asc, Last_Updated_Time desc, agreement_no ASC) Row_Num, ID From #Temp
-		) As b On a.Id = b.Id
+	DECLARE @UpdateRowNum NVARCHAR(MAX)=''
+	SET @UpdateRowNum ='
+			UPDATE a   
+				SET a.Row_Num = b.Row_Num  
+			FROM #Temp a  
+			INNER JOIN (  		   
+				SELECT DENSE_RANK() OVER(ORDER BY Sort ASC,'+ @OrderByCndition+', agreement_no ASC) Row_Num, ID FROM #Temp  
+			) AS b ON a.Id = b.Id  
+			'
+	EXEC(@UpdateRowNum)
+
+	--Update a 
+	--	Set a.Row_Num = b.Row_Num
+	--	From #Temp a
+	--	Inner Join (
+	--		--Select Rank() over(order by Sort Asc, Last_Updated_Time desc, ID ASC) Row_Num, ID From #Temp
+	--		Select dense_Rank() over(order by Sort Asc, Last_Updated_Time DESC, agreement_no ASC) Row_Num, ID From #Temp
+	--	) As b On a.Id = b.Id
 		
 	PRINT '4'
 	If(@IsPaging = 'Y')

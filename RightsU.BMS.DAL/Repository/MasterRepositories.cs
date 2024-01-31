@@ -36,6 +36,18 @@ namespace RightsU.BMS.DAL
         {
             return base.ExecuteSQLStmt<User>(strSQL);
         }
+
+        public string GetUserName(int Id)
+        {
+            string UserName = string.Empty;
+
+            User objUser = Get(Id);
+            if (objUser != null)
+            {
+                UserName = objUser.First_Name + " " + objUser.Last_Name;
+            }
+            return UserName;
+        }
     }
     #endregion
 
@@ -450,13 +462,13 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Country_Code = Id };
 
-            return base.GetById<Country,CountryLanguage, Language>(obj);
+            return base.GetById<Country, CountryLanguage, Language>(obj);
         }
         public IEnumerable<Country> GetAll()
         {
-            return base.GetAll<Country, CountryLanguage,Language>();
+            return base.GetAll<Country, CountryLanguage, Language>();
         }
-        
+
         public void Add(Country entity)
         {
             base.AddEntity(entity);
@@ -1396,7 +1408,7 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
-    
+
     #region -------- Vendor_Contacts -----------
     public class Vendor_ContactsRepositories : MainRepository<Vendor_Contacts>
     {
@@ -1560,11 +1572,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Territory_Code = Id };
 
-            return base.GetById<Territory,Territory_Details>(obj);
+            return base.GetById<Territory, Territory_Details>(obj);
         }
         public IEnumerable<Territory> GetAll()
         {
-            return base.GetAll<Territory,Territory_Details>();
+            return base.GetAll<Territory, Territory_Details>();
         }
         public void Add(Territory entity)
         {
@@ -1716,7 +1728,7 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Language_Group_Code = Id };
 
-            return base.GetById<LanguageGroup, LanguageGroupDetails,Language>(obj);
+            return base.GetById<LanguageGroup, LanguageGroupDetails, Language>(obj);
         }
         public IEnumerable<LanguageGroup> GetAll()
         {
@@ -1759,7 +1771,7 @@ namespace RightsU.BMS.DAL
     {
         public IEnumerable<Currency> GetAll()
         {
-            return base.GetAll<Currency,CurrencyExchangeRate>();
+            return base.GetAll<Currency, CurrencyExchangeRate>();
         }
         public IEnumerable<Currency> GetAllByQuery(string query)
         {
@@ -1867,11 +1879,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Channel_Code = Id };
 
-            return base.GetById<Channel, Entity,ChannelTerritory>(obj);
+            return base.GetById<Channel, Entity, ChannelTerritory>(obj);
         }
         public IEnumerable<Channel> GetAll()
         {
-            return base.GetAll<Channel,Entity,ChannelTerritory>();
+            return base.GetAll<Channel, Entity, ChannelTerritory>();
         }
         public IEnumerable<Channel> SearchFor(object param)
         {
@@ -1888,11 +1900,50 @@ namespace RightsU.BMS.DAL
         }
     }
 
-    public class ChannelCountryDetailsRepositories: MainRepository<ChannelTerritory>
+    public class ChannelCountryDetailsRepositories : MainRepository<ChannelTerritory>
     {
         public void Delete(ChannelTerritory entity)
         {
             base.DeleteEntity(entity);
+        }
+    }
+    #endregion
+
+    #region -------- PaymentTerms -----------
+    public class PaymentTermsRepositories : MainRepository<Payment_Terms>
+    {
+        public Payment_Terms Get(int Id)
+        {
+            var obj = new { Vendor_Code = Id };
+
+            return base.GetById<Payment_Terms>(obj);
+        }
+        public IEnumerable<Payment_Terms> GetAll()
+        {
+            return base.GetAll<Payment_Terms>();
+        }
+        public void Add(Payment_Terms entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Payment_Terms entity)
+        {
+            Payment_Terms oldObj = Get(entity.Payment_Terms_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Payment_Terms entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Payment_Terms> SearchFor(object param)
+        {
+            return base.SearchForEntity<Payment_Terms>(param);
+        }
+
+        public IEnumerable<Payment_Terms> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Payment_Terms>(strSQL);
         }
     }
     #endregion

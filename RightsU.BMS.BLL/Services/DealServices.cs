@@ -3,8 +3,10 @@ using RightsU.BMS.DAL;
 using RightsU.BMS.DAL.Repository;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.Entities.ReturnClasses;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -20,7 +22,189 @@ namespace RightsU.BMS.BLL.Services
         private readonly Acq_Deal_MovieRepositories objAcq_Deal_MovieRepositories = new Acq_Deal_MovieRepositories();
         private readonly AcquisitionDealRepositories objDealRightsRepositories = new AcquisitionDealRepositories();
 
-        public GenericReturn GetById(Int32 deal_id)
+        public GenericReturn GetDealList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validations
+
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                //else if (sort.ToLower() == "TitleName".ToLower())
+                //{
+                //    sort = "Title_Name";
+                //}
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd HH:mm:ss");
+                        //Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd HH:mm:ss");
+                        //Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            DealReturn _DealReturn = new DealReturn();
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    string strSQL = "AND Deal_Workflow_Status <> 'AR' AND is_active ='Y'";
+
+                    strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
+
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        strSQL += " AND (agreement_no like '%" + search_value + "%'"
+                                        + " or Entity_Code in (Select Entity_Code from Entity where Entity_Name like N'%" + search_value + "%')"
+                                        + " or Vendor_Code in (Select Vendor_Code from Vendor where Vendor_Name like N'%" + search_value + "%')"
+                                        + " or Acq_Deal_Code in (Select Acq_Deal_Code from Acq_Deal_Movie where Title_Code in (Select Title_Code from Title where Title_name  like N'%" + search_value + "%')))";
+
+                        //strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
+                        
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        strSQL += " AND ISNULL(Last_Updated_Time,Inserted_On) BETWEEN '" + Date_GT + "' AND '" + Date_LT + "'";
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        strSQL += " AND ISNULL(Last_Updated_Time,Inserted_On) >= '" + Date_GT + "'";
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        strSQL += " AND ISNULL(Last_Updated_Time,Inserted_On) <= '" + Date_LT + "'";
+                    }
+
+                    string strOrderbyCondition = string.Empty;
+
+                    strOrderbyCondition = sort + " " + order.ToUpper();
+
+
+                    _DealReturn = objDealRepositories.GetDeal_List(strSQL, page, strOrderbyCondition, size, Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]));
+
+                    var deallist = (List<Acq_Deal_List>)_DealReturn.content;
+                    deallist.ForEach(i =>
+                    {
+                        i.agreement_date = Convert.ToString(GlobalTool.DateToLinux(i.DealSignedDate));
+                    });
+
+                }
+                else
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _DealReturn.paging.page = page;
+            _DealReturn.paging.size = size;
+
+            _objRet.Response = _DealReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetById(Int32? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -29,7 +213,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (deal_id == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -42,7 +226,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.Get(deal_id);
+                    objDealGeneral = objDealRepositories.Get(deal_id.Value);
 
                     if (objDealGeneral != null)
                     {
@@ -116,6 +300,16 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR160");
             }
+            else
+            {
+                if (objInput.Is_Master_Deal.ToUpper() == "N")
+                {
+                    if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                    }
+                }
+            }
             //else if (objInput.Is_Master_Deal.ToUpper() != "Y" && objInput.Is_Master_Deal.ToUpper() != "N")
             //{
             //    _objRet.Message = "Input Paramater 'deal_for' is invalid";
@@ -155,14 +349,6 @@ namespace RightsU.BMS.BLL.Services
             //    }
             //}
 
-            if (objInput.Is_Master_Deal.ToUpper() == "N")
-            {
-                if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
-                {
-                    _objRet = GlobalTool.SetError(_objRet, "ERR165");
-                }
-            }
-
             if (string.IsNullOrWhiteSpace(objInput.Year_Type))
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR166");
@@ -199,7 +385,7 @@ namespace RightsU.BMS.BLL.Services
             //    return _objRet;
             //}
 
-            if (objInput.licensors.Count() == 0)
+            if (objInput.licensors == null || objInput.licensors.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR170");
             }
@@ -214,7 +400,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172");
             }
@@ -374,6 +560,16 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR160");
             }
+            else
+            {
+                if (objInput.Is_Master_Deal != null && objInput.Is_Master_Deal.ToUpper() == "N")
+                {
+                    if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                    }
+                }
+            }
 
             if (objInput.Role_Code == null || objInput.Role_Code <= 0)
             {
@@ -393,14 +589,6 @@ namespace RightsU.BMS.BLL.Services
             if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR164");
-            }
-
-            if (objInput.Is_Master_Deal != null && objInput.Is_Master_Deal.ToUpper() == "N")
-            {
-                if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
-                {
-                    _objRet = GlobalTool.SetError(_objRet, "ERR165");
-                }
             }
 
             if (string.IsNullOrWhiteSpace(objInput.Year_Type))
@@ -423,7 +611,7 @@ namespace RightsU.BMS.BLL.Services
                 _objRet = GlobalTool.SetError(_objRet, "ERR169");
             }
 
-            if (objInput.licensors.Count() == 0)
+            if (objInput.licensors == null || objInput.licensors.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR170");
             }
@@ -438,7 +626,7 @@ namespace RightsU.BMS.BLL.Services
                 }
             }
 
-            if (objInput.titles.Count() == 0)
+            if (objInput.titles == null || objInput.titles.Count() == 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR172");
             }
@@ -613,7 +801,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn Delete(Int32 deal_id)
+        public GenericReturn Delete(Int32? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -622,7 +810,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (deal_id == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -635,7 +823,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     Acq_Deal objDealGeneral = new Acq_Deal();
 
-                    objDealGeneral = objDealRepositories.Get(deal_id);
+                    objDealGeneral = objDealRepositories.Get(deal_id.Value);
 
                     if (objDealGeneral != null)
                     {
@@ -662,7 +850,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn DealCompeteStatus(Acq_Deal objInput)
+        public GenericReturn DealCompeteStatus(int? deal_id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -671,7 +859,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Acq_Deal_Code == 0)
+            if (deal_id == null || deal_id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR178");
             }
@@ -683,9 +871,9 @@ namespace RightsU.BMS.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     Acq_Deal objDeal = new Acq_Deal();
-                    bool is_RightCompleted = true;                    
+                    bool is_RightCompleted = true;
 
-                    objDeal = objDealRepositories.Get(objInput.Acq_Deal_Code.Value);
+                    objDeal = objDealRepositories.Get(deal_id.Value);
 
                     if (objDeal != null)
                     {
@@ -716,17 +904,17 @@ namespace RightsU.BMS.BLL.Services
 
                         #region Rights available in all titles Check
 
-                        List<int?> lstRightTitles = new List<int?>();
-                        List<int?> lstDealTitles = new List<int?>();
+                        List<string> lstRightTitles = new List<string>();
+                        List<string> lstDealTitles = new List<string>();
 
                         objDeal.titles.ToList().ForEach(i =>
                         {
-                            lstDealTitles.Add(i.Title_Code);
+                            lstDealTitles.Add(i.Title_Code + "~" + i.Episode_Starts_From + "~" + i.Episode_End_To);
                         });
 
                         lstdeal_rights.ForEach(i =>
                         {
-                            lstRightTitles.Add(i.Titles.Select(x => Convert.ToInt32(x.Title_Code)).Distinct().FirstOrDefault());
+                            lstRightTitles.Add(i.Titles.Select(x => x.Title_Code.Value + "~" + x.Episode_From + "~" + x.Episode_To).Distinct().FirstOrDefault());
                         });
 
                         lstRightTitles = lstRightTitles.Distinct().ToList();
@@ -741,7 +929,7 @@ namespace RightsU.BMS.BLL.Services
 
                         #region Checking Liner Rights for run defination
 
-                        List<int?> lstLinerTitle = new List<int?>();
+                        List<string> lstLinerTitle = new List<string>();
 
                         if (objDeal.Deal_Complete_Flag.Contains("R, R"))
                         {
@@ -749,15 +937,15 @@ namespace RightsU.BMS.BLL.Services
                             {
                                 if (i.Platform.Where(x => x.platform.Is_No_Of_Run == "Y").Count() > 0)
                                 {
-                                    lstLinerTitle.Add(i.Titles.Select(x => x.Title_Code.Value).Distinct().FirstOrDefault());
+                                    lstLinerTitle.Add(i.Titles.Select(x => x.Title_Code + "~" + x.Episode_From + "~" + x.Episode_To).Distinct().FirstOrDefault());
                                 }
                             });
 
-                            List<int?> lstRunTitle = new List<int?>();
+                            List<string> lstRunTitle = new List<string>();
 
                             var lstAcqDealRuns = new AcqDealRunRepositories().SearchFor(new { Acq_Deal_Code = objDeal.Acq_Deal_Code }).ToList();
 
-                            lstRunTitle = lstAcqDealRuns.Select(x => x.Titles.Select(c => c.Title_Code).FirstOrDefault()).ToList();
+                            lstRunTitle = lstAcqDealRuns.Select(x => x.titles.Select(c => c.Title_Code + "~" + c.Episode_From + "~" + c.Episode_To).FirstOrDefault()).ToList();
 
                             int cntRunTitle = lstLinerTitle.Distinct().Except(lstRunTitle).Count();
 
@@ -767,7 +955,7 @@ namespace RightsU.BMS.BLL.Services
                             }
                         }
 
-                        
+
 
                         #endregion
 
@@ -782,6 +970,117 @@ namespace RightsU.BMS.BLL.Services
                 if (!_objRet.IsSuccess)
                 {
                     _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn rollback(Acq_Deal objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR178");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    var message = objDealRepositories.validate_Rollback(objInput.Acq_Deal_Code.Value, "A", Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]));
+
+                    if (!string.IsNullOrWhiteSpace(message))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR300");
+                    }
+
+                    _objRet.id = objInput.Acq_Deal_Code;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn candeletetitle(int? deal_id, int? title_id, int? episode_from, int? episode_to)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            string strValidationMessage = string.Empty;
+
+            #region Input Validation
+
+            if (deal_id == null || deal_id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR178");
+            }
+
+            if (title_id == null || title_id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR194");
+            }
+
+            if (episode_from == null || episode_from <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR301");
+            }
+
+            if (episode_to == null || episode_to <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR302");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    var message = objDealRepositories.validate_General_Delete_For_Title(deal_id.Value, title_id.Value, episode_from.Value, episode_to.Value, "A");
+
+                    if (message.Status.ToUpper() == "E")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR303");
+                        strValidationMessage = message.Message;
+                    }
+
+                    _objRet.id = deal_id;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR303"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{deal_candeletetitle}", strValidationMessage);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
