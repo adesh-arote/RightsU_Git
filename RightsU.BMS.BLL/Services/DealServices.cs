@@ -137,7 +137,9 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                    string strSQL = "AND Business_Unit_Code IN (1) AND Deal_Workflow_Status <> 'AR' AND is_active ='Y'";
+                    string strSQL = "AND Deal_Workflow_Status <> 'AR' AND is_active ='Y'";
+
+                    strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
 
                     if (!string.IsNullOrWhiteSpace(search_value))
                     {
@@ -147,7 +149,7 @@ namespace RightsU.BMS.BLL.Services
                                         + " or Acq_Deal_Code in (Select Acq_Deal_Code from Acq_Deal_Movie where Title_Code in (Select Title_Code from Title where Title_name  like N'%" + search_value + "%')))";
 
                         //strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
-                        strSQL += " And Business_Unit_Code In (select Business_Unit_Code from Users_Business_Unit where Users_Code=" + Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]) + ")";//AND is_active='Y';
+                        
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
