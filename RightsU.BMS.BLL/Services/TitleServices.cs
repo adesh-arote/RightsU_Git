@@ -508,39 +508,49 @@ namespace RightsU.BMS.BLL.Services
                     }
                 }
 
-                JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objInput));
-                string strInsertedUserName = string.Empty;
-                string strUpdatedUserName = string.Empty;
-
-                if (objInput.Inserted_By != null || objInput.Inserted_By > 0)
-                {
-                    strInsertedUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
-                    objJson["inserted_by_user"] = strInsertedUserName;
-                }
-
-                if (objInput.Last_Action_By != null || objInput.Last_Action_By > 0)
-                {
-                    strUpdatedUserName = new UserRepositories().GetUserName(objInput.Last_Action_By.Value);
-                    objJson["last_action_by_user"] = strUpdatedUserName;
-                }
-
-                objJson["inserted_on"] = objInput.Inserted_On;
-                objJson["updated_on"] = objInput.Last_UpDated_Time;
-
                 #region Audit Log
 
-                MasterAuditLog objAuditLog = new MasterAuditLog();
-                objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
-                objAuditLog.intCode = objInput.Title_Code.Value;
-                objAuditLog.logData = objJson.ToString();
-                objAuditLog.actionBy = strInsertedUserName;
-                objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objInput.Inserted_On.Value));
-                objAuditLog.actionType = "C";
-                objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+                if (objInput.Title_Code > 0)
+                {
+                    var title_audit = GetTitleById(objInput.Title_Code);
+                    var objtitleAudit = (Title)title_audit.Response;
 
-                string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+                    JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objtitleAudit));
+                    string strInsertedUserName = string.Empty;
+                    string strUpdatedUserName = string.Empty;
 
-                var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+                    if (objtitleAudit != null)
+                    {
+                        if (objtitleAudit.Inserted_By != null || objtitleAudit.Inserted_By > 0)
+                        {
+                            strInsertedUserName = new UserRepositories().GetUserName(objtitleAudit.Inserted_By.Value);
+                            objJson["inserted_by_user"] = strInsertedUserName;
+                        }
+
+                        if (objtitleAudit.Last_Action_By != null || objtitleAudit.Last_Action_By > 0)
+                        {
+                            strUpdatedUserName = new UserRepositories().GetUserName(objtitleAudit.Last_Action_By.Value);
+                            objJson["last_action_by_user"] = strUpdatedUserName;
+                        }
+                    }
+
+                    objJson["inserted_on"] = objtitleAudit.Inserted_On;
+                    objJson["updated_on"] = objtitleAudit.Last_UpDated_Time;
+
+                    MasterAuditLog objAuditLog = new MasterAuditLog();
+                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
+                    objAuditLog.intCode = objtitleAudit.Title_Code.Value;
+                    objAuditLog.logData = objJson.ToString();
+                    objAuditLog.actionBy = strUpdatedUserName;
+                    objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objtitleAudit.Last_UpDated_Time.Value));
+                    objAuditLog.actionType = "C";
+                    objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+
+                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+
+                    var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+
+                }
 
                 #endregion
             }
@@ -841,40 +851,49 @@ namespace RightsU.BMS.BLL.Services
                         }
                     }
 
-                    JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objInput));
-                    string strInsertedUserName = string.Empty;
-                    string strUpdatedUserName = string.Empty;
-
-
-                    if (objInput.Inserted_By != null || objInput.Inserted_By > 0)
-                    {
-                        strInsertedUserName = new UserRepositories().GetUserName(objInput.Inserted_By.Value);
-                        objJson["inserted_by_user"] = strInsertedUserName;
-                    }
-
-                    if (objInput.Last_Action_By != null || objInput.Last_Action_By > 0)
-                    {
-                        strUpdatedUserName = new UserRepositories().GetUserName(objInput.Last_Action_By.Value);
-                        objJson["last_action_by_user"] = strUpdatedUserName;
-                    }
-
-                    objJson["inserted_on"] = objInput.Inserted_On;
-                    objJson["updated_on"] = objInput.Last_UpDated_Time;
-
                     #region Audit Log
 
-                    MasterAuditLog objAuditLog = new MasterAuditLog();
-                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
-                    objAuditLog.intCode = objInput.Title_Code.Value;
-                    objAuditLog.logData = objJson.ToString();
-                    objAuditLog.actionBy = strUpdatedUserName;
-                    objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objInput.Last_UpDated_Time.Value));
-                    objAuditLog.actionType = "U";
-                    objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+                    if (objInput.Title_Code > 0)
+                    {
+                        var title_audit = GetTitleById(objInput.Title_Code);
+                        var objtitleAudit = (Title)title_audit.Response;
 
-                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+                        JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objtitleAudit));
+                        string strInsertedUserName = string.Empty;
+                        string strUpdatedUserName = string.Empty;
 
-                    var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+                        if (objtitleAudit != null)
+                        {
+                            if (objtitleAudit.Inserted_By != null || objtitleAudit.Inserted_By > 0)
+                            {
+                                strInsertedUserName = new UserRepositories().GetUserName(objtitleAudit.Inserted_By.Value);
+                                objJson["inserted_by_user"] = strInsertedUserName;
+                            }
+
+                            if (objtitleAudit.Last_Action_By != null || objtitleAudit.Last_Action_By > 0)
+                            {
+                                strUpdatedUserName = new UserRepositories().GetUserName(objtitleAudit.Last_Action_By.Value);
+                                objJson["last_action_by_user"] = strUpdatedUserName;
+                            }
+                        }
+
+                        objJson["inserted_on"] = objtitleAudit.Inserted_On;
+                        objJson["updated_on"] = objtitleAudit.Last_UpDated_Time;
+
+                        MasterAuditLog objAuditLog = new MasterAuditLog();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
+                        objAuditLog.intCode = objtitleAudit.Title_Code.Value;
+                        objAuditLog.logData = objJson.ToString();
+                        objAuditLog.actionBy = strUpdatedUserName;
+                        objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objtitleAudit.Last_UpDated_Time.Value));
+                        objAuditLog.actionType = "U";
+                        objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+
+                        string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+
+                        var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+
+                    }
 
                     #endregion
                 }
@@ -942,126 +961,48 @@ namespace RightsU.BMS.BLL.Services
                     objTitleRepositories.Update(objTitle);
                     _objRet.id = objTitle.Title_Code;
 
-
-                    #region Bind Metadata Details for AuditLog
-
-                    var objMapExtended = objMap_Extended_ColumnsRepositories.SearchFor(new { Record_Code = objTitle.Title_Code });
-
-                    if (objMapExtended.Count() > 0)
-                    {
-                        foreach (var item in objMapExtended)
-                        {
-                            if (item.extended_columns.Is_Ref == "N" && item.extended_columns.Is_Defined_Values == "N" && item.extended_columns.Is_Multiple_Select == "N")
-                            {
-                                string strColumnValue = string.Empty;
-
-                                if (item.extended_columns.Control_Type == "DATE")
-                                {
-                                    if (!string.IsNullOrWhiteSpace(item.Column_Value))
-                                    {
-                                        item.Column_Value = Convert.ToString(GlobalTool.DateToLinux(DateTime.Parse(item.Column_Value)));
-                                    }
-                                }
-                            }
-                            else if (item.extended_columns.Is_Ref == "Y" && item.extended_columns.Is_Multiple_Select == "N")
-                            {
-                                if (item.extended_columns.Is_Defined_Values == "Y")
-                                {
-                                    string strQuery = "SELECT * FROM Extended_Columns_Value WHERE Columns_Value_Code=" + item.Columns_Value_Code.Value;
-
-                                    var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
-
-                                    if (Extended_Columns_Value.Count() > 0)
-                                    {
-                                        item.extended_columns_value = Extended_Columns_Value[0];
-                                    }
-                                }
-                                else
-                                {
-                                    string strQuery = "SELECT " + item.extended_columns.Ref_Display_Field + " as Columns_Value," + item.extended_columns.Ref_Value_Field + " as Columns_Value_Code FROM " + item.extended_columns.Ref_Table + " WHERE " + item.extended_columns.Ref_Value_Field + "=" + item.Columns_Value_Code.Value;
-
-                                    var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
-
-                                    if (Extended_Columns_Value.Count() > 0)
-                                    {
-                                        item.extended_columns_value = Extended_Columns_Value[0];
-                                    }
-                                }
-                            }
-                            else if (item.extended_columns.Is_Ref == "Y" && item.extended_columns.Is_Multiple_Select == "Y")
-                            {
-                                if (item.extended_columns.Is_Defined_Values == "Y")
-                                {
-                                    item.metadata_values.ToList().ForEach(i =>
-                                    {
-                                        string strQuery = "SELECT * FROM Extended_Columns_Value WHERE Columns_Value_Code=" + i.Columns_Value_Code.Value;
-
-                                        var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
-
-                                        if (Extended_Columns_Value.Count() > 0)
-                                        {
-                                            i.name = Extended_Columns_Value[0].Columns_Value;
-                                        }
-                                    });
-                                }
-                                else
-                                {
-                                    item.metadata_values.ToList().ForEach(i =>
-                                    {
-                                        string strQuery = "SELECT " + item.extended_columns.Ref_Display_Field + " as Columns_Value," + item.extended_columns.Ref_Value_Field + " as Columns_Value_Code FROM " + item.extended_columns.Ref_Table + " WHERE " + item.extended_columns.Ref_Value_Field + "=" + i.Columns_Value_Code.Value;
-
-                                        var Extended_Columns_Value = objExtended_Columns_ValueRepositories.GetScalarDataWithSQLStmt(strQuery);
-
-                                        if (Extended_Columns_Value.Count() > 0)
-                                        {
-                                            i.name = Extended_Columns_Value[0].Columns_Value;
-                                        }
-                                    });
-                                }
-                            }
-
-                        }
-
-                        objTitle.MetaData = objMapExtended.ToList();
-                    }
-
-                    #endregion
-
-                    JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objTitle));
-                    string strInsertedUserName = string.Empty;
-                    string strUpdatedUserName = string.Empty;
-
-                    
-
-                    if (objTitle.Inserted_By != null || objTitle.Inserted_By > 0)
-                    {
-                        strInsertedUserName = new UserRepositories().GetUserName(objTitle.Inserted_By.Value);
-                        objJson["inserted_by_user"] = strInsertedUserName;
-                    }
-
-                    if (objTitle.Last_Action_By != null || objTitle.Last_Action_By > 0)
-                    {
-                        strUpdatedUserName = new UserRepositories().GetUserName(objTitle.Last_Action_By.Value);
-                        objJson["last_action_by_user"] = strUpdatedUserName;
-                    }
-
-                    objJson["inserted_on"] = objTitle.Inserted_On;
-                    objJson["updated_on"] = objTitle.Last_UpDated_Time;
-
                     #region Audit Log
 
-                    MasterAuditLog objAuditLog = new MasterAuditLog();
-                    objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
-                    objAuditLog.intCode = objInput.Title_Code.Value;
-                    objAuditLog.logData = objJson.ToString();
-                    objAuditLog.actionBy = strUpdatedUserName;
-                    objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objTitle.Last_UpDated_Time.Value));
-                    objAuditLog.actionType = objTitle.Is_Active.ToUpper() == "Y" ? "A" : "D";
-                    objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+                    if (objInput.Title_Code > 0)
+                    {
+                        var title_audit = GetTitleById(objInput.Title_Code);
+                        var objtitleAudit = (Title)title_audit.Response;
 
-                    string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+                        JObject objJson = JObject.Parse(JsonConvert.SerializeObject(objtitleAudit));
+                        string strInsertedUserName = string.Empty;
+                        string strUpdatedUserName = string.Empty;
 
-                    var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+                        if (objtitleAudit != null)
+                        {
+                            if (objtitleAudit.Inserted_By != null || objtitleAudit.Inserted_By > 0)
+                            {
+                                strInsertedUserName = new UserRepositories().GetUserName(objtitleAudit.Inserted_By.Value);
+                                objJson["inserted_by_user"] = strInsertedUserName;
+                            }
+
+                            if (objtitleAudit.Last_Action_By != null || objtitleAudit.Last_Action_By > 0)
+                            {
+                                strUpdatedUserName = new UserRepositories().GetUserName(objtitleAudit.Last_Action_By.Value);
+                                objJson["last_action_by_user"] = strUpdatedUserName;
+                            }
+                        }
+
+                        objJson["inserted_on"] = objtitleAudit.Inserted_On;
+                        objJson["updated_on"] = objtitleAudit.Last_UpDated_Time;
+
+                        MasterAuditLog objAuditLog = new MasterAuditLog();
+                        objAuditLog.moduleCode = GlobalParams.ModuleCodeForTitle;
+                        objAuditLog.intCode = objtitleAudit.Title_Code.Value;
+                        objAuditLog.logData = objJson.ToString();
+                        objAuditLog.actionBy = strUpdatedUserName;
+                        objAuditLog.actionOn = Convert.ToInt32(GlobalTool.DateToLinux(objtitleAudit.Last_UpDated_Time.Value));
+                        objAuditLog.actionType = objtitleAudit.Is_Active.ToUpper() == "Y" ? "A" : "D";
+                        objAuditLog.requestId = HttpContext.Current.Request.Headers["LogRequestId"];
+
+                        string GlobalAuthKey = (HttpContext.Current.ApplicationInstance).Application["AuthKey"].ToString();
+
+                        var xyz = GlobalTool.AuditLog(objAuditLog, GlobalAuthKey);
+                    }
 
                     #endregion
                 }
