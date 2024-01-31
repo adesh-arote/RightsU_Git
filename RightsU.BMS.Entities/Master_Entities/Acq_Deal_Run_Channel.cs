@@ -30,9 +30,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         public Nullable<int> Channel_Code { get; set; }
 
         [SimpleSaveIgnore]
-        [SimpleLoadIgnore]
-        //[ManyToOne]
-        //[Column("Channel_Code")]
+        [ManyToOne]
+        [Column("Channel_Code")]
         public virtual Channel Channel { get; set; }
 
         [JsonProperty(PropertyName = "define_runs")]
