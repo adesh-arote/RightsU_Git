@@ -227,4 +227,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonIgnore]
         public string Material_Remarks { get; set; }
     }
+
+    public partial class USP_Validate_General_Delete_For_Title
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+    }
 }

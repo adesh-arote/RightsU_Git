@@ -133,7 +133,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.Titles.ToList()[i].Title_Code == null || objInput.Titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR273");
+                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
                     }
                 }
             }
@@ -352,7 +352,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.Titles.ToList()[i].Title_Code == null || objInput.Titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR273");
+                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
                     }
                 }
             }

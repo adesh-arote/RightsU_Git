@@ -66,7 +66,7 @@ Begin
 	
 		IF @Title_Codes <> '' AND @Channel_Codes <> ','
 		BEGIN
-			SELECT distinct Acq_Deal_Run_Code,Acq_Deal_Code,Title_Name,Acq_Deal_Movie_Code,ChannelNames,Run_Definition_Type,Run_Type,No_Of_Runs,Is_Rule_Right,No_Of_Runs_Sched,Data_For,Is_SubLicense,Syndication_Runs FROM #temp
+			SELECT distinct Acq_Deal_Run_Code,Acq_Deal_Code,Title_Name,Acq_Deal_Movie_Code,ChannelNames,Run_Definition_Type,Run_Type,No_Of_Runs,Is_Rule_Right,No_Of_Runs_Sched,Data_For,Is_SubLicense,Syndication_Runs, Inserted_On, Last_updated_Time FROM #temp
 			WHERE(
 				   (Acq_Deal_Movie_Code IN (select number from dbo.fn_Split_withdelemiter(@Title_Codes,',')) OR @Title_Codes='0') 
 					 and (Channel_Code in (select number from dbo.fn_Split_withdelemiter(@Channel_Codes,','))  OR  @Channel_Codes = '')	
@@ -76,7 +76,7 @@ Begin
 		END
 		ELSE
 		BEGIN
-			SELECT distinct Acq_Deal_Run_Code,Acq_Deal_Code,Title_Name,Acq_Deal_Movie_Code,ChannelNames,Run_Definition_Type,Run_Type,No_Of_Runs,Is_Rule_Right,No_Of_Runs_Sched,Data_For,Is_SubLicense,Syndication_Runs FROM #temp
+			SELECT distinct Acq_Deal_Run_Code,Acq_Deal_Code,Title_Name,Acq_Deal_Movie_Code,ChannelNames,Run_Definition_Type,Run_Type,No_Of_Runs,Is_Rule_Right,No_Of_Runs_Sched,Data_For,Is_SubLicense,Syndication_Runs, Inserted_On, Last_updated_Time FROM #temp
 			WHERE(
 				   (Acq_Deal_Movie_Code IN (select number from dbo.fn_Split_withdelemiter(@Title_Codes,',')) OR @Title_Codes='0') 
 					 or (Channel_Code in (select number from dbo.fn_Split_withdelemiter(@Channel_Codes,','))  OR  @Channel_Codes = '')	

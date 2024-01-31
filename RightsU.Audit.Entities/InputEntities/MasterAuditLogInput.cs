@@ -33,7 +33,7 @@ namespace RightsU.Audit.Entities.InputEntities
         /// Only below keywards are allowed , "C" - for new instance of a record,"X" - for Delete,"U" - for Update,"A" - for Active,"D" - for De-Active
         /// </summary>
         public string actionType { get; set; }
-        [JsonIgnore]
+        
         public string requestId { get; set; }
 
 

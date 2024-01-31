@@ -109,7 +109,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objPartyServices.GetById(id.Value);
+            GenericReturn objReturn = objPartyServices.GetById(id);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

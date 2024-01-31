@@ -22,5 +22,13 @@ namespace RightsU.BMS.Entities.FrameworkClasses
         public const int Assets_Title_Put = 284;
         public const int Assets_Title_Active = 285;
         public const int Assets_Title_Deactive = 286;
+
+
+
+        #region Audit Global Params
+
+        public const int ModuleCodeForTitle = 27;
+
+        #endregion
     }
 }

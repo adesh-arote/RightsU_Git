@@ -107,7 +107,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTitleServices.GetTitleById(id.Value);
+            GenericReturn objReturn = objTitleServices.GetTitleById(id);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

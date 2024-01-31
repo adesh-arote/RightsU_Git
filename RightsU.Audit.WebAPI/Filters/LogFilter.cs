@@ -65,16 +65,15 @@ namespace RightsU.Audit.WebAPI.Filters
                     logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
                     if (actionExecutedContext.Request.Method.Method == "GET")
                     {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
-                        logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                        logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                        
                     }
                     else
                     {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);
-                        logObj.IsSuccess = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
-                        logObj.TimeTaken = Convert.ToString(((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);
+                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                        
                     }
+
+                    logObj.IsSuccess = ((string[])actionExecutedContext.Response.Headers.Where(x => x.Key == "request_completion").Select(x => x.Value).FirstOrDefault())[0];
+                    logObj.TimeTaken = ((string[])actionExecutedContext.Response.Headers.Where(x => x.Key == "timetaken").Select(x => x.Value).FirstOrDefault())[0];
 
                     logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
                     logObj.RequestDateTime = DateTime.Now.ToString("dd-MMM-yyyy HH:mm:ss");
@@ -82,7 +81,7 @@ namespace RightsU.Audit.WebAPI.Filters
                     logObj.ResponseContent = JsonConvert.SerializeObject(((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value);
                     logObj.ResponseLength = Convert.ToString(logObj.ResponseContent.Length);
                     logObj.ServerName = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["strHostName"].ToString();
-                    logObj.UserAgent = "AutidLog API";
+                    logObj.UserAgent = "AuditLog API";
                     logObj.Method = actionExecutedContext.Request.Method.Method;
                     logObj.ClientIpAddress = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["ipAddress"].ToString();
 
@@ -91,22 +90,25 @@ namespace RightsU.Audit.WebAPI.Filters
                     string GlobalAuthKey = (HttpContext.Current.ApplicationInstance as WebApiApplication).Application["AuthKey"].ToString();
                     logObj.AuthenticationKey = GlobalAuthKey;
 
+                    actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
+                    actionExecutedContext.Response.Headers.Remove("timetaken");
+
                     var logDetails = await UTOLogger.LogService(logObj, GlobalAuthKey);
                     HttpResponses logData = JsonConvert.DeserializeObject<HttpResponses>(logDetails);
-                    if (logData.LGCode > 0)
-                    {
-                        actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
-                        if (logObj.Method == "GET")
-                        {
-                            actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                            actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
-                        }
-                        else
-                        {
-                            actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
-                            actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
-                        }
-                    }
+                    //if (logData.LGCode > 0)
+                    //{
+                    //    actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
+                    //    if (logObj.Method == "GET")
+                    //    {
+                    //        actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                    //        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+                    //    }
+                    //    else
+                    //    {
+                    //        actionExecutedContext.Response.Headers.Add("message", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).Message);
+                    //        actionExecutedContext.Response.Headers.Add("issuccess", ((RightsU.Audit.Entities.FrameworkClasses.PostReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess.ToString());
+                    //    }
+                    //}
                 }
                 catch (Exception ex)
                 {

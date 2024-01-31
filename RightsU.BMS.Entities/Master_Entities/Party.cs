@@ -11,7 +11,14 @@ namespace RightsU.BMS.Entities.Master_Entities
 {
     [Table("Vendor")]
     public partial class Party
-    {
+    {        
+        public Party()
+        {
+            this.party_role = new HashSet<Vendor_Role>();
+            this.party_country = new HashSet<Vendor_Country>();
+            this.party_contact = new HashSet<Vendor_Contacts>();
+        }
+
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonIgnore]
