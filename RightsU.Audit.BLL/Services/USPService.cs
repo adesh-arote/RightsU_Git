@@ -20,9 +20,9 @@ namespace RightsU.Audit.BLL.Services
     {
         private readonly ProcedureRepositories objProcedureRepositories = new ProcedureRepositories();
         
-        public PostReturn InsertAuditLog(MasterAuditLogInput Input)
+        public GenericReturn InsertAuditLog(MasterAuditLogInput Input)
         {
-            PostReturn _objRet = new PostReturn();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
             _objRet.StatusCode = HttpStatusCode.OK;
@@ -30,7 +30,7 @@ namespace RightsU.Audit.BLL.Services
             #region Input Validation
             if (Input != null)
             {
-                if (Input.moduleCode == null || Input.moduleCode == 0)
+                if (Input.moduleCode == null || Input.moduleCode <= 0)
                 {
                     _objRet.Message = "Input Paramater 'moduleCode' is mandatory";
                     _objRet.IsSuccess = false;
@@ -39,7 +39,7 @@ namespace RightsU.Audit.BLL.Services
                     //objLog.Error_Description = _objRet.Message;
                 }
 
-                if (Input.intCode == null || Input.intCode == 0)
+                if (Input.intCode == null || Input.intCode <= 0)
                 {
                     _objRet.Message = "Input Paramater 'intCode' is mandatory";
                     _objRet.IsSuccess = false;
@@ -66,7 +66,7 @@ namespace RightsU.Audit.BLL.Services
                     //objLog.Error_Description = _objRet.Message;
                 }
 
-                if (Input.actionOn == null || Input.actionOn == 0)
+                if (Input.actionOn == null || Input.actionOn <= 0)
                 {
                     _objRet.Message = "Input Paramater 'actionOn' is mandatory";
                     _objRet.IsSuccess = false;
@@ -107,6 +107,8 @@ namespace RightsU.Audit.BLL.Services
                 if (_objRet.IsSuccess)
                 {
                     var auditId = objProcedureRepositories.InsertAuditLog(Input.moduleCode, Input.intCode, Input.logData, Input.actionBy, Input.actionOn, Input.actionType,Input.requestId);
+
+                    _objRet.id = auditId;
                 }
             }
             catch (Exception ex)

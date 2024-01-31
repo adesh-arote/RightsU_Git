@@ -25,8 +25,14 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "currency_code")]
         public Nullable<int> Currency_Code { get; set; }
 
-        [JsonProperty(PropertyName = "effective_start_date")]
+      
+        [JsonIgnore]
         public System.DateTime Effective_Start_Date { get; set; }
+
+        [SimpleSaveIgnore]
+        [SimpleLoadIgnore]
+        [JsonProperty(PropertyName = "effective_start_date")]
+        public string effective_start_date { get; set; }
 
         [JsonIgnore]
         public Nullable<System.DateTime> System_End_Date { get; set; }
