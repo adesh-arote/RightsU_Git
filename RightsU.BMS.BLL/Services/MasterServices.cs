@@ -187,7 +187,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -199,7 +199,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -237,12 +237,12 @@ namespace RightsU.BMS.BLL.Services
                     }
                     if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        channels = channels.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                        channels = channels.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        channels = channels.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                        channels = channels.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
 
                     GlobalTool.GetPaging(page, size, channels.Count, out noOfRecordSkip, out noOfRecordTake);
@@ -427,7 +427,7 @@ namespace RightsU.BMS.BLL.Services
 
                     objChannelDetailsRepositories.Add(objChannel);
 
-                    _objRet.Response = new { id = objChannel.Channel_Code };
+                    _objRet.id = objInput.Channel_Code;
                 }
             }
             catch (Exception ex)
@@ -548,7 +548,7 @@ namespace RightsU.BMS.BLL.Services
 
                     objChannelDetailsRepositories.Update(objInput);
 
-                    _objRet.Response = new { id = objChannel.Channel_Code };
+                    _objRet.id = objInput.Channel_Code;
 
                 }
             }
@@ -601,7 +601,7 @@ namespace RightsU.BMS.BLL.Services
                 objChannel.Inserted_On = DateTime.Now;
                 objChannelDetailsRepositories.Update(objChannel);
 
-                _objRet.Response = new { id = objChannel.Channel_Code };
+                _objRet.id = objInput.Channel_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -3420,6 +3420,13 @@ namespace RightsU.BMS.BLL.Services
                 if (!_objRet.IsSuccess)
                 {
                     _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -3429,13 +3436,12 @@ namespace RightsU.BMS.BLL.Services
 
             _PromoterRemarkReturn.paging.page = page;
             _PromoterRemarkReturn.paging.size = size;
-
             _objRet.Response = _PromoterRemarkReturn;
 
             return _objRet;
         }
 
-        public GenericReturn GetPromoterRemarkById(Int32 id)
+        public GenericReturn GetPromoterRemarkById(int ? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -3444,7 +3450,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (id == 0)
+            if (id == 0 || id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR155");
             }
@@ -3455,12 +3461,14 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                    PromoterRemark objReturn = new PromoterRemark();
-                    objReturn = objPromoterRemarkRepositories.GetById(id);
-                    if (objReturn != null)
+                    PromoterRemark objPromoterRemark = new PromoterRemark();
+
+                    objPromoterRemark = objPromoterRemarkRepositories.GetById(id.Value);
+
+                    if (objPromoterRemark != null)
                     {
                         {
-                            _objRet.Response = objReturn;
+                            _objRet.Response = objPromoterRemark;
                         }
                     }
                     else
@@ -3494,33 +3502,35 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
+            else
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR207");
+                if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR207");
+                }
+                else
+                {
+                    var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
+
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR208");
+                    }
+                }
             }
-
-            var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
-
-            if (CheckDuplicate.Count > 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR208");
-            }
-
             #endregion
             if (_objRet.IsSuccess)
             {
-                PromoterRemark objPromoterRemark = new PromoterRemark();
+                objInput.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
+                objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                objInput.Inserted_On = DateTime.Now;
+                objInput.Last_Updated_Time = DateTime.Now;
+                objInput.Is_Active = "Y";
 
-                objPromoterRemark.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
-                objPromoterRemark.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                objPromoterRemark.Inserted_On = DateTime.Now;
-                objPromoterRemark.Last_Updated_Time = DateTime.Now;
-                objPromoterRemark.Is_Active = "Y";
+                objPromoterRemarkRepositories.Add(objInput);
 
-                objPromoterRemarkRepositories.Add(objPromoterRemark);
-
-                _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+                _objRet.id = objInput.Promoter_Remarks_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -3543,24 +3553,26 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR209");
-            }
-
-            if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR207");
-            }
             else
             {
-                var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
-                if (CheckDuplicate.Count > 0)
+                if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
                 {
-                    if (CheckDuplicate.FirstOrDefault().Promoter_Remarks_Code != objInput.Promoter_Remarks_Code)
+                    _objRet = GlobalTool.SetError(_objRet, "ERR209");
+                }
+
+                if (string.IsNullOrEmpty(objInput.Promoter_Remark_Desc))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR207");
+                }
+                else
+                {
+                    var CheckDuplicate = objPromoterRemarkRepositories.SearchFor(new { Promoter_Remark_Desc = objInput.Promoter_Remark_Desc }).ToList();
+                    if (CheckDuplicate.Count > 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR208");
+                        if (CheckDuplicate.FirstOrDefault().Promoter_Remarks_Code != objInput.Promoter_Remarks_Code)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR208");
+                        }
                     }
                 }
             }
@@ -3570,17 +3582,17 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                    PromoterRemark objPromoterRemark = new PromoterRemark();
-
-                    objPromoterRemark = objPromoterRemarkRepositories.Get(objInput.Promoter_Remarks_Code.Value);
-                    objPromoterRemark.Promoter_Remark_Desc = objInput.Promoter_Remark_Desc;
-                    objPromoterRemark.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                    objPromoterRemark.Last_Updated_Time = DateTime.Now;
-                    objPromoterRemark.Is_Active = objPromoterRemark.Is_Active;
+                    var objPromoterRemark = objPromoterRemarkRepositories.Get(objInput.Promoter_Remarks_Code.Value);
+                    objInput.Promoter_Remark_Desc = objPromoterRemark.Promoter_Remark_Desc;
+                    objInput.Inserted_On = objPromoterRemark.Inserted_On;
+                    objInput.Inserted_By = objPromoterRemark.Inserted_By;
+                    objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objInput.Last_Updated_Time = DateTime.Now;
+                    objInput.Is_Active = objPromoterRemark.Is_Active;
 
                     objPromoterRemarkRepositories.Update(objPromoterRemark);
 
-                    _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+                    _objRet.id = objInput.Promoter_Remarks_Code;
 
                 }
             }
@@ -3608,33 +3620,41 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
+            else
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR155");
-            }
+                if (objInput.Promoter_Remarks_Code == null || objInput.Promoter_Remarks_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR155");
+                }
 
-            if (string.IsNullOrEmpty(objInput.Is_Active))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+                if (string.IsNullOrEmpty(objInput.Is_Active))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR195");
+                }
+                else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR211");
+                }
             }
-            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR211");
-            }
-
             #endregion
             if (_objRet.IsSuccess)
             {
                 PromoterRemark objPromoterRemark = new PromoterRemark();
-                objPromoterRemark = objPromoterRemarkRepositories.Get(Convert.ToInt32(objInput.Promoter_Remarks_Code));
+                objPromoterRemark = objPromoterRemarkRepositories.Get(objInput.Promoter_Remarks_Code.Value);
 
-                objPromoterRemark.Last_Updated_Time = DateTime.Now;
-                objPromoterRemark.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
-                objPromoterRemark.Is_Active = objInput.Is_Active.ToUpper();
+                if (objPromoterRemark != null)
+                {
+                    objPromoterRemark.Last_Updated_Time = DateTime.Now;
+                    objPromoterRemark.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
+                    objPromoterRemark.Is_Active = objInput.Is_Active.ToUpper();
 
-                objPromoterRemarkRepositories.Update(objPromoterRemark);
-                _objRet.Response = new { id = objPromoterRemark.Promoter_Remarks_Code };
+                    objPromoterRemarkRepositories.Update(objPromoterRemark);
+                    _objRet.id = objInput.Promoter_Remarks_Code;
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR210");
+                }
 
             }
             if (!_objRet.IsSuccess)
@@ -3894,7 +3914,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objCategoryRepositories.Add(objCategory);
 
-                _objRet.Response = new { id = objCategory.Category_Code };
+                _objRet.id = objInput.Category_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -3955,7 +3975,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objCategoryRepositories.Update(objCategory);
 
-                _objRet.Response = new { id = objCategory.Category_Code };
+                _objRet.id = objInput.Category_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -4003,7 +4023,8 @@ namespace RightsU.BMS.BLL.Services
                 objCategory.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objCategory.Is_Active = objInput.Is_Active.ToUpper();
                 objCategoryRepositories.Update(objCategory);
-                _objRet.Response = new { id = objCategory.Category_Code };
+
+                _objRet.id = objInput.Category_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -4147,13 +4168,11 @@ namespace RightsU.BMS.BLL.Services
                     {
                         rightRules = rightRules.Where(w => (w.Last_Updated_Time.Value == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
 
-                        // rightRules = rightRules.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        // rightRules = rightRules.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
-                        rightRules = rightRules.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
+                        rightRules = rightRules.Where(w => (w.Last_Updated_Time.Value == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
                     GlobalTool.GetPaging(page, size, rightRules.Count, out noOfRecordSkip, out noOfRecordTake);
                     if (sort.ToLower() == "Inserted_On".ToLower())
@@ -4319,7 +4338,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objRightRuleRepositories.Add(objRightRule);
 
-                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+                _objRet.id = objInput.Right_Rule_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -4403,7 +4422,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objRightRuleRepositories.Update(objRightRule);
 
-                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+                _objRet.id = objInput.Right_Rule_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -4450,7 +4469,8 @@ namespace RightsU.BMS.BLL.Services
                 objRightRule.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                 objRightRule.Is_Active = objInput.Is_Active.ToUpper();
                 objRightRuleRepositories.Update(objRightRule);
-                _objRet.Response = new { id = objRightRule.Right_Rule_Code };
+
+                _objRet.id = objInput.Right_Rule_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -4600,7 +4620,7 @@ namespace RightsU.BMS.BLL.Services
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time.Value == null ? (w.Inserted_On.Value >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
+                        languageGroups = languageGroups.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On.Value <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
 
                     }
                     GlobalTool.GetPaging(page, size, languageGroups.Count, out noOfRecordSkip, out noOfRecordTake);
@@ -4755,8 +4775,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objLanguageGroupRepositories.Add(objLanguageGroup);
 
-                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
-
+                _objRet.id = objInput.Language_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
@@ -4864,8 +4883,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objLanguageGroupRepositories.Update(objInput);
 
-                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
-
+                _objRet.id = objInput.Language_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
@@ -4913,8 +4931,7 @@ namespace RightsU.BMS.BLL.Services
                 objLanguageGroup.Inserted_On = DateTime.Now;
                 objLanguageGroupRepositories.Update(objLanguageGroup);
 
-                _objRet.Response = new { id = objLanguageGroup.Language_Group_Code };
-
+                _objRet.id = objInput.Language_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
@@ -5004,7 +5021,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -5016,7 +5033,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -5063,12 +5080,12 @@ namespace RightsU.BMS.BLL.Services
                     }
                     if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        currencies = currencies.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                        currencies = currencies.Where(w => (w.Last_Updated_Time.Value == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        currencies = currencies.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                        currencies = currencies.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
                     GlobalTool.GetPaging(page, size, currencies.Count, out noOfRecordSkip, out noOfRecordTake);
                     if (sort.ToLower() == "Inserted_On".ToLower())
@@ -5148,6 +5165,10 @@ namespace RightsU.BMS.BLL.Services
                     objReturn = objCurrencyRepositories.GetById(id);
                     if (objReturn != null)
                     {
+                        foreach (var item in objReturn.currency_exchange.ToList())
+                        {
+                            item.effective_start_date = Convert.ToString(GlobalTool.DateToLinux(item.Effective_Start_Date));
+                        }
                         _objRet.Response = objReturn;
                     }
                     else
@@ -5251,7 +5272,7 @@ namespace RightsU.BMS.BLL.Services
 
                     objCurrencyRepositories.Add(objCurrrency);
 
-                    _objRet.Response = new { id = objCurrrency.Currency_Code };
+                    _objRet.id = objInput.Currency_Code;
 
                 }
             }
@@ -5378,7 +5399,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objCurrencyRepositories.Update(objInput);
 
-                _objRet.Response = new { id = objCurrency.Currency_Code };
+                _objRet.id = objInput.Currency_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -5427,7 +5448,7 @@ namespace RightsU.BMS.BLL.Services
                 objCurrency.Inserted_On = DateTime.Now;
                 objCurrencyRepositories.Update(objCurrency);
 
-                _objRet.Response = new { id = objCurrency.Currency_Code };
+                _objRet.id = objInput.Currency_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -5518,7 +5539,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -5530,7 +5551,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -5579,12 +5600,12 @@ namespace RightsU.BMS.BLL.Services
                     }
                     if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        countries = countries.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                        countries = countries.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        countries = countries.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                        countries = countries.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
 
                     GlobalTool.GetPaging(page, size, countries.Count, out noOfRecordSkip, out noOfRecordTake);
@@ -5702,19 +5723,21 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (string.IsNullOrEmpty(objInput.Country_Name))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR237");
-            }
             else
             {
-                var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
-                if (CheckDuplicate.Count > 0)
+                if (string.IsNullOrEmpty(objInput.Country_Name))
                 {
-                    if (CheckDuplicate.FirstOrDefault().Country_Code != objInput.Country_Code)
+                    _objRet = GlobalTool.SetError(_objRet, "ERR237");
+                }
+                else
+                {
+                    var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
+                    if (CheckDuplicate.Count > 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR238");
+                        if (CheckDuplicate.FirstOrDefault().Country_Code != objInput.Country_Code)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR238");
+                        }
                     }
                 }
             }
@@ -5748,7 +5771,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objCountryRepositories.Add(objCountry);
 
-                _objRet.Response = new { id = objCountry.Country_Code };
+                _objRet.id = objInput.Country_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -5771,20 +5794,22 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-            if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+            else
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR239");
-            }
+                if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR239");
+                }
 
-            if (string.IsNullOrEmpty(objInput.Is_Active))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR195");
+                if (string.IsNullOrEmpty(objInput.Is_Active))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR195");
+                }
+                else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR211");
+                }
             }
-            else if (objInput.Is_Active.ToUpper() != "Y" && objInput.Is_Active.ToUpper() != "N")
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR211");
-            }
-
             #endregion
             if (_objRet.IsSuccess)
             {
@@ -5798,7 +5823,7 @@ namespace RightsU.BMS.BLL.Services
                 objCountry.Inserted_On = DateTime.Now;
                 objCountryRepositories.Update(objCountry);
 
-                _objRet.Response = new { id = objCountry.Country_Code };
+                _objRet.id = objInput.Country_Code;
 
             }
             if (!_objRet.IsSuccess)
@@ -5820,32 +5845,37 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-            if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+            else
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR239");
-            }
+                if (objInput.Country_Code == null || objInput.Country_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR239");
+                }
 
-            if (string.IsNullOrEmpty(objInput.Country_Name))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR237");
-            }
+                if (string.IsNullOrEmpty(objInput.Country_Name))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR237");
+                }
 
-            var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
+                else
+                {
+                    var CheckDuplicate = objCountryRepositories.SearchFor(new { Country_Name = objInput.Country_Name }).ToList();
 
-            if (CheckDuplicate.Count > 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR238");
-            }
-            if (!_objRet.IsSuccess)
-            {
-                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        if (CheckDuplicate.FirstOrDefault().Country_Code != objInput.Country_Code)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR238");
+                        }
+                    }
+                }
             }
             #endregion
 
             if (_objRet.IsSuccess)
             {
                 var objCountry = objCountryRepositories.Get(objInput.Country_Code.Value);
-                if (objInput.country_language != null)
+                if (objInput.country_language != null && objInput.country_language.Count() > 0)
                 {
 
                     objCountry.country_language.ToList().ForEach(f => f.EntityState = State.Deleted);
@@ -5891,8 +5921,12 @@ namespace RightsU.BMS.BLL.Services
 
                 objCountryRepositories.Update(objInput);
 
-                _objRet.Response = new { id = objCountry.Country_Code };
+                _objRet.id = objInput.Country_Code;
 
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
             }
             return _objRet;
         }
@@ -6606,7 +6640,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -6618,7 +6652,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                     }
                     catch (Exception ex)
                     {
@@ -6657,12 +6691,12 @@ namespace RightsU.BMS.BLL.Services
                     }
                     if (!string.IsNullOrWhiteSpace(Date_GT))
                     {
-                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time >= DateTime.Parse(Date_GT) || w.Inserted_On >= DateTime.Parse(Date_GT))).ToList();
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time.Value >= DateTime.Parse(Date_GT)))).ToList();
                     }
 
                     if (!string.IsNullOrWhiteSpace(Date_LT))
                     {
-                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time <= DateTime.Parse(Date_LT) || w.Inserted_On <= DateTime.Parse(Date_LT))).ToList();
+                        promoterGroups = promoterGroups.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time.Value <= DateTime.Parse(Date_LT)))).ToList();
                     }
 
                     GlobalTool.GetPaging(page, size, promoterGroups.Count, out noOfRecordSkip, out noOfRecordTake);
@@ -6729,7 +6763,7 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (id == 0)
+            if (id == 0 || id <= 0)
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR244");
             }
@@ -6807,8 +6841,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objPromoterGroupRepositories.Add(objPromoterGroup);
 
-                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
-
+                _objRet.id = objInput.Promoter_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
@@ -6868,8 +6901,7 @@ namespace RightsU.BMS.BLL.Services
 
                 objPromoterGroupRepositories.Update(objPromoterGroup);
 
-                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
-
+                _objRet.id = objInput.Promoter_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
@@ -6918,8 +6950,7 @@ namespace RightsU.BMS.BLL.Services
                 objPromoterGroup.Is_Active = objInput.Is_Active.ToUpper();
 
                 objPromoterGroupRepositories.Update(objPromoterGroup);
-                _objRet.Response = new { id = objPromoterGroup.Promoter_Group_Code };
-
+                _objRet.id = objInput.Promoter_Group_Code;
             }
             if (!_objRet.IsSuccess)
             {
