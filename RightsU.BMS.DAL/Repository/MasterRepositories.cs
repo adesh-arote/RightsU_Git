@@ -1207,7 +1207,7 @@ namespace RightsU.BMS.DAL
     #region -------- PromoterRemark -----------
     public class PromoterRemarkRepositories : MainRepository<PromoterRemark>
     {
-        public PromoterRemark Get(int Id)
+        public PromoterRemark Get(int ? Id)
         {
             var obj = new { Promoter_Remarks_Code = Id };
 
