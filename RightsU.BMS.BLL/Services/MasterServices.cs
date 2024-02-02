@@ -3409,13 +3409,13 @@ namespace RightsU.BMS.BLL.Services
 
             #endregion
 
-            PromoterRemarkReturn _PromoterRemarkReturn = new PromoterRemarkReturn();
+            PromoterRemarkReturn _promoterRemarkReturn = new PromoterRemarkReturn();
 
             try
             {
                 if (_objRet.IsSuccess)
                 {
-                    _PromoterRemarkReturn = objPromoterRemarkRepositories.GetPromoterRemark_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                    _promoterRemarkReturn = objPromoterRemarkRepositories.GetPromoterRemark_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
                 }
                 if (!_objRet.IsSuccess)
                 {
@@ -3434,9 +3434,9 @@ namespace RightsU.BMS.BLL.Services
                 throw;
             }
 
-            _PromoterRemarkReturn.paging.page = page;
-            _PromoterRemarkReturn.paging.size = size;
-            _objRet.Response = _PromoterRemarkReturn;
+            _promoterRemarkReturn.paging.page = page;
+            _promoterRemarkReturn.paging.size = size;
+            _objRet.Response = _promoterRemarkReturn;
 
             return _objRet;
         }
@@ -3578,8 +3578,7 @@ namespace RightsU.BMS.BLL.Services
             }
             #endregion
 
-            try
-            {
+           
                 if (_objRet.IsSuccess)
                 {
                     var objPromoterRemark = objPromoterRemarkRepositories.Get(objInput.Promoter_Remarks_Code.Value);
@@ -3595,11 +3594,7 @@ namespace RightsU.BMS.BLL.Services
                     _objRet.id = objInput.Promoter_Remarks_Code;
 
                 }
-            }
-            catch (Exception ex)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR187");
-            }
+           
             if (!_objRet.IsSuccess)
             {
                 _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
