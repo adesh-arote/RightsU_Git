@@ -48,15 +48,14 @@ namespace RightsU.Audit.WebAPI.Logging
             }
             catch (Exception ex)
             {
-                request.Abort();
-                //LogService("Not able to post to Log Service");
+                request.Abort();                
                 LogService(JsonConvert.SerializeObject(obj));
             }
             if (result != "")
             {
                 //request posted successfully;	
             }
-            //return Task.FromResult<string>(result);
+            
             return result;
         }
 

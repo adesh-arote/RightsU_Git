@@ -107,7 +107,7 @@
     <Compile Include="FrameworkClasses\Return.cs" />
     <Compile Include="HttpModel\HttpResponses.cs" />
     <Compile Include="LogClasses\Error.cs" />
-	<Compile Include="LogClasses\MasterAuditLog.cs" />
+    <Compile Include="LogClasses\MasterAuditLog.cs" />
     <Compile Include="Master_Entities\Acq_Deal.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
     <Compile Include="Master_Entities\Acq_Deal_List.cs" />
@@ -133,6 +133,7 @@
     <Compile Include="Master_Entities\Channel.cs" />
     <Compile Include="Master_Entities\ChannelTerritory.cs" />
     <Compile Include="Master_Entities\Channel_Category.cs" />
+    <Compile Include="Master_Entities\Cost_Type.cs" />
     <Compile Include="Master_Entities\Country.cs" />
     <Compile Include="Master_Entities\CountryLanguage.cs" />
     <Compile Include="Master_Entities\Currency.cs" />
@@ -160,7 +161,7 @@
     <Compile Include="Master_Entities\Party.cs" />
     <Compile Include="Master_Entities\Party_Category.cs" />
     <Compile Include="Master_Entities\Party_Group.cs" />
-    <Compile Include="Master_Entities\Payment_Terms.cs" />	
+    <Compile Include="Master_Entities\Payment_Terms.cs" />
     <Compile Include="Master_Entities\Platform.cs" />
     <Compile Include="Master_Entities\Milestone_Type.cs" />
     <Compile Include="Master_Entities\Platform_Group.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="ReturnClasses\CategoryReturn.cs" />
     <Compile Include="ReturnClasses\ChannelReturn.cs" />
     <Compile Include="ReturnClasses\Channel_CategoryReturn.cs" />
+    <Compile Include="ReturnClasses\CostTypeReturn.cs" />
     <Compile Include="ReturnClasses\CountryReturn.cs" />
     <Compile Include="ReturnClasses\CurrencyReturn.cs" />
     <Compile Include="ReturnClasses\DealReturn.cs" />

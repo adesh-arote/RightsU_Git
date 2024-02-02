@@ -1207,7 +1207,7 @@ namespace RightsU.BMS.DAL
     #region -------- PromoterRemark -----------
     public class PromoterRemarkRepositories : MainRepository<PromoterRemark>
     {
-        public PromoterRemark Get(int ? Id)
+        public PromoterRemark Get(int Id)
         {
             var obj = new { Promoter_Remarks_Code = Id };
 
@@ -1914,7 +1914,7 @@ namespace RightsU.BMS.DAL
     {
         public Payment_Terms Get(int Id)
         {
-            var obj = new { Vendor_Code = Id };
+            var obj = new { Payment_Terms_Code = Id };
 
             return base.GetById<Payment_Terms>(obj);
         }
@@ -1948,4 +1948,42 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
+    #region -------- Cost Type -----------
+    public class CostTypeRepositories : MainRepository<Cost_Type>
+    {
+        public Cost_Type Get(int Id)
+        {
+            var obj = new { Cost_Type_Code = Id };
+
+            return base.GetById<Cost_Type>(obj);
+        }
+        public IEnumerable<Cost_Type> GetAll()
+        {
+            return base.GetAll<Cost_Type>();
+        }
+        public void Add(Cost_Type entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Cost_Type entity)
+        {
+            Cost_Type oldObj = Get(entity.Cost_Type_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Cost_Type entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Cost_Type> SearchFor(object param)
+        {
+            return base.SearchForEntity<Cost_Type>(param);
+        }
+
+        public IEnumerable<Cost_Type> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Cost_Type>(strSQL);
+        }
+    }
+    #endregion
 }
