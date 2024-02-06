@@ -7278,7 +7278,7 @@ namespace RightsU.BMS.BLL.Services
                     objInput.Inserted_By = objPromoterGroup.Inserted_By;
                     objInput.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objInput.Last_Updated_Time = DateTime.Now;
-                    objPromoterGroup.Is_Active = objPromoterGroup.Is_Active;
+                    objInput.Is_Active = objPromoterGroup.Is_Active;
 
                     objPromoterGroupRepositories.Update(objInput);
                 }
