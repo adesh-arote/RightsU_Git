@@ -27,6 +27,10 @@ namespace RightsU.BMS.Entities.FrameworkClasses
 
         #region Audit Global Params
 
+        public const int ModuleCodeForParty = 10;
+        public const int ModuleCodeForCostType = 14;
+        public const int ModuleCodeForTerritory = 59;
+
         public const int ModuleCodeForTitle = 27;
 
         #endregion

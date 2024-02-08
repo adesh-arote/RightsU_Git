@@ -269,158 +269,160 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (string.IsNullOrWhiteSpace(objInput.agreement_date))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR156");
-            }
             else
             {
-                try
+                if (string.IsNullOrWhiteSpace(objInput.agreement_date))
                 {
-                    objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.agreement_date));
+                    _objRet = GlobalTool.SetError(_objRet, "ERR156");
                 }
-                catch (Exception ex)
+                else
                 {
-                    _objRet = GlobalTool.SetError(_objRet, "ERR157");
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR158");
-            }
-
-            if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR159");
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR160");
-            }
-            else
-            {
-                if (objInput.Is_Master_Deal.ToUpper() == "N")
-                {
-                    if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                    try
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                        objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.agreement_date)).Date;
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR157");
                     }
                 }
-            }
-            //else if (objInput.Is_Master_Deal.ToUpper() != "Y" && objInput.Is_Master_Deal.ToUpper() != "N")
-            //{
-            //    _objRet.Message = "Input Paramater 'deal_for' is invalid";
-            //    _objRet.IsSuccess = false;
-            //    _objRet.StatusCode = HttpStatusCode.BadRequest;
-            //    return _objRet;
-            //}
 
-            if (objInput.Role_Code == null || objInput.Role_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR161");
-            }
-
-            if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR162");
-            }
-
-            if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR163");
-            }
-
-            if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR164");
-            }
-
-            //if (objInput.Is_Master_Deal.ToUpper() == "N")
-            //{
-            //    if (objInput.Parent_Deal_Code == null || objInput.Parent_Deal_Code <= 0)
-            //    {
-            //        _objRet.Message = "Input Paramater 'master_deal_id' is mandatory";
-            //        _objRet.IsSuccess = false;
-            //        _objRet.StatusCode = HttpStatusCode.BadRequest;
-            //        return _objRet;
-            //    }
-            //}
-
-            if (string.IsNullOrWhiteSpace(objInput.Year_Type))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR166");
-            }
-
-            if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR167");
-            }
-
-            //if (objInput.Exchange_Rate == null || objInput.Exchange_Rate <= 0)
-            //{
-            //    _objRet.Message = "Input Paramater 'exchange_rate' is mandatory";
-            //    _objRet.IsSuccess = false;
-            //    _objRet.StatusCode = HttpStatusCode.BadRequest;
-            //    return _objRet;
-            //}
-
-            if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR168");
-            }
-
-            if (objInput.Category_Code == null || objInput.Category_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR169");
-            }
-
-            //if (string.IsNullOrWhiteSpace(objInput.Deal_Workflow_Status))
-            //{
-            //    _objRet.Message = "Input Paramater 'workflow_status' is mandatory";
-            //    _objRet.IsSuccess = false;
-            //    _objRet.StatusCode = HttpStatusCode.BadRequest;
-            //    return _objRet;
-            //}
-
-            if (objInput.licensors == null || objInput.licensors.Count() == 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR170");
-            }
-            else
-            {
-                for (int i = 0; i < objInput.licensors.ToList().Count(); i++)
+                if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
                 {
-                    if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
+                    _objRet = GlobalTool.SetError(_objRet, "ERR158");
+                }
+
+                if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR159");
+                }
+
+                if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR160");
+                }
+                else
+                {
+                    if (objInput.Is_Master_Deal.ToUpper() == "N")
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR171");
+                        if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                        }
                     }
                 }
-            }
+                //else if (objInput.Is_Master_Deal.ToUpper() != "Y" && objInput.Is_Master_Deal.ToUpper() != "N")
+                //{
+                //    _objRet.Message = "Input Paramater 'deal_for' is invalid";
+                //    _objRet.IsSuccess = false;
+                //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                //    return _objRet;
+                //}
 
-            if (objInput.titles == null || objInput.titles.Count() == 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR172");
-            }
-            else
-            {
-                for (int i = 0; i < objInput.titles.ToList().Count(); i++)
+                if (objInput.Role_Code == null || objInput.Role_Code <= 0)
                 {
-                    if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
-                    {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
-                    }
+                    _objRet = GlobalTool.SetError(_objRet, "ERR161");
+                }
 
-                    if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
-                    {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR174");
-                    }
+                if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR162");
+                }
 
-                    if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
+                if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR163");
+                }
+
+                if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR164");
+                }
+
+                //if (objInput.Is_Master_Deal.ToUpper() == "N")
+                //{
+                //    if (objInput.Parent_Deal_Code == null || objInput.Parent_Deal_Code <= 0)
+                //    {
+                //        _objRet.Message = "Input Paramater 'master_deal_id' is mandatory";
+                //        _objRet.IsSuccess = false;
+                //        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                //        return _objRet;
+                //    }
+                //}
+
+                if (string.IsNullOrWhiteSpace(objInput.Year_Type))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR166");
+                }
+
+                if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR167");
+                }
+
+                //if (objInput.Exchange_Rate == null || objInput.Exchange_Rate <= 0)
+                //{
+                //    _objRet.Message = "Input Paramater 'exchange_rate' is mandatory";
+                //    _objRet.IsSuccess = false;
+                //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                //    return _objRet;
+                //}
+
+                if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR168");
+                }
+
+                if (objInput.Category_Code == null || objInput.Category_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR169");
+                }
+
+                //if (string.IsNullOrWhiteSpace(objInput.Deal_Workflow_Status))
+                //{
+                //    _objRet.Message = "Input Paramater 'workflow_status' is mandatory";
+                //    _objRet.IsSuccess = false;
+                //    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                //    return _objRet;
+                //}
+
+                if (objInput.licensors == null || objInput.licensors.Count() == 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR170");
+                }
+                else
+                {
+                    for (int i = 0; i < objInput.licensors.ToList().Count(); i++)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR175");
+                        if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR171");
+                        }
+                    }
+                }
+
+                if (objInput.titles == null || objInput.titles.Count() == 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR172");
+                }
+                else
+                {
+                    for (int i = 0; i < objInput.titles.ToList().Count(); i++)
+                    {
+                        if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR173");
+                        }
+
+                        if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR174");
+                        }
+
+                        if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR175");
+                        }
                     }
                 }
             }
@@ -494,6 +496,7 @@ namespace RightsU.BMS.BLL.Services
                     objDealTitle.Inserted_By = objInput.Inserted_By;
                     objDealTitle.Last_UpDated_Time = objInput.Last_Updated_Time;
                     objDealTitle.Last_Action_By = objInput.Last_Action_By;
+                    objDealTitle.Is_Closed = "N";
                     lstDealTitles.Add(objDealTitle);
                 }
                 objInput.titles = lstDealTitles;
@@ -524,129 +527,131 @@ namespace RightsU.BMS.BLL.Services
             {
                 _objRet = GlobalTool.SetError(_objRet, "ERR154");
             }
-
-            if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR178");
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.agreement_date))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR156");
-            }
             else
             {
-                try
+                if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
                 {
-                    objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.agreement_date));
+                    _objRet = GlobalTool.SetError(_objRet, "ERR178");
                 }
-                catch (Exception ex)
+
+                if (string.IsNullOrWhiteSpace(objInput.agreement_date))
                 {
-                    _objRet = GlobalTool.SetError(_objRet, "ERR157");
+                    _objRet = GlobalTool.SetError(_objRet, "ERR156");
                 }
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR158");
-            }
-
-            if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR159");
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR160");
-            }
-            else
-            {
-                if (objInput.Is_Master_Deal != null && objInput.Is_Master_Deal.ToUpper() == "N")
+                else
                 {
-                    if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                    try
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                        objInput.Agreement_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.agreement_date)).Date;
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR157");
                     }
                 }
-            }
 
-            if (objInput.Role_Code == null || objInput.Role_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR161");
-            }
-
-            if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR162");
-            }
-
-            if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR163");
-            }
-
-            if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR164");
-            }
-
-            if (string.IsNullOrWhiteSpace(objInput.Year_Type))
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR166");
-            }
-
-            if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR167");
-            }
-
-            if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR168");
-            }
-
-            if (objInput.Category_Code == null || objInput.Category_Code <= 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR169");
-            }
-
-            if (objInput.licensors == null || objInput.licensors.Count() == 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR170");
-            }
-            else
-            {
-                for (int i = 0; i < objInput.licensors.ToList().Count(); i++)
+                if (string.IsNullOrWhiteSpace(objInput.Deal_Desc))
                 {
-                    if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
+                    _objRet = GlobalTool.SetError(_objRet, "ERR158");
+                }
+
+                if (objInput.Deal_Tag_Code == null || objInput.Deal_Tag_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR159");
+                }
+
+                if (string.IsNullOrWhiteSpace(objInput.Is_Master_Deal))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR160");
+                }
+                else
+                {
+                    if (objInput.Is_Master_Deal != null && objInput.Is_Master_Deal.ToUpper() == "N")
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR171");
+                        if (objInput.Master_Deal_Movie_Code_ToLink == null || objInput.Master_Deal_Movie_Code_ToLink <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR165");
+                        }
                     }
                 }
-            }
 
-            if (objInput.titles == null || objInput.titles.Count() == 0)
-            {
-                _objRet = GlobalTool.SetError(_objRet, "ERR172");
-            }
-            else
-            {
-                for (int i = 0; i < objInput.titles.ToList().Count(); i++)
+                if (objInput.Role_Code == null || objInput.Role_Code <= 0)
                 {
-                    if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
-                    {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
-                    }
+                    _objRet = GlobalTool.SetError(_objRet, "ERR161");
+                }
 
-                    if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
-                    {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR174");
-                    }
+                if (objInput.Deal_Type_Code == null || objInput.Deal_Type_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR162");
+                }
 
-                    if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
+                if (objInput.Entity_Code == null || objInput.Entity_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR163");
+                }
+
+                if (objInput.Vendor_Code == null || objInput.Vendor_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR164");
+                }
+
+                if (string.IsNullOrWhiteSpace(objInput.Year_Type))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR166");
+                }
+
+                if (objInput.Currency_Code == null || objInput.Currency_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR167");
+                }
+
+                if (objInput.Business_Unit_Code == null || objInput.Business_Unit_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR168");
+                }
+
+                if (objInput.Category_Code == null || objInput.Category_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR169");
+                }
+
+                if (objInput.licensors == null || objInput.licensors.Count() == 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR170");
+                }
+                else
+                {
+                    for (int i = 0; i < objInput.licensors.ToList().Count(); i++)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR175");
+                        if (objInput.licensors.ToList()[i].Vendor_Code == null || objInput.licensors.ToList()[i].Vendor_Code <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR171");
+                        }
+                    }
+                }
+
+                if (objInput.titles == null || objInput.titles.Count() == 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR172");
+                }
+                else
+                {
+                    for (int i = 0; i < objInput.titles.ToList().Count(); i++)
+                    {
+                        if (objInput.titles.ToList()[i].Title_Code == null || objInput.titles.ToList()[i].Title_Code <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR173");
+                        }
+
+                        if (objInput.titles.ToList()[i].Episode_Starts_From == null || objInput.titles.ToList()[i].Episode_Starts_From <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR174");
+                        }
+
+                        if (objInput.titles.ToList()[i].Episode_End_To == null || objInput.titles.ToList()[i].Episode_End_To <= 0)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR175");
+                        }
                     }
                 }
             }
@@ -989,9 +994,16 @@ namespace RightsU.BMS.BLL.Services
 
             #region Input Validation
 
-            if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
+            if (objInput == null)
             {
-                _objRet = GlobalTool.SetError(_objRet, "ERR178");
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            else
+            {
+                if (objInput.Acq_Deal_Code == null || objInput.Acq_Deal_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR178");
+                }
             }
 
             #endregion

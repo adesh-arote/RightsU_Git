@@ -199,6 +199,7 @@
     <Compile Include="Controllers\businessunitController.cs" />
     <Compile Include="Controllers\categoryController.cs" />
     <Compile Include="Controllers\channelController.cs" />
+    <Compile Include="Controllers\costtypeController.cs" />
     <Compile Include="Controllers\countryController.cs" />
     <Compile Include="Controllers\currencyController.cs" />
     <Compile Include="Controllers\dealController.cs" />

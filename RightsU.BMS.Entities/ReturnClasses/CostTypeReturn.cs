@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.Entities.ReturnClasses
 {
-    public class PartyReturn : ListReturn
+    public class CostTypeReturn : ListReturn
     {
-        public PartyReturn()
+        public CostTypeReturn()
         {
-            content = new List<Party>();
+            content = new List<Cost_Type>();
             paging = new paging();
         }
 
         /// <summary>
-        /// Party Details
+        /// CostType Details
         /// </summary>
         public override object content { get; set; }
+
     }
 }
