@@ -31,10 +31,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string Is_Active { get; set; }
 
         [JsonIgnore]
-        public System.DateTime Inserted_On { get; set; }
+        public Nullable<System.DateTime> Inserted_On { get; set; }
 
         [JsonIgnore]
-        public int Inserted_By { get; set; }
+        public Nullable<int> Inserted_By { get; set; }
 
         [JsonIgnore]
         public Nullable<System.DateTime> Last_Updated_Time { get; set; }

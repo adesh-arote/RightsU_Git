@@ -20,7 +20,6 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-
     public class territoryController : ApiController
     {
         public enum SortColumn
@@ -58,7 +57,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTerritoryServices.GetTerritoryList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
+            GenericReturn objReturn = objTerritoryServices.GetList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
 
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
@@ -106,13 +105,13 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
         [Route("api/territory/{id}")]
-        public async Task<HttpResponseMessage> GetTerritoryById(int? id)
+        public async Task<HttpResponseMessage> GetById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objTerritoryServices.GetTerritoryById(id.Value);
+            GenericReturn objReturn = objTerritoryServices.GetById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -159,19 +158,19 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
         [Route("api/territory")]
-        public async Task<HttpResponseMessage> PostTerritory(Territory Input)
+        public async Task<HttpResponseMessage> Post(Territory Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
 
-            GenericReturn objReturn = objTerritoryServices.PostTerritory(Input);
+            GenericReturn objReturn = objTerritoryServices.Post(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
@@ -213,19 +212,19 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
         [Route("api/territory")]
-        public async Task<HttpResponseMessage> PutTerritory(Territory Input)
+        public async Task<HttpResponseMessage> Put(Territory Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objTerritoryServices.PutTerritory(Input);
+            objReturn = objTerritoryServices.Put(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
@@ -279,7 +278,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);

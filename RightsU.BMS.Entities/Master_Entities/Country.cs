@@ -12,6 +12,11 @@ namespace RightsU.BMS.Entities.Master_Entities
     [Table("Country")]
     public partial class Country
     {
+        public Country()
+        {
+            this.country_language = new HashSet<CountryLanguage>();
+        } 
+
         [JsonIgnore]
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
@@ -52,6 +57,7 @@ namespace RightsU.BMS.Entities.Master_Entities
 
         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
+
 
         [OneToMany]
         public ICollection<CountryLanguage> country_language { get; set; }
