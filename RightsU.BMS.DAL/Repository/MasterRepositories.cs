@@ -891,48 +891,17 @@ namespace RightsU.BMS.DAL
     #region -------- DealType -----------
     public class DealTypeRepositories : MainRepository<Deal_Type>
     {
-        public Deal_TypeReturn GetDealType_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        public IEnumerable<Deal_Type> GetAll()
         {
-            Deal_TypeReturn ObjDealTypeReturn = new Deal_TypeReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjDealTypeReturn.content = base.ExecuteSQLProcedure<Deal_Type>("[USPAPI_Deal_Type]", param).ToList();
-            ObjDealTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjDealTypeReturn;
+            return base.GetAll<Deal_Type>();
         }
+        
     }
     #endregion
 
     #region -------- ChannelCategory -----------
     public class ChannelCategoryRepositories : MainRepository<Channel_Category>
     {
-        public Channel_CategoryReturn GetChannelCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            Channel_CategoryReturn ObjChannelCategoryReturn = new Channel_CategoryReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjChannelCategoryReturn.content = base.ExecuteSQLProcedure<Channel_Category>("[USPAPI_Channel_Category]", param).ToList();
-            ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjChannelCategoryReturn;
-        }
         public Channel_Category Get(int Id)
         {
             var obj = new { Channel_Category_Code = Id };
@@ -1238,25 +1207,6 @@ namespace RightsU.BMS.DAL
         {
             PromoterRemark oldObj = Get(entity.Promoter_Remarks_Code.Value);
             base.UpdateEntity(oldObj, entity);
-        }
-
-        public PromoterRemarkReturn GetPromoterRemark_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            PromoterRemarkReturn ObjPromoterReturnReturn = new PromoterRemarkReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjPromoterReturnReturn.content = base.ExecuteSQLProcedure<PromoterRemark>("[USPAPI_Promoter_Remark]", param).ToList();
-            ObjPromoterReturnReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjPromoterReturnReturn;
         }
     }
     #endregion
@@ -1648,24 +1598,6 @@ namespace RightsU.BMS.DAL
         {
             Category oldObj = Get(entity.Category_Code.Value);
             base.UpdateEntity(oldObj, entity);
-        }
-        public CategoryReturn GetCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            CategoryReturn ObjCategorynReturn = new CategoryReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjCategorynReturn.content = base.ExecuteSQLProcedure<Category>("[USPAPI_Category]", param).ToList();
-            ObjCategorynReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjCategorynReturn;
         }
     }
     #endregion

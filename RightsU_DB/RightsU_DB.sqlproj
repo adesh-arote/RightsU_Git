@@ -1749,8 +1749,6 @@
     <Build Include="dbo\Stored Procedures\USPITGetDrillDownGenreWiseTitle_Details.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_GetModuleRights.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Role_List.sql" />
-    <Build Include="dbo\Stored Procedures\USPAPI_Deal_Type.sql" />
-    <Build Include="dbo\Stored Procedures\USPAPI_Channel_Category.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Platform.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_BusinessUnit_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Deal_Tag.sql" />
@@ -1759,7 +1757,6 @@
     <Build Include="dbo\Stored Procedures\USPAPI_MilestoneType_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_ROFR_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Sub_License.sql" />
-    <Build Include="dbo\Stored Procedures\USPAPI_Promoter_Remark.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_List_Acq.sql" />
   </ItemGroup>
   <ItemGroup>
