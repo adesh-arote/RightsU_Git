@@ -1,0 +1,1166 @@
+﻿@model RightsU_Entities.Digital_Tab
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+
+    var IsCall = 'Y', Command_Name = "" , Mode_G = '@ViewBag.PageType';
+    var URL_BindTabConfig = '@Url.Action("BindTabConfig", "DigitalConfig")';
+    var URL_AddEditTabConfig = '@Url.Action("AddEditTabConfig", "DigitalConfig")';
+    var URL_DeleteTabConfig = '@Url.Action("DeleteTabConfig", "DigitalConfig")';
+    var URL_UpdateTabConfig = '@Url.Action("UpdateTabConfig", "DigitalConfig")';
+    var URL_SaveTabConfig = '@Url.Action("SaveTabConfig", "DigitalConfig")';
+    var URL_AddDigitalMaster = '@Url.Action("Save_Digital_Master", "DigitalConfig")';
+    var URL_BindDigitalMaster = '@Url.Action("BindDigitalMaster", "DigitalConfig")';
+    var URL_UpdateDigitalMaster = '@Url.Action("UpdateDigitalMaster", "DigitalConfig")';
+    var URL_AddDigitalDataMaster = '@Url.Action("Save_DigitalData_Master", "DigitalConfig")';
+    var URL_BindDigitalDataMaster = '@Url.Action("BindDigitalDataMaster", "DigitalConfig")';
+    var URL_UpdateDigitalDataMaster = '@Url.Action("UpdateDigitalDataMaster", "DigitalConfig")';
+
+    $(document).ready(function () {
+        initializeChosen();
+        showLoading();
+        BindTabConfig();
+        hideLoading();
+    });
+
+    function BindTabConfig() {
+        debugger;
+        var DigitalTabCode = $('#hdnDigitalTabCode').val();
+        $.ajax({
+            type: "POST",
+            url: URL_BindTabConfig,
+
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                DigitalTabCode: DigitalTabCode,
+                PageType: Mode_G
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divTabConfig').empty();
+                    $('#divTabConfig').html(result);
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+    function AddEditTabConfig(tabId,dummyGuid, commandName) {
+        if (checkCurrentAction()) {
+            $('#hdnAction').val(commandName)
+            $.ajax({
+                type: "POST",
+                url: URL_AddEditTabConfig,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    TabId: tabId,
+                    dummyGuid: dummyGuid,
+                    commandName: commandName
+                }),
+                async: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            BindTabConfig();
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+    function checkCurrentAction() {
+
+        var action = $.trim($('#hdnAction').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+    function cancelView() {
+        BindPartialView("LIST", 0)
+    }
+
+    function CancelTabConfig() {
+        $('#hdnAction').val("")
+        BindTabConfig();
+    }
+    function CancelSave() {
+        Command_Name = "CANCEL_SAVE_TAB";
+        showAlert("I", '@objMessageKey.AllUnsavedDataWillBeLostStillWantToGoAhead?', "OKCANCEL");
+    }
+    function handleOk() {
+        if (Command_Name == "DELETE_TAB_CONFIG") {
+            DeleteTabConfig(dummyGuid_G, true);
+        }
+        if (Command_Name == "CANCEL_SAVE_TAB" || Command_Name == "SAVE_UPDATE_TAB") {
+
+            //var recordLockingCode = parseInt($('#hdnRecodLockingCode').val())
+            //if (recordLockingCode > 0)
+            //    ReleaseRecordLock(recordLockingCode, URL_Release_Lock);
+
+
+            BindPartialView("LIST", 0)
+        }
+    }
+
+    function handleCancel() {
+        Command_Name = "";
+        dummyGuid_G = "";
+    }
+
+    function DeleteTabConfig(dummyGuid, confirmed) {
+        debugger;
+        if (checkCurrentAction()) {
+            if (confirmed) {
+                Command_Name = "";
+                dummyGuid_G = "";
+                $.ajax({
+                    type: "POST",
+                    url: URL_DeleteTabConfig,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        dummyGuid: dummyGuid,
+                    }),
+                    async: false,
+                    success: function (result) {
+                        if (result == "true") {
+                            redirectToLogin();
+                        }
+                        else {
+                            if (result.Status == "S") {
+                                $('#hdnAction').val("");
+                                BindTabConfig();
+                            }
+                            else {
+                                showAlert("E", result.Message, "OK");
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        alert('Error: ' + result.responseText);
+                        hideLoading();
+                    }
+                })
+            }
+            else {
+                Command_Name = "DELETE_TAB_CONFIG";
+                dummyGuid_G = dummyGuid;
+                showAlert("I", "@objMessageKey.Areyousureyouwanttodeletethisrecord?", "OKCANCEL")
+            }
+        }
+    }
+
+    function UpdateTabConfig(dummyGuid) {
+        debugger;
+        if (!Validate_Save_TabConfig()) {
+            return false;
+        }
+        var DummyGuid = dummyGuid;
+        var digital = $("#ddlDigital").val();
+        var controlType = $("#ddlControlType").val();
+        var isMultipleSelect = $("#ddlIsMultipleSelect").val();
+        var isMandatory = $("#chkMandatory").prop("checked");
+        var maxLength = $("#txtMax_Length").val();
+        var pageControlOrder = $("#txtPage_Control_Order").val();
+        var controlFieldOrder = $("#txtControl_Field_Order").val();
+        var viewName = $("#txtView_Name").val();
+        var txtField = $("#txtText_Field").val();
+        var valueField = $("#txtValue_Field").val();
+        var additional = $("#ddlAdditional").val();
+
+        var formData = new FormData();
+        formData.append("DummyGuid", DummyGuid);
+        formData.append("digital", digital);
+        formData.append("controlType", controlType);
+        formData.append("isMultipleSelect", isMultipleSelect);
+        formData.append("isMandatory", isMandatory);
+        formData.append("maxLength", maxLength);
+        formData.append("pageControlOrder", pageControlOrder);
+        formData.append("controlFieldOrder", controlFieldOrder);
+        formData.append("viewName", viewName);
+        formData.append("txtField", txtField);
+        formData.append("valueField", valueField);
+        formData.append("additional", additional);
+
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateTabConfig,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindTabConfig();
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function SaveTabConfig() {
+        debugger;
+        if (!Validate_Save_TabConfig()) {
+            return false;
+        }
+
+        var digital = $("#ddlDigital").val();
+        var controlType = $("#ddlControlType").val();
+        var isMultipleSelect = $("#ddlIsMultipleSelect").val();
+        var isMandatory = $("#chkMandatory").prop("checked");
+        var maxLength = $("#txtMax_Length").val();
+        var pageControlOrder = $("#txtPage_Control_Order").val();
+        var controlFieldOrder = $("#txtControl_Field_Order").val();
+        var viewName = $("#txtView_Name").val();
+        var txtField = $("#txtText_Field").val();
+        var valueField = $("#txtValue_Field").val();
+        var additional = $("#ddlAdditional").val();
+        var DigitalTabCode = $('#hdnDigitalTabCode').val();
+
+        var formData = new FormData();
+        formData.append("digital", digital);
+        formData.append("controlType", controlType);
+        formData.append("isMultipleSelect", isMultipleSelect);
+        formData.append("isMandatory", isMandatory);
+        formData.append("maxLength", maxLength);
+        formData.append("pageControlOrder", pageControlOrder);
+        formData.append("controlFieldOrder", controlFieldOrder);
+        formData.append("viewName", viewName);
+        formData.append("txtField", txtField);
+        formData.append("valueField", valueField);
+        formData.append("additional", additional);
+        formData.append("DigitalTabCode", DigitalTabCode);
+
+        $.ajax({
+            type: "POST",
+            url: URL_SaveTabConfig,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction').val("");
+                        BindTabConfig();
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function Validate_Save_TabConfig() {
+        var returnVal = true;
+        var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
+
+        if ($.trim($('#ddlDigital').val()) == "") {
+            showAlert("E", "Please select Column in Tab Field Value");
+            returnVal = false;
+        } else if ($.trim($('#ddlControlType').val()) == "") {
+            showAlert("E", "Please select Control Field Value");
+            returnVal = false;
+        }else if ($.trim($('#ddlControlType').val()) == 'TXTDDL') {
+            if ($.trim($('#txtPage_Control_Order').val()) == "") {
+                showAlert("E", "Please Enter Column Order Value");
+                returnVal = false;
+            } else if ($.trim($('#txtControl_Field_Order').val()) == "") {
+                showAlert("E", "Please Enter Order in Column Value");
+                returnVal = false;
+            } else if ($.trim($('#txtView_Name').val()) == "") {
+                showAlert("E", "Please Enter RefTable Value");
+                returnVal = false;
+            } else if ($.trim($('#txtText_Field').val()) == "") {
+                showAlert("E", "Please Enter Ref Display Field Value");
+                returnVal = false;
+            } else if ($.trim($('#txtValue_Field').val()) == "") {
+                showAlert("E", "Please Enter Ref Value Field Value");
+                returnVal = false;
+            } else if ($.trim($('#ddlAdditional').val()) == "") {
+                showAlert("E", "Please select Additional Condition Value");
+                returnVal = false;
+            }
+        } else {
+            if ($.trim($('#txtMax_Length').val()) == "") {
+                showAlert("E", "Please Enter Column Length Value");
+                returnVal = false;
+            } else if ($.trim($('#txtPage_Control_Order').val()) == "") {
+                showAlert("E", "Please Enter Column Order Value");
+                returnVal = false;
+            } else if ($.trim($('#txtControl_Field_Order').val()) == "") {
+                showAlert("E", "Please Enter Order in Column Value");
+                returnVal = false;
+            }
+        }
+
+        return returnVal;
+    }
+
+    function SaveDigitalTab() {
+        debugger;
+        if (checkCurrentAction()) {
+
+            if (!Validate_Save()) {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    function Validate_Save() {
+        debugger;
+        var returnVal = true;
+
+        if ($.trim($('#Digital_Tab_Description').val()) == "") {
+            $('#Digital_Tab_Description').val('')
+            $('#Digital_Tab_Description').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Short_Name').val()) == "") {
+            $('#Short_Name').val('')
+            $('#Short_Name').attr('required', true)
+            returnVal = false;
+        }
+        if ($.trim($('#Order_No').val()) == "") {
+            $('#Order_No').val('')
+            $('#Order_No').attr('required', true)
+            returnVal = false;
+        }
+        if ($('#ddlTabType').val() == "") {
+            $('#ddlTabType').addClass("required");
+            returnVal = false;
+        }
+        if ($('#ddlEditWindowType').val()=="")
+        {
+            $('#ddlEditWindowType').addClass("required");
+            returnVal = false;
+        }
+
+        if ($('#ddlModule').val() == "") {
+            $('#ddlModule').addClass("required");
+            returnVal = false;
+        }
+
+        return returnVal;
+    }
+
+    function SaveSuccess(result) {
+        debugger;
+        if (result.Status == "S") {
+            showAlert("S", result.Message);
+            $('#hdnRecodLockingCode').val(0)
+            $('#hdnRecodLockingCode_temp').val(0)
+            BindPartialView("LIST", 0)
+
+        }
+        else {
+            Command_Name = "";
+            showAlert("E", result.Message, "OK");
+        }
+    }
+
+    $(".numeric").keypress(function () {
+        CheckNumeric(event);
+    });
+    $('.alphaNumeric').keypress(function (e) {
+        debugger;
+        var regex = new RegExp("^[a-zA-Z0-9 ]+$");
+        var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
+        if (regex.test(str)) {
+            return true;
+        }
+        e.preventDefault();
+        return false;
+    });
+
+    function CheckNumeric(e) {
+        if (window.event) { if ((e.keyCode < 48 || e.keyCode > 57) & e.keyCode != 8) { event.returnValue = false; return false; } }
+    }
+
+    //Digital Master Methods Start
+
+    function AddDigitalMaster(MasterMode, DigitalCode, searchText) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (checkDigitalCurrentAction()) {
+            $('#hdnAction_DigitalMaster').val(MasterMode);
+            $.ajax({
+                type: "POST",
+                url: URL_BindDigitalMaster,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    DigitalCode: DigitalCode,
+                    MasterMode: MasterMode,
+                    searchText: searchText
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (MasterMode != 'SEARCH') {
+                            $('#searchDigital').val('');
+                        }
+                        $('#Digital_Master_Name').val('');
+                        $('#divDigitalList').empty();
+                        $('#divDigitalList').html(result);
+                        $("#popAddDigital").modal();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function saveDigitalMaster() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var Digital_Master_Name = $.trim($("#Digital_Master_Name").val());
+        if (Digital_Master_Name == "") {
+            $("#Digital_Master_Name").val('');
+            $("#Digital_Master_Name").attr('required', true);
+            return false;
+        }
+        if (checkDigitalCurrentAction()) {
+            $('#hdnAction_DigitalMaster').val('ADD');
+            $.ajax({
+                type: "POST",
+                url: URL_AddDigitalMaster,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Digital_Master_Name: Digital_Master_Name
+                }),
+                success: function (result) {
+
+                    if (result.Status == "S") {
+                        $('#hdnAction_DigitalMaster').val('');
+                        showAlert("S", result.Message);
+                        $("#Digital_Master_Name").val('');
+                        $('#divDigitalList').empty();
+                        $("#popAddDigital").modal('hide');
+                        $('#ddlDigital').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                        $('#ddlDigital').trigger("chosen:updated");
+
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                        ("#popAddDigital").modal();
+                    }
+                },
+                error: function (result) { }
+            });
+        }
+    }
+
+    function UpdateDigitalMaster(Digital_Code) {
+        debugger;
+        if ($("#txtDigital_Name").val().trim()=="") {
+            return false;
+        }
+
+        var Digital_Name = $("#txtDigital_Name").val();
+        var IsActive = $("#chkIsActive").prop("checked");
+
+
+        var formData = new FormData();
+        formData.append("Digital_Name", Digital_Name);
+        formData.append("IsActive", IsActive);
+        formData.append("Digital_Code", Digital_Code);
+
+
+        $.ajax({
+            type: "POST",
+            url: URL_UpdateDigitalMaster,
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    if (result.Status == "S") {
+                        $('#hdnAction_DigitalMaster').val('');
+                        AddDigitalMaster("LIST",0);
+                    }
+                    else {
+                        showAlert("E", result.Message, "OK");
+                    }
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+                hideLoading();
+            }
+        });
+    }
+
+    function CancelDigitalMaster() {
+        $('#hdnAction_DigitalMaster').val('');
+        AddDigitalMaster("LIST", 0);
+    }
+
+    $('#searchDigital').keypress(function (e) {
+        if (e.keyCode == 13) {
+            SearchDigital()
+            return false;
+        }
+    });
+
+    function SearchDigital() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchDigital').val());
+
+        if (searchText == '') {
+            $('#searchDigital').val('');
+            $('#searchDigital').attr('required', true)
+            return false;
+        }
+        AddDigitalMaster("SEARCH", 0, searchText);
+    }
+
+    function SearchAllDigital() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#searchDigital').val('');
+        AddDigitalMaster("LIST", 0, "");
+    }
+
+    function checkDigitalCurrentAction() {
+
+        var action = $.trim($('#hdnAction_DigitalMaster').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+    //Digital Master Methods End
+
+    //Digital Data Master Methods Start
+    function AddDigitalDataMaster(MasterMode, DigitalDataCode, searchText) {
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+        if (checkDigitalDataCurrentAction()) {
+            $('#hdnAction_DigitalDataMaster').val(MasterMode);
+            $.ajax({
+                type: "POST",
+                url: URL_BindDigitalDataMaster,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    DigitalDataCode: DigitalDataCode,
+                    MasterMode: MasterMode,
+                    searchText: searchText
+                }),
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (MasterMode != 'SEARCH') {
+                            $('#searchDigitalData').val('');
+                        }
+                        $("#Digital_Data_Desc").val('');
+                        $("#Digital_Type").val($('#ddlAdditional').val());
+                        $('#divDigitalDataList').empty();
+                        $('#divDigitalDataList').html(result);
+                        $("#popAddDigitalData").modal();
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }
+    }
+
+    function saveDigitalDataMaster() {
+        debugger;
+
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var isValid = true;
+
+        var Digital_Data_Desc = $.trim($("#Digital_Data_Desc").val());
+        if (Digital_Data_Desc == "") {
+            $("#Digital_Data_Desc").val('');
+            $("#Digital_Data_Desc").attr('required', true);
+            isValid = false;
+        }
+
+        var Digital_Type = $.trim($("#Digital_Type").val());
+        if (Digital_Type == "") {
+            $("#Digital_Type").val('');
+            $("#Digital_Type").attr('required', true);
+            isValid = false;
+        }
+
+        if (isValid)
+        {
+            if (checkDigitalDataCurrentAction()) {
+                $('#hdnAction_DigitalDataMaster').val('ADD');
+                $.ajax({
+                    type: "POST",
+                    url: URL_AddDigitalDataMaster,
+                    traditional: true,
+                    enctype: 'multipart/form-data',
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify({
+                        Digital_Data_Desc: Digital_Data_Desc,
+                        Digital_Type: Digital_Type
+                    }),
+                    success: function (result) {
+
+                        if (result.Status == "S") {
+                            $('#hdnAction_DigitalDataMaster').val('');
+                            showAlert("S", result.Message);
+                            $("#Digital_Data_Desc").val('');
+                            $("#Digital_Type").val('');
+                            $('#divDigitalDataList').empty();
+                            $("#popAddDigitalData").modal('hide');
+
+                            var digiType = $("#Digital_Type").val();
+                            if ($("#ddlAdditional option[value='" + digiType + "']").length == 0) {
+                                $('#ddlAdditional').append("<option selected='selected' value=" + result.Value + ">" + result.Text + "</option>");
+                            }
+
+                            $('#ddlAdditional').trigger("chosen:updated");
+
+                        }
+                        else {
+                            showAlert("E", result.Message);
+                            ("#popAddDigitalData").modal();
+                        }
+                    },
+                    error: function (result) { }
+                });
+            }
+        }
+    }
+
+    function UpdateDigitalDataMaster(Digital_Data_Code) {
+        debugger;
+
+        var isValid = true;
+
+        if ($("#txtData_Description").val().trim() == "") {
+            $("#txtData_Description").val('');
+            $("#txtData_Description").attr('required', true);
+            isValid = false;
+        }
+
+        if ($("#txtDigital_Type").val().trim() == "") {
+            $("#txtDigital_Type").val('');
+            $("#txtDigital_Type").attr('required', true);
+            isValid = false;
+        }
+
+        var Digital_Data_Desc = $("#txtData_Description").val();
+        var Digital_Type = $("#txtDigital_Type").val();
+        var IsActive = $("#chkIsActive").prop("checked");
+
+
+        var formData = new FormData();
+        formData.append("Digital_Data_Desc", Digital_Data_Desc);
+        formData.append("Digital_Type", Digital_Type);
+        formData.append("IsActive", IsActive);
+        formData.append("Digital_Data_Code", Digital_Data_Code);
+
+        if (isValid) {
+
+            $.ajax({
+                type: "POST",
+                url: URL_UpdateDigitalDataMaster,
+                data: formData,
+                dataType: 'json',
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        if (result.Status == "S") {
+                            $('#hdnAction_DigitalDataMaster').val('');
+                            AddDigitalDataMaster("LIST", 0);
+                        }
+                        else {
+                            showAlert("E", result.Message, "OK");
+                        }
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                    hideLoading();
+                }
+            });
+        }
+    }
+
+    function CancelDigitalDataMaster() {
+        $('#hdnAction_DigitalDataMaster').val('');
+        AddDigitalDataMaster("LIST", 0);
+    }
+
+    $('#searchDigitalData').keypress(function (e) {
+        if (e.keyCode == 13) {
+            SearchDigitalData()
+            return false;
+        }
+    });
+
+    function SearchDigitalData() {
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchDigitalData').val());
+
+        if (searchText == '') {
+            $('#searchDigitalData').val('');
+            $('#searchDigitalData').attr('required', true)
+            return false;
+        }
+        AddDigitalDataMaster("SEARCH", 0, searchText);
+    }
+
+    function SearchAllDigitalData() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        $('#searchDigitalData').val('');
+        AddDigitalDataMaster("LIST", 0, "");
+    }
+
+    function checkDigitalDataCurrentAction() {
+
+        var action = $.trim($('#hdnAction_DigitalDataMaster').val());
+        if (action == "ADD") {
+            showAlert("I", "@objMessageKey.CompleteAddOperationFirst")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("I", "@objMessageKey.CompleteEditOperationFirst")
+            return false;
+        }
+        return true;
+    }
+
+    //Digital Data Master Methods End
+
+    
+</script>
+
+<style>
+</style>
+
+<div class="title_block dotted_border clearfix">
+    <h2 class="pull-left">
+        @if (ViewBag.PageType == "ADD")
+        {
+            @*<span>  @objMessageKey.AddPartyDetails </span>*@
+            <span>Add Digital Config</span>
+        }
+        else if (ViewBag.PageType == "EDIT")
+        {
+            @*<span>  @objMessageKey.EditPartyDetails</span>*@
+            <span>Edit Digital Config</span>
+        }
+        else if (ViewBag.PageType == "VIEW")
+        {
+            @*<span> @objMessageKey.ViewPartyDetails </span>*@
+            <span>View Digital Config</span>
+        }
+        <span> </span>
+    </h2>
+</div>
+
+@using (Ajax.BeginForm("SaveDigitalTabConfig", "DigitalConfig", new AjaxOptions() { OnSuccess = "SaveSuccess" }))
+{
+    string strModuleName = Model.Module_Code == 30 ? "Acquisition Deals" : Model.Module_Code == 35 ? "Syndication Deals" : "";
+    string strListPageConfig = Model.Is_Show == "Y" ? "Yes" : "No";
+    <table class="table_brif table">
+        <tbody>
+            <tr>
+                <td class="intro">
+                    <table class="four_column table">
+                        <tr>
+                            @*<td style="width:3%;">@objMessageKey.TabName</td>*@
+                            <td style="width:3%;">Tab Name</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    <span>@Model.Digital_Tab_Description</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Digital_Tab_Description" name="Digital_Tab_Description" value="@Model.Digital_Tab_Description" maxlength="100" />
+                                }
+                                <input type="hidden" id="hdnDigitalTabCode" name="Digital_Tab_Code" value="@Model.Digital_Tab_Code" />
+                                <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            </td>
+                            <td>Short Name</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    @Model.Short_Name
+                                }
+                                else
+                                {
+                                    <input type="text" id="Short_Name" name="Short_Name" value="@Model.Short_Name" maxlength="100" />
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Tab Order</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    <span>@Model.Order_No</span>
+                                }
+                                else
+                                {
+                                    <input type="text" id="Order_No" name="Order_No" value="@Model.Order_No" maxlength="100" class="numeric" />
+                                }
+                            </td>
+                            <td>Tab Type</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    <span>@Model.Tab_Type</span>
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlTabType", TempData["TabTypeDDL"] as SelectList, "Select", new { @id = "ddlTabType", @class = "form_input chosen-select" })
+                                    @*<select name="ddlTabType" id="ddlTabType" class="form_input chosen-select">
+                                            <option value="">Select</option>
+                                            <option value="NS">NS</option>
+                                            <option value="?">?</option>
+                                        </select>*@
+                                }
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Add / Edit</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    <span>@Model.EditWindowType</span>
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlEditWindowType", TempData["EditWindowTypeDDL"] as SelectList, "Select", new { @id = "ddlEditWindowType", @class = "form_input chosen-select" })
+                                    @*<select name="EditWindowType" id="ddlEditWindowType" class="form_input chosen-select">
+                                            <option value="">Select</option>
+                                            <option value="inLine">inLine</option>
+                                            <option value="PopUp">PopUp</option>
+                                        </select>*@
+                                }
+                            </td>
+                            <td>Module</td>
+                            <td>
+                                @if (ViewBag.PageType == "VIEW")
+                                {
+                                    <span>@strModuleName</span>
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("ddlModule", TempData["ModuleDDL"] as SelectList, "Select", new { @id = "ddlModule", @class = "form_input chosen-select" })
+                                    @*<select name="Module_Code" id="ddlModule" class="form_input chosen-select">
+                                            <option value="">Select</option>
+                                            <option value="30">Acquisition Deals</option>
+                                            <option value="35">Syndication Deals</option>
+                                        </select>*@
+                                }
+                            </td>
+                        </tr>
+                        @if (ViewBag.PageType == "VIEW")
+                        {
+                            <tr>
+                                <td>List Page Config</td>
+                                <td>
+                                    <span>@strListPageConfig</span>
+                                </td>
+                            </tr>
+                        }
+                        @*<tr>
+                                <td>List Page Config</td>
+                                <td>
+                                    @if (ViewBag.PageType == "VIEW")
+                                    {
+                                        <span>@strListPageConfig</span>
+                                    }
+                                    else
+                                    {
+                                        @Html.CheckBox("Is_Show", Model.Is_Show == "Y" ? true : false, new { @id = "chkListPageConfig" })
+                                    }
+                                </td>
+                            </tr>*@
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="search_area" style="background-color:#eee">
+        <table class="table">
+            <tr>
+                <td style="width:20%; line-height:26px">
+                    <h4 class="pull-left">Digital Tab Config</h4>
+                </td>
+
+                <td class="right_nav pull-right" style="margin-right:10px">
+                    @if (ViewBag.PageType != "VIEW")
+                    {
+                        <input type="button" value="Add Tab Config" onclick="AddEditTabConfig(@Model.Digital_Tab_Code,'0','ADD')" id="btnAdd" class="btn btn-primary">
+                    }
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="tab-content clearfix table-wrapper scale_table_container">
+        <div class="scale_table_block">
+            <input type="hidden" id="hdnAction" value="" />
+            <input type="hidden" id="hdnTabConfigCode" value="0" />
+            <div id="divTabConfig" class="deal clearfix">
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="bottom_action">
+        <ul class="form_link_nav clearfix">
+
+            @if (ViewBag.PageType != "VIEW")
+            {
+                <li>
+                    <input type="submit" id="btnSave" class="btn btn-primary" value="@objMessageKey.Save" onclick="return SaveDigitalTab();" />
+                </li>
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="CancelSave()" />
+                </li>
+            }
+            else
+            {
+                <li>
+                    <input type="button" id="btnCancel" class="btn btn-primary" value="@objMessageKey.Cancel" onclick="cancelView()" />
+                </li>
+            }
+
+        </ul>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddDigital" role="dialog" tabindex="-1" aria-hidden="false" style="max-width:600px">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="program_popup">
+                    <div>
+                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Add / Edit Digital Master</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="form_fields_wrapper add_program_popup">
+                                    <li>
+                                        <label><b>Digital Master</b></label>
+                                        <input class="form_input" id="Digital_Master_Name" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                        <input type="hidden" id="hdnAction_DigitalMaster" value="" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" onclick="return saveDigitalMaster()">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="form_links">
+                                    <div class="search_area" style="background-color: #eee; padding:5px;">
+                                        <table class="table">
+                                            <tr style="float:right">
+                                                <td style="width:23%;text-align:right;padding-top:8px;">
+                                                    @objMessageKey.SearchText :
+                                                </td>
+                                                <td style="width:44%;text-align:right">
+                                                    <input type="text" name="searchDigital" id="searchDigital" class="search" style="width:100%" placeholder="Digital Name" />
+                                                </td>
+                                                <td style="text-align:right">
+                                                    <input type="button" id="btnSearchDigital" class="button" value="@objMessageKey.Search" onclick="SearchDigital()">
+                                                    <input type="button" id="btnShowAllDigital" class="button" value="@objMessageKey.ShowAll" onclick="SearchAllDigital()">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div class="scale_table_block">
+                                        <input type="hidden" id="hdnAction" value="" />
+                                        <input type="hidden" id="hdnDigitalCode" value="0" />
+                                        <div id="divDigitalList" class="deal clearfix" style="height:300px;overflow-y:scroll">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div aria-labelledby="myModalLabel" class="form_wrapper modal fade in" id="popAddDigitalData" role="dialog" tabindex="-1" aria-hidden="false" style="max-width:600px;">
+        <div class="modal-dialog">
+            <div class="modal-content clearfix">
+                <form class="form" id="program_popup">
+                    <div>
+                        <div class="form_fields" dir="@objMessageKey.LayoutDirection">
+                            <div class="modal_block modal_header">
+                                <a class="close" data-dismiss="modal" href="#">
+                                    <span>×</span>
+                                    <span class="sr-only">Close</span>
+                                </a>
+                                <h2>Add / Edit Digital Data Master</h2>
+                            </div>
+                            <div class="modal_block">
+                                <ul class="add_program_popup">
+                                    <li>
+                                        <input type="hidden" id="hdnAction_DigitalDataMaster" value="" />
+                                        <label><b>Digital Data Description</b></label>
+                                        <input class="form_input" id="Digital_Data_Desc" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                    </li>
+                                    <li>
+                                        <label><b>Digital Type</b></label>
+                                        <input class="form_input" id="Digital_Type" name="title" type="text" value="" maxlength="100" ondrop="return false;" onkeydown="return (event.keyCode!=13);" />
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal_block_full">
+                                <div class="form_links">
+                                    <ul class="modal_block clearfix">
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" onclick="return saveDigitalDataMaster()">@objMessageKey.Save</a>
+                                        </li>
+                                        <li class="poptalent">
+                                            <a class="btn btn-primary" href="#" data-dismiss="modal">@objMessageKey.Cancel</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="form_links">
+                                    <div class="search_area" style="background-color: #eee; padding:5px;">
+                                        <table class="table">
+                                            <tr style="float:right">
+                                                <td style="width:23%;text-align:right;padding-top:8px;">
+                                                    @objMessageKey.SearchText :
+                                                </td>
+                                                <td style="width:44%;text-align:right">
+                                                    <input type="text" name="searchDigitalData" id="searchDigitalData" class="search" style="width:100%" placeholder="Data Description,Type" />
+                                                </td>
+                                                <td style="text-align:right">
+                                                    <input type="button" id="btnSearchDigitalData" class="button" value="@objMessageKey.Search" onclick="SearchDigitalData()">
+                                                    <input type="button" id="btnShowAllDigitalData" class="button" value="@objMessageKey.ShowAll" onclick="SearchAllDigitalData()">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-content clearfix table-wrapper scale_table_container">
+                                    <div class="scale_table_block">
+                                        <input type="hidden" id="hdnAction" value="" />
+                                        <input type="hidden" id="hdnDigitalDataCode" value="0" />
+                                        <div id="divDigitalDataList" class="deal clearfix" style="height:300px;overflow-y:scroll">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}

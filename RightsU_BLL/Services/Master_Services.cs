@@ -7293,6 +7293,10 @@ namespace RightsU_BLL
             this.obj_Repository = new Supplementary_Repository(Connection_Str);
         }
 
+        public bool Save(Supplementary objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
         public IQueryable<Supplementary> SearchFor(Expression<Func<Supplementary, bool>> predicate)
         {
             return obj_Repository.SearchFor(predicate);
@@ -7304,22 +7308,35 @@ namespace RightsU_BLL
         }
 
         public override bool Validate(Supplementary objToValidate, out dynamic resultSet)
-        {
-            throw new NotImplementedException();
+        {            
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Supplementary objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Supplementary objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Supplementary objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Supplementary_Name == objToValidate.Supplementary_Name && s.Supplementary_Code != objToValidate.Supplementary_Code).Count() > 0)
+            {
+                resultSet = "Supplementary already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
-    public class Supplementary_Data_Service
+    public class Supplementary_Data_Service : BusinessLogic<Supplementary_Data>
     {
         private readonly Supplementary_Data_Repository obj_Repository;
 
@@ -7328,6 +7345,10 @@ namespace RightsU_BLL
             this.obj_Repository = new Supplementary_Data_Repository(Connection_Str);
         }
 
+        public bool Save(Supplementary_Data objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
         public IQueryable<Supplementary_Data> SearchFor(Expression<Func<Supplementary_Data, bool>> predicate)
         {
             return obj_Repository.SearchFor(predicate);
@@ -7336,6 +7357,34 @@ namespace RightsU_BLL
         public Supplementary_Data GetById(int id)
         {
             return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Supplementary_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Supplementary_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Supplementary_Data objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Supplementary_Data objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Data_Description == objToValidate.Data_Description && s.Supplementary_Type==objToValidate.Supplementary_Type && s.Supplementary_Data_Code != objToValidate.Supplementary_Data_Code).Count() > 0)
+            {
+                resultSet = "Supplementary Data already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
@@ -7358,23 +7407,51 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
 
+        public bool Save(Supplementary_Tab objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
+
+        public bool Update(Supplementary_Tab objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, obj_Repository, out resultSet);
+        }
+
+        public bool Delete(Supplementary_Tab objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, obj_Repository, out resultSet);
+        }
+
         public override bool Validate(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Supplementary_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Supplementary_Tab objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Supplementary_Tab_Description == objToValidate.Supplementary_Tab_Description && s.Short_Name == objToValidate.Short_Name && s.Supplementary_Tab_Code != objToValidate.Supplementary_Tab_Code).Count() > 0)
+            {
+                resultSet = "Supplementary Tab already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
-    public class Supplementary_Config_Service
+    public class Supplementary_Config_Service: BusinessLogic<Supplementary_Config>
     {
         private readonly Supplementary_Config_Repository obj_Repository;
 
@@ -7391,6 +7468,28 @@ namespace RightsU_BLL
         public Supplementary_Config GetById(int id)
         {
             return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Supplementary_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Supplementary_Config objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Supplementary_Config objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Supplementary_Config objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
         }
     }
 
@@ -7448,7 +7547,7 @@ namespace RightsU_BLL
         }
 
     }
-    public class Digital_Data_Service
+    public class Digital_Data_Service : BusinessLogic<Digital_Data>
     {
         private readonly Digital_Data_Repository obj_Repository;
 
@@ -7457,6 +7556,10 @@ namespace RightsU_BLL
             this.obj_Repository = new Digital_Data_Repository(Connection_Str);
         }
 
+        public bool Save(Digital_Data objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
         public IQueryable<Digital_Data> SearchFor(Expression<Func<Digital_Data, bool>> predicate)
         {
             return obj_Repository.SearchFor(predicate);
@@ -7465,6 +7568,34 @@ namespace RightsU_BLL
         public Digital_Data GetById(int id)
         {
             return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Digital_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Digital_Data objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Digital_Data objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Digital_Data objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Data_Description == objToValidate.Data_Description && s.Digital_Type == objToValidate.Digital_Type && s.Digital_Data_Code != objToValidate.Digital_Data_Code).Count() > 0)
+            {
+                resultSet = "Digital Data already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
@@ -7487,19 +7618,47 @@ namespace RightsU_BLL
             return obj_Repository.GetById(id);
         }
 
+        public bool Save(Digital_Tab objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
+
+        public bool Update(Digital_Tab objToUpdate, out dynamic resultSet)
+        {
+            return base.Update(objToUpdate, obj_Repository, out resultSet);
+        }
+
+        public bool Delete(Digital_Tab objToDelete, out dynamic resultSet)
+        {
+            return base.Delete(objToDelete, obj_Repository, out resultSet);
+        }
+
         public override bool Validate(Digital_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Digital_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Digital_Tab objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Digital_Tab objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Digital_Tab_Description == objToValidate.Digital_Tab_Description && s.Short_Name == objToValidate.Short_Name && s.Digital_Tab_Code != objToValidate.Digital_Tab_Code).Count() > 0)
+            {
+                resultSet = "Digital Tab already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
@@ -7520,6 +7679,58 @@ namespace RightsU_BLL
         public Digital_Config GetById(int id)
         {
             return obj_Repository.GetById(id);
+        }
+    }
+
+    public class Digital_Service : BusinessLogic<Digital>
+    {
+        private readonly Digital_Repository obj_Repository;
+
+        public Digital_Service(string Connection_Str)
+        {
+            this.obj_Repository = new Digital_Repository(Connection_Str);
+        }
+
+        public bool Save(Digital objToSave, out dynamic resultSet)
+        {
+            return base.Save(objToSave, obj_Repository, out resultSet);
+        }
+        public IQueryable<Digital> SearchFor(Expression<Func<Digital, bool>> predicate)
+        {
+            return obj_Repository.SearchFor(predicate);
+        }
+
+        public Digital GetById(int id)
+        {
+            return obj_Repository.GetById(id);
+        }
+
+        public override bool Validate(Digital objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateUpdate(Digital objToValidate, out dynamic resultSet)
+        {
+            return ValidateDuplicate(objToValidate, out resultSet);
+        }
+
+        public override bool ValidateDelete(Digital objToValidate, out dynamic resultSet)
+        {
+            resultSet = "";
+            return true;
+        }
+
+        private bool ValidateDuplicate(Digital objToValidate, out dynamic resultSet)
+        {
+            if (SearchFor(s => s.Digital_Name == objToValidate.Digital_Name && s.Digital_Code != objToValidate.Digital_Code).Count() > 0)
+            {
+                resultSet = "Digital already exists";
+                return false;
+            }
+
+            resultSet = "";
+            return true;
         }
     }
 
