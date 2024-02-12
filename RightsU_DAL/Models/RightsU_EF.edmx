@@ -23332,8 +23332,17 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Supplementary" EntityType="RightsU_NeoModel.Supplementary" />
+          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
           <EntitySet Name="Supplementary_Data" EntityType="RightsU_NeoModel.Supplementary_Data" />
           <EntitySet Name="Supplementary_Tab" EntityType="RightsU_NeoModel.Supplementary_Tab" />
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
+            <End Role="Supplementary" EntitySet="Supplementary" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
+            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
+            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
+          </AssociationSet>          
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
             <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -23539,16 +23548,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Row_Num" Mode="In" Type="Int32" />
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
           </FunctionImport>
-          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
-            <End Role="Supplementary" EntitySet="Supplementary" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
-            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
-          </EntityContainer>
           <EntitySet Name="Banners" EntityType="RightsU_NeoModel.Banner" />
           <EntitySet Name="Extended_Group" EntityType="RightsU_NeoModel.Extended_Group" />
           <EntitySet Name="Extended_Group_Config" EntityType="RightsU_NeoModel.Extended_Group_Config" />
@@ -40846,7 +40845,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        </Schema>
         <EntityType Name="BV_Schedule_Transaction">
           <Key>
             <PropertyRef Name="BV_Schedule_Transaction_Code" />

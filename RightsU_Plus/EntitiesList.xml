@@ -1,21 +1,7 @@
 <RightsUEntities>
   <Entity>
-    <ShortName>VMP</ShortName>
-    <FullName>VMP</FullName>
-    <DatabaseName>RightsU_Plus_Dev</DatabaseName>
-    <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
-    <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
-  </Entity>
-  <Entity>
-    <ShortName>VIACOM18 Network</ShortName>
-    <FullName>Viacom18 Network</FullName>
-    <DatabaseName>RightsU_Plus_Dev</DatabaseName>
-    <ConnectionStringName>RightsU_Broadcaster</ConnectionStringName>
-    <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
-  </Entity>
-  <Entity>
-    <ShortName>ROP</ShortName>
-    <FullName>ROP</FullName>
+    <ShortName>UTO</ShortName>
+    <FullName>UTO</FullName>
     <DatabaseName>RightsU_Plus_Dev</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>

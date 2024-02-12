@@ -1873,7 +1873,6 @@ namespace RightsU_DAL
             updatedList = new Save_Entitiy_Lists_Generic<AL_Vendor_TnC>().SetListFlagsCUD(updatedList, dbContext);
             return updatedList;
         }
-    }
 
         public ICollection<Supplementary_Config> SaveSupplementaryConfig(ICollection<Supplementary_Config> entityList, DbContext dbContext)
         {
