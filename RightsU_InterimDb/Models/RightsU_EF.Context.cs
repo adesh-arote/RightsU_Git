@@ -15,19 +15,19 @@ namespace RightsU_InterimDb.Models
     using System.Data.Entity.Core.Objects;
     using System.Data.Objects.DataClasses;
     using System.Linq;
-    
+
     public partial class RightsU_NeoEntities : DbContext
     {
         public RightsU_NeoEntities()
             : base("name=RightsU_NeoEntities")
         {
         }
-    
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public DbSet<Acq_Deal> Acq_Deal { get; set; }
         public DbSet<Acq_Deal_Ancillary> Acq_Deal_Ancillary { get; set; }
         public DbSet<Acq_Deal_Ancillary_Platform> Acq_Deal_Ancillary_Platform { get; set; }
@@ -434,7 +434,6 @@ namespace RightsU_InterimDb.Models
         public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
         public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
         public DbSet<Supplementary> Supplementary { get; set; }
-        public DbSet<Supplementary_Config> Supplementary_Config { get; set; }
         public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
         public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
         public DbSet<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
@@ -489,5438 +488,5438 @@ namespace RightsU_InterimDb.Models
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
                 new ObjectParameter("PlatformCodes", typeof(string));
-    
+
             var search_Platform_NameParameter = search_Platform_Name != null ?
                 new ObjectParameter("Search_Platform_Name", search_Platform_Name) :
                 new ObjectParameter("Search_Platform_Name", typeof(string));
-    
+
             var iS_Sport_RightsParameter = iS_Sport_Rights != null ?
                 new ObjectParameter("IS_Sport_Rights", iS_Sport_Rights) :
                 new ObjectParameter("IS_Sport_Rights", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Platform_Tree_Hierarchy_Result>("USP_Get_Platform_Tree_Hierarchy", platformCodesParameter, search_Platform_NameParameter, iS_Sport_RightsParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Territory_ForDDL_Result> USP_Get_Territory_ForDDL(string is_Theatrical)
         {
             var is_TheatricalParameter = is_Theatrical != null ?
                 new ObjectParameter("Is_Theatrical", is_Theatrical) :
                 new ObjectParameter("Is_Theatrical", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Territory_ForDDL_Result>("USP_Get_Territory_ForDDL", is_TheatricalParameter);
         }
-    
+
         public virtual ObjectResult<USP_Ancillary_Validate_Result> USP_Ancillary_Validate(Nullable<int> acq_Deal_Code, Nullable<int> acq_Deal_Ancillary_Code, Nullable<int> ancillary_Type_code, string title_Code, string ancillary_Platform_Code, string ancillary_Platform_Medium_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var acq_Deal_Ancillary_CodeParameter = acq_Deal_Ancillary_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Ancillary_Code", acq_Deal_Ancillary_Code) :
                 new ObjectParameter("Acq_Deal_Ancillary_Code", typeof(int));
-    
+
             var ancillary_Type_codeParameter = ancillary_Type_code.HasValue ?
                 new ObjectParameter("Ancillary_Type_code", ancillary_Type_code) :
                 new ObjectParameter("Ancillary_Type_code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var ancillary_Platform_CodeParameter = ancillary_Platform_Code != null ?
                 new ObjectParameter("Ancillary_Platform_Code", ancillary_Platform_Code) :
                 new ObjectParameter("Ancillary_Platform_Code", typeof(string));
-    
+
             var ancillary_Platform_Medium_CodeParameter = ancillary_Platform_Medium_Code != null ?
                 new ObjectParameter("Ancillary_Platform_Medium_Code", ancillary_Platform_Medium_Code) :
                 new ObjectParameter("Ancillary_Platform_Medium_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Ancillary_Validate_Result>("USP_Ancillary_Validate", acq_Deal_CodeParameter, acq_Deal_Ancillary_CodeParameter, ancillary_Type_codeParameter, title_CodeParameter, ancillary_Platform_CodeParameter, ancillary_Platform_Medium_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_Ancillary_Result> USP_List_Acq_Ancillary(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_Ancillary_Result>("USP_List_Acq_Ancillary", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_Rights_Details_Codes_Result> USP_Get_Acq_Rights_Details_Codes(string title_Code, Nullable<int> deal_Code)
         {
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Rights_Details_Codes_Result>("USP_Get_Acq_Rights_Details_Codes", title_CodeParameter, deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Territory> USP_Select_Acq_Deal_Rights_Territory(Nullable<int> acq_Deal_Rights_Code)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Territory>("USP_Select_Acq_Deal_Rights_Territory", acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Territory> USP_Select_Acq_Deal_Rights_Territory(Nullable<int> acq_Deal_Rights_Code, MergeOption mergeOption)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Territory>("USP_Select_Acq_Deal_Rights_Territory", mergeOption, acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Subtitling> USP_Select_Acq_Deal_Rights_Subtitling(Nullable<int> acq_Deal_Rights_Code)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Subtitling>("USP_Select_Acq_Deal_Rights_Subtitling", acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Subtitling> USP_Select_Acq_Deal_Rights_Subtitling(Nullable<int> acq_Deal_Rights_Code, MergeOption mergeOption)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Subtitling>("USP_Select_Acq_Deal_Rights_Subtitling", mergeOption, acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Dubbing> USP_Select_Acq_Deal_Rights_Dubbing(Nullable<int> acq_Deal_Rights_Code)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Dubbing>("USP_Select_Acq_Deal_Rights_Dubbing", acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Rights_Dubbing> USP_Select_Acq_Deal_Rights_Dubbing(Nullable<int> acq_Deal_Rights_Code, MergeOption mergeOption)
         {
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Rights_Dubbing>("USP_Select_Acq_Deal_Rights_Dubbing", mergeOption, acq_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Assign_Workflow(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> login_User, string remarks_Approval)
         {
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var login_UserParameter = login_User.HasValue ?
                 new ObjectParameter("Login_User", login_User) :
                 new ObjectParameter("Login_User", typeof(int));
-    
+
             var remarks_ApprovalParameter = remarks_Approval != null ?
                 new ObjectParameter("Remarks_Approval", remarks_Approval) :
                 new ObjectParameter("Remarks_Approval", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Assign_Workflow", record_CodeParameter, module_CodeParameter, login_UserParameter, remarks_ApprovalParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_Run_Result> USP_Validate_Run(string tITLE_CODE, string rUN_TYPE, string iSYEARWISE, string iSRULERIGHT, string iSCHANNELWISE, string cHANNEL_CODES, Nullable<int> aCQ_DEAL_RUN_CODE, Nullable<int> aCQ_DEAL_CODE)
         {
             var tITLE_CODEParameter = tITLE_CODE != null ?
                 new ObjectParameter("TITLE_CODE", tITLE_CODE) :
                 new ObjectParameter("TITLE_CODE", typeof(string));
-    
+
             var rUN_TYPEParameter = rUN_TYPE != null ?
                 new ObjectParameter("RUN_TYPE", rUN_TYPE) :
                 new ObjectParameter("RUN_TYPE", typeof(string));
-    
+
             var iSYEARWISEParameter = iSYEARWISE != null ?
                 new ObjectParameter("ISYEARWISE", iSYEARWISE) :
                 new ObjectParameter("ISYEARWISE", typeof(string));
-    
+
             var iSRULERIGHTParameter = iSRULERIGHT != null ?
                 new ObjectParameter("ISRULERIGHT", iSRULERIGHT) :
                 new ObjectParameter("ISRULERIGHT", typeof(string));
-    
+
             var iSCHANNELWISEParameter = iSCHANNELWISE != null ?
                 new ObjectParameter("ISCHANNELWISE", iSCHANNELWISE) :
                 new ObjectParameter("ISCHANNELWISE", typeof(string));
-    
+
             var cHANNEL_CODESParameter = cHANNEL_CODES != null ?
                 new ObjectParameter("CHANNEL_CODES", cHANNEL_CODES) :
                 new ObjectParameter("CHANNEL_CODES", typeof(string));
-    
+
             var aCQ_DEAL_RUN_CODEParameter = aCQ_DEAL_RUN_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", aCQ_DEAL_RUN_CODE) :
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", typeof(int));
-    
+
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_Run_Result>("USP_Validate_Run", tITLE_CODEParameter, rUN_TYPEParameter, iSYEARWISEParameter, iSRULERIGHTParameter, iSCHANNELWISEParameter, cHANNEL_CODESParameter, aCQ_DEAL_RUN_CODEParameter, aCQ_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_RIGHT_FOR_RUN(Nullable<int> aCQ_DEAL_CODE)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_RIGHT_FOR_RUN", aCQ_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_TITLE_FOR_RUN_Result> USP_GET_TITLE_FOR_RUN(Nullable<int> aCQ_DEAL_CODE)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_TITLE_FOR_RUN_Result>("USP_GET_TITLE_FOR_RUN", aCQ_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Process_Workflow(Nullable<int> module_Code, Nullable<int> record_Code, Nullable<int> login_User, string user_Action, string remarks)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var login_UserParameter = login_User.HasValue ?
                 new ObjectParameter("Login_User", login_User) :
                 new ObjectParameter("Login_User", typeof(int));
-    
+
             var user_ActionParameter = user_Action != null ?
                 new ObjectParameter("User_Action", user_Action) :
                 new ObjectParameter("User_Action", typeof(string));
-    
+
             var remarksParameter = remarks != null ?
                 new ObjectParameter("Remarks", remarks) :
                 new ObjectParameter("Remarks", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Process_Workflow", module_CodeParameter, record_CodeParameter, login_UserParameter, user_ActionParameter, remarksParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Check_Workflow(Nullable<int> module_Code, Nullable<int> record_Code)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Check_Workflow", module_CodeParameter, record_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_Get_Creator_Group_Code_AfterReject(Nullable<int> module_Code, Nullable<int> record_Code)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Get_Creator_Group_Code_AfterReject", module_CodeParameter, record_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_YEARWISE_RIGHT_FOR_RUN_Result> USP_Validate_YEARWISE_RIGHT_FOR_RUN(Nullable<int> aCQ_DEAL_CODE, Nullable<int> aCQ_DEAL_RUN_CODE, string tITLE_CODE, Nullable<System.DateTime> mIN_YEARWISE_START_DATE, Nullable<System.DateTime> mAX_YEARWISE_END_DATE)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             var aCQ_DEAL_RUN_CODEParameter = aCQ_DEAL_RUN_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", aCQ_DEAL_RUN_CODE) :
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", typeof(int));
-    
+
             var tITLE_CODEParameter = tITLE_CODE != null ?
                 new ObjectParameter("TITLE_CODE", tITLE_CODE) :
                 new ObjectParameter("TITLE_CODE", typeof(string));
-    
+
             var mIN_YEARWISE_START_DATEParameter = mIN_YEARWISE_START_DATE.HasValue ?
                 new ObjectParameter("MIN_YEARWISE_START_DATE", mIN_YEARWISE_START_DATE) :
                 new ObjectParameter("MIN_YEARWISE_START_DATE", typeof(System.DateTime));
-    
+
             var mAX_YEARWISE_END_DATEParameter = mAX_YEARWISE_END_DATE.HasValue ?
                 new ObjectParameter("MAX_YEARWISE_END_DATE", mAX_YEARWISE_END_DATE) :
                 new ObjectParameter("MAX_YEARWISE_END_DATE", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_YEARWISE_RIGHT_FOR_RUN_Result>("USP_Validate_YEARWISE_RIGHT_FOR_RUN", aCQ_DEAL_CODEParameter, aCQ_DEAL_RUN_CODEParameter, tITLE_CODEParameter, mIN_YEARWISE_START_DATEParameter, mAX_YEARWISE_END_DATEParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Status_History_Result> USP_List_Status_History(Nullable<int> record_Code, Nullable<int> module_Code)
         {
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Status_History_Result>("USP_List_Status_History", record_CodeParameter, module_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_RollBack_Acq_Deal_Result> USP_RollBack_Acq_Deal(Nullable<int> acq_Deal_Code, Nullable<int> user_Code, string is_Edit_WO_Approval)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var is_Edit_WO_ApprovalParameter = is_Edit_WO_Approval != null ?
                 new ObjectParameter("Is_Edit_WO_Approval", is_Edit_WO_Approval) :
                 new ObjectParameter("Is_Edit_WO_Approval", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_RollBack_Acq_Deal_Result>("USP_RollBack_Acq_Deal", acq_Deal_CodeParameter, user_CodeParameter, is_Edit_WO_ApprovalParameter);
         }
-    
+
         public virtual ObjectResult<USP_RollBack_Syn_Deal_Result> USP_RollBack_Syn_Deal(Nullable<int> syn_Deal_Code, Nullable<int> user_Code)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_RollBack_Syn_Deal_Result>("USP_RollBack_Syn_Deal", syn_Deal_CodeParameter, user_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_Deal_Status_Result> USP_List_Acq_Deal_Status(Nullable<int> acq_Deal_Code, string debug)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var debugParameter = debug != null ?
                 new ObjectParameter("Debug", debug) :
                 new ObjectParameter("Debug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_Deal_Status_Result>("USP_List_Acq_Deal_Status", acq_Deal_CodeParameter, debugParameter);
         }
-    
+
         public virtual ObjectResult<USP_Add_ACQ_Milestone_Result> USP_Add_ACQ_Milestone(Nullable<int> acq_Deal_Code, string isDebug)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var isDebugParameter = isDebug != null ?
                 new ObjectParameter("IsDebug", isDebug) :
                 new ObjectParameter("IsDebug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Add_ACQ_Milestone_Result>("USP_Add_ACQ_Milestone", acq_Deal_CodeParameter, isDebugParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_DELETE_Deal(Nullable<int> acq_Deal_Code, string debug)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var debugParameter = debug != null ?
                 new ObjectParameter("Debug", debug) :
                 new ObjectParameter("Debug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_DELETE_Deal", acq_Deal_CodeParameter, debugParameter);
         }
-    
+
         public virtual int USP_AT_Acq_Deal(Nullable<int> acq_Deal_Code, ObjectParameter is_Error, string is_Edit_WO_Approval)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var is_Edit_WO_ApprovalParameter = is_Edit_WO_Approval != null ?
                 new ObjectParameter("Is_Edit_WO_Approval", is_Edit_WO_Approval) :
                 new ObjectParameter("Is_Edit_WO_Approval", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_AT_Acq_Deal", acq_Deal_CodeParameter, is_Error, is_Edit_WO_ApprovalParameter);
         }
-    
+
         public virtual int USP_Insert_Module_Status_History(Nullable<int> module_Code, Nullable<int> record_Code, string user_Action, Nullable<int> login_User, string remarks)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var user_ActionParameter = user_Action != null ?
                 new ObjectParameter("User_Action", user_Action) :
                 new ObjectParameter("User_Action", typeof(string));
-    
+
             var login_UserParameter = login_User.HasValue ?
                 new ObjectParameter("Login_User", login_User) :
                 new ObjectParameter("Login_User", typeof(int));
-    
+
             var remarksParameter = remarks != null ?
                 new ObjectParameter("Remarks", remarks) :
                 new ObjectParameter("Remarks", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Insert_Module_Status_History", module_CodeParameter, record_CodeParameter, user_ActionParameter, login_UserParameter, remarksParameter);
         }
-    
+
         public virtual ObjectResult<USP_Schedule_AsRun_Report_Result> USP_Schedule_AsRun_Report(string title, Nullable<int> episodeFrom, Nullable<int> episodeTo, string isShowAll, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType, string contentType)
         {
             var titleParameter = title != null ?
                 new ObjectParameter("Title", title) :
                 new ObjectParameter("Title", typeof(string));
-    
+
             var episodeFromParameter = episodeFrom.HasValue ?
                 new ObjectParameter("EpisodeFrom", episodeFrom) :
                 new ObjectParameter("EpisodeFrom", typeof(int));
-    
+
             var episodeToParameter = episodeTo.HasValue ?
                 new ObjectParameter("EpisodeTo", episodeTo) :
                 new ObjectParameter("EpisodeTo", typeof(int));
-    
+
             var isShowAllParameter = isShowAll != null ?
                 new ObjectParameter("IsShowAll", isShowAll) :
                 new ObjectParameter("IsShowAll", typeof(string));
-    
+
             var startDateParameter = startDate != null ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(string));
-    
+
             var endDateParameter = endDate != null ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(string));
-    
+
             var channelParameter = channel != null ?
                 new ObjectParameter("Channel", channel) :
                 new ObjectParameter("Channel", typeof(string));
-    
+
             var excludeExpiredDealParameter = excludeExpiredDeal.HasValue ?
                 new ObjectParameter("ExcludeExpiredDeal", excludeExpiredDeal) :
                 new ObjectParameter("ExcludeExpiredDeal", typeof(bool));
-    
+
             var runTypeParameter = runType != null ?
                 new ObjectParameter("RunType", runType) :
                 new ObjectParameter("RunType", typeof(string));
-    
+
             var contentTypeParameter = contentType != null ?
                 new ObjectParameter("ContentType", contentType) :
                 new ObjectParameter("ContentType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_AsRun_Report_Result>("USP_Schedule_AsRun_Report", titleParameter, episodeFromParameter, episodeToParameter, isShowAllParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter, contentTypeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_Title_Language(string title_Codes)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Title_Language", title_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Dashboard_Detail_Result> USP_Get_Dashboard_Detail(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
         {
             var dashboardTypeParameter = dashboardType != null ?
                 new ObjectParameter("DashboardType", dashboardType) :
                 new ObjectParameter("DashboardType", typeof(string));
-    
+
             var searchForParameter = searchFor != null ?
                 new ObjectParameter("SearchFor", searchFor) :
                 new ObjectParameter("SearchFor", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var dashboardDaysParameter = dashboardDays.HasValue ?
                 new ObjectParameter("DashboardDays", dashboardDays) :
                 new ObjectParameter("DashboardDays", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Result>("USP_Get_Dashboard_Detail", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Dubbing> USP_Select_Acq_Deal_Pushback_Dubbing(Nullable<int> acq_Deal_Pushback_Code)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Dubbing>("USP_Select_Acq_Deal_Pushback_Dubbing", acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Dubbing> USP_Select_Acq_Deal_Pushback_Dubbing(Nullable<int> acq_Deal_Pushback_Code, MergeOption mergeOption)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Dubbing>("USP_Select_Acq_Deal_Pushback_Dubbing", mergeOption, acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Subtitling> USP_Select_Acq_Deal_Pushback_Subtitling(Nullable<int> acq_Deal_Pushback_Code)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Subtitling>("USP_Select_Acq_Deal_Pushback_Subtitling", acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Subtitling> USP_Select_Acq_Deal_Pushback_Subtitling(Nullable<int> acq_Deal_Pushback_Code, MergeOption mergeOption)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Subtitling>("USP_Select_Acq_Deal_Pushback_Subtitling", mergeOption, acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Territory> USP_Select_Acq_Deal_Pushback_Territory(Nullable<int> acq_Deal_Pushback_Code)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Territory>("USP_Select_Acq_Deal_Pushback_Territory", acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Pushback_Territory> USP_Select_Acq_Deal_Pushback_Territory(Nullable<int> acq_Deal_Pushback_Code, MergeOption mergeOption)
         {
             var acq_Deal_Pushback_CodeParameter = acq_Deal_Pushback_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Pushback_Code", acq_Deal_Pushback_Code) :
                 new ObjectParameter("Acq_Deal_Pushback_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Pushback_Territory>("USP_Select_Acq_Deal_Pushback_Territory", mergeOption, acq_Deal_Pushback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Generate_Deal_Type_Year_Result> USP_Generate_Deal_Type_Year(string yearDefinition, Nullable<System.DateTime> stDt, Nullable<System.DateTime> enDt)
         {
             var yearDefinitionParameter = yearDefinition != null ?
                 new ObjectParameter("yearDefinition", yearDefinition) :
                 new ObjectParameter("yearDefinition", typeof(string));
-    
+
             var stDtParameter = stDt.HasValue ?
                 new ObjectParameter("stDt", stDt) :
                 new ObjectParameter("stDt", typeof(System.DateTime));
-    
+
             var enDtParameter = enDt.HasValue ?
                 new ObjectParameter("enDt", enDt) :
                 new ObjectParameter("enDt", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Generate_Deal_Type_Year_Result>("USP_Generate_Deal_Type_Year", yearDefinitionParameter, stDtParameter, enDtParameter);
         }
-    
+
         public virtual ObjectResult<USP_Select_Mass_Territory_Update_Result> USP_Select_Mass_Territory_Update(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, string dealFor, ObjectParameter recordCount)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var dealForParameter = dealFor != null ?
                 new ObjectParameter("DealFor", dealFor) :
                 new ObjectParameter("DealFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Select_Mass_Territory_Update_Result>("USP_Select_Mass_Territory_Update", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, dealForParameter, recordCount);
         }
-    
+
         public virtual int USP_Update_Mass_Territory_Update(string acqDealMassCodes, string dealFor)
         {
             var acqDealMassCodesParameter = acqDealMassCodes != null ?
                 new ObjectParameter("acqDealMassCodes", acqDealMassCodes) :
                 new ObjectParameter("acqDealMassCodes", typeof(string));
-    
+
             var dealForParameter = dealFor != null ?
                 new ObjectParameter("DealFor", dealFor) :
                 new ObjectParameter("DealFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Update_Mass_Territory_Update", acqDealMassCodesParameter, dealForParameter);
         }
-    
+
         public virtual ObjectResult<USP_VALIDATE_TITLES_FOR_YEARWISE_RUN_Result> USP_VALIDATE_TITLES_FOR_YEARWISE_RUN(string tITLE_CODES, Nullable<int> dEAL_CODE)
         {
             var tITLE_CODESParameter = tITLE_CODES != null ?
                 new ObjectParameter("TITLE_CODES", tITLE_CODES) :
                 new ObjectParameter("TITLE_CODES", typeof(string));
-    
+
             var dEAL_CODEParameter = dEAL_CODE.HasValue ?
                 new ObjectParameter("DEAL_CODE", dEAL_CODE) :
                 new ObjectParameter("DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_VALIDATE_TITLES_FOR_YEARWISE_RUN_Result>("USP_VALIDATE_TITLES_FOR_YEARWISE_RUN", tITLE_CODESParameter, dEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Sports_Result> USP_List_Sports(Nullable<int> acq_Deal_Code, string view_Type, string title_Codes, string deal_Movie_Codes)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var view_TypeParameter = view_Type != null ?
                 new ObjectParameter("View_Type", view_Type) :
                 new ObjectParameter("View_Type", typeof(string));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var deal_Movie_CodesParameter = deal_Movie_Codes != null ?
                 new ObjectParameter("Deal_Movie_Codes", deal_Movie_Codes) :
                 new ObjectParameter("Deal_Movie_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Sports_Result>("USP_List_Sports", acq_Deal_CodeParameter, view_TypeParameter, title_CodesParameter, deal_Movie_CodesParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Sport_Language> USP_Select_Acq_Deal_Sport_Language(Nullable<int> acq_Deal_Sport_Code)
         {
             var acq_Deal_Sport_CodeParameter = acq_Deal_Sport_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Sport_Code", acq_Deal_Sport_Code) :
                 new ObjectParameter("Acq_Deal_Sport_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Sport_Language>("USP_Select_Acq_Deal_Sport_Language", acq_Deal_Sport_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Acq_Deal_Sport_Language> USP_Select_Acq_Deal_Sport_Language(Nullable<int> acq_Deal_Sport_Code, MergeOption mergeOption)
         {
             var acq_Deal_Sport_CodeParameter = acq_Deal_Sport_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Sport_Code", acq_Deal_Sport_Code) :
                 new ObjectParameter("Acq_Deal_Sport_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Acq_Deal_Sport_Language>("USP_Select_Acq_Deal_Sport_Language", mergeOption, acq_Deal_Sport_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_Result> USP_GET_DATA_FOR_APPROVED_TITLES(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var platform_CodesParameter = platform_Codes != null ?
                 new ObjectParameter("Platform_Codes", platform_Codes) :
                 new ObjectParameter("Platform_Codes", typeof(string));
-    
+
             var platform_TypeParameter = platform_Type != null ?
                 new ObjectParameter("Platform_Type", platform_Type) :
                 new ObjectParameter("Platform_Type", typeof(string));
-    
+
             var region_TypeParameter = region_Type != null ?
                 new ObjectParameter("Region_Type", region_Type) :
                 new ObjectParameter("Region_Type", typeof(string));
-    
+
             var subtitling_TypeParameter = subtitling_Type != null ?
                 new ObjectParameter("Subtitling_Type", subtitling_Type) :
                 new ObjectParameter("Subtitling_Type", typeof(string));
-    
+
             var dubbing_TypeParameter = dubbing_Type != null ?
                 new ObjectParameter("Dubbing_Type", dubbing_Type) :
                 new ObjectParameter("Dubbing_Type", typeof(string));
-    
+
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_DATA_FOR_APPROVED_TITLES_Result>("USP_GET_DATA_FOR_APPROVED_TITLES", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, region_TypeParameter, subtitling_TypeParameter, dubbing_TypeParameter, syn_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Syn_Deal_Status_Result> USP_List_Syn_Deal_Status(Nullable<int> syn_Deal_Code, string debug)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var debugParameter = debug != null ?
                 new ObjectParameter("Debug", debug) :
                 new ObjectParameter("Debug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Syn_Deal_Status_Result>("USP_List_Syn_Deal_Status", syn_Deal_CodeParameter, debugParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_DELETE_Syn_DEAL(Nullable<int> syn_Deal_Code, string debug)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var debugParameter = debug != null ?
                 new ObjectParameter("Debug", debug) :
                 new ObjectParameter("Debug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_DELETE_Syn_DEAL", syn_Deal_CodeParameter, debugParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_List_Runs_Result> USP_Syn_List_Runs(Nullable<int> deal_Code, string title_Codes)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_List_Runs_Result>("USP_Syn_List_Runs", deal_CodeParameter, title_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_VALIDATE_SYN_TITLES_Result> USP_VALIDATE_SYN_TITLES(string tITLE_CODES, Nullable<int> dEAL_CODE)
         {
             var tITLE_CODESParameter = tITLE_CODES != null ?
                 new ObjectParameter("TITLE_CODES", tITLE_CODES) :
                 new ObjectParameter("TITLE_CODES", typeof(string));
-    
+
             var dEAL_CODEParameter = dEAL_CODE.HasValue ?
                 new ObjectParameter("DEAL_CODE", dEAL_CODE) :
                 new ObjectParameter("DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_VALIDATE_SYN_TITLES_Result>("USP_VALIDATE_SYN_TITLES", tITLE_CODESParameter, dEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_RIGHT_FOR_SYN_RUN(Nullable<int> sYN_DEAL_CODE)
         {
             var sYN_DEAL_CODEParameter = sYN_DEAL_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_CODE", sYN_DEAL_CODE) :
                 new ObjectParameter("SYN_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_RIGHT_FOR_SYN_RUN", sYN_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN_Result> USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN(Nullable<int> sYN_DEAL_CODE, Nullable<int> sYN_DEAL_RUN_CODE, string tITLE_CODE, Nullable<System.DateTime> mIN_YEARWISE_START_DATE, Nullable<System.DateTime> mAX_YEARWISE_END_DATE)
         {
             var sYN_DEAL_CODEParameter = sYN_DEAL_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_CODE", sYN_DEAL_CODE) :
                 new ObjectParameter("SYN_DEAL_CODE", typeof(int));
-    
+
             var sYN_DEAL_RUN_CODEParameter = sYN_DEAL_RUN_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_RUN_CODE", sYN_DEAL_RUN_CODE) :
                 new ObjectParameter("SYN_DEAL_RUN_CODE", typeof(int));
-    
+
             var tITLE_CODEParameter = tITLE_CODE != null ?
                 new ObjectParameter("TITLE_CODE", tITLE_CODE) :
                 new ObjectParameter("TITLE_CODE", typeof(string));
-    
+
             var mIN_YEARWISE_START_DATEParameter = mIN_YEARWISE_START_DATE.HasValue ?
                 new ObjectParameter("MIN_YEARWISE_START_DATE", mIN_YEARWISE_START_DATE) :
                 new ObjectParameter("MIN_YEARWISE_START_DATE", typeof(System.DateTime));
-    
+
             var mAX_YEARWISE_END_DATEParameter = mAX_YEARWISE_END_DATE.HasValue ?
                 new ObjectParameter("MAX_YEARWISE_END_DATE", mAX_YEARWISE_END_DATE) :
                 new ObjectParameter("MAX_YEARWISE_END_DATE", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN_Result>("USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN", sYN_DEAL_CODEParameter, sYN_DEAL_RUN_CODEParameter, tITLE_CODEParameter, mIN_YEARWISE_START_DATEParameter, mAX_YEARWISE_END_DATEParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_Duplicate_Syn_Run_Result> USP_Validate_Duplicate_Syn_Run(string tITLE_CODE, string pLATFORM_CODE, Nullable<int> sYN_DEAL_RUN_CODE, Nullable<int> sYN_DEAL_CODE)
         {
             var tITLE_CODEParameter = tITLE_CODE != null ?
                 new ObjectParameter("TITLE_CODE", tITLE_CODE) :
                 new ObjectParameter("TITLE_CODE", typeof(string));
-    
+
             var pLATFORM_CODEParameter = pLATFORM_CODE != null ?
                 new ObjectParameter("PLATFORM_CODE", pLATFORM_CODE) :
                 new ObjectParameter("PLATFORM_CODE", typeof(string));
-    
+
             var sYN_DEAL_RUN_CODEParameter = sYN_DEAL_RUN_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_RUN_CODE", sYN_DEAL_RUN_CODE) :
                 new ObjectParameter("SYN_DEAL_RUN_CODE", typeof(int));
-    
+
             var sYN_DEAL_CODEParameter = sYN_DEAL_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_CODE", sYN_DEAL_CODE) :
                 new ObjectParameter("SYN_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_Duplicate_Syn_Run_Result>("USP_Validate_Duplicate_Syn_Run", tITLE_CODEParameter, pLATFORM_CODEParameter, sYN_DEAL_RUN_CODEParameter, sYN_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<StatusMessage> USP_Validate_General_Delete_For_Title(Nullable<int> syn_Deal_Code, Nullable<int> title_Code, Nullable<int> episode_From, Nullable<int> episode_To, string checkFor)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var episode_FromParameter = episode_From.HasValue ?
                 new ObjectParameter("Episode_From", episode_From) :
                 new ObjectParameter("Episode_From", typeof(int));
-    
+
             var episode_ToParameter = episode_To.HasValue ?
                 new ObjectParameter("Episode_To", episode_To) :
                 new ObjectParameter("Episode_To", typeof(int));
-    
+
             var checkForParameter = checkFor != null ?
                 new ObjectParameter("CheckFor", checkFor) :
                 new ObjectParameter("CheckFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<StatusMessage>("USP_Validate_General_Delete_For_Title", syn_Deal_CodeParameter, title_CodeParameter, episode_FromParameter, episode_ToParameter, checkForParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_Check_Acq_Deal_Status_For_Syn(Nullable<int> syn_Deal_Code)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Check_Acq_Deal_Status_For_Syn", syn_Deal_CodeParameter);
         }
-    
+
         public virtual int USP_Invoke_Validation_Job()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Invoke_Validation_Job");
         }
-    
+
         public virtual ObjectResult<USP_Get_Syn_Rights_Errors_Result> USP_Get_Syn_Rights_Errors(Nullable<int> code, string call_From)
         {
             var codeParameter = code.HasValue ?
                 new ObjectParameter("Code", code) :
                 new ObjectParameter("Code", typeof(int));
-    
+
             var call_FromParameter = call_From != null ?
                 new ObjectParameter("Call_From", call_From) :
                 new ObjectParameter("Call_From", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Rights_Errors_Result>("USP_Get_Syn_Rights_Errors", codeParameter, call_FromParameter);
         }
-    
+
         public virtual int USP_Reprocess_Rights(Nullable<int> code, string call_From)
         {
             var codeParameter = code.HasValue ?
                 new ObjectParameter("Code", code) :
                 new ObjectParameter("Code", typeof(int));
-    
+
             var call_FromParameter = call_From != null ?
                 new ObjectParameter("Call_From", call_From) :
                 new ObjectParameter("Call_From", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Reprocess_Rights", codeParameter, call_FromParameter);
         }
-    
+
         public virtual ObjectResult<USP_Populate_Titles_Result> USP_Populate_Titles(Nullable<int> deal_Code, Nullable<int> deal_Type_Code, Nullable<int> master_Deal_Movie_Code, string selected_Title_Codes, string callFrom)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var master_Deal_Movie_CodeParameter = master_Deal_Movie_Code.HasValue ?
                 new ObjectParameter("Master_Deal_Movie_Code", master_Deal_Movie_Code) :
                 new ObjectParameter("Master_Deal_Movie_Code", typeof(int));
-    
+
             var selected_Title_CodesParameter = selected_Title_Codes != null ?
                 new ObjectParameter("Selected_Title_Codes", selected_Title_Codes) :
                 new ObjectParameter("Selected_Title_Codes", typeof(string));
-    
+
             var callFromParameter = callFrom != null ?
                 new ObjectParameter("CallFrom", callFrom) :
                 new ObjectParameter("CallFrom", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Populate_Titles_Result>("USP_Populate_Titles", deal_CodeParameter, deal_Type_CodeParameter, master_Deal_Movie_CodeParameter, selected_Title_CodesParameter, callFromParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Acq_Copy_Right_For_Sub_Deal(Nullable<int> acq_Deal_Code, Nullable<int> master_Deal_Movie_Code, Nullable<int> user_Code, string selected_Title_Codes)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var master_Deal_Movie_CodeParameter = master_Deal_Movie_Code.HasValue ?
                 new ObjectParameter("Master_Deal_Movie_Code", master_Deal_Movie_Code) :
                 new ObjectParameter("Master_Deal_Movie_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var selected_Title_CodesParameter = selected_Title_Codes != null ?
                 new ObjectParameter("Selected_Title_Codes", selected_Title_Codes) :
                 new ObjectParameter("Selected_Title_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Acq_Copy_Right_For_Sub_Deal", acq_Deal_CodeParameter, master_Deal_Movie_CodeParameter, user_CodeParameter, selected_Title_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_IPR_Class_Tree_Hierarchy_Result> USP_Get_IPR_Class_Tree_Hierarchy(string iPR_ClassCodes)
         {
             var iPR_ClassCodesParameter = iPR_ClassCodes != null ?
                 new ObjectParameter("IPR_ClassCodes", iPR_ClassCodes) :
                 new ObjectParameter("IPR_ClassCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_IPR_Class_Tree_Hierarchy_Result>("USP_Get_IPR_Class_Tree_Hierarchy", iPR_ClassCodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_IPR_Status_History_Result> USP_List_IPR_Status_History(Nullable<int> iPR_Rep_Code)
         {
             var iPR_Rep_CodeParameter = iPR_Rep_Code.HasValue ?
                 new ObjectParameter("IPR_Rep_Code", iPR_Rep_Code) :
                 new ObjectParameter("IPR_Rep_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_IPR_Status_History_Result>("USP_List_IPR_Status_History", iPR_Rep_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Login_Details_Report_Result> USP_Login_Details_Report(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Login_Details_Report_Result>("USP_Login_Details_Report", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_Talent_Master(Nullable<int> talent_Code, string selected_Role_Code)
         {
             var talent_CodeParameter = talent_Code.HasValue ?
                 new ObjectParameter("Talent_Code", talent_Code) :
                 new ObjectParameter("Talent_Code", typeof(int));
-    
+
             var selected_Role_CodeParameter = selected_Role_Code != null ?
                 new ObjectParameter("Selected_Role_Code", selected_Role_Code) :
                 new ObjectParameter("Selected_Role_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Talent_Master", talent_CodeParameter, selected_Role_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Populate_Master_Deal_Titles_Result> USP_Populate_Master_Deal_Titles(Nullable<int> acq_Deal_Movie_Code)
         {
             var acq_Deal_Movie_CodeParameter = acq_Deal_Movie_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Movie_Code", acq_Deal_Movie_Code) :
                 new ObjectParameter("Acq_Deal_Movie_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Populate_Master_Deal_Titles_Result>("USP_Populate_Master_Deal_Titles", acq_Deal_Movie_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_Mapping_Countries(Nullable<int> acq_Deal_Right_Code)
         {
             var acq_Deal_Right_CodeParameter = acq_Deal_Right_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Right_Code", acq_Deal_Right_Code) :
                 new ObjectParameter("Acq_Deal_Right_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Mapping_Countries", acq_Deal_Right_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_Episode_Result> USP_Validate_Episode(string title_with_Episode, string program_Type)
         {
             var title_with_EpisodeParameter = title_with_Episode != null ?
                 new ObjectParameter("Title_with_Episode", title_with_Episode) :
                 new ObjectParameter("Title_with_Episode", typeof(string));
-    
+
             var program_TypeParameter = program_Type != null ?
                 new ObjectParameter("Program_Type", program_Type) :
                 new ObjectParameter("Program_Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_Episode_Result>("USP_Validate_Episode", title_with_EpisodeParameter, program_TypeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Schedule_ShowDetails_Sche_Report_Result> USP_Schedule_ShowDetails_Sche_Report(string dMCode, Nullable<int> title_Code, Nullable<int> deal_Code, Nullable<int> episode, string deal_Type, string startDate, string endDate, string channel, Nullable<bool> excludeExpiredDeal, string runType)
         {
             var dMCodeParameter = dMCode != null ?
                 new ObjectParameter("DMCode", dMCode) :
                 new ObjectParameter("DMCode", typeof(string));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var episodeParameter = episode.HasValue ?
                 new ObjectParameter("Episode", episode) :
                 new ObjectParameter("Episode", typeof(int));
-    
+
             var deal_TypeParameter = deal_Type != null ?
                 new ObjectParameter("Deal_Type", deal_Type) :
                 new ObjectParameter("Deal_Type", typeof(string));
-    
+
             var startDateParameter = startDate != null ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(string));
-    
+
             var endDateParameter = endDate != null ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(string));
-    
+
             var channelParameter = channel != null ?
                 new ObjectParameter("Channel", channel) :
                 new ObjectParameter("Channel", typeof(string));
-    
+
             var excludeExpiredDealParameter = excludeExpiredDeal.HasValue ?
                 new ObjectParameter("ExcludeExpiredDeal", excludeExpiredDeal) :
                 new ObjectParameter("ExcludeExpiredDeal", typeof(bool));
-    
+
             var runTypeParameter = runType != null ?
                 new ObjectParameter("RunType", runType) :
                 new ObjectParameter("RunType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Schedule_ShowDetails_Sche_Report_Result>("USP_Schedule_ShowDetails_Sche_Report", dMCodeParameter, title_CodeParameter, deal_CodeParameter, episodeParameter, deal_TypeParameter, startDateParameter, endDateParameter, channelParameter, excludeExpiredDealParameter, runTypeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Syn_Acq_Mapping(Nullable<int> syn_Deal_Code, string debug)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var debugParameter = debug != null ?
                 new ObjectParameter("Debug", debug) :
                 new ObjectParameter("Debug", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Syn_Acq_Mapping", syn_Deal_CodeParameter, debugParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Cost_Colors_Result> USP_List_Cost_Colors(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Cost_Colors_Result>("USP_List_Cost_Colors", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Update_Syn_Acq_Mapping(Nullable<int> acq_Deal_Code, string acq_Deal_Rights_Code, string map_Syn_Deal_Rights_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code != null ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(string));
-    
+
             var map_Syn_Deal_Rights_CodeParameter = map_Syn_Deal_Rights_Code != null ?
                 new ObjectParameter("Map_Syn_Deal_Rights_Code", map_Syn_Deal_Rights_Code) :
                 new ObjectParameter("Map_Syn_Deal_Rights_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Update_Syn_Acq_Mapping", acq_Deal_CodeParameter, acq_Deal_Rights_CodeParameter, map_Syn_Deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_Cost_Duplication_Colors(string dealType, string titleCodes, Nullable<int> cost_Type_Code, Nullable<int> acq_Deal_Cost_Code, Nullable<int> acq_Deal_Code)
         {
             var dealTypeParameter = dealType != null ?
                 new ObjectParameter("DealType", dealType) :
                 new ObjectParameter("DealType", typeof(string));
-    
+
             var titleCodesParameter = titleCodes != null ?
                 new ObjectParameter("TitleCodes", titleCodes) :
                 new ObjectParameter("TitleCodes", typeof(string));
-    
+
             var cost_Type_CodeParameter = cost_Type_Code.HasValue ?
                 new ObjectParameter("Cost_Type_Code", cost_Type_Code) :
                 new ObjectParameter("Cost_Type_Code", typeof(int));
-    
+
             var acq_Deal_Cost_CodeParameter = acq_Deal_Cost_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Cost_Code", acq_Deal_Cost_Code) :
                 new ObjectParameter("Acq_Deal_Cost_Code", typeof(int));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Cost_Duplication_Colors", dealTypeParameter, titleCodesParameter, cost_Type_CodeParameter, acq_Deal_Cost_CodeParameter, acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_Close_Movie__Scheduled_Run_Result> USP_Validate_Close_Movie__Scheduled_Run(Nullable<int> acq_Deal_Movie_Code, Nullable<int> title_Code, string deal_Movie_Close_Date, Nullable<int> episode_From, Nullable<int> episode_To)
         {
             var acq_Deal_Movie_CodeParameter = acq_Deal_Movie_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Movie_Code", acq_Deal_Movie_Code) :
                 new ObjectParameter("Acq_Deal_Movie_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var deal_Movie_Close_DateParameter = deal_Movie_Close_Date != null ?
                 new ObjectParameter("Deal_Movie_Close_Date", deal_Movie_Close_Date) :
                 new ObjectParameter("Deal_Movie_Close_Date", typeof(string));
-    
+
             var episode_FromParameter = episode_From.HasValue ?
                 new ObjectParameter("Episode_From", episode_From) :
                 new ObjectParameter("Episode_From", typeof(int));
-    
+
             var episode_ToParameter = episode_To.HasValue ?
                 new ObjectParameter("Episode_To", episode_To) :
                 new ObjectParameter("Episode_To", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_Close_Movie__Scheduled_Run_Result>("USP_Validate_Close_Movie__Scheduled_Run", acq_Deal_Movie_CodeParameter, title_CodeParameter, deal_Movie_Close_DateParameter, episode_FromParameter, episode_ToParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages(string syn_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
         {
             var syn_Deal_Rights_CodesParameter = syn_Deal_Rights_Codes != null ?
                 new ObjectParameter("Syn_Deal_Rights_Codes", syn_Deal_Rights_Codes) :
                 new ObjectParameter("Syn_Deal_Rights_Codes", typeof(string));
-    
+
             var selected_SubTitling_Language_CodesParameter = selected_SubTitling_Language_Codes != null ?
                 new ObjectParameter("Selected_SubTitling_Language_Codes", selected_SubTitling_Language_Codes) :
                 new ObjectParameter("Selected_SubTitling_Language_Codes", typeof(string));
-    
+
             var selected_Dubbing_Language_CodesParameter = selected_Dubbing_Language_Codes != null ?
                 new ObjectParameter("Selected_Dubbing_Language_Codes", selected_Dubbing_Language_Codes) :
                 new ObjectParameter("Selected_Dubbing_Language_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Mapping_SubTitling_Dubbing_Languages_Result>("USP_Get_Mapping_SubTitling_Dubbing_Languages", syn_Deal_Rights_CodesParameter, selected_SubTitling_Language_CodesParameter, selected_Dubbing_Language_CodesParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_Rights_Duplication_Country_Lang(string selected_Territory_Codes, string selected_SubTitling_LangGroup_Codes, string selected_Dubbing_LangGroup_Codes, string callFrom)
         {
             var selected_Territory_CodesParameter = selected_Territory_Codes != null ?
                 new ObjectParameter("Selected_Territory_Codes", selected_Territory_Codes) :
                 new ObjectParameter("Selected_Territory_Codes", typeof(string));
-    
+
             var selected_SubTitling_LangGroup_CodesParameter = selected_SubTitling_LangGroup_Codes != null ?
                 new ObjectParameter("Selected_SubTitling_LangGroup_Codes", selected_SubTitling_LangGroup_Codes) :
                 new ObjectParameter("Selected_SubTitling_LangGroup_Codes", typeof(string));
-    
+
             var selected_Dubbing_LangGroup_CodesParameter = selected_Dubbing_LangGroup_Codes != null ?
                 new ObjectParameter("Selected_Dubbing_LangGroup_Codes", selected_Dubbing_LangGroup_Codes) :
                 new ObjectParameter("Selected_Dubbing_LangGroup_Codes", typeof(string));
-    
+
             var callFromParameter = callFrom != null ?
                 new ObjectParameter("CallFrom", callFrom) :
                 new ObjectParameter("CallFrom", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Rights_Duplication_Country_Lang", selected_Territory_CodesParameter, selected_SubTitling_LangGroup_CodesParameter, selected_Dubbing_LangGroup_CodesParameter, callFromParameter);
         }
-    
+
         public virtual ObjectResult<USP_Uploaded_File_List_Result> USP_Uploaded_File_List(string strSearch, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Uploaded_File_List_Result>("USP_Uploaded_File_List", strSearchParameter, pageNoParameter, recordCount, isPagingParameter, pageSizeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Uploaded_File_Error_List_Result> USP_Uploaded_File_Error_List(Nullable<int> upload_Detail_Code)
         {
             var upload_Detail_CodeParameter = upload_Detail_Code.HasValue ?
                 new ObjectParameter("Upload_Detail_Code", upload_Detail_Code) :
                 new ObjectParameter("Upload_Detail_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Uploaded_File_Error_List_Result>("USP_Uploaded_File_Error_List", upload_Detail_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Audit_Log_Report_for_Territory_and_Language_Group_Result> USP_Audit_Log_Report_for_Territory_and_Language_Group(string search_Key, string log)
         {
             var search_KeyParameter = search_Key != null ?
                 new ObjectParameter("Search_Key", search_Key) :
                 new ObjectParameter("Search_Key", typeof(string));
-    
+
             var logParameter = log != null ?
                 new ObjectParameter("Log", log) :
                 new ObjectParameter("Log", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Audit_Log_Report_for_Territory_and_Language_Group_Result>("USP_Audit_Log_Report_for_Territory_and_Language_Group", search_KeyParameter, logParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetMenu_Result> USP_GetMenu(string securityGroupCode, string isSuperAdmin, Nullable<int> users_Code)
         {
             var securityGroupCodeParameter = securityGroupCode != null ?
                 new ObjectParameter("SecurityGroupCode", securityGroupCode) :
                 new ObjectParameter("SecurityGroupCode", typeof(string));
-    
+
             var isSuperAdminParameter = isSuperAdmin != null ?
                 new ObjectParameter("IsSuperAdmin", isSuperAdmin) :
                 new ObjectParameter("IsSuperAdmin", typeof(string));
-    
+
             var users_CodeParameter = users_Code.HasValue ?
                 new ObjectParameter("Users_Code", users_Code) :
                 new ObjectParameter("Users_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetMenu_Result>("USP_GetMenu", securityGroupCodeParameter, isSuperAdminParameter, users_CodeParameter);
         }
-    
+
         public virtual int usp_GetUserEMail_Body(string user_Name, string first_Name, string last_Name, string pass_Word, string isLDAP_Required, string site_Address, string system_Name, string status, string cur_email_id)
         {
             var user_NameParameter = user_Name != null ?
                 new ObjectParameter("User_Name", user_Name) :
                 new ObjectParameter("User_Name", typeof(string));
-    
+
             var first_NameParameter = first_Name != null ?
                 new ObjectParameter("First_Name", first_Name) :
                 new ObjectParameter("First_Name", typeof(string));
-    
+
             var last_NameParameter = last_Name != null ?
                 new ObjectParameter("Last_Name", last_Name) :
                 new ObjectParameter("Last_Name", typeof(string));
-    
+
             var pass_WordParameter = pass_Word != null ?
                 new ObjectParameter("Pass_Word", pass_Word) :
                 new ObjectParameter("Pass_Word", typeof(string));
-    
+
             var isLDAP_RequiredParameter = isLDAP_Required != null ?
                 new ObjectParameter("IsLDAP_Required", isLDAP_Required) :
                 new ObjectParameter("IsLDAP_Required", typeof(string));
-    
+
             var site_AddressParameter = site_Address != null ?
                 new ObjectParameter("Site_Address", site_Address) :
                 new ObjectParameter("Site_Address", typeof(string));
-    
+
             var system_NameParameter = system_Name != null ?
                 new ObjectParameter("System_Name", system_Name) :
                 new ObjectParameter("System_Name", typeof(string));
-    
+
             var statusParameter = status != null ?
                 new ObjectParameter("Status", status) :
                 new ObjectParameter("Status", typeof(string));
-    
+
             var cur_email_idParameter = cur_email_id != null ?
                 new ObjectParameter("cur_email_id", cur_email_id) :
                 new ObjectParameter("cur_email_id", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_GetUserEMail_Body", user_NameParameter, first_NameParameter, last_NameParameter, pass_WordParameter, isLDAP_RequiredParameter, site_AddressParameter, system_NameParameter, statusParameter, cur_email_idParameter);
         }
-    
+
         public virtual ObjectResult<USP_Acq_List_Runs_Result> USP_Acq_List_Runs(Nullable<int> deal_Code, string title_Codes, string channel_Codes, string acq_Deal_Run_Codes)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var channel_CodesParameter = channel_Codes != null ?
                 new ObjectParameter("Channel_Codes", channel_Codes) :
                 new ObjectParameter("Channel_Codes", typeof(string));
-    
+
             var acq_Deal_Run_CodesParameter = acq_Deal_Run_Codes != null ?
                 new ObjectParameter("Acq_Deal_Run_Codes", acq_Deal_Run_Codes) :
                 new ObjectParameter("Acq_Deal_Run_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_List_Runs_Result>("USP_Acq_List_Runs", deal_CodeParameter, title_CodesParameter, channel_CodesParameter, acq_Deal_Run_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Talent_Name_Result> USP_Get_Talent_Name()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Talent_Name_Result>("USP_Get_Talent_Name");
         }
-    
+
         public virtual ObjectResult<USP_Bind_Extend_Column_Grid_Result> USP_Bind_Extend_Column_Grid(Nullable<int> title_Code)
         {
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Bind_Extend_Column_Grid_Result>("USP_Bind_Extend_Column_Grid", title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Approval_Acq_Syn_Result> USP_List_Approval_Acq_Syn(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Approval_Acq_Syn_Result>("USP_List_Approval_Acq_Syn", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_MODULE_RIGHTS(Nullable<int> module_Code, Nullable<int> security_Group_Code, Nullable<int> users_Code)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var security_Group_CodeParameter = security_Group_Code.HasValue ?
                 new ObjectParameter("Security_Group_Code", security_Group_Code) :
                 new ObjectParameter("Security_Group_Code", typeof(int));
-    
+
             var users_CodeParameter = users_Code.HasValue ?
                 new ObjectParameter("Users_Code", users_Code) :
                 new ObjectParameter("Users_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_MODULE_RIGHTS", module_CodeParameter, security_Group_CodeParameter, users_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_ValidateWithDeal(string territory_Code, string country_Code)
         {
             var territory_CodeParameter = territory_Code != null ?
                 new ObjectParameter("Territory_Code", territory_Code) :
                 new ObjectParameter("Territory_Code", typeof(string));
-    
+
             var country_CodeParameter = country_Code != null ?
                 new ObjectParameter("Country_Code", country_Code) :
                 new ObjectParameter("Country_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_ValidateWithDeal", territory_CodeParameter, country_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_Deal_DealWorkFlowStatus(Nullable<int> acq_Deal_Code, string deal_Workflow_Status, Nullable<int> user_Code, string deal_Type)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var deal_Workflow_StatusParameter = deal_Workflow_Status != null ?
                 new ObjectParameter("Deal_Workflow_Status", deal_Workflow_Status) :
                 new ObjectParameter("Deal_Workflow_Status", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var deal_TypeParameter = deal_Type != null ?
                 new ObjectParameter("Deal_Type", deal_Type) :
                 new ObjectParameter("Deal_Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Deal_DealWorkFlowStatus", acq_Deal_CodeParameter, deal_Workflow_StatusParameter, user_CodeParameter, deal_TypeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Rights_Result> USP_List_Rights(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText)
         {
             var right_TypeParameter = right_Type != null ?
                 new ObjectParameter("Right_Type", right_Type) :
                 new ObjectParameter("Right_Type", typeof(string));
-    
+
             var view_TypeParameter = view_Type != null ?
                 new ObjectParameter("View_Type", view_Type) :
                 new ObjectParameter("View_Type", typeof(string));
-    
+
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var deal_Movie_CodesParameter = deal_Movie_Codes != null ?
                 new ObjectParameter("Deal_Movie_Codes", deal_Movie_Codes) :
                 new ObjectParameter("Deal_Movie_Codes", typeof(string));
-    
+
             var regionCodesParameter = regionCodes != null ?
                 new ObjectParameter("RegionCodes", regionCodes) :
                 new ObjectParameter("RegionCodes", typeof(string));
-    
+
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
                 new ObjectParameter("PlatformCodes", typeof(string));
-    
+
             var iSExclusiveParameter = iSExclusive != null ?
                 new ObjectParameter("ISExclusive", iSExclusive) :
                 new ObjectParameter("ISExclusive", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("SearchText", searchText) :
                 new ObjectParameter("SearchText", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Rights_Result>("USP_List_Rights", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter);
         }
-    
+
         public virtual ObjectResult<USP_Search_Run_Shows_Result> USP_Search_Run_Shows(string searchCriteria, string data_For_flag, string selectedDealMovieCodes, string selectedChannelNames, string selectedTitleCodes, string unCheck_Run_Shows_Code, Nullable<int> run_Code)
         {
             var searchCriteriaParameter = searchCriteria != null ?
                 new ObjectParameter("searchCriteria", searchCriteria) :
                 new ObjectParameter("searchCriteria", typeof(string));
-    
+
             var data_For_flagParameter = data_For_flag != null ?
                 new ObjectParameter("Data_For_flag", data_For_flag) :
                 new ObjectParameter("Data_For_flag", typeof(string));
-    
+
             var selectedDealMovieCodesParameter = selectedDealMovieCodes != null ?
                 new ObjectParameter("selectedDealMovieCodes", selectedDealMovieCodes) :
                 new ObjectParameter("selectedDealMovieCodes", typeof(string));
-    
+
             var selectedChannelNamesParameter = selectedChannelNames != null ?
                 new ObjectParameter("selectedChannelNames", selectedChannelNames) :
                 new ObjectParameter("selectedChannelNames", typeof(string));
-    
+
             var selectedTitleCodesParameter = selectedTitleCodes != null ?
                 new ObjectParameter("selectedTitleCodes", selectedTitleCodes) :
                 new ObjectParameter("selectedTitleCodes", typeof(string));
-    
+
             var unCheck_Run_Shows_CodeParameter = unCheck_Run_Shows_Code != null ?
                 new ObjectParameter("UnCheck_Run_Shows_Code", unCheck_Run_Shows_Code) :
                 new ObjectParameter("UnCheck_Run_Shows_Code", typeof(string));
-    
+
             var run_CodeParameter = run_Code.HasValue ?
                 new ObjectParameter("Run_Code", run_Code) :
                 new ObjectParameter("Run_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Search_Run_Shows_Result>("USP_Search_Run_Shows", searchCriteriaParameter, data_For_flagParameter, selectedDealMovieCodesParameter, selectedChannelNamesParameter, selectedTitleCodesParameter, unCheck_Run_Shows_CodeParameter, run_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_List_Result> USP_Title_List(Nullable<int> deal_Type_code, string titleName, string originalTitleName, Nullable<int> bUCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string advanceSearch, string exactMatch)
         {
             var deal_Type_codeParameter = deal_Type_code.HasValue ?
                 new ObjectParameter("Deal_Type_code", deal_Type_code) :
                 new ObjectParameter("Deal_Type_code", typeof(int));
-    
+
             var titleNameParameter = titleName != null ?
                 new ObjectParameter("TitleName", titleName) :
                 new ObjectParameter("TitleName", typeof(string));
-    
+
             var originalTitleNameParameter = originalTitleName != null ?
                 new ObjectParameter("OriginalTitleName", originalTitleName) :
                 new ObjectParameter("OriginalTitleName", typeof(string));
-    
+
             var bUCodeParameter = bUCode.HasValue ?
                 new ObjectParameter("BUCode", bUCode) :
                 new ObjectParameter("BUCode", typeof(int));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var advanceSearchParameter = advanceSearch != null ?
                 new ObjectParameter("AdvanceSearch", advanceSearch) :
                 new ObjectParameter("AdvanceSearch", typeof(string));
-    
+
             var exactMatchParameter = exactMatch != null ?
                 new ObjectParameter("ExactMatch", exactMatch) :
                 new ObjectParameter("ExactMatch", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_List_Result>("USP_Title_List", deal_Type_codeParameter, titleNameParameter, originalTitleNameParameter, bUCodeParameter, pageNoParameter, recordCount, isPagingParameter, pageSizeParameter, advanceSearchParameter, exactMatchParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result> USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode(Nullable<int> deal_Movie_Rights_Code)
         {
             var deal_Movie_Rights_CodeParameter = deal_Movie_Rights_Code.HasValue ?
                 new ObjectParameter("Deal_Movie_Rights_Code", deal_Movie_Rights_Code) :
                 new ObjectParameter("Deal_Movie_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result>("USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode", deal_Movie_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_Budget_Result> USP_List_Acq_Budget(Nullable<int> acq_Deal_Code, string title_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_Budget_Result>("USP_List_Acq_Budget", acq_Deal_CodeParameter, title_CodeParameter);
         }
-    
+
         public virtual int usp_Schedule_RUN_SAVE_Process(Nullable<int> aCQ_DEAL_RUN_CODE, Nullable<int> title_Code, Nullable<int> aCQ_DEAL_MOVIE_CODE)
         {
             var aCQ_DEAL_RUN_CODEParameter = aCQ_DEAL_RUN_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", aCQ_DEAL_RUN_CODE) :
                 new ObjectParameter("ACQ_DEAL_RUN_CODE", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var aCQ_DEAL_MOVIE_CODEParameter = aCQ_DEAL_MOVIE_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_MOVIE_CODE", aCQ_DEAL_MOVIE_CODE) :
                 new ObjectParameter("ACQ_DEAL_MOVIE_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("usp_Schedule_RUN_SAVE_Process", aCQ_DEAL_RUN_CODEParameter, title_CodeParameter, aCQ_DEAL_MOVIE_CODEParameter);
         }
-    
+
         public virtual ObjectResult<USP_Bind_Title_Result> USP_Bind_Title(Nullable<int> deal_Code, Nullable<int> deal_Type_Code, string deal_Type)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var deal_TypeParameter = deal_Type != null ?
                 new ObjectParameter("Deal_Type", deal_Type) :
                 new ObjectParameter("Deal_Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Bind_Title_Result>("USP_Bind_Title", deal_CodeParameter, deal_Type_CodeParameter, deal_TypeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Syn_Result> USP_List_Syn(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string exactMatch)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var exactMatchParameter = exactMatch != null ?
                 new ObjectParameter("ExactMatch", exactMatch) :
                 new ObjectParameter("ExactMatch", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Syn_Result>("USP_List_Syn", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_TITLE_FOR_SYN_RUN_Result> USP_GET_TITLE_FOR_SYN_RUN(Nullable<int> sYN_DEAL_CODE)
         {
             var sYN_DEAL_CODEParameter = sYN_DEAL_CODE.HasValue ?
                 new ObjectParameter("SYN_DEAL_CODE", sYN_DEAL_CODE) :
                 new ObjectParameter("SYN_DEAL_CODE", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_TITLE_FOR_SYN_RUN_Result>("USP_GET_TITLE_FOR_SYN_RUN", sYN_DEAL_CODEParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result> USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var platform_CodesParameter = platform_Codes != null ?
                 new ObjectParameter("Platform_Codes", platform_Codes) :
                 new ObjectParameter("Platform_Codes", typeof(string));
-    
+
             var platform_TypeParameter = platform_Type != null ?
                 new ObjectParameter("Platform_Type", platform_Type) :
                 new ObjectParameter("Platform_Type", typeof(string));
-    
+
             var region_TypeParameter = region_Type != null ?
                 new ObjectParameter("Region_Type", region_Type) :
                 new ObjectParameter("Region_Type", typeof(string));
-    
+
             var subtitling_TypeParameter = subtitling_Type != null ?
                 new ObjectParameter("Subtitling_Type", subtitling_Type) :
                 new ObjectParameter("Subtitling_Type", typeof(string));
-    
+
             var dubbing_TypeParameter = dubbing_Type != null ?
                 new ObjectParameter("Dubbing_Type", dubbing_Type) :
                 new ObjectParameter("Dubbing_Type", typeof(string));
-    
+
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result>("USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, region_TypeParameter, subtitling_TypeParameter, dubbing_TypeParameter, syn_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_Validate_Syn_Right_Title_With_Acq_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
         {
             var rCodeParameter = rCode.HasValue ?
                 new ObjectParameter("RCode", rCode) :
                 new ObjectParameter("RCode", typeof(int));
-    
+
             var tCodeParameter = tCode.HasValue ?
                 new ObjectParameter("TCode", tCode) :
                 new ObjectParameter("TCode", typeof(int));
-    
+
             var episode_FromParameter = episode_From.HasValue ?
                 new ObjectParameter("Episode_From", episode_From) :
                 new ObjectParameter("Episode_From", typeof(int));
-    
+
             var episode_ToParameter = episode_To.HasValue ?
                 new ObjectParameter("Episode_To", episode_To) :
                 new ObjectParameter("Episode_To", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Validate_Syn_Right_Title_With_Acq_On_Edit", rCodeParameter, tCodeParameter, episode_FromParameter, episode_ToParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Platform_Group_Result> USP_List_Platform_Group(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Platform_Group_Result>("USP_List_Platform_Group", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_GET_TITLE_DATA_Result> USP_GET_TITLE_DATA(string searchTitle, Nullable<int> deal_Type_Code)
         {
             var searchTitleParameter = searchTitle != null ?
                 new ObjectParameter("SearchTitle", searchTitle) :
                 new ObjectParameter("SearchTitle", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_TITLE_DATA_Result>("USP_GET_TITLE_DATA", searchTitleParameter, deal_Type_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_WBS_Data_Result> USP_Get_Title_WBS_Data(Nullable<int> acq_Deal_Code, string callForMilestone)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var callForMilestoneParameter = callForMilestone != null ?
                 new ObjectParameter("callForMilestone", callForMilestone) :
                 new ObjectParameter("callForMilestone", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_WBS_Data_Result>("USP_Get_Title_WBS_Data", acq_Deal_CodeParameter, callForMilestoneParameter);
         }
-    
+
         public virtual int USP_Send_Mail_WBS_Linked_Titles(string wBS_Codes)
         {
             var wBS_CodesParameter = wBS_Codes != null ?
                 new ObjectParameter("WBS_Codes", wBS_Codes) :
                 new ObjectParameter("WBS_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Send_Mail_WBS_Linked_Titles", wBS_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Bind_Title_Platform_Tree_Report_Result> USP_Bind_Title_Platform_Tree_Report(Nullable<int> business_Unit_Code, string search_Platform_Hiearachy)
         {
             var business_Unit_CodeParameter = business_Unit_Code.HasValue ?
                 new ObjectParameter("Business_Unit_Code", business_Unit_Code) :
                 new ObjectParameter("Business_Unit_Code", typeof(int));
-    
+
             var search_Platform_HiearachyParameter = search_Platform_Hiearachy != null ?
                 new ObjectParameter("Search_Platform_Hiearachy", search_Platform_Hiearachy) :
                 new ObjectParameter("Search_Platform_Hiearachy", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Bind_Title_Platform_Tree_Report_Result>("USP_Bind_Title_Platform_Tree_Report", business_Unit_CodeParameter, search_Platform_HiearachyParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_BV_WBS_Result> USP_List_BV_WBS(string is_Process, string wBS_Code, Nullable<int> file_Code)
         {
             var is_ProcessParameter = is_Process != null ?
                 new ObjectParameter("Is_Process", is_Process) :
                 new ObjectParameter("Is_Process", typeof(string));
-    
+
             var wBS_CodeParameter = wBS_Code != null ?
                 new ObjectParameter("WBS_Code", wBS_Code) :
                 new ObjectParameter("WBS_Code", typeof(string));
-    
+
             var file_CodeParameter = file_Code.HasValue ?
                 new ObjectParameter("File_Code", file_Code) :
                 new ObjectParameter("File_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_BV_WBS_Result>("USP_List_BV_WBS", is_ProcessParameter, wBS_CodeParameter, file_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Uploaded_File_Detail_Result> USP_Uploaded_File_Detail(string file_Code, string strSearch, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize)
         {
             var file_CodeParameter = file_Code != null ?
                 new ObjectParameter("File_Code", file_Code) :
                 new ObjectParameter("File_Code", typeof(string));
-    
+
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Uploaded_File_Detail_Result>("USP_Uploaded_File_Detail", file_CodeParameter, strSearchParameter, pageNoParameter, recordCount, isPagingParameter, pageSizeParameter);
         }
-    
+
         public virtual ObjectResult<USP_SAP_Export_Detail_Result> USP_SAP_Export_Detail(Nullable<int> file_Code)
         {
             var file_CodeParameter = file_Code.HasValue ?
                 new ObjectParameter("File_Code", file_Code) :
                 new ObjectParameter("File_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SAP_Export_Detail_Result>("USP_SAP_Export_Detail", file_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_IPR_Opp_Status_History_Result> USP_List_IPR_Opp_Status_History(Nullable<int> iPR_Opp_Code)
         {
             var iPR_Opp_CodeParameter = iPR_Opp_Code.HasValue ?
                 new ObjectParameter("IPR_Opp_Code", iPR_Opp_Code) :
                 new ObjectParameter("IPR_Opp_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_IPR_Opp_Status_History_Result>("USP_List_IPR_Opp_Status_History", iPR_Opp_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_Platform_Code_For_Syn_Run(Nullable<int> syn_Deal_Code, string title_Codes, string codeType)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var codeTypeParameter = codeType != null ?
                 new ObjectParameter("CodeType", codeType) :
                 new ObjectParameter("CodeType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Platform_Code_For_Syn_Run", syn_Deal_CodeParameter, title_CodesParameter, codeTypeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Termination_Title_Data_Result> USP_Get_Termination_Title_Data(Nullable<int> deal_Code, string type)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Termination_Title_Data_Result>("USP_Get_Termination_Title_Data", deal_CodeParameter, typeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Music_Title_Result> USP_List_Music_Title(string musicTitleName, Nullable<int> sysLanguageCode, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string starCastCode, string languageCode, string albumCode, string genresCode, string musicLabelCode, string yearOfRelease, string singerCode, string composerCode, string lyricistCode, string musicNameText, string themeCode, string musicTag, string publicDomain, string exactMatch, string movieAlbumType)
         {
             var musicTitleNameParameter = musicTitleName != null ?
                 new ObjectParameter("MusicTitleName", musicTitleName) :
                 new ObjectParameter("MusicTitleName", typeof(string));
-    
+
             var sysLanguageCodeParameter = sysLanguageCode.HasValue ?
                 new ObjectParameter("SysLanguageCode", sysLanguageCode) :
                 new ObjectParameter("SysLanguageCode", typeof(int));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var starCastCodeParameter = starCastCode != null ?
                 new ObjectParameter("StarCastCode", starCastCode) :
                 new ObjectParameter("StarCastCode", typeof(string));
-    
+
             var languageCodeParameter = languageCode != null ?
                 new ObjectParameter("LanguageCode", languageCode) :
                 new ObjectParameter("LanguageCode", typeof(string));
-    
+
             var albumCodeParameter = albumCode != null ?
                 new ObjectParameter("AlbumCode", albumCode) :
                 new ObjectParameter("AlbumCode", typeof(string));
-    
+
             var genresCodeParameter = genresCode != null ?
                 new ObjectParameter("GenresCode", genresCode) :
                 new ObjectParameter("GenresCode", typeof(string));
-    
+
             var musicLabelCodeParameter = musicLabelCode != null ?
                 new ObjectParameter("MusicLabelCode", musicLabelCode) :
                 new ObjectParameter("MusicLabelCode", typeof(string));
-    
+
             var yearOfReleaseParameter = yearOfRelease != null ?
                 new ObjectParameter("YearOfRelease", yearOfRelease) :
                 new ObjectParameter("YearOfRelease", typeof(string));
-    
+
             var singerCodeParameter = singerCode != null ?
                 new ObjectParameter("SingerCode", singerCode) :
                 new ObjectParameter("SingerCode", typeof(string));
-    
+
             var composerCodeParameter = composerCode != null ?
                 new ObjectParameter("ComposerCode", composerCode) :
                 new ObjectParameter("ComposerCode", typeof(string));
-    
+
             var lyricistCodeParameter = lyricistCode != null ?
                 new ObjectParameter("LyricistCode", lyricistCode) :
                 new ObjectParameter("LyricistCode", typeof(string));
-    
+
             var musicNameTextParameter = musicNameText != null ?
                 new ObjectParameter("MusicNameText", musicNameText) :
                 new ObjectParameter("MusicNameText", typeof(string));
-    
+
             var themeCodeParameter = themeCode != null ?
                 new ObjectParameter("ThemeCode", themeCode) :
                 new ObjectParameter("ThemeCode", typeof(string));
-    
+
             var musicTagParameter = musicTag != null ?
                 new ObjectParameter("MusicTag", musicTag) :
                 new ObjectParameter("MusicTag", typeof(string));
-    
+
             var publicDomainParameter = publicDomain != null ?
                 new ObjectParameter("PublicDomain", publicDomain) :
                 new ObjectParameter("PublicDomain", typeof(string));
-    
+
             var exactMatchParameter = exactMatch != null ?
                 new ObjectParameter("ExactMatch", exactMatch) :
                 new ObjectParameter("ExactMatch", typeof(string));
-    
+
             var movieAlbumTypeParameter = movieAlbumType != null ?
                 new ObjectParameter("MovieAlbumType", movieAlbumType) :
                 new ObjectParameter("MovieAlbumType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Music_Title_Result>("USP_List_Music_Title", musicTitleNameParameter, sysLanguageCodeParameter, pageNoParameter, recordCount, isPagingParameter, pageSizeParameter, starCastCodeParameter, languageCodeParameter, albumCodeParameter, genresCodeParameter, musicLabelCodeParameter, yearOfReleaseParameter, singerCodeParameter, composerCodeParameter, lyricistCodeParameter, musicNameTextParameter, themeCodeParameter, musicTagParameter, publicDomainParameter, exactMatchParameter, movieAlbumTypeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Amort_Rule_Result> USP_List_Amort_Rule(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string moduleCode)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var moduleCodeParameter = moduleCode != null ?
                 new ObjectParameter("ModuleCode", moduleCode) :
                 new ObjectParameter("ModuleCode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Amort_Rule_Result>("USP_List_Amort_Rule", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, moduleCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_IPR_Result> USP_List_IPR(string tabName, string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, Nullable<int> module_Code)
         {
             var tabNameParameter = tabName != null ?
                 new ObjectParameter("tabName", tabName) :
                 new ObjectParameter("tabName", typeof(string));
-    
+
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_IPR_Result>("USP_List_IPR", tabNameParameter, strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, module_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_IPR_Opp_Result> USP_List_IPR_Opp(string ipr_For, string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, Nullable<int> module_Code)
         {
             var ipr_ForParameter = ipr_For != null ?
                 new ObjectParameter("Ipr_For", ipr_For) :
                 new ObjectParameter("Ipr_For", typeof(string));
-    
+
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_IPR_Opp_Result>("USP_List_IPR_Opp", ipr_ForParameter, strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, module_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Close_Deal_Movie_Result> USP_Close_Deal_Movie(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Close_Deal_Movie_Result>("USP_Close_Deal_Movie", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_Termination(Nullable<int> deal_Code, string type)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Termination", deal_CodeParameter, typeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Deal_Info_Result> USP_Title_Deal_Info(Nullable<int> title_Code, Nullable<int> user_Code)
         {
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Deal_Info_Result>("USP_Title_Deal_Info", title_CodeParameter, user_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Assign_Music_Result> USP_List_Assign_Music(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Assign_Music_Result>("USP_List_Assign_Music", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Populate_Music_Result> USP_Populate_Music(Nullable<int> acq_Deal_Movie_Code, string search_Text, Nullable<int> deal_Type_Code, string link_Show, string mode)
         {
             var acq_Deal_Movie_CodeParameter = acq_Deal_Movie_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Movie_Code", acq_Deal_Movie_Code) :
                 new ObjectParameter("Acq_Deal_Movie_Code", typeof(int));
-    
+
             var search_TextParameter = search_Text != null ?
                 new ObjectParameter("Search_Text", search_Text) :
                 new ObjectParameter("Search_Text", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var link_ShowParameter = link_Show != null ?
                 new ObjectParameter("Link_Show", link_Show) :
                 new ObjectParameter("Link_Show", typeof(string));
-    
+
             var modeParameter = mode != null ?
                 new ObjectParameter("Mode", mode) :
                 new ObjectParameter("Mode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Populate_Music_Result>("USP_Populate_Music", acq_Deal_Movie_CodeParameter, search_TextParameter, deal_Type_CodeParameter, link_ShowParameter, modeParameter);
         }
-    
+
         public virtual int USP_SendMail_Page_Crashed(string user_Name, string site_Address, string entity_Name, string controller_Name, string action_Name, string view_Name, string error_Desc, string error_Type, string iP_Address, string fromMailId, string toMailId)
         {
             var user_NameParameter = user_Name != null ?
                 new ObjectParameter("User_Name", user_Name) :
                 new ObjectParameter("User_Name", typeof(string));
-    
+
             var site_AddressParameter = site_Address != null ?
                 new ObjectParameter("Site_Address", site_Address) :
                 new ObjectParameter("Site_Address", typeof(string));
-    
+
             var entity_NameParameter = entity_Name != null ?
                 new ObjectParameter("Entity_Name", entity_Name) :
                 new ObjectParameter("Entity_Name", typeof(string));
-    
+
             var controller_NameParameter = controller_Name != null ?
                 new ObjectParameter("Controller_Name", controller_Name) :
                 new ObjectParameter("Controller_Name", typeof(string));
-    
+
             var action_NameParameter = action_Name != null ?
                 new ObjectParameter("Action_Name", action_Name) :
                 new ObjectParameter("Action_Name", typeof(string));
-    
+
             var view_NameParameter = view_Name != null ?
                 new ObjectParameter("View_Name", view_Name) :
                 new ObjectParameter("View_Name", typeof(string));
-    
+
             var error_DescParameter = error_Desc != null ?
                 new ObjectParameter("Error_Desc", error_Desc) :
                 new ObjectParameter("Error_Desc", typeof(string));
-    
+
             var error_TypeParameter = error_Type != null ?
                 new ObjectParameter("Error_Type", error_Type) :
                 new ObjectParameter("Error_Type", typeof(string));
-    
+
             var iP_AddressParameter = iP_Address != null ?
                 new ObjectParameter("IP_Address", iP_Address) :
                 new ObjectParameter("IP_Address", typeof(string));
-    
+
             var fromMailIdParameter = fromMailId != null ?
                 new ObjectParameter("FromMailId", fromMailId) :
                 new ObjectParameter("FromMailId", typeof(string));
-    
+
             var toMailIdParameter = toMailId != null ?
                 new ObjectParameter("ToMailId", toMailId) :
                 new ObjectParameter("ToMailId", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_SendMail_Page_Crashed", user_NameParameter, site_AddressParameter, entity_NameParameter, controller_NameParameter, action_NameParameter, view_NameParameter, error_DescParameter, error_TypeParameter, iP_AddressParameter, fromMailIdParameter, toMailIdParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Dashboard_Data_Result> USP_Get_Dashboard_Data(string dataFor, string businessUnitCodes)
         {
             var dataForParameter = dataFor != null ?
                 new ObjectParameter("DataFor", dataFor) :
                 new ObjectParameter("DataFor", typeof(string));
-    
+
             var businessUnitCodesParameter = businessUnitCodes != null ?
                 new ObjectParameter("BusinessUnitCodes", businessUnitCodes) :
                 new ObjectParameter("BusinessUnitCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Data_Result>("USP_Get_Dashboard_Data", dataForParameter, businessUnitCodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Get_Acq_PreReq(string data_For, string call_From, Nullable<int> loginUserCode, Nullable<int> acq_Deal_Code, Nullable<int> deal_Type_Code, Nullable<int> businessUnitCode)
         {
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var call_FromParameter = call_From != null ?
                 new ObjectParameter("Call_From", call_From) :
                 new ObjectParameter("Call_From", typeof(string));
-    
+
             var loginUserCodeParameter = loginUserCode.HasValue ?
                 new ObjectParameter("LoginUserCode", loginUserCode) :
                 new ObjectParameter("LoginUserCode", typeof(int));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var businessUnitCodeParameter = businessUnitCode.HasValue ?
                 new ObjectParameter("BusinessUnitCode", businessUnitCode) :
                 new ObjectParameter("BusinessUnitCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Get_Acq_PreReq", data_ForParameter, call_FromParameter, loginUserCodeParameter, acq_Deal_CodeParameter, deal_Type_CodeParameter, businessUnitCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Get_Syn_PreReq(string data_For, string call_From, Nullable<int> loginUserCode, Nullable<int> syn_Deal_Code, Nullable<int> deal_Type_Code, Nullable<int> businessUnitCode)
         {
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var call_FromParameter = call_From != null ?
                 new ObjectParameter("Call_From", call_From) :
                 new ObjectParameter("Call_From", typeof(string));
-    
+
             var loginUserCodeParameter = loginUserCode.HasValue ?
                 new ObjectParameter("LoginUserCode", loginUserCode) :
                 new ObjectParameter("LoginUserCode", typeof(int));
-    
+
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var businessUnitCodeParameter = businessUnitCode.HasValue ?
                 new ObjectParameter("BusinessUnitCode", businessUnitCode) :
                 new ObjectParameter("BusinessUnitCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Get_Syn_PreReq", data_ForParameter, call_FromParameter, loginUserCodeParameter, syn_Deal_CodeParameter, deal_Type_CodeParameter, businessUnitCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_PreReq_Result> USP_Get_Title_PreReq(string data_For, Nullable<int> deal_Type_Code, Nullable<int> business_Unit_Code, string search_String)
         {
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var business_Unit_CodeParameter = business_Unit_Code.HasValue ?
                 new ObjectParameter("Business_Unit_Code", business_Unit_Code) :
                 new ObjectParameter("Business_Unit_Code", typeof(int));
-    
+
             var search_StringParameter = search_String != null ?
                 new ObjectParameter("Search_String", search_String) :
                 new ObjectParameter("Search_String", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_PreReq_Result>("USP_Get_Title_PreReq", data_ForParameter, deal_Type_CodeParameter, business_Unit_CodeParameter, search_StringParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_PaymentTerms_Result> USP_List_Acq_PaymentTerms(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_PaymentTerms_Result>("USP_List_Acq_PaymentTerms", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Login_Details_Result> USP_Get_Login_Details(string data_For, Nullable<int> entity_Code, Nullable<int> user_Code)
         {
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var entity_CodeParameter = entity_Code.HasValue ?
                 new ObjectParameter("Entity_Code", entity_Code) :
                 new ObjectParameter("Entity_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Login_Details_Result>("USP_Get_Login_Details", data_ForParameter, entity_CodeParameter, user_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Syn_Rights_PreReq(Nullable<int> syn_Deal_Code, Nullable<int> deal_Type_Code, string data_For, string call_From, string country_Territory_Codes, string sub_Lang_Codes, string dub_Lang_Codes)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var call_FromParameter = call_From != null ?
                 new ObjectParameter("Call_From", call_From) :
                 new ObjectParameter("Call_From", typeof(string));
-    
+
             var country_Territory_CodesParameter = country_Territory_Codes != null ?
                 new ObjectParameter("Country_Territory_Codes", country_Territory_Codes) :
                 new ObjectParameter("Country_Territory_Codes", typeof(string));
-    
+
             var sub_Lang_CodesParameter = sub_Lang_Codes != null ?
                 new ObjectParameter("Sub_Lang_Codes", sub_Lang_Codes) :
                 new ObjectParameter("Sub_Lang_Codes", typeof(string));
-    
+
             var dub_Lang_CodesParameter = dub_Lang_Codes != null ?
                 new ObjectParameter("Dub_Lang_Codes", dub_Lang_Codes) :
                 new ObjectParameter("Dub_Lang_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Syn_Rights_PreReq", syn_Deal_CodeParameter, deal_Type_CodeParameter, data_ForParameter, call_FromParameter, country_Territory_CodesParameter, sub_Lang_CodesParameter, dub_Lang_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_PreReq_Result> USP_Acq_Rights_PreReq(Nullable<int> acq_Deal_Code, string data_For, Nullable<int> deal_Type_Code, string is_Syn_Acq_Mapp)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var is_Syn_Acq_MappParameter = is_Syn_Acq_Mapp != null ?
                 new ObjectParameter("Is_Syn_Acq_Mapp", is_Syn_Acq_Mapp) :
                 new ObjectParameter("Is_Syn_Acq_Mapp", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_PreReq_Result>("USP_Acq_Rights_PreReq", acq_Deal_CodeParameter, data_ForParameter, deal_Type_CodeParameter, is_Syn_Acq_MappParameter);
         }
-    
+
         public virtual ObjectResult<USP_Integration_Generate_XML_Result> USP_Integration_Generate_XML(string module_Name, Nullable<int> deal_Type_Code, Nullable<int> bU_Code, Nullable<int> title_Lang_Code, string channel_Codes, string foreign_System_Name)
         {
             var module_NameParameter = module_Name != null ?
                 new ObjectParameter("Module_Name", module_Name) :
                 new ObjectParameter("Module_Name", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var bU_CodeParameter = bU_Code.HasValue ?
                 new ObjectParameter("BU_Code", bU_Code) :
                 new ObjectParameter("BU_Code", typeof(int));
-    
+
             var title_Lang_CodeParameter = title_Lang_Code.HasValue ?
                 new ObjectParameter("Title_Lang_Code", title_Lang_Code) :
                 new ObjectParameter("Title_Lang_Code", typeof(int));
-    
+
             var channel_CodesParameter = channel_Codes != null ?
                 new ObjectParameter("Channel_Codes", channel_Codes) :
                 new ObjectParameter("Channel_Codes", typeof(string));
-    
+
             var foreign_System_NameParameter = foreign_System_Name != null ?
                 new ObjectParameter("Foreign_System_Name", foreign_System_Name) :
                 new ObjectParameter("Foreign_System_Name", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Integration_Generate_XML_Result>("USP_Integration_Generate_XML", module_NameParameter, deal_Type_CodeParameter, bU_CodeParameter, title_Lang_CodeParameter, channel_CodesParameter, foreign_System_NameParameter);
         }
-    
+
         public virtual ObjectResult<USP_Integration_Response_Result> USP_Integration_Response(string error_Details, string is_Error, string module_Name, string strXml)
         {
             var error_DetailsParameter = error_Details != null ?
                 new ObjectParameter("Error_Details", error_Details) :
                 new ObjectParameter("Error_Details", typeof(string));
-    
+
             var is_ErrorParameter = is_Error != null ?
                 new ObjectParameter("Is_Error", is_Error) :
                 new ObjectParameter("Is_Error", typeof(string));
-    
+
             var module_NameParameter = module_Name != null ?
                 new ObjectParameter("Module_Name", module_Name) :
                 new ObjectParameter("Module_Name", typeof(string));
-    
+
             var strXmlParameter = strXml != null ?
                 new ObjectParameter("StrXml", strXml) :
                 new ObjectParameter("StrXml", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Integration_Response_Result>("USP_Integration_Response", error_DetailsParameter, is_ErrorParameter, module_NameParameter, strXmlParameter);
         }
-    
+
         public virtual ObjectResult<USP_SendMail_AskExpert_Result> USP_SendMail_AskExpert(Nullable<int> user_Code, string subject, string query, string fromMailId, string toMailId)
         {
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var subjectParameter = subject != null ?
                 new ObjectParameter("Subject", subject) :
                 new ObjectParameter("Subject", typeof(string));
-    
+
             var queryParameter = query != null ?
                 new ObjectParameter("Query", query) :
                 new ObjectParameter("Query", typeof(string));
-    
+
             var fromMailIdParameter = fromMailId != null ?
                 new ObjectParameter("FromMailId", fromMailId) :
                 new ObjectParameter("FromMailId", typeof(string));
-    
+
             var toMailIdParameter = toMailId != null ?
                 new ObjectParameter("ToMailId", toMailId) :
                 new ObjectParameter("ToMailId", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SendMail_AskExpert_Result>("USP_SendMail_AskExpert", user_CodeParameter, subjectParameter, queryParameter, fromMailIdParameter, toMailIdParameter);
         }
-    
+
         public virtual ObjectResult<USP_Check_HoldBack_Result> USP_Check_HoldBack(Nullable<long> title_Code)
         {
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Check_HoldBack_Result>("USP_Check_HoldBack", title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_Save_TitleRelease(Nullable<long> title_Code, string release_Type, string release_Date, string platform_Code, string territory_Code, string country_Code, string world_Code, Nullable<long> title_Release_Code)
         {
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(long));
-    
+
             var release_TypeParameter = release_Type != null ?
                 new ObjectParameter("Release_Type", release_Type) :
                 new ObjectParameter("Release_Type", typeof(string));
-    
+
             var release_DateParameter = release_Date != null ?
                 new ObjectParameter("Release_Date", release_Date) :
                 new ObjectParameter("Release_Date", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var territory_CodeParameter = territory_Code != null ?
                 new ObjectParameter("Territory_Code", territory_Code) :
                 new ObjectParameter("Territory_Code", typeof(string));
-    
+
             var country_CodeParameter = country_Code != null ?
                 new ObjectParameter("Country_Code", country_Code) :
                 new ObjectParameter("Country_Code", typeof(string));
-    
+
             var world_CodeParameter = world_Code != null ?
                 new ObjectParameter("World_Code", world_Code) :
                 new ObjectParameter("World_Code", typeof(string));
-    
+
             var title_Release_CodeParameter = title_Release_Code.HasValue ?
                 new ObjectParameter("Title_Release_Code", title_Release_Code) :
                 new ObjectParameter("Title_Release_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Save_TitleRelease", title_CodeParameter, release_TypeParameter, release_DateParameter, platform_CodeParameter, territory_CodeParameter, country_CodeParameter, world_CodeParameter, title_Release_CodeParameter);
         }
-    
+
         public virtual int USP_Validate_Title_Release(string release_Type, string release_Date, Nullable<long> title_Code, string country_Code, string territory_Code, ObjectParameter result)
         {
             var release_TypeParameter = release_Type != null ?
                 new ObjectParameter("Release_Type", release_Type) :
                 new ObjectParameter("Release_Type", typeof(string));
-    
+
             var release_DateParameter = release_Date != null ?
                 new ObjectParameter("Release_Date", release_Date) :
                 new ObjectParameter("Release_Date", typeof(string));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(long));
-    
+
             var country_CodeParameter = country_Code != null ?
                 new ObjectParameter("Country_Code", country_Code) :
                 new ObjectParameter("Country_Code", typeof(string));
-    
+
             var territory_CodeParameter = territory_Code != null ?
                 new ObjectParameter("Territory_Code", territory_Code) :
                 new ObjectParameter("Territory_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Validate_Title_Release", release_TypeParameter, release_DateParameter, title_CodeParameter, country_CodeParameter, territory_CodeParameter, result);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_CheckIfTitleReleaseDateExist(string title_Code, string holdback_Country_Code, string holdback_Code)
         {
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var holdback_Country_CodeParameter = holdback_Country_Code != null ?
                 new ObjectParameter("Holdback_Country_Code", holdback_Country_Code) :
                 new ObjectParameter("Holdback_Country_Code", typeof(string));
-    
+
             var holdback_CodeParameter = holdback_Code != null ?
                 new ObjectParameter("Holdback_Code", holdback_Code) :
                 new ObjectParameter("Holdback_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_CheckIfTitleReleaseDateExist", title_CodeParameter, holdback_Country_CodeParameter, holdback_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_ValidateIfHoldbackExist_Result> USP_ValidateIfHoldbackExist(Nullable<long> syn_Deal_Rights_Code, string title_Code, string region_Code, string platform_Code, string subTitling_Code, string dubbing_Lang_Code, string region_Type, string sub_Lang_Type, string dubbing_Lang_Type, string right_Start_Date, string right_End_Date, string right_Type, string is_Title_Language_Right)
         {
             var syn_Deal_Rights_CodeParameter = syn_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Rights_Code", syn_Deal_Rights_Code) :
                 new ObjectParameter("Syn_Deal_Rights_Code", typeof(long));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var region_CodeParameter = region_Code != null ?
                 new ObjectParameter("Region_Code", region_Code) :
                 new ObjectParameter("Region_Code", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var subTitling_CodeParameter = subTitling_Code != null ?
                 new ObjectParameter("SubTitling_Code", subTitling_Code) :
                 new ObjectParameter("SubTitling_Code", typeof(string));
-    
+
             var dubbing_Lang_CodeParameter = dubbing_Lang_Code != null ?
                 new ObjectParameter("Dubbing_Lang_Code", dubbing_Lang_Code) :
                 new ObjectParameter("Dubbing_Lang_Code", typeof(string));
-    
+
             var region_TypeParameter = region_Type != null ?
                 new ObjectParameter("Region_Type", region_Type) :
                 new ObjectParameter("Region_Type", typeof(string));
-    
+
             var sub_Lang_TypeParameter = sub_Lang_Type != null ?
                 new ObjectParameter("Sub_Lang_Type", sub_Lang_Type) :
                 new ObjectParameter("Sub_Lang_Type", typeof(string));
-    
+
             var dubbing_Lang_TypeParameter = dubbing_Lang_Type != null ?
                 new ObjectParameter("Dubbing_Lang_Type", dubbing_Lang_Type) :
                 new ObjectParameter("Dubbing_Lang_Type", typeof(string));
-    
+
             var right_Start_DateParameter = right_Start_Date != null ?
                 new ObjectParameter("Right_Start_Date", right_Start_Date) :
                 new ObjectParameter("Right_Start_Date", typeof(string));
-    
+
             var right_End_DateParameter = right_End_Date != null ?
                 new ObjectParameter("Right_End_Date", right_End_Date) :
                 new ObjectParameter("Right_End_Date", typeof(string));
-    
+
             var right_TypeParameter = right_Type != null ?
                 new ObjectParameter("Right_Type", right_Type) :
                 new ObjectParameter("Right_Type", typeof(string));
-    
+
             var is_Title_Language_RightParameter = is_Title_Language_Right != null ?
                 new ObjectParameter("Is_Title_Language_Right", is_Title_Language_Right) :
                 new ObjectParameter("Is_Title_Language_Right", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_ValidateIfHoldbackExist_Result>("USP_ValidateIfHoldbackExist", syn_Deal_Rights_CodeParameter, title_CodeParameter, region_CodeParameter, platform_CodeParameter, subTitling_CodeParameter, dubbing_Lang_CodeParameter, region_TypeParameter, sub_Lang_TypeParameter, dubbing_Lang_TypeParameter, right_Start_DateParameter, right_End_DateParameter, right_TypeParameter, is_Title_Language_RightParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Bulk_Populate_Result> USP_Syn_Bulk_Populate(string right_Codes, string type, string changeFor)
         {
             var right_CodesParameter = right_Codes != null ?
                 new ObjectParameter("Right_Codes", right_Codes) :
                 new ObjectParameter("Right_Codes", typeof(string));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var changeForParameter = changeFor != null ?
                 new ObjectParameter("ChangeFor", changeFor) :
                 new ObjectParameter("ChangeFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Bulk_Populate_Result>("USP_Syn_Bulk_Populate", right_CodesParameter, typeParameter, changeForParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_GetSynRightStatus(Nullable<int> rightCode, Nullable<int> dealCode)
         {
             var rightCodeParameter = rightCode.HasValue ?
                 new ObjectParameter("rightCode", rightCode) :
                 new ObjectParameter("rightCode", typeof(int));
-    
+
             var dealCodeParameter = dealCode.HasValue ?
                 new ObjectParameter("dealCode", dealCode) :
                 new ObjectParameter("dealCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_GetSynRightStatus", rightCodeParameter, dealCodeParameter);
         }
-    
+
         public virtual int USP_Edit_Without_Approval(Nullable<int> acq_Deal_Code, string mode, Nullable<int> user_Code, string remarks)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var modeParameter = mode != null ?
                 new ObjectParameter("Mode", mode) :
                 new ObjectParameter("Mode", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var remarksParameter = remarks != null ?
                 new ObjectParameter("Remarks", remarks) :
                 new ObjectParameter("Remarks", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Edit_Without_Approval", acq_Deal_CodeParameter, modeParameter, user_CodeParameter, remarksParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Content_Result> USP_List_Content(string searchText, Nullable<int> episodeFrom, Nullable<int> episodeTo)
         {
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("searchText", searchText) :
                 new ObjectParameter("searchText", typeof(string));
-    
+
             var episodeFromParameter = episodeFrom.HasValue ?
                 new ObjectParameter("episodeFrom", episodeFrom) :
                 new ObjectParameter("episodeFrom", typeof(int));
-    
+
             var episodeToParameter = episodeTo.HasValue ?
                 new ObjectParameter("episodeTo", episodeTo) :
                 new ObjectParameter("episodeTo", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Content_Result>("USP_List_Content", searchTextParameter, episodeFromParameter, episodeToParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_MusicTrack_Result> USP_List_MusicTrack(string searchText)
         {
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("searchText", searchText) :
                 new ObjectParameter("searchText", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_MusicTrack_Result>("USP_List_MusicTrack", searchTextParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentMetadata_Result> USP_GetContentMetadata(Nullable<long> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentMetadata_Result>("USP_GetContentMetadata", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentsMusicData_Result> USP_GetContentsMusicData(Nullable<long> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsMusicData_Result>("USP_GetContentsMusicData", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentsRightData_Result> USP_GetContentsRightData(Nullable<long> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsRightData_Result>("USP_GetContentsRightData", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentsAiringData_Result> USP_GetContentsAiringData(Nullable<long> title_Content_Code, string start_Date, string end_Date, string version_ID, string channel_Codes)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             var start_DateParameter = start_Date != null ?
                 new ObjectParameter("Start_Date", start_Date) :
                 new ObjectParameter("Start_Date", typeof(string));
-    
+
             var end_DateParameter = end_Date != null ?
                 new ObjectParameter("End_Date", end_Date) :
                 new ObjectParameter("End_Date", typeof(string));
-    
+
             var version_IDParameter = version_ID != null ?
                 new ObjectParameter("Version_ID", version_ID) :
                 new ObjectParameter("Version_ID", typeof(string));
-    
+
             var channel_CodesParameter = channel_Codes != null ?
                 new ObjectParameter("Channel_Codes", channel_Codes) :
                 new ObjectParameter("Channel_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsAiringData_Result>("USP_GetContentsAiringData", title_Content_CodeParameter, start_DateParameter, end_DateParameter, version_IDParameter, channel_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentsVersionData_Result> USP_GetContentsVersionData(Nullable<long> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsVersionData_Result>("USP_GetContentsVersionData", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_PopulateContent_Result> USP_PopulateContent(string searchPrefix)
         {
             var searchPrefixParameter = searchPrefix != null ?
                 new ObjectParameter("searchPrefix", searchPrefix) :
                 new ObjectParameter("searchPrefix", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_PopulateContent_Result>("USP_PopulateContent", searchPrefixParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentsStatusHistoryData_Result> USP_GetContentsStatusHistoryData(Nullable<long> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(long));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentsStatusHistoryData_Result>("USP_GetContentsStatusHistoryData", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetContentRestrictionRemarks_Result> USP_GetContentRestrictionRemarks(Nullable<long> titleContentCode, string musicTitleCodes)
         {
             var titleContentCodeParameter = titleContentCode.HasValue ?
                 new ObjectParameter("TitleContentCode", titleContentCode) :
                 new ObjectParameter("TitleContentCode", typeof(long));
-    
+
             var musicTitleCodesParameter = musicTitleCodes != null ?
                 new ObjectParameter("MusicTitleCodes", musicTitleCodes) :
                 new ObjectParameter("MusicTitleCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetContentRestrictionRemarks_Result>("USP_GetContentRestrictionRemarks", titleContentCodeParameter, musicTitleCodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Music_Exception_Handling_Result> USP_Music_Exception_Handling(string isAired, Nullable<int> pageNo, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, string musicTrackCode, string musicLabelCode, string channelCode, string contentCode, string episodeFrom, string episodeTO, string initialResponse, string exceptionStatus, Nullable<int> userCode, string commonSearch, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
         {
             var isAiredParameter = isAired != null ?
                 new ObjectParameter("IsAired", isAired) :
                 new ObjectParameter("IsAired", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var musicTrackCodeParameter = musicTrackCode != null ?
                 new ObjectParameter("MusicTrackCode", musicTrackCode) :
                 new ObjectParameter("MusicTrackCode", typeof(string));
-    
+
             var musicLabelCodeParameter = musicLabelCode != null ?
                 new ObjectParameter("MusicLabelCode", musicLabelCode) :
                 new ObjectParameter("MusicLabelCode", typeof(string));
-    
+
             var channelCodeParameter = channelCode != null ?
                 new ObjectParameter("ChannelCode", channelCode) :
                 new ObjectParameter("ChannelCode", typeof(string));
-    
+
             var contentCodeParameter = contentCode != null ?
                 new ObjectParameter("ContentCode", contentCode) :
                 new ObjectParameter("ContentCode", typeof(string));
-    
+
             var episodeFromParameter = episodeFrom != null ?
                 new ObjectParameter("EpisodeFrom", episodeFrom) :
                 new ObjectParameter("EpisodeFrom", typeof(string));
-    
+
             var episodeTOParameter = episodeTO != null ?
                 new ObjectParameter("EpisodeTO", episodeTO) :
                 new ObjectParameter("EpisodeTO", typeof(string));
-    
+
             var initialResponseParameter = initialResponse != null ?
                 new ObjectParameter("InitialResponse", initialResponse) :
                 new ObjectParameter("InitialResponse", typeof(string));
-    
+
             var exceptionStatusParameter = exceptionStatus != null ?
                 new ObjectParameter("ExceptionStatus", exceptionStatus) :
                 new ObjectParameter("ExceptionStatus", typeof(string));
-    
+
             var userCodeParameter = userCode.HasValue ?
                 new ObjectParameter("UserCode", userCode) :
                 new ObjectParameter("UserCode", typeof(int));
-    
+
             var commonSearchParameter = commonSearch != null ?
                 new ObjectParameter("CommonSearch", commonSearch) :
                 new ObjectParameter("CommonSearch", typeof(string));
-    
+
             var startDateParameter = startDate.HasValue ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
-    
+
             var endDateParameter = endDate.HasValue ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Music_Exception_Handling_Result>("USP_Music_Exception_Handling", isAiredParameter, pageNoParameter, recordCount, isPagingParameter, pageSizeParameter, musicTrackCodeParameter, musicLabelCodeParameter, channelCodeParameter, contentCodeParameter, episodeFromParameter, episodeTOParameter, initialResponseParameter, exceptionStatusParameter, userCodeParameter, commonSearchParameter, startDateParameter, endDateParameter);
         }
-    
+
         public virtual int USP_Music_Schedule_Process(Nullable<long> titleCode, Nullable<int> episodeNo, Nullable<long> bV_Schedule_Transaction_Code, Nullable<long> musicScheduleTransactionCode, string callFrom)
         {
             var titleCodeParameter = titleCode.HasValue ?
                 new ObjectParameter("TitleCode", titleCode) :
                 new ObjectParameter("TitleCode", typeof(long));
-    
+
             var episodeNoParameter = episodeNo.HasValue ?
                 new ObjectParameter("EpisodeNo", episodeNo) :
                 new ObjectParameter("EpisodeNo", typeof(int));
-    
+
             var bV_Schedule_Transaction_CodeParameter = bV_Schedule_Transaction_Code.HasValue ?
                 new ObjectParameter("BV_Schedule_Transaction_Code", bV_Schedule_Transaction_Code) :
                 new ObjectParameter("BV_Schedule_Transaction_Code", typeof(long));
-    
+
             var musicScheduleTransactionCodeParameter = musicScheduleTransactionCode.HasValue ?
                 new ObjectParameter("MusicScheduleTransactionCode", musicScheduleTransactionCode) :
                 new ObjectParameter("MusicScheduleTransactionCode", typeof(long));
-    
+
             var callFromParameter = callFrom != null ?
                 new ObjectParameter("CallFrom", callFrom) :
                 new ObjectParameter("CallFrom", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Music_Schedule_Process", titleCodeParameter, episodeNoParameter, bV_Schedule_Transaction_CodeParameter, musicScheduleTransactionCodeParameter, callFromParameter);
         }
-    
+
         public virtual ObjectResult<USP_Music_Exception_Dashboard_Result> USP_Music_Exception_Dashboard(string isAired, string musicTrackCode, string musicLabelCode, string channelCode, string contentCode, string episodeFrom, string episodeTO, string initialResponse, string exceptionStatus, Nullable<int> userCode, string commonSearch, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
         {
             var isAiredParameter = isAired != null ?
                 new ObjectParameter("IsAired", isAired) :
                 new ObjectParameter("IsAired", typeof(string));
-    
+
             var musicTrackCodeParameter = musicTrackCode != null ?
                 new ObjectParameter("MusicTrackCode", musicTrackCode) :
                 new ObjectParameter("MusicTrackCode", typeof(string));
-    
+
             var musicLabelCodeParameter = musicLabelCode != null ?
                 new ObjectParameter("MusicLabelCode", musicLabelCode) :
                 new ObjectParameter("MusicLabelCode", typeof(string));
-    
+
             var channelCodeParameter = channelCode != null ?
                 new ObjectParameter("ChannelCode", channelCode) :
                 new ObjectParameter("ChannelCode", typeof(string));
-    
+
             var contentCodeParameter = contentCode != null ?
                 new ObjectParameter("ContentCode", contentCode) :
                 new ObjectParameter("ContentCode", typeof(string));
-    
+
             var episodeFromParameter = episodeFrom != null ?
                 new ObjectParameter("EpisodeFrom", episodeFrom) :
                 new ObjectParameter("EpisodeFrom", typeof(string));
-    
+
             var episodeTOParameter = episodeTO != null ?
                 new ObjectParameter("EpisodeTO", episodeTO) :
                 new ObjectParameter("EpisodeTO", typeof(string));
-    
+
             var initialResponseParameter = initialResponse != null ?
                 new ObjectParameter("InitialResponse", initialResponse) :
                 new ObjectParameter("InitialResponse", typeof(string));
-    
+
             var exceptionStatusParameter = exceptionStatus != null ?
                 new ObjectParameter("ExceptionStatus", exceptionStatus) :
                 new ObjectParameter("ExceptionStatus", typeof(string));
-    
+
             var userCodeParameter = userCode.HasValue ?
                 new ObjectParameter("UserCode", userCode) :
                 new ObjectParameter("UserCode", typeof(int));
-    
+
             var commonSearchParameter = commonSearch != null ?
                 new ObjectParameter("CommonSearch", commonSearch) :
                 new ObjectParameter("CommonSearch", typeof(string));
-    
+
             var startDateParameter = startDate.HasValue ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
-    
+
             var endDateParameter = endDate.HasValue ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Music_Exception_Dashboard_Result>("USP_Music_Exception_Dashboard", isAiredParameter, musicTrackCodeParameter, musicLabelCodeParameter, channelCodeParameter, contentCodeParameter, episodeFromParameter, episodeTOParameter, initialResponseParameter, exceptionStatusParameter, userCodeParameter, commonSearchParameter, startDateParameter, endDateParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Country_Result> USP_List_Country(Nullable<int> sysLanguageCode)
         {
             var sysLanguageCodeParameter = sysLanguageCode.HasValue ?
                 new ObjectParameter("SysLanguageCode", sysLanguageCode) :
                 new ObjectParameter("SysLanguageCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Country_Result>("USP_List_Country", sysLanguageCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_BMS_log_Result> USP_List_BMS_log(string strSearch, Nullable<int> pageNo, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_BMS_log_Result>("USP_List_BMS_log", strSearchParameter, pageNoParameter, isPagingParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Export_Table_To_Excel_Result> USP_Export_Table_To_Excel(Nullable<int> module_Code, ObjectParameter column_Count, string sort_Column, string sort_Order)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var sort_ColumnParameter = sort_Column != null ?
                 new ObjectParameter("Sort_Column", sort_Column) :
                 new ObjectParameter("Sort_Column", typeof(string));
-    
+
             var sort_OrderParameter = sort_Order != null ?
                 new ObjectParameter("Sort_Order", sort_Order) :
                 new ObjectParameter("Sort_Order", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Export_Table_To_Excel_Result>("USP_Export_Table_To_Excel", module_CodeParameter, column_Count, sort_ColumnParameter, sort_OrderParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Release_Content_List_Result> USP_Get_Release_Content_List(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Release_Content_List_Result>("USP_Get_Release_Content_List", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_DM_Master_Import_Result> USP_List_DM_Master_Import(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("strSearch", strSearch) :
                 new ObjectParameter("strSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_DM_Master_Import_Result>("USP_List_DM_Master_Import", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter);
         }
-    
+
         public virtual int USP_Lock_Refresh_Release_Record(Nullable<int> record_Code, Nullable<int> module_Code, Nullable<int> user_Code, string iP_Address, ObjectParameter record_Locking_Code, ObjectParameter message, string action)
         {
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var iP_AddressParameter = iP_Address != null ?
                 new ObjectParameter("IP_Address", iP_Address) :
                 new ObjectParameter("IP_Address", typeof(string));
-    
+
             var actionParameter = action != null ?
                 new ObjectParameter("Action", action) :
                 new ObjectParameter("Action", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Lock_Refresh_Release_Record", record_CodeParameter, module_CodeParameter, user_CodeParameter, iP_AddressParameter, record_Locking_Code, message, actionParameter);
         }
-    
+
         public virtual ObjectResult<USP_Music_Title_Contents_Result> USP_Music_Title_Contents(Nullable<int> musicTitleCode, string genericSearch, ObjectParameter recordCount, string isPaging, Nullable<int> pageSize, Nullable<int> pageNo)
         {
             var musicTitleCodeParameter = musicTitleCode.HasValue ?
                 new ObjectParameter("MusicTitleCode", musicTitleCode) :
                 new ObjectParameter("MusicTitleCode", typeof(int));
-    
+
             var genericSearchParameter = genericSearch != null ?
                 new ObjectParameter("GenericSearch", genericSearch) :
                 new ObjectParameter("GenericSearch", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Music_Title_Contents_Result>("USP_Music_Title_Contents", musicTitleCodeParameter, genericSearchParameter, recordCount, isPagingParameter, pageSizeParameter, pageNoParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Generate_Title_Content(Nullable<int> acq_Deal_Code, string title_Codes, Nullable<int> user_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Generate_Title_Content", acq_Deal_CodeParameter, title_CodesParameter, user_CodeParameter);
         }
-    
+
         public virtual int USP_UpdateContentHouseID(Nullable<int> bV_HouseId_Data_Code, Nullable<int> mappedDealTitleCode)
         {
             var bV_HouseId_Data_CodeParameter = bV_HouseId_Data_Code.HasValue ?
                 new ObjectParameter("BV_HouseId_Data_Code", bV_HouseId_Data_Code) :
                 new ObjectParameter("BV_HouseId_Data_Code", typeof(int));
-    
+
             var mappedDealTitleCodeParameter = mappedDealTitleCode.HasValue ?
                 new ObjectParameter("MappedDealTitleCode", mappedDealTitleCode) :
                 new ObjectParameter("MappedDealTitleCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_UpdateContentHouseID", bV_HouseId_Data_CodeParameter, mappedDealTitleCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Deal_Title_Content_Result> USP_List_Deal_Title_Content(string title_Codes, Nullable<int> acq_Deal_Code, Nullable<int> pageNo, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Deal_Title_Content_Result>("USP_List_Deal_Title_Content", title_CodesParameter, acq_Deal_CodeParameter, pageNoParameter, isPagingParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Get_Security_Group_Tree_Hierarchy_Result> USP_Get_Security_Group_Tree_Hierarchy(string moduleCodes, string search_Module_Name)
         {
             var moduleCodesParameter = moduleCodes != null ?
                 new ObjectParameter("ModuleCodes", moduleCodes) :
                 new ObjectParameter("ModuleCodes", typeof(string));
-    
+
             var search_Module_NameParameter = search_Module_Name != null ?
                 new ObjectParameter("Search_Module_Name", search_Module_Name) :
                 new ObjectParameter("Search_Module_Name", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Security_Group_Tree_Hierarchy_Result>("USP_Get_Security_Group_Tree_Hierarchy", moduleCodesParameter, search_Module_NameParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Validate_Rollback(Nullable<int> deal_Code, string type, Nullable<int> user_Code)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Validate_Rollback", deal_CodeParameter, typeParameter, user_CodeParameter);
         }
-    
+
         public virtual int USP_BV_Title_Mapping_Shows(string bV_HouseID_Data_Code)
         {
             var bV_HouseID_Data_CodeParameter = bV_HouseID_Data_Code != null ?
                 new ObjectParameter("BV_HouseID_Data_Code", bV_HouseID_Data_Code) :
                 new ObjectParameter("BV_HouseID_Data_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_BV_Title_Mapping_Shows", bV_HouseID_Data_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Territory_Result> USP_List_Territory(Nullable<int> sysLanguageCode)
         {
             var sysLanguageCodeParameter = sysLanguageCode.HasValue ?
                 new ObjectParameter("SysLanguageCode", sysLanguageCode) :
                 new ObjectParameter("SysLanguageCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Territory_Result>("USP_List_Territory", sysLanguageCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Music_Deal_Result> USP_List_Music_Deal(string searchText, string agreement_No, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, string deal_Type_Code, string status_Code, Nullable<int> business_Unit_Code, Nullable<int> deal_Tag_Code, string workflow_Status, string vendor_Codes, string show_Type_Code, string title_Code, string music_Label_Codes, string isAdvance_Search, Nullable<int> user_Code, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("SearchText", searchText) :
                 new ObjectParameter("SearchText", typeof(string));
-    
+
             var agreement_NoParameter = agreement_No != null ?
                 new ObjectParameter("Agreement_No", agreement_No) :
                 new ObjectParameter("Agreement_No", typeof(string));
-    
+
             var startDateParameter = startDate.HasValue ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
-    
+
             var endDateParameter = endDate.HasValue ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(System.DateTime));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code != null ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(string));
-    
+
             var status_CodeParameter = status_Code != null ?
                 new ObjectParameter("Status_Code", status_Code) :
                 new ObjectParameter("Status_Code", typeof(string));
-    
+
             var business_Unit_CodeParameter = business_Unit_Code.HasValue ?
                 new ObjectParameter("Business_Unit_Code", business_Unit_Code) :
                 new ObjectParameter("Business_Unit_Code", typeof(int));
-    
+
             var deal_Tag_CodeParameter = deal_Tag_Code.HasValue ?
                 new ObjectParameter("Deal_Tag_Code", deal_Tag_Code) :
                 new ObjectParameter("Deal_Tag_Code", typeof(int));
-    
+
             var workflow_StatusParameter = workflow_Status != null ?
                 new ObjectParameter("Workflow_Status", workflow_Status) :
                 new ObjectParameter("Workflow_Status", typeof(string));
-    
+
             var vendor_CodesParameter = vendor_Codes != null ?
                 new ObjectParameter("Vendor_Codes", vendor_Codes) :
                 new ObjectParameter("Vendor_Codes", typeof(string));
-    
+
             var show_Type_CodeParameter = show_Type_Code != null ?
                 new ObjectParameter("Show_Type_Code", show_Type_Code) :
                 new ObjectParameter("Show_Type_Code", typeof(string));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var music_Label_CodesParameter = music_Label_Codes != null ?
                 new ObjectParameter("Music_Label_Codes", music_Label_Codes) :
                 new ObjectParameter("Music_Label_Codes", typeof(string));
-    
+
             var isAdvance_SearchParameter = isAdvance_Search != null ?
                 new ObjectParameter("IsAdvance_Search", isAdvance_Search) :
                 new ObjectParameter("IsAdvance_Search", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Music_Deal_Result>("USP_List_Music_Deal", searchTextParameter, agreement_NoParameter, startDateParameter, endDateParameter, deal_Type_CodeParameter, status_CodeParameter, business_Unit_CodeParameter, deal_Tag_CodeParameter, workflow_StatusParameter, vendor_CodesParameter, show_Type_CodeParameter, title_CodeParameter, music_Label_CodesParameter, isAdvance_SearchParameter, user_CodeParameter, pageNo, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Music_Deal_Link_Show_Result> USP_Music_Deal_Link_Show(string channel_Code, string title_Name, string mode, Nullable<int> music_Deal_Code, string selectedTitleCodes)
         {
             var channel_CodeParameter = channel_Code != null ?
                 new ObjectParameter("Channel_Code", channel_Code) :
                 new ObjectParameter("Channel_Code", typeof(string));
-    
+
             var title_NameParameter = title_Name != null ?
                 new ObjectParameter("Title_Name", title_Name) :
                 new ObjectParameter("Title_Name", typeof(string));
-    
+
             var modeParameter = mode != null ?
                 new ObjectParameter("Mode", mode) :
                 new ObjectParameter("Mode", typeof(string));
-    
+
             var music_Deal_CodeParameter = music_Deal_Code.HasValue ?
                 new ObjectParameter("Music_Deal_Code", music_Deal_Code) :
                 new ObjectParameter("Music_Deal_Code", typeof(int));
-    
+
             var selectedTitleCodesParameter = selectedTitleCodes != null ?
                 new ObjectParameter("SelectedTitleCodes", selectedTitleCodes) :
                 new ObjectParameter("SelectedTitleCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Music_Deal_Link_Show_Result>("USP_Music_Deal_Link_Show", channel_CodeParameter, title_NameParameter, modeParameter, music_Deal_CodeParameter, selectedTitleCodesParameter);
         }
-    
+
         public virtual int USP_RollBack_Music_Deal(Nullable<int> music_Deal_Code, Nullable<int> user_Code, ObjectParameter errorMessage)
         {
             var music_Deal_CodeParameter = music_Deal_Code.HasValue ?
                 new ObjectParameter("Music_Deal_Code", music_Deal_Code) :
                 new ObjectParameter("Music_Deal_Code", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_RollBack_Music_Deal", music_Deal_CodeParameter, user_CodeParameter, errorMessage);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_Content_Data_Result> USP_Get_Title_Content_Data(string data_For)
         {
             var data_ForParameter = data_For != null ?
                 new ObjectParameter("Data_For", data_For) :
                 new ObjectParameter("Data_For", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Content_Data_Result>("USP_Get_Title_Content_Data", data_ForParameter);
         }
-    
+
         public virtual ObjectResult<USP_Acq_Deal_Rights_Holdback_Validation_Result> USP_Acq_Deal_Rights_Holdback_Validation(string acq_Deal_Right_Code, string platform_Code, string territoryCountry_Code, string title_Code, Nullable<int> deal_Type_Code, string isTitleLangRight, string languageCode_Dub, string languageCode_Sub, string is_Exclusive)
         {
             var acq_Deal_Right_CodeParameter = acq_Deal_Right_Code != null ?
                 new ObjectParameter("Acq_Deal_Right_Code", acq_Deal_Right_Code) :
                 new ObjectParameter("Acq_Deal_Right_Code", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var territoryCountry_CodeParameter = territoryCountry_Code != null ?
                 new ObjectParameter("TerritoryCountry_Code", territoryCountry_Code) :
                 new ObjectParameter("TerritoryCountry_Code", typeof(string));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var isTitleLangRightParameter = isTitleLangRight != null ?
                 new ObjectParameter("IsTitleLangRight", isTitleLangRight) :
                 new ObjectParameter("IsTitleLangRight", typeof(string));
-    
+
             var languageCode_DubParameter = languageCode_Dub != null ?
                 new ObjectParameter("LanguageCode_Dub", languageCode_Dub) :
                 new ObjectParameter("LanguageCode_Dub", typeof(string));
-    
+
             var languageCode_SubParameter = languageCode_Sub != null ?
                 new ObjectParameter("LanguageCode_Sub", languageCode_Sub) :
                 new ObjectParameter("LanguageCode_Sub", typeof(string));
-    
+
             var is_ExclusiveParameter = is_Exclusive != null ?
                 new ObjectParameter("Is_Exclusive", is_Exclusive) :
                 new ObjectParameter("Is_Exclusive", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Rights_Holdback_Validation_Result>("USP_Acq_Deal_Rights_Holdback_Validation", acq_Deal_Right_CodeParameter, platform_CodeParameter, territoryCountry_CodeParameter, title_CodeParameter, deal_Type_CodeParameter, isTitleLangRightParameter, languageCode_DubParameter, languageCode_SubParameter, is_ExclusiveParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Deal_Rights_Holdback_Validation_Result> USP_Syn_Deal_Rights_Holdback_Validation(string syn_Deal_Right_Code, string platform_Code, string territoryCountry_Code, string title_Code, Nullable<int> deal_Type_Code, string isTitleLangRight, string languageCode_Dub, string languageCode_Sub, string is_Exclusive)
         {
             var syn_Deal_Right_CodeParameter = syn_Deal_Right_Code != null ?
                 new ObjectParameter("Syn_Deal_Right_Code", syn_Deal_Right_Code) :
                 new ObjectParameter("Syn_Deal_Right_Code", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var territoryCountry_CodeParameter = territoryCountry_Code != null ?
                 new ObjectParameter("TerritoryCountry_Code", territoryCountry_Code) :
                 new ObjectParameter("TerritoryCountry_Code", typeof(string));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var isTitleLangRightParameter = isTitleLangRight != null ?
                 new ObjectParameter("IsTitleLangRight", isTitleLangRight) :
                 new ObjectParameter("IsTitleLangRight", typeof(string));
-    
+
             var languageCode_DubParameter = languageCode_Dub != null ?
                 new ObjectParameter("LanguageCode_Dub", languageCode_Dub) :
                 new ObjectParameter("LanguageCode_Dub", typeof(string));
-    
+
             var languageCode_SubParameter = languageCode_Sub != null ?
                 new ObjectParameter("LanguageCode_Sub", languageCode_Sub) :
                 new ObjectParameter("LanguageCode_Sub", typeof(string));
-    
+
             var is_ExclusiveParameter = is_Exclusive != null ?
                 new ObjectParameter("Is_Exclusive", is_Exclusive) :
                 new ObjectParameter("Is_Exclusive", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Rights_Holdback_Validation_Result>("USP_Syn_Deal_Rights_Holdback_Validation", syn_Deal_Right_CodeParameter, platform_CodeParameter, territoryCountry_CodeParameter, title_CodeParameter, deal_Type_CodeParameter, isTitleLangRightParameter, languageCode_DubParameter, languageCode_SubParameter, is_ExclusiveParameter);
         }
-    
+
         public virtual ObjectResult<USP_Acq_Deal_Rights_Holdback_Release_Result> USP_Acq_Deal_Rights_Holdback_Release(string acqDealRightHoldbackCode)
         {
             var acqDealRightHoldbackCodeParameter = acqDealRightHoldbackCode != null ?
                 new ObjectParameter("AcqDealRightHoldbackCode", acqDealRightHoldbackCode) :
                 new ObjectParameter("AcqDealRightHoldbackCode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Rights_Holdback_Release_Result>("USP_Acq_Deal_Rights_Holdback_Release", acqDealRightHoldbackCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Content_Cost_Result> USP_Get_Content_Cost(Nullable<int> title_Code, Nullable<int> episode_No, string cost_Type_Code)
         {
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var episode_NoParameter = episode_No.HasValue ?
                 new ObjectParameter("Episode_No", episode_No) :
                 new ObjectParameter("Episode_No", typeof(int));
-    
+
             var cost_Type_CodeParameter = cost_Type_Code != null ?
                 new ObjectParameter("Cost_Type_Code", cost_Type_Code) :
                 new ObjectParameter("Cost_Type_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Content_Cost_Result>("USP_Get_Content_Cost", title_CodeParameter, episode_NoParameter, cost_Type_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Avail_Titles_Result> USP_Get_Avail_Titles(string txtSearch, string bU_Code, string availType, string titleNoInCodes)
         {
             var txtSearchParameter = txtSearch != null ?
                 new ObjectParameter("txtSearch", txtSearch) :
                 new ObjectParameter("txtSearch", typeof(string));
-    
+
             var bU_CodeParameter = bU_Code != null ?
                 new ObjectParameter("BU_Code", bU_Code) :
                 new ObjectParameter("BU_Code", typeof(string));
-    
+
             var availTypeParameter = availType != null ?
                 new ObjectParameter("AvailType", availType) :
                 new ObjectParameter("AvailType", typeof(string));
-    
+
             var titleNoInCodesParameter = titleNoInCodes != null ?
                 new ObjectParameter("TitleNoInCodes", titleNoInCodes) :
                 new ObjectParameter("TitleNoInCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Avail_Titles_Result>("USP_Get_Avail_Titles", txtSearchParameter, bU_CodeParameter, availTypeParameter, titleNoInCodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Deal_Rights_Template_Result> USP_Deal_Rights_Template(Nullable<int> deal_Code, string deal_Movie_Codes, Nullable<int> user_Code, string agreement_Date)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var deal_Movie_CodesParameter = deal_Movie_Codes != null ?
                 new ObjectParameter("Deal_Movie_Codes", deal_Movie_Codes) :
                 new ObjectParameter("Deal_Movie_Codes", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var agreement_DateParameter = agreement_Date != null ?
                 new ObjectParameter("Agreement_Date", agreement_Date) :
                 new ObjectParameter("Agreement_Date", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Deal_Rights_Template_Result>("USP_Deal_Rights_Template", deal_CodeParameter, deal_Movie_CodesParameter, user_CodeParameter, agreement_DateParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetSystem_Language_Message_ByModule_Result> USP_GetSystem_Language_Message_ByModule(Nullable<int> module_Code, string form_ID, Nullable<int> system_Language_Code)
         {
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             var form_IDParameter = form_ID != null ?
                 new ObjectParameter("Form_ID", form_ID) :
                 new ObjectParameter("Form_ID", typeof(string));
-    
+
             var system_Language_CodeParameter = system_Language_Code.HasValue ?
                 new ObjectParameter("System_Language_Code", system_Language_Code) :
                 new ObjectParameter("System_Language_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetSystem_Language_Message_ByModule_Result>("USP_GetSystem_Language_Message_ByModule", module_CodeParameter, form_IDParameter, system_Language_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Music_Deal_Schedule_Validation_Result> USP_Music_Deal_Schedule_Validation(Nullable<int> music_Deal_Code, string channel_Codes, string start_Date, string end_Date, string linkedShowType, string linkedTitleCode)
         {
             var music_Deal_CodeParameter = music_Deal_Code.HasValue ?
                 new ObjectParameter("Music_Deal_Code", music_Deal_Code) :
                 new ObjectParameter("Music_Deal_Code", typeof(int));
-    
+
             var channel_CodesParameter = channel_Codes != null ?
                 new ObjectParameter("Channel_Codes", channel_Codes) :
                 new ObjectParameter("Channel_Codes", typeof(string));
-    
+
             var start_DateParameter = start_Date != null ?
                 new ObjectParameter("Start_Date", start_Date) :
                 new ObjectParameter("Start_Date", typeof(string));
-    
+
             var end_DateParameter = end_Date != null ?
                 new ObjectParameter("End_Date", end_Date) :
                 new ObjectParameter("End_Date", typeof(string));
-    
+
             var linkedShowTypeParameter = linkedShowType != null ?
                 new ObjectParameter("LinkedShowType", linkedShowType) :
                 new ObjectParameter("LinkedShowType", typeof(string));
-    
+
             var linkedTitleCodeParameter = linkedTitleCode != null ?
                 new ObjectParameter("LinkedTitleCode", linkedTitleCode) :
                 new ObjectParameter("LinkedTitleCode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Music_Deal_Schedule_Validation_Result>("USP_Music_Deal_Schedule_Validation", music_Deal_CodeParameter, channel_CodesParameter, start_DateParameter, end_DateParameter, linkedShowTypeParameter, linkedTitleCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Provisional_Deal_Title_Result> USP_Get_Provisional_Deal_Title(string searchString, Nullable<int> deal_Type_Code)
         {
             var searchStringParameter = searchString != null ?
                 new ObjectParameter("SearchString", searchString) :
                 new ObjectParameter("SearchString", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Provisional_Deal_Title_Result>("USP_Get_Provisional_Deal_Title", searchStringParameter, deal_Type_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Provisional_Deal_Result> USP_List_Provisional_Deal(string searchText, string agreement_No, Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, Nullable<int> deal_Type_Code, Nullable<int> business_Unit_Code, string vendor_Codes, string title_Codes, string isAdvance_Search, Nullable<int> user_Code, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("SearchText", searchText) :
                 new ObjectParameter("SearchText", typeof(string));
-    
+
             var agreement_NoParameter = agreement_No != null ?
                 new ObjectParameter("Agreement_No", agreement_No) :
                 new ObjectParameter("Agreement_No", typeof(string));
-    
+
             var startDateParameter = startDate.HasValue ?
                 new ObjectParameter("StartDate", startDate) :
                 new ObjectParameter("StartDate", typeof(System.DateTime));
-    
+
             var endDateParameter = endDate.HasValue ?
                 new ObjectParameter("EndDate", endDate) :
                 new ObjectParameter("EndDate", typeof(System.DateTime));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var business_Unit_CodeParameter = business_Unit_Code.HasValue ?
                 new ObjectParameter("Business_Unit_Code", business_Unit_Code) :
                 new ObjectParameter("Business_Unit_Code", typeof(int));
-    
+
             var vendor_CodesParameter = vendor_Codes != null ?
                 new ObjectParameter("Vendor_Codes", vendor_Codes) :
                 new ObjectParameter("Vendor_Codes", typeof(string));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var isAdvance_SearchParameter = isAdvance_Search != null ?
                 new ObjectParameter("IsAdvance_Search", isAdvance_Search) :
                 new ObjectParameter("IsAdvance_Search", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Provisional_Deal_Result>("USP_List_Provisional_Deal", searchTextParameter, agreement_NoParameter, startDateParameter, endDateParameter, deal_Type_CodeParameter, business_Unit_CodeParameter, vendor_CodesParameter, title_CodesParameter, isAdvance_SearchParameter, user_CodeParameter, pageNo, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Integration_SDM_Generate_XML_Result> USP_Integration_SDM_Generate_XML(string module_Name, Nullable<System.DateTime> date_Since)
         {
             var module_NameParameter = module_Name != null ?
                 new ObjectParameter("Module_Name", module_Name) :
                 new ObjectParameter("Module_Name", typeof(string));
-    
+
             var date_SinceParameter = date_Since.HasValue ?
                 new ObjectParameter("Date_Since", date_Since) :
                 new ObjectParameter("Date_Since", typeof(System.DateTime));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Integration_SDM_Generate_XML_Result>("USP_Integration_SDM_Generate_XML", module_NameParameter, date_SinceParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_SDM_Title_Result> USP_Validate_SDM_Title(string validateXML)
         {
             var validateXMLParameter = validateXML != null ?
                 new ObjectParameter("ValidateXML", validateXML) :
                 new ObjectParameter("ValidateXML", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_SDM_Title_Result>("USP_Validate_SDM_Title", validateXMLParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetRunDefinitonForContent_Result> USP_GetRunDefinitonForContent(Nullable<int> title_Content_Code, string type, Nullable<int> channel_Code, string start_Date, string end_Date, string deal_Type, string is_active)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(int));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var channel_CodeParameter = channel_Code.HasValue ?
                 new ObjectParameter("Channel_Code", channel_Code) :
                 new ObjectParameter("Channel_Code", typeof(int));
-    
+
             var start_DateParameter = start_Date != null ?
                 new ObjectParameter("Start_Date", start_Date) :
                 new ObjectParameter("Start_Date", typeof(string));
-    
+
             var end_DateParameter = end_Date != null ?
                 new ObjectParameter("End_Date", end_Date) :
                 new ObjectParameter("End_Date", typeof(string));
-    
+
             var deal_TypeParameter = deal_Type != null ?
                 new ObjectParameter("Deal_Type", deal_Type) :
                 new ObjectParameter("Deal_Type", typeof(string));
-    
+
             var is_activeParameter = is_active != null ?
                 new ObjectParameter("Is_active", is_active) :
                 new ObjectParameter("Is_active", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetRunDefinitonForContent_Result>("USP_GetRunDefinitonForContent", title_Content_CodeParameter, typeParameter, channel_CodeParameter, start_DateParameter, end_DateParameter, deal_TypeParameter, is_activeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_Syn_Status_Result> USP_Get_Acq_Syn_Status(Nullable<int> deal_Code, string type, Nullable<int> userCode)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var userCodeParameter = userCode.HasValue ?
                 new ObjectParameter("UserCode", userCode) :
                 new ObjectParameter("UserCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Syn_Status_Result>("USP_Get_Acq_Syn_Status", deal_CodeParameter, typeParameter, userCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Promoter_Group_Tree_Hierarchy_Result> USP_Get_Promoter_Group_Tree_Hierarchy(string promoter_Group_Codes, string search_Promoter_Group_Name)
         {
             var promoter_Group_CodesParameter = promoter_Group_Codes != null ?
                 new ObjectParameter("Promoter_Group_Codes", promoter_Group_Codes) :
                 new ObjectParameter("Promoter_Group_Codes", typeof(string));
-    
+
             var search_Promoter_Group_NameParameter = search_Promoter_Group_Name != null ?
                 new ObjectParameter("Search_Promoter_Group_Name", search_Promoter_Group_Name) :
                 new ObjectParameter("Search_Promoter_Group_Name", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Promoter_Group_Tree_Hierarchy_Result>("USP_Get_Promoter_Group_Tree_Hierarchy", promoter_Group_CodesParameter, search_Promoter_Group_NameParameter);
         }
-    
+
         public virtual ObjectResult<USP_GetMinMaxEpisode_Result> USP_GetMinMaxEpisode(Nullable<int> dealCode, string dealType)
         {
             var dealCodeParameter = dealCode.HasValue ?
                 new ObjectParameter("DealCode", dealCode) :
                 new ObjectParameter("DealCode", typeof(int));
-    
+
             var dealTypeParameter = dealType != null ?
                 new ObjectParameter("DealType", dealType) :
                 new ObjectParameter("DealType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GetMinMaxEpisode_Result>("USP_GetMinMaxEpisode", dealCodeParameter, dealTypeParameter);
         }
-    
+
         public virtual int USP_DeleteContentMapping(Nullable<int> dealCode, string dealType)
         {
             var dealCodeParameter = dealCode.HasValue ?
                 new ObjectParameter("DealCode", dealCode) :
                 new ObjectParameter("DealCode", typeof(int));
-    
+
             var dealTypeParameter = dealType != null ?
                 new ObjectParameter("DealType", dealType) :
                 new ObjectParameter("DealType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_DeleteContentMapping", dealCodeParameter, dealTypeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_ParentOrChild_Details_Promoter(string promoter_Group_Codes, string type)
         {
             var promoter_Group_CodesParameter = promoter_Group_Codes != null ?
                 new ObjectParameter("Promoter_Group_Codes", promoter_Group_Codes) :
                 new ObjectParameter("Promoter_Group_Codes", typeof(string));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_ParentOrChild_Details_Promoter", promoter_Group_CodesParameter, typeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Music_Platform_Tree_Hierarchy_Result> USP_Get_Music_Platform_Tree_Hierarchy(string musicPlatformCodes, string search_Music_Platform_Name)
         {
             var musicPlatformCodesParameter = musicPlatformCodes != null ?
                 new ObjectParameter("MusicPlatformCodes", musicPlatformCodes) :
                 new ObjectParameter("MusicPlatformCodes", typeof(string));
-    
+
             var search_Music_Platform_NameParameter = search_Music_Platform_Name != null ?
                 new ObjectParameter("Search_Music_Platform_Name", search_Music_Platform_Name) :
                 new ObjectParameter("Search_Music_Platform_Name", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Music_Platform_Tree_Hierarchy_Result>("USP_Get_Music_Platform_Tree_Hierarchy", musicPlatformCodesParameter, search_Music_Platform_NameParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Content_Version_Result> USP_List_Content_Version(Nullable<int> title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code.HasValue ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Content_Version_Result>("USP_List_Content_Version", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Title_Content_ExportToXml_Result> USP_List_Title_Content_ExportToXml(string title_Content_Code)
         {
             var title_Content_CodeParameter = title_Content_Code != null ?
                 new ObjectParameter("Title_Content_Code", title_Content_Code) :
                 new ObjectParameter("Title_Content_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Title_Content_ExportToXml_Result>("USP_List_Title_Content_ExportToXml", title_Content_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_GetPromoterCodes(string title_Code, string platform_Code, string country_Code, string subtitle_Code, string dubbing_Code, string title_Language, Nullable<int> deal_Type_Code, string period_Type, string start_Date, string end_Date)
         {
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var country_CodeParameter = country_Code != null ?
                 new ObjectParameter("Country_Code", country_Code) :
                 new ObjectParameter("Country_Code", typeof(string));
-    
+
             var subtitle_CodeParameter = subtitle_Code != null ?
                 new ObjectParameter("Subtitle_Code", subtitle_Code) :
                 new ObjectParameter("Subtitle_Code", typeof(string));
-    
+
             var dubbing_CodeParameter = dubbing_Code != null ?
                 new ObjectParameter("Dubbing_Code", dubbing_Code) :
                 new ObjectParameter("Dubbing_Code", typeof(string));
-    
+
             var title_LanguageParameter = title_Language != null ?
                 new ObjectParameter("Title_Language", title_Language) :
                 new ObjectParameter("Title_Language", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var period_TypeParameter = period_Type != null ?
                 new ObjectParameter("Period_Type", period_Type) :
                 new ObjectParameter("Period_Type", typeof(string));
-    
+
             var start_DateParameter = start_Date != null ?
                 new ObjectParameter("Start_Date", start_Date) :
                 new ObjectParameter("Start_Date", typeof(string));
-    
+
             var end_DateParameter = end_Date != null ?
                 new ObjectParameter("End_Date", end_Date) :
                 new ObjectParameter("End_Date", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_GetPromoterCodes", title_CodeParameter, platform_CodeParameter, country_CodeParameter, subtitle_CodeParameter, dubbing_CodeParameter, title_LanguageParameter, deal_Type_CodeParameter, period_TypeParameter, start_DateParameter, end_DateParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_Availability_LanguageWise_Filter_Result> USP_Get_Title_Availability_LanguageWise_Filter(string title_Code, string platform_Code, string country_Code, string subtit_Language_Code, string dubbing_Language_Code, string mustHavePlatform, string dubbing_Subtitling, string mustHaveRegion, string region_Exclusion, string title_Language_Code, Nullable<int> callFrom, string is_IFTA_Cluster, string subtitling_Group_Code, string subtitling_MustHave, string subtitling_Exclusion, string dubbing_Group_Code, string dubbing_MustHave, string dubbing_Exclusion, string platform_Group_Code, string mustHave_Platform, string territory_Code, string bU_Code, string subLicense_Code, string restrictionRemarks, string othersRemarks, string include_Metadata, string is_Digital, string exclusivity, string promoter_Code, string mustHave_Promoter)
         {
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var platform_CodeParameter = platform_Code != null ?
                 new ObjectParameter("Platform_Code", platform_Code) :
                 new ObjectParameter("Platform_Code", typeof(string));
-    
+
             var country_CodeParameter = country_Code != null ?
                 new ObjectParameter("Country_Code", country_Code) :
                 new ObjectParameter("Country_Code", typeof(string));
-    
+
             var subtit_Language_CodeParameter = subtit_Language_Code != null ?
                 new ObjectParameter("Subtit_Language_Code", subtit_Language_Code) :
                 new ObjectParameter("Subtit_Language_Code", typeof(string));
-    
+
             var dubbing_Language_CodeParameter = dubbing_Language_Code != null ?
                 new ObjectParameter("Dubbing_Language_Code", dubbing_Language_Code) :
                 new ObjectParameter("Dubbing_Language_Code", typeof(string));
-    
+
             var mustHavePlatformParameter = mustHavePlatform != null ?
                 new ObjectParameter("MustHavePlatform", mustHavePlatform) :
                 new ObjectParameter("MustHavePlatform", typeof(string));
-    
+
             var dubbing_SubtitlingParameter = dubbing_Subtitling != null ?
                 new ObjectParameter("Dubbing_Subtitling", dubbing_Subtitling) :
                 new ObjectParameter("Dubbing_Subtitling", typeof(string));
-    
+
             var mustHaveRegionParameter = mustHaveRegion != null ?
                 new ObjectParameter("MustHaveRegion", mustHaveRegion) :
                 new ObjectParameter("MustHaveRegion", typeof(string));
-    
+
             var region_ExclusionParameter = region_Exclusion != null ?
                 new ObjectParameter("Region_Exclusion", region_Exclusion) :
                 new ObjectParameter("Region_Exclusion", typeof(string));
-    
+
             var title_Language_CodeParameter = title_Language_Code != null ?
                 new ObjectParameter("Title_Language_Code", title_Language_Code) :
                 new ObjectParameter("Title_Language_Code", typeof(string));
-    
+
             var callFromParameter = callFrom.HasValue ?
                 new ObjectParameter("CallFrom", callFrom) :
                 new ObjectParameter("CallFrom", typeof(int));
-    
+
             var is_IFTA_ClusterParameter = is_IFTA_Cluster != null ?
                 new ObjectParameter("Is_IFTA_Cluster", is_IFTA_Cluster) :
                 new ObjectParameter("Is_IFTA_Cluster", typeof(string));
-    
+
             var subtitling_Group_CodeParameter = subtitling_Group_Code != null ?
                 new ObjectParameter("Subtitling_Group_Code", subtitling_Group_Code) :
                 new ObjectParameter("Subtitling_Group_Code", typeof(string));
-    
+
             var subtitling_MustHaveParameter = subtitling_MustHave != null ?
                 new ObjectParameter("Subtitling_MustHave", subtitling_MustHave) :
                 new ObjectParameter("Subtitling_MustHave", typeof(string));
-    
+
             var subtitling_ExclusionParameter = subtitling_Exclusion != null ?
                 new ObjectParameter("Subtitling_Exclusion", subtitling_Exclusion) :
                 new ObjectParameter("Subtitling_Exclusion", typeof(string));
-    
+
             var dubbing_Group_CodeParameter = dubbing_Group_Code != null ?
                 new ObjectParameter("Dubbing_Group_Code", dubbing_Group_Code) :
                 new ObjectParameter("Dubbing_Group_Code", typeof(string));
-    
+
             var dubbing_MustHaveParameter = dubbing_MustHave != null ?
                 new ObjectParameter("Dubbing_MustHave", dubbing_MustHave) :
                 new ObjectParameter("Dubbing_MustHave", typeof(string));
-    
+
             var dubbing_ExclusionParameter = dubbing_Exclusion != null ?
                 new ObjectParameter("Dubbing_Exclusion", dubbing_Exclusion) :
                 new ObjectParameter("Dubbing_Exclusion", typeof(string));
-    
+
             var platform_Group_CodeParameter = platform_Group_Code != null ?
                 new ObjectParameter("Platform_Group_Code", platform_Group_Code) :
                 new ObjectParameter("Platform_Group_Code", typeof(string));
-    
+
             var mustHave_PlatformParameter = mustHave_Platform != null ?
                 new ObjectParameter("MustHave_Platform", mustHave_Platform) :
                 new ObjectParameter("MustHave_Platform", typeof(string));
-    
+
             var territory_CodeParameter = territory_Code != null ?
                 new ObjectParameter("Territory_Code", territory_Code) :
                 new ObjectParameter("Territory_Code", typeof(string));
-    
+
             var bU_CodeParameter = bU_Code != null ?
                 new ObjectParameter("BU_Code", bU_Code) :
                 new ObjectParameter("BU_Code", typeof(string));
-    
+
             var subLicense_CodeParameter = subLicense_Code != null ?
                 new ObjectParameter("SubLicense_Code", subLicense_Code) :
                 new ObjectParameter("SubLicense_Code", typeof(string));
-    
+
             var restrictionRemarksParameter = restrictionRemarks != null ?
                 new ObjectParameter("RestrictionRemarks", restrictionRemarks) :
                 new ObjectParameter("RestrictionRemarks", typeof(string));
-    
+
             var othersRemarksParameter = othersRemarks != null ?
                 new ObjectParameter("OthersRemarks", othersRemarks) :
                 new ObjectParameter("OthersRemarks", typeof(string));
-    
+
             var include_MetadataParameter = include_Metadata != null ?
                 new ObjectParameter("Include_Metadata", include_Metadata) :
                 new ObjectParameter("Include_Metadata", typeof(string));
-    
+
             var is_DigitalParameter = is_Digital != null ?
                 new ObjectParameter("Is_Digital", is_Digital) :
                 new ObjectParameter("Is_Digital", typeof(string));
-    
+
             var exclusivityParameter = exclusivity != null ?
                 new ObjectParameter("Exclusivity", exclusivity) :
                 new ObjectParameter("Exclusivity", typeof(string));
-    
+
             var promoter_CodeParameter = promoter_Code != null ?
                 new ObjectParameter("Promoter_Code", promoter_Code) :
                 new ObjectParameter("Promoter_Code", typeof(string));
-    
+
             var mustHave_PromoterParameter = mustHave_Promoter != null ?
                 new ObjectParameter("MustHave_Promoter", mustHave_Promoter) :
                 new ObjectParameter("MustHave_Promoter", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Availability_LanguageWise_Filter_Result>("USP_Get_Title_Availability_LanguageWise_Filter", title_CodeParameter, platform_CodeParameter, country_CodeParameter, subtit_Language_CodeParameter, dubbing_Language_CodeParameter, mustHavePlatformParameter, dubbing_SubtitlingParameter, mustHaveRegionParameter, region_ExclusionParameter, title_Language_CodeParameter, callFromParameter, is_IFTA_ClusterParameter, subtitling_Group_CodeParameter, subtitling_MustHaveParameter, subtitling_ExclusionParameter, dubbing_Group_CodeParameter, dubbing_MustHaveParameter, dubbing_ExclusionParameter, platform_Group_CodeParameter, mustHave_PlatformParameter, territory_CodeParameter, bU_CodeParameter, subLicense_CodeParameter, restrictionRemarksParameter, othersRemarksParameter, include_MetadataParameter, is_DigitalParameter, exclusivityParameter, promoter_CodeParameter, mustHave_PromoterParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Check_Autopush_Ammend_Acq(Nullable<int> acqDealCode)
         {
             var acqDealCodeParameter = acqDealCode.HasValue ?
                 new ObjectParameter("AcqDealCode", acqDealCode) :
                 new ObjectParameter("AcqDealCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Check_Autopush_Ammend_Acq", acqDealCodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Check_Autopush_Ammend_Syn(Nullable<int> synDealCode)
         {
             var synDealCodeParameter = synDealCode.HasValue ?
                 new ObjectParameter("SynDealCode", synDealCode) :
                 new ObjectParameter("SynDealCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Check_Autopush_Ammend_Syn", synDealCodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_PlatformCodes_For_Ancillary(string title_Codes, string platform_Codes, string platform_Type, Nullable<int> acq_Deal_Code, string call_From_Rights, Nullable<int> deal_Rights_Code)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var platform_CodesParameter = platform_Codes != null ?
                 new ObjectParameter("Platform_Codes", platform_Codes) :
                 new ObjectParameter("Platform_Codes", typeof(string));
-    
+
             var platform_TypeParameter = platform_Type != null ?
                 new ObjectParameter("Platform_Type", platform_Type) :
                 new ObjectParameter("Platform_Type", typeof(string));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var call_From_RightsParameter = call_From_Rights != null ?
                 new ObjectParameter("Call_From_Rights", call_From_Rights) :
                 new ObjectParameter("Call_From_Rights", typeof(string));
-    
+
             var deal_Rights_CodeParameter = deal_Rights_Code.HasValue ?
                 new ObjectParameter("Deal_Rights_Code", deal_Rights_Code) :
                 new ObjectParameter("Deal_Rights_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_PlatformCodes_For_Ancillary", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, acq_Deal_CodeParameter, call_From_RightsParameter, deal_Rights_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_BUWise_Title_Result> USP_Get_BUWise_Title(Nullable<int> buCode, string searchKey)
         {
             var buCodeParameter = buCode.HasValue ?
                 new ObjectParameter("BuCode", buCode) :
                 new ObjectParameter("BuCode", typeof(int));
-    
+
             var searchKeyParameter = searchKey != null ?
                 new ObjectParameter("SearchKey", searchKey) :
                 new ObjectParameter("SearchKey", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_BUWise_Title_Result>("USP_Get_BUWise_Title", buCodeParameter, searchKeyParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Syn_Rights_Autopush_Delete_Validation(Nullable<int> synDealRightsCode)
         {
             var synDealRightsCodeParameter = synDealRightsCode.HasValue ?
                 new ObjectParameter("SynDealRightsCode", synDealRightsCode) :
                 new ObjectParameter("SynDealRightsCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Syn_Rights_Autopush_Delete_Validation", synDealRightsCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPPopulateTitleForMapping_Result> USPPopulateTitleForMapping(string searchKey)
         {
             var searchKeyParameter = searchKey != null ?
                 new ObjectParameter("SearchKey", searchKey) :
                 new ObjectParameter("SearchKey", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPPopulateTitleForMapping_Result>("USPPopulateTitleForMapping", searchKeyParameter);
         }
-    
+
         public virtual ObjectResult<USPVWTitleList_Result> USPVWTitleList(string searchString, string contentType)
         {
             var searchStringParameter = searchString != null ?
                 new ObjectParameter("searchString", searchString) :
                 new ObjectParameter("searchString", typeof(string));
-    
+
             var contentTypeParameter = contentType != null ?
                 new ObjectParameter("contentType", contentType) :
                 new ObjectParameter("contentType", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPVWTitleList_Result>("USPVWTitleList", searchStringParameter, contentTypeParameter);
         }
-    
+
         public virtual ObjectResult<USPGetTitleCode_Result> USPGetTitleCode(string titleName)
         {
             var titleNameParameter = titleName != null ?
                 new ObjectParameter("titleName", titleName) :
                 new ObjectParameter("titleName", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGetTitleCode_Result>("USPGetTitleCode", titleNameParameter);
         }
-    
+
         public virtual ObjectResult<USPGetTitleEpisodes_Result> USPGetTitleEpisodes(Nullable<int> titleCode)
         {
             var titleCodeParameter = titleCode.HasValue ?
                 new ObjectParameter("titleCode", titleCode) :
                 new ObjectParameter("titleCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGetTitleEpisodes_Result>("USPGetTitleEpisodes", titleCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPMHRequisitionList_Result> USPMHRequisitionList(string productionHouseCode, string musicLabel, Nullable<int> mHRequestTypeCode, string fromDate, string toDate, string statusCode, string titleCode, string businessUnitCode, string dealTypeCode, Nullable<int> pageNo, Nullable<int> pageSize, string usersCode, string requestId, ObjectParameter recordCount)
         {
             var productionHouseCodeParameter = productionHouseCode != null ?
                 new ObjectParameter("ProductionHouseCode", productionHouseCode) :
                 new ObjectParameter("ProductionHouseCode", typeof(string));
-    
+
             var musicLabelParameter = musicLabel != null ?
                 new ObjectParameter("MusicLabel", musicLabel) :
                 new ObjectParameter("MusicLabel", typeof(string));
-    
+
             var mHRequestTypeCodeParameter = mHRequestTypeCode.HasValue ?
                 new ObjectParameter("MHRequestTypeCode", mHRequestTypeCode) :
                 new ObjectParameter("MHRequestTypeCode", typeof(int));
-    
+
             var fromDateParameter = fromDate != null ?
                 new ObjectParameter("FromDate", fromDate) :
                 new ObjectParameter("FromDate", typeof(string));
-    
+
             var toDateParameter = toDate != null ?
                 new ObjectParameter("ToDate", toDate) :
                 new ObjectParameter("ToDate", typeof(string));
-    
+
             var statusCodeParameter = statusCode != null ?
                 new ObjectParameter("StatusCode", statusCode) :
                 new ObjectParameter("StatusCode", typeof(string));
-    
+
             var titleCodeParameter = titleCode != null ?
                 new ObjectParameter("TitleCode", titleCode) :
                 new ObjectParameter("TitleCode", typeof(string));
-    
+
             var businessUnitCodeParameter = businessUnitCode != null ?
                 new ObjectParameter("BusinessUnitCode", businessUnitCode) :
                 new ObjectParameter("BusinessUnitCode", typeof(string));
-    
+
             var dealTypeCodeParameter = dealTypeCode != null ?
                 new ObjectParameter("DealTypeCode", dealTypeCode) :
                 new ObjectParameter("DealTypeCode", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var usersCodeParameter = usersCode != null ?
                 new ObjectParameter("UsersCode", usersCode) :
                 new ObjectParameter("UsersCode", typeof(string));
-    
+
             var requestIdParameter = requestId != null ?
                 new ObjectParameter("RequestId", requestId) :
                 new ObjectParameter("RequestId", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHRequisitionList_Result>("USPMHRequisitionList", productionHouseCodeParameter, musicLabelParameter, mHRequestTypeCodeParameter, fromDateParameter, toDateParameter, statusCodeParameter, titleCodeParameter, businessUnitCodeParameter, dealTypeCodeParameter, pageNoParameter, pageSizeParameter, usersCodeParameter, requestIdParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPValidateMHRequestConsumption_Result> USPValidateMHRequestConsumption(Nullable<int> mHRequestCode)
         {
             var mHRequestCodeParameter = mHRequestCode.HasValue ?
                 new ObjectParameter("MHRequestCode", mHRequestCode) :
                 new ObjectParameter("MHRequestCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPValidateMHRequestConsumption_Result>("USPValidateMHRequestConsumption", mHRequestCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPMHCueSheetList_Result> USPMHCueSheetList(Nullable<int> productionHouseCode, string mHUploadStatus, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var productionHouseCodeParameter = productionHouseCode.HasValue ?
                 new ObjectParameter("ProductionHouseCode", productionHouseCode) :
                 new ObjectParameter("ProductionHouseCode", typeof(int));
-    
+
             var mHUploadStatusParameter = mHUploadStatus != null ?
                 new ObjectParameter("MHUploadStatus", mHUploadStatus) :
                 new ObjectParameter("MHUploadStatus", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHCueSheetList_Result>("USPMHCueSheetList", productionHouseCodeParameter, mHUploadStatusParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPMHStatusHistoryList_Result> USPMHStatusHistoryList(Nullable<int> mHRequestTypeCode, string titleName, Nullable<int> mHRequestStatusCode, string requestID, string fromDate, string toDate, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var mHRequestTypeCodeParameter = mHRequestTypeCode.HasValue ?
                 new ObjectParameter("MHRequestTypeCode", mHRequestTypeCode) :
                 new ObjectParameter("MHRequestTypeCode", typeof(int));
-    
+
             var titleNameParameter = titleName != null ?
                 new ObjectParameter("TitleName", titleName) :
                 new ObjectParameter("TitleName", typeof(string));
-    
+
             var mHRequestStatusCodeParameter = mHRequestStatusCode.HasValue ?
                 new ObjectParameter("MHRequestStatusCode", mHRequestStatusCode) :
                 new ObjectParameter("MHRequestStatusCode", typeof(int));
-    
+
             var requestIDParameter = requestID != null ?
                 new ObjectParameter("RequestID", requestID) :
                 new ObjectParameter("RequestID", typeof(string));
-    
+
             var fromDateParameter = fromDate != null ?
                 new ObjectParameter("FromDate", fromDate) :
                 new ObjectParameter("FromDate", typeof(string));
-    
+
             var toDateParameter = toDate != null ?
                 new ObjectParameter("ToDate", toDate) :
                 new ObjectParameter("ToDate", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHStatusHistoryList_Result>("USPMHStatusHistoryList", mHRequestTypeCodeParameter, titleNameParameter, mHRequestStatusCodeParameter, requestIDParameter, fromDateParameter, toDateParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<string> USPMHGetErrorList(string list)
         {
             var listParameter = list != null ?
                 new ObjectParameter("List", list) :
                 new ObjectParameter("List", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPMHGetErrorList", listParameter);
         }
-    
+
         public virtual ObjectResult<USPMHMusicTitleAlbumSearch_Result> USPMHMusicTitleAlbumSearch(string keyword, string type)
         {
             var keywordParameter = keyword != null ?
                 new ObjectParameter("keyword", keyword) :
                 new ObjectParameter("keyword", typeof(string));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHMusicTitleAlbumSearch_Result>("USPMHMusicTitleAlbumSearch", keywordParameter, typeParameter);
         }
-    
+
         public virtual ObjectResult<USPRUBVMappingList_Result> USPRUBVMappingList(string dropdownOption, string tabselect, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var dropdownOptionParameter = dropdownOption != null ?
                 new ObjectParameter("DropdownOption", dropdownOption) :
                 new ObjectParameter("DropdownOption", typeof(string));
-    
+
             var tabselectParameter = tabselect != null ?
                 new ObjectParameter("Tabselect", tabselect) :
                 new ObjectParameter("Tabselect", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPRUBVMappingList_Result>("USPRUBVMappingList", dropdownOptionParameter, tabselectParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPMHGetChartPopupList_Result> USPMHGetChartPopupList(string mHRequestCode, string prodHouseCode, string statusCode, string callFor, Nullable<int> pageNo, Nullable<int> pageSize, string dealTypeCode, string businessUnitCode, ObjectParameter recordCount)
         {
             var mHRequestCodeParameter = mHRequestCode != null ?
                 new ObjectParameter("MHRequestCode", mHRequestCode) :
                 new ObjectParameter("MHRequestCode", typeof(string));
-    
+
             var prodHouseCodeParameter = prodHouseCode != null ?
                 new ObjectParameter("ProdHouseCode", prodHouseCode) :
                 new ObjectParameter("ProdHouseCode", typeof(string));
-    
+
             var statusCodeParameter = statusCode != null ?
                 new ObjectParameter("StatusCode", statusCode) :
                 new ObjectParameter("StatusCode", typeof(string));
-    
+
             var callForParameter = callFor != null ?
                 new ObjectParameter("CallFor", callFor) :
                 new ObjectParameter("CallFor", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var dealTypeCodeParameter = dealTypeCode != null ?
                 new ObjectParameter("DealTypeCode", dealTypeCode) :
                 new ObjectParameter("DealTypeCode", typeof(string));
-    
+
             var businessUnitCodeParameter = businessUnitCode != null ?
                 new ObjectParameter("BusinessUnitCode", businessUnitCode) :
                 new ObjectParameter("BusinessUnitCode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHGetChartPopupList_Result>("USPMHGetChartPopupList", mHRequestCodeParameter, prodHouseCodeParameter, statusCodeParameter, callForParameter, pageNoParameter, pageSizeParameter, dealTypeCodeParameter, businessUnitCodeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPBindJobAndExecute_Result> USPBindJobAndExecute(string type, string jobName)
         {
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var jobNameParameter = jobName != null ?
                 new ObjectParameter("JobName", jobName) :
                 new ObjectParameter("JobName", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPBindJobAndExecute_Result>("USPBindJobAndExecute", typeParameter, jobNameParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Title_Milestone_Result> USP_List_Title_Milestone(Nullable<int> pageNo, ObjectParameter recordCount, string pagingRequired, Nullable<int> pageSize, Nullable<int> titleCode)
         {
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pagingRequiredParameter = pagingRequired != null ?
                 new ObjectParameter("PagingRequired", pagingRequired) :
                 new ObjectParameter("PagingRequired", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var titleCodeParameter = titleCode.HasValue ?
                 new ObjectParameter("TitleCode", titleCode) :
                 new ObjectParameter("TitleCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Title_Milestone_Result>("USP_List_Title_Milestone", pageNoParameter, recordCount, pagingRequiredParameter, pageSizeParameter, titleCodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USPMHGetMaxVendorCodes(string lastRequiredDate, string dealTypeCode, string businessUnitCode)
         {
             var lastRequiredDateParameter = lastRequiredDate != null ?
                 new ObjectParameter("LastRequiredDate", lastRequiredDate) :
                 new ObjectParameter("LastRequiredDate", typeof(string));
-    
+
             var dealTypeCodeParameter = dealTypeCode != null ?
                 new ObjectParameter("DealTypeCode", dealTypeCode) :
                 new ObjectParameter("DealTypeCode", typeof(string));
-    
+
             var businessUnitCodeParameter = businessUnitCode != null ?
                 new ObjectParameter("BusinessUnitCode", businessUnitCode) :
                 new ObjectParameter("BusinessUnitCode", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPMHGetMaxVendorCodes", lastRequiredDateParameter, dealTypeCodeParameter, businessUnitCodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USPMHMailNotification(Nullable<int> mHRequestCode, Nullable<int> mHRequestTypeCode, Nullable<int> mHCueSheetCode)
         {
             var mHRequestCodeParameter = mHRequestCode.HasValue ?
                 new ObjectParameter("MHRequestCode", mHRequestCode) :
                 new ObjectParameter("MHRequestCode", typeof(int));
-    
+
             var mHRequestTypeCodeParameter = mHRequestTypeCode.HasValue ?
                 new ObjectParameter("MHRequestTypeCode", mHRequestTypeCode) :
                 new ObjectParameter("MHRequestTypeCode", typeof(int));
-    
+
             var mHCueSheetCodeParameter = mHCueSheetCode.HasValue ?
                 new ObjectParameter("MHCueSheetCode", mHCueSheetCode) :
                 new ObjectParameter("MHCueSheetCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPMHMailNotification", mHRequestCodeParameter, mHRequestTypeCodeParameter, mHCueSheetCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPMHRequistionTrackList_Result> USPMHRequistionTrackList(Nullable<int> mHRequestCode)
         {
             var mHRequestCodeParameter = mHRequestCode.HasValue ?
                 new ObjectParameter("MHRequestCode", mHRequestCode) :
                 new ObjectParameter("MHRequestCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPMHRequistionTrackList_Result>("USPMHRequistionTrackList", mHRequestCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPTATList_Result> USPTATList(Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPTATList_Result>("USPTATList", pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPTATSLAList_Result> USPTATSLAList(Nullable<int> tATSLACode, string action)
         {
             var tATSLACodeParameter = tATSLACode.HasValue ?
                 new ObjectParameter("TATSLACode", tATSLACode) :
                 new ObjectParameter("TATSLACode", typeof(int));
-    
+
             var actionParameter = action != null ?
                 new ObjectParameter("Action", action) :
                 new ObjectParameter("Action", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPTATSLAList_Result>("USPTATSLAList", tATSLACodeParameter, actionParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_Linear_Title_Status_Result> USP_List_Acq_Linear_Title_Status(Nullable<int> acq_Deal_Code)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_Linear_Title_Status_Result>("USP_List_Acq_Linear_Title_Status", acq_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_TitleBulkImport_Result> USP_List_TitleBulkImport(Nullable<int> dM_Master_Import_Code, string titleName, string titleType, string titleLanguage, string keyStarCast, string status, string errorMsg, string director, string musicLabel, string searchCriteria, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var titleNameParameter = titleName != null ?
                 new ObjectParameter("TitleName", titleName) :
                 new ObjectParameter("TitleName", typeof(string));
-    
+
             var titleTypeParameter = titleType != null ?
                 new ObjectParameter("TitleType", titleType) :
                 new ObjectParameter("TitleType", typeof(string));
-    
+
             var titleLanguageParameter = titleLanguage != null ?
                 new ObjectParameter("TitleLanguage", titleLanguage) :
                 new ObjectParameter("TitleLanguage", typeof(string));
-    
+
             var keyStarCastParameter = keyStarCast != null ?
                 new ObjectParameter("KeyStarCast", keyStarCast) :
                 new ObjectParameter("KeyStarCast", typeof(string));
-    
+
             var statusParameter = status != null ?
                 new ObjectParameter("Status", status) :
                 new ObjectParameter("Status", typeof(string));
-    
+
             var errorMsgParameter = errorMsg != null ?
                 new ObjectParameter("ErrorMsg", errorMsg) :
                 new ObjectParameter("ErrorMsg", typeof(string));
-    
+
             var directorParameter = director != null ?
                 new ObjectParameter("Director", director) :
                 new ObjectParameter("Director", typeof(string));
-    
+
             var musicLabelParameter = musicLabel != null ?
                 new ObjectParameter("MusicLabel", musicLabel) :
                 new ObjectParameter("MusicLabel", typeof(string));
-    
+
             var searchCriteriaParameter = searchCriteria != null ?
                 new ObjectParameter("SearchCriteria", searchCriteria) :
                 new ObjectParameter("SearchCriteria", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_TitleBulkImport_Result>("USP_List_TitleBulkImport", dM_Master_Import_CodeParameter, titleNameParameter, titleTypeParameter, titleLanguageParameter, keyStarCastParameter, statusParameter, errorMsgParameter, directorParameter, musicLabelParameter, searchCriteriaParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_List_ContentBulkImport_Result> USP_List_ContentBulkImport(Nullable<int> dM_Master_Import_Code, string searchCriteria, string contentName, string musicTrackName, string status, string errorMsg, string episodeNos, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var searchCriteriaParameter = searchCriteria != null ?
                 new ObjectParameter("SearchCriteria", searchCriteria) :
                 new ObjectParameter("SearchCriteria", typeof(string));
-    
+
             var contentNameParameter = contentName != null ?
                 new ObjectParameter("ContentName", contentName) :
                 new ObjectParameter("ContentName", typeof(string));
-    
+
             var musicTrackNameParameter = musicTrackName != null ?
                 new ObjectParameter("MusicTrackName", musicTrackName) :
                 new ObjectParameter("MusicTrackName", typeof(string));
-    
+
             var statusParameter = status != null ?
                 new ObjectParameter("Status", status) :
                 new ObjectParameter("Status", typeof(string));
-    
+
             var errorMsgParameter = errorMsg != null ?
                 new ObjectParameter("ErrorMsg", errorMsg) :
                 new ObjectParameter("ErrorMsg", typeof(string));
-    
+
             var episodeNosParameter = episodeNos != null ?
                 new ObjectParameter("EpisodeNos", episodeNos) :
                 new ObjectParameter("EpisodeNos", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_ContentBulkImport_Result>("USP_List_ContentBulkImport", dM_Master_Import_CodeParameter, searchCriteriaParameter, contentNameParameter, musicTrackNameParameter, statusParameter, errorMsgParameter, episodeNosParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_List_MusicTrackBulkImport_Result> USP_List_MusicTrackBulkImport(Nullable<int> dM_Master_Import_Code, string searchCriteria, string musicTrack, string movieAlbum, string musicLabel, string titleLanguage, string starCast, string singer, string status, string errorMsg, string musicAlbumType, string genres, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var searchCriteriaParameter = searchCriteria != null ?
                 new ObjectParameter("SearchCriteria", searchCriteria) :
                 new ObjectParameter("SearchCriteria", typeof(string));
-    
+
             var musicTrackParameter = musicTrack != null ?
                 new ObjectParameter("MusicTrack", musicTrack) :
                 new ObjectParameter("MusicTrack", typeof(string));
-    
+
             var movieAlbumParameter = movieAlbum != null ?
                 new ObjectParameter("MovieAlbum", movieAlbum) :
                 new ObjectParameter("MovieAlbum", typeof(string));
-    
+
             var musicLabelParameter = musicLabel != null ?
                 new ObjectParameter("MusicLabel", musicLabel) :
                 new ObjectParameter("MusicLabel", typeof(string));
-    
+
             var titleLanguageParameter = titleLanguage != null ?
                 new ObjectParameter("TitleLanguage", titleLanguage) :
                 new ObjectParameter("TitleLanguage", typeof(string));
-    
+
             var starCastParameter = starCast != null ?
                 new ObjectParameter("StarCast", starCast) :
                 new ObjectParameter("StarCast", typeof(string));
-    
+
             var singerParameter = singer != null ?
                 new ObjectParameter("Singer", singer) :
                 new ObjectParameter("Singer", typeof(string));
-    
+
             var statusParameter = status != null ?
                 new ObjectParameter("Status", status) :
                 new ObjectParameter("Status", typeof(string));
-    
+
             var errorMsgParameter = errorMsg != null ?
                 new ObjectParameter("ErrorMsg", errorMsg) :
                 new ObjectParameter("ErrorMsg", typeof(string));
-    
+
             var musicAlbumTypeParameter = musicAlbumType != null ?
                 new ObjectParameter("MusicAlbumType", musicAlbumType) :
                 new ObjectParameter("MusicAlbumType", typeof(string));
-    
+
             var genresParameter = genres != null ?
                 new ObjectParameter("Genres", genres) :
                 new ObjectParameter("Genres", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_MusicTrackBulkImport_Result>("USP_List_MusicTrackBulkImport", dM_Master_Import_CodeParameter, searchCriteriaParameter, musicTrackParameter, movieAlbumParameter, musicLabelParameter, titleLanguageParameter, starCastParameter, singerParameter, statusParameter, errorMsgParameter, musicAlbumTypeParameter, genresParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPExportToExcelBulkImport_Result> USPExportToExcelBulkImport(Nullable<int> dM_Master_Import_Code, string searchCriteria, string file_Type)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var searchCriteriaParameter = searchCriteria != null ?
                 new ObjectParameter("SearchCriteria", searchCriteria) :
                 new ObjectParameter("SearchCriteria", typeof(string));
-    
+
             var file_TypeParameter = file_Type != null ?
                 new ObjectParameter("File_Type", file_Type) :
                 new ObjectParameter("File_Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPExportToExcelBulkImport_Result>("USPExportToExcelBulkImport", dM_Master_Import_CodeParameter, searchCriteriaParameter, file_TypeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Acq_Deal_Right_Clone(Nullable<int> new_Acq_Deal_Code, Nullable<int> acq_Deal_Rights_Code, Nullable<int> acq_Deal_Rights_Title_Code, Nullable<int> title_Code, string is_Program)
         {
             var new_Acq_Deal_CodeParameter = new_Acq_Deal_Code.HasValue ?
                 new ObjectParameter("New_Acq_Deal_Code", new_Acq_Deal_Code) :
                 new ObjectParameter("New_Acq_Deal_Code", typeof(int));
-    
+
             var acq_Deal_Rights_CodeParameter = acq_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Code", acq_Deal_Rights_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Code", typeof(int));
-    
+
             var acq_Deal_Rights_Title_CodeParameter = acq_Deal_Rights_Title_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Rights_Title_Code", acq_Deal_Rights_Title_Code) :
                 new ObjectParameter("Acq_Deal_Rights_Title_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var is_ProgramParameter = is_Program != null ?
                 new ObjectParameter("Is_Program", is_Program) :
                 new ObjectParameter("Is_Program", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Acq_Deal_Right_Clone", new_Acq_Deal_CodeParameter, acq_Deal_Rights_CodeParameter, acq_Deal_Rights_Title_CodeParameter, title_CodeParameter, is_ProgramParameter);
         }
-    
+
         public virtual ObjectResult<USPListResolveConflict_Result> USPListResolveConflict(string dM_Master_Import_Code, Nullable<int> code, string fileType, Nullable<int> pageNo, Nullable<int> pageSize, ObjectParameter recordCount)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code != null ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(string));
-    
+
             var codeParameter = code.HasValue ?
                 new ObjectParameter("Code", code) :
                 new ObjectParameter("Code", typeof(int));
-    
+
             var fileTypeParameter = fileType != null ?
                 new ObjectParameter("FileType", fileType) :
                 new ObjectParameter("FileType", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPListResolveConflict_Result>("USPListResolveConflict", dM_Master_Import_CodeParameter, codeParameter, fileTypeParameter, pageNoParameter, pageSizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USPGetAiredNotAiredDates_Result> USPGetAiredNotAiredDates()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGetAiredNotAiredDates_Result>("USPGetAiredNotAiredDates");
         }
-    
+
         public virtual ObjectResult<USP_Get_User_Security_Group_Tree_Hierarchy_Result> USP_Get_User_Security_Group_Tree_Hierarchy(string moduleCodes, string search_Module_Name)
         {
             var moduleCodesParameter = moduleCodes != null ?
                 new ObjectParameter("ModuleCodes", moduleCodes) :
                 new ObjectParameter("ModuleCodes", typeof(string));
-    
+
             var search_Module_NameParameter = search_Module_Name != null ?
                 new ObjectParameter("Search_Module_Name", search_Module_Name) :
                 new ObjectParameter("Search_Module_Name", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_User_Security_Group_Tree_Hierarchy_Result>("USP_Get_User_Security_Group_Tree_Hierarchy", moduleCodesParameter, search_Module_NameParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Acq_Result> USP_List_Acq(string strSearch, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string exactMatch)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var exactMatchParameter = exactMatch != null ?
                 new ObjectParameter("ExactMatch", exactMatch) :
                 new ObjectParameter("ExactMatch", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Acq_Result>("USP_List_Acq", strSearchParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Syn_Deal_Right_Clone(Nullable<int> new_Syn_Deal_Code, Nullable<int> syn_Deal_Rights_Code, Nullable<int> syn_Deal_Rights_Title_Code, Nullable<int> title_Code, string is_Program)
         {
             var new_Syn_Deal_CodeParameter = new_Syn_Deal_Code.HasValue ?
                 new ObjectParameter("New_Syn_Deal_Code", new_Syn_Deal_Code) :
                 new ObjectParameter("New_Syn_Deal_Code", typeof(int));
-    
+
             var syn_Deal_Rights_CodeParameter = syn_Deal_Rights_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Rights_Code", syn_Deal_Rights_Code) :
                 new ObjectParameter("Syn_Deal_Rights_Code", typeof(int));
-    
+
             var syn_Deal_Rights_Title_CodeParameter = syn_Deal_Rights_Title_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Rights_Title_Code", syn_Deal_Rights_Title_Code) :
                 new ObjectParameter("Syn_Deal_Rights_Title_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             var is_ProgramParameter = is_Program != null ?
                 new ObjectParameter("Is_Program", is_Program) :
                 new ObjectParameter("Is_Program", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Syn_Deal_Right_Clone", new_Syn_Deal_CodeParameter, syn_Deal_Rights_CodeParameter, syn_Deal_Rights_Title_CodeParameter, title_CodeParameter, is_ProgramParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_ExcelSrNo(Nullable<int> dM_Master_Import_Code, string keyword, string callFor)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var keywordParameter = keyword != null ?
                 new ObjectParameter("Keyword", keyword) :
                 new ObjectParameter("Keyword", typeof(string));
-    
+
             var callForParameter = callFor != null ?
                 new ObjectParameter("CallFor", callFor) :
                 new ObjectParameter("CallFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_ExcelSrNo", dM_Master_Import_CodeParameter, keywordParameter, callForParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Import_RCData_Result> USP_Title_Import_RCData(string keyword, string tabName, string roles)
         {
             var keywordParameter = keyword != null ?
                 new ObjectParameter("Keyword", keyword) :
                 new ObjectParameter("Keyword", typeof(string));
-    
+
             var tabNameParameter = tabName != null ?
                 new ObjectParameter("TabName", tabName) :
                 new ObjectParameter("TabName", typeof(string));
-    
+
             var rolesParameter = roles != null ?
                 new ObjectParameter("Roles", roles) :
                 new ObjectParameter("Roles", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Import_RCData_Result>("USP_Title_Import_RCData", keywordParameter, tabNameParameter, rolesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_Import_Utility_AdvSearch_Result> USP_Get_Title_Import_Utility_AdvSearch(Nullable<int> dM_Master_Import_Code, string callFor)
         {
             var dM_Master_Import_CodeParameter = dM_Master_Import_Code.HasValue ?
                 new ObjectParameter("DM_Master_Import_Code", dM_Master_Import_Code) :
                 new ObjectParameter("DM_Master_Import_Code", typeof(int));
-    
+
             var callForParameter = callFor != null ?
                 new ObjectParameter("CallFor", callFor) :
                 new ObjectParameter("CallFor", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_Import_Utility_AdvSearch_Result>("USP_Get_Title_Import_Utility_AdvSearch", dM_Master_Import_CodeParameter, callForParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_IPR_Dashboard_Details_Result> USP_Get_IPR_Dashboard_Details(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
         {
             var dashboardTypeParameter = dashboardType != null ?
                 new ObjectParameter("DashboardType", dashboardType) :
                 new ObjectParameter("DashboardType", typeof(string));
-    
+
             var searchForParameter = searchFor != null ?
                 new ObjectParameter("SearchFor", searchFor) :
                 new ObjectParameter("SearchFor", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var dashboardDaysParameter = dashboardDays.HasValue ?
                 new ObjectParameter("DashboardDays", dashboardDays) :
                 new ObjectParameter("DashboardDays", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_IPR_Dashboard_Details_Result>("USP_Get_IPR_Dashboard_Details", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Objection_List_Result> USP_Title_Objection_List(string callFrom, string title_Codes, string licensor_Codes)
         {
             var callFromParameter = callFrom != null ?
                 new ObjectParameter("CallFrom", callFrom) :
                 new ObjectParameter("CallFrom", typeof(string));
-    
+
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var licensor_CodesParameter = licensor_Codes != null ?
                 new ObjectParameter("Licensor_Codes", licensor_Codes) :
                 new ObjectParameter("Licensor_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_List_Result>("USP_Title_Objection_List", callFromParameter, title_CodesParameter, licensor_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Objection_PreReq_Result> USP_Title_Objection_PreReq(Nullable<int> titleCode, Nullable<int> record_Code, string record_Type, string pCodes)
         {
             var titleCodeParameter = titleCode.HasValue ?
                 new ObjectParameter("TitleCode", titleCode) :
                 new ObjectParameter("TitleCode", typeof(int));
-    
+
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var record_TypeParameter = record_Type != null ?
                 new ObjectParameter("Record_Type", record_Type) :
                 new ObjectParameter("Record_Type", typeof(string));
-    
+
             var pCodesParameter = pCodes != null ?
                 new ObjectParameter("PCodes", pCodes) :
                 new ObjectParameter("PCodes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_PreReq_Result>("USP_Title_Objection_PreReq", titleCodeParameter, record_CodeParameter, record_TypeParameter, pCodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Objection_Adv_List_Result> USP_Title_Objection_Adv_List(string strSearch, string type, Nullable<int> pageNo, string orderByCndition, string isPaging, Nullable<int> pageSize, ObjectParameter recordCount, Nullable<int> user_Code, string exactMatch)
         {
             var strSearchParameter = strSearch != null ?
                 new ObjectParameter("StrSearch", strSearch) :
                 new ObjectParameter("StrSearch", typeof(string));
-    
+
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("PageNo", pageNo) :
                 new ObjectParameter("PageNo", typeof(int));
-    
+
             var orderByCnditionParameter = orderByCndition != null ?
                 new ObjectParameter("OrderByCndition", orderByCndition) :
                 new ObjectParameter("OrderByCndition", typeof(string));
-    
+
             var isPagingParameter = isPaging != null ?
                 new ObjectParameter("IsPaging", isPaging) :
                 new ObjectParameter("IsPaging", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var exactMatchParameter = exactMatch != null ?
                 new ObjectParameter("ExactMatch", exactMatch) :
                 new ObjectParameter("ExactMatch", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_List_Result>("USP_Title_Objection_Adv_List", strSearchParameter, typeParameter, pageNoParameter, orderByCnditionParameter, isPagingParameter, pageSizeParameter, recordCount, user_CodeParameter, exactMatchParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_Objection_Adv_PreReq_Result> USP_Title_Objection_Adv_PreReq(string type)
         {
             var typeParameter = type != null ?
                 new ObjectParameter("Type", type) :
                 new ObjectParameter("Type", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_Objection_Adv_PreReq_Result>("USP_Title_Objection_Adv_PreReq", typeParameter);
         }
-    
+
         public virtual ObjectResult<USP_List_Syn_Ancillary_Result> USP_List_Syn_Ancillary(Nullable<int> syn_Deal_Code)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_List_Syn_Ancillary_Result>("USP_List_Syn_Ancillary", syn_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result> USP_GET_TITLE_FOR_SUPPLEMENTARY(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("title_Code", title_Code) :
                 new ObjectParameter("title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_TITLE_FOR_SUPPLEMENTARY_Result>("USP_GET_TITLE_FOR_SUPPLEMENTARY", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Acq_SUPP_Tab_Result> USP_Acq_SUPP_Tab(Nullable<int> supplementary_Tab_Code)
         {
             var supplementary_Tab_CodeParameter = supplementary_Tab_Code.HasValue ?
                 new ObjectParameter("Supplementary_Tab_Code", supplementary_Tab_Code) :
                 new ObjectParameter("Supplementary_Tab_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_SUPP_Tab_Result>("USP_Acq_SUPP_Tab", supplementary_Tab_CodeParameter);
         }
-    
+
         public virtual int USP_Get_Edit_Row(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
         {
             var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Supplementary_Code", acq_Deal_Supplementary_Code) :
                 new ObjectParameter("Acq_Deal_Supplementary_Code", typeof(int));
-    
+
             var row_NumParameter = row_Num.HasValue ?
                 new ObjectParameter("Row_Num", row_Num) :
                 new ObjectParameter("Row_Num", typeof(int));
-    
+
             var tab_SMParameter = tab_SM != null ?
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Get_Edit_Row", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-    
+
         public virtual ObjectResult<USP_SUPP_Create_Table_Result> USP_SUPP_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
         {
             var tabCodeParameter = tabCode.HasValue ?
                 new ObjectParameter("tabCode", tabCode) :
                 new ObjectParameter("tabCode", typeof(int));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var viewParameter = view != null ?
                 new ObjectParameter("View", view) :
                 new ObjectParameter("View", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_SUPP_Create_Table_Result>("USP_SUPP_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
         }
-    
+
         public virtual ObjectResult<USP_Supplementary_List_Result> USP_Supplementary_List(Nullable<int> deal_Code, string title_Code)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Supplementary_List_Result>("USP_Supplementary_List", deal_CodeParameter, title_CodeParameter);
         }
-    
+
         public virtual int USP_Acq_Supplementary_Delete_Title(Nullable<int> supplementaryCode)
         {
             var supplementaryCodeParameter = supplementaryCode.HasValue ?
                 new ObjectParameter("SupplementaryCode", supplementaryCode) :
                 new ObjectParameter("SupplementaryCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Acq_Supplementary_Delete_Title", supplementaryCodeParameter);
         }
-    
+
         public virtual int USP_Delete_Syn_Supplementary(Nullable<int> supplementary_Code)
         {
             var supplementary_CodeParameter = supplementary_Code.HasValue ?
                 new ObjectParameter("Supplementary_Code", supplementary_Code) :
                 new ObjectParameter("Supplementary_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Syn_Supplementary", supplementary_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_For_Syn_Supplementary_Result> USP_Get_Title_For_Syn_Supplementary(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Syn_Supplementary_Result>("USP_Get_Title_For_Syn_Supplementary", syn_Deal_CodeParameter, title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Deal_Supplementary_Details_Data_Result> USP_Syn_Deal_Supplementary_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Supplementary_Code, string view)
         {
             var tabCodeParameter = tabCode.HasValue ?
                 new ObjectParameter("TabCode", tabCode) :
                 new ObjectParameter("TabCode", typeof(int));
-    
+
             var syn_Deal_Supplementary_CodeParameter = syn_Deal_Supplementary_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Supplementary_Code", syn_Deal_Supplementary_Code) :
                 new ObjectParameter("Syn_Deal_Supplementary_Code", typeof(int));
-    
+
             var viewParameter = view != null ?
                 new ObjectParameter("View", view) :
                 new ObjectParameter("View", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_Details_Data_Result>("USP_Syn_Deal_Supplementary_Details_Data", tabCodeParameter, syn_Deal_Supplementary_CodeParameter, viewParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Supplementary_Config_Result> USP_Get_Supplementary_Config(Nullable<int> supplementary_Tab_Code)
         {
             var supplementary_Tab_CodeParameter = supplementary_Tab_Code.HasValue ?
                 new ObjectParameter("Supplementary_Tab_Code", supplementary_Tab_Code) :
                 new ObjectParameter("Supplementary_Tab_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Supplementary_Config_Result>("USP_Get_Supplementary_Config", supplementary_Tab_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Syn_Deal_Supplementary_Edit_Result> USP_Get_Syn_Deal_Supplementary_Edit(Nullable<int> syn_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
         {
             var syn_Deal_Supplementary_CodeParameter = syn_Deal_Supplementary_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Supplementary_Code", syn_Deal_Supplementary_Code) :
                 new ObjectParameter("Syn_Deal_Supplementary_Code", typeof(int));
-    
+
             var row_NumParameter = row_Num.HasValue ?
                 new ObjectParameter("Row_Num", row_Num) :
                 new ObjectParameter("Row_Num", typeof(int));
-    
+
             var tab_SMParameter = tab_SM != null ?
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Deal_Supplementary_Edit_Result>("USP_Get_Syn_Deal_Supplementary_Edit", syn_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Deal_Supplementary_List_Result> USP_Syn_Deal_Supplementary_List(Nullable<int> syn_Deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("pageNo", pageNo) :
                 new ObjectParameter("pageNo", typeof(int));
-    
+
             var pagesizeParameter = pagesize.HasValue ?
                 new ObjectParameter("pagesize", pagesize) :
                 new ObjectParameter("pagesize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Supplementary_List_Result>("USP_Syn_Deal_Supplementary_List", syn_Deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Acq_Deal_Supplementary_List_Result> USP_Acq_Deal_Supplementary_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("pageNo", pageNo) :
                 new ObjectParameter("pageNo", typeof(int));
-    
+
             var pagesizeParameter = pagesize.HasValue ?
                 new ObjectParameter("pagesize", pagesize) :
                 new ObjectParameter("pagesize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Supplementary_List_Result>("USP_Acq_Deal_Supplementary_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_Deal_Supplementary_Edit_Result> USP_Get_Acq_Deal_Supplementary_Edit(Nullable<int> acq_Deal_Supplementary_Code, Nullable<int> row_Num, string tab_SM)
         {
             var acq_Deal_Supplementary_CodeParameter = acq_Deal_Supplementary_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Supplementary_Code", acq_Deal_Supplementary_Code) :
                 new ObjectParameter("Acq_Deal_Supplementary_Code", typeof(int));
-    
+
             var row_NumParameter = row_Num.HasValue ?
                 new ObjectParameter("Row_Num", row_Num) :
                 new ObjectParameter("Row_Num", typeof(int));
-    
+
             var tab_SMParameter = tab_SM != null ?
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Supplementary_Edit_Result>("USP_Get_Acq_Deal_Supplementary_Edit", acq_Deal_Supplementary_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-    
+
         public virtual int USP_Delete_Acq_Supplementary(Nullable<int> supplementaryCode)
         {
             var supplementaryCodeParameter = supplementaryCode.HasValue ?
                 new ObjectParameter("SupplementaryCode", supplementaryCode) :
                 new ObjectParameter("SupplementaryCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Acq_Supplementary", supplementaryCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_For_Acq_Supplementary_Result> USP_Get_Title_For_Acq_Supplementary(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("title_Code", title_Code) :
                 new ObjectParameter("title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Supplementary_Result>("USP_Get_Title_For_Acq_Supplementary", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_BuyBackRights_List_Result> USP_BuyBackRights_List(string right_Type, string view_Type, Nullable<int> deal_Code, string deal_Movie_Codes, string regionCodes, string platformCodes, string iSExclusive, ObjectParameter pageNo, Nullable<int> pageSize, ObjectParameter totalRecord, string searchText, Nullable<int> deal_Type_Code, string titleCodes, Nullable<int> licensorCode)
         {
             var right_TypeParameter = right_Type != null ?
                 new ObjectParameter("Right_Type", right_Type) :
                 new ObjectParameter("Right_Type", typeof(string));
-    
+
             var view_TypeParameter = view_Type != null ?
                 new ObjectParameter("View_Type", view_Type) :
                 new ObjectParameter("View_Type", typeof(string));
-    
+
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var deal_Movie_CodesParameter = deal_Movie_Codes != null ?
                 new ObjectParameter("Deal_Movie_Codes", deal_Movie_Codes) :
                 new ObjectParameter("Deal_Movie_Codes", typeof(string));
-    
+
             var regionCodesParameter = regionCodes != null ?
                 new ObjectParameter("RegionCodes", regionCodes) :
                 new ObjectParameter("RegionCodes", typeof(string));
-    
+
             var platformCodesParameter = platformCodes != null ?
                 new ObjectParameter("PlatformCodes", platformCodes) :
                 new ObjectParameter("PlatformCodes", typeof(string));
-    
+
             var iSExclusiveParameter = iSExclusive != null ?
                 new ObjectParameter("ISExclusive", iSExclusive) :
                 new ObjectParameter("ISExclusive", typeof(string));
-    
+
             var pageSizeParameter = pageSize.HasValue ?
                 new ObjectParameter("PageSize", pageSize) :
                 new ObjectParameter("PageSize", typeof(int));
-    
+
             var searchTextParameter = searchText != null ?
                 new ObjectParameter("SearchText", searchText) :
                 new ObjectParameter("SearchText", typeof(string));
-    
+
             var deal_Type_CodeParameter = deal_Type_Code.HasValue ?
                 new ObjectParameter("Deal_Type_Code", deal_Type_Code) :
                 new ObjectParameter("Deal_Type_Code", typeof(int));
-    
+
             var titleCodesParameter = titleCodes != null ?
                 new ObjectParameter("TitleCodes", titleCodes) :
                 new ObjectParameter("TitleCodes", typeof(string));
-    
+
             var licensorCodeParameter = licensorCode.HasValue ?
                 new ObjectParameter("LicensorCode", licensorCode) :
                 new ObjectParameter("LicensorCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_BuyBackRights_List_Result>("USP_BuyBackRights_List", right_TypeParameter, view_TypeParameter, deal_CodeParameter, deal_Movie_CodesParameter, regionCodesParameter, platformCodesParameter, iSExclusiveParameter, pageNo, pageSizeParameter, totalRecord, searchTextParameter, deal_Type_CodeParameter, titleCodesParameter, licensorCodeParameter);
         }
-    
+
         public virtual int USP_BuybackRightsInsert(Nullable<int> acq_Deal_Code, string synRightsCode, Nullable<int> usersCode)
         {
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var synRightsCodeParameter = synRightsCode != null ?
                 new ObjectParameter("SynRightsCode", synRightsCode) :
                 new ObjectParameter("SynRightsCode", typeof(string));
-    
+
             var usersCodeParameter = usersCode.HasValue ?
                 new ObjectParameter("UsersCode", usersCode) :
                 new ObjectParameter("UsersCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_BuybackRightsInsert", acq_Deal_CodeParameter, synRightsCodeParameter, usersCodeParameter);
         }
-    
+
         public virtual ObjectResult<Nullable<int>> USP_Validate_Acq_Right_Title_With_Syn_On_Edit(Nullable<int> rCode, Nullable<int> tCode, Nullable<int> episode_From, Nullable<int> episode_To)
         {
             var rCodeParameter = rCode.HasValue ?
                 new ObjectParameter("RCode", rCode) :
                 new ObjectParameter("RCode", typeof(int));
-    
+
             var tCodeParameter = tCode.HasValue ?
                 new ObjectParameter("TCode", tCode) :
                 new ObjectParameter("TCode", typeof(int));
-    
+
             var episode_FromParameter = episode_From.HasValue ?
                 new ObjectParameter("Episode_From", episode_From) :
                 new ObjectParameter("Episode_From", typeof(int));
-    
+
             var episode_ToParameter = episode_To.HasValue ?
                 new ObjectParameter("Episode_To", episode_To) :
                 new ObjectParameter("Episode_To", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<Nullable<int>>("USP_Validate_Acq_Right_Title_With_Syn_On_Edit", rCodeParameter, tCodeParameter, episode_FromParameter, episode_ToParameter);
         }
-    
+
         public virtual ObjectResult<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result> USP_GET_DATA_FOR_APPROVED_TITLES_Buyback(string title_Codes, string platform_Codes, string platform_Type, string region_Type, string subtitling_Type, string dubbing_Type, Nullable<int> syn_Deal_Code)
         {
             var title_CodesParameter = title_Codes != null ?
                 new ObjectParameter("Title_Codes", title_Codes) :
                 new ObjectParameter("Title_Codes", typeof(string));
-    
+
             var platform_CodesParameter = platform_Codes != null ?
                 new ObjectParameter("Platform_Codes", platform_Codes) :
                 new ObjectParameter("Platform_Codes", typeof(string));
-    
+
             var platform_TypeParameter = platform_Type != null ?
                 new ObjectParameter("Platform_Type", platform_Type) :
                 new ObjectParameter("Platform_Type", typeof(string));
-    
+
             var region_TypeParameter = region_Type != null ?
                 new ObjectParameter("Region_Type", region_Type) :
                 new ObjectParameter("Region_Type", typeof(string));
-    
+
             var subtitling_TypeParameter = subtitling_Type != null ?
                 new ObjectParameter("Subtitling_Type", subtitling_Type) :
                 new ObjectParameter("Subtitling_Type", typeof(string));
-    
+
             var dubbing_TypeParameter = dubbing_Type != null ?
                 new ObjectParameter("Dubbing_Type", dubbing_Type) :
                 new ObjectParameter("Dubbing_Type", typeof(string));
-    
+
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_GET_DATA_FOR_APPROVED_TITLES_Buyback_Result>("USP_GET_DATA_FOR_APPROVED_TITLES_Buyback", title_CodesParameter, platform_CodesParameter, platform_TypeParameter, region_TypeParameter, subtitling_TypeParameter, dubbing_TypeParameter, syn_Deal_CodeParameter);
         }
-    
+
         public virtual ObjectResult<string> USP_Get_Mapping_Countries_Buyback(Nullable<int> syn_Deal_Right_Code)
         {
             var syn_Deal_Right_CodeParameter = syn_Deal_Right_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Right_Code", syn_Deal_Right_Code) :
                 new ObjectParameter("Syn_Deal_Right_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USP_Get_Mapping_Countries_Buyback", syn_Deal_Right_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result> USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback(string acq_Deal_Rights_Codes, string selected_SubTitling_Language_Codes, string selected_Dubbing_Language_Codes)
         {
             var acq_Deal_Rights_CodesParameter = acq_Deal_Rights_Codes != null ?
                 new ObjectParameter("Acq_Deal_Rights_Codes", acq_Deal_Rights_Codes) :
                 new ObjectParameter("Acq_Deal_Rights_Codes", typeof(string));
-    
+
             var selected_SubTitling_Language_CodesParameter = selected_SubTitling_Language_Codes != null ?
                 new ObjectParameter("Selected_SubTitling_Language_Codes", selected_SubTitling_Language_Codes) :
                 new ObjectParameter("Selected_SubTitling_Language_Codes", typeof(string));
-    
+
             var selected_Dubbing_Language_CodesParameter = selected_Dubbing_Language_Codes != null ?
                 new ObjectParameter("Selected_Dubbing_Language_Codes", selected_Dubbing_Language_Codes) :
                 new ObjectParameter("Selected_Dubbing_Language_Codes", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result>("USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback", acq_Deal_Rights_CodesParameter, selected_SubTitling_Language_CodesParameter, selected_Dubbing_Language_CodesParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Dashboard_Detail_Material_Type_Result> USP_Get_Dashboard_Detail_Material_Type(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
         {
             var dashboardTypeParameter = dashboardType != null ?
                 new ObjectParameter("DashboardType", dashboardType) :
                 new ObjectParameter("DashboardType", typeof(string));
-    
+
             var searchForParameter = searchFor != null ?
                 new ObjectParameter("SearchFor", searchFor) :
                 new ObjectParameter("SearchFor", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var dashboardDaysParameter = dashboardDays.HasValue ?
                 new ObjectParameter("DashboardDays", dashboardDays) :
                 new ObjectParameter("DashboardDays", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Material_Type_Result>("USP_Get_Dashboard_Detail_Material_Type", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Dashboard_Detail_Payment_Term_Result> USP_Get_Dashboard_Detail_Payment_Term(string dashboardType, string searchFor, Nullable<int> user_Code, Nullable<int> dashboardDays)
         {
             var dashboardTypeParameter = dashboardType != null ?
                 new ObjectParameter("DashboardType", dashboardType) :
                 new ObjectParameter("DashboardType", typeof(string));
-    
+
             var searchForParameter = searchFor != null ?
                 new ObjectParameter("SearchFor", searchFor) :
                 new ObjectParameter("SearchFor", typeof(string));
-    
+
             var user_CodeParameter = user_Code.HasValue ?
                 new ObjectParameter("User_Code", user_Code) :
                 new ObjectParameter("User_Code", typeof(int));
-    
+
             var dashboardDaysParameter = dashboardDays.HasValue ?
                 new ObjectParameter("DashboardDays", dashboardDays) :
                 new ObjectParameter("DashboardDays", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Dashboard_Detail_Payment_Term_Result>("USP_Get_Dashboard_Detail_Payment_Term", dashboardTypeParameter, searchForParameter, user_CodeParameter, dashboardDaysParameter);
         }
-    
+
         public virtual ObjectResult<USP_Acq_Deal_Digital_List_Result> USP_Acq_Deal_Digital_List(Nullable<int> deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("pageNo", pageNo) :
                 new ObjectParameter("pageNo", typeof(int));
-    
+
             var pagesizeParameter = pagesize.HasValue ?
                 new ObjectParameter("pagesize", pagesize) :
                 new ObjectParameter("pagesize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Deal_Digital_List_Result>("USP_Acq_Deal_Digital_List", deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Acq_Digital_Tab_Result> USP_Acq_Digital_Tab(Nullable<int> digital_Tab_Code)
         {
             var digital_Tab_CodeParameter = digital_Tab_Code.HasValue ?
                 new ObjectParameter("Digital_Tab_Code", digital_Tab_Code) :
                 new ObjectParameter("Digital_Tab_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Acq_Digital_Tab_Result>("USP_Acq_Digital_Tab", digital_Tab_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_For_Acq_Digital_Result> USP_Get_Title_For_Acq_Digital(Nullable<int> aCQ_DEAL_CODE, Nullable<int> title_Code)
         {
             var aCQ_DEAL_CODEParameter = aCQ_DEAL_CODE.HasValue ?
                 new ObjectParameter("ACQ_DEAL_CODE", aCQ_DEAL_CODE) :
                 new ObjectParameter("ACQ_DEAL_CODE", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("title_Code", title_Code) :
                 new ObjectParameter("title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Acq_Digital_Result>("USP_Get_Title_For_Acq_Digital", aCQ_DEAL_CODEParameter, title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Digital_Create_Table_Result> USP_Digital_Create_Table(Nullable<int> tabCode, Nullable<int> acq_Deal_Code, string title_Code, string view)
         {
             var tabCodeParameter = tabCode.HasValue ?
                 new ObjectParameter("tabCode", tabCode) :
                 new ObjectParameter("tabCode", typeof(int));
-    
+
             var acq_Deal_CodeParameter = acq_Deal_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Code", acq_Deal_Code) :
                 new ObjectParameter("Acq_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var viewParameter = view != null ?
                 new ObjectParameter("View", view) :
                 new ObjectParameter("View", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Digital_Create_Table_Result>("USP_Digital_Create_Table", tabCodeParameter, acq_Deal_CodeParameter, title_CodeParameter, viewParameter);
         }
-    
+
         public virtual int USP_Delete_Acq_Digital(Nullable<int> digitalCode)
         {
             var digitalCodeParameter = digitalCode.HasValue ?
                 new ObjectParameter("DigitalCode", digitalCode) :
                 new ObjectParameter("DigitalCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Acq_Digital", digitalCodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Acq_Deal_Digital_Edit_Result> USP_Get_Acq_Deal_Digital_Edit(Nullable<int> acq_Deal_Digital_Code, Nullable<int> row_Num, string tab_SM)
         {
             var acq_Deal_Digital_CodeParameter = acq_Deal_Digital_Code.HasValue ?
                 new ObjectParameter("Acq_Deal_Digital_Code", acq_Deal_Digital_Code) :
                 new ObjectParameter("Acq_Deal_Digital_Code", typeof(int));
-    
+
             var row_NumParameter = row_Num.HasValue ?
                 new ObjectParameter("Row_Num", row_Num) :
                 new ObjectParameter("Row_Num", typeof(int));
-    
+
             var tab_SMParameter = tab_SM != null ?
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Acq_Deal_Digital_Edit_Result>("USP_Get_Acq_Deal_Digital_Edit", acq_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetBookingSheetList_Result> USPAL_GetBookingSheetList()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingSheetList_Result>("USPAL_GetBookingSheetList");
         }
-    
+
         public virtual ObjectResult<USPAL_GetReCommendationList_Result> USPAL_GetReCommendationList()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetReCommendationList_Result>("USPAL_GetReCommendationList");
         }
-    
+
         public virtual ObjectResult<string> USPAL_Title_Content_Gen_From_Title(Nullable<int> titleCode)
         {
             var titleCodeParameter = titleCode.HasValue ?
                 new ObjectParameter("TitleCode", titleCode) :
                 new ObjectParameter("TitleCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("USPAL_Title_Content_Gen_From_Title", titleCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPGet_DDLValues_For_ExtendedColumns_Result> USPGet_DDLValues_For_ExtendedColumns(Nullable<int> extendedColumnsCode)
         {
             var extendedColumnsCodeParameter = extendedColumnsCode.HasValue ?
                 new ObjectParameter("ExtendedColumnsCode", extendedColumnsCode) :
                 new ObjectParameter("ExtendedColumnsCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPGet_DDLValues_For_ExtendedColumns_Result>("USPGet_DDLValues_For_ExtendedColumns", extendedColumnsCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet(string loadsheetMonth, Nullable<int> loadSheetCode)
         {
             var loadsheetMonthParameter = loadsheetMonth != null ?
                 new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
                 new ObjectParameter("LoadsheetMonth", typeof(string));
-    
+
             var loadSheetCodeParameter = loadSheetCode.HasValue ?
                 new ObjectParameter("LoadSheetCode", loadSheetCode) :
                 new ObjectParameter("LoadSheetCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet", loadsheetMonthParameter, loadSheetCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetLoadsheetList_Result> USPAL_GetLoadsheetList()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetLoadsheetList_Result>("USPAL_GetLoadsheetList");
         }
-    
+
         public virtual ObjectResult<USPAL_GetBookingsheetDataForLoadsheet_Result> USPAL_GetBookingsheetDataForLoadsheet1(string loadsheetMonth, Nullable<int> loadSheetCode)
         {
             var loadsheetMonthParameter = loadsheetMonth != null ?
                 new ObjectParameter("LoadsheetMonth", loadsheetMonth) :
                 new ObjectParameter("LoadsheetMonth", typeof(string));
-    
+
             var loadSheetCodeParameter = loadSheetCode.HasValue ?
                 new ObjectParameter("LoadSheetCode", loadSheetCode) :
                 new ObjectParameter("LoadSheetCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetBookingsheetDataForLoadsheet_Result>("USPAL_GetBookingsheetDataForLoadsheet1", loadsheetMonthParameter, loadSheetCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetPurchaseOrderList_Result> USPAL_GetPurchaseOrderList(Nullable<int> usersCode)
         {
             var usersCodeParameter = usersCode.HasValue ?
                 new ObjectParameter("UsersCode", usersCode) :
                 new ObjectParameter("UsersCode", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetPurchaseOrderList_Result>("USPAL_GetPurchaseOrderList", usersCodeParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetDeliveryTrackingListMovies_Result> USPAL_GetDeliveryTrackingListMovies(Nullable<int> client, string cycle, Nullable<int> aL_Lab_Code, Nullable<int> distributor, string display)
         {
             var clientParameter = client.HasValue ?
                 new ObjectParameter("Client", client) :
                 new ObjectParameter("Client", typeof(int));
-    
+
             var cycleParameter = cycle != null ?
                 new ObjectParameter("Cycle", cycle) :
                 new ObjectParameter("Cycle", typeof(string));
-    
+
             var aL_Lab_CodeParameter = aL_Lab_Code.HasValue ?
                 new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
                 new ObjectParameter("AL_Lab_Code", typeof(int));
-    
+
             var distributorParameter = distributor.HasValue ?
                 new ObjectParameter("Distributor", distributor) :
                 new ObjectParameter("Distributor", typeof(int));
-    
+
             var displayParameter = display != null ?
                 new ObjectParameter("Display", display) :
                 new ObjectParameter("Display", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingListMovies_Result>("USPAL_GetDeliveryTrackingListMovies", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetDeliveryTrackingList_Result> USPAL_GetDeliveryTrackingList(string client, string cycle, string aL_Lab_Code, string distributor, string display, string tabName, string includeHoldover)
         {
             var clientParameter = client != null ?
                 new ObjectParameter("Client", client) :
                 new ObjectParameter("Client", typeof(string));
-    
+
             var cycleParameter = cycle != null ?
                 new ObjectParameter("Cycle", cycle) :
                 new ObjectParameter("Cycle", typeof(string));
-    
+
             var aL_Lab_CodeParameter = aL_Lab_Code != null ?
                 new ObjectParameter("AL_Lab_Code", aL_Lab_Code) :
                 new ObjectParameter("AL_Lab_Code", typeof(string));
-    
+
             var distributorParameter = distributor != null ?
                 new ObjectParameter("Distributor", distributor) :
                 new ObjectParameter("Distributor", typeof(string));
-    
+
             var displayParameter = display != null ?
                 new ObjectParameter("Display", display) :
                 new ObjectParameter("Display", typeof(string));
-    
+
             var tabNameParameter = tabName != null ?
                 new ObjectParameter("TabName", tabName) :
                 new ObjectParameter("TabName", typeof(string));
-    
+
             var includeHoldoverParameter = includeHoldover != null ?
                 new ObjectParameter("IncludeHoldover", includeHoldover) :
                 new ObjectParameter("IncludeHoldover", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetDeliveryTrackingList_Result>("USPAL_GetDeliveryTrackingList", clientParameter, cycleParameter, aL_Lab_CodeParameter, distributorParameter, displayParameter, tabNameParameter, includeHoldoverParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetRevisionHistoryForLoadsheet_Result> USPAL_GetRevisionHistoryForLoadsheet(Nullable<int> record_Code)
         {
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForLoadsheet_Result>("USPAL_GetRevisionHistoryForLoadsheet", record_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USPAL_GetRevisionHistoryForModule_Result> USPAL_GetRevisionHistoryForModule(Nullable<int> record_Code, Nullable<int> module_Code)
         {
             var record_CodeParameter = record_Code.HasValue ?
                 new ObjectParameter("Record_Code", record_Code) :
                 new ObjectParameter("Record_Code", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USPAL_GetRevisionHistoryForModule_Result>("USPAL_GetRevisionHistoryForModule", record_CodeParameter, module_CodeParameter);
         }
-    
+
         public virtual int USP_Delete_Syn_Digital(Nullable<int> digital_Code)
         {
             var digital_CodeParameter = digital_Code.HasValue ?
                 new ObjectParameter("Digital_Code", digital_Code) :
                 new ObjectParameter("Digital_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_Delete_Syn_Digital", digital_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Digital_Config_Result> USP_Get_Digital_Config(Nullable<int> digital_Tab_Code)
         {
             var digital_Tab_CodeParameter = digital_Tab_Code.HasValue ?
                 new ObjectParameter("Digital_Tab_Code", digital_Tab_Code) :
                 new ObjectParameter("Digital_Tab_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Digital_Config_Result>("USP_Get_Digital_Config", digital_Tab_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Title_For_Syn_Digital_Result> USP_Get_Title_For_Syn_Digital(Nullable<int> syn_Deal_Code, Nullable<int> title_Code)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code.HasValue ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Title_For_Syn_Digital_Result>("USP_Get_Title_For_Syn_Digital", syn_Deal_CodeParameter, title_CodeParameter);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Deal_Digital_List_Result> USP_Syn_Deal_Digital_List(Nullable<int> syn_Deal_Code, string title_Code, Nullable<int> pageNo, Nullable<int> pagesize, ObjectParameter recordCount)
         {
             var syn_Deal_CodeParameter = syn_Deal_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Code", syn_Deal_Code) :
                 new ObjectParameter("Syn_Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var pageNoParameter = pageNo.HasValue ?
                 new ObjectParameter("pageNo", pageNo) :
                 new ObjectParameter("pageNo", typeof(int));
-    
+
             var pagesizeParameter = pagesize.HasValue ?
                 new ObjectParameter("pagesize", pagesize) :
                 new ObjectParameter("pagesize", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Digital_List_Result>("USP_Syn_Deal_Digital_List", syn_Deal_CodeParameter, title_CodeParameter, pageNoParameter, pagesizeParameter, recordCount);
         }
-    
+
         public virtual ObjectResult<USP_Syn_Deal_Digital_Details_Data_Result> USP_Syn_Deal_Digital_Details_Data(Nullable<int> tabCode, Nullable<int> syn_Deal_Digital_Code, string view)
         {
             var tabCodeParameter = tabCode.HasValue ?
                 new ObjectParameter("TabCode", tabCode) :
                 new ObjectParameter("TabCode", typeof(int));
-    
+
             var syn_Deal_Digital_CodeParameter = syn_Deal_Digital_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Digital_Code", syn_Deal_Digital_Code) :
                 new ObjectParameter("Syn_Deal_Digital_Code", typeof(int));
-    
+
             var viewParameter = view != null ?
                 new ObjectParameter("View", view) :
                 new ObjectParameter("View", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Syn_Deal_Digital_Details_Data_Result>("USP_Syn_Deal_Digital_Details_Data", tabCodeParameter, syn_Deal_Digital_CodeParameter, viewParameter);
         }
-    
+
         public virtual ObjectResult<USP_Get_Syn_Deal_Digital_Edit_Result> USP_Get_Syn_Deal_Digital_Edit(Nullable<int> syn_Deal_Digital_Code, Nullable<int> row_Num, string tab_SM)
         {
             var syn_Deal_Digital_CodeParameter = syn_Deal_Digital_Code.HasValue ?
                 new ObjectParameter("Syn_Deal_Digital_Code", syn_Deal_Digital_Code) :
                 new ObjectParameter("Syn_Deal_Digital_Code", typeof(int));
-    
+
             var row_NumParameter = row_Num.HasValue ?
                 new ObjectParameter("Row_Num", row_Num) :
                 new ObjectParameter("Row_Num", typeof(int));
-    
+
             var tab_SMParameter = tab_SM != null ?
                 new ObjectParameter("Tab_SM", tab_SM) :
                 new ObjectParameter("Tab_SM", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Get_Syn_Deal_Digital_Edit_Result>("USP_Get_Syn_Deal_Digital_Edit", syn_Deal_Digital_CodeParameter, row_NumParameter, tab_SMParameter);
         }
-    
+
         public virtual ObjectResult<USP_Title_PosterList_Result> USP_Title_PosterList(string title_Code, string title_language_Code, string title_Star_Cast, string title_Genre_Code, string title_Type, string poster_Status)
         {
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var title_language_CodeParameter = title_language_Code != null ?
                 new ObjectParameter("Title_language_Code", title_language_Code) :
                 new ObjectParameter("Title_language_Code", typeof(string));
-    
+
             var title_Star_CastParameter = title_Star_Cast != null ?
                 new ObjectParameter("Title_Star_Cast", title_Star_Cast) :
                 new ObjectParameter("Title_Star_Cast", typeof(string));
-    
+
             var title_Genre_CodeParameter = title_Genre_Code != null ?
                 new ObjectParameter("Title_Genre_Code", title_Genre_Code) :
                 new ObjectParameter("Title_Genre_Code", typeof(string));
-    
+
             var title_TypeParameter = title_Type != null ?
                 new ObjectParameter("Title_Type", title_Type) :
                 new ObjectParameter("Title_Type", typeof(string));
-    
+
             var poster_StatusParameter = poster_Status != null ?
                 new ObjectParameter("Poster_Status", poster_Status) :
                 new ObjectParameter("Poster_Status", typeof(string));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Title_PosterList_Result>("USP_Title_PosterList", title_CodeParameter, title_language_CodeParameter, title_Star_CastParameter, title_Genre_CodeParameter, title_TypeParameter, poster_StatusParameter);
         }
-    
+
         public virtual ObjectResult<USP_Validate_LP_Result> USP_Validate_LP(Nullable<int> deal_Code, string title_Code, Nullable<int> epsFrom, Nullable<int> epsTo, Nullable<int> module_Code)
         {
             var deal_CodeParameter = deal_Code.HasValue ?
                 new ObjectParameter("Deal_Code", deal_Code) :
                 new ObjectParameter("Deal_Code", typeof(int));
-    
+
             var title_CodeParameter = title_Code != null ?
                 new ObjectParameter("Title_Code", title_Code) :
                 new ObjectParameter("Title_Code", typeof(string));
-    
+
             var epsFromParameter = epsFrom.HasValue ?
                 new ObjectParameter("EpsFrom", epsFrom) :
                 new ObjectParameter("EpsFrom", typeof(int));
-    
+
             var epsToParameter = epsTo.HasValue ?
                 new ObjectParameter("EpsTo", epsTo) :
                 new ObjectParameter("EpsTo", typeof(int));
-    
+
             var module_CodeParameter = module_Code.HasValue ?
                 new ObjectParameter("Module_Code", module_Code) :
                 new ObjectParameter("Module_Code", typeof(int));
-    
+
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<USP_Validate_LP_Result>("USP_Validate_LP", deal_CodeParameter, title_CodeParameter, epsFromParameter, epsToParameter, module_CodeParameter);
         }
     }
