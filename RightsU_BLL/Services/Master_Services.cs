@@ -7392,13 +7392,13 @@ namespace RightsU_BLL
         }
 
         public override bool Validate(Supplementary objToValidate, out dynamic resultSet)
-        {            
+        {
             return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateUpdate(Supplementary objToValidate, out dynamic resultSet)
         {
-            throw new NotImplementedException();
+            return ValidateDuplicate(objToValidate, out resultSet);
         }
 
         public override bool ValidateDelete(Supplementary objToValidate, out dynamic resultSet)
@@ -7461,7 +7461,7 @@ namespace RightsU_BLL
 
         private bool ValidateDuplicate(Supplementary_Data objToValidate, out dynamic resultSet)
         {
-            if (SearchFor(s => s.Data_Description == objToValidate.Data_Description && s.Supplementary_Type==objToValidate.Supplementary_Type && s.Supplementary_Data_Code != objToValidate.Supplementary_Data_Code).Count() > 0)
+            if (SearchFor(s => s.Data_Description == objToValidate.Data_Description && s.Supplementary_Type == objToValidate.Supplementary_Type && s.Supplementary_Data_Code != objToValidate.Supplementary_Data_Code).Count() > 0)
             {
                 resultSet = "Supplementary Data already exists";
                 return false;
@@ -7535,7 +7535,7 @@ namespace RightsU_BLL
         }
     }
 
-    public class Supplementary_Config_Service: BusinessLogic<Supplementary_Config>
+    public class Supplementary_Config_Service : BusinessLogic<Supplementary_Config>
     {
         private readonly Supplementary_Config_Repository obj_Repository;
 
