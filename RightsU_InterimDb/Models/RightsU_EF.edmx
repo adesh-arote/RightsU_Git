@@ -5379,6 +5379,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Remark" Type="nvarchar" MaxLength="4000" />
           <Property Name="Episode_End_To" Type="int" />
           <Property Name="Episode_From" Type="int" />
+          <Property Name="Closing_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Closed_Date" Type="datetime" />
+          <Property Name="Opening_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Opening_Date" Type="datetime" />
+          <Property Name="Deal_Closed_By" Type="int" />
+          <Property Name="Deal_Closed_On" Type="datetime" />
+          <Property Name="Deal_Opened_By" Type="int" />
+          <Property Name="Deal_Opened_On" Type="datetime" />
+          <Property Name="Is_Reopen" Type="varchar" MaxLength="5" />
+          <Property Name="Movie_Opening_Start_Date" Type="datetime" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -23401,17 +23411,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Supplementary" EntityType="RightsU_NeoModel.Supplementary" />
-          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
           <EntitySet Name="Supplementary_Data" EntityType="RightsU_NeoModel.Supplementary_Data" />
           <EntitySet Name="Supplementary_Tab" EntityType="RightsU_NeoModel.Supplementary_Tab" />
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
-            <End Role="Supplementary" EntitySet="Supplementary" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
-            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
           <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -26343,6 +26344,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Syn_Deal_Movie" ToRole="Title" />
           <Property Type="Int32" Name="Episode_From" />
           <Property Type="Int32" Name="Episode_End_To" />
+          <Property Name="Closing_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Closed_Date" Type="DateTime" Precision="3" />
+          <Property Name="Opening_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Opening_Date" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Closed_By" Type="Int32" />
+          <Property Name="Deal_Closed_On" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Opened_By" Type="Int32" />
+          <Property Name="Deal_Opened_On" Type="DateTime" Precision="3" />
+          <Property Name="Is_Reopen" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Movie_Opening_Start_Date" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -43476,6 +43487,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal_Movie">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Movie">
               <MappingFragment StoreEntitySet="Syn_Deal_Movie">
+                <ScalarProperty Name="Movie_Opening_Start_Date" ColumnName="Movie_Opening_Start_Date" />
+                <ScalarProperty Name="Is_Reopen" ColumnName="Is_Reopen" />
+                <ScalarProperty Name="Deal_Opened_On" ColumnName="Deal_Opened_On" />
+                <ScalarProperty Name="Deal_Opened_By" ColumnName="Deal_Opened_By" />
+                <ScalarProperty Name="Deal_Closed_On" ColumnName="Deal_Closed_On" />
+                <ScalarProperty Name="Deal_Closed_By" ColumnName="Deal_Closed_By" />
+                <ScalarProperty Name="Movie_Opening_Date" ColumnName="Movie_Opening_Date" />
+                <ScalarProperty Name="Opening_Remarks" ColumnName="Opening_Remarks" />
+                <ScalarProperty Name="Movie_Closed_Date" ColumnName="Movie_Closed_Date" />
+                <ScalarProperty Name="Closing_Remarks" ColumnName="Closing_Remarks" />
                 <ScalarProperty Name="Episode_End_To" ColumnName="Episode_End_To" />
                 <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
                 <ScalarProperty Name="Syn_Deal_Movie_Code" ColumnName="Syn_Deal_Movie_Code" />
@@ -51804,7 +51825,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

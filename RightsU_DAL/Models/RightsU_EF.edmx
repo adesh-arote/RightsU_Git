@@ -16494,602 +16494,602 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Workflow_Role" EntityType="Self.Workflow_Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Acq_Deal_Mass_Territory_Update_Details" EntityType="Self.Acq_Deal_Mass_Territory_Update_Details" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [Acq_Deal_Mass_Territory_Update_Details].[Acq_Deal_Mass_Update_Det_Code] AS [Acq_Deal_Mass_Update_Det_Code], 
-    [Acq_Deal_Mass_Territory_Update_Details].[Acq_Deal_Mass_Update_Code] AS [Acq_Deal_Mass_Update_Code], 
-    [Acq_Deal_Mass_Territory_Update_Details].[Territory_Code] AS [Territory_Code]
-    FROM [dbo].[Acq_Deal_Mass_Territory_Update_Details] AS [Acq_Deal_Mass_Territory_Update_Details]
-	</DefiningQuery>
+              SELECT
+              [Acq_Deal_Mass_Territory_Update_Details].[Acq_Deal_Mass_Update_Det_Code] AS [Acq_Deal_Mass_Update_Det_Code],
+              [Acq_Deal_Mass_Territory_Update_Details].[Acq_Deal_Mass_Update_Code] AS [Acq_Deal_Mass_Update_Code],
+              [Acq_Deal_Mass_Territory_Update_Details].[Territory_Code] AS [Territory_Code]
+              FROM [dbo].[Acq_Deal_Mass_Territory_Update_Details] AS [Acq_Deal_Mass_Territory_Update_Details]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="BV_HouseId_Data_Temp" EntityType="Self.BV_HouseId_Data_Temp" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [BV_HouseId_Data_Temp].[BV_HouseId_Data_Code] AS [BV_HouseId_Data_Code], 
-    [BV_HouseId_Data_Temp].[House_Ids] AS [House_Ids], 
-    [BV_HouseId_Data_Temp].[BV_Title] AS [BV_Title], 
-    [BV_HouseId_Data_Temp].[No_Of_Episode] AS [No_Of_Episode], 
-    [BV_HouseId_Data_Temp].[House_Type] AS [House_Type], 
-    [BV_HouseId_Data_Temp].[Mapped_Deal_Title_Code] AS [Mapped_Deal_Title_Code], 
-    [BV_HouseId_Data_Temp].[Is_Mapped] AS [Is_Mapped], 
-    [BV_HouseId_Data_Temp].[Parent_BV_HouseId_Data_Code] AS [Parent_BV_HouseId_Data_Code], 
-    [BV_HouseId_Data_Temp].[Upload_File_Code] AS [Upload_File_Code]
-    FROM [dbo].[BV_HouseId_Data_Temp] AS [BV_HouseId_Data_Temp]
-	</DefiningQuery>
+              SELECT
+              [BV_HouseId_Data_Temp].[BV_HouseId_Data_Code] AS [BV_HouseId_Data_Code],
+              [BV_HouseId_Data_Temp].[House_Ids] AS [House_Ids],
+              [BV_HouseId_Data_Temp].[BV_Title] AS [BV_Title],
+              [BV_HouseId_Data_Temp].[No_Of_Episode] AS [No_Of_Episode],
+              [BV_HouseId_Data_Temp].[House_Type] AS [House_Type],
+              [BV_HouseId_Data_Temp].[Mapped_Deal_Title_Code] AS [Mapped_Deal_Title_Code],
+              [BV_HouseId_Data_Temp].[Is_Mapped] AS [Is_Mapped],
+              [BV_HouseId_Data_Temp].[Parent_BV_HouseId_Data_Code] AS [Parent_BV_HouseId_Data_Code],
+              [BV_HouseId_Data_Temp].[Upload_File_Code] AS [Upload_File_Code]
+              FROM [dbo].[BV_HouseId_Data_Temp] AS [BV_HouseId_Data_Temp]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="ChannelWiseConsumption_Report" EntityType="Self.ChannelWiseConsumption_Report" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [ChannelWiseConsumption_Report].[Deal_No] AS [Deal_No], 
-    [ChannelWiseConsumption_Report].[English_Title] AS [English_Title], 
-    [ChannelWiseConsumption_Report].[Rights_Period] AS [Rights_Period], 
-    [ChannelWiseConsumption_Report].[Deal_Movie_Code] AS [Deal_Movie_Code], 
-    [ChannelWiseConsumption_Report].[Channel_Code] AS [Channel_Code], 
-    [ChannelWiseConsumption_Report].[ChannelBeam] AS [ChannelBeam], 
-    [ChannelWiseConsumption_Report].[Channels] AS [Channels], 
-    [ChannelWiseConsumption_Report].[Run_Definition] AS [Run_Definition], 
-    [ChannelWiseConsumption_Report].[Runs] AS [Runs], 
-    [ChannelWiseConsumption_Report].[Balance] AS [Balance], 
-    [ChannelWiseConsumption_Report].[ParameterName] AS [ParameterName], 
-    [ChannelWiseConsumption_Report].[ParameterValue] AS [ParameterValue], 
-    [ChannelWiseConsumption_Report].[Id] AS [Id]
-    FROM [dbo].[ChannelWiseConsumption_Report] AS [ChannelWiseConsumption_Report]
-	</DefiningQuery>
+              SELECT
+              [ChannelWiseConsumption_Report].[Deal_No] AS [Deal_No],
+              [ChannelWiseConsumption_Report].[English_Title] AS [English_Title],
+              [ChannelWiseConsumption_Report].[Rights_Period] AS [Rights_Period],
+              [ChannelWiseConsumption_Report].[Deal_Movie_Code] AS [Deal_Movie_Code],
+              [ChannelWiseConsumption_Report].[Channel_Code] AS [Channel_Code],
+              [ChannelWiseConsumption_Report].[ChannelBeam] AS [ChannelBeam],
+              [ChannelWiseConsumption_Report].[Channels] AS [Channels],
+              [ChannelWiseConsumption_Report].[Run_Definition] AS [Run_Definition],
+              [ChannelWiseConsumption_Report].[Runs] AS [Runs],
+              [ChannelWiseConsumption_Report].[Balance] AS [Balance],
+              [ChannelWiseConsumption_Report].[ParameterName] AS [ParameterName],
+              [ChannelWiseConsumption_Report].[ParameterValue] AS [ParameterValue],
+              [ChannelWiseConsumption_Report].[Id] AS [Id]
+              FROM [dbo].[ChannelWiseConsumption_Report] AS [ChannelWiseConsumption_Report]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="DM_AQDeal" EntityType="Self.DM_AQDeal" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [DM_AQDeal].[Deal Number] AS [Deal Number], 
-    [DM_AQDeal].[Deal Signed_ Date] AS [Deal Signed_ Date], 
-    [DM_AQDeal].[Deal Description] AS [Deal Description], 
-    [DM_AQDeal].[Status] AS [Status], 
-    [DM_AQDeal].[Deal type] AS [Deal type], 
-    [DM_AQDeal].[Link Sub Deal to Master Deal] AS [Link Sub Deal to Master Deal], 
-    [DM_AQDeal].[Mode of Acquisition] AS [Mode of Acquisition], 
-    [DM_AQDeal].[Deal For] AS [Deal For], 
-    [DM_AQDeal].[Currency] AS [Currency], 
-    [DM_AQDeal].[Licensee / Assignee] AS [Licensee / Assignee], 
-    [DM_AQDeal].[Licensor/Assignor/Producer] AS [Licensor/Assignor/Producer], 
-    [DM_AQDeal].[Category] AS [Category], 
-    [DM_AQDeal].[Reference No] AS [Reference No], 
-    [DM_AQDeal].[Title] AS [Title], 
-    [DM_AQDeal].[Remarks] AS [Remarks], 
-    [DM_AQDeal].[1] AS [1], 
-    [DM_AQDeal].[18] AS [18], 
-    [DM_AQDeal].[19] AS [19], 
-    [DM_AQDeal].[84] AS [84], 
-    [DM_AQDeal].[85] AS [85], 
-    [DM_AQDeal].[21] AS [21], 
-    [DM_AQDeal].[22] AS [22], 
-    [DM_AQDeal].[23] AS [23], 
-    [DM_AQDeal].[24] AS [24], 
-    [DM_AQDeal].[86] AS [86], 
-    [DM_AQDeal].[87] AS [87], 
-    [DM_AQDeal].[88] AS [88], 
-    [DM_AQDeal].[89] AS [89], 
-    [DM_AQDeal].[90] AS [90], 
-    [DM_AQDeal].[91] AS [91], 
-    [DM_AQDeal].[28] AS [28], 
-    [DM_AQDeal].[92] AS [92], 
-    [DM_AQDeal].[93] AS [93], 
-    [DM_AQDeal].[94] AS [94], 
-    [DM_AQDeal].[95] AS [95], 
-    [DM_AQDeal].[96] AS [96], 
-    [DM_AQDeal].[97] AS [97], 
-    [DM_AQDeal].[98] AS [98], 
-    [DM_AQDeal].[99] AS [99], 
-    [DM_AQDeal].[100] AS [100], 
-    [DM_AQDeal].[101] AS [101], 
-    [DM_AQDeal].[33] AS [33], 
-    [DM_AQDeal].[34] AS [34], 
-    [DM_AQDeal].[35] AS [35], 
-    [DM_AQDeal].[36] AS [36], 
-    [DM_AQDeal].[37] AS [37], 
-    [DM_AQDeal].[38] AS [38], 
-    [DM_AQDeal].[6] AS [6], 
-    [DM_AQDeal].[102] AS [102], 
-    [DM_AQDeal].[166] AS [166], 
-    [DM_AQDeal].[167] AS [167], 
-    [DM_AQDeal].[168] AS [168], 
-    [DM_AQDeal].[169] AS [169], 
-    [DM_AQDeal].[170] AS [170], 
-    [DM_AQDeal].[105] AS [105], 
-    [DM_AQDeal].[171] AS [171], 
-    [DM_AQDeal].[172] AS [172], 
-    [DM_AQDeal].[173] AS [173], 
-    [DM_AQDeal].[174] AS [174], 
-    [DM_AQDeal].[175] AS [175], 
-    [DM_AQDeal].[176] AS [176], 
-    [DM_AQDeal].[177] AS [177], 
-    [DM_AQDeal].[178] AS [178], 
-    [DM_AQDeal].[179] AS [179], 
-    [DM_AQDeal].[180] AS [180], 
-    [DM_AQDeal].[181] AS [181], 
-    [DM_AQDeal].[182] AS [182], 
-    [DM_AQDeal].[183] AS [183], 
-    [DM_AQDeal].[184] AS [184], 
-    [DM_AQDeal].[185] AS [185], 
-    [DM_AQDeal].[186] AS [186], 
-    [DM_AQDeal].[187] AS [187], 
-    [DM_AQDeal].[188] AS [188], 
-    [DM_AQDeal].[189] AS [189], 
-    [DM_AQDeal].[190] AS [190], 
-    [DM_AQDeal].[191] AS [191], 
-    [DM_AQDeal].[192] AS [192], 
-    [DM_AQDeal].[193] AS [193], 
-    [DM_AQDeal].[194] AS [194], 
-    [DM_AQDeal].[195] AS [195], 
-    [DM_AQDeal].[196] AS [196], 
-    [DM_AQDeal].[197] AS [197], 
-    [DM_AQDeal].[198] AS [198], 
-    [DM_AQDeal].[199] AS [199], 
-    [DM_AQDeal].[200] AS [200], 
-    [DM_AQDeal].[201] AS [201], 
-    [DM_AQDeal].[202] AS [202], 
-    [DM_AQDeal].[203] AS [203], 
-    [DM_AQDeal].[117] AS [117], 
-    [DM_AQDeal].[118] AS [118], 
-    [DM_AQDeal].[119] AS [119], 
-    [DM_AQDeal].[120] AS [120], 
-    [DM_AQDeal].[121] AS [121], 
-    [DM_AQDeal].[122] AS [122], 
-    [DM_AQDeal].[204] AS [204], 
-    [DM_AQDeal].[205] AS [205], 
-    [DM_AQDeal].[206] AS [206], 
-    [DM_AQDeal].[207] AS [207], 
-    [DM_AQDeal].[208] AS [208], 
-    [DM_AQDeal].[209] AS [209], 
-    [DM_AQDeal].[210] AS [210], 
-    [DM_AQDeal].[211] AS [211], 
-    [DM_AQDeal].[212] AS [212], 
-    [DM_AQDeal].[213] AS [213], 
-    [DM_AQDeal].[126] AS [126], 
-    [DM_AQDeal].[127] AS [127], 
-    [DM_AQDeal].[128] AS [128], 
-    [DM_AQDeal].[129] AS [129], 
-    [DM_AQDeal].[130] AS [130], 
-    [DM_AQDeal].[131] AS [131], 
-    [DM_AQDeal].[45] AS [45], 
-    [DM_AQDeal].[46] AS [46], 
-    [DM_AQDeal].[47] AS [47], 
-    [DM_AQDeal].[48] AS [48], 
-    [DM_AQDeal].[49] AS [49], 
-    [DM_AQDeal].[50] AS [50], 
-    [DM_AQDeal].[51] AS [51], 
-    [DM_AQDeal].[52] AS [52], 
-    [DM_AQDeal].[53] AS [53], 
-    [DM_AQDeal].[54] AS [54], 
-    [DM_AQDeal].[55] AS [55], 
-    [DM_AQDeal].[56] AS [56], 
-    [DM_AQDeal].[57] AS [57], 
-    [DM_AQDeal].[132] AS [132], 
-    [DM_AQDeal].[133] AS [133], 
-    [DM_AQDeal].[134] AS [134], 
-    [DM_AQDeal].[135] AS [135], 
-    [DM_AQDeal].[136] AS [136], 
-    [DM_AQDeal].[137] AS [137], 
-    [DM_AQDeal].[138] AS [138], 
-    [DM_AQDeal].[139] AS [139], 
-    [DM_AQDeal].[140] AS [140], 
-    [DM_AQDeal].[141] AS [141], 
-    [DM_AQDeal].[142] AS [142], 
-    [DM_AQDeal].[143] AS [143], 
-    [DM_AQDeal].[144] AS [144], 
-    [DM_AQDeal].[145] AS [145], 
-    [DM_AQDeal].[146] AS [146], 
-    [DM_AQDeal].[147] AS [147], 
-    [DM_AQDeal].[148] AS [148], 
-    [DM_AQDeal].[149] AS [149], 
-    [DM_AQDeal].[150] AS [150], 
-    [DM_AQDeal].[151] AS [151], 
-    [DM_AQDeal].[152] AS [152], 
-    [DM_AQDeal].[153] AS [153], 
-    [DM_AQDeal].[154] AS [154], 
-    [DM_AQDeal].[155] AS [155], 
-    [DM_AQDeal].[156] AS [156], 
-    [DM_AQDeal].[157] AS [157], 
-    [DM_AQDeal].[158] AS [158], 
-    [DM_AQDeal].[159] AS [159], 
-    [DM_AQDeal].[160] AS [160], 
-    [DM_AQDeal].[161] AS [161], 
-    [DM_AQDeal].[64] AS [64], 
-    [DM_AQDeal].[65] AS [65], 
-    [DM_AQDeal].[66] AS [66], 
-    [DM_AQDeal].[67] AS [67], 
-    [DM_AQDeal].[68] AS [68], 
-    [DM_AQDeal].[69] AS [69], 
-    [DM_AQDeal].[70] AS [70], 
-    [DM_AQDeal].[71] AS [71], 
-    [DM_AQDeal].[72] AS [72], 
-    [DM_AQDeal].[73] AS [73], 
-    [DM_AQDeal].[74] AS [74], 
-    [DM_AQDeal].[75] AS [75], 
-    [DM_AQDeal].[76] AS [76], 
-    [DM_AQDeal].[77] AS [77], 
-    [DM_AQDeal].[78] AS [78], 
-    [DM_AQDeal].[16] AS [16], 
-    [DM_AQDeal].[214] AS [214], 
-    [DM_AQDeal].[215] AS [215], 
-    [DM_AQDeal].[216] AS [216], 
-    [DM_AQDeal].[217] AS [217], 
-    [DM_AQDeal].[218] AS [218], 
-    [DM_AQDeal].[219] AS [219], 
-    [DM_AQDeal].[165] AS [165], 
-    [DM_AQDeal].[81] AS [81], 
-    [DM_AQDeal].[82] AS [82], 
-    [DM_AQDeal].[83] AS [83], 
-    [DM_AQDeal].[Country] AS [Country], 
-    [DM_AQDeal].[Territory] AS [Territory], 
-    [DM_AQDeal].[Exclusive] AS [Exclusive], 
-    [DM_AQDeal].[Deal Term ] AS [Deal Term ], 
-    [DM_AQDeal].[Tenative Start Date] AS [Tenative Start Date], 
-    [DM_AQDeal].[Start Date] AS [Start Date], 
-    [DM_AQDeal].[End Date] AS [End Date], 
-    [DM_AQDeal].[Original Language Right ] AS [Original Language Right ], 
-    [DM_AQDeal].[Sub Licensing] AS [Sub Licensing], 
-    [DM_AQDeal].[Sub Titling] AS [Sub Titling], 
-    [DM_AQDeal].[Dubbing] AS [Dubbing], 
-    [DM_AQDeal].[Rights for First Refusal Trigger date] AS [Rights for First Refusal Trigger date], 
-    [DM_AQDeal].[Rights Restriction Remarks] AS [Rights Restriction Remarks], 
-    [DM_AQDeal].[Holdback On  Licensee] AS [Holdback On  Licensee], 
-    [DM_AQDeal].[Holdback Date] AS [Holdback Date], 
-    [DM_AQDeal].[Holdback Comments] AS [Holdback Comments], 
-    [DM_AQDeal].[Blackout Start Date] AS [Blackout Start Date], 
-    [DM_AQDeal].[Blackout End Date] AS [Blackout End Date], 
-    [DM_AQDeal].[No# of Runs] AS [No# of Runs], 
-    [DM_AQDeal].[Yearly Runs] AS [Yearly Runs], 
-    [DM_AQDeal].[Rights Rule] AS [Rights Rule], 
-    [DM_AQDeal].[All MSM Channels] AS [All MSM Channels], 
-    [DM_AQDeal].[Shared Rights] AS [Shared Rights], 
-    [DM_AQDeal].[AXN India] AS [AXN India], 
-    [DM_AQDeal].[MIX India] AS [MIX India], 
-    [DM_AQDeal].[MIX International] AS [MIX International], 
-    [DM_AQDeal].[SET India] AS [SET India], 
-    [DM_AQDeal].[SET ME] AS [SET ME], 
-    [DM_AQDeal].[SET HD] AS [SET HD], 
-    [DM_AQDeal].[SET HD US] AS [SET HD US], 
-    [DM_AQDeal].[SET International] AS [SET International], 
-    [DM_AQDeal].[SET Africa] AS [SET Africa], 
-    [DM_AQDeal].[SET HD Canada] AS [SET HD Canada], 
-    [DM_AQDeal].[SET United Kingdom] AS [SET United Kingdom], 
-    [DM_AQDeal].[SET United States] AS [SET United States], 
-    [DM_AQDeal].[SAB India] AS [SAB India], 
-    [DM_AQDeal].[SAB US] AS [SAB US], 
-    [DM_AQDeal].[SAB International] AS [SAB International], 
-    [DM_AQDeal].[SAB United Kingdom] AS [SAB United Kingdom], 
-    [DM_AQDeal].[MAX India] AS [MAX India], 
-    [DM_AQDeal].[MAX Africa] AS [MAX Africa], 
-    [DM_AQDeal].[MAX International] AS [MAX International], 
-    [DM_AQDeal].[MAX Canada] AS [MAX Canada], 
-    [DM_AQDeal].[MAX United Kingdom] AS [MAX United Kingdom], 
-    [DM_AQDeal].[MAX United States] AS [MAX United States], 
-    [DM_AQDeal].[MAX Middle East] AS [MAX Middle East], 
-    [DM_AQDeal].[PIX India] AS [PIX India], 
-    [DM_AQDeal].[PIX HD] AS [PIX HD], 
-    [DM_AQDeal].[Sony Aath] AS [Sony Aath], 
-    [DM_AQDeal].[SIX (On Air)] AS [SIX (On Air)], 
-    [DM_AQDeal].[SIX HD (On Air)] AS [SIX HD (On Air)], 
-    [DM_AQDeal].[MAX 2] AS [MAX 2], 
-    [DM_AQDeal].[Sony Pal] AS [Sony Pal], 
-    [DM_AQDeal].[Restriction Window] AS [Restriction Window], 
-    [DM_AQDeal].[Time Lag (Simulcast)] AS [Time Lag (Simulcast)], 
-    [DM_AQDeal].[IntCode] AS [IntCode]
-    FROM [dbo].[DM_AQDeal] AS [DM_AQDeal]
-	</DefiningQuery>
+              SELECT
+              [DM_AQDeal].[Deal Number] AS [Deal Number],
+              [DM_AQDeal].[Deal Signed_ Date] AS [Deal Signed_ Date],
+              [DM_AQDeal].[Deal Description] AS [Deal Description],
+              [DM_AQDeal].[Status] AS [Status],
+              [DM_AQDeal].[Deal type] AS [Deal type],
+              [DM_AQDeal].[Link Sub Deal to Master Deal] AS [Link Sub Deal to Master Deal],
+              [DM_AQDeal].[Mode of Acquisition] AS [Mode of Acquisition],
+              [DM_AQDeal].[Deal For] AS [Deal For],
+              [DM_AQDeal].[Currency] AS [Currency],
+              [DM_AQDeal].[Licensee / Assignee] AS [Licensee / Assignee],
+              [DM_AQDeal].[Licensor/Assignor/Producer] AS [Licensor/Assignor/Producer],
+              [DM_AQDeal].[Category] AS [Category],
+              [DM_AQDeal].[Reference No] AS [Reference No],
+              [DM_AQDeal].[Title] AS [Title],
+              [DM_AQDeal].[Remarks] AS [Remarks],
+              [DM_AQDeal].[1] AS [1],
+              [DM_AQDeal].[18] AS [18],
+              [DM_AQDeal].[19] AS [19],
+              [DM_AQDeal].[84] AS [84],
+              [DM_AQDeal].[85] AS [85],
+              [DM_AQDeal].[21] AS [21],
+              [DM_AQDeal].[22] AS [22],
+              [DM_AQDeal].[23] AS [23],
+              [DM_AQDeal].[24] AS [24],
+              [DM_AQDeal].[86] AS [86],
+              [DM_AQDeal].[87] AS [87],
+              [DM_AQDeal].[88] AS [88],
+              [DM_AQDeal].[89] AS [89],
+              [DM_AQDeal].[90] AS [90],
+              [DM_AQDeal].[91] AS [91],
+              [DM_AQDeal].[28] AS [28],
+              [DM_AQDeal].[92] AS [92],
+              [DM_AQDeal].[93] AS [93],
+              [DM_AQDeal].[94] AS [94],
+              [DM_AQDeal].[95] AS [95],
+              [DM_AQDeal].[96] AS [96],
+              [DM_AQDeal].[97] AS [97],
+              [DM_AQDeal].[98] AS [98],
+              [DM_AQDeal].[99] AS [99],
+              [DM_AQDeal].[100] AS [100],
+              [DM_AQDeal].[101] AS [101],
+              [DM_AQDeal].[33] AS [33],
+              [DM_AQDeal].[34] AS [34],
+              [DM_AQDeal].[35] AS [35],
+              [DM_AQDeal].[36] AS [36],
+              [DM_AQDeal].[37] AS [37],
+              [DM_AQDeal].[38] AS [38],
+              [DM_AQDeal].[6] AS [6],
+              [DM_AQDeal].[102] AS [102],
+              [DM_AQDeal].[166] AS [166],
+              [DM_AQDeal].[167] AS [167],
+              [DM_AQDeal].[168] AS [168],
+              [DM_AQDeal].[169] AS [169],
+              [DM_AQDeal].[170] AS [170],
+              [DM_AQDeal].[105] AS [105],
+              [DM_AQDeal].[171] AS [171],
+              [DM_AQDeal].[172] AS [172],
+              [DM_AQDeal].[173] AS [173],
+              [DM_AQDeal].[174] AS [174],
+              [DM_AQDeal].[175] AS [175],
+              [DM_AQDeal].[176] AS [176],
+              [DM_AQDeal].[177] AS [177],
+              [DM_AQDeal].[178] AS [178],
+              [DM_AQDeal].[179] AS [179],
+              [DM_AQDeal].[180] AS [180],
+              [DM_AQDeal].[181] AS [181],
+              [DM_AQDeal].[182] AS [182],
+              [DM_AQDeal].[183] AS [183],
+              [DM_AQDeal].[184] AS [184],
+              [DM_AQDeal].[185] AS [185],
+              [DM_AQDeal].[186] AS [186],
+              [DM_AQDeal].[187] AS [187],
+              [DM_AQDeal].[188] AS [188],
+              [DM_AQDeal].[189] AS [189],
+              [DM_AQDeal].[190] AS [190],
+              [DM_AQDeal].[191] AS [191],
+              [DM_AQDeal].[192] AS [192],
+              [DM_AQDeal].[193] AS [193],
+              [DM_AQDeal].[194] AS [194],
+              [DM_AQDeal].[195] AS [195],
+              [DM_AQDeal].[196] AS [196],
+              [DM_AQDeal].[197] AS [197],
+              [DM_AQDeal].[198] AS [198],
+              [DM_AQDeal].[199] AS [199],
+              [DM_AQDeal].[200] AS [200],
+              [DM_AQDeal].[201] AS [201],
+              [DM_AQDeal].[202] AS [202],
+              [DM_AQDeal].[203] AS [203],
+              [DM_AQDeal].[117] AS [117],
+              [DM_AQDeal].[118] AS [118],
+              [DM_AQDeal].[119] AS [119],
+              [DM_AQDeal].[120] AS [120],
+              [DM_AQDeal].[121] AS [121],
+              [DM_AQDeal].[122] AS [122],
+              [DM_AQDeal].[204] AS [204],
+              [DM_AQDeal].[205] AS [205],
+              [DM_AQDeal].[206] AS [206],
+              [DM_AQDeal].[207] AS [207],
+              [DM_AQDeal].[208] AS [208],
+              [DM_AQDeal].[209] AS [209],
+              [DM_AQDeal].[210] AS [210],
+              [DM_AQDeal].[211] AS [211],
+              [DM_AQDeal].[212] AS [212],
+              [DM_AQDeal].[213] AS [213],
+              [DM_AQDeal].[126] AS [126],
+              [DM_AQDeal].[127] AS [127],
+              [DM_AQDeal].[128] AS [128],
+              [DM_AQDeal].[129] AS [129],
+              [DM_AQDeal].[130] AS [130],
+              [DM_AQDeal].[131] AS [131],
+              [DM_AQDeal].[45] AS [45],
+              [DM_AQDeal].[46] AS [46],
+              [DM_AQDeal].[47] AS [47],
+              [DM_AQDeal].[48] AS [48],
+              [DM_AQDeal].[49] AS [49],
+              [DM_AQDeal].[50] AS [50],
+              [DM_AQDeal].[51] AS [51],
+              [DM_AQDeal].[52] AS [52],
+              [DM_AQDeal].[53] AS [53],
+              [DM_AQDeal].[54] AS [54],
+              [DM_AQDeal].[55] AS [55],
+              [DM_AQDeal].[56] AS [56],
+              [DM_AQDeal].[57] AS [57],
+              [DM_AQDeal].[132] AS [132],
+              [DM_AQDeal].[133] AS [133],
+              [DM_AQDeal].[134] AS [134],
+              [DM_AQDeal].[135] AS [135],
+              [DM_AQDeal].[136] AS [136],
+              [DM_AQDeal].[137] AS [137],
+              [DM_AQDeal].[138] AS [138],
+              [DM_AQDeal].[139] AS [139],
+              [DM_AQDeal].[140] AS [140],
+              [DM_AQDeal].[141] AS [141],
+              [DM_AQDeal].[142] AS [142],
+              [DM_AQDeal].[143] AS [143],
+              [DM_AQDeal].[144] AS [144],
+              [DM_AQDeal].[145] AS [145],
+              [DM_AQDeal].[146] AS [146],
+              [DM_AQDeal].[147] AS [147],
+              [DM_AQDeal].[148] AS [148],
+              [DM_AQDeal].[149] AS [149],
+              [DM_AQDeal].[150] AS [150],
+              [DM_AQDeal].[151] AS [151],
+              [DM_AQDeal].[152] AS [152],
+              [DM_AQDeal].[153] AS [153],
+              [DM_AQDeal].[154] AS [154],
+              [DM_AQDeal].[155] AS [155],
+              [DM_AQDeal].[156] AS [156],
+              [DM_AQDeal].[157] AS [157],
+              [DM_AQDeal].[158] AS [158],
+              [DM_AQDeal].[159] AS [159],
+              [DM_AQDeal].[160] AS [160],
+              [DM_AQDeal].[161] AS [161],
+              [DM_AQDeal].[64] AS [64],
+              [DM_AQDeal].[65] AS [65],
+              [DM_AQDeal].[66] AS [66],
+              [DM_AQDeal].[67] AS [67],
+              [DM_AQDeal].[68] AS [68],
+              [DM_AQDeal].[69] AS [69],
+              [DM_AQDeal].[70] AS [70],
+              [DM_AQDeal].[71] AS [71],
+              [DM_AQDeal].[72] AS [72],
+              [DM_AQDeal].[73] AS [73],
+              [DM_AQDeal].[74] AS [74],
+              [DM_AQDeal].[75] AS [75],
+              [DM_AQDeal].[76] AS [76],
+              [DM_AQDeal].[77] AS [77],
+              [DM_AQDeal].[78] AS [78],
+              [DM_AQDeal].[16] AS [16],
+              [DM_AQDeal].[214] AS [214],
+              [DM_AQDeal].[215] AS [215],
+              [DM_AQDeal].[216] AS [216],
+              [DM_AQDeal].[217] AS [217],
+              [DM_AQDeal].[218] AS [218],
+              [DM_AQDeal].[219] AS [219],
+              [DM_AQDeal].[165] AS [165],
+              [DM_AQDeal].[81] AS [81],
+              [DM_AQDeal].[82] AS [82],
+              [DM_AQDeal].[83] AS [83],
+              [DM_AQDeal].[Country] AS [Country],
+              [DM_AQDeal].[Territory] AS [Territory],
+              [DM_AQDeal].[Exclusive] AS [Exclusive],
+              [DM_AQDeal].[Deal Term ] AS [Deal Term ],
+              [DM_AQDeal].[Tenative Start Date] AS [Tenative Start Date],
+              [DM_AQDeal].[Start Date] AS [Start Date],
+              [DM_AQDeal].[End Date] AS [End Date],
+              [DM_AQDeal].[Original Language Right ] AS [Original Language Right ],
+              [DM_AQDeal].[Sub Licensing] AS [Sub Licensing],
+              [DM_AQDeal].[Sub Titling] AS [Sub Titling],
+              [DM_AQDeal].[Dubbing] AS [Dubbing],
+              [DM_AQDeal].[Rights for First Refusal Trigger date] AS [Rights for First Refusal Trigger date],
+              [DM_AQDeal].[Rights Restriction Remarks] AS [Rights Restriction Remarks],
+              [DM_AQDeal].[Holdback On  Licensee] AS [Holdback On  Licensee],
+              [DM_AQDeal].[Holdback Date] AS [Holdback Date],
+              [DM_AQDeal].[Holdback Comments] AS [Holdback Comments],
+              [DM_AQDeal].[Blackout Start Date] AS [Blackout Start Date],
+              [DM_AQDeal].[Blackout End Date] AS [Blackout End Date],
+              [DM_AQDeal].[No# of Runs] AS [No# of Runs],
+              [DM_AQDeal].[Yearly Runs] AS [Yearly Runs],
+              [DM_AQDeal].[Rights Rule] AS [Rights Rule],
+              [DM_AQDeal].[All MSM Channels] AS [All MSM Channels],
+              [DM_AQDeal].[Shared Rights] AS [Shared Rights],
+              [DM_AQDeal].[AXN India] AS [AXN India],
+              [DM_AQDeal].[MIX India] AS [MIX India],
+              [DM_AQDeal].[MIX International] AS [MIX International],
+              [DM_AQDeal].[SET India] AS [SET India],
+              [DM_AQDeal].[SET ME] AS [SET ME],
+              [DM_AQDeal].[SET HD] AS [SET HD],
+              [DM_AQDeal].[SET HD US] AS [SET HD US],
+              [DM_AQDeal].[SET International] AS [SET International],
+              [DM_AQDeal].[SET Africa] AS [SET Africa],
+              [DM_AQDeal].[SET HD Canada] AS [SET HD Canada],
+              [DM_AQDeal].[SET United Kingdom] AS [SET United Kingdom],
+              [DM_AQDeal].[SET United States] AS [SET United States],
+              [DM_AQDeal].[SAB India] AS [SAB India],
+              [DM_AQDeal].[SAB US] AS [SAB US],
+              [DM_AQDeal].[SAB International] AS [SAB International],
+              [DM_AQDeal].[SAB United Kingdom] AS [SAB United Kingdom],
+              [DM_AQDeal].[MAX India] AS [MAX India],
+              [DM_AQDeal].[MAX Africa] AS [MAX Africa],
+              [DM_AQDeal].[MAX International] AS [MAX International],
+              [DM_AQDeal].[MAX Canada] AS [MAX Canada],
+              [DM_AQDeal].[MAX United Kingdom] AS [MAX United Kingdom],
+              [DM_AQDeal].[MAX United States] AS [MAX United States],
+              [DM_AQDeal].[MAX Middle East] AS [MAX Middle East],
+              [DM_AQDeal].[PIX India] AS [PIX India],
+              [DM_AQDeal].[PIX HD] AS [PIX HD],
+              [DM_AQDeal].[Sony Aath] AS [Sony Aath],
+              [DM_AQDeal].[SIX (On Air)] AS [SIX (On Air)],
+              [DM_AQDeal].[SIX HD (On Air)] AS [SIX HD (On Air)],
+              [DM_AQDeal].[MAX 2] AS [MAX 2],
+              [DM_AQDeal].[Sony Pal] AS [Sony Pal],
+              [DM_AQDeal].[Restriction Window] AS [Restriction Window],
+              [DM_AQDeal].[Time Lag (Simulcast)] AS [Time Lag (Simulcast)],
+              [DM_AQDeal].[IntCode] AS [IntCode]
+              FROM [dbo].[DM_AQDeal] AS [DM_AQDeal]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="DM_Booking_Sheet_Data" EntityType="Self.DM_Booking_Sheet_Data" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [DM_Booking_Sheet_Data].[DM_Booking_Sheet_Data_Code] AS [DM_Booking_Sheet_Data_Code], 
-    [DM_Booking_Sheet_Data].[DM_Master_Import_Code] AS [DM_Master_Import_Code], 
-    [DM_Booking_Sheet_Data].[Data_Type] AS [Data_Type], 
-    [DM_Booking_Sheet_Data].[Sheet_Name] AS [Sheet_Name], 
-    [DM_Booking_Sheet_Data].[Col1] AS [Col1], 
-    [DM_Booking_Sheet_Data].[Col2] AS [Col2], 
-    [DM_Booking_Sheet_Data].[Col3] AS [Col3], 
-    [DM_Booking_Sheet_Data].[Col4] AS [Col4], 
-    [DM_Booking_Sheet_Data].[Col5] AS [Col5], 
-    [DM_Booking_Sheet_Data].[Col6] AS [Col6], 
-    [DM_Booking_Sheet_Data].[Col7] AS [Col7], 
-    [DM_Booking_Sheet_Data].[Col8] AS [Col8], 
-    [DM_Booking_Sheet_Data].[Col9] AS [Col9], 
-    [DM_Booking_Sheet_Data].[Col10] AS [Col10], 
-    [DM_Booking_Sheet_Data].[Col11] AS [Col11], 
-    [DM_Booking_Sheet_Data].[Col12] AS [Col12], 
-    [DM_Booking_Sheet_Data].[Col13] AS [Col13], 
-    [DM_Booking_Sheet_Data].[Col14] AS [Col14], 
-    [DM_Booking_Sheet_Data].[Col15] AS [Col15], 
-    [DM_Booking_Sheet_Data].[Col16] AS [Col16], 
-    [DM_Booking_Sheet_Data].[Col17] AS [Col17], 
-    [DM_Booking_Sheet_Data].[Col18] AS [Col18], 
-    [DM_Booking_Sheet_Data].[Col19] AS [Col19], 
-    [DM_Booking_Sheet_Data].[Col20] AS [Col20], 
-    [DM_Booking_Sheet_Data].[Col21] AS [Col21], 
-    [DM_Booking_Sheet_Data].[Col22] AS [Col22], 
-    [DM_Booking_Sheet_Data].[Col23] AS [Col23], 
-    [DM_Booking_Sheet_Data].[Col24] AS [Col24], 
-    [DM_Booking_Sheet_Data].[Col25] AS [Col25], 
-    [DM_Booking_Sheet_Data].[Col26] AS [Col26], 
-    [DM_Booking_Sheet_Data].[Col27] AS [Col27], 
-    [DM_Booking_Sheet_Data].[Col28] AS [Col28], 
-    [DM_Booking_Sheet_Data].[Col29] AS [Col29], 
-    [DM_Booking_Sheet_Data].[Col30] AS [Col30], 
-    [DM_Booking_Sheet_Data].[Col31] AS [Col31], 
-    [DM_Booking_Sheet_Data].[Col32] AS [Col32], 
-    [DM_Booking_Sheet_Data].[Col33] AS [Col33], 
-    [DM_Booking_Sheet_Data].[Col34] AS [Col34], 
-    [DM_Booking_Sheet_Data].[Col35] AS [Col35], 
-    [DM_Booking_Sheet_Data].[Col36] AS [Col36], 
-    [DM_Booking_Sheet_Data].[Col37] AS [Col37], 
-    [DM_Booking_Sheet_Data].[Col38] AS [Col38], 
-    [DM_Booking_Sheet_Data].[Col39] AS [Col39], 
-    [DM_Booking_Sheet_Data].[Col40] AS [Col40], 
-    [DM_Booking_Sheet_Data].[Col41] AS [Col41], 
-    [DM_Booking_Sheet_Data].[Col42] AS [Col42], 
-    [DM_Booking_Sheet_Data].[Col43] AS [Col43], 
-    [DM_Booking_Sheet_Data].[Col44] AS [Col44], 
-    [DM_Booking_Sheet_Data].[Col45] AS [Col45], 
-    [DM_Booking_Sheet_Data].[Col46] AS [Col46], 
-    [DM_Booking_Sheet_Data].[Col47] AS [Col47], 
-    [DM_Booking_Sheet_Data].[Col48] AS [Col48], 
-    [DM_Booking_Sheet_Data].[Col49] AS [Col49], 
-    [DM_Booking_Sheet_Data].[Col50] AS [Col50], 
-    [DM_Booking_Sheet_Data].[Col51] AS [Col51], 
-    [DM_Booking_Sheet_Data].[Col52] AS [Col52], 
-    [DM_Booking_Sheet_Data].[Col53] AS [Col53], 
-    [DM_Booking_Sheet_Data].[Col54] AS [Col54], 
-    [DM_Booking_Sheet_Data].[Col55] AS [Col55], 
-    [DM_Booking_Sheet_Data].[Col56] AS [Col56], 
-    [DM_Booking_Sheet_Data].[Col57] AS [Col57], 
-    [DM_Booking_Sheet_Data].[Col58] AS [Col58], 
-    [DM_Booking_Sheet_Data].[Col59] AS [Col59], 
-    [DM_Booking_Sheet_Data].[Col60] AS [Col60], 
-    [DM_Booking_Sheet_Data].[Col61] AS [Col61], 
-    [DM_Booking_Sheet_Data].[Col62] AS [Col62], 
-    [DM_Booking_Sheet_Data].[Col63] AS [Col63], 
-    [DM_Booking_Sheet_Data].[Col64] AS [Col64], 
-    [DM_Booking_Sheet_Data].[Col65] AS [Col65], 
-    [DM_Booking_Sheet_Data].[Col66] AS [Col66], 
-    [DM_Booking_Sheet_Data].[Col67] AS [Col67], 
-    [DM_Booking_Sheet_Data].[Col68] AS [Col68], 
-    [DM_Booking_Sheet_Data].[Col69] AS [Col69], 
-    [DM_Booking_Sheet_Data].[Col70] AS [Col70], 
-    [DM_Booking_Sheet_Data].[Col71] AS [Col71], 
-    [DM_Booking_Sheet_Data].[Col72] AS [Col72], 
-    [DM_Booking_Sheet_Data].[Col73] AS [Col73], 
-    [DM_Booking_Sheet_Data].[Col74] AS [Col74], 
-    [DM_Booking_Sheet_Data].[Col75] AS [Col75], 
-    [DM_Booking_Sheet_Data].[Col76] AS [Col76], 
-    [DM_Booking_Sheet_Data].[Col77] AS [Col77], 
-    [DM_Booking_Sheet_Data].[Col78] AS [Col78], 
-    [DM_Booking_Sheet_Data].[Col79] AS [Col79], 
-    [DM_Booking_Sheet_Data].[Col80] AS [Col80], 
-    [DM_Booking_Sheet_Data].[Col81] AS [Col81], 
-    [DM_Booking_Sheet_Data].[Col82] AS [Col82], 
-    [DM_Booking_Sheet_Data].[Col83] AS [Col83], 
-    [DM_Booking_Sheet_Data].[Col84] AS [Col84], 
-    [DM_Booking_Sheet_Data].[Col85] AS [Col85], 
-    [DM_Booking_Sheet_Data].[Col86] AS [Col86], 
-    [DM_Booking_Sheet_Data].[Col87] AS [Col87], 
-    [DM_Booking_Sheet_Data].[Col88] AS [Col88], 
-    [DM_Booking_Sheet_Data].[Col89] AS [Col89], 
-    [DM_Booking_Sheet_Data].[Col90] AS [Col90], 
-    [DM_Booking_Sheet_Data].[Col91] AS [Col91], 
-    [DM_Booking_Sheet_Data].[Col92] AS [Col92], 
-    [DM_Booking_Sheet_Data].[Col93] AS [Col93], 
-    [DM_Booking_Sheet_Data].[Col94] AS [Col94], 
-    [DM_Booking_Sheet_Data].[Col95] AS [Col95], 
-    [DM_Booking_Sheet_Data].[Col96] AS [Col96], 
-    [DM_Booking_Sheet_Data].[Col97] AS [Col97], 
-    [DM_Booking_Sheet_Data].[Col98] AS [Col98], 
-    [DM_Booking_Sheet_Data].[Col99] AS [Col99], 
-    [DM_Booking_Sheet_Data].[Col100] AS [Col100], 
-    [DM_Booking_Sheet_Data].[Col101] AS [Col101], 
-    [DM_Booking_Sheet_Data].[Col102] AS [Col102], 
-    [DM_Booking_Sheet_Data].[Col103] AS [Col103], 
-    [DM_Booking_Sheet_Data].[Col104] AS [Col104], 
-    [DM_Booking_Sheet_Data].[Col105] AS [Col105], 
-    [DM_Booking_Sheet_Data].[Col106] AS [Col106], 
-    [DM_Booking_Sheet_Data].[Col107] AS [Col107], 
-    [DM_Booking_Sheet_Data].[Col108] AS [Col108], 
-    [DM_Booking_Sheet_Data].[Col109] AS [Col109], 
-    [DM_Booking_Sheet_Data].[Col110] AS [Col110], 
-    [DM_Booking_Sheet_Data].[Col111] AS [Col111], 
-    [DM_Booking_Sheet_Data].[Col112] AS [Col112], 
-    [DM_Booking_Sheet_Data].[Col113] AS [Col113], 
-    [DM_Booking_Sheet_Data].[Col114] AS [Col114], 
-    [DM_Booking_Sheet_Data].[Col115] AS [Col115], 
-    [DM_Booking_Sheet_Data].[Col116] AS [Col116], 
-    [DM_Booking_Sheet_Data].[Col117] AS [Col117], 
-    [DM_Booking_Sheet_Data].[Col118] AS [Col118], 
-    [DM_Booking_Sheet_Data].[Col119] AS [Col119], 
-    [DM_Booking_Sheet_Data].[Col120] AS [Col120], 
-    [DM_Booking_Sheet_Data].[Col121] AS [Col121], 
-    [DM_Booking_Sheet_Data].[Col122] AS [Col122], 
-    [DM_Booking_Sheet_Data].[Col123] AS [Col123], 
-    [DM_Booking_Sheet_Data].[Col124] AS [Col124], 
-    [DM_Booking_Sheet_Data].[Col125] AS [Col125], 
-    [DM_Booking_Sheet_Data].[Col126] AS [Col126], 
-    [DM_Booking_Sheet_Data].[Col127] AS [Col127], 
-    [DM_Booking_Sheet_Data].[Col128] AS [Col128], 
-    [DM_Booking_Sheet_Data].[Col129] AS [Col129], 
-    [DM_Booking_Sheet_Data].[Col130] AS [Col130], 
-    [DM_Booking_Sheet_Data].[Col131] AS [Col131], 
-    [DM_Booking_Sheet_Data].[Col132] AS [Col132], 
-    [DM_Booking_Sheet_Data].[Col133] AS [Col133], 
-    [DM_Booking_Sheet_Data].[Col134] AS [Col134], 
-    [DM_Booking_Sheet_Data].[Col135] AS [Col135], 
-    [DM_Booking_Sheet_Data].[Col136] AS [Col136], 
-    [DM_Booking_Sheet_Data].[Col137] AS [Col137], 
-    [DM_Booking_Sheet_Data].[Col138] AS [Col138], 
-    [DM_Booking_Sheet_Data].[Col139] AS [Col139], 
-    [DM_Booking_Sheet_Data].[Col140] AS [Col140], 
-    [DM_Booking_Sheet_Data].[Col141] AS [Col141], 
-    [DM_Booking_Sheet_Data].[Col142] AS [Col142], 
-    [DM_Booking_Sheet_Data].[Col143] AS [Col143], 
-    [DM_Booking_Sheet_Data].[Col144] AS [Col144], 
-    [DM_Booking_Sheet_Data].[Col145] AS [Col145], 
-    [DM_Booking_Sheet_Data].[Col146] AS [Col146], 
-    [DM_Booking_Sheet_Data].[Col147] AS [Col147], 
-    [DM_Booking_Sheet_Data].[Col148] AS [Col148], 
-    [DM_Booking_Sheet_Data].[Col149] AS [Col149], 
-    [DM_Booking_Sheet_Data].[Col150] AS [Col150], 
-    [DM_Booking_Sheet_Data].[Col151] AS [Col151], 
-    [DM_Booking_Sheet_Data].[Col152] AS [Col152], 
-    [DM_Booking_Sheet_Data].[Col153] AS [Col153], 
-    [DM_Booking_Sheet_Data].[Col154] AS [Col154], 
-    [DM_Booking_Sheet_Data].[Col155] AS [Col155], 
-    [DM_Booking_Sheet_Data].[Col156] AS [Col156], 
-    [DM_Booking_Sheet_Data].[Col157] AS [Col157], 
-    [DM_Booking_Sheet_Data].[Col158] AS [Col158], 
-    [DM_Booking_Sheet_Data].[Col159] AS [Col159], 
-    [DM_Booking_Sheet_Data].[Col160] AS [Col160], 
-    [DM_Booking_Sheet_Data].[Col161] AS [Col161], 
-    [DM_Booking_Sheet_Data].[Col162] AS [Col162], 
-    [DM_Booking_Sheet_Data].[Col163] AS [Col163], 
-    [DM_Booking_Sheet_Data].[Col164] AS [Col164], 
-    [DM_Booking_Sheet_Data].[Col165] AS [Col165], 
-    [DM_Booking_Sheet_Data].[Col166] AS [Col166], 
-    [DM_Booking_Sheet_Data].[Col167] AS [Col167], 
-    [DM_Booking_Sheet_Data].[Col168] AS [Col168], 
-    [DM_Booking_Sheet_Data].[Col169] AS [Col169], 
-    [DM_Booking_Sheet_Data].[Col170] AS [Col170], 
-    [DM_Booking_Sheet_Data].[Col171] AS [Col171], 
-    [DM_Booking_Sheet_Data].[Col172] AS [Col172], 
-    [DM_Booking_Sheet_Data].[Col173] AS [Col173], 
-    [DM_Booking_Sheet_Data].[Col174] AS [Col174], 
-    [DM_Booking_Sheet_Data].[Col175] AS [Col175], 
-    [DM_Booking_Sheet_Data].[Col176] AS [Col176], 
-    [DM_Booking_Sheet_Data].[Col177] AS [Col177], 
-    [DM_Booking_Sheet_Data].[Col178] AS [Col178], 
-    [DM_Booking_Sheet_Data].[Col179] AS [Col179], 
-    [DM_Booking_Sheet_Data].[Col180] AS [Col180], 
-    [DM_Booking_Sheet_Data].[Col181] AS [Col181], 
-    [DM_Booking_Sheet_Data].[Col182] AS [Col182], 
-    [DM_Booking_Sheet_Data].[Col183] AS [Col183], 
-    [DM_Booking_Sheet_Data].[Col184] AS [Col184], 
-    [DM_Booking_Sheet_Data].[Col185] AS [Col185], 
-    [DM_Booking_Sheet_Data].[Col186] AS [Col186], 
-    [DM_Booking_Sheet_Data].[Col187] AS [Col187], 
-    [DM_Booking_Sheet_Data].[Col188] AS [Col188], 
-    [DM_Booking_Sheet_Data].[Col189] AS [Col189], 
-    [DM_Booking_Sheet_Data].[Col190] AS [Col190], 
-    [DM_Booking_Sheet_Data].[Col191] AS [Col191], 
-    [DM_Booking_Sheet_Data].[Col192] AS [Col192], 
-    [DM_Booking_Sheet_Data].[Col193] AS [Col193], 
-    [DM_Booking_Sheet_Data].[Col194] AS [Col194], 
-    [DM_Booking_Sheet_Data].[Col195] AS [Col195], 
-    [DM_Booking_Sheet_Data].[Col196] AS [Col196], 
-    [DM_Booking_Sheet_Data].[Col197] AS [Col197], 
-    [DM_Booking_Sheet_Data].[Col198] AS [Col198], 
-    [DM_Booking_Sheet_Data].[Col199] AS [Col199], 
-    [DM_Booking_Sheet_Data].[Col200] AS [Col200], 
-    [DM_Booking_Sheet_Data].[Record_Status] AS [Record_Status], 
-    [DM_Booking_Sheet_Data].[Error_Message] AS [Error_Message], 
-    [DM_Booking_Sheet_Data].[Is_Ignore] AS [Is_Ignore]
-    FROM [dbo].[DM_Booking_Sheet_Data] AS [DM_Booking_Sheet_Data]
-	</DefiningQuery>
+              SELECT
+              [DM_Booking_Sheet_Data].[DM_Booking_Sheet_Data_Code] AS [DM_Booking_Sheet_Data_Code],
+              [DM_Booking_Sheet_Data].[DM_Master_Import_Code] AS [DM_Master_Import_Code],
+              [DM_Booking_Sheet_Data].[Data_Type] AS [Data_Type],
+              [DM_Booking_Sheet_Data].[Sheet_Name] AS [Sheet_Name],
+              [DM_Booking_Sheet_Data].[Col1] AS [Col1],
+              [DM_Booking_Sheet_Data].[Col2] AS [Col2],
+              [DM_Booking_Sheet_Data].[Col3] AS [Col3],
+              [DM_Booking_Sheet_Data].[Col4] AS [Col4],
+              [DM_Booking_Sheet_Data].[Col5] AS [Col5],
+              [DM_Booking_Sheet_Data].[Col6] AS [Col6],
+              [DM_Booking_Sheet_Data].[Col7] AS [Col7],
+              [DM_Booking_Sheet_Data].[Col8] AS [Col8],
+              [DM_Booking_Sheet_Data].[Col9] AS [Col9],
+              [DM_Booking_Sheet_Data].[Col10] AS [Col10],
+              [DM_Booking_Sheet_Data].[Col11] AS [Col11],
+              [DM_Booking_Sheet_Data].[Col12] AS [Col12],
+              [DM_Booking_Sheet_Data].[Col13] AS [Col13],
+              [DM_Booking_Sheet_Data].[Col14] AS [Col14],
+              [DM_Booking_Sheet_Data].[Col15] AS [Col15],
+              [DM_Booking_Sheet_Data].[Col16] AS [Col16],
+              [DM_Booking_Sheet_Data].[Col17] AS [Col17],
+              [DM_Booking_Sheet_Data].[Col18] AS [Col18],
+              [DM_Booking_Sheet_Data].[Col19] AS [Col19],
+              [DM_Booking_Sheet_Data].[Col20] AS [Col20],
+              [DM_Booking_Sheet_Data].[Col21] AS [Col21],
+              [DM_Booking_Sheet_Data].[Col22] AS [Col22],
+              [DM_Booking_Sheet_Data].[Col23] AS [Col23],
+              [DM_Booking_Sheet_Data].[Col24] AS [Col24],
+              [DM_Booking_Sheet_Data].[Col25] AS [Col25],
+              [DM_Booking_Sheet_Data].[Col26] AS [Col26],
+              [DM_Booking_Sheet_Data].[Col27] AS [Col27],
+              [DM_Booking_Sheet_Data].[Col28] AS [Col28],
+              [DM_Booking_Sheet_Data].[Col29] AS [Col29],
+              [DM_Booking_Sheet_Data].[Col30] AS [Col30],
+              [DM_Booking_Sheet_Data].[Col31] AS [Col31],
+              [DM_Booking_Sheet_Data].[Col32] AS [Col32],
+              [DM_Booking_Sheet_Data].[Col33] AS [Col33],
+              [DM_Booking_Sheet_Data].[Col34] AS [Col34],
+              [DM_Booking_Sheet_Data].[Col35] AS [Col35],
+              [DM_Booking_Sheet_Data].[Col36] AS [Col36],
+              [DM_Booking_Sheet_Data].[Col37] AS [Col37],
+              [DM_Booking_Sheet_Data].[Col38] AS [Col38],
+              [DM_Booking_Sheet_Data].[Col39] AS [Col39],
+              [DM_Booking_Sheet_Data].[Col40] AS [Col40],
+              [DM_Booking_Sheet_Data].[Col41] AS [Col41],
+              [DM_Booking_Sheet_Data].[Col42] AS [Col42],
+              [DM_Booking_Sheet_Data].[Col43] AS [Col43],
+              [DM_Booking_Sheet_Data].[Col44] AS [Col44],
+              [DM_Booking_Sheet_Data].[Col45] AS [Col45],
+              [DM_Booking_Sheet_Data].[Col46] AS [Col46],
+              [DM_Booking_Sheet_Data].[Col47] AS [Col47],
+              [DM_Booking_Sheet_Data].[Col48] AS [Col48],
+              [DM_Booking_Sheet_Data].[Col49] AS [Col49],
+              [DM_Booking_Sheet_Data].[Col50] AS [Col50],
+              [DM_Booking_Sheet_Data].[Col51] AS [Col51],
+              [DM_Booking_Sheet_Data].[Col52] AS [Col52],
+              [DM_Booking_Sheet_Data].[Col53] AS [Col53],
+              [DM_Booking_Sheet_Data].[Col54] AS [Col54],
+              [DM_Booking_Sheet_Data].[Col55] AS [Col55],
+              [DM_Booking_Sheet_Data].[Col56] AS [Col56],
+              [DM_Booking_Sheet_Data].[Col57] AS [Col57],
+              [DM_Booking_Sheet_Data].[Col58] AS [Col58],
+              [DM_Booking_Sheet_Data].[Col59] AS [Col59],
+              [DM_Booking_Sheet_Data].[Col60] AS [Col60],
+              [DM_Booking_Sheet_Data].[Col61] AS [Col61],
+              [DM_Booking_Sheet_Data].[Col62] AS [Col62],
+              [DM_Booking_Sheet_Data].[Col63] AS [Col63],
+              [DM_Booking_Sheet_Data].[Col64] AS [Col64],
+              [DM_Booking_Sheet_Data].[Col65] AS [Col65],
+              [DM_Booking_Sheet_Data].[Col66] AS [Col66],
+              [DM_Booking_Sheet_Data].[Col67] AS [Col67],
+              [DM_Booking_Sheet_Data].[Col68] AS [Col68],
+              [DM_Booking_Sheet_Data].[Col69] AS [Col69],
+              [DM_Booking_Sheet_Data].[Col70] AS [Col70],
+              [DM_Booking_Sheet_Data].[Col71] AS [Col71],
+              [DM_Booking_Sheet_Data].[Col72] AS [Col72],
+              [DM_Booking_Sheet_Data].[Col73] AS [Col73],
+              [DM_Booking_Sheet_Data].[Col74] AS [Col74],
+              [DM_Booking_Sheet_Data].[Col75] AS [Col75],
+              [DM_Booking_Sheet_Data].[Col76] AS [Col76],
+              [DM_Booking_Sheet_Data].[Col77] AS [Col77],
+              [DM_Booking_Sheet_Data].[Col78] AS [Col78],
+              [DM_Booking_Sheet_Data].[Col79] AS [Col79],
+              [DM_Booking_Sheet_Data].[Col80] AS [Col80],
+              [DM_Booking_Sheet_Data].[Col81] AS [Col81],
+              [DM_Booking_Sheet_Data].[Col82] AS [Col82],
+              [DM_Booking_Sheet_Data].[Col83] AS [Col83],
+              [DM_Booking_Sheet_Data].[Col84] AS [Col84],
+              [DM_Booking_Sheet_Data].[Col85] AS [Col85],
+              [DM_Booking_Sheet_Data].[Col86] AS [Col86],
+              [DM_Booking_Sheet_Data].[Col87] AS [Col87],
+              [DM_Booking_Sheet_Data].[Col88] AS [Col88],
+              [DM_Booking_Sheet_Data].[Col89] AS [Col89],
+              [DM_Booking_Sheet_Data].[Col90] AS [Col90],
+              [DM_Booking_Sheet_Data].[Col91] AS [Col91],
+              [DM_Booking_Sheet_Data].[Col92] AS [Col92],
+              [DM_Booking_Sheet_Data].[Col93] AS [Col93],
+              [DM_Booking_Sheet_Data].[Col94] AS [Col94],
+              [DM_Booking_Sheet_Data].[Col95] AS [Col95],
+              [DM_Booking_Sheet_Data].[Col96] AS [Col96],
+              [DM_Booking_Sheet_Data].[Col97] AS [Col97],
+              [DM_Booking_Sheet_Data].[Col98] AS [Col98],
+              [DM_Booking_Sheet_Data].[Col99] AS [Col99],
+              [DM_Booking_Sheet_Data].[Col100] AS [Col100],
+              [DM_Booking_Sheet_Data].[Col101] AS [Col101],
+              [DM_Booking_Sheet_Data].[Col102] AS [Col102],
+              [DM_Booking_Sheet_Data].[Col103] AS [Col103],
+              [DM_Booking_Sheet_Data].[Col104] AS [Col104],
+              [DM_Booking_Sheet_Data].[Col105] AS [Col105],
+              [DM_Booking_Sheet_Data].[Col106] AS [Col106],
+              [DM_Booking_Sheet_Data].[Col107] AS [Col107],
+              [DM_Booking_Sheet_Data].[Col108] AS [Col108],
+              [DM_Booking_Sheet_Data].[Col109] AS [Col109],
+              [DM_Booking_Sheet_Data].[Col110] AS [Col110],
+              [DM_Booking_Sheet_Data].[Col111] AS [Col111],
+              [DM_Booking_Sheet_Data].[Col112] AS [Col112],
+              [DM_Booking_Sheet_Data].[Col113] AS [Col113],
+              [DM_Booking_Sheet_Data].[Col114] AS [Col114],
+              [DM_Booking_Sheet_Data].[Col115] AS [Col115],
+              [DM_Booking_Sheet_Data].[Col116] AS [Col116],
+              [DM_Booking_Sheet_Data].[Col117] AS [Col117],
+              [DM_Booking_Sheet_Data].[Col118] AS [Col118],
+              [DM_Booking_Sheet_Data].[Col119] AS [Col119],
+              [DM_Booking_Sheet_Data].[Col120] AS [Col120],
+              [DM_Booking_Sheet_Data].[Col121] AS [Col121],
+              [DM_Booking_Sheet_Data].[Col122] AS [Col122],
+              [DM_Booking_Sheet_Data].[Col123] AS [Col123],
+              [DM_Booking_Sheet_Data].[Col124] AS [Col124],
+              [DM_Booking_Sheet_Data].[Col125] AS [Col125],
+              [DM_Booking_Sheet_Data].[Col126] AS [Col126],
+              [DM_Booking_Sheet_Data].[Col127] AS [Col127],
+              [DM_Booking_Sheet_Data].[Col128] AS [Col128],
+              [DM_Booking_Sheet_Data].[Col129] AS [Col129],
+              [DM_Booking_Sheet_Data].[Col130] AS [Col130],
+              [DM_Booking_Sheet_Data].[Col131] AS [Col131],
+              [DM_Booking_Sheet_Data].[Col132] AS [Col132],
+              [DM_Booking_Sheet_Data].[Col133] AS [Col133],
+              [DM_Booking_Sheet_Data].[Col134] AS [Col134],
+              [DM_Booking_Sheet_Data].[Col135] AS [Col135],
+              [DM_Booking_Sheet_Data].[Col136] AS [Col136],
+              [DM_Booking_Sheet_Data].[Col137] AS [Col137],
+              [DM_Booking_Sheet_Data].[Col138] AS [Col138],
+              [DM_Booking_Sheet_Data].[Col139] AS [Col139],
+              [DM_Booking_Sheet_Data].[Col140] AS [Col140],
+              [DM_Booking_Sheet_Data].[Col141] AS [Col141],
+              [DM_Booking_Sheet_Data].[Col142] AS [Col142],
+              [DM_Booking_Sheet_Data].[Col143] AS [Col143],
+              [DM_Booking_Sheet_Data].[Col144] AS [Col144],
+              [DM_Booking_Sheet_Data].[Col145] AS [Col145],
+              [DM_Booking_Sheet_Data].[Col146] AS [Col146],
+              [DM_Booking_Sheet_Data].[Col147] AS [Col147],
+              [DM_Booking_Sheet_Data].[Col148] AS [Col148],
+              [DM_Booking_Sheet_Data].[Col149] AS [Col149],
+              [DM_Booking_Sheet_Data].[Col150] AS [Col150],
+              [DM_Booking_Sheet_Data].[Col151] AS [Col151],
+              [DM_Booking_Sheet_Data].[Col152] AS [Col152],
+              [DM_Booking_Sheet_Data].[Col153] AS [Col153],
+              [DM_Booking_Sheet_Data].[Col154] AS [Col154],
+              [DM_Booking_Sheet_Data].[Col155] AS [Col155],
+              [DM_Booking_Sheet_Data].[Col156] AS [Col156],
+              [DM_Booking_Sheet_Data].[Col157] AS [Col157],
+              [DM_Booking_Sheet_Data].[Col158] AS [Col158],
+              [DM_Booking_Sheet_Data].[Col159] AS [Col159],
+              [DM_Booking_Sheet_Data].[Col160] AS [Col160],
+              [DM_Booking_Sheet_Data].[Col161] AS [Col161],
+              [DM_Booking_Sheet_Data].[Col162] AS [Col162],
+              [DM_Booking_Sheet_Data].[Col163] AS [Col163],
+              [DM_Booking_Sheet_Data].[Col164] AS [Col164],
+              [DM_Booking_Sheet_Data].[Col165] AS [Col165],
+              [DM_Booking_Sheet_Data].[Col166] AS [Col166],
+              [DM_Booking_Sheet_Data].[Col167] AS [Col167],
+              [DM_Booking_Sheet_Data].[Col168] AS [Col168],
+              [DM_Booking_Sheet_Data].[Col169] AS [Col169],
+              [DM_Booking_Sheet_Data].[Col170] AS [Col170],
+              [DM_Booking_Sheet_Data].[Col171] AS [Col171],
+              [DM_Booking_Sheet_Data].[Col172] AS [Col172],
+              [DM_Booking_Sheet_Data].[Col173] AS [Col173],
+              [DM_Booking_Sheet_Data].[Col174] AS [Col174],
+              [DM_Booking_Sheet_Data].[Col175] AS [Col175],
+              [DM_Booking_Sheet_Data].[Col176] AS [Col176],
+              [DM_Booking_Sheet_Data].[Col177] AS [Col177],
+              [DM_Booking_Sheet_Data].[Col178] AS [Col178],
+              [DM_Booking_Sheet_Data].[Col179] AS [Col179],
+              [DM_Booking_Sheet_Data].[Col180] AS [Col180],
+              [DM_Booking_Sheet_Data].[Col181] AS [Col181],
+              [DM_Booking_Sheet_Data].[Col182] AS [Col182],
+              [DM_Booking_Sheet_Data].[Col183] AS [Col183],
+              [DM_Booking_Sheet_Data].[Col184] AS [Col184],
+              [DM_Booking_Sheet_Data].[Col185] AS [Col185],
+              [DM_Booking_Sheet_Data].[Col186] AS [Col186],
+              [DM_Booking_Sheet_Data].[Col187] AS [Col187],
+              [DM_Booking_Sheet_Data].[Col188] AS [Col188],
+              [DM_Booking_Sheet_Data].[Col189] AS [Col189],
+              [DM_Booking_Sheet_Data].[Col190] AS [Col190],
+              [DM_Booking_Sheet_Data].[Col191] AS [Col191],
+              [DM_Booking_Sheet_Data].[Col192] AS [Col192],
+              [DM_Booking_Sheet_Data].[Col193] AS [Col193],
+              [DM_Booking_Sheet_Data].[Col194] AS [Col194],
+              [DM_Booking_Sheet_Data].[Col195] AS [Col195],
+              [DM_Booking_Sheet_Data].[Col196] AS [Col196],
+              [DM_Booking_Sheet_Data].[Col197] AS [Col197],
+              [DM_Booking_Sheet_Data].[Col198] AS [Col198],
+              [DM_Booking_Sheet_Data].[Col199] AS [Col199],
+              [DM_Booking_Sheet_Data].[Col200] AS [Col200],
+              [DM_Booking_Sheet_Data].[Record_Status] AS [Record_Status],
+              [DM_Booking_Sheet_Data].[Error_Message] AS [Error_Message],
+              [DM_Booking_Sheet_Data].[Is_Ignore] AS [Is_Ignore]
+              FROM [dbo].[DM_Booking_Sheet_Data] AS [DM_Booking_Sheet_Data]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="DM_Title" EntityType="Self.DM_Title" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [DM_Title].[DM_Title_Code] AS [DM_Title_Code], 
-    [DM_Title].[Title Type] AS [Title Type], 
-    [DM_Title].[Original Title (Tanil/Telugu)] AS [Original Title (Tanil/Telugu)], 
-    [DM_Title].[Title/ Dubbed Title (Hindi)] AS [Title/ Dubbed Title (Hindi)], 
-    [DM_Title].[Type of Film (Original/Dubbed)] AS [Type of Film (Original/Dubbed)], 
-    [DM_Title].[Program Category] AS [Program Category], 
-    [DM_Title].[Synopsis] AS [Synopsis], 
-    [DM_Title].[Producer Name] AS [Producer Name], 
-    [DM_Title].[Director Name] AS [Director Name], 
-    [DM_Title].[Banner] AS [Banner], 
-    [DM_Title].[Key Star Cast] AS [Key Star Cast], 
-    [DM_Title].[Original Language (Hindi)] AS [Original Language (Hindi)], 
-    [DM_Title].[Country of Origin] AS [Country of Origin], 
-    [DM_Title].[Title Genres] AS [Title Genres], 
-    [DM_Title].[Colour or B&amp;W] AS [Colour or B&amp;W], 
-    [DM_Title].[Year of Release] AS [Year of Release], 
-    [DM_Title].[Duration (Min)] AS [Duration (Min)], 
-    [DM_Title].[CBFC Rating] AS [CBFC Rating], 
-    [DM_Title].[Music Composer] AS [Music Composer], 
-    [DM_Title].[Record_Status] AS [Record_Status], 
-    [DM_Title].[Error_Message] AS [Error_Message], 
-    [DM_Title].[Music_Label] AS [Music_Label], 
-    [DM_Title].[Music_Version] AS [Music_Version], 
-    [DM_Title].[DM_Master_Import_Code] AS [DM_Master_Import_Code], 
-    [DM_Title].[Excel_Line_No] AS [Excel_Line_No], 
-    [DM_Title].[Is_Ignore] AS [Is_Ignore], 
-    [DM_Title].[Original_Language] AS [Original_Language]
-    FROM [dbo].[DM_Title] AS [DM_Title]
-	</DefiningQuery>
+              SELECT
+              [DM_Title].[DM_Title_Code] AS [DM_Title_Code],
+              [DM_Title].[Title Type] AS [Title Type],
+              [DM_Title].[Original Title (Tanil/Telugu)] AS [Original Title (Tanil/Telugu)],
+              [DM_Title].[Title/ Dubbed Title (Hindi)] AS [Title/ Dubbed Title (Hindi)],
+              [DM_Title].[Type of Film (Original/Dubbed)] AS [Type of Film (Original/Dubbed)],
+              [DM_Title].[Program Category] AS [Program Category],
+              [DM_Title].[Synopsis] AS [Synopsis],
+              [DM_Title].[Producer Name] AS [Producer Name],
+              [DM_Title].[Director Name] AS [Director Name],
+              [DM_Title].[Banner] AS [Banner],
+              [DM_Title].[Key Star Cast] AS [Key Star Cast],
+              [DM_Title].[Original Language (Hindi)] AS [Original Language (Hindi)],
+              [DM_Title].[Country of Origin] AS [Country of Origin],
+              [DM_Title].[Title Genres] AS [Title Genres],
+              [DM_Title].[Colour or B&amp;W] AS [Colour or B&amp;W],
+              [DM_Title].[Year of Release] AS [Year of Release],
+              [DM_Title].[Duration (Min)] AS [Duration (Min)],
+              [DM_Title].[CBFC Rating] AS [CBFC Rating],
+              [DM_Title].[Music Composer] AS [Music Composer],
+              [DM_Title].[Record_Status] AS [Record_Status],
+              [DM_Title].[Error_Message] AS [Error_Message],
+              [DM_Title].[Music_Label] AS [Music_Label],
+              [DM_Title].[Music_Version] AS [Music_Version],
+              [DM_Title].[DM_Master_Import_Code] AS [DM_Master_Import_Code],
+              [DM_Title].[Excel_Line_No] AS [Excel_Line_No],
+              [DM_Title].[Is_Ignore] AS [Is_Ignore],
+              [DM_Title].[Original_Language] AS [Original_Language]
+              FROM [dbo].[DM_Title] AS [DM_Title]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="Paf_Details" EntityType="Self.Paf_Details" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [Paf_Details].[Id] AS [Id], 
-    [Paf_Details].[Paf_Code] AS [Paf_Code], 
-    [Paf_Details].[Paf_Cost_Type_Code] AS [Paf_Cost_Type_Code], 
-    [Paf_Details].[Ams_Cost_Type_Code] AS [Ams_Cost_Type_Code], 
-    [Paf_Details].[P_Amount] AS [P_Amount], 
-    [Paf_Details].[P_Utilized] AS [P_Utilized], 
-    [Paf_Details].[P_Balance] AS [P_Balance], 
-    [Paf_Details].[Ct_Amount] AS [Ct_Amount], 
-    [Paf_Details].[Ct_Utilized] AS [Ct_Utilized], 
-    [Paf_Details].[Ct_Balance] AS [Ct_Balance], 
-    [Paf_Details].[IsCostTypeMatching] AS [IsCostTypeMatching], 
-    [Paf_Details].[PAF_Level_Balance_Available] AS [PAF_Level_Balance_Available], 
-    [Paf_Details].[Cost_Type_Level_Balance_Available] AS [Cost_Type_Level_Balance_Available], 
-    [Paf_Details].[UsedInTransaction] AS [UsedInTransaction], 
-    [Paf_Details].[PAF_Level_Utilised_Amt_Available] AS [PAF_Level_Utilised_Amt_Available], 
-    [Paf_Details].[Cost_Type_Level_Utilised_Amt_Available] AS [Cost_Type_Level_Utilised_Amt_Available], 
-    [Paf_Details].[Entry_Type] AS [Entry_Type], 
-    [Paf_Details].[User_Code] AS [User_Code]
-    FROM [dbo].[Paf_Details] AS [Paf_Details]
-	</DefiningQuery>
+              SELECT
+              [Paf_Details].[Id] AS [Id],
+              [Paf_Details].[Paf_Code] AS [Paf_Code],
+              [Paf_Details].[Paf_Cost_Type_Code] AS [Paf_Cost_Type_Code],
+              [Paf_Details].[Ams_Cost_Type_Code] AS [Ams_Cost_Type_Code],
+              [Paf_Details].[P_Amount] AS [P_Amount],
+              [Paf_Details].[P_Utilized] AS [P_Utilized],
+              [Paf_Details].[P_Balance] AS [P_Balance],
+              [Paf_Details].[Ct_Amount] AS [Ct_Amount],
+              [Paf_Details].[Ct_Utilized] AS [Ct_Utilized],
+              [Paf_Details].[Ct_Balance] AS [Ct_Balance],
+              [Paf_Details].[IsCostTypeMatching] AS [IsCostTypeMatching],
+              [Paf_Details].[PAF_Level_Balance_Available] AS [PAF_Level_Balance_Available],
+              [Paf_Details].[Cost_Type_Level_Balance_Available] AS [Cost_Type_Level_Balance_Available],
+              [Paf_Details].[UsedInTransaction] AS [UsedInTransaction],
+              [Paf_Details].[PAF_Level_Utilised_Amt_Available] AS [PAF_Level_Utilised_Amt_Available],
+              [Paf_Details].[Cost_Type_Level_Utilised_Amt_Available] AS [Cost_Type_Level_Utilised_Amt_Available],
+              [Paf_Details].[Entry_Type] AS [Entry_Type],
+              [Paf_Details].[User_Code] AS [User_Code]
+              FROM [dbo].[Paf_Details] AS [Paf_Details]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="RunData" EntityType="Self.RunData" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [RunData].[Id] AS [Id], 
-    [RunData].[ChannelCode] AS [ChannelCode], 
-    [RunData].[ChannelName] AS [ChannelName], 
-    [RunData].[ParameterName] AS [ParameterName], 
-    [RunData].[ParameterValue] AS [ParameterValue]
-    FROM [dbo].[RunData] AS [RunData]
-	</DefiningQuery>
+              SELECT
+              [RunData].[Id] AS [Id],
+              [RunData].[ChannelCode] AS [ChannelCode],
+              [RunData].[ChannelName] AS [ChannelName],
+              [RunData].[ParameterName] AS [ParameterName],
+              [RunData].[ParameterValue] AS [ParameterValue]
+              FROM [dbo].[RunData] AS [RunData]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="Upload_Err_Detail" EntityType="Self.Upload_Err_Detail" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [Upload_Err_Detail].[Upload_Detail_Code] AS [Upload_Detail_Code], 
-    [Upload_Err_Detail].[File_Code] AS [File_Code], 
-    [Upload_Err_Detail].[Row_Num] AS [Row_Num], 
-    [Upload_Err_Detail].[Row_Delimed] AS [Row_Delimed], 
-    [Upload_Err_Detail].[Err_Cols] AS [Err_Cols], 
-    [Upload_Err_Detail].[Upload_Type] AS [Upload_Type], 
-    [Upload_Err_Detail].[Upload_Title_Type] AS [Upload_Title_Type]
-    FROM [dbo].[Upload_Err_Detail] AS [Upload_Err_Detail]
-	</DefiningQuery>
+              SELECT
+              [Upload_Err_Detail].[Upload_Detail_Code] AS [Upload_Detail_Code],
+              [Upload_Err_Detail].[File_Code] AS [File_Code],
+              [Upload_Err_Detail].[Row_Num] AS [Row_Num],
+              [Upload_Err_Detail].[Row_Delimed] AS [Row_Delimed],
+              [Upload_Err_Detail].[Err_Cols] AS [Err_Cols],
+              [Upload_Err_Detail].[Upload_Type] AS [Upload_Type],
+              [Upload_Err_Detail].[Upload_Title_Type] AS [Upload_Title_Type]
+              FROM [dbo].[Upload_Err_Detail] AS [Upload_Err_Detail]
+            </DefiningQuery>
           </EntitySet>
           <EntitySet Name="Upload_Files" EntityType="Self.Upload_Files" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>
-			SELECT 
-    [Upload_Files].[File_Code] AS [File_Code], 
-    [Upload_Files].[File_Name] AS [File_Name], 
-    [Upload_Files].[Err_YN] AS [Err_YN], 
-    [Upload_Files].[Upload_Date] AS [Upload_Date], 
-    [Upload_Files].[Uploaded_By] AS [Uploaded_By], 
-    [Upload_Files].[Upload_Type] AS [Upload_Type], 
-    [Upload_Files].[Pending_Review_YN] AS [Pending_Review_YN], 
-    [Upload_Files].[Upload_Record_Count] AS [Upload_Record_Count], 
-    [Upload_Files].[Bank_Code] AS [Bank_Code], 
-    [Upload_Files].[Records_Inserted] AS [Records_Inserted], 
-    [Upload_Files].[Records_Updated] AS [Records_Updated], 
-    [Upload_Files].[Total_Errors] AS [Total_Errors], 
-    [Upload_Files].[ChannelCode] AS [ChannelCode], 
-    [Upload_Files].[StartDate] AS [StartDate], 
-    [Upload_Files].[EndDate] AS [EndDate]
-    FROM [dbo].[Upload_Files] AS [Upload_Files]
-	</DefiningQuery>
+              SELECT
+              [Upload_Files].[File_Code] AS [File_Code],
+              [Upload_Files].[File_Name] AS [File_Name],
+              [Upload_Files].[Err_YN] AS [Err_YN],
+              [Upload_Files].[Upload_Date] AS [Upload_Date],
+              [Upload_Files].[Uploaded_By] AS [Uploaded_By],
+              [Upload_Files].[Upload_Type] AS [Upload_Type],
+              [Upload_Files].[Pending_Review_YN] AS [Pending_Review_YN],
+              [Upload_Files].[Upload_Record_Count] AS [Upload_Record_Count],
+              [Upload_Files].[Bank_Code] AS [Bank_Code],
+              [Upload_Files].[Records_Inserted] AS [Records_Inserted],
+              [Upload_Files].[Records_Updated] AS [Records_Updated],
+              [Upload_Files].[Total_Errors] AS [Total_Errors],
+              [Upload_Files].[ChannelCode] AS [ChannelCode],
+              [Upload_Files].[StartDate] AS [StartDate],
+              [Upload_Files].[EndDate] AS [EndDate]
+              FROM [dbo].[Upload_Files] AS [Upload_Files]
+            </DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK__Acq_Deal___Acq_D__4DE0370C" Association="Self.FK__Acq_Deal___Acq_D__4DE0370C">
             <End Role="Acq_Deal_Rights" EntitySet="Acq_Deal_Rights" />
@@ -19489,7 +19489,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </AssociationSet>
         </EntityContainer>
       </Schema>
-	  </edmx:StorageModels>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="RightsU_NeoModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -20624,7 +20624,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="IS_Sport_Rights" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Territory_ForDDL" ReturnType="Collection(RightsU_NeoModel.USP_Get_Territory_ForDDL_Result)">
-          <Parameter Name="Is_Theatrical" Mode="In" Type="String" />
+            <Parameter Name="Is_Theatrical" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Acq_Deal_Pushback" EntityType="RightsU_NeoModel.Acq_Deal_Pushback" />
           <EntitySet Name="Acq_Deal_Pushback_Dubbing" EntityType="RightsU_NeoModel.Acq_Deal_Pushback_Dubbing" />
@@ -20844,7 +20844,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Syn_Deal_Attachment" EntitySet="Syn_Deal_Attachment" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Acq_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Acq_Ancillary_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Acq_Deal_Mass_Territory_Update" EntityType="RightsU_NeoModel.Acq_Deal_Mass_Territory_Update" />
           <EntitySet Name="Acq_Deal_Mass_Territory_Update_Details" EntityType="RightsU_NeoModel.Acq_Deal_Mass_Territory_Update_Details" />
@@ -20886,13 +20886,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Rights_Territory" EntitySet="Acq_Deal_Rights_Territory" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Rights_Territory)">
-          <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Rights_Subtitling" EntitySet="Acq_Deal_Rights_Subtitling" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Rights_Subtitling)">
-          <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Rights_Dubbing" EntitySet="Acq_Deal_Rights_Dubbing" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Rights_Dubbing)">
-          <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Rights_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Assign_Workflow" ReturnType="Collection(String)">
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
@@ -20911,10 +20911,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_RIGHT_FOR_RUN" ReturnType="Collection(String)">
-          <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_GET_TITLE_FOR_RUN" ReturnType="Collection(RightsU_NeoModel.USP_GET_TITLE_FOR_RUN_Result)">
-          <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Process_Workflow" ReturnType="Collection(String)">
             <Parameter Name="Module_Code" Mode="In" Type="Int32" />
@@ -20997,7 +20997,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ContentType" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_Language" ReturnType="Collection(String)">
-          <Parameter Name="Title_Codes" Mode="In" Type="String" />
+            <Parameter Name="Title_Codes" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Dashboard_Detail" ReturnType="Collection(RightsU_NeoModel.USP_Get_Dashboard_Detail_Result)">
             <Parameter Name="DashboardType" Mode="In" Type="String" />
@@ -21006,13 +21006,13 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Pushback_Dubbing" EntitySet="Acq_Deal_Pushback_Dubbing" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Pushback_Dubbing)">
-          <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Pushback_Subtitling" EntitySet="Acq_Deal_Pushback_Subtitling" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Pushback_Subtitling)">
-          <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Select_Acq_Deal_Pushback_Territory" EntitySet="Acq_Deal_Pushback_Territory" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Pushback_Territory)">
-          <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Pushback_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Acq_Deal_Sport" EntityType="RightsU_NeoModel.Acq_Deal_Sport" />
           <EntitySet Name="Acq_Deal_Sport_Broadcast" EntityType="RightsU_NeoModel.Acq_Deal_Sport_Broadcast" />
@@ -21112,7 +21112,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Acq_Deal_Sport_Language" EntitySet="Acq_Deal_Sport_Language" />
           </AssociationSet>
           <FunctionImport Name="USP_Select_Acq_Deal_Sport_Language" EntitySet="Acq_Deal_Sport_Language" ReturnType="Collection(RightsU_NeoModel.Acq_Deal_Sport_Language)">
-          <Parameter Name="Acq_Deal_Sport_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Sport_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Acq_Deal_Sport_Ancillary" EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary" />
           <EntitySet Name="Acq_Deal_Sport_Ancillary_Broadcast" EntityType="RightsU_NeoModel.Acq_Deal_Sport_Ancillary_Broadcast" />
@@ -21290,7 +21290,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_RIGHT_FOR_SYN_RUN" ReturnType="Collection(String)">
-          <Parameter Name="SYN_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="SYN_DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN" ReturnType="Collection(RightsU_NeoModel.USP_Validate_SYN_YEARWISE_RIGHT_FOR_RUN_Result)">
             <Parameter Name="SYN_DEAL_CODE" Mode="In" Type="Int32" />
@@ -21313,7 +21313,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="CheckFor" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Check_Acq_Deal_Status_For_Syn" ReturnType="Collection(Int32)">
-          <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Invoke_Validation_Job" />
           <FunctionImport Name="USP_Get_Syn_Rights_Errors" ReturnType="Collection(RightsU_NeoModel.USP_Get_Syn_Rights_Errors_Result)">
@@ -21388,10 +21388,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="IPR_REP_STATUS_HISTORY" EntitySet="IPR_REP_STATUS_HISTORY" />
           </AssociationSet>
           <FunctionImport Name="USP_Get_IPR_Class_Tree_Hierarchy" ReturnType="Collection(RightsU_NeoModel.USP_Get_IPR_Class_Tree_Hierarchy_Result)">
-          <Parameter Name="IPR_ClassCodes" Mode="In" Type="String" />
+            <Parameter Name="IPR_ClassCodes" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_List_IPR_Status_History" ReturnType="Collection(RightsU_NeoModel.USP_List_IPR_Status_History_Result)">
-          <Parameter Name="IPR_Rep_Code" Mode="In" Type="Int32" />
+            <Parameter Name="IPR_Rep_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Login_Details_Report" ReturnType="Collection(RightsU_NeoModel.USP_Login_Details_Report_Result)">
             <Parameter Name="StrSearch" Mode="In" Type="String" />
@@ -21406,10 +21406,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Selected_Role_Code" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Populate_Master_Deal_Titles" ReturnType="Collection(RightsU_NeoModel.USP_Populate_Master_Deal_Titles_Result)" >
-          <Parameter Name="Acq_Deal_Movie_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Movie_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Mapping_Countries" ReturnType="Collection(String)">
-          <Parameter Name="Acq_Deal_Right_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Right_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_Episode" ReturnType="Collection(RightsU_NeoModel.USP_Validate_Episode_Result)">
             <Parameter Name="Title_with_Episode" Mode="In" Type="String" />
@@ -21432,7 +21432,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Debug" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_List_Cost_Colors" ReturnType="Collection(RightsU_NeoModel.USP_List_Cost_Colors_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Update_Syn_Acq_Mapping" ReturnType="Collection(String)">
             <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
@@ -21486,7 +21486,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="PageSize" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Uploaded_File_Error_List" ReturnType="Collection(RightsU_NeoModel.USP_Uploaded_File_Error_List_Result)">
-          <Parameter Name="Upload_Detail_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Upload_Detail_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Language_Deal_Log" EntityType="RightsU_NeoModel.Language_Deal_Log" />
           <EntitySet Name="Territory_Deal_Log" EntityType="RightsU_NeoModel.Territory_Deal_Log" />
@@ -21518,7 +21518,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
           <FunctionImport Name="USP_Get_Talent_Name" ReturnType="Collection(RightsU_NeoModel.USP_Get_Talent_Name_Result)" />
           <FunctionImport Name="USP_Bind_Extend_Column_Grid" ReturnType="Collection(RightsU_NeoModel.USP_Bind_Extend_Column_Grid_Result)">
-          <Parameter Name="Title_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_List_Approval_Acq_Syn" ReturnType="Collection(RightsU_NeoModel.USP_List_Approval_Acq_Syn_Result)">
             <Parameter Name="StrSearch" Mode="In" Type="String" />
@@ -21593,7 +21593,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode" ReturnType="Collection(RightsU_NeoModel.USP_Get_BV_Schedule_MinMaxDate_BasedOn_RightCode_Result)">
-          <Parameter Name="Deal_Movie_Rights_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Deal_Movie_Rights_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_List_Acq_Budget" ReturnType="Collection(RightsU_NeoModel.USP_List_Acq_Budget_Result)">
             <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
@@ -21621,7 +21621,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_GET_TITLE_FOR_SYN_RUN" ReturnType="Collection(RightsU_NeoModel.USP_GET_TITLE_FOR_SYN_RUN_Result)">
-          <Parameter Name="SYN_DEAL_CODE" Mode="In" Type="Int32" />
+            <Parameter Name="SYN_DEAL_CODE" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK" ReturnType="Collection(RightsU_NeoModel.USP_GET_DATA_FOR_APPROVED_TITLES_FOR_SYN_PUSHBACK_Result)">
             <Parameter Name="Title_Codes" Mode="In" Type="String" />
@@ -21676,7 +21676,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="callForMilestone" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Send_Mail_WBS_Linked_Titles">
-          <Parameter Name="WBS_Codes" Mode="In" Type="String" />
+            <Parameter Name="WBS_Codes" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Channel_Region" EntityType="RightsU_NeoModel.Channel_Region" />
           <EntitySet Name="Channel_Region_Mapping" EntityType="RightsU_NeoModel.Channel_Region_Mapping" />
@@ -21706,7 +21706,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="PageSize" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_SAP_Export_Detail" ReturnType="Collection(RightsU_NeoModel.USP_SAP_Export_Detail_Result)">
-          <Parameter Name="File_Code" Mode="In" Type="Int32" />
+            <Parameter Name="File_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="IPR_Opp" EntityType="RightsU_NeoModel.IPR_Opp" />
           <EntitySet Name="IPR_Opp_Attachment" EntityType="RightsU_NeoModel.IPR_Opp_Attachment" />
@@ -21738,7 +21738,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="IPR_Opp" EntitySet="IPR_Opp" />
           </AssociationSet>
           <FunctionImport Name="USP_List_IPR_Opp_Status_History" ReturnType="Collection(RightsU_NeoModel.USP_List_IPR_Opp_Status_History_Result)">
-          <Parameter Name="IPR_Opp_Code" Mode="In" Type="Int32" />
+            <Parameter Name="IPR_Opp_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Platform_Code_For_Syn_Run" ReturnType="Collection(String)">
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
@@ -21821,7 +21821,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Module_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Close_Deal_Movie" ReturnType="Collection(RightsU_NeoModel.USP_Close_Deal_Movie_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_Termination" ReturnType="Collection(String)">
             <Parameter Name="Deal_Code" Mode="In" Type="Int32" />
@@ -21842,7 +21842,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Acq_Deal_Movie_Music_Link" EntitySet="Acq_Deal_Movie_Music_Link" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Assign_Music" ReturnType="Collection(RightsU_NeoModel.USP_List_Assign_Music_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Populate_Music" ReturnType="Collection(RightsU_NeoModel.USP_Populate_Music_Result)">
             <Parameter Name="Acq_Deal_Movie_Code" Mode="In" Type="Int32" />
@@ -21891,7 +21891,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Search_String" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_List_Acq_PaymentTerms" ReturnType="Collection(RightsU_NeoModel.USP_List_Acq_PaymentTerms_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Login_Details" ReturnType="Collection(RightsU_NeoModel.USP_Get_Login_Details_Result)">
             <Parameter Name="Data_For" Mode="In" Type="String" />
@@ -21941,7 +21941,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ToMailId" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Check_HoldBack" ReturnType="Collection(RightsU_NeoModel.USP_Check_HoldBack_Result)">
-          <Parameter Name="Title_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="USP_Save_TitleRelease" ReturnType="Collection(Int32)">
             <Parameter Name="Title_Code" Mode="In" Type="Int64" />
@@ -22026,16 +22026,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Content_Music_Link" EntitySet="Content_Music_Link" />
           </AssociationSet>
           <FunctionImport Name="USP_List_MusicTrack" ReturnType="Collection(RightsU_NeoModel.USP_List_MusicTrack_Result)">
-          <Parameter Name="searchText" Mode="In" Type="String" />
+            <Parameter Name="searchText" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_GetContentMetadata" ReturnType="Collection(RightsU_NeoModel.USP_GetContentMetadata_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="USP_GetContentsMusicData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsMusicData_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="USP_GetContentsRightData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsRightData_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <EntitySet Name="Acq_Deal_Tab_Version" EntityType="RightsU_NeoModel.Acq_Deal_Tab_Version" />
           <FunctionImport Name="USP_GetContentsAiringData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsAiringData_Result)">
@@ -22046,14 +22046,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Channel_Codes" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_GetContentsVersionData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsVersionData_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="USP_PopulateContent" ReturnType="Collection(RightsU_NeoModel.USP_PopulateContent_Result)">
-          <Parameter Name="searchPrefix" Mode="In" Type="String" />
+            <Parameter Name="searchPrefix" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Content_Status_History" EntityType="RightsU_NeoModel.Content_Status_History" />
           <FunctionImport Name="USP_GetContentsStatusHistoryData" ReturnType="Collection(RightsU_NeoModel.USP_GetContentsStatusHistoryData_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int64" />
           </FunctionImport>
           <FunctionImport Name="USP_GetContentRestrictionRemarks" ReturnType="Collection(RightsU_NeoModel.USP_GetContentRestrictionRemarks_Result)">
             <Parameter Name="TitleContentCode" Mode="In" Type="Int64" />
@@ -22170,7 +22170,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           </FunctionImport>
           <EntitySet Name="Deal_Workflow_Status" EntityType="RightsU_NeoModel.Deal_Workflow_Status" />
           <FunctionImport Name="USP_List_Country" ReturnType="Collection(RightsU_NeoModel.USP_List_Country_Result)" >
-          <Parameter Name="SysLanguageCode" Mode="In" Type="Int32" />
+            <Parameter Name="SysLanguageCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="DM_Master_Import" EntityType="RightsU_NeoModel.DM_Master_Import" />
           <EntitySet Name="DM_Music_Title" EntityType="RightsU_NeoModel.DM_Music_Title" />
@@ -22190,7 +22190,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Sort_Order" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Release_Content_List" ReturnType="Collection(RightsU_NeoModel.USP_Get_Release_Content_List_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="DM_Title" EntityType="RightsU_NeoModel.DM_Title" />
           <FunctionImport Name="USP_List_DM_Master_Import" ReturnType="Collection(RightsU_NeoModel.USP_List_DM_Master_Import_Result)">
@@ -22271,14 +22271,14 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="User_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_BV_Title_Mapping_Shows">
-          <Parameter Name="BV_HouseID_Data_Code" Mode="In" Type="String" />
+            <Parameter Name="BV_HouseID_Data_Code" Mode="In" Type="String" />
           </FunctionImport>
           <AssociationSet Name="FK_Title_Program" Association="RightsU_NeoModel.FK_Title_Program">
             <End Role="Program" EntitySet="Programs" />
             <End Role="Title" EntitySet="Titles" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Territory" ReturnType="Collection(RightsU_NeoModel.USP_List_Territory_Result)" >
-          <Parameter Name="SysLanguageCode" Mode="In" Type="Int32" />
+            <Parameter Name="SysLanguageCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Music_Deal" EntityType="RightsU_NeoModel.Music_Deal" />
           <EntitySet Name="Music_Deal_Channel" EntityType="RightsU_NeoModel.Music_Deal_Channel" />
@@ -22387,7 +22387,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ErrorMessage" Mode="InOut" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_Content_Data" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_Content_Data_Result)">
-          <Parameter Name="Data_For" Mode="In" Type="String" />
+            <Parameter Name="Data_For" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Versions" EntityType="RightsU_NeoModel.Version" />
           <AssociationSet Name="FK_Title_Content_Version_Version" Association="RightsU_NeoModel.FK_Title_Content_Version_Version">
@@ -22428,7 +22428,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Report_Territory" EntityType="RightsU_NeoModel.Report_Territory" />
           <EntitySet Name="Report_Territory_Country" EntityType="RightsU_NeoModel.Report_Territory_Country" />
           <FunctionImport Name="USP_Acq_Deal_Rights_Holdback_Release" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Deal_Rights_Holdback_Release_Result)">
-          <Parameter Name="AcqDealRightHoldbackCode" Mode="In" Type="String" />
+            <Parameter Name="AcqDealRightHoldbackCode" Mode="In" Type="String" />
           </FunctionImport>
           <AssociationSet Name="FK_Report_Territory_Country_Country" Association="RightsU_NeoModel.FK_Report_Territory_Country_Country">
             <End Role="Country" EntitySet="Countries" />
@@ -22693,7 +22693,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Date_Since" Mode="In" Type="DateTime" />
           </FunctionImport>
           <FunctionImport Name="USP_Validate_SDM_Title" ReturnType="Collection(RightsU_NeoModel.USP_Validate_SDM_Title_Result)">
-          <Parameter Name="ValidateXML" Mode="In" Type="String" />
+            <Parameter Name="ValidateXML" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="Title_Content_Mapping" EntityType="RightsU_NeoModel.Title_Content_Mapping" />
           <AssociationSet Name="FK_Title_Content_Mapping_Acq_Deal_Movie" Association="RightsU_NeoModel.FK_Title_Content_Mapping_Acq_Deal_Movie">
@@ -22796,7 +22796,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Music_Deal_Platform" EntitySet="Music_Deal_Platform" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Content_Version" ReturnType="Collection(RightsU_NeoModel.USP_List_Content_Version_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Title_Content_Version_Details" EntityType="RightsU_NeoModel.Title_Content_Version_Details" />
           <AssociationSet Name="FK__Title_Con__Title__5146B39C" Association="RightsU_NeoModel.FK__Title_Con__Title__5146B39C">
@@ -22804,7 +22804,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Title_Content_Version_Details" EntitySet="Title_Content_Version_Details" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Title_Content_ExportToXml" ReturnType="Collection(RightsU_NeoModel.USP_List_Title_Content_ExportToXml_Result)">
-          <Parameter Name="Title_Content_Code" Mode="In" Type="String" />
+            <Parameter Name="Title_Content_Code" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_GetPromoterCodes" ReturnType="Collection(String)">
             <Parameter Name="Title_Code" Mode="In" Type="String" />
@@ -22851,10 +22851,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="MustHave_Promoter" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Check_Autopush_Ammend_Acq" ReturnType="Collection(String)">
-          <Parameter Name="AcqDealCode" Mode="In" Type="Int32" />
+            <Parameter Name="AcqDealCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Check_Autopush_Ammend_Syn" ReturnType="Collection(String)">
-          <Parameter Name="SynDealCode" Mode="In" Type="Int32" />
+            <Parameter Name="SynDealCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <AssociationSet Name="FK_Acq_Deal_Ancillary_Platform_Platform" Association="RightsU_NeoModel.FK_Acq_Deal_Ancillary_Platform_Platform">
             <End Role="Platform" EntitySet="Platforms" />
@@ -22873,10 +22873,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="SearchKey" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Syn_Rights_Autopush_Delete_Validation" ReturnType="Collection(String)">
-          <Parameter Name="SynDealRightsCode" Mode="In" Type="Int32" />
+            <Parameter Name="SynDealRightsCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPPopulateTitleForMapping" ReturnType="Collection(RightsU_NeoModel.USPPopulateTitleForMapping_Result)">
-          <Parameter Name="SearchKey" Mode="In" Type="String" />
+            <Parameter Name="SearchKey" Mode="In" Type="String" />
           </FunctionImport>
           <EntitySet Name="MHPlayLists" EntityType="RightsU_NeoModel.MHPlayList" />
           <EntitySet Name="MHPlayListSongs" EntityType="RightsU_NeoModel.MHPlayListSong" />
@@ -22952,10 +22952,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="contentType" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USPGetTitleCode" ReturnType="Collection(RightsU_NeoModel.USPGetTitleCode_Result)">
-          <Parameter Name="titleName" Mode="In" Type="String" />
+            <Parameter Name="titleName" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USPGetTitleEpisodes" ReturnType="Collection(RightsU_NeoModel.USPGetTitleEpisodes_Result)">
-          <Parameter Name="titleCode" Mode="In" Type="Int32" />
+            <Parameter Name="titleCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <AssociationSet Name="FK_MHCueSheetSong_Title" Association="RightsU_NeoModel.FK_MHCueSheetSong_Title">
             <End Role="Title" EntitySet="Titles" />
@@ -22990,7 +22990,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="MHRequest" EntitySet="MHRequests" />
           </AssociationSet>
           <FunctionImport Name="USPValidateMHRequestConsumption" ReturnType="Collection(RightsU_NeoModel.USPValidateMHRequestConsumption_Result)">
-          <Parameter Name="MHRequestCode" Mode="In" Type="Int32" />
+            <Parameter Name="MHRequestCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPMHCueSheetList" ReturnType="Collection(RightsU_NeoModel.USPMHCueSheetList_Result)">
             <Parameter Name="ProductionHouseCode" Mode="In" Type="Int32" />
@@ -23023,7 +23023,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="BMS_Deal_Content_Rights" EntitySet="BMS_Deal_Content_Rights" />
           </AssociationSet>
           <FunctionImport Name="USPMHGetErrorList" ReturnType="Collection(String)">
-          <Parameter Name="List" Mode="In" Type="String" />
+            <Parameter Name="List" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USPMHMusicTitleAlbumSearch" ReturnType="Collection(RightsU_NeoModel.USPMHMusicTitleAlbumSearch_Result)">
             <Parameter Name="keyword" Mode="In" Type="String" />
@@ -23083,7 +23083,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="MHCueSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPMHRequistionTrackList" ReturnType="Collection(RightsU_NeoModel.USPMHRequistionTrackList_Result)">
-          <Parameter Name="MHRequestCode" Mode="In" Type="Int32" />
+            <Parameter Name="MHRequestCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="TATSLAStatus" EntityType="RightsU_NeoModel.TATSLAStatus" />
           <EntitySet Name="TATs" EntityType="RightsU_NeoModel.TAT" />
@@ -23141,7 +23141,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Vendor" EntitySet="Vendors" />
           </AssociationSet>
           <FunctionImport Name="USP_List_Acq_Linear_Title_Status" ReturnType="Collection(RightsU_NeoModel.USP_List_Acq_Linear_Title_Status_Result)">
-          <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Acq_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_List_TitleBulkImport" ReturnType="Collection(RightsU_NeoModel.USP_List_TitleBulkImport_Result)">
             <Parameter Name="DM_Master_Import_Code" Mode="In" Type="Int32" />
@@ -23412,10 +23412,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="ExactMatch" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Title_Objection_Adv_PreReq" ReturnType="Collection(RightsU_NeoModel.USP_Title_Objection_Adv_PreReq_Result)">
-          <Parameter Name="Type" Mode="In" Type="String" />
+            <Parameter Name="Type" Mode="In" Type="String" />
           </FunctionImport>
-		  <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
-          <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
+          <FunctionImport Name="USP_List_Syn_Ancillary" ReturnType="Collection(RightsU_NeoModel.USP_List_Syn_Ancillary_Result)">
+            <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_GET_TITLE_FOR_SUPPLEMENTARY" ReturnType="Collection(RightsU_NeoModel.USP_GET_TITLE_FOR_SUPPLEMENTARY_Result)">
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
@@ -23432,9 +23432,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
             <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
             <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
+          </AssociationSet>          
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
-          <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Edit_Row">
             <Parameter Name="Acq_Deal_Supplementary_Code" Mode="In" Type="Int32" />
@@ -23458,7 +23458,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Acq_Deal_Supplementary_detail" EntitySet="Acq_Deal_Supplementary_detail" />
           </AssociationSet>
           <FunctionImport Name="USP_Acq_Supplementary_Delete_Title">
-          <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
+            <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Syn_Deal_Supplementary" EntityType="RightsU_NeoModel.Syn_Deal_Supplementary" />
           <EntitySet Name="Syn_Deal_Supplementary_Detail" EntityType="RightsU_NeoModel.Syn_Deal_Supplementary_Detail" />
@@ -23467,7 +23467,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Syn_Deal_Supplementary_Detail" EntitySet="Syn_Deal_Supplementary_Detail" />
           </AssociationSet>
           <FunctionImport Name="USP_Delete_Syn_Supplementary">
-          <Parameter Name="Supplementary_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Supplementary_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_For_Syn_Supplementary" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Syn_Supplementary_Result)">
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
@@ -23479,7 +23479,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="View" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Supplementary_Config" ReturnType="Collection(RightsU_NeoModel.USP_Get_Supplementary_Config_Result)">
-          <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Syn_Deal_Supplementary_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Syn_Deal_Supplementary_Edit_Result)">
             <Parameter Name="Syn_Deal_Supplementary_Code" Mode="In" Type="Int32" />
@@ -23507,7 +23507,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Tab_SM" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Delete_Acq_Supplementary">
-          <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
+            <Parameter Name="SupplementaryCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_For_Acq_Supplementary" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Acq_Supplementary_Result)">
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
@@ -23566,7 +23566,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Mapping_Countries_Buyback" ReturnType="Collection(String)">
-          <Parameter Name="Syn_Deal_Right_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Syn_Deal_Right_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback" ReturnType="Collection(RightsU_NeoModel.USP_Get_Mapping_SubTitling_Dubbing_Languages_Buyback_Result)">
             <Parameter Name="Acq_Deal_Rights_Codes" Mode="In" Type="String" />
@@ -23600,7 +23600,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Report_Column_Setup_IT" EntitySet="Report_Column_Setup_IT" />
             <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
           </AssociationSet>
-
           <EntitySet Name="Acq_Deal_Digital" EntityType="RightsU_NeoModel.Acq_Deal_Digital" />
           <EntitySet Name="Acq_Deal_Digital_detail" EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" />
           <EntitySet Name="AT_Acq_Deal_Digital" EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" />
@@ -23633,7 +23632,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="RecordCount" Mode="InOut" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Acq_Digital_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_Digital_Tab_Result)">
-          <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_For_Acq_Digital" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Acq_Digital_Result)">
             <Parameter Name="ACQ_DEAL_CODE" Mode="In" Type="Int32" />
@@ -23646,7 +23645,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="View" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="USP_Delete_Acq_Digital">
-          <Parameter Name="DigitalCode" Mode="In" Type="Int32" />
+            <Parameter Name="DigitalCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Acq_Deal_Digital_Edit" ReturnType="Collection(RightsU_NeoModel.USP_Get_Acq_Deal_Digital_Edit_Result)">
             <Parameter Name="Acq_Deal_Digital_Code" Mode="In" Type="Int32" />
@@ -23768,11 +23767,11 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <FunctionImport Name="USPAL_GetBookingSheetList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetBookingSheetList_Result)" />
           <FunctionImport Name="USPAL_GetReCommendationList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetReCommendationList_Result)" />
           <FunctionImport Name="USPAL_Title_Content_Gen_From_Title" ReturnType="Collection(String)">
-          <Parameter Name="TitleCode" Mode="In" Type="Int32" />
+            <Parameter Name="TitleCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="DM_Booking_Sheet_Data" EntityType="RightsU_NeoModel.DM_Booking_Sheet_Data" />
           <FunctionImport Name="USPGet_DDLValues_For_ExtendedColumns" ReturnType="Collection(RightsU_NeoModel.USPGet_DDLValues_For_ExtendedColumns_Result)">
-          <Parameter Name="ExtendedColumnsCode" Mode="In" Type="Int32" />
+            <Parameter Name="ExtendedColumnsCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="AL_Load_Sheet" EntityType="RightsU_NeoModel.AL_Load_Sheet" />
           <EntitySet Name="AL_Load_Sheet_Details" EntityType="RightsU_NeoModel.AL_Load_Sheet_Details" />
@@ -23799,7 +23798,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="LoadSheetCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetPurchaseOrderList" ReturnType="Collection(RightsU_NeoModel.USPAL_GetPurchaseOrderList_Result)" >
-          <Parameter Name="UsersCode" Mode="In" Type="Int32" />
+            <Parameter Name="UsersCode" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="AL_Material_Tracking" EntityType="RightsU_NeoModel.AL_Material_Tracking" />
           <EntitySet Name="AL_Material_Tracking_OEM" EntityType="RightsU_NeoModel.AL_Material_Tracking_OEM" />
@@ -23878,7 +23877,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="AL_Purchase_Order_Rel" EntitySet="AL_Purchase_Order_Rel" />
           </AssociationSet>
           <FunctionImport Name="USPAL_GetRevisionHistoryForLoadsheet" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForLoadsheet_Result)">
-          <Parameter Name="Record_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Record_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USPAL_GetRevisionHistoryForModule" ReturnType="Collection(RightsU_NeoModel.USPAL_GetRevisionHistoryForModule_Result)">
             <Parameter Name="Record_Code" Mode="In" Type="Int32" />
@@ -23903,10 +23902,10 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <End Role="Syn_Deal_Digital" EntitySet="Syn_Deal_Digital" />
           </AssociationSet>
           <FunctionImport Name="USP_Delete_Syn_Digital">
-          <Parameter Name="Digital_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Digital_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Digital_Config" ReturnType="Collection(RightsU_NeoModel.USP_Get_Digital_Config_Result)">
-          <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
+            <Parameter Name="Digital_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="USP_Get_Title_For_Syn_Digital" ReturnType="Collection(RightsU_NeoModel.USP_Get_Title_For_Syn_Digital_Result)">
             <Parameter Name="Syn_Deal_Code" Mode="In" Type="Int32" />
@@ -38968,7 +38967,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Display_Text" Nullable="true" />
           <Property Type="String" Name="Data_For" Nullable="true" />
         </ComplexType>
-		<ComplexType Name="USP_List_Syn_Ancillary_Result">
+        <ComplexType Name="USP_List_Syn_Ancillary_Result">
           <Property Type="Int32" Name="Syn_Deal_Ancillary_Code" Nullable="false" />
           <Property Type="String" Name="TitleName" Nullable="false" MaxLength="1" />
           <Property Type="Int32" Name="Ancillary_Type_Code" Nullable="false" />
@@ -38991,6 +38990,29 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Supplementary_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Supplementary_Config" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary" ToRole="Supplementary_Config" />
+        </EntityType>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
+          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Supplementary_Data">
           <Key>
@@ -39160,7 +39182,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
           <Property Type="Int32" Name="Title_Code" Nullable="true" />
           <Property Type="Int32" Name="Syn_Deal_Supplementary_Code" Nullable="true" />
-          </ComplexType>
+        </ComplexType>
         <EntityType Name="Acq_Amendement_History">
           <Key>
             <PropertyRef Name="Acq_Amendement_History_Code" />
@@ -39180,7 +39202,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
           <Property Type="Int32" Name="Title_Code" Nullable="true" />
           <Property Type="Int32" Name="Acq_Deal_Supplementary_Code" Nullable="true" />
-          </ComplexType>
+        </ComplexType>
         <ComplexType Name="USP_Get_Acq_Deal_Supplementary_Edit_Result">
           <Property Type="String" Name="Supplementary_Data_Code" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="User_Value" Nullable="true" />
@@ -39317,85 +39339,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ImgPath" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ImgData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityType Name="Attrib_Report_Column">
-          <Key>
-            <PropertyRef Name="Attrib_Report_Column_Code" />
-          </Key>
-          <Property Name="Attrib_Report_Column_Code" Type="Int32" Nullable="false" />
-          <Property Name="DP_Attrib_Group_Code" Type="Int32" />
-          <Property Name="BV_Attrib_Group_Code" Type="Int32" />
-          <Property Name="Column_Code" Type="Int32" />
-          <Property Name="Control_Type" Type="Int32" />
-          <Property Name="Display_Order" Type="Int32" />
-          <Property Name="Output_Group" Type="Int32" />
-          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Icon" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Css_Class" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsSelectCriteria" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Attrib_Group" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
-          <NavigationProperty Name="Attrib_Group1" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
-          <NavigationProperty Name="Report_Column_Setup_IT" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Attrib_Report_Column" ToRole="Report_Column_Setup_IT" />
-        </EntityType>
-        <EntityType Name="Report_Column_Setup_IT">
-          <Key>
-            <PropertyRef Name="Column_Code" />
-          </Key>
-          <Property Name="Column_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="View_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Name_In_DB" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
-          <Property Name="Display_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Valued_As" Type="Int16" />
-          <Property Name="Display_Order" Type="Int32" />
-          <Property Name="IsPartofSelectOnly" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
-          <Property Name="List_Source" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
-          <Property Name="Lookup_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Display_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Right_Code" Type="Int32" />
-          <Property Name="Max_Length" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="WhCondition" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="ValidOpList" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Alternate_Config_Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Attrib_Report_Column" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Report_Column_Setup_IT" ToRole="Attrib_Report_Column" />
-        </EntityType>
-        <Association Name="FK_Attrib_Report_Column_Attrib_Group">
-          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Attrib_Group">
-              <PropertyRef Name="Attrib_Group_Code" />
-            </Principal>
-            <Dependent Role="Attrib_Report_Column">
-              <PropertyRef Name="DP_Attrib_Group_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Attrib_Report_Column_Attrib_Group1">
-          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Attrib_Group">
-              <PropertyRef Name="Attrib_Group_Code" />
-            </Principal>
-            <Dependent Role="Attrib_Report_Column">
-              <PropertyRef Name="BV_Attrib_Group_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Attrib_Report_Column_Report_Column_Setup">
-          <End Type="RightsU_NeoModel.Report_Column_Setup_IT" Role="Report_Column_Setup_IT" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Report_Column_Setup_IT">
-              <PropertyRef Name="Column_Code" />
-            </Principal>
-            <Dependent Role="Attrib_Report_Column">
-              <PropertyRef Name="Column_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        
         <EntityType Name="Acq_Deal_Digital">
           <Key>
             <PropertyRef Name="Acq_Deal_Digital_Code" />
@@ -39561,7 +39504,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Remarks" Nullable="true" MaxLength="5000" />
           <Property Type="Int32" Name="Title_Code" Nullable="true" />
           <Property Type="Int32" Name="Acq_Deal_Digital_Code" Nullable="true" />
-          </ComplexType>
+        </ComplexType>
         <ComplexType Name="USP_Acq_Digital_Tab_Result">
           <Property Type="String" Name="Digital_name" Nullable="true" MaxLength="200" />
           <Property Type="String" Name="Control_Type" Nullable="true" MaxLength="50" />
@@ -39598,55 +39541,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="View_Name" Nullable="true" MaxLength="100" />
           <Property Type="String" Name="Whr_Criteria" Nullable="true" MaxLength="100" />
         </ComplexType>
-        <EntityType Name="Supplementary_Config">
-          <Key>
-            <PropertyRef Name="Supplementary_Config_Code" />
-          </Key>
-          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Supplementary_Code" Type="Int32" />
-          <Property Name="Supplementary_Tab_Code" Type="Int32" />
-          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
-          <Property Name="Max_Length" Type="Int32" />
-          <Property Name="Page_Control_Order" Type="Int32" />
-          <Property Name="Control_Field_Order" Type="Int32" />
-          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
-          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
-          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
-        </EntityType>
-        <Association Name="FK_Supplementary_Config_Supplementary">
-          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Supplementary">
-              <PropertyRef Name="Supplementary_Code" />
-            </Principal>
-            <Dependent Role="Supplementary_Config">
-              <PropertyRef Name="Supplementary_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
-          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
-          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Supplementary_Tab">
-              <PropertyRef Name="Supplementary_Tab_Code" />
-            </Principal>
-            <Dependent Role="Supplementary_Config">
-              <PropertyRef Name="Supplementary_Tab_Code" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="Banner">
           <Key>
             <PropertyRef Name="Banner_Code" />
@@ -40210,9 +40104,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="DateTime" Name="Last_Updated_Time" Nullable="true" Precision="23" />
           <Property Type="String" Name="Record_Status" Nullable="true" MaxLength="5" />
           <Property Type="String" Name="Excel_File" Nullable="true" MaxLength="1000" />
-		  <Property Type="String" Name="Cycle" Nullable="true" MaxLength="1000" />
+          <Property Type="String" Name="Cycle" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
-          </ComplexType>
+        </ComplexType>
         <ComplexType Name="USPAL_GetReCommendationList_Result">
           <Property Type="Int32" Name="AL_Proposal_Code" Nullable="true" />
           <Property Type="Int32" Name="AL_Recommendation_Code" Nullable="true" />
@@ -40222,7 +40116,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="String" Name="Vendor_Name" Nullable="true" MaxLength="1000" />
           <Property Type="String" Name="Proposal_CY" Nullable="true" MaxLength="1000" />
           <Property Type="Int32" Name="Vendor_Code" Nullable="true" />
-		  <Property Type="String" Name="IsMinimum" Nullable="true" MaxLength="10" />
+          <Property Type="String" Name="IsMinimum" Nullable="true" MaxLength="10" />
         </ComplexType>
         <EntityType Name="DM_Booking_Sheet_Data">
           <Key>
@@ -41033,6 +40927,55 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Type="Int32" Name="DtDiff" Nullable="false" />
           <Property Type="String" Name="DtType" Nullable="false" MaxLength="1" />
         </ComplexType>
+        <EntityType Name="Supplementary_Config">
+          <Key>
+            <PropertyRef Name="Supplementary_Config_Code" />
+          </Key>
+          <Property Name="Supplementary_Config_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Supplementary_Code" Type="Int32" />
+          <Property Name="Supplementary_Tab_Code" Type="Int32" />
+          <Property Name="Page_Group" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Label_Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Control_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Is_Multiselect" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Max_Length" Type="Int32" />
+          <Property Name="Page_Control_Order" Type="Int32" />
+          <Property Name="Control_Field_Order" Type="Int32" />
+          <Property Name="Default_Values" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="View_Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Text_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Value_Field" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Whr_Criteria" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Data_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LP_Supplementary_Value_Config_Code" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Supplementary" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" FromRole="Supplementary_Config" ToRole="Supplementary" />
+          <NavigationProperty Name="Supplementary_Tab" Relationship="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" FromRole="Supplementary_Config" ToRole="Supplementary_Tab" />
+        </EntityType>
+        <Association Name="FK_Supplementary_Config_Supplementary">
+          <End Type="RightsU_NeoModel.Supplementary" Role="Supplementary" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary">
+              <PropertyRef Name="Supplementary_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Supplementary_Config_Supplementary_Tab">
+          <End Type="RightsU_NeoModel.Supplementary_Tab" Role="Supplementary_Tab" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Supplementary_Config" Role="Supplementary_Config" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Supplementary_Tab">
+              <PropertyRef Name="Supplementary_Tab_Code" />
+            </Principal>
+            <Dependent Role="Supplementary_Config">
+              <PropertyRef Name="Supplementary_Tab_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="BV_Schedule_Transaction">
           <Key>
             <PropertyRef Name="BV_Schedule_Transaction_Code" />
@@ -47656,6 +47599,36 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="USP_Generate_Title_Content" FunctionName="RightsU_NeoModel.Store.USP_Generate_Title_Content" />
+          <EntitySetMapping Name="BV_Schedule_Transaction">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.BV_Schedule_Transaction">
+              <MappingFragment StoreEntitySet="BV_Schedule_Transaction">
+                <ScalarProperty Name="IsIgnore" ColumnName="IsIgnore" />
+                <ScalarProperty Name="IsDealApproved" ColumnName="IsDealApproved" />
+                <ScalarProperty Name="IsException" ColumnName="IsException" />
+                <ScalarProperty Name="IsRevertCnt_OnAsRunLoad" ColumnName="IsRevertCnt_OnAsRunLoad" />
+                <ScalarProperty Name="Deal_Movie_Rights_Code" ColumnName="Deal_Movie_Rights_Code" />
+                <ScalarProperty Name="Deal_Movie_Code" ColumnName="Deal_Movie_Code" />
+                <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
+                <ScalarProperty Name="Inserted_On" ColumnName="Inserted_On" />
+                <ScalarProperty Name="Inserted_By" ColumnName="Inserted_By" />
+                <ScalarProperty Name="IsProcessed" ColumnName="IsProcessed" />
+                <ScalarProperty Name="Channel_Code" ColumnName="Channel_Code" />
+                <ScalarProperty Name="File_Code" ColumnName="File_Code" />
+                <ScalarProperty Name="Found_Status" ColumnName="Found_Status" />
+                <ScalarProperty Name="Scheduled_Version_House_Number_List" ColumnName="Scheduled_Version_House_Number_List" />
+                <ScalarProperty Name="Schedule_Item_Duration" ColumnName="Schedule_Item_Duration" />
+                <ScalarProperty Name="Schedule_Item_Log_Time" ColumnName="Schedule_Item_Log_Time" />
+                <ScalarProperty Name="Schedule_Item_Log_Date" ColumnName="Schedule_Item_Log_Date" />
+                <ScalarProperty Name="Program_Category" ColumnName="Program_Category" />
+                <ScalarProperty Name="Program_Title" ColumnName="Program_Title" />
+                <ScalarProperty Name="Program_Episode_Number" ColumnName="Program_Episode_Number" />
+                <ScalarProperty Name="Program_Episode_Title" ColumnName="Program_Episode_Title" />
+                <ScalarProperty Name="Program_Version_ID" ColumnName="Program_Version_ID" />
+                <ScalarProperty Name="Program_Episode_ID" ColumnName="Program_Episode_ID" />
+                <ScalarProperty Name="BV_Schedule_Transaction_Code" ColumnName="BV_Schedule_Transaction_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Music_Schedule_Exception">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Music_Schedule_Exception">
               <MappingFragment StoreEntitySet="Music_Schedule_Exception">
@@ -50294,7 +50267,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-		  <FunctionImportMapping FunctionImportName="USP_List_Syn_Ancillary" FunctionName="RightsU_NeoModel.Store.USP_List_Syn_Ancillary">
+          <FunctionImportMapping FunctionImportName="USP_List_Syn_Ancillary" FunctionName="RightsU_NeoModel.Store.USP_List_Syn_Ancillary">
             <ResultMapping>
               <ComplexTypeMapping TypeName="RightsU_NeoModel.USP_List_Syn_Ancillary_Result">
                 <ScalarProperty Name="Syn_Deal_Ancillary_Code" ColumnName="Syn_Deal_Ancillary_Code" />
@@ -50315,6 +50288,28 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Is_Active" ColumnName="Is_Active" />
                 <ScalarProperty Name="Supplementary_Name" ColumnName="Supplementary_Name" />
                 <ScalarProperty Name="Supplementary_Code" ColumnName="Supplementary_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Supplementary_Config">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Supplementary_Config">
+              <MappingFragment StoreEntitySet="Supplementary_Config">
+                <ScalarProperty Name="LP_Supplementary_Value_Config_Code" ColumnName="LP_Supplementary_Value_Config_Code" />
+                <ScalarProperty Name="LP_Supplementary_Data_Code" ColumnName="LP_Supplementary_Data_Code" />
+                <ScalarProperty Name="Whr_Criteria" ColumnName="Whr_Criteria" />
+                <ScalarProperty Name="Value_Field" ColumnName="Value_Field" />
+                <ScalarProperty Name="Text_Field" ColumnName="Text_Field" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Default_Values" ColumnName="Default_Values" />
+                <ScalarProperty Name="Control_Field_Order" ColumnName="Control_Field_Order" />
+                <ScalarProperty Name="Page_Control_Order" ColumnName="Page_Control_Order" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Is_Multiselect" ColumnName="Is_Multiselect" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Label_Name" ColumnName="Label_Name" />
+                <ScalarProperty Name="Page_Group" ColumnName="Page_Group" />
+                <ScalarProperty Name="Supplementary_Config_Code" ColumnName="Supplementary_Config_Code" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -50496,7 +50491,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
                 <ScalarProperty Name="Syn_Deal_Supplementary_Code" ColumnName="Syn_Deal_Supplementary_Code" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <EntitySetMapping Name="Acq_Amendement_History">
@@ -50521,7 +50516,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
                 <ScalarProperty Name="Acq_Deal_Supplementary_Code" ColumnName="Acq_Deal_Supplementary_Code" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Get_Acq_Deal_Supplementary_Edit" FunctionName="RightsU_NeoModel.Store.USP_Get_Acq_Deal_Supplementary_Edit">
@@ -50645,47 +50640,6 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Attrib_Report_Column">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Attrib_Report_Column">
-              <MappingFragment StoreEntitySet="Attrib_Report_Column">
-                <ScalarProperty Name="IsSelectCriteria" ColumnName="IsSelectCriteria" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="Css_Class" ColumnName="Css_Class" />
-                <ScalarProperty Name="Icon" ColumnName="Icon" />
-                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
-                <ScalarProperty Name="Output_Group" ColumnName="Output_Group" />
-                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
-                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
-                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
-                <ScalarProperty Name="BV_Attrib_Group_Code" ColumnName="BV_Attrib_Group_Code" />
-                <ScalarProperty Name="DP_Attrib_Group_Code" ColumnName="DP_Attrib_Group_Code" />
-                <ScalarProperty Name="Attrib_Report_Column_Code" ColumnName="Attrib_Report_Column_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Report_Column_Setup_IT">
-            <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup_IT">
-              <MappingFragment StoreEntitySet="Report_Column_Setup_IT">
-                <ScalarProperty Name="Display_Type" ColumnName="Display_Type" />
-                <ScalarProperty Name="Alternate_Config_Code" ColumnName="Alternate_Config_Code" />
-                <ScalarProperty Name="ValidOpList" ColumnName="ValidOpList" />
-                <ScalarProperty Name="WhCondition" ColumnName="WhCondition" />
-                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
-                <ScalarProperty Name="Right_Code" ColumnName="Right_Code" />
-                <ScalarProperty Name="Display_Column" ColumnName="Display_Column" />
-                <ScalarProperty Name="Lookup_Column" ColumnName="Lookup_Column" />
-                <ScalarProperty Name="List_Source" ColumnName="List_Source" />
-                <ScalarProperty Name="IsPartofSelectOnly" ColumnName="IsPartofSelectOnly" />
-                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
-                <ScalarProperty Name="Valued_As" ColumnName="Valued_As" />
-                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
-                <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
-                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
-                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-
           <EntitySetMapping Name="Acq_Deal_Digital">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Digital">
               <MappingFragment StoreEntitySet="Acq_Deal_Digital">
@@ -50805,7 +50759,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Remarks" ColumnName="Remarks" />
                 <ScalarProperty Name="Title_Code" ColumnName="Title_Code" />
                 <ScalarProperty Name="Acq_Deal_Digital_Code" ColumnName="Acq_Deal_Digital_Code" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USP_Acq_Digital_Tab" FunctionName="RightsU_NeoModel.Store.USP_Acq_Digital_Tab">
@@ -51114,9 +51068,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Last_Updated_Time" ColumnName="Last_Updated_Time" />
                 <ScalarProperty Name="Record_Status" ColumnName="Record_Status" />
                 <ScalarProperty Name="Excel_File" ColumnName="Excel_File" />
-				<ScalarProperty Name="Cycle" ColumnName="Cycle" />
+                <ScalarProperty Name="Cycle" ColumnName="Cycle" />
                 <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
-                </ComplexTypeMapping>
+              </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="USPAL_GetReCommendationList" FunctionName="RightsU_NeoModel.Store.USPAL_GetReCommendationList">
@@ -51130,7 +51084,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
                 <ScalarProperty Name="Vendor_Name" ColumnName="Vendor_Name" />
                 <ScalarProperty Name="Proposal_CY" ColumnName="Proposal_CY" />
                 <ScalarProperty Name="Vendor_Code" ColumnName="Vendor_Code" />
-				<ScalarProperty Name="IsMinimum" ColumnName="IsMinimum" />
+                <ScalarProperty Name="IsMinimum" ColumnName="IsMinimum" />
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
