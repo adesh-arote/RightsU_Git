@@ -9,6 +9,7 @@
 
 namespace RightsU_Entities
 {
+    //using RightsU_Entities.Master_Entities;
     using System;
     using System.Collections.Generic;
 
@@ -17,6 +18,7 @@ namespace RightsU_Entities
         public Attrib_Group()
         {
             this.Users_Detail = new HashSet<Users_Detail>();
+            this.Attrib_Report_Column = new HashSet<Attrib_Report_Column>();
         }
 
         public State EntityState { get; set; }
@@ -28,5 +30,8 @@ namespace RightsU_Entities
         public string Is_Active { get; set; }
 
         public virtual ICollection<Users_Detail> Users_Detail { get; set; }
+        public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public virtual ICollection<Attrib_Report_Column> Attrib_Report_Column1 { get; set; }
+
     }
 }

@@ -1588,6 +1588,23 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Acq_Deal_Mass_Territory_Update
           <Property Name="Is_Multiple_Select" Type="char" MaxLength="1" />
           <Property Name="Is_Active" Type="char" MaxLength="1" />
         </EntityType>
+        <EntityType Name="Attrib_Report_Column">
+          <Key>
+            <PropertyRef Name="Attrib_Report_Column_Code" />
+          </Key>
+          <Property Name="Attrib_Report_Column_Code" Type="int" Nullable="false" />
+          <Property Name="DP_Attrib_Group_Code" Type="int" />
+          <Property Name="BV_Attrib_Group_Code" Type="int" />
+          <Property Name="Column_Code" Type="int" />
+          <Property Name="Control_Type" Type="int" />
+          <Property Name="Display_Order" Type="int" />
+          <Property Name="Output_Group" Type="int" />
+          <Property Name="Is_Mandatory" Type="char" MaxLength="1" />
+          <Property Name="Icon" Type="varchar" MaxLength="100" />
+          <Property Name="Css_Class" Type="varchar" MaxLength="50" />
+          <Property Name="Type" Type="varchar" MaxLength="50" />
+          <Property Name="IsSelectCriteria" Type="varchar" MaxLength="50" />
+        </EntityType>
         <EntityType Name="Avail_Acq">
           <Key>
             <PropertyRef Name="Avail_Acq_Code" />
@@ -4792,7 +4809,30 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Paf_Details' does not have a p
           <Property Name="Right_Code" Type="int" />
           <Property Name="Max_Length" Type="int" />
           <Property Name="WhCondition" Type="varchar" MaxLength="500" />
-          <Property Name="ValidOpList" Type="varchar" MaxLength="5" />
+          <Property Name="ValidOpList" Type="varchar" MaxLength="50" />
+          <Property Name="Alternate_Config_Code" Type="int" />
+          <Property Name="Display_Type" Type="varchar" MaxLength="5" />
+        </EntityType>
+        <EntityType Name="Report_Column_Setup_IT">
+          <Key>
+            <PropertyRef Name="Column_Code" />
+          </Key>
+          <Property Name="Column_Code" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="View_Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Name_In_DB" Type="varchar" MaxLength="1000" />
+          <Property Name="Display_Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Valued_As" Type="smallint" />
+          <Property Name="Display_Order" Type="int" />
+          <Property Name="IsPartofSelectOnly" Type="varchar" MaxLength="1" />
+          <Property Name="List_Source" Type="varchar" MaxLength="80" />
+          <Property Name="Lookup_Column" Type="nvarchar" MaxLength="50" />
+          <Property Name="Display_Column" Type="nvarchar" MaxLength="50" />
+          <Property Name="Right_Code" Type="int" />
+          <Property Name="Max_Length" Type="nvarchar" MaxLength="50" />
+          <Property Name="WhCondition" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ValidOpList" Type="varchar" MaxLength="50" />
+          <Property Name="Alternate_Config_Code" Type="nvarchar" MaxLength="50" />
+          <Property Name="Display_Type" Type="varchar" MaxLength="5" />
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -5339,6 +5379,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.RunData' does not have a prima
           <Property Name="Remark" Type="nvarchar" MaxLength="4000" />
           <Property Name="Episode_End_To" Type="int" />
           <Property Name="Episode_From" Type="int" />
+          <Property Name="Closing_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Closed_Date" Type="datetime" />
+          <Property Name="Opening_Remarks" Type="nvarchar(max)" />
+          <Property Name="Movie_Opening_Date" Type="datetime" />
+          <Property Name="Deal_Closed_By" Type="int" />
+          <Property Name="Deal_Closed_On" Type="datetime" />
+          <Property Name="Deal_Opened_By" Type="int" />
+          <Property Name="Deal_Opened_On" Type="datetime" />
+          <Property Name="Is_Reopen" Type="varchar" MaxLength="5" />
+          <Property Name="Movie_Opening_Start_Date" Type="datetime" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -9361,6 +9411,42 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             </Principal>
             <Dependent Role="Ancillary_Platform_Medium">
               <PropertyRef Name="Ancillary_Platform_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group">
+          <End Role="Attrib_Group" Type="Self.Attrib_Group" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="DP_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group1">
+          <End Role="Attrib_Group" Type="Self.Attrib_Group" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="BV_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Report_Column_Setup">
+          <End Role="Report_Column_Setup_IT" Type="Self.Report_Column_Setup_IT" Multiplicity="0..1" />
+          <End Role="Attrib_Report_Column" Type="Self.Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Report_Column_Setup_IT">
+              <PropertyRef Name="Column_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="Column_Code" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -16085,6 +16171,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="AT_Acq_Deal_Digital" EntityType="Self.AT_Acq_Deal_Digital" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AT_Acq_Deal_Digital_detail" EntityType="Self.AT_Acq_Deal_Digital_detail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Attrib_Group" EntityType="Self.Attrib_Group" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Attrib_Report_Column" EntityType="Self.Attrib_Report_Column" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq" EntityType="Self.Avail_Acq" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Details" EntityType="Self.Avail_Acq_Details" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Avail_Acq_Language" EntityType="Self.Avail_Acq_Language" Schema="dbo" store:Type="Tables" />
@@ -16263,6 +16350,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySet Name="Provisional_Deal_Type" EntityType="Self.Provisional_Deal_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Column" EntityType="Self.Report_Column" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Column_Setup" EntityType="Self.Report_Column_Setup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Report_Column_Setup_IT" EntityType="Self.Report_Column_Setup_IT" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Condition" EntityType="Self.Report_Condition" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Format" EntityType="Self.Report_Format" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Report_Query" EntityType="Self.Report_Query" Schema="dbo" store:Type="Tables" />
@@ -17884,6 +17972,18 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <AssociationSet Name="FK_Ancillary_Platform_Medium_Ancillary_Platform_Code" Association="Self.FK_Ancillary_Platform_Medium_Ancillary_Platform_Code">
             <End Role="Ancillary_Platform" EntitySet="Ancillary_Platform" />
             <End Role="Ancillary_Platform_Medium" EntitySet="Ancillary_Platform_Medium" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group" Association="Self.FK_Attrib_Report_Column_Attrib_Group">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group1" Association="Self.FK_Attrib_Report_Column_Attrib_Group1">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Report_Column_Setup" Association="Self.FK_Attrib_Report_Column_Report_Column_Setup">
+            <End Role="Report_Column_Setup_IT" EntitySet="Report_Column_Setup_IT" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
           </AssociationSet>
           <AssociationSet Name="FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital" Association="Self.FK_AT_Acq_Deal_Digital_detail_AT_Acq_Deal_Digital">
             <End Role="AT_Acq_Deal_Digital" EntitySet="AT_Acq_Deal_Digital" />
@@ -23311,17 +23411,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="title_Code" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="Supplementary" EntityType="RightsU_NeoModel.Supplementary" />
-          <EntitySet Name="Supplementary_Config" EntityType="RightsU_NeoModel.Supplementary_Config" />
           <EntitySet Name="Supplementary_Data" EntityType="RightsU_NeoModel.Supplementary_Data" />
           <EntitySet Name="Supplementary_Tab" EntityType="RightsU_NeoModel.Supplementary_Tab" />
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary">
-            <End Role="Supplementary" EntitySet="Supplementary" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Supplementary_Config_Supplementary_Tab" Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab">
-            <End Role="Supplementary_Tab" EntitySet="Supplementary_Tab" />
-            <End Role="Supplementary_Config" EntitySet="Supplementary_Config" />
-          </AssociationSet>
           <FunctionImport Name="USP_Acq_SUPP_Tab" ReturnType="Collection(RightsU_NeoModel.USP_Acq_SUPP_Tab_Result)">
           <Parameter Name="Supplementary_Tab_Code" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -23475,6 +23566,21 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
             <Parameter Name="DashboardDays" Mode="In" Type="Int32" />
           </FunctionImport>
           <EntitySet Name="ImgPathDatas" EntityType="RightsU_NeoModel.ImgPathData" />
+          <EntitySet Name="Attrib_Report_Column" EntityType="RightsU_NeoModel.Attrib_Report_Column" />
+          <EntitySet Name="Report_Column_Setup_IT" EntityType="RightsU_NeoModel.Report_Column_Setup_IT" />
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group" Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Attrib_Group1" Association="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1">
+            <End Role="Attrib_Group" EntitySet="Attrib_Group" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Attrib_Report_Column_Report_Column_Setup" Association="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup">
+            <End Role="Report_Column_Setup_IT" EntitySet="Report_Column_Setup_IT" />
+            <End Role="Attrib_Report_Column" EntitySet="Attrib_Report_Column" />
+          </AssociationSet>
+
           <EntitySet Name="Acq_Deal_Digital" EntityType="RightsU_NeoModel.Acq_Deal_Digital" />
           <EntitySet Name="Acq_Deal_Digital_detail" EntityType="RightsU_NeoModel.Acq_Deal_Digital_detail" />
           <EntitySet Name="AT_Acq_Deal_Digital" EntityType="RightsU_NeoModel.AT_Acq_Deal_Digital" />
@@ -25901,7 +26007,9 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Right_Code" Type="Int32" />
           <Property Name="Max_Length" Type="Int32" />
           <Property Name="WhCondition" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
-          <Property Name="ValidOpList" Type="String" MaxLength="5" Unicode="false" FixedLength="false" />
+          <Property Name="ValidOpList" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Alternate_Config_Code" Type="Int32" />
+          <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Report_Condition">
           <Key>
@@ -26236,6 +26344,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <NavigationProperty Name="Title" Relationship="RightsU_NeoModel.FK_Syn_Deal_Movie_Title" FromRole="Syn_Deal_Movie" ToRole="Title" />
           <Property Type="Int32" Name="Episode_From" />
           <Property Type="Int32" Name="Episode_End_To" />
+          <Property Name="Closing_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Closed_Date" Type="DateTime" Precision="3" />
+          <Property Name="Opening_Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Movie_Opening_Date" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Closed_By" Type="Int32" />
+          <Property Name="Deal_Closed_On" Type="DateTime" Precision="3" />
+          <Property Name="Deal_Opened_By" Type="Int32" />
+          <Property Name="Deal_Opened_On" Type="DateTime" Precision="3" />
+          <Property Name="Is_Reopen" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Movie_Opening_Start_Date" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="Syn_Deal_Payment_Terms">
           <Key>
@@ -38230,6 +38348,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="Is_Multiple_Select" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <Property Name="Is_Active" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
           <NavigationProperty Name="Users_Detail" Relationship="RightsU_NeoModel.FK_Users_Detail_Attrib_Group" FromRole="Attrib_Group" ToRole="Users_Detail" />
+          <NavigationProperty Name="Attrib_Report_Column" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" FromRole="Attrib_Group" ToRole="Attrib_Report_Column" />
+          <NavigationProperty Name="Attrib_Report_Column1" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" FromRole="Attrib_Group" ToRole="Attrib_Report_Column" />
         </EntityType>
         <EntityType Name="Users_Detail">
           <Key>
@@ -39187,6 +39307,85 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <Property Name="ImgPath" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="ImgData" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
+        <EntityType Name="Attrib_Report_Column">
+          <Key>
+            <PropertyRef Name="Attrib_Report_Column_Code" />
+          </Key>
+          <Property Name="Attrib_Report_Column_Code" Type="Int32" Nullable="false" />
+          <Property Name="DP_Attrib_Group_Code" Type="Int32" />
+          <Property Name="BV_Attrib_Group_Code" Type="Int32" />
+          <Property Name="Column_Code" Type="Int32" />
+          <Property Name="Control_Type" Type="Int32" />
+          <Property Name="Display_Order" Type="Int32" />
+          <Property Name="Output_Group" Type="Int32" />
+          <Property Name="Is_Mandatory" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Name="Icon" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Css_Class" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Type" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsSelectCriteria" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Attrib_Group" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
+          <NavigationProperty Name="Attrib_Group1" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Attrib_Group1" FromRole="Attrib_Report_Column" ToRole="Attrib_Group" />
+          <NavigationProperty Name="Report_Column_Setup_IT" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Attrib_Report_Column" ToRole="Report_Column_Setup_IT" />
+        </EntityType>
+        <EntityType Name="Report_Column_Setup_IT">
+          <Key>
+            <PropertyRef Name="Column_Code" />
+          </Key>
+          <Property Name="Column_Code" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="View_Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name_In_DB" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="Display_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Valued_As" Type="Int16" />
+          <Property Name="Display_Order" Type="Int32" />
+          <Property Name="IsPartofSelectOnly" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="List_Source" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="Lookup_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Display_Column" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Right_Code" Type="Int32" />
+          <Property Name="Max_Length" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WhCondition" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="ValidOpList" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Alternate_Config_Code" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Display_Type" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Attrib_Report_Column" Relationship="RightsU_NeoModel.FK_Attrib_Report_Column_Report_Column_Setup" FromRole="Report_Column_Setup_IT" ToRole="Attrib_Report_Column" />
+        </EntityType>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group">
+          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="DP_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Attrib_Group1">
+          <End Type="RightsU_NeoModel.Attrib_Group" Role="Attrib_Group" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Attrib_Group">
+              <PropertyRef Name="Attrib_Group_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="BV_Attrib_Group_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Attrib_Report_Column_Report_Column_Setup">
+          <End Type="RightsU_NeoModel.Report_Column_Setup_IT" Role="Report_Column_Setup_IT" Multiplicity="0..1" />
+          <End Type="RightsU_NeoModel.Attrib_Report_Column" Role="Attrib_Report_Column" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Report_Column_Setup_IT">
+              <PropertyRef Name="Column_Code" />
+            </Principal>
+            <Dependent Role="Attrib_Report_Column">
+              <PropertyRef Name="Column_Code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        
         <EntityType Name="Acq_Deal_Digital">
           <Key>
             <PropertyRef Name="Acq_Deal_Digital_Code" />
@@ -42901,6 +43100,8 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Report_Column_Setup">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup">
               <MappingFragment StoreEntitySet="Report_Column_Setup">
+                <ScalarProperty Name="Display_Type" ColumnName="Display_Type" />
+                <ScalarProperty Name="Alternate_Config_Code" ColumnName="Alternate_Config_Code" />
                 <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
                 <ScalarProperty Name="View_Name" ColumnName="View_Name" />
                 <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
@@ -43286,6 +43487,16 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
           <EntitySetMapping Name="Syn_Deal_Movie">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Syn_Deal_Movie">
               <MappingFragment StoreEntitySet="Syn_Deal_Movie">
+                <ScalarProperty Name="Movie_Opening_Start_Date" ColumnName="Movie_Opening_Start_Date" />
+                <ScalarProperty Name="Is_Reopen" ColumnName="Is_Reopen" />
+                <ScalarProperty Name="Deal_Opened_On" ColumnName="Deal_Opened_On" />
+                <ScalarProperty Name="Deal_Opened_By" ColumnName="Deal_Opened_By" />
+                <ScalarProperty Name="Deal_Closed_On" ColumnName="Deal_Closed_On" />
+                <ScalarProperty Name="Deal_Closed_By" ColumnName="Deal_Closed_By" />
+                <ScalarProperty Name="Movie_Opening_Date" ColumnName="Movie_Opening_Date" />
+                <ScalarProperty Name="Opening_Remarks" ColumnName="Opening_Remarks" />
+                <ScalarProperty Name="Movie_Closed_Date" ColumnName="Movie_Closed_Date" />
+                <ScalarProperty Name="Closing_Remarks" ColumnName="Closing_Remarks" />
                 <ScalarProperty Name="Episode_End_To" ColumnName="Episode_End_To" />
                 <ScalarProperty Name="Episode_From" ColumnName="Episode_From" />
                 <ScalarProperty Name="Syn_Deal_Movie_Code" ColumnName="Syn_Deal_Movie_Code" />
@@ -50434,6 +50645,47 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Attrib_Report_Column">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Attrib_Report_Column">
+              <MappingFragment StoreEntitySet="Attrib_Report_Column">
+                <ScalarProperty Name="IsSelectCriteria" ColumnName="IsSelectCriteria" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Css_Class" ColumnName="Css_Class" />
+                <ScalarProperty Name="Icon" ColumnName="Icon" />
+                <ScalarProperty Name="Is_Mandatory" ColumnName="Is_Mandatory" />
+                <ScalarProperty Name="Output_Group" ColumnName="Output_Group" />
+                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
+                <ScalarProperty Name="Control_Type" ColumnName="Control_Type" />
+                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
+                <ScalarProperty Name="BV_Attrib_Group_Code" ColumnName="BV_Attrib_Group_Code" />
+                <ScalarProperty Name="DP_Attrib_Group_Code" ColumnName="DP_Attrib_Group_Code" />
+                <ScalarProperty Name="Attrib_Report_Column_Code" ColumnName="Attrib_Report_Column_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Report_Column_Setup_IT">
+            <EntityTypeMapping TypeName="RightsU_NeoModel.Report_Column_Setup_IT">
+              <MappingFragment StoreEntitySet="Report_Column_Setup_IT">
+                <ScalarProperty Name="Display_Type" ColumnName="Display_Type" />
+                <ScalarProperty Name="Alternate_Config_Code" ColumnName="Alternate_Config_Code" />
+                <ScalarProperty Name="ValidOpList" ColumnName="ValidOpList" />
+                <ScalarProperty Name="WhCondition" ColumnName="WhCondition" />
+                <ScalarProperty Name="Max_Length" ColumnName="Max_Length" />
+                <ScalarProperty Name="Right_Code" ColumnName="Right_Code" />
+                <ScalarProperty Name="Display_Column" ColumnName="Display_Column" />
+                <ScalarProperty Name="Lookup_Column" ColumnName="Lookup_Column" />
+                <ScalarProperty Name="List_Source" ColumnName="List_Source" />
+                <ScalarProperty Name="IsPartofSelectOnly" ColumnName="IsPartofSelectOnly" />
+                <ScalarProperty Name="Display_Order" ColumnName="Display_Order" />
+                <ScalarProperty Name="Valued_As" ColumnName="Valued_As" />
+                <ScalarProperty Name="Display_Name" ColumnName="Display_Name" />
+                <ScalarProperty Name="Name_In_DB" ColumnName="Name_In_DB" />
+                <ScalarProperty Name="View_Name" ColumnName="View_Name" />
+                <ScalarProperty Name="Column_Code" ColumnName="Column_Code" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+
           <EntitySetMapping Name="Acq_Deal_Digital">
             <EntityTypeMapping TypeName="RightsU_NeoModel.Acq_Deal_Digital">
               <MappingFragment StoreEntitySet="Acq_Deal_Digital">
@@ -51573,7 +51825,7 @@ warning 6002: The table/view 'RightsU_EF_Plus.dbo.Upload_Files' does not have a 
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
         <DesignerProperty Name="UseLegacyProvider" Value="False" />

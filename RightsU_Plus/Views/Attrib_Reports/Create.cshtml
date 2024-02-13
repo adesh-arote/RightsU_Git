@@ -1,0 +1,421 @@
+﻿@model RightsU_Entities.Attrib_Report_Column
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+
+}
+
+<script>
+    $(document).ready(function () {
+
+        $('#AttribTypeDP').change(function () {
+            $('#AttribTypeDP').removeAttr("style", "border-color: red; width:70%;");
+            $('#AttribTypeDP').addClass("chosen-single");
+            $('#AttribTypeDP').css("width", "70%");
+        })
+
+        $('#AttribTypeBV').change(function () {
+            $('#AttribTypeBV').removeAttr("style", "border-color: red; width:70%;");
+            $('#AttribTypeBV').addClass("chosen-single");
+            $('#AttribTypeBV').css("width", "70%");
+        })
+
+        $('#DisplayName').change(function () {
+            $('#DisplayName').removeAttr("style", "border-color: red; width:70%;");
+            $('#DisplayName').addClass("chosen-single");
+            $('#DisplayName').css("width", "70%");
+        })
+
+        $('#ControlType').change(function () {
+            $('#ControlType').removeAttr("style", "border-color: red; width:70%;");
+            $('#ControlType').addClass("chosen-single");
+            $('#ControlType').css("width", "70%");
+        })
+
+        $('#Type').change(function () {
+            $('#Type').removeAttr("style", "border-color: red; width:70%;");
+            $('#Type').addClass("chosen-single");
+            $('#Type').css("width", "70%");
+        })
+
+        $('#IsSelectCriteria').change(function () {
+            $('#IsSelectCriteria').removeAttr("style", "border-color: red; width:70%;");
+            $('#IsSelectCriteria').addClass("chosen-single");
+            $('#IsSelectCriteria').css("width", "70%");
+        })
+
+    });
+</script>
+
+<script>
+    @*var URL_SaveReport = '@Url.Action("Create", "Attrib_Reports")';*@
+    var URL_Index = '@Url.Action("Index", "Attrib_Reports")';
+    var URL_IndexAttribGroup = '@Url.Action("Index", "Attrib_Group")';
+
+    function IndexAttribGroup() {
+        window.location.href = URL_IndexAttribGroup;
+    }
+
+    function SaveReport() {
+        debugger;
+        var returnVal = true;
+        var attribTypeDP = $('#AttribTypeDP').val();
+        var attribTypeBV = $('#AttribTypeBV').val();
+        var displayName = $('#DisplayName').val();
+        var controlType = $('#ControlType').val();
+        var displayOrder = $('#DisplayOrder').val();
+        var outputGroup = $('#OutputGroup').val();
+        var isMandatory = $('#IsMandatory').val();
+        var icon = $('#Icon').val();
+        var cssClass = $('#CssClass').val();
+        var type = $('#Type').val();
+        var isSelectCriteria = $("#IsSelectCriteria").val();
+
+        if (attribTypeDP == "") {
+            $('#AttribTypeDP').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+        if (attribTypeBV == "") {
+            $('#AttribTypeBV').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+        if (displayName == "") {
+            $('#DisplayName').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+        if (controlType == "") {
+            $('#ControlType').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+        if (displayOrder == "") {
+            $('#DisplayOrder').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (outputGroup == "") {
+            $('#OutputGroup').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (isMandatory == "") {
+            $('#IsMandatory').val('').attr('required', true)
+            returnVal = false;
+        }
+        //if (icon == "") {
+        //    $('#Icon').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        //if (cssClass == "") {
+        //    $('#CssClass').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+        if (type == "") {
+            $('#Type').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+        if (isSelectCriteria == "") {
+            $('#IsSelectCriteria').val('').attr("style", "border-color: red; width:70%;")
+            returnVal = false;
+        }
+
+        if ("@ViewBag.Title" == "Edit") {
+            var URL_SaveReport = '@Url.Action("Edit", "Attrib_Reports")';
+        }
+        else {
+            var URL_SaveReport = '@Url.Action("Create", "Attrib_Reports")';
+        }
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveReport,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    DP_Attrib_Group_Code: attribTypeDP,
+                    BV_Attrib_Group_Code: attribTypeBV,
+                    Column_Code: displayName,
+                    Control_Type: controlType,
+                    Display_Order: displayOrder,
+                    Output_Group: outputGroup,
+                    Is_Mandatory: isMandatory,
+                    Icon: icon,
+                    Css_Class: cssClass,
+                    Type: type,
+                    IsSelectCriteria: isSelectCriteria
+                }),
+                async: false,
+                success: function (result) {
+                    if (result.Status == "S") {
+                        //$('#hdnAction').val("");
+                        showLoading();
+                        window.location.href = URL_Index;
+                        }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            });
+        }
+    }
+
+    function addNumeric() {
+        $(".numberOnly").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="main_section">
+        <section class="rightsU_container clearfix">
+            <div class="container acq main_col">
+                <div class="title_block dotted_border clearfix">
+                    @if (ViewBag.Title == "Create")
+                    {
+                        <h2>Create Attrib Report</h2>
+                    }
+                    @if (ViewBag.Title == "Edit")
+                    {
+                        <h2>Edit Attrib Report</h2>
+                    }
+                    @if (ViewBag.Title == "View")
+                    {
+                        <h2>Attrib Report Details</h2>
+                    }
+                    <hr />
+                    <br />
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Department Attrib</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @ViewBag.DP
+                                    }
+                                    else
+                                    {
+                                        if (ViewBag.Configuration == "config" && Model.DP_Attrib_Group_Code != null)
+                                        {
+                                            @ViewBag.DP
+                                            <input type="hidden" id="AttribTypeDP" value="@Model.DP_Attrib_Group_Code" />
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("lstAttribTypeDP", (IEnumerable<SelectListItem>)ViewBag.AttribTypeDP, "---Please Select---", htmlAttributes: new { @id = "AttribTypeDP", @class = "chosen-single", @style = "width:70%; text-align:left;" })
+                                        }
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Business Vertical Attrib</b>
+                                </td>
+                                <td style="width:25%;">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @ViewBag.BV
+                                    }
+                                    else
+                                    {
+                                        if (ViewBag.Configuration == "config" && Model.BV_Attrib_Group_Code != null)
+                                        {
+                                            @ViewBag.BV
+                                            <input type="hidden" id="AttribTypeBV" value="@Model.BV_Attrib_Group_Code" />
+                                        }
+                                        else
+                                        {
+                                            @Html.DropDownList("lstAttribTypeBV", (IEnumerable<SelectListItem>)ViewBag.AttribTypeBV, "---Please Select---", htmlAttributes: new { @id = "AttribTypeBV", @class = "chosen-single", @style = "width:70%; text-align:left;" })
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Name</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Report_Column_Setup_IT.Display_Name)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("lstDisplaypName", (IEnumerable<SelectListItem>)ViewBag.DisplayName, "---Please Select---", htmlAttributes: new { @id = "DisplayName", @class = "chosen-single", @style = "width:70%; text-align:left;" })
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Control Type</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Control_Type)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Control_Type, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "DropDownList", Value = "3"},
+                                            new SelectListItem{Text = "Type To Search", Value = "5"},
+                                            new SelectListItem{Text = "Date Range", Value = "8"}
+                                        }, "---Please Select---", htmlAttributes: new { @id = "ControlType", @class = "chosen-single", @style = "width:70%; text-align:left" })
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Display Order</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Display_Order)
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control input-sm numberOnly" value="@Model.Display_Order" id="DisplayOrder" onclick="addNumeric()" style="width:70%; text-align:left;" type="text">
+                                        @*@Html.EditorFor(model => model.Display_Order, new { htmlAttributes = new { @id = "DisplayOrder", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Output Group</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Output_Group)
+                                    }
+                                    else
+                                    {
+                                        <input class="form-control input-sm numberOnly" id="OutputGroup" value="@Model.Output_Group" onclick="addNumeric()" style="width:70%; text-align:left;" type="text">
+                                        @*@Html.EditorFor(model => model.Output_Group, new { htmlAttributes = new { @id = "OutputGroup", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Is Mandatory?</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Is_Mandatory)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Is_Mandatory, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "Yes", Value = "Y"},
+                                            new SelectListItem{Selected = true, Text = "No", Value = "N"},
+                                        }, htmlAttributes: new { @id = "IsMandatory", @class = "chosen-single", @style = "width:70%; text-align:left;" })
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Icon</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Icon)
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="Icon" class="form-control input-sm" value="@Model.Icon" style="width:70%; text-align:left;" />
+                                        @*@Html.TextBoxFor(model => model.Icon, new { htmlAttributes = new { @id = "Icon", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Css Class</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Css_Class)
+                                    }
+                                    else
+                                    {
+                                        <input type="text" id="CssClass" class="form-control input-sm" value="@Model.Css_Class" style="width:70%; text-align:left;" />
+                                        @*@Html.TextBoxFor(model => model.Css_Class, new { htmlAttributes = new { @id = "CssClass", @class = "form-control input-sm", @style = "width:50%; text-align:center;" } })*@
+                                    }
+                                </td>
+                                <td style="width:20%">
+                                    <b>Type</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.Type)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.Type, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "PR", Value = "PR"},
+                                            new SelectListItem{Text = "RP", Value = "RP"},
+                                            new SelectListItem{Text = "AR", Value = "AR"}
+                                        }, "---Please Select---", htmlAttributes: new { @id = "Type", @class = "chosen-single", @style = "width:70%; text-align:left;" })
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="width:20%">
+                                    <b>Is Select Criteria?</b>
+                                </td>
+                                <td style="width:25%">
+                                    @if (ViewBag.Title == "View")
+                                    {
+                                        @Html.DisplayFor(model => model.IsSelectCriteria)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.IsSelectCriteria, new List<SelectListItem>
+                                        {
+                                            new SelectListItem{Text = "Yes", Value = "Y"},
+                                            new SelectListItem{Text = "No", Value = "N"},
+                                        }, "---Please Select---", htmlAttributes: new { @id = "IsSelectCriteria", @class = "chosen-single", @style = "width:70%; text-align:left" })
+                                    }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <div style="margin:20px; text-align:left">
+                            @if (ViewBag.Title == "Create")
+                            {
+                                <input type="button" value="Create" class="btn btn-primary" style="width:100px;" onclick="SaveReport()" />
+                            }
+                            @if (ViewBag.Title == "Edit")
+                            {
+                                <input type="button" value="Update" class="btn btn-primary" style="width:100px;" onclick="SaveReport()" />
+                            }
+                            @if (ViewBag.Configuration == "config")
+                            {
+                                <a class="btn btn-primary" onclick="IndexAttribGroup()">Back to List</a>
+                            }
+                            else
+                            {
+                                @Html.ActionLink("Back to List", "Index", "", new { @class = "btn btn-primary" })
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+}

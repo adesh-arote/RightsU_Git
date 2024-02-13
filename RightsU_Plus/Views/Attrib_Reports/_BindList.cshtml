@@ -1,0 +1,150 @@
+﻿@model IEnumerable<RightsU_Entities.Attrib_Report_Column>
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>
+            Department Attrib
+        </th>
+        <th>
+            Business Vertical Attrib
+        </th>
+        <th>
+            Display Name
+        </th>
+        <th>
+            Control Type
+        </th>
+        <th>
+            Display Order
+        </th>
+        @*<th>
+                Output Group
+            </th>
+            <th>
+                Is Mandatory?
+            </th>
+            <th>
+                Icon
+            </th>
+            <th>
+                Css Class
+            </th>*@
+        <th>
+            Type
+        </th>
+        <th>
+            Is Select Criteria?
+        </th>
+        <th>Actions</th>
+    </tr>
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td align="center">
+                    @{
+                        string DpAttribGroupName = "";
+                        if (item.DP_Attrib_Group_Code > 0 && item.DP_Attrib_Group_Code != null)
+                        {
+                            DpAttribGroupName = ((IEnumerable<RightsU_Entities.Attrib_Group>)ViewBag.BindAttribLst).Where(a => a.Attrib_Group_Code == item.DP_Attrib_Group_Code).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+                        }
+                        @DpAttribGroupName
+                    }
+                    @*@Html.DisplayFor(modelItem => item.Attrib_Group.Attrib_Group_Name)*@
+                </td>
+                <td align="center">
+                    @{
+                        string BvAttribGroupName = "";
+                        if (item.BV_Attrib_Group_Code > 0 && item.BV_Attrib_Group_Code != null)
+                        {
+                            BvAttribGroupName = ((IEnumerable<RightsU_Entities.Attrib_Group>)ViewBag.BindAttribLst).Where(a => a.Attrib_Group_Code == item.BV_Attrib_Group_Code).Select(b => b.Attrib_Group_Name).FirstOrDefault();
+                        }
+                        @BvAttribGroupName
+                    }
+                    @*@Html.DisplayFor(modelItem => item.BV_Attrib_Group_Code)*@
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Report_Column_Setup_IT.Display_Name)
+                </td>
+                <td align="center">
+                    @if (item.Control_Type == 3)
+                    {
+                        <span>DropDown List</span>
+                    }
+                    else if (item.Control_Type == 5)
+                    {
+                        <span>Type To Search</span>
+                    }
+                    else if (item.Control_Type == 8)
+                    {
+                        <span>Date Range</span>
+                    }
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Order)
+                </td>
+                @*<td align="center">
+                        @Html.DisplayFor(modelItem => item.Output_Group)
+                    </td>
+                    <td align="center">
+                        @if (item.Is_Mandatory == "Y")
+                        {
+                            <span>Yes</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    </td>
+                    <td align="center">
+                        @Html.DisplayFor(modelItem => item.Icon)
+                    </td>
+                    <td align="center">
+                        @Html.DisplayFor(modelItem => item.Css_Class)
+                    </td>*@
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td align="center">
+                    @if (item.IsSelectCriteria == "Y")
+                    {
+                        <span>Yes</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                    @*@Html.DisplayFor(modelItem => item.IsSelectCriteria)*@
+                </td>
+                <td align="center">
+                    @Html.ActionLink(" ", "Edit", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" })
+                    @Html.ActionLink(" ", "Details", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "View" })
+                    @Html.ActionLink(" ", "Delete", "Attrib_Reports", new { id = item.Attrib_Report_Column_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">No Record ound</td>
+        </tr>
+    }
+</table>
+
+<div>
+    <div style="margin:20px; text-align:left">
+        @if (Convert.ToString(Session["Configuration"]) == "config")
+        {
+            <a class="btn btn-primary" onclick="IndexReportColumnSetupIT()">Back to List</a>
+        }
+    </div>
+</div>

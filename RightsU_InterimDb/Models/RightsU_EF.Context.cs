@@ -434,6 +434,7 @@ namespace RightsU_InterimDb.Models
         public DbSet<Title_Objection_Territory> Title_Objection_Territory { get; set; }
         public DbSet<Title_Objection_Type> Title_Objection_Type { get; set; }
         public DbSet<Supplementary> Supplementary { get; set; }
+        public DbSet<Supplementary_Config> Supplementary_Config { get; set; }
         public DbSet<Supplementary_Data> Supplementary_Data { get; set; }
         public DbSet<Supplementary_Tab> Supplementary_Tab { get; set; }
         public DbSet<Acq_Deal_Supplementary> Acq_Deal_Supplementary { get; set; }
@@ -480,7 +481,9 @@ namespace RightsU_InterimDb.Models
         public DbSet<Master_Log> Master_Log { get; set; }
         public DbSet<Acq_Deal_Run_LP> Acq_Deal_Run_LP { get; set; }
         public DbSet<BV_Schedule_Transaction> BV_Schedule_Transaction { get; set; }
-    
+        public DbSet<Attrib_Report_Column> Attrib_Report_Column { get; set; }
+        public DbSet<Report_Column_Setup_IT> Report_Column_Setup_IT { get; set; }
+
         public virtual ObjectResult<USP_Get_Platform_Tree_Hierarchy_Result> USP_Get_Platform_Tree_Hierarchy(string platformCodes, string search_Platform_Name, string iS_Sport_Rights)
         {
             var platformCodesParameter = platformCodes != null ?
