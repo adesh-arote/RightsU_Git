@@ -76,7 +76,12 @@ Declare @Loglevel int;
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size     
 
-	select Business_Unit_Code,Business_Unit_Name,Is_Active from #Temp
+	DECLARE @Query NVARCHAR(MAX)=''
+
+	SET @Query = 'select business_Unit_code as Business_Unit_Code,business_Unit_Name as Business_Unit_Name ,Is_Active from #Temp order by '+ @sort+'' 
+	
+
+	EXEC(@Query)
 
 	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_BusinessUnit_List]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 

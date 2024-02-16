@@ -1,0 +1,113 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script src="~/JS_Core/jquery.sumoselect.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+<link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings[" Version_No"]" />
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]"></script>
+
+<script>
+    var URL_BindPartialPages = '@Url.Action("BindPartialPages", "SupplimentaryConfig")';
+
+
+    $(document).ready(function () {
+        debugger;
+        BindPartialView("LIST", 0);
+    });
+
+    function BindPartialView(key, SupplimentaryTabCode) {
+        debugger
+        if (key == "ADD") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+        }
+
+        if (key == "EDIT") {
+            Search = $('#searchCommon').val();
+            $('#hdnSearch').val($('#searchCommon').val());
+            //CheckRecordLock(VendorCode, "EDIT")
+
+            //var isRCLock = $("#hdnRecordislocked").val()
+            //if (isRCLock == "N") {
+            //    return false;
+            //}
+        }
+
+        $.ajax({
+            type: "POST",
+            url: URL_BindPartialPages,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                key: key,
+                SupplimentaryTabCode: SupplimentaryTabCode
+            }),
+            success: function (result) {
+                if (result == "true") {
+                    redirectToLogin();
+                }
+                else {
+                    $('#divSupplimentaryConfig').empty();
+                    $('#divSupplimentaryConfig').html(result);                    
+                }
+            },
+            error: function (result) {
+                alert('Error: ' + result.responseText);
+            }
+        });
+    }
+
+</script>
+
+<style>
+    td {
+        padding: 5px 0px;
+    }
+
+    .form-control {
+        display: inline-block !important;
+    }
+
+    .paging_area {
+        border-bottom: 1px dotted #777;
+        height: 36px;
+        margin-top: 10px;
+    }
+
+    #ddlSortType_chosen {
+        max-width: 46%;
+        text-align: left;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div id="divSupplimentaryConfig">
+
+            </div>
+        </div>
+    </section>
+    <input type="hidden" id="hdnSearch" name="hdnSearch" />
+    <input type="hidden" id="hdnRecodLockingCode_temp" name="hdnRecodLockingCode_temp" value="0" />
+    <input type="hidden" id="hdnRecordislocked" name="hdnRecordislocked" value="Y" />
+</div>
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="pupupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>
+

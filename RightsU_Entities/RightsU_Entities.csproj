@@ -206,6 +206,7 @@
     <Compile Include="Master_Entities\AL_Vendor_TnC.cs" />
     <Compile Include="Master_Entities\Banner.cs" />
     <Compile Include="Master_Entities\MasterAuditLogInput.cs" />
+	<Compile Include="Master_Entities\Attrib_Report_Column.cs" />
     <Compile Include="Master_Entities\Digital.cs" />
     <Compile Include="Master_Entities\Digital_Config.cs" />
     <Compile Include="Master_Entities\Digital_Data.cs" />
@@ -215,6 +216,7 @@
     <Compile Include="Master_Entities\Extended_Group_Config.cs" />
     <Compile Include="Master_Entities\ImgPathData.cs" />
     <Compile Include="Master_Entities\Master_Log.cs" />
+    <Compile Include="Master_Entities\Report_Column_Setup_IT.cs" />
     <Compile Include="Master_Entities\Supplementary.cs" />
     <Compile Include="Master_Entities\Supplementary_Config.cs" />
     <Compile Include="Master_Entities\Supplementary_Data.cs" />

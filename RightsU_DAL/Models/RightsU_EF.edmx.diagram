@@ -596,6 +596,12 @@
         <EntityTypeShape EntityType="RightsU_NeoModel.Syn_Deal_Revenue_Platform" Width="1.5" PointX="9.060194915654229" PointY="30.189515962353681" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Platform_Platform" />
         <AssociationConnector Association="RightsU_NeoModel.FK_Syn_Deal_Revenue_Platform_Syn_Deal_Revenue" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary_Config" Width="1.5" PointX="34" PointY="30.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary" Width="1.5" PointX="31.75" PointY="52.25" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary_Data" Width="1.5" PointX="27.375" PointY="6.75" />
+        <EntityTypeShape EntityType="RightsU_NeoModel.Supplementary_Tab" Width="1.5" PointX="25.75" PointY="35" />
+        <AssociationConnector Association="RightsU_NeoModel.FK_Supplementary_Config_Supplementary_Tab" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

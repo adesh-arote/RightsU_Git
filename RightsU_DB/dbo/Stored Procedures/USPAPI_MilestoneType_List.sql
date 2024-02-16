@@ -72,7 +72,13 @@ Declare @Loglevel int;
 	EXEC(@UpdateRowNum)
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size     
 
-	select Milestone_Type_Code,Milestone_Type_Name,Is_Automated,Is_Active from #Temp
+	
+	DECLARE @Query NVARCHAR(MAX)=''
+
+	SET @Query = 'select Milestone_Type_Code,Milestone_Type_Name,Is_Automated,Is_Active from #Temp order by '+ @sort+'' 
+
+	EXEC(@Query)
+
 
 	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_MilestoneType_List]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 END
