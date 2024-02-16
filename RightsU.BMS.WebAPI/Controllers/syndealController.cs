@@ -76,10 +76,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Deal General details
+        /// Modify Syndication Deal General details
         /// </summary>
-        /// <remarks>Update / Modify Deal General details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Deal General</param>
+        /// <remarks>Update / Modify Syndication Deal General details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing Syndication Deal General</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]

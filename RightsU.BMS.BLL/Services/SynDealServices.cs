@@ -369,7 +369,8 @@ namespace RightsU.BMS.BLL.Services
                             objT.Title_Code = item.Title_Code;
                             objT.Episode_From = item.Episode_From;
                             objT.Episode_End_To = item.Episode_End_To;                            
-                            objT.Syn_Title_Type = item.Syn_Title_Type;                            
+                            objT.Syn_Title_Type = item.Syn_Title_Type;
+                            objT.Is_Closed = "N";
                             objDeal.SynDealTitles.Add(objT);
                         }
                     }
