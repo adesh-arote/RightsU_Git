@@ -141,6 +141,7 @@
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\Deal_Segment.cs" />
     <Compile Include="Master_Entities\Deal_Tag.cs" />
     <Compile Include="Master_Entities\Deal_Type.cs" />
     <Compile Include="Master_Entities\Entity.cs" />
@@ -168,11 +169,14 @@
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\PromoterGroup.cs" />
     <Compile Include="Master_Entities\PromoterRemark.cs" />
+    <Compile Include="Master_Entities\Revenue_Vertical.cs" />
     <Compile Include="Master_Entities\RightRule.cs" />
     <Compile Include="Master_Entities\ROFR.cs" />
     <Compile Include="Master_Entities\Role.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
     <Compile Include="Master_Entities\Sub_License.cs" />
+    <Compile Include="Master_Entities\Syn_Deal.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Movie.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Master_Entities\Talent.cs" />

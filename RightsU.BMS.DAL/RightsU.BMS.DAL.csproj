@@ -80,6 +80,7 @@
     <Compile Include="Repository\DealTypeRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
     <Compile Include="Repository\RoleRepositories.cs" />
+    <Compile Include="Repository\SynDealRepositories.cs" />
     <Compile Include="Repository\TitleRepositories.cs" />
   </ItemGroup>
   <ItemGroup>

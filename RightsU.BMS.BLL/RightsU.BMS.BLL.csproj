@@ -59,6 +59,7 @@
     <Compile Include="Services\BMSServices.cs" />
     <Compile Include="Services\DealServices.cs" />
     <Compile Include="Services\MasterServices.cs" />
+    <Compile Include="Services\SynDealServices.cs" />
     <Compile Include="Services\TitleServices.cs" />
     <Compile Include="Services\UserManagementService.cs" />
   </ItemGroup>
