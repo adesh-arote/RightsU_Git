@@ -177,6 +177,10 @@
     <Compile Include="Master_Entities\Sub_License.cs" />
     <Compile Include="Master_Entities\Syn_Deal.cs" />
     <Compile Include="Master_Entities\Syn_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Platform.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Yearwise_Run.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Master_Entities\Talent.cs" />
