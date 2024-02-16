@@ -14,6 +14,7 @@ namespace RightsU_Entities
     
     public partial class Report_Column_Setup
     {
+        public State EntityState { get; set; }
         public int Column_Code { get; set; }
         public string View_Name { get; set; }
         public string Name_In_DB { get; set; }
@@ -28,5 +29,7 @@ namespace RightsU_Entities
         public Nullable<int> Max_Length { get; set; }
         public string WhCondition { get; set; }
         public string ValidOpList { get; set; }
+        public Nullable<int> Alternate_Config_Code { get; set; }
+        public string Display_Type { get; set; }
     }
 }

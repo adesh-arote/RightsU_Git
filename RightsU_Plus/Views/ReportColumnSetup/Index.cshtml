@@ -1,0 +1,511 @@
+﻿@using UTOFrameWork.FrameworkClasses
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
+
+<script>
+
+    var IsCall = 'Y', Command_Name = "", dummyGuid_G, sort_Type = "T";
+    var URL_BindReportColumnSetup = '@Url.Action("BindReportColumnSetup", "ReportColumnSetup")';
+    var URL_SearchResultColumnSetUp = '@Url.Action("SearchResultColumnSetUp", "ReportColumnSetup")';
+    var URL_AddEditReportColumnSetup = '@Url.Action("AddEditReportColumnSetup", "ReportColumnSetup")';
+    var URL_SaveReportColumnSetup = '@Url.Action("SaveReportColumnSetup", "ReportColumnSetup")';
+
+    $(document).ready(function () {
+        debugger;
+        if (LayoutDirection_G == "RTL") {
+            $('#btnUser').css("float", "right");
+            $('#txtSort').css("text-align", "left");
+            $('#ddlSortType_chosen').css("text-align", "right");
+        }
+        else {
+            $('#btnUser').css("float", "left");
+            $('#txtSort').css("text-align", "right");
+            $('#ddlSortType_chosen').css("text-align", "left");
+        }
+        SearchReportColumnSetup("");
+        addNumeric();
+        initializeChosen();
+        //NumberOnly();
+
+        $('#searchCommon').keypress(function (e) {
+            if (e.keyCode == 13) {
+                btnSearch_OnClick()
+                return false;
+            }
+        });
+        $('#ddlSortType').change(function () {
+            sort_Type = $('#ddlSortType').val();
+            $('#hdnPageNo').val(1);
+            var searchtext = $("#searchCommon").val();
+            SearchReportColumnSetup(searchtext);
+        })
+    });
+
+    //-----------------SEARCH-----------------
+
+    function btnSearch_OnClick() {
+        debugger;
+        $('.required').removeClass('required');
+        $("[required='required']").removeAttr("required");
+
+        var searchText = $.trim($('#searchCommon').val());
+
+        if (searchText == '') {
+            $('#searchCommon').val('');
+            $('#searchCommon').attr('required', true)
+            return false;
+        }
+        SearchReportColumnSetup(searchText);
+    }
+
+    function btnShowAll_OnClick() {
+        debugger;
+        if (!checkCurrentActionReportColumnSetup())
+            return false;
+        if (!ValidatePageSize())
+            return false;
+        sort_Type = "T";
+        $("#ddlSortType").find("option").attr("selected", false);
+        $("#ddlSortType").val('T').trigger("chosen:updated");
+        $('#hdnPageNo').val(1);
+        $('#searchCommon').attr('required', false)
+        $('#searchCommon').val('');
+        //SearchReportColumnSetup("");
+        SearchReportColumnSetup("");
+    }
+
+    function SearchReportColumnSetup(searchtext) {
+        debugger;
+        $('#searchCommon').val(searchtext);
+        showLoading();
+        $.ajax({
+            type: "POST",
+            url: URL_SearchResultColumnSetUp,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                searchText: searchtext
+            }),
+            success: function (result) {
+                $('#hdnPageNo').text(1);
+                $('#hdnPageNo').val(1);
+                $('#lblRecordCount').text(result.Record_Count);
+                $("#hdnRecordCount").val(result.Record_Count);
+                SetPaging();
+                ReportColumnSetupList("", 0);
+                hideLoading();
+            }
+        });
+    }
+
+    //-----------------PAGING-----------------
+
+    function addNumeric() {
+        debugger;
+        $(".pagingSize").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 99,
+            min: 1
+        });
+    }
+
+    function SetPaging() {
+        debugger;
+        IsCall = 'N';
+        var pageNo = parseInt($('#hdnPageNo').val());
+        var recordCount = parseInt($('#hdnRecordCount').val());
+        var pagePerBatch = parseInt($('#hdnPagePerBatch').val());
+        var recordPerPage = parseInt($('#txtPageSize').val());
+
+        var cnt = pageNo * recordPerPage;
+        if (cnt >= recordCount) {
+            var v1 = parseInt(recordCount / recordPerPage);
+            if ((v1 * recordPerPage) == recordCount)
+                pageNo = v1;
+            else
+                pageNo = v1 + 1;
+        }
+
+        if (pageNo == 0)
+            pageNo = 1;
+
+        var index = pageNo - 1;
+        $('#hdnPageNo').val(pageNo);
+
+        var opt = null;
+        opt = { callback: pageselectCallback };
+        opt["items_per_page"] = recordPerPage;
+        opt["num_display_entries"] = pagePerBatch;
+        opt["num"] = 10;
+        opt["prev_text"] = "<<";
+        opt["next_text"] = ">>";
+        opt["current_page"] = index;
+        $("#Pagination").pagination(recordCount, opt);
+    }
+
+    function pageselectCallback(page_index, jq) {
+        debugger;
+        if (checkCurrentActionReportColumnSetup()) {
+            $('.required').removeClass('required');
+
+            if (!ValidatePageSize())
+                return false;
+
+            var pageNo = page_index + 1
+            $('#hdnPageNo').val(pageNo);
+            if (IsCall == 'Y')
+                ReportColumnSetupList("", 0);
+            else
+            IsCall = 'Y';
+        }
+    }
+
+    function txtPageSize_OnChange() {
+        debugger;
+        $("[required='required']").removeAttr("required");
+        $('.required').removeClass('required');
+        if (!ValidatePageSize())
+            return false;
+
+        ReportColumnSetupList("", 0);
+        SetPaging();
+    }
+
+    function ValidatePageSize() {
+        debugger;
+        var recordPerPage = $('#txtPageSize').val()
+        if ($.trim(recordPerPage) != '') {
+            var pageSize = parseInt(recordPerPage);
+            if (pageSize > 0)
+                return true;
+        }
+        $('#txtPageSize').attr('required', true)
+        return false
+    }
+
+    function pageBinding() {
+        debugger;
+        ReportColumnSetupList("", 0);
+        SetPaging();
+    }
+
+    //-----------------VALIDATION-----------------
+
+    function checkCurrentActionReportColumnSetup() {
+        debugger;
+        var action = $("#hdnAction").val();
+        if (action == "ADD") {
+            showAlert("E", "Complete Add Operation First")
+            return false;
+        }
+        else if (action == "EDIT") {
+            showAlert("E", "Complete Edit Operation First")
+            return false;
+        }
+        return true;
+    }
+
+    //-----------------MASTER-----------------
+
+    function ReportColumnSetupList(commandName, columnCode) {
+        debugger;
+        var pageNo = $('#hdnPageNo').val();
+        var recordPerPage = $('#txtPageSize').val();
+        
+        $.ajax({
+            type: "POST",
+            url: URL_BindReportColumnSetup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                pageNo: pageNo,
+                recordPerPage: recordPerPage,
+                ColumnCode: columnCode,
+                commandName: commandName,
+                sortType: sort_Type
+            }),
+            success: function (result) {
+                $('#divReportColumnSetupList').empty();
+                $('#divReportColumnSetupList').html(result);
+                initializeTooltip();
+                initializeExpander();
+            }
+        })
+    }
+
+    function AddEditReportColumnSetup(commandName, ColumnCode) {
+        debugger;
+        $.ajax({
+            type: "POST",
+            url: URL_AddEditReportColumnSetup,
+            traditional: true,
+            enctype: 'multipart/form-data',
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            data: JSON.stringify({
+                commandName: commandName,
+                ColumnCode: ColumnCode
+            }),
+            success: function (result) {
+                debugger;
+                //Show Add in Pop Up
+                $('#popup').modal();
+                $('#popupHtml').empty();
+                $('#popupHtml').html(result);
+                if (commandName != "VIEW") {
+                    commandName = commandName;
+                }
+                //ReportColumnSetupList("", 0);
+
+                //Show Add in same div as List
+                //$('#divReportColumnSetupList').empty();
+                //$('#divReportColumnSetupList').html(result);
+                //initializeTooltip();
+                //initializeExpander();
+            }
+        });
+    }
+
+    function ClosePopup() {
+        debugger;
+        //Hide Add in Pop Up
+        $('#hdnAction').val("");
+        $('#popup').modal('hide');
+        $('#popupHtml').empty();
+
+        //Hide Add in same div as List
+        //$('#divReportColumnSetupList').empty();
+        //var searchtext = $("#searchCommon").val();
+        //SearchReportColumnSetup(searchtext);
+    }
+
+    function SaveReportColumnSetup() {
+        debugger;
+        var returnVal = true;
+
+        var ColumnCode = $('#Column_Code').val();
+        var ViewName = $('#View_Name').val();
+        var NameInDB = $('#Name_In_DB').val();
+        var DisplayName = $('#Display_Name').val();
+        var ValuedAs = $('#Valued_As').val();
+        var DisplayOrder = $('#Display_Order').val();
+        var IsPartofSelectOnly = $('#IsPartofSelectOnly').val();
+        var ListSource = $('#List_Source').val();
+        var LookupColumn = $('#Lookup_Column').val();
+        var DisplayColumn = $('#Display_Column').val();
+        var RightCode = $('#Right_Code').val();
+        var MaxLength = $('#Max_Length').val();
+        var WhCondition = $('#WhCondition').val();
+        var ValidOpList = $('#ValidOpList').val();
+        var AlternateConfigCode = $('#Alternate_Config_Code').val();
+        var DisplayType = $('#Display_Type').val();
+
+        if (ViewName == "") {
+            $('#View_Name').val('').attr('required', true)
+            $('#View_Name').val('').attr("style",  "border-color: red; width:90%; background-color: rgba(155,0,0,0.1);" )
+            returnVal = false;
+        }
+        if (DisplayName == "") {
+            $('#Display_Name').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (NameInDB == "") {
+            $('#Name_In_DB').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (ValuedAs == "") {
+            $('#Valued_As').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (DisplayOrder == "") {
+            $('#Display_Order').val('').attr('required', true)
+            returnVal = false;
+        }
+        if (IsPartofSelectOnly == "") {
+            $('#IsPartofSelectOnly').val('').attr('required', true)
+            $('#IsPartofSelectOnly').val('').attr("style", "border-color: red; width:90%; background-color: rgba(155,0,0,0.1);")
+            returnVal = false;
+        }
+        if (MaxLength == "") {
+            $('#Max_Length').val('').attr('required', true)
+            returnVal = false;
+        }
+        //if (LookupColumn == "") {
+        //    $('#List_Source').val('').attr('required', true)
+        //    returnVal = false;
+        //}
+
+        if (returnVal) {
+            $.ajax({
+                type: "POST",
+                url: URL_SaveReportColumnSetup,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify({
+                    Column_Code: ColumnCode,
+                    View_Name: ViewName,
+                    Name_In_DB: NameInDB,
+                    Display_Name: DisplayName,
+                    Valued_As: ValuedAs,
+                    Display_Order: DisplayOrder,
+                    IsPartofSelectOnly: IsPartofSelectOnly,
+                    List_Source: ListSource,
+                    Lookup_Column: LookupColumn,
+                    Display_Column: DisplayColumn,
+                    Right_Code: RightCode,
+                    Max_Length: MaxLength,
+                    WhCondition: WhCondition,
+                    ValidOpList: ValidOpList,
+                    Alternate_Config_Code: AlternateConfigCode,
+                    Display_Type: DisplayType
+                }),
+                success: function (result) {
+                    //ClosePopup();
+                    //ReportColumnSetupList("", 0);
+                    if (result.Status == "S") {
+                        $('#lblRecordCount').text(result.RecordCount);
+                        $('#hdnAction').val("")
+                        showAlert("S", result.Message);
+                        SetPaging();
+
+                        if ($("#searchCommon").val() != "") {
+                            SearchReportColumnSetup($("#searchCommon").val())
+                        }
+                        else {
+                            ClosePopup();
+                            ReportColumnSetupList("", 0);
+                        }
+                        SetPaging();
+                    }
+                    else {
+                        showAlert("E", result.Message);
+                    }
+                }
+            });
+        }
+    }
+
+    function NumberOnly() {
+        debugger;
+        $(".NumberOnlyFn").numeric({
+            allowMinus: false,
+            allowThouSep: false,
+            allowDecSep: false,
+            max: 999,
+            min: 1
+        });
+    }
+
+</script>
+
+<style>
+    .search_area {
+        border-bottom: 1px dotted #777;
+        margin-bottom: 5px;
+        background-color: #eee;
+    }
+
+    #ddlSortType_chosen {
+        max-width: 42%;
+        text-align: left;
+    }
+</style>
+
+<div class="main_section">
+    <section class="rightsU_container clearfix">
+        <div class="container acq main_col">
+            <div class="">
+
+                <div class="title_block dotted_border clearfix">
+                    <h2 class="pull-left">
+                        Report Column Setup
+                        <span></span>
+                    </h2>
+
+                    <div class="right_nav pull-right">
+                        <ul>
+                            <li id="btnUser">
+                                <input type="button" class="btn btn-primary" value="@objMessageKey.Add" onclick="AddEditReportColumnSetup('ADD', 0)" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="search_area">
+                    <table class="table">
+                        <tr>
+                            <td style="width:10%; vertical-align: middle;text-align:center;">
+                                @objMessageKey.SearchText :
+                            </td>
+                            <td style="width:25%; vertical-align:middle;">
+                                <input type="text" name="srchCommon" id="searchCommon" class="search" style="width:100%" placeholder="Display Name, Name in DB, List Source" maxlength="100" />
+                            </td>
+                            <td>
+                                <input type="button" id="btnSearch" class="button" value="@objMessageKey.Search" onclick="btnSearch_OnClick()">
+                                <input type="button" id="btnShowAll" class="button" value="@objMessageKey.ShowAll" onclick="btnShowAll_OnClick()">
+                            </td>
+                            <td id="txtSort">
+                                @objMessageKey.SortBy :
+                                @Html.DropDownList("SortType", (List<SelectListItem>)ViewBag.SortType, new { @id = "ddlSortType", @class = "form_input chosen-select" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="grid_area">
+                    <div style="border-bottom: 1px dotted #777; display:none;"></div>
+                    <div class="paging_area clearfix">
+                        <span class="pull-left">@objMessageKey.TotalRecords: </span>
+                        <span class="pull-left" id="lblRecordCount"></span>
+                        <input type="hidden" id="hdnPageNo" name="hdnPageNo" value="1" />
+                        <input type="hidden" id="hdnPagePerBatch" name="hdnPagePerBatch" value="5" />
+                        <input type="hidden" id="hdnRecordCount" name="hdnRecordCount" value="0" />
+
+                        <div id="Pagination" class="pagination">
+                        </div>
+                        <span class="pull-right">
+                            @objMessageKey.PageSize:
+                            <input type="text" id="txtPageSize" name="txtPageSize" class="smallTextBox pagingSize" value="10" onchange="txtPageSize_OnChange()" onfocus="checkCurrentActionReportColumnSetup()" onblur="setDefaultPaging('txtPageSize')">
+                        </span>
+                    </div>
+
+                    <div class="tab-content clearfix table-wrapper scale_table_container">
+                        <div class="scale_table_block">
+                            <input type="hidden" id="hdnCategoryCode" value="0" />
+                            <input type="hidden" id="hdnAction" name="hdnAction" value="" />
+                            <input type="hidden" id="hdnRecodLockingCode" name="hdnRecodLockingCode" value="0" />
+                            <div id="divReportColumnSetupList" class="deal clearfix">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<div aria-labelledby="myModalLabel" class="form_wrapper modal fade big_popup" id="popup" role="dialog" tabindex="-1" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content clearfix">
+            <div class="form_fields acq" id="popupHtml">
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+﻿@model IEnumerable<RightsU_Entities.Report_Column_Setup_IT>
+
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<table class="table table-bordered table-hover">
+    <tr>
+        @*<th>
+            @Html.DisplayNameFor(model => model.Column_Code)
+        </th>*@
+        <th>
+            View Name
+        </th>
+        <th>
+           Name In DB
+        </th>
+        <th>
+            Display Name
+        </th>
+        <th>
+           Valued As
+        </th>
+        <th>
+           Display Order
+        </th>
+        <th>
+            Is Part of Select Only?
+        </th>
+        <th>
+            List Source
+        </th>
+        <th>
+            Lookup Column
+        </th>
+        @*<th>
+            Display Column
+        </th>
+        <th>
+            Right Code
+        </th>
+        <th>
+            Max Length
+        </th>
+        <th>
+            Wh Condition
+        </th>
+        <th>
+            Valid OpList
+        </th>
+        <th>
+            Alternate Config Code
+        </th>
+        <th>
+            Display Type
+        </th>*@
+        <th>Actions</th>
+    </tr>
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                @*<td align="center">
+                    @Html.DisplayFor(modelItem => item.Column_Code)
+                </td>*@
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.View_Name)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Name_In_DB)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Name)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Valued_As)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Order)
+                </td>
+                <td align="center">
+                    @if (item.IsPartofSelectOnly == "Y")
+                    {
+                    <span>Yes</span>
+                    }
+                    else
+                    {
+                    <span>No</span>
+                    }
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.List_Source)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Lookup_Column)
+                </td>
+                @*<td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Column)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Right_Code)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Max_Length)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.WhCondition)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.ValidOpList)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Alternate_Config_Code)
+                </td>
+                <td align="center">
+                    @Html.DisplayFor(modelItem => item.Display_Type)
+                </td>*@
+                <td align="center">
+                    @Html.ActionLink(" ", "Edit", new { id = item.Column_Code }, new { @class = "glyphicon glyphicon-pencil", title = "Edit" })
+                    @Html.ActionLink(" ", "Details", new { id = item.Column_Code }, new { @class = "glyphicon glyphicon-eye-open", title = "Details" })
+                    @*@Html.ActionLink(" ", "Delete", new { id=item.Column_Code }, new { @class = "glyphicon glyphicon-trash", title = "Delete" })*@
+                    <a title="Configure" class="glyphicon glyphicon-cog" style="cursor: pointer" onclick="ConfigureAttribReportColumn('@item.Column_Code', '@item.Display_Name', 'config')"></a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="5">No Record ound</td>
+        </tr>
+    }
+</table>

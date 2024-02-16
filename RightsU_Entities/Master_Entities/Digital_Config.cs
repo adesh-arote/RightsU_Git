@@ -36,5 +36,20 @@ namespace RightsU_Entities
 
         public virtual Digital Digital { get; set; }
         public virtual Digital_Tab Digital_Tab { get; set; }
+
+        public string _Dummy_Guid { get; set; }
+        public string Dummy_Guid
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_Dummy_Guid))
+                    _Dummy_Guid = GetDummy_Guid();
+                return _Dummy_Guid;
+            }
+        }
+        private string GetDummy_Guid()
+        {
+            return Guid.NewGuid().ToString();
+        }
     }
 }
