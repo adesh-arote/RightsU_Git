@@ -199,6 +199,7 @@
     <Compile Include="Controllers\businessunitController.cs" />
     <Compile Include="Controllers\categoryController.cs" />
     <Compile Include="Controllers\channelController.cs" />
+    <Compile Include="Controllers\costtypeController.cs" />
     <Compile Include="Controllers\countryController.cs" />
     <Compile Include="Controllers\currencyController.cs" />
     <Compile Include="Controllers\dealController.cs" />
@@ -212,7 +213,8 @@
     <Compile Include="Controllers\languagegroupController.cs" />
     <Compile Include="Controllers\loginController.cs" />
     <Compile Include="Controllers\milestonetypeController.cs" />
-	<Compile Include="Controllers\partyController.cs" />
+    <Compile Include="Controllers\partyController.cs" />
+    <Compile Include="Controllers\payment_termsController.cs" />
     <Compile Include="Controllers\programController.cs" />
     <Compile Include="Controllers\platformController.cs" />
     <Compile Include="Controllers\promotergroupController.cs" />

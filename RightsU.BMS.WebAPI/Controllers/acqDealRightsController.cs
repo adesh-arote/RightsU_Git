@@ -130,7 +130,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <remarks>Delete deal rights by id</remarks>
         /// <param name="id">delete specific deal rights data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal_Rights))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]

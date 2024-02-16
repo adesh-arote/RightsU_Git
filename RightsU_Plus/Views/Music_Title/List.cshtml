@@ -557,11 +557,17 @@
                 <h2 class="pull-left">@objMessageKey.MusicTrackList</h2>
                 <div class="right_nav pull-right" style="margin-right: 17px;">
                     <ul>
+                        @*<li>
+            <input class="btn btn-primary" type="submit" id="btnSearch" value="@objMessageKey.Search" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); searchList();" />
+        </li>
+        <li>
+            <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); ShowAll()"></a>
+        </li>*@
                         <li>
-                            <input class="btn btn-primary" type="submit" id="btnSearch" value="@objMessageKey.Search" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); searchList();" />
+                            <input type="button" class="btn btn-primary" value="@objMessageKey.Search" id="btnSearch" onclick="return searchList();" />
                         </li>
                         <li>
-                            <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="javascript: panelVisible = true; togglePanelVisibility2('pnlSearch'); ShowAll()"></a>
+                            <a class="glyphicon glyphicon-refresh" title="@objMessageKey.ShowAll" id="btnShowAll" onclick="ShowAll()"></a>
                         </li>
                         <li>
                             @if (ViewBag.VisibilityforAdd.Contains("~" + GlobalParams.RightCodeForExportToExcel + "~"))

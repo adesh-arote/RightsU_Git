@@ -65,7 +65,8 @@ BEGIN
 			Business_Unit_Code int,
 			Vendor_Name NVARCHAR(max),
 			ROFR_Type  NVARCHAR(max),
-			ROFR_Date DateTime
+			ROFR_Date DateTime,
+			Vendor_Code INT
 		)
 		--select * from Email_Config_Detail_Alert
 	
@@ -283,10 +284,10 @@ BEGIN
 		PRINT 'AROD'
 			SET @Deal_heading ='ROFR'
 			INSERT INTO #DealDetails(Agreement_No,Title_Code,Title_Name,Right_Start_Date,Right_End_Date,Platform_Code,Platform_name,
-					Country,Is_Processed,PlatformCodeCount,Acq_Deal_Rights_Code,Expire_In_Days,Business_Unit_Code,Vendor_Name,ROFR_Date, ROFR_Type)
+					Country,Is_Processed,PlatformCodeCount,Acq_Deal_Rights_Code,Expire_In_Days,Business_Unit_Code, Vendor_Code, Vendor_Name,ROFR_Date, ROFR_Type)
 			SELECT DISTINCT  b.Agreement_No, Title_Code, Title_name, Right_Start_Date, Right_End_Date, PlatformCodes, Platform_Name,
 					Country,'N' as IsProcessed,Platform_Count,cast (Acq_Deal_Rights_Code as varchar(1000)), ROFR_In_Days,
-					IsNull(b.Business_Unit_Code,0),Vendor_Name , b.ROFR_Date , b.ROFR_Type
+					IsNull(b.Business_Unit_Code,0), b.Vendor_Code, Vendor_Name, b.ROFR_Date , b.ROFR_Type
 			FROM VW_ACQ_EXPIRING_DEALS b
 			INNER JOIN  Acq_Deal AD (NOLOCK) ON ad.Acq_Deal_Code = b.Acq_Deal_Code AND AD.Is_Master_Deal = 'Y'
 			Where ROFR_In_Days Is Not Null And ROFR_In_Days > 0
@@ -299,16 +300,20 @@ BEGIN
 		PRINT 'SROD'
 			SET @Deal_heading ='ROFR'
 			INSERT INTO #DealDetails(Agreement_No,Title_Code,Title_Name,Right_Start_Date,Right_End_Date,Platform_Code,Platform_name,
-					Country,Is_Processed,PlatformCodeCount,Acq_Deal_Rights_Code,Expire_In_Days,Business_Unit_Code,Vendor_Name,ROFR_Date, ROFR_Type)
+					Country,Is_Processed,PlatformCodeCount,Acq_Deal_Rights_Code,Expire_In_Days,Business_Unit_Code, Vendor_Code, Vendor_Name,ROFR_Date, ROFR_Type)
 			SELECT DISTINCT  Agreement_No, Title_Code, Title_name, Right_Start_Date, Right_End_Date, PlatformCodes, Platform_Name,
 					Country,'N' as IsProcessed,Platform_Count,cast (Syn_Deal_Rights_Code as varchar(1000)), ROFR_In_Days,
-					IsNull(Business_Unit_Code,0),Vendor_Name , b.ROFR_Date , b.ROFR_Type
+					IsNull(Business_Unit_Code,0), b.Vendor_Code, Vendor_Name, b.ROFR_Date , b.ROFR_Type
 			FROM VW_SYN_EXPIRING_DEALS b
 			Where ROFR_In_Days Is Not Null And ROFR_In_Days > 0
 			And Exists (
 				Select 1 From #Alert_Range tmp Where b.ROFR_In_Days Between tmp.Start_Range And tmp.End_Range
 			)
-		END	
+		END
+
+		UPDATE dd SET dd.Vendor_NAME = v.Vendor_Name
+		FROM #DealDetails dd
+		inner JOIN VENDOR V On v.Vendor_Code = dd.Vendor_Code 
 
 		------------
 		DECLARE
@@ -502,9 +507,18 @@ BEGIN
 					BEGIN
 						SET @Emailbody = @Emailbody + '<table class="tblFormat"><br>'
 					
-						SET @Emailbody=@Emailbody + '<tr><th align="center" width="10%" class="tblHead">Agreement#</th>
-						<th align="center" width="15%" class="tblHead">Licensor</th>
-						<th align="center" width="10%" class="tblHead">Title</th>
+						SET @Emailbody=@Emailbody + '<tr><th align="center" width="10%" class="tblHead">Agreement#</th>'
+
+						IF(@Alert_Type = 'AROD')
+						BEGIN
+							SET @Emailbody = @Emailbody + '<th align="center" width="15%" class="tblHead">Licensor</th>'
+						END
+						ELSE IF(@Alert_Type = 'SROD')
+						BEGIN
+							SET @Emailbody = @Emailbody + '<th align="center" width="15%" class="tblHead">Licensee</th>'
+						END
+						
+						SET @Emailbody = @Emailbody + '<th align="center" width="10%" class="tblHead">Title</th>
 						<th align="center" width="10%" class="tblHead">ROFR Type</th>
 						<th align="center" width="10%" class="tblHead">ROFR Trigger Date</th>
 						<th align="center" width="15%" class="tblHead">Country / Territory</th>
@@ -533,6 +547,8 @@ BEGIN
 						<th align="center" width="15%" class="tblHead">Country / Territory</th>
 						<th align="center" width="30%" class="tblHead">Platform</th></tr>'
 					END
+
+					print @Emailbody
 		
 				END
 					SET @Index  = @Index  + 1
@@ -639,14 +655,14 @@ BEGIN
 				BEGIN
 					PRINT 'ROD1'
 
-					SET @EmailHead= @EmailHead+'Dear User,<br><br> Kindly take note that the below mentioned deals where Right of First Negotiation (Acquisition ROFR) is available to Viacom18, are nearing the trigger dates indicated below. You are requested to take note of the same and determine next steps. If you need any further information regarding any of the below deals, please get in touch with your Legal Contact.</b> 
+					SET @EmailHead= @EmailHead+'Dear User,<br><br> Kindly, take note that the Right of First Negotiation (Acquisition ROFR) is nearing the trigger dates for the deals mentioned below. You are requested to take note of the same and determine next steps. If you need any further information regarding any of the below deals, please get in touch with your Legal Contact.</b> 
 											<br><br><table border="1" cellspacing="0" cellpadding="3">'
 				END
 				ELSE IF(@Alert_Type = 'SROD')
 				BEGIN
 					PRINT 'ROD1'
 
-					SET @EmailHead= @EmailHead+'Dear User,<br><br> Kindly take note that the below mentioned deals where Right of First Negotiation (Syndication ROFR) is available to Viacom18, are nearing the trigger dates indicated below. You are requested to take note of the same and determine next steps. If you need any further information regarding any of the below deals, please get in touch with your Legal Contact</b> 
+					SET @EmailHead= @EmailHead+'Dear User,<br><br> Kindly, take note that the Right of First Negotiation (Syndication ROFR) is nearing the trigger dates for the deals mentioned below. You are requested to take note of the same and determine next steps. If you need any further information regarding any of the below deals, please get in touch with your Legal Contact.</b> 
 											<br><br><table border="1" cellspacing="0" cellpadding="3">'
 
 				END

@@ -36,6 +36,18 @@ namespace RightsU.BMS.DAL
         {
             return base.ExecuteSQLStmt<User>(strSQL);
         }
+
+        public string GetUserName(int Id)
+        {
+            string UserName = string.Empty;
+
+            User objUser = Get(Id);
+            if (objUser != null)
+            {
+                UserName = objUser.First_Name + " " + objUser.Last_Name;
+            }
+            return UserName;
+        }
     }
     #endregion
 
@@ -450,13 +462,13 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Country_Code = Id };
 
-            return base.GetById<Country,CountryLanguage, Language>(obj);
+            return base.GetById<Country, CountryLanguage, Language>(obj);
         }
         public IEnumerable<Country> GetAll()
         {
-            return base.GetAll<Country, CountryLanguage,Language>();
+            return base.GetAll<Country, CountryLanguage, Language>();
         }
-        
+
         public void Add(Country entity)
         {
             base.AddEntity(entity);
@@ -879,48 +891,17 @@ namespace RightsU.BMS.DAL
     #region -------- DealType -----------
     public class DealTypeRepositories : MainRepository<Deal_Type>
     {
-        public Deal_TypeReturn GetDealType_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        public IEnumerable<Deal_Type> GetAll()
         {
-            Deal_TypeReturn ObjDealTypeReturn = new Deal_TypeReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjDealTypeReturn.content = base.ExecuteSQLProcedure<Deal_Type>("[USPAPI_Deal_Type]", param).ToList();
-            ObjDealTypeReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjDealTypeReturn;
+            return base.GetAll<Deal_Type>();
         }
+        
     }
     #endregion
 
     #region -------- ChannelCategory -----------
     public class ChannelCategoryRepositories : MainRepository<Channel_Category>
     {
-        public Channel_CategoryReturn GetChannelCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            Channel_CategoryReturn ObjChannelCategoryReturn = new Channel_CategoryReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjChannelCategoryReturn.content = base.ExecuteSQLProcedure<Channel_Category>("[USPAPI_Channel_Category]", param).ToList();
-            ObjChannelCategoryReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjChannelCategoryReturn;
-        }
         public Channel_Category Get(int Id)
         {
             var obj = new { Channel_Category_Code = Id };
@@ -972,24 +953,11 @@ namespace RightsU.BMS.DAL
             return base.GetById<Platform>(obj);
         }
 
-        public PlatformReturn GetPlatform_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        public IEnumerable<Platform> GetAll()
         {
-            PlatformReturn ObjPlatformReturn = new PlatformReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjPlatformReturn.content = base.ExecuteSQLProcedure<Platform>("[USPAPI_Platform]", param).ToList();
-            ObjPlatformReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjPlatformReturn;
+            return base.GetAll<Platform>();
         }
+
     }
     #endregion
 
@@ -1227,25 +1195,6 @@ namespace RightsU.BMS.DAL
             PromoterRemark oldObj = Get(entity.Promoter_Remarks_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
-
-        public PromoterRemarkReturn GetPromoterRemark_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            PromoterRemarkReturn ObjPromoterReturnReturn = new PromoterRemarkReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjPromoterReturnReturn.content = base.ExecuteSQLProcedure<PromoterRemark>("[USPAPI_Promoter_Remark]", param).ToList();
-            ObjPromoterReturnReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjPromoterReturnReturn;
-        }
     }
     #endregion
 
@@ -1396,7 +1345,7 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
-    
+
     #region -------- Vendor_Contacts -----------
     public class Vendor_ContactsRepositories : MainRepository<Vendor_Contacts>
     {
@@ -1560,11 +1509,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Territory_Code = Id };
 
-            return base.GetById<Territory,Territory_Details>(obj);
+            return base.GetById<Territory, Territory_Details>(obj);
         }
         public IEnumerable<Territory> GetAll()
         {
-            return base.GetAll<Territory,Territory_Details>();
+            return base.GetAll<Territory, Territory_Details>();
         }
         public void Add(Territory entity)
         {
@@ -1637,24 +1586,6 @@ namespace RightsU.BMS.DAL
             Category oldObj = Get(entity.Category_Code.Value);
             base.UpdateEntity(oldObj, entity);
         }
-        public CategoryReturn GetCategory_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
-        {
-            CategoryReturn ObjCategorynReturn = new CategoryReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjCategorynReturn.content = base.ExecuteSQLProcedure<Category>("[USPAPI_Category]", param).ToList();
-            ObjCategorynReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjCategorynReturn;
-        }
     }
     #endregion
 
@@ -1716,7 +1647,7 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Language_Group_Code = Id };
 
-            return base.GetById<LanguageGroup, LanguageGroupDetails,Language>(obj);
+            return base.GetById<LanguageGroup, LanguageGroupDetails, Language>(obj);
         }
         public IEnumerable<LanguageGroup> GetAll()
         {
@@ -1759,7 +1690,7 @@ namespace RightsU.BMS.DAL
     {
         public IEnumerable<Currency> GetAll()
         {
-            return base.GetAll<Currency,CurrencyExchangeRate>();
+            return base.GetAll<Currency, CurrencyExchangeRate>();
         }
         public IEnumerable<Currency> GetAllByQuery(string query)
         {
@@ -1867,11 +1798,11 @@ namespace RightsU.BMS.DAL
         {
             var obj = new { Channel_Code = Id };
 
-            return base.GetById<Channel, Entity,ChannelTerritory>(obj);
+            return base.GetById<Channel, Entity, ChannelTerritory>(obj);
         }
         public IEnumerable<Channel> GetAll()
         {
-            return base.GetAll<Channel,Entity,ChannelTerritory>();
+            return base.GetAll<Channel, Entity, ChannelTerritory>();
         }
         public IEnumerable<Channel> SearchFor(object param)
         {
@@ -1888,7 +1819,7 @@ namespace RightsU.BMS.DAL
         }
     }
 
-    public class ChannelCountryDetailsRepositories: MainRepository<ChannelTerritory>
+    public class ChannelCountryDetailsRepositories : MainRepository<ChannelTerritory>
     {
         public void Delete(ChannelTerritory entity)
         {
@@ -1897,4 +1828,81 @@ namespace RightsU.BMS.DAL
     }
     #endregion
 
+    #region -------- PaymentTerms -----------
+    public class PaymentTermsRepositories : MainRepository<Payment_Terms>
+    {
+        public Payment_Terms Get(int Id)
+        {
+            var obj = new { Payment_Terms_Code = Id };
+
+            return base.GetById<Payment_Terms>(obj);
+        }
+        public IEnumerable<Payment_Terms> GetAll()
+        {
+            return base.GetAll<Payment_Terms>();
+        }
+        public void Add(Payment_Terms entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Payment_Terms entity)
+        {
+            Payment_Terms oldObj = Get(entity.Payment_Terms_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Payment_Terms entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Payment_Terms> SearchFor(object param)
+        {
+            return base.SearchForEntity<Payment_Terms>(param);
+        }
+
+        public IEnumerable<Payment_Terms> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Payment_Terms>(strSQL);
+        }
+    }
+    #endregion
+
+    #region -------- Cost Type -----------
+    public class CostTypeRepositories : MainRepository<Cost_Type>
+    {
+        public Cost_Type Get(int Id)
+        {
+            var obj = new { Cost_Type_Code = Id };
+
+            return base.GetById<Cost_Type>(obj);
+        }
+        public IEnumerable<Cost_Type> GetAll()
+        {
+            return base.GetAll<Cost_Type>();
+        }
+        public void Add(Cost_Type entity)
+        {
+            base.AddEntity(entity);
+        }
+        public void Update(Cost_Type entity)
+        {
+            Cost_Type oldObj = Get(entity.Cost_Type_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+        public void Delete(Cost_Type entity)
+        {
+            base.DeleteEntity(entity);
+        }
+
+        public IEnumerable<Cost_Type> SearchFor(object param)
+        {
+            return base.SearchForEntity<Cost_Type>(param);
+        }
+
+        public IEnumerable<Cost_Type> GetDataWithSQLStmt(string strSQL)
+        {
+            return base.ExecuteSQLStmt<Cost_Type>(strSQL);
+        }
+    }
+    #endregion
 }

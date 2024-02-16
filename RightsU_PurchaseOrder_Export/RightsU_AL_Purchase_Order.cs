@@ -287,7 +287,7 @@ namespace RightsU_PurchaseOrder_Export
             string outputFilePath = ConfigurationManager.AppSettings["outputPath"];
             string outputFileName = "";
 
-            Regex reg = new Regex("[*'\",:&#^@]");
+            Regex reg = new Regex("[*'\",:&#^@/<>?|]");
             Title_Name = reg.Replace(Title_Name, "_");
 
             outputFileName = PO_Number.Replace("/", "_") + "-" + Title_Name + ".pdf";

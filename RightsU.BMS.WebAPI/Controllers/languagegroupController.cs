@@ -171,7 +171,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
@@ -227,7 +227,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
@@ -283,7 +283,7 @@ namespace RightsU.BMS.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);

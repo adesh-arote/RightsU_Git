@@ -65,8 +65,11 @@ AS
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size     
 		
-	select Sub_License_Code,Sub_License_Name,Is_Active from #Temp
+	DECLARE @Query NVARCHAR(MAX)=''
 
+	SET @Query = 'select Sub_License_Code,Sub_License_Name,Is_Active from #Temp order by '+ @sort+'' 
+	
+	EXEC(@Query)
 
 	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_Sub_License]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 	END

@@ -1387,7 +1387,8 @@
                                                 @item.Days_After
                                             </td>
                                             <td>
-                                                <div title="@item.Payment_Terms">@Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)</div>
+                                                @*<div title="@item.Payment_Terms">@Html.Raw(@item.Payment_Terms.Length >= 33 ? @item.Payment_Terms.Substring(0, 30) + "..." : @item.Payment_Terms)</div>*@
+                                                @item.Cost_Percentage
                                             </td>
                                             <td>
                                                 @(item.Due_Date.ToString().Substring(0, 10))

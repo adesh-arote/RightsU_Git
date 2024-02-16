@@ -1,0 +1,85 @@
+﻿@model List<RightsU_Entities.Digital_Tab>
+@using UTOFrameWork.FrameworkClasses;
+@{
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
+
+<script>
+    $('.expand_Tab_Name').expander({
+        slicePoint: 38,
+        expandPrefix: '',
+        expandText: '...@objMessageKey.readmore',
+        collapseTimer: 0,
+        userCollapseText: '<span>[^]</span>'
+    });
+</script>
+
+<table class="table table-bordered table-hover" id="tblMusicLink">
+    <thead>
+        <tr>
+            <th style="width:20%;">Tab Name</th>
+            <th style="width:15%;">Short Name</th>
+            <th style="width:15%;">Tab Order</th>
+            <th style="width:15%;">Add / Edit</th>
+            <th style="width:15%;">Module</th>
+            <th style="width:10%;">List Page Config</th>
+            <th style="width:15%;">@objMessageKey.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count > 0)
+        {
+            foreach (var item in Model)
+            {
+                string strListPageConfig = string.Empty, strModuleName = string.Empty;
+                strListPageConfig = item.Is_Show == "Y" ? objMessageKey.Yes : objMessageKey.NO;
+
+                strModuleName = item.Module_Code == 30 ? "Acquisition Deals" : item.Module_Code == 35 ? "Syndication Deals" : "";
+                <tr>
+                    <td class="expand_Tab_Name">
+                        <span>@item.Digital_Tab_Description</span>
+                    </td>
+                    <td style="text-align:center;">
+                        <span>@item.Short_Name</span>
+                    </td>
+                    <td align="center">
+                        <span>@item.Order_No</span>
+                    </td>
+                    <td align="center">
+                        <span>@item.EditWindowType</span>
+                    </td>
+                    <td align="center">
+                        <span>@strModuleName</span>
+                    </td>
+                    <td align="center">
+                        <span>@strListPageConfig</span>
+                    </td>
+                    <td align="center">
+                        @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForEdit + "~"))
+                            {*@
+                        <a title="@objMessageKey.Edit" class="glyphicon glyphicon-pencil" style="cursor: pointer;" onclick="BindPartialView('EDIT',@item.Digital_Tab_Code)"></a>
+                        @*}*@
+                        @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {*@
+                        <a title="@objMessageKey.View" class="glyphicon glyphicon-eye-open" style="cursor: pointer;" onclick="BindPartialView('VIEW',@item.Digital_Tab_Code)"></a>
+                        @*}*@
+                        @*@if (ViewBag.UserModuleRights.Contains("~" + GlobalParams.RightCodeForView + "~"))
+                            {*@
+                        <a title="Tab List View Config" class="glyphicon glyphicon-cog" style="cursor: pointer;" onclick="SetTabListViewConfig(@item.Digital_Tab_Code)"></a>
+                        @*}*@
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">@objMessageKey.Norecordfound</td>
+            </tr>
+        }
+    </tbody>
+</table>

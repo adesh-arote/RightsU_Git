@@ -12,7 +12,7 @@ namespace RightsU.BMS.Entities.ReturnClasses
     {
         public PartyReturn()
         {
-            content = new List<Vendor>();
+            content = new List<Party>();
             paging = new paging();
         }
 

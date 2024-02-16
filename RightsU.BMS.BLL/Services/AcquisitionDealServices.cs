@@ -133,7 +133,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.Titles.ToList()[i].Title_Code == null || objInput.Titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR273");
+                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
                     }
                 }
             }
@@ -171,13 +171,17 @@ namespace RightsU.BMS.BLL.Services
 
             #endregion
 
-            objInput.Term = "1";
+            DateTime stDate = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.right_start_date));
+            DateTime enDate = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.right_end_date));
+            string strCalculatTerm = "Select [dbo].[UFN_Calculate_Term]('"+ stDate.ToString("dd/MMMM/yyyy") + "', '"+ enDate.ToString("dd/MMMM/yyyy") + "') AS Term";
+
+            objInput.Term = Convert.ToString(objAcquisitionDealRepositories.GetDataWithSQLStmt(strCalculatTerm).FirstOrDefault().Term);
             objInput.Right_Start_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.right_start_date));
             objInput.Right_End_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.right_end_date));
             objInput.ROFR_Date = GlobalTool.LinuxToDate(Convert.ToDouble(objInput.rofr_date));
             objInput.Actual_Right_Start_Date = objInput.Right_Start_Date;
-            objInput.Actual_Right_Start_Date = objInput.Right_End_Date;
-
+            objInput.Actual_Right_End_Date = objInput.Right_End_Date;
+            objInput.Effective_Start_Date = objInput.Right_Start_Date;
             objInput.Inserted_On = DateTime.Now;
             objInput.Inserted_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
             objInput.Last_Updated_Time = DateTime.Now;
@@ -352,7 +356,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (objInput.Titles.ToList()[i].Title_Code == null || objInput.Titles.ToList()[i].Title_Code <= 0)
                     {
-                        _objRet = GlobalTool.SetError(_objRet, "ERR273");
+                        _objRet = GlobalTool.SetError(_objRet, "ERR173");
                     }
                 }
             }

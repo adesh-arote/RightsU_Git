@@ -47,7 +47,7 @@ namespace RightsU.Audit.WebAPI.Controllers
         /// <remarks>This API will be used to store Master Audit data.</remarks>
         /// <param name="Input"></param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(PostReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Invalid AuthKey")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / AuthKey Missing")]
@@ -62,25 +62,34 @@ namespace RightsU.Audit.WebAPI.Controllers
 
             DateTime startTime;
             startTime = DateTime.Now;
-            Input.requestId = Input.isExternal == true ? HttpContext.Current.Request.Headers["LogRequestId"] : string.Empty;
-            
-            PostReturn objReturn = objUSPServices.InsertAuditLog(Input);
+            //Input.requestId = Input.isExternal == true ? HttpContext.Current.Request.Headers["LogRequestId"] : string.Empty;
+
+            GenericReturn objReturn = objUSPServices.InsertAuditLog(Input);
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -123,19 +132,28 @@ namespace RightsU.Audit.WebAPI.Controllers
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
