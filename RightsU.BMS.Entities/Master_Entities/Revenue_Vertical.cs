@@ -18,11 +18,11 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "revenue_vertical_name")]
         public string Revenue_Vertical_Name { get; set; }
 
-        [JsonIgnore]
+     
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 
-        [JsonIgnore]
+     
         [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
     }

@@ -1905,4 +1905,90 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Deal Segment  -----------
+    public class DealSegmentRepositories : MainRepository<Deal_Segment>
+    {
+        public Deal_Segment Get(int Id)
+        {
+            var obj = new { Deal_Segment_Code = Id };
+
+            return base.GetById<Deal_Segment>(obj);
+        }
+        public IEnumerable<Deal_Segment> GetAll()
+        {
+            return base.GetAll<Deal_Segment>();
+        }
+
+        public void Add(Deal_Segment entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Deal_Segment entity)
+        {
+            Deal_Segment oldObj = Get(entity.Deal_Segment_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public IEnumerable<Deal_Segment> SearchFor(object param)
+        {
+            return base.SearchForEntity<Deal_Segment>(param);
+        }
+    }
+    #endregion
+
+    #region -------- Revenue Vertical -----------
+    public class RevenueVerticalRepositories : MainRepository<Revenue_Vertical>
+    {
+        public Revenue_Vertical Get(int Id)
+        {
+            var obj = new { Revenue_Vertical_Code = Id };
+
+            return base.GetById<Revenue_Vertical>(obj);
+        }
+        public IEnumerable<Revenue_Vertical> GetAll()
+        {
+            return base.GetAll<Revenue_Vertical>();
+        }
+
+        public void Add(Revenue_Vertical entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Revenue_Vertical entity)
+        {
+            Revenue_Vertical oldObj = Get(entity.Revenue_Vertical_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public IEnumerable<Revenue_Vertical> SearchFor(object param)
+        {
+            return base.SearchForEntity<Revenue_Vertical>(param);
+        }
+    }
+    #endregion
+
+
+    #region -------- Assign Work Flow --------
+    public class AssignWorkFlowRepositories : MainRepository<Workflow_Module>
+  
+    {
+        public Workflow_Module Get(int Id)
+        {
+            var obj = new { Workflow_Module_Code = Id };
+
+            return base.GetById<Workflow_Module, Workflow, Business_Unit, System_Module>(obj);
+        }
+        public IEnumerable<Workflow_Module> GetAll()
+        {
+            return base.GetAll<Workflow_Module, Workflow , Business_Unit, System_Module>();
+        }
+    }
+
+
+    #endregion
+
+
 }
