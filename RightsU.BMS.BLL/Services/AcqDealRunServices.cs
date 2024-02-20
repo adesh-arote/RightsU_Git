@@ -395,7 +395,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
-                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code <= 0)
+                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code < 0)
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR290"); // Input Paramater 'repeaton.day_id' is mandatory
                     }
@@ -675,7 +675,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
-                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code <= 0)
+                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code < 0)
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR290"); // Input Paramater 'repeaton.day_id' is mandatory
                     }
