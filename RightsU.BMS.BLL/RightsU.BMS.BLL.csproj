@@ -55,10 +55,12 @@
     <Compile Include="Miscellaneous\GlobalTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AcqDealRunServices.cs" />
-    <Compile Include="Services\AcquisitionDealServices.cs" />
+    <Compile Include="Services\SynDealRightsServices.cs" />
+    <Compile Include="Services\AcqDealRightsServices.cs" />
     <Compile Include="Services\BMSServices.cs" />
     <Compile Include="Services\DealServices.cs" />
     <Compile Include="Services\MasterServices.cs" />
+    <Compile Include="Services\SynDealServices.cs" />
     <Compile Include="Services\TitleServices.cs" />
     <Compile Include="Services\UserManagementService.cs" />
   </ItemGroup>

@@ -33,6 +33,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         public string User_Image { get; set; }
         // public bool Validate_Email { get; set; }
         public string ChangePasswordLinkGUID { get; set; }
+        public Nullable<int> Default_Entity_Code { get; set; }
 
         [OneToMany]
         public virtual ICollection<Users_Password_Detail> Users_Password_Detail { get; set; }

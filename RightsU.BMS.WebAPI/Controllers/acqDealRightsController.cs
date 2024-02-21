@@ -1,9 +1,11 @@
 ﻿using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
+using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,220 +14,94 @@ using System.Web.Http;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
-    public class acqDealRightsController : ApiController
+    [DisplayName("Acquisition Deal Rights")]
+    [Route("api/acqdealrights")]
+    public class AcqDealRightsController : BaseController
     {
-        public readonly AcquisitionDealServices objAcquisitionDealServices = new AcquisitionDealServices();
+        public readonly AcqDealRightsServices objAcqDealRightsServices = new AcqDealRightsServices();
 
         /// <summary>
-        /// Acquisition Deal Rights by id
+        /// Get Specific Acquisition Right
         /// </summary>
-        /// <remarks>Retrieves Acq Deal Rights by Id</remarks>
-        /// <param name="id">get specific deal data using id.</param>
+        /// <remarks>Retrieves acquisition right by Id</remarks>
+        /// <param name="id">Get specific acquisition right data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal_Rights))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/acqDealRights/{id}")]
+        [Route("api/acqdealrights/{id}")]
         public async Task<HttpResponseMessage> GetAcqDealRightsById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objAcquisitionDealServices.GetById(id.Value);
+            GenericReturn objReturn = objAcqDealRightsServices.GetById(id.Value);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
-
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, true);
 
             return response;
         }
 
         /// <summary>
-        /// Save Acq Deal Rights
+        /// Create Acquisition Right
         /// </summary>
-        /// <remarks>Create /Save new deal rights</remarks>
-        /// <param name="Input">Input data object for Create/Save New Deal General</param>
+        /// <remarks>Using this api new acquisition rights will be created</remarks>
+        /// <param name="Input">Input data object for create new acquisition rights</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/acqDealRights")]
         public async Task<HttpResponseMessage> AcqDealRightsPost(Acq_Deal_Rights Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objAcquisitionDealServices.Post(Input);
+            GenericReturn objReturn = objAcqDealRightsServices.Post(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }
 
         /// <summary>
-        /// Delete Acq Dela Rights
+        /// Delete Acquisition Right
         /// </summary>
-        /// <remarks>Delete deal rights by id</remarks>
-        /// <param name="id">delete specific deal rights data using id.</param>
+        /// <remarks>Using this api existing acquisition right can be delete</remarks>
+        /// <param name="id">delete specific acquisition right data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal_Rights))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpDelete]
-        [Route("api/acqDealRights/{id}")]
+        [Route("api/acqdealrights/{id}")]
         public async Task<HttpResponseMessage> Delete(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objAcquisitionDealServices.Delete(id.Value);
+            GenericReturn objReturn = objAcqDealRightsServices.Delete(id.Value);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }
 
         /// <summary>
-        /// Modify Deal General details
+        /// Modify Acquisition Right
         /// </summary>
-        /// <remarks>Update / Modify Deal General details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Deal General</param>
+        /// <remarks>Using this api existing acquisition right can be modify</remarks>
+        /// <param name="Input">Input data object for Modify existing acquisition right</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/acqDealRights")]
         public async Task<HttpResponseMessage> Put(Acq_Deal_Rights Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objAcquisitionDealServices.Put(Input);
+            GenericReturn objReturn = objAcqDealRightsServices.Put(Input);
 
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
+            objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(objReturn, false);
 
             return response;
         }

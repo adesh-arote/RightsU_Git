@@ -1,4 +1,6 @@
-﻿using RightsU.BMS.Entities.ReturnClasses;
+﻿using RightsU.BMS.BLL.Services;
+using RightsU.BMS.Entities.FrameworkClasses;
+using RightsU.BMS.Entities.ReturnClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
@@ -8,54 +10,51 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
-using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.BLL.Services;
 
 namespace RightsU.BMS.WebAPI.Controllers
 {
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
     [HideInDocs]
-    [AssetsLogFilter]
+    [SysLogFilter]
     [CustomExceptionFilter]
-    public class dealController : ApiController
-    {
-        private readonly DealServices objDealServices = new DealServices();
 
+    public class revenueverticalController : ApiController
+    {
         public enum SortColumn
         {
-            CreatedDate = 1,
-            UpdatedDate = 2
+            RevenueVerticalName = 1
         }
 
-        /// <summary>
-        /// Deal General List 
+        private readonly RevenueVerticalService objRevenueVerticalServices = new RevenueVerticalService();
+
+        // <summary>
+        /// RevenueVertical List 
         /// </summary>
-        /// <remarks>Retrieves all available Deal General</remarks>
+        /// <remarks>Retrieves all available RevenueVertical</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="searchValue">The value of the search across the title</param>
+        /// <param name="searchValue">The value of the search across the RevenueVertical</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
-        /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
-        /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(DealReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Revenue_Vertical))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/deal")]
-        public async Task<HttpResponseMessage> GetDealList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [System.Web.Http.Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> GetRevenueVerticalList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.GetDealList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt);
+            GenericReturn objReturn = objRevenueVerticalServices.GetRevenueVerticalList(order.ToString(), sort.ToString(), size, page, searchValue);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -89,26 +88,26 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Deal General by id
+        /// RevenueVertical by id
         /// </summary>
-        /// <remarks>Retrieves Deal General by Id</remarks>
-        /// <param name="id">get specific deal data using id.</param>
+        /// <remarks>Retrieves RevenueVertical by Id</remarks>
+        /// <param name="id">get specific RevenueVertical data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Revenue_Vertical))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/deal/{id}")]
-        public async Task<HttpResponseMessage> GetDealById(int? id)
+        [Route("api/revenuevertical/{id}")]
+        public async Task<HttpResponseMessage> GetRevenueVerticalById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.GetById(id);
+            GenericReturn objReturn = objRevenueVerticalServices.GetRevenueVerticalById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -144,10 +143,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save Deal General Details
+        /// Save RevenueVertical Details
         /// </summary>
-        /// <remarks>Create / Save New Deal General</remarks>
-        /// <param name="Input">Input data object for Create/Save New Deal General</param>
+        /// <remarks>Create / Save New RevenueVertical</remarks>
+        /// <param name="Input">Input data object for Create/Save New RevenueVertical</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -156,14 +155,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/deal")]
-        public async Task<HttpResponseMessage> Post(Acq_Deal Input)
+        [Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> PostRevenueVertical(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.Post(Input);
+
+            GenericReturn objReturn = objRevenueVerticalServices.PostRevenueVertical(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -181,6 +181,8 @@ namespace RightsU.BMS.WebAPI.Controllers
                 response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
                 response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
                 response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
@@ -197,10 +199,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Deal General details
+        /// Modify RevenueVertical details
         /// </summary>
-        /// <remarks>Update / Modify Deal General details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Deal General</param>
+        /// <remarks>Update / Modify RevenueVertical details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing RevenueVertical</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -209,14 +211,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/deal")]
-        public async Task<HttpResponseMessage> Put(Acq_Deal Input)
+        [Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> PutRevenueVertical(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.Put(Input);
+            GenericReturn objReturn = new GenericReturn();
+            objReturn = objRevenueVerticalServices.PutRevenueVertical(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -250,63 +253,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Delete Deal General details
+        /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Delete Deal General details by id</remarks>
-        /// <param name="id">delete specific deal data using id.</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Acq_Deal))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpDelete]
-        [Route("api/deal/{deal_id}")]
-        public async Task<HttpResponseMessage> Delete(int? deal_id)
-        {
-            var response = new HttpResponseMessage();
-            DateTime startTime;
-            startTime = DateTime.Now;
-
-            GenericReturn objReturn = objDealServices.Delete(deal_id);
-
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-
-            return response;
-        }
-
-        /// <summary>
-        /// Deal Complete Status
-        /// </summary>
-        /// <remarks>Check Deal Complete Status</remarks>
-        /// <param name="Input">Input data object for get deal completion status</param>
+        /// <remarks>Modify Active/Deactive Status of ExistingRevenueVertical</remarks>
+        /// <param name="Input">Input data object for Modify existing Cost Type Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -314,121 +264,15 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpGet]
-        [Route("api/deal/dealcompletestatus")]
-        public async Task<HttpResponseMessage> DealCompleteStatus(int? deal_id)
+        [HttpPut]
+        [Route("api/revenuevertical/ChangeActiveStatus")]
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objDealServices.DealCompeteStatus(deal_id);
-
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-
-            return response;
-        }
-
-        /// <summary>
-        /// Deal Rollback
-        /// </summary>
-        /// <remarks>Used for rollback the changes on deal since last approval</remarks>
-        /// <param name="Input">Input data object for rollback deal</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpPost]
-        [Route("api/deal/rollback")]
-        public async Task<HttpResponseMessage> rollback(Acq_Deal Input)
-        {
-            var response = new HttpResponseMessage();
-            DateTime startTime;
-            startTime = DateTime.Now;
-
-            GenericReturn objReturn = objDealServices.rollback(Input);
-
-            if (objReturn.StatusCode == HttpStatusCode.OK)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-            else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
-            {
-                objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
-                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
-                response.Headers.Add("message", objReturn.Message);
-                return response;
-            }
-
-            return response;
-        }
-
-        /// <summary>
-        /// Can Delete Title
-        /// </summary>
-        /// <remarks>Used for check can delete title from deal.</remarks>
-        /// <param name="Input">Input data object to check can delete title from deal</param>
-        /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
-        [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
-        [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
-        [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
-        [HttpGet]
-        [Route("api/deal/candeletetitle")]
-        public async Task<HttpResponseMessage> candeletetitle(int? deal_id, int? title_id, int? episode_from, int? episode_to)
-        {
-            var response = new HttpResponseMessage();
-            DateTime startTime;
-            startTime = DateTime.Now;
-
-            GenericReturn objReturn = objDealServices.candeletetitle(deal_id, title_id, episode_from, episode_to);
+            GenericReturn objReturn = objRevenueVerticalServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {

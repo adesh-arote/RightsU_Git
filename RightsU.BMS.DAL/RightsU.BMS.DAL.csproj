@@ -70,7 +70,8 @@
     <Compile Include="Infrastructure\ProcRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\AcqDealRunRepositories.cs" />
-    <Compile Include="Repository\AcquisitionDealRepositories.cs" />
+    <Compile Include="Repository\SynDealRightsRepositories.cs" />
+    <Compile Include="Repository\AcqDealRightsRepositories.cs" />
     <Compile Include="Repository\BMSAssetRepositories.cs" />
     <Compile Include="Repository\BMSDealContentRepositories.cs" />
     <Compile Include="Repository\BMSDealContentRightsRepositories.cs" />
@@ -80,6 +81,7 @@
     <Compile Include="Repository\DealTypeRepositories.cs" />
     <Compile Include="Repository\MasterRepositories.cs" />
     <Compile Include="Repository\RoleRepositories.cs" />
+    <Compile Include="Repository\SynDealRepositories.cs" />
     <Compile Include="Repository\TitleRepositories.cs" />
   </ItemGroup>
   <ItemGroup>

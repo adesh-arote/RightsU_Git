@@ -16,9 +16,9 @@ namespace RightsU.BMS.WebAPI.Controllers
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
     [HideInDocs]
-    [AssetsLogFilter]
+    [SysLogFilter]
     [CustomExceptionFilter]
-    public class payment_termsController : ApiController
+    public class paymenttermsController : ApiController
     {
         private readonly PaymentTermsService objPaymentTermsServices = new PaymentTermsService();
 

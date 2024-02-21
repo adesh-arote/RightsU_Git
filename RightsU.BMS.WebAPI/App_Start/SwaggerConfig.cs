@@ -6,6 +6,9 @@ using RightsU.BMS.WebAPI.Filters;
 using System;
 using System.Web;
 using System.Net.Http;
+using Swashbuckle.Swagger;
+using System.ComponentModel;
+using System.Linq;
 
 [assembly: WebActivatorEx.PreApplicationStartMethod(typeof(SwaggerConfig), "Register")]
 
@@ -39,8 +42,8 @@ namespace RightsU.BMS.WebAPI
                         // hold additional metadata for an API. Version and title are required but you can also provide
                         // additional fields by chaining methods off SingleApiVersion.
                         //
-                        c.SingleApiVersion("v1", "RightsU BMS API Documentation");
-                        
+                        c.SingleApiVersion("v1", "RightsU API Documentation");
+
                         // If you want the output Swagger docs to be indented properly, enable the "PrettyPrint" option.
                         //
                         //c.PrettyPrint();
@@ -69,11 +72,11 @@ namespace RightsU.BMS.WebAPI
                         //    .Description("Basic HTTP Authentication");
                         //
                         // NOTE: You must also configure 'EnableApiKeySupport' below in the SwaggerUI section
-                        //c.ApiKey("apiKey")
-                        //    .Description("API Key Authentication")
-                        //    .Name("apiKey")
-                        //    .In("header");
-                        //
+                        c.ApiKey("Authorization")
+                            .Description("Authorization")
+                            .Name("Authorization")
+                            .In("header");
+
                         //c.OAuth2("oauth2")
                         //    .Description("OAuth2 Implicit Grant")
                         //    .Flow("implicit")
@@ -94,6 +97,14 @@ namespace RightsU.BMS.WebAPI
                         // override with any value.
                         //
                         //c.GroupActionsBy(apiDesc => apiDesc.HttpMethod.ToString());
+                        c.GroupActionsBy(apiDesc => {
+                            var attr = apiDesc
+                                .GetControllerAndActionAttributes<DisplayNameAttribute>()
+                                .FirstOrDefault();
+
+                            // use controller name if the attribute isn't specified
+                            return attr?.DisplayName ?? apiDesc.ActionDescriptor.ControllerDescriptor.ControllerName;
+                        });
 
                         // You can also specify a custom sort order for groups (as defined by "GroupActionsBy") to dictate
                         // the order in which operations are listed. For example, if the default grouping is in place
@@ -258,7 +269,7 @@ namespace RightsU.BMS.WebAPI
                         // If your API supports ApiKey, you can override the default values.
                         // "apiKeyIn" can either be "query" or "header"
                         //
-                        //c.EnableApiKeySupport("apiKey", "header");
+                        c.EnableApiKeySupport("Authorization", "header");
                     });
         }
     }

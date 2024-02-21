@@ -29,15 +29,15 @@ namespace RightsU.BMS.WebAPI.Filters
                 {
                     return;
                 }
-                else if (actionContext.Request.Headers.GetValues("Authorization") != null && actionContext.Request.Headers.GetValues("token") != null)
+                else if (actionContext.Request.Headers.GetValues("Authorization") != null)
                 {
                     // get value from header
                     string authenticationToken = Convert.ToString(actionContext.Request.Headers.GetValues("Authorization").FirstOrDefault());
-                    string RefreshToken = Convert.ToString(actionContext.Request.Headers.GetValues("token").FirstOrDefault());
+                    //string RefreshToken = Convert.ToString(actionContext.Request.Headers.GetValues("token").FirstOrDefault());
 
                     //string UserCode = Convert.ToString(actionContext.Request.Headers.GetValues("userCode").FirstOrDefault());
                     authenticationToken = authenticationToken.Replace("Bearer ", "");
-                    RefreshToken = RefreshToken.Replace("Bearer ", "");
+                    //RefreshToken = RefreshToken.Replace("Bearer ", "");
                     //UserCode = UserCode.Replace("Bearer ", "");
                     //User user = new User();
                     //user.Users_Code = Convert.ToInt32(UserCode);
@@ -45,7 +45,7 @@ namespace RightsU.BMS.WebAPI.Filters
                     LoggedInUsersServices objLoggedInUsersServices = new LoggedInUsersServices();
                     System_Module_Service objSystemModuleServices = new System_Module_Service();
 
-                    LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken, RefreshToken = RefreshToken }).ToList().FirstOrDefault();
+                    LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken }).ToList().FirstOrDefault();
 
                     if (objUserDetails != null)
                     {
@@ -73,8 +73,8 @@ namespace RightsU.BMS.WebAPI.Filters
                         return;
                     }
 
-                    var userId = objSystemModuleServices.hasModuleRights(actionContext.Request.RequestUri.AbsolutePath, actionContext.Request.Method.Method, authenticationToken, RefreshToken);
-                    
+                    var userId = objSystemModuleServices.hasModuleRights(actionContext.Request.RequestUri.AbsolutePath, actionContext.Request.Method.Method, authenticationToken);
+
                     if (userId == 0)
                     {
                         HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");

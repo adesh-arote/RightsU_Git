@@ -71,7 +71,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "right_start_date")]
-        public string right_start_date { get; set; }
+        public string right_start_date_str { get; set; }
 
         //[JsonProperty(PropertyName = "right_end_date")]
         [JsonIgnore]
@@ -80,7 +80,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "right_end_date")]
-        public string right_end_date { get; set; }
+        public string right_end_date_str { get; set; }
 
         [JsonProperty(PropertyName = "milestone_type_id")]
         [ForeignKeyReference(typeof(Milestone_Type))]
@@ -97,8 +97,10 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "milestone_unit_type")]
         public Nullable<int> Milestone_Unit_Type { get; set; }
 
-        [JsonProperty(PropertyName = "rofr_id")]
         public string Is_ROFR { get; set; }
+
+        [JsonProperty(PropertyName = "rofr_id")]
+        public Nullable<int> ROFR_Code { get; set; }
 
         //[JsonProperty(PropertyName = "rofr_date")]
         [JsonIgnore]
@@ -107,7 +109,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "rofr_date")]
-        public string rofr_date { get; set; }
+        public string rofr_date_str { get; set; }
 
         [JsonProperty(PropertyName = "restriction_remarks")]
         public string Restriction_Remarks { get; set; }

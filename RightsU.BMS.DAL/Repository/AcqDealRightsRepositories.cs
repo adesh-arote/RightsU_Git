@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RightsU.BMS.DAL.Repository
 {
-    public class AcquisitionDealRepositories : MainRepository<Acq_Deal_Rights>
+    public class AcqDealRightsRepositories : MainRepository<Acq_Deal_Rights>
     {
         public Acq_Deal_Rights GetById(Int32? Id)
         {
