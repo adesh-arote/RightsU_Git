@@ -12,16 +12,16 @@ namespace RightsU.BMS.Entities.Master_Entities
 
 #pragma warning disable 1591
 
-    [Table("Acq_Deal_Rights")]
-    public partial class Acq_Deal_Rights
+    [Table("Syn_Deal_Rights")]
+    public partial class Syn_Deal_Rights
     {
-        public Acq_Deal_Rights()
+        public Syn_Deal_Rights()
         {
-            this.Titles = new HashSet<Acq_Deal_Rights_Title>();
-            this.Region = new HashSet<Acq_Deal_Rights_Territory>();
-            this.Platform = new HashSet<Acq_Deal_Rights_Platform>();
-            this.Subtitling = new HashSet<Acq_Deal_Rights_Subtitling>();
-            this.Dubbing = new HashSet<Acq_Deal_Rights_Dubbing>();
+            this.Titles = new HashSet<Syn_Deal_Rights_Title>();
+            this.Region = new HashSet<Syn_Deal_Rights_Territory>();
+            this.Platform = new HashSet<Syn_Deal_Rights_Platform>();
+            this.Subtitling = new HashSet<Syn_Deal_Rights_Subtitling>();
+            this.Dubbing = new HashSet<Syn_Deal_Rights_Dubbing>();
         }
 
         [JsonIgnore]
@@ -30,12 +30,12 @@ namespace RightsU.BMS.Entities.Master_Entities
         public State EntityState { get; set; }
 
         [PrimaryKey]
-        [JsonProperty(PropertyName = "deal_rights_id")]
-        public int? Acq_Deal_Rights_Code { get; set; }
+        [JsonProperty(PropertyName = "syn_deal_rights_id")]
+        public int? Syn_Deal_Rights_Code { get; set; }
 
-        [ForeignKeyReference(typeof(Acq_Deal))]
-        [JsonProperty(PropertyName = "deal_id")]
-        public int Acq_Deal_Code { get; set; }
+        //[ForeignKeyReference(typeof(Syn_Deal))]
+        [JsonProperty(PropertyName = "syn_deal_id")]
+        public int Syn_Deal_Code { get; set; }
 
         [JsonProperty(PropertyName = "exclusive")]
         public string Is_Exclusive { get; set; }
@@ -114,24 +114,24 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "restriction_remarks")]
         public string Restriction_Remarks { get; set; }
 
-        [JsonProperty(PropertyName = "under_production")]
-        public string Is_Under_Production { get; set; }
+        [JsonProperty(PropertyName = "coexclusive_remarks")]
+        public string CoExclusive_Remarks { get; set; }
 
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Title> Titles { get; set; }
+        public virtual ICollection<Syn_Deal_Rights_Title> Titles { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Territory> Region { get; set; }
+        public virtual ICollection<Syn_Deal_Rights_Territory> Region { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Platform> Platform { get; set; }
+        public virtual ICollection<Syn_Deal_Rights_Platform> Platform { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Subtitling> Subtitling { get; set; }
+        public virtual ICollection<Syn_Deal_Rights_Subtitling> Subtitling { get; set; }
 
         [OneToMany]
-        public virtual ICollection<Acq_Deal_Rights_Dubbing> Dubbing { get; set; }
+        public virtual ICollection<Syn_Deal_Rights_Dubbing> Dubbing { get; set; }
 
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
@@ -162,19 +162,19 @@ namespace RightsU.BMS.Entities.Master_Entities
         //Pending columns
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "term")]
+        //[JsonProperty(PropertyName = "term")]
         public string Term { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "effective_start_date")]
+        //[JsonProperty(PropertyName = "effective_start_date")]
         public Nullable<System.DateTime> Effective_Start_Date { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "actual_right_start_date")]
+        //[JsonProperty(PropertyName = "actual_right_start_date")]
         public Nullable<System.DateTime> Actual_Right_Start_Date { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "actual_right_end_date")]
+        //[JsonProperty(PropertyName = "actual_right_end_date")]
         public Nullable<System.DateTime> Actual_Right_End_Date { get; set; }
 
         [JsonIgnore]
@@ -184,15 +184,15 @@ namespace RightsU.BMS.Entities.Master_Entities
         //public string Is_ROFR { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "is_Verified")]
+        //[JsonProperty(PropertyName = "is_Verified")]
         public string Is_Verified { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "original_right_type")]
+        //[JsonProperty(PropertyName = "original_right_type")]
         public string Original_Right_Type { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "promoter_flag")]
+        //[JsonProperty(PropertyName = "promoter_flag")]
         public string Promoter_Flag { get; set; }
 
         //[JsonIgnore]
@@ -200,8 +200,8 @@ namespace RightsU.BMS.Entities.Master_Entities
         //public string Is_Under_Production { get; set; }
 
         [JsonIgnore]
-        [JsonProperty(PropertyName = "buyback_syn_rights_code")]
-        public string Buyback_Syn_Rights_Code { get; set; }
+        [JsonProperty(PropertyName = "is_pushback")]
+        public string Is_Pushback { get; set; }
 
 
     }

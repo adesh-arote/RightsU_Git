@@ -25,7 +25,11 @@ namespace RightsU.BMS.WebAPI.Filters
                     swaggerDoc.paths.Remove(route);
                     swaggerDoc.paths.Remove("/api/" + apiDescription.ActionDescriptor.ControllerDescriptor.ControllerName);
                 }
-
+                //else
+                //{
+                //    swaggerDoc.paths.Remove(route);
+                //    swaggerDoc.paths.ToString();
+                //}
             }
         }
     }

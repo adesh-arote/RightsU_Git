@@ -18,7 +18,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class payment_termsController : ApiController
+    public class paymenttermsController : ApiController
     {
         private readonly PaymentTermsService objPaymentTermsServices = new PaymentTermsService();
 

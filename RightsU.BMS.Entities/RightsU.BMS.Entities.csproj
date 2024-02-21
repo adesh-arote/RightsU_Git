@@ -112,11 +112,17 @@
     <Compile Include="Master_Entities\Acq_Deal_Licensor.cs" />
     <Compile Include="Master_Entities\Acq_Deal_List.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Dubbing.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Dubbing.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Platform.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Platform.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Subtitling.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Subtitling.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Territory.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Territory.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Rights_Title.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Rights_Title.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Run.cs" />
     <Compile Include="Master_Entities\Acq_Deal_Run_Channel.cs" />

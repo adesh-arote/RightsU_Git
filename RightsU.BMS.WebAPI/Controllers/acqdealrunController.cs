@@ -6,6 +6,7 @@ using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,7 +21,8 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class acqdealrunController : ApiController
+    [DisplayName("Acquisition Deal Run")]
+    public class AcqDealRunController : ApiController
     {
         private readonly AcqDealRunServices objAcqDealRunServices = new AcqDealRunServices();
 
@@ -43,7 +45,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/dealrun")]
+        [Route("api/acqdealrun")]
         public async Task<HttpResponseMessage> GetAcqDealRunList(Order order, SortColumn sort, int deal_id, Int32 page = 0, Int32 size = 0, string deal_movie_ids = "", string channel_ids = "")
         {
             var response = new HttpResponseMessage();
@@ -96,7 +98,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/dealrun/{id}")]
+        [Route("api/acqdealrun/{id}")]
         public async Task<HttpResponseMessage> GetDealRunById(int? id)
         {
             var response = new HttpResponseMessage();
@@ -151,7 +153,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/dealrun")]
+        [Route("api/acqdealrun")]
         public async Task<HttpResponseMessage> PostAcqDealRun(Acq_Deal_Run Input)
         {
             var response = new HttpResponseMessage();
@@ -204,7 +206,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/dealrun")]
+        [Route("api/acqdealrun")]
         public async Task<HttpResponseMessage> Put(Acq_Deal_Run Input)
         {
             var response = new HttpResponseMessage();
@@ -257,7 +259,7 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpDelete]
-        [Route("api/dealrun/{id}")]
+        [Route("api/acqdealrun/{id}")]
         public async Task<HttpResponseMessage> Delete(int? id)
         {
             var response = new HttpResponseMessage();

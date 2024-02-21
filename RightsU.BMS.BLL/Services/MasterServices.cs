@@ -1,5 +1,4 @@
-﻿
-using RightsU.BMS.DAL;
+﻿using RightsU.BMS.DAL;
 using RightsU.BMS.Entities.FrameworkClasses;
 using RightsU.BMS.Entities.Master_Entities;
 using System;
@@ -304,7 +303,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetChannelDetailsById(int ? id)
+        public GenericReturn GetChannelDetailsById(int? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -408,7 +407,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 if (_objRet.IsSuccess)
                 {
-                   
+
 
                     List<ChannelTerritory> lstChannelterritory_Details = new List<ChannelTerritory>();
                     if (objInput.country_details != null)
@@ -749,14 +748,14 @@ namespace RightsU.BMS.BLL.Services
             return objSystemModuleRepositories.USPAPI_GetModuleRights(Security_Group_Code);
         }
 
-        public int hasModuleRights(string Module_Url, string Rights_Name, string authenticationToken, string RefreshToken)
+        public int hasModuleRights(string Module_Url, string Rights_Name, string authenticationToken)
         {
             int hasRights = 0;
 
             LoggedInUsersServices objLoggedInUsersServices = new LoggedInUsersServices();
             UserServices objUserServices = new UserServices();
 
-            LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken, RefreshToken = RefreshToken }).ToList().FirstOrDefault();
+            LoggedInUsers objUserDetails = objLoggedInUsersServices.SearchFor(new { AccessToken = authenticationToken }).ToList().FirstOrDefault();
 
             if (objUserDetails != null)
             {
@@ -769,7 +768,10 @@ namespace RightsU.BMS.BLL.Services
 
                 var lstModuleUrl = Module_Url.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).Where(x => x.ToLower() != domainSubFolder.ToLower()).ToArray();
 
-                var objModuleRights = UserModuleRights.Where(x => x.Module_Name.ToLower() == lstModuleUrl[1].ToLower()).ToList();
+                var objModuleRights = UserModuleRights.Where(x => x.Url.ToLower() == Module_Url.ToLower()).ToList();
+
+                if (lstModuleUrl.Count() > 2)
+                    objModuleRights = UserModuleRights.Where(x => x.Url.ToLower() == "/" + lstModuleUrl[0].ToLower() + "/" + lstModuleUrl[1].ToLower()).ToList();
 
                 if (objModuleRights.Count() > 0)
                 {
@@ -3544,7 +3546,7 @@ namespace RightsU.BMS.BLL.Services
 
             #endregion
 
-        
+
             PromoterRemarkReturn _promoterRemarkReturn = new PromoterRemarkReturn();
             List<PromoterRemark> promoterRemarks = new List<PromoterRemark>();
 
@@ -4979,7 +4981,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetLanguageGroupById(int ? id)
+        public GenericReturn GetLanguageGroupById(int? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -5059,7 +5061,8 @@ namespace RightsU.BMS.BLL.Services
             if (_objRet.IsSuccess)
             {
                 List<LanguageGroupDetails> lstLangGrp_Details = new List<LanguageGroupDetails>();
-                if (objInput.languagegroup_details != null) { 
+                if (objInput.languagegroup_details != null)
+                {
                     foreach (var item in objInput.languagegroup_details)
                     {
                         LanguageGroupDetails objLangGrp_Details = new LanguageGroupDetails();
@@ -5068,7 +5071,7 @@ namespace RightsU.BMS.BLL.Services
                         objLangGrp_Details.Language_Group_Code = item.Language_Group_Code;
                         lstLangGrp_Details.Add(objLangGrp_Details);
                     }
-                 }
+                }
                 objInput.languagegroup_details = lstLangGrp_Details;
 
                 objInput.Language_Group_Name = objInput.Language_Group_Name;
@@ -5132,7 +5135,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-              
+
                 var objLanguageGroup = objLanguageGroupRepositories.GetById(objInput.Language_Group_Code.Value);
                 if (objLanguageGroup != null)
                 {
@@ -5463,7 +5466,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetCurrencyById(int ? id)
+        public GenericReturn GetCurrencyById(int? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -5786,7 +5789,7 @@ namespace RightsU.BMS.BLL.Services
                     objCurrency.Last_Updated_Time = DateTime.Now;
                     objCurrency.Last_Action_By = Convert.ToInt32(HttpContext.Current.Request.Headers["UserId"]);
                     objCurrency.Is_Active = objInput.Is_Active.ToUpper();
-                   
+
                     objCurrencyRepositories.Update(objCurrency);
                     _objRet.id = objInput.Currency_Code;
                 }
@@ -6014,7 +6017,7 @@ namespace RightsU.BMS.BLL.Services
             return _objRet;
         }
 
-        public GenericReturn GetCountryById(int ? id)
+        public GenericReturn GetCountryById(int? id)
         {
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
@@ -6098,7 +6101,7 @@ namespace RightsU.BMS.BLL.Services
 
             if (_objRet.IsSuccess)
             {
-               
+
 
                 List<CountryLanguage> lstCountrylang_Details = new List<CountryLanguage>();
 

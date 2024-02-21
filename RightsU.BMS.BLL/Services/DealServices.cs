@@ -20,7 +20,7 @@ namespace RightsU.BMS.BLL.Services
         private readonly DealRepositories objDealRepositories = new DealRepositories();
         private readonly Acq_Deal_LicensorRepositories objAcq_Deal_LicensorRepositories = new Acq_Deal_LicensorRepositories();
         private readonly Acq_Deal_MovieRepositories objAcq_Deal_MovieRepositories = new Acq_Deal_MovieRepositories();
-        private readonly AcquisitionDealRepositories objDealRightsRepositories = new AcquisitionDealRepositories();
+        private readonly AcqDealRightsRepositories objDealRightsRepositories = new AcqDealRightsRepositories();
 
         public GenericReturn GetDealList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
         {
