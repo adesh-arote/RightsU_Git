@@ -17,7 +17,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
     [HideInDocs]
-    [AssetsLogFilter]
+    [SysLogFilter]
     [CustomExceptionFilter]
     public class rofrController : ApiController
     {

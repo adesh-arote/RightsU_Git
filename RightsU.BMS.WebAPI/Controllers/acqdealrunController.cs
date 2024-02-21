@@ -19,7 +19,7 @@ namespace RightsU.BMS.WebAPI.Controllers
     [SwaggerConsumes("application/json")]
     [SwaggerProduces("application/json")]
     [HideInDocs]
-    [AssetsLogFilter]
+    [SysLogFilter]
     [CustomExceptionFilter]
     [DisplayName("Acquisition Deal Run")]
     public class AcqDealRunController : ApiController

@@ -12,7 +12,7 @@ namespace RightsU.BMS.WebAPI
         {
             // Web API configuration and services
             config.Filters.Add(new SessionFilter());//-- UnComment at build time
-            config.Filters.Add(new AssetsLogFilter());//-- UnComment at build time
+            config.Filters.Add(new SysLogFilter());//-- UnComment at build time
             config.Filters.Add(new CustomExceptionFilter());//-- UnComment at build time
 
             // Web API routes

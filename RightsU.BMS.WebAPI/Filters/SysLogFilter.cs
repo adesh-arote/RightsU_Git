@@ -13,7 +13,7 @@ using System.Web.Http.Filters;
 
 namespace RightsU.BMS.WebAPI.Filters
 {
-    public class AssetsLogFilter : ActionFilterAttribute
+    public class SysLogFilter : ActionFilterAttribute
     {
         private const string _requestId = "";
 

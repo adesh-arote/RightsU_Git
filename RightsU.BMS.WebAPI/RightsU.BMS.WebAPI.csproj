@@ -233,7 +233,7 @@
     <Compile Include="Controllers\talentController.cs" />
     <Compile Include="Controllers\territoryController.cs" />
     <Compile Include="Controllers\titleController.cs" />
-    <Compile Include="Filters\AssetsLogFilter.cs" />
+    <Compile Include="Filters\SysLogFilter.cs" />
     <Compile Include="Filters\AuthorizationFilter.cs" />
     <Compile Include="Filters\CustomExceptionFilter.cs" />
     <Compile Include="Filters\FileOperationFilter.cs" />
