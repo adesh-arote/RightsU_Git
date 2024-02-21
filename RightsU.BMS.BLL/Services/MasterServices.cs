@@ -9540,10 +9540,6 @@ namespace RightsU.BMS.BLL.Services
                 {
                     sort = "Last_Updated_Time";
                 }
-                else if (sort.ToLower() == "WorkflowName".ToLower())
-                {
-                    sort = "Workflow_Name";
-                }
                 else
                 {
                     _objRet = GlobalTool.SetError(_objRet, "ERR186");
@@ -9646,17 +9642,6 @@ namespace RightsU.BMS.BLL.Services
                         else
                         {
                             assignworkFlow = assignworkFlow.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                        }
-                    }
-                    else if (sort.ToLower() == "WorkflowName".ToLower())
-                    {
-                        if (order.ToUpper() == "ASC")
-                        {
-                            assignworkFlow = assignworkFlow.OrderBy(o => o.workflow_name.Workflow_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
-                        }
-                        else
-                        {
-                            assignworkFlow = assignworkFlow.OrderByDescending(o => o.workflow_name.Workflow_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
                         }
                     }
                 }

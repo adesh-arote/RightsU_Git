@@ -21,7 +21,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "workflow_id")]
         public Nullable<int> Workflow_Code { get; set; }
 
-       
+        [JsonProperty(PropertyName = "module_id")]
         public Nullable<int> Module_Code { get; set; }
 
         [ForeignKeyReference(typeof(Business_Unit))]

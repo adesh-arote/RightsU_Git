@@ -28,7 +28,6 @@ namespace RightsU.BMS.WebAPI.Controllers
         {
             CreatedDate = 1,
             UpdatedDate = 2,
-            WorkflowName = 3
         }
         private readonly AssignWorkFlowService objAssignWorkFlowServices = new AssignWorkFlowService();
         /// <summary>
