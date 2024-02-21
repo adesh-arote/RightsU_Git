@@ -71,12 +71,17 @@ BEGIN
 	INNER JOIN (  		   
 		SELECT DENSE_RANK() OVER(ORDER BY Sort ASC,'+ @sort+', ROFR_Code ASC) Row_Num, ID FROM #Temp  
 	) AS b ON a.Id = b.Id'
-	--print @UpdateRowNum
+	
 	
 	EXEC(@UpdateRowNum)
 
 	DELETE FROM #Temp WHERE Row_Num < (((@page - 1) * @size) + 1) Or Row_Num > @page * @size     
-	select ROFR_Code,ROFR_Type,Is_Active from #Temp
+	
+	DECLARE @Query NVARCHAR(MAX)=''
+
+	SET @Query = 'select ROFR_Code,ROFR_Type,Is_Active from #Temp order by '+ @sort+''
+
+	EXEC(@Query)
 
 	if(@Loglevel< 2)Exec [USPLogSQLSteps] '[USPAPI_ROFR_List]', 'Step 2', 0, 'Procedure Excuting Completed', 0, '' 
 END

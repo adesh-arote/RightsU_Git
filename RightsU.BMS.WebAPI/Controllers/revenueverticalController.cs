@@ -1,7 +1,7 @@
 ﻿using RightsU.BMS.BLL.Services;
 using RightsU.BMS.Entities.FrameworkClasses;
-using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.Entities.ReturnClasses;
+using RightsU.BMS.Entities.Master_Entities;
 using RightsU.BMS.WebAPI.Filters;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using System.Web.Http;
 
 namespace RightsU.BMS.WebAPI.Controllers
@@ -19,44 +20,41 @@ namespace RightsU.BMS.WebAPI.Controllers
     [HideInDocs]
     [AssetsLogFilter]
     [CustomExceptionFilter]
-    public class languageController : ApiController
+
+    public class revenueverticalController : ApiController
     {
-      
         public enum SortColumn
         {
-            LanguageName = 1
-            //UpdatedDate = 2,
-            //TitleName = 3
+            RevenueVerticalName = 1
         }
 
-        private readonly LanguageServices objLanguageServices = new LanguageServices();
+        private readonly RevenueVerticalService objRevenueVerticalServices = new RevenueVerticalService();
 
-        /// <summary>
-        /// Language List 
+        // <summary>
+        /// RevenueVertical List 
         /// </summary>
-        /// <remarks>Retrieves all available Assets</remarks>
+        /// <remarks>Retrieves all available RevenueVertical</remarks>
         /// <param name="order">Defines how the results will be ordered</param>
         /// <param name="page">The page number that should be retrieved</param>
-        /// <param name="searchValue">The value of the search across the title</param>
+        /// <param name="searchValue">The value of the search across the RevenueVertical</param>
         /// <param name="size">The size (total records) of each page</param>
         /// <param name="sort">Defines on which attribute the results should be sorted</param>
-        /// <param name="dateGt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
-        /// <param name="dateLt">Format - "dd-mmm-yyyy", filter basis on creation or modification date whichever falls into criteria</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(LanguageReturn))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Revenue_Vertical))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/language")]
-        public async Task<HttpResponseMessage> GetLanguageList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "", string dateGt = "", string dateLt = "")
+        [System.Web.Http.Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> GetRevenueVerticalList(Order order, Int32 page, Int32 size, SortColumn sort, string searchValue = "")
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-            GenericReturn objReturn = objLanguageServices.GetLanguageList(order.ToString(), sort.ToString(), size, page, searchValue, dateGt, dateLt, 0);
+
+            GenericReturn objReturn = objRevenueVerticalServices.GetRevenueVerticalList(order.ToString(), sort.ToString(), size, page, searchValue);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
@@ -90,42 +88,54 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Language by id
+        /// RevenueVertical by id
         /// </summary>
-        /// <remarks>Retrieves Assets by Id</remarks>
-        /// <param name="id">get specific asset data using id.</param>
+        /// <remarks>Retrieves RevenueVertical by Id</remarks>
+        /// <param name="id">get specific RevenueVertical data using id.</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Language))]
+        [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success", Type = typeof(Revenue_Vertical))]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
         [SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
         [SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpGet]
-        [Route("api/Language/{id}")]
-        public async Task<HttpResponseMessage> GetTitleById(int? id)
+        [Route("api/revenuevertical/{id}")]
+        public async Task<HttpResponseMessage> GetRevenueVerticalById(int? id)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
-            GenericReturn objReturn = objLanguageServices.GetLanguageById(id.Value);
+
+            GenericReturn objReturn = objRevenueVerticalServices.GetRevenueVerticalById(id.Value);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.OK, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -133,10 +143,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Save Language Details
+        /// Save RevenueVertical Details
         /// </summary>
-        /// <remarks>Create / Save New Language</remarks>
-        /// <param name="Input">Input data object for Create/Save New Language</param>
+        /// <remarks>Create / Save New RevenueVertical</remarks>
+        /// <param name="Input">Input data object for Create/Save New RevenueVertical</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -145,31 +155,43 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
-        [Route("api/Language")]
-        public async Task<HttpResponseMessage> PostLanguage(Language objInput)
+        [Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> PostRevenueVertical(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = objLanguageServices.PostLanguage(objInput);
+
+            GenericReturn objReturn = objRevenueVerticalServices.PostRevenueVertical(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
+                var xyz = System.Text.Json.JsonSerializer.Serialize<GenericReturn>(objReturn);
+
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -177,10 +199,10 @@ namespace RightsU.BMS.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Modify Language details
+        /// Modify RevenueVertical details
         /// </summary>
-        /// <remarks>Update / Modify Language details by id</remarks>
-        /// <param name="Input">Input data object for Modify existing Language</param>
+        /// <remarks>Update / Modify RevenueVertical details by id</remarks>
+        /// <param name="Input">Input data object for Modify existing RevenueVertical</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -189,31 +211,41 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/Language")]
-        public async Task<HttpResponseMessage> PutLanguage(Language objInput)
+        [Route("api/revenuevertical")]
+        public async Task<HttpResponseMessage> PutRevenueVertical(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
+
             GenericReturn objReturn = new GenericReturn();
-            objReturn = objLanguageServices.PutLanguage(objInput);
+            objReturn = objRevenueVerticalServices.PutRevenueVertical(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 
@@ -223,8 +255,8 @@ namespace RightsU.BMS.WebAPI.Controllers
         /// <summary>
         /// Active/Deactive Status 
         /// </summary>
-        /// <remarks>Modify Active/Deactive Status of Existing Language</remarks>
-        /// <param name="Input">Input data object for Modify existing Language Active/Deactive Status</param>
+        /// <remarks>Modify Active/Deactive Status of ExistingRevenueVertical</remarks>
+        /// <param name="Input">Input data object for Modify existing Cost Type Active/Deactive Status</param>
         /// <returns></returns>
         [SwaggerResponse(HttpStatusCode.OK, "Status ok / Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
@@ -233,32 +265,40 @@ namespace RightsU.BMS.WebAPI.Controllers
         [SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
         [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPut]
-        [Route("api/Language/ChangeActiveStatus")]
-        public async Task<HttpResponseMessage> ChangeActiveStatus(Language Input)
+        [Route("api/revenuevertical/ChangeActiveStatus")]
+        public async Task<HttpResponseMessage> ChangeActiveStatus(Revenue_Vertical Input)
         {
             var response = new HttpResponseMessage();
             DateTime startTime;
             startTime = DateTime.Now;
 
-            GenericReturn objReturn = new GenericReturn();
-            objReturn = objLanguageServices.ChangeActiveStatus(Input);
+            GenericReturn objReturn = objRevenueVerticalServices.ChangeActiveStatus(Input);
 
             if (objReturn.StatusCode == HttpStatusCode.OK)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.OK, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.BadRequest)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
-                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn.Response, Configuration.Formatters.JsonFormatter);
+                response = Request.CreateResponse(HttpStatusCode.BadRequest, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
             else if (objReturn.StatusCode == HttpStatusCode.InternalServerError)
             {
                 objReturn.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
                 response = Request.CreateResponse(HttpStatusCode.InternalServerError, objReturn, Configuration.Formatters.JsonFormatter);
+                response.Headers.Add("timetaken", Convert.ToString(objReturn.TimeTaken));
+                response.Headers.Add("request_completion", Convert.ToString(objReturn.IsSuccess));
+                response.Headers.Add("message", objReturn.Message);
                 return response;
             }
 

@@ -147,6 +147,7 @@
     <Compile Include="Master_Entities\DealContentResult.cs" />
     <Compile Include="Master_Entities\DealContentRightsResult.cs" />
     <Compile Include="Master_Entities\DealResult.cs" />
+    <Compile Include="Master_Entities\Deal_Segment.cs" />
     <Compile Include="Master_Entities\Deal_Tag.cs" />
     <Compile Include="Master_Entities\Deal_Type.cs" />
     <Compile Include="Master_Entities\Entity.cs" />
@@ -174,11 +175,18 @@
     <Compile Include="Master_Entities\Program.cs" />
     <Compile Include="Master_Entities\PromoterGroup.cs" />
     <Compile Include="Master_Entities\PromoterRemark.cs" />
+    <Compile Include="Master_Entities\Revenue_Vertical.cs" />
     <Compile Include="Master_Entities\RightRule.cs" />
     <Compile Include="Master_Entities\ROFR.cs" />
     <Compile Include="Master_Entities\Role.cs" />
     <Compile Include="Master_Entities\ServiceLog.cs" />
     <Compile Include="Master_Entities\Sub_License.cs" />
+    <Compile Include="Master_Entities\Syn_Deal.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Movie.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Platform.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Repeat_On_Day.cs" />
+    <Compile Include="Master_Entities\Syn_Deal_Run_Yearwise_Run.cs" />
     <Compile Include="Master_Entities\System_Module.cs" />
     <Compile Include="Master_Entities\System_Parameter_New.cs" />
     <Compile Include="Master_Entities\Talent.cs" />
@@ -203,7 +211,9 @@
     <Compile Include="Master_Entities\Vendor_Country.cs" />
     <Compile Include="Master_Entities\Vendor_Role.cs" />
     <Compile Include="Master_Entities\Version.cs" />
+    <Compile Include="Master_Entities\Workflow_Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReturnClasses\AssignWorkFlowReturn.cs" />
     <Compile Include="ReturnClasses\BusinessUnitReturn.cs" />
     <Compile Include="ReturnClasses\CategoryReturn.cs" />
     <Compile Include="ReturnClasses\ChannelReturn.cs" />
@@ -213,6 +223,7 @@
     <Compile Include="ReturnClasses\CurrencyReturn.cs" />
     <Compile Include="ReturnClasses\DealReturn.cs" />
     <Compile Include="ReturnClasses\AcqDealRunReturn.cs" />
+    <Compile Include="ReturnClasses\DealSegmentReturn.cs" />
     <Compile Include="ReturnClasses\DealTagReturn.cs" />
     <Compile Include="ReturnClasses\Deal_TypeReturn.cs" />
     <Compile Include="ReturnClasses\EntityReturn.cs" />
@@ -224,6 +235,7 @@
     <Compile Include="ReturnClasses\ProgramReturn.cs" />
     <Compile Include="ReturnClasses\PromoterGroupReturn.cs" />
     <Compile Include="ReturnClasses\PromoterRemarkReturn.cs" />
+    <Compile Include="ReturnClasses\RevenueVerticalReturn.cs" />
     <Compile Include="ReturnClasses\RightRuleReturn.cs" />
     <Compile Include="ReturnClasses\ROFRReturn.cs" />
     <Compile Include="ReturnClasses\RoleReturn.cs" />
@@ -232,6 +244,7 @@
     <Compile Include="ReturnClasses\TerritoryReturn.cs" />
     <Compile Include="ReturnClasses\TitleReturn.cs" />
     <Compile Include="ReturnClasses\PartyReturn.cs" />
+    <Compile Include="Master_Entities\Workflow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

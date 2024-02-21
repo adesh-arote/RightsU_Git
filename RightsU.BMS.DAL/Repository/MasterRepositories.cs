@@ -953,24 +953,11 @@ namespace RightsU.BMS.DAL
             return base.GetById<Platform>(obj);
         }
 
-        public PlatformReturn GetPlatform_List(string order, Int32 page, string search_value, Int32 size, string sort, string Date_GT, string Date_LT, Int32 id)
+        public IEnumerable<Platform> GetAll()
         {
-            PlatformReturn ObjPlatformReturn = new PlatformReturn();
-
-            var param = new DynamicParameters();
-            param.Add("@order", order);
-            param.Add("@page", page);
-            param.Add("@search_value", search_value);
-            param.Add("@size", size);
-            param.Add("@sort", sort);
-            param.Add("@date_gt", Date_GT);
-            param.Add("@date_lt", Date_LT);
-            param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
-            param.Add("@id", id);
-            ObjPlatformReturn.content = base.ExecuteSQLProcedure<Platform>("[USPAPI_Platform]", param).ToList();
-            ObjPlatformReturn.paging.total = param.Get<Int64>("@RecordCount");
-            return ObjPlatformReturn;
+            return base.GetAll<Platform>();
         }
+
     }
     #endregion
 
@@ -1918,4 +1905,90 @@ namespace RightsU.BMS.DAL
         }
     }
     #endregion
+
+    #region -------- Deal Segment  -----------
+    public class DealSegmentRepositories : MainRepository<Deal_Segment>
+    {
+        public Deal_Segment Get(int Id)
+        {
+            var obj = new { Deal_Segment_Code = Id };
+
+            return base.GetById<Deal_Segment>(obj);
+        }
+        public IEnumerable<Deal_Segment> GetAll()
+        {
+            return base.GetAll<Deal_Segment>();
+        }
+
+        public void Add(Deal_Segment entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Deal_Segment entity)
+        {
+            Deal_Segment oldObj = Get(entity.Deal_Segment_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public IEnumerable<Deal_Segment> SearchFor(object param)
+        {
+            return base.SearchForEntity<Deal_Segment>(param);
+        }
+    }
+    #endregion
+
+    #region -------- Revenue Vertical -----------
+    public class RevenueVerticalRepositories : MainRepository<Revenue_Vertical>
+    {
+        public Revenue_Vertical Get(int Id)
+        {
+            var obj = new { Revenue_Vertical_Code = Id };
+
+            return base.GetById<Revenue_Vertical>(obj);
+        }
+        public IEnumerable<Revenue_Vertical> GetAll()
+        {
+            return base.GetAll<Revenue_Vertical>();
+        }
+
+        public void Add(Revenue_Vertical entity)
+        {
+            base.AddEntity(entity);
+        }
+
+        public void Update(Revenue_Vertical entity)
+        {
+            Revenue_Vertical oldObj = Get(entity.Revenue_Vertical_Code.Value);
+            base.UpdateEntity(oldObj, entity);
+        }
+
+        public IEnumerable<Revenue_Vertical> SearchFor(object param)
+        {
+            return base.SearchForEntity<Revenue_Vertical>(param);
+        }
+    }
+    #endregion
+
+
+    #region -------- Assign Work Flow --------
+    public class AssignWorkFlowRepositories : MainRepository<Workflow_Module>
+  
+    {
+        public Workflow_Module Get(int Id)
+        {
+            var obj = new { Workflow_Module_Code = Id };
+
+            return base.GetById<Workflow_Module, Workflow, Business_Unit, System_Module>(obj);
+        }
+        public IEnumerable<Workflow_Module> GetAll()
+        {
+            return base.GetAll<Workflow_Module, Workflow , Business_Unit, System_Module>();
+        }
+    }
+
+
+    #endregion
+
+
 }

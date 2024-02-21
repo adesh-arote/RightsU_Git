@@ -85,7 +85,7 @@ namespace RightsU.BMS.BLL.Services
             }
             else
             {
-                sort = ConfigurationManager.AppSettings["defaultSort"];
+                sort = "Last_updated_Time"; //ConfigurationManager.AppSettings["defaultSort"];
             }
 
             if (deal_id <= 0)
@@ -148,8 +148,8 @@ namespace RightsU.BMS.BLL.Services
                         i.Run_Definition_Type = i.Run_Definition_Type.Trim() == "C" ? "Channel" : (i.Run_Definition_Type.Trim() == "S" ? "Shared" : "NA");
                         i.Run_Type = i.Run_Type.Trim() == "U" ? "Unlimited" : "Limited";
                         i.Is_Rule_Right = i.Is_Rule_Right.Trim() == "Y" ? "Yes" : "No";
-                        i.No_Of_Runs = i.No_Of_Runs!= null || i.No_Of_Runs.Value > 0 ? i.No_Of_Runs : 0;
-                        i.No_Of_Runs_Sched = i.No_Of_Runs_Sched != null || i.No_Of_Runs_Sched.Value > 0 ? i.No_Of_Runs_Sched : 0;
+                        i.No_Of_Runs = i.No_Of_Runs!= null || i.No_Of_Runs > 0 ? i.No_Of_Runs : 0;
+                        i.No_Of_Runs_Sched = i.No_Of_Runs_Sched != null || i.No_Of_Runs_Sched > 0 ? i.No_Of_Runs_Sched : 0;                     
                     });
                 }
                 else
@@ -207,11 +207,22 @@ namespace RightsU.BMS.BLL.Services
                         //objAcq_Deal_Run.Inserted_On = Convert.ToString(GlobalTool.DateToLinux(objAcq_Deal_Run.Inserted_On.Value));
                         //objAcq_Deal_Run.Last_updated_Time = Convert.ToString(GlobalTool.DateToLinux(objAcq_Deal_Run.Last_updated_Time.Value));
                         //objAcq_Deal_Run.Last_action_By = objAcq_Deal_Run.Inserted_By != null || objAcq_Deal_Run.Inserted_By.Value > 0 ? objAcq_Deal_Run.Inserted_By : objAcq_Deal_Run.Last_action_By;
+                       
+                        objAcq_Deal_Run.prime_start_time = Convert.ToString(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_Start_Time ?? TimeSpan.FromHours(0)));
+                        objAcq_Deal_Run.prime_end_time = Convert.ToString(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_End_Time ?? TimeSpan.FromHours(0)));
+                        objAcq_Deal_Run.off_prime_start_time = Convert.ToString(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_Start_Time ?? TimeSpan.FromHours(0)));
+                        objAcq_Deal_Run.off_prime_end_time = Convert.ToString(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_End_Time ?? TimeSpan.FromHours(0)));
+                        objAcq_Deal_Run.time_lag = Convert.ToString(GlobalTool.TimeToLinux(objAcq_Deal_Run.Time_Lag_Simulcast ?? TimeSpan.FromHours(0)));
 
-                        //objAcq_Deal_Run.prime_start_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_Start_Time));
-                        //objAcq_Deal_Run.prime_end_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Prime_End_Time));
-                        //objAcq_Deal_Run.off_prime_start_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_Start_Time));
-                        //objAcq_Deal_Run.off_prime_end_time = Convert.ToInt32(GlobalTool.TimeToLinux(objAcq_Deal_Run.Off_Prime_End_Time));
+                        #region --- Acq_Deal_Run_Yearwise_Run ---
+
+                        foreach (var item in objAcq_Deal_Run.yeardefinition.ToList())
+                        {
+                            item.start_date = Convert.ToString(GlobalTool.DateToLinux(Convert.ToDateTime(item.Start_Date)));
+                            item.end_date = Convert.ToString(GlobalTool.DateToLinux(Convert.ToDateTime(item.End_Date)));
+                        }
+
+                        #endregion
                     }
                     else
                     {
@@ -384,7 +395,7 @@ namespace RightsU.BMS.BLL.Services
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
-                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code <= 0)
+                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code < 0)
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR290"); // Input Paramater 'repeaton.day_id' is mandatory
                     }
@@ -396,7 +407,7 @@ namespace RightsU.BMS.BLL.Services
             #endregion
 
             if (_objRet.IsSuccess)
-            {
+            { 
                 objInput.Prime_Start_Time = GlobalTool.LinuxToTime(Convert.ToDouble(objInput.prime_start_time));
                 objInput.Prime_End_Time = GlobalTool.LinuxToTime(Convert.ToDouble(objInput.prime_end_time));
                 objInput.Off_Prime_Start_Time = GlobalTool.LinuxToTime(Convert.ToDouble(objInput.off_prime_start_time));
@@ -409,8 +420,8 @@ namespace RightsU.BMS.BLL.Services
                 objInput.No_Of_Runs_Sched = 0;
                 objInput.No_Of_AsRuns = 0;
                 objInput.Is_Yearwise_Definition = objInput.yeardefinition.Count > 0 ? "Y" : "N"; 
-                objInput.Is_Rule_Right = objInput.Right_Rule_Code != null || objInput.Right_Rule_Code.Value > 0 ? "Y" : "N";
-                objInput.Channel_Type = objInput.Channel_Category_Code != null || objInput.Channel_Category_Code.Value > 0 ? "G" : "C";
+                objInput.Is_Rule_Right = objInput.Right_Rule_Code > 0 ? "Y" : "N";
+                objInput.Channel_Type = objInput.Channel_Category_Code > 0 ? "G" : "C";
                 objInput.No_Of_Days_Hrs = 0;
                 objInput.Is_Channel_Definition_Rights = "Y";
                 objInput.Run_Definition_Group_Code = null;
@@ -660,11 +671,11 @@ namespace RightsU.BMS.BLL.Services
 
             #region --- Acq_Deal_Run_Repeat_On_Day ---
 
-            if (objInput.repeaton != null || objInput.repeaton.Count() != 0)
+           if (objInput.repeaton != null || objInput.repeaton.Count() != 0)
             {
                 for (int i = 0; i < objInput.repeaton.ToList().Count(); i++)
                 {
-                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code <= 0)
+                    if (objInput.repeaton.ToList()[i].Day_Code == null || objInput.repeaton.ToList()[i].Day_Code < 0)
                     {
                         _objRet = GlobalTool.SetError(_objRet, "ERR290"); // Input Paramater 'repeaton.day_id' is mandatory
                     }
@@ -689,12 +700,12 @@ namespace RightsU.BMS.BLL.Services
 
                     #region Pending Columns
 
-                    objInput.Run_Definition_Type = objDealRun.Run_Definition_Type;
+                    objInput.Run_Definition_Type = objInput.Run_Definition_Type != null ? objInput.Run_Definition_Type : "C";
                     objInput.No_Of_Runs_Sched = objDealRun.No_Of_Runs_Sched;
                     objInput.No_Of_AsRuns = objDealRun.No_Of_AsRuns;
-                    objInput.Is_Yearwise_Definition = objDealRun.Is_Yearwise_Definition;
-                    objInput.Is_Rule_Right = objDealRun.Is_Rule_Right;
-                    objInput.Channel_Type = objDealRun.Channel_Type;
+                    objInput.Is_Yearwise_Definition = objInput.yeardefinition.Count > 0 ? "Y" : "N";
+                    objInput.Is_Rule_Right = objInput.Right_Rule_Code > 0 ? "Y" : "N";
+                    objInput.Channel_Type = objInput.Channel_Category_Code > 0 ? "G" : "C";
                     objInput.No_Of_Days_Hrs = objDealRun.No_Of_Days_Hrs;
                     objInput.Is_Channel_Definition_Rights = objDealRun.Is_Channel_Definition_Rights;
                     objInput.Run_Definition_Group_Code = objDealRun.Run_Definition_Group_Code;

@@ -18,7 +18,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [JsonProperty(PropertyName = "business_unit_name")]
         public string Business_Unit_Name { get; set; }
 
-        [JsonProperty(PropertyName = "is_Active")]
+        [JsonProperty(PropertyName = "is_active")]
         public string Is_Active { get; set; }
     }
 }

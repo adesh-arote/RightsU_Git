@@ -1309,6 +1309,7 @@ namespace RightsU.BMS.BLL.Services
 
         public GenericReturn GetPlatformList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT, Int32? id)
         {
+            int noOfRecordSkip, noOfRecordTake;
             GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
@@ -1322,9 +1323,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (order.ToUpper() != "DESC")
                     {
-                        _objRet.Message = "Input Paramater 'order' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
                     }
                 }
             }
@@ -1343,9 +1342,7 @@ namespace RightsU.BMS.BLL.Services
                 var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
                 if (size > maxSize)
                 {
-                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
                 }
             }
             else
@@ -1363,15 +1360,13 @@ namespace RightsU.BMS.BLL.Services
                 {
                     sort = "Last_Updated_Time";
                 }
-                else if (sort.ToLower() == "ChannelCategoryName".ToLower())
+                else if (sort.ToLower() == "PlatformName".ToLower())
                 {
                     sort = "Platform_Name";
                 }
                 else
                 {
-                    _objRet.Message = "Input Paramater 'sort' is not in valid format";
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
                 }
             }
             else
@@ -1385,13 +1380,11 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
                     }
 
                 }
@@ -1399,13 +1392,11 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_LT = DateTime.Parse(Date_LT).ToString("yyyy-MM-dd");
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Input Paramater 'dateLt' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
                     }
                 }
 
@@ -1413,39 +1404,103 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
                     {
-                        _objRet.Message = "Input Paramater 'dateLt' should not be less than 'dateGt'";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
                     }
                 }
             }
             catch (Exception ex)
             {
-                _objRet.Message = "Input Paramater 'dateLt' or 'dateGt' is not in valid format";
-                _objRet.IsSuccess = false;
-                _objRet.StatusCode = HttpStatusCode.BadRequest;
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
             }
 
             #endregion
 
-            PlatformReturn _PlatformReturn = new PlatformReturn();
+            PlatformReturn _platformReturn = new PlatformReturn();
+            List<Platform> platforms = new List<Platform>();
 
             try
             {
                 if (_objRet.IsSuccess)
                 {
-                    _PlatformReturn = objPlatformRepositories.GetPlatform_List(order, page, search_value, size, sort, Date_GT, Date_LT, id.Value);
+                    platforms = objPlatformRepositories.GetAll().ToList();
+
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        platforms = platforms.Where(w => w.Platform_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        platforms = platforms.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time >= DateTime.Parse(Date_GT)))).ToList();
+
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        platforms = platforms.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time <= DateTime.Parse(Date_LT)))).ToList();
+                    }
+                    GlobalTool.GetPaging(page, size, platforms.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            platforms = platforms.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            platforms = platforms.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            platforms = platforms.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            platforms = platforms.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Platform_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            platforms = platforms.OrderBy(o => o.Platform_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            platforms = platforms.OrderByDescending(o => o.Platform_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
                 }
+
+
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+
+
+
             }
             catch (Exception ex)
             {
                 throw;
             }
 
-            _PlatformReturn.paging.page = page;
-            _PlatformReturn.paging.size = size;
-
-            _objRet.Response = _PlatformReturn;
+            _platformReturn.content = platforms;
+            _platformReturn.paging.page = page;
+            _platformReturn.paging.size = size;
+            _platformReturn.paging.total = platforms.Count;
+            _objRet.Response = _platformReturn;
 
             return _objRet;
         }
@@ -1471,9 +1526,7 @@ namespace RightsU.BMS.BLL.Services
                 {
                     if (order.ToUpper() != "DESC")
                     {
-                        _objRet.Message = "Input Paramater 'order' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
                     }
                 }
             }
@@ -1492,9 +1545,7 @@ namespace RightsU.BMS.BLL.Services
                 var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
                 if (size > maxSize)
                 {
-                    _objRet.Message = "Input Paramater 'size' should not be greater than " + maxSize;
-                    _objRet.IsSuccess = false;
-                    _objRet.StatusCode = HttpStatusCode.BadRequest;
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
                 }
             }
             else
@@ -1534,13 +1585,11 @@ namespace RightsU.BMS.BLL.Services
                 {
                     try
                     {
-                        Date_GT = DateTime.Parse(Date_GT).ToString("yyyy-MM-dd");
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
                     }
                     catch (Exception ex)
                     {
-                        _objRet.Message = "Input Paramater 'dateGt' is not in valid format";
-                        _objRet.IsSuccess = false;
-                        _objRet.StatusCode = HttpStatusCode.BadRequest;
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
                     }
 
                 }
@@ -8793,6 +8842,879 @@ namespace RightsU.BMS.BLL.Services
             if (!_objRet.IsSuccess)
             {
                 _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Deal Segment --------
+    public class DealSegmentService
+    {
+        private readonly DealSegmentRepositories objDealSegmentRepositories = new DealSegmentRepositories();
+
+        public GenericReturn GetDealSegmentList(string order, string sort, Int32 size, Int32 page, string search_value)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "DealSegmentName".ToLower())
+                {
+                    sort = "Deal_Segment_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+
+            DealSegmentReturn _dealSegmentReturn = new DealSegmentReturn();
+            List<Deal_Segment> dealSegments = new List<Deal_Segment>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    dealSegments = objDealSegmentRepositories.GetAll().ToList();
+
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        dealSegments = dealSegments.Where(w => w.Deal_Segment_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+
+                    _dealSegmentReturn.paging.total = dealSegments.Count;
+
+                    GlobalTool.GetPaging(page, size, dealSegments.Count, out noOfRecordSkip, out noOfRecordTake);
+                     if (sort.ToLower() == "Deal_Segment_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            dealSegments = dealSegments.OrderBy(o => o.Deal_Segment_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            dealSegments = dealSegments.OrderByDescending(o => o.Deal_Segment_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _dealSegmentReturn.content = dealSegments;
+            _dealSegmentReturn.paging.page = page;
+            _dealSegmentReturn.paging.size = size;
+        
+            _objRet.Response = _dealSegmentReturn;
+
+            return _objRet;
+
+        }
+
+        public GenericReturn GetDealSegmentById(int? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == null || id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Deal_Segment objDealSegment = new Deal_Segment();
+
+                    objDealSegment = objDealSegmentRepositories.Get(id.Value);
+
+                    if (objDealSegment == null)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR318");
+                    }
+
+                    _objRet.Response = objDealSegment;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+        
+        public GenericReturn PostDealSegment(Deal_Segment objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(objInput.Deal_Segment_Name))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR319");
+                }
+                else
+                {
+                    var CheckDuplicate = objDealSegmentRepositories.SearchFor(new { Deal_Segment_Name = objInput.Deal_Segment_Name }).ToList();
+
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR320");
+                    }
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                objInput.Deal_Segment_Code = objInput.Deal_Segment_Code;
+
+                objDealSegmentRepositories.Add(objInput);
+
+                _objRet.id = objInput.Deal_Segment_Code;
+                
+            }
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PutDealSegment(Deal_Segment objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            else
+            {
+                if (objInput.Deal_Segment_Code == null || objInput.Deal_Segment_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR321");
+                }
+
+                if (string.IsNullOrEmpty(objInput.Deal_Segment_Name))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR319");
+                }
+                else
+                {
+                    var CheckDuplicate = objDealSegmentRepositories.SearchFor(new { Deal_Segment_Name = objInput.Deal_Segment_Name }).ToList();
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        if (CheckDuplicate.FirstOrDefault().Deal_Segment_Code != objInput.Deal_Segment_Code)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR320");
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Deal_Segment objDealSegment = new Deal_Segment();
+
+                objDealSegment = objDealSegmentRepositories.Get(objInput.Deal_Segment_Code.Value);
+                if (objDealSegment != null)
+                {
+                    objInput.Deal_Segment_Name = objInput.Deal_Segment_Name;
+                    objDealSegmentRepositories.Update(objInput);
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR245");
+                }
+                _objRet.id = objInput.Deal_Segment_Code;
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Revenue Vertical --------
+    public class RevenueVerticalService
+    {
+        private readonly RevenueVerticalRepositories objRevenueVerticalRepositories = new RevenueVerticalRepositories();
+        public GenericReturn GetRevenueVerticalList(string order, string sort, Int32 size, Int32 page, string search_value)
+        {
+            int noOfRecordSkip, noOfRecordTake;
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+
+            #region Input Validations
+
+            if (!string.IsNullOrEmpty(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrEmpty(sort.ToString()))
+            {
+                if (sort.ToLower() == "RevenueVerticalName".ToLower())
+                {
+                    sort = "Revenue_Vertical_Name";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            #endregion
+
+            RevenueVerticalReturn _revenueVerticalReturn = new RevenueVerticalReturn();
+            List<Revenue_Vertical> revenueVerticals = new List<Revenue_Vertical>();
+
+            try
+            {
+
+                if (_objRet.IsSuccess)
+                {
+                    revenueVerticals = objRevenueVerticalRepositories.GetAll().ToList();
+
+                    if (!string.IsNullOrEmpty(search_value))
+                    {
+                        revenueVerticals = revenueVerticals.Where(w => w.Revenue_Vertical_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+
+                    _revenueVerticalReturn.paging.total = revenueVerticals.Count;
+
+                    GlobalTool.GetPaging(page, size, revenueVerticals.Count, out noOfRecordSkip, out noOfRecordTake);
+                    if (sort.ToLower() == "Revenue_Vertical_Name".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            revenueVerticals = revenueVerticals.OrderBy(o => o.Revenue_Vertical_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            revenueVerticals = revenueVerticals.OrderByDescending(o => o.Revenue_Vertical_Name).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _revenueVerticalReturn.content = revenueVerticals;
+            _revenueVerticalReturn.paging.page = page;
+            _revenueVerticalReturn.paging.size = size;
+          
+            _objRet.Response = _revenueVerticalReturn;
+
+            return _objRet;
+
+        }
+
+        public GenericReturn GetRevenueVerticalById(int? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == null || id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Revenue_Vertical objRevenueVertical = new Revenue_Vertical();
+
+                    objRevenueVertical = objRevenueVerticalRepositories.Get(id.Value);
+
+                    if (objRevenueVertical == null)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR322");
+                    }
+
+                    _objRet.Response = objRevenueVertical;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            return _objRet;
+        }
+
+        public GenericReturn PostRevenueVertical(Revenue_Vertical objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+           
+            else
+            {
+                if (objInput.Type != "A" && objInput.Type != "S")
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR330");
+                }
+
+                if (string.IsNullOrWhiteSpace(objInput.Revenue_Vertical_Name))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR327");
+                }
+                else
+                {
+                    var CheckDuplicate = objRevenueVerticalRepositories.SearchFor(new { Revenue_Vertical_Name = objInput.Revenue_Vertical_Name }).ToList();
+
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR328");
+                    }
+                }
+            }
+
+            #endregion
+           
+                if (_objRet.IsSuccess)
+                {
+                    objInput.Revenue_Vertical_Code = objInput.Revenue_Vertical_Code;
+                    objInput.Type = objInput.Type;
+                    objInput.Is_Active = "Y";
+
+                    objRevenueVerticalRepositories.Add(objInput);
+
+                    _objRet.id = objInput.Revenue_Vertical_Code;
+
+                }
+            
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+
+            
+            return _objRet;
+        }
+
+        public GenericReturn PutRevenueVertical(Revenue_Vertical objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            else
+            {
+                if (objInput.Revenue_Vertical_Code == null || objInput.Revenue_Vertical_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR329");
+                }
+                if (objInput.Type != "A" && objInput.Type != "S")
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR330");
+                }
+                if (string.IsNullOrEmpty(objInput.Revenue_Vertical_Name))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR327");
+                }
+                
+                else
+                {
+                    var CheckDuplicate = objRevenueVerticalRepositories.SearchFor(new { Revenue_Vertical_Name = objInput.Revenue_Vertical_Name }).ToList();
+                    if (CheckDuplicate.Count > 0)
+                    {
+                        if (CheckDuplicate.FirstOrDefault().Revenue_Vertical_Code != objInput.Revenue_Vertical_Code)
+                        {
+                            _objRet = GlobalTool.SetError(_objRet, "ERR328");
+                        }
+                    }
+                }
+            }
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Revenue_Vertical objRevenueVertical = new Revenue_Vertical();
+
+                objRevenueVertical = objRevenueVerticalRepositories.Get(objInput.Revenue_Vertical_Code.Value);
+                if (objRevenueVertical != null)
+                {
+                    objInput.Revenue_Vertical_Name = objInput.Revenue_Vertical_Name;
+                    objInput.Is_Active = objRevenueVertical.Is_Active;
+                    objInput.Type = objInput.Type;
+
+                    objRevenueVerticalRepositories.Update(objInput);
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR322");
+                }
+                _objRet.id = objInput.Revenue_Vertical_Code;
+            }
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+            return _objRet;
+        }
+
+        public GenericReturn ChangeActiveStatus(Revenue_Vertical objInput)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (objInput == null)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR154");
+            }
+            else
+            {
+                if (objInput.Revenue_Vertical_Code == null || objInput.Revenue_Vertical_Code <= 0)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR329");
+                }
+
+                if (string.IsNullOrWhiteSpace(objInput.Is_Active))
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR195");
+                }
+            }
+
+            #endregion
+
+            if (_objRet.IsSuccess)
+            {
+                Revenue_Vertical objRevenueVertical = new Revenue_Vertical();
+
+                objRevenueVertical = objRevenueVerticalRepositories.Get(objInput.Revenue_Vertical_Code.Value);
+
+                if (objRevenueVertical != null)
+                {
+                    objRevenueVertical.Is_Active = objInput.Is_Active.ToUpper();
+
+                    objRevenueVerticalRepositories.Update(objRevenueVertical);
+                    _objRet.id = objRevenueVertical.Revenue_Vertical_Code;
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR322");
+                }
+            }
+
+            if (!_objRet.IsSuccess)
+            {
+                _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+            }
+
+            return _objRet;
+        }
+    }
+    #endregion
+
+    #region -------- Assign Work Flow --------
+    public class AssignWorkFlowService
+    {
+        private readonly AssignWorkFlowRepositories objAssignWorkFlowRepositories = new AssignWorkFlowRepositories();
+
+        public GenericReturn GetAssignWorkFlowList(string order, string sort, Int32 size, Int32 page, string search_value, string Date_GT, string Date_LT)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            int noOfRecordSkip, noOfRecordTake;
+
+            #region Input Validations
+
+            if (!string.IsNullOrWhiteSpace(order))
+            {
+                if (order.ToUpper() != "ASC")
+                {
+                    if (order.ToUpper() != "DESC")
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR184");
+                    }
+                }
+            }
+            else
+            {
+                order = ConfigurationManager.AppSettings["defaultOrder"];
+            }
+
+            if (page == 0)
+            {
+                page = Convert.ToInt32(ConfigurationManager.AppSettings["defaultPage"]);
+            }
+
+            if (size > 0)
+            {
+                var maxSize = Convert.ToInt32(ConfigurationManager.AppSettings["maxSize"]);
+                if (size > maxSize)
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR185");
+                }
+            }
+            else
+            {
+                size = Convert.ToInt32(ConfigurationManager.AppSettings["defaultSize"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sort.ToString()))
+            {
+                if (sort.ToLower() == "CreatedDate".ToLower())
+                {
+                    sort = "Inserted_On";
+                }
+                else if (sort.ToLower() == "UpdatedDate".ToLower())
+                {
+                    sort = "Last_Updated_Time";
+                }
+                else
+                {
+                    _objRet = GlobalTool.SetError(_objRet, "ERR186");
+                }
+            }
+            else
+            {
+                sort = ConfigurationManager.AppSettings["defaultSort"];
+            }
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(Date_GT))
+                {
+                    try
+                    {
+                        Date_GT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_GT)).ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR187");
+                    }
+
+                }
+                if (!string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    try
+                    {
+                        Date_LT = GlobalTool.LinuxToDate(Convert.ToDouble(Date_LT)).ToString();
+                    }
+                    catch (Exception ex)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR188");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(Date_GT) && !string.IsNullOrWhiteSpace(Date_LT))
+                {
+                    if (DateTime.Parse(Date_GT) > DateTime.Parse(Date_LT))
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR189");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR190");
+            }
+
+            #endregion
+
+            AssignWorkFlowReturn _assignworkFlowReturn = new AssignWorkFlowReturn();
+            List<Workflow_Module> assignworkFlow = new List<Workflow_Module>();
+           
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    assignworkFlow = objAssignWorkFlowRepositories.GetAll().ToList();
+
+                    assignworkFlow = assignworkFlow.Where(w => w.Is_Active ==  "Y").ToList();
+
+                    if (!string.IsNullOrWhiteSpace(search_value))
+                    {
+                        assignworkFlow = assignworkFlow.Where(w => w.workflow_name.Workflow_Name.ToUpper().Contains(search_value.ToUpper())).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_GT))
+                    {
+                        assignworkFlow = assignworkFlow.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On >= DateTime.Parse(Date_GT)) : (w.Last_Updated_Time >= DateTime.Parse(Date_GT)))).ToList();
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Date_LT))
+                    {
+                        assignworkFlow = assignworkFlow.Where(w => (w.Last_Updated_Time == null ? (w.Inserted_On <= DateTime.Parse(Date_LT)) : (w.Last_Updated_Time <= DateTime.Parse(Date_LT)))).ToList();
+                    }
+
+                    _assignworkFlowReturn.paging.total = assignworkFlow.Count;
+
+                    GlobalTool.GetPaging(page, size, assignworkFlow.Count, out noOfRecordSkip, out noOfRecordTake);
+
+                    if (sort.ToLower() == "Inserted_On".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            assignworkFlow = assignworkFlow.OrderBy(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            assignworkFlow = assignworkFlow.OrderByDescending(o => o.Inserted_On).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                    else if (sort.ToLower() == "Last_Updated_Time".ToLower())
+                    {
+                        if (order.ToUpper() == "ASC")
+                        {
+                            assignworkFlow = assignworkFlow.OrderBy(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                        else
+                        {
+                            assignworkFlow = assignworkFlow.OrderByDescending(o => o.Last_Updated_Time).Skip(noOfRecordSkip).Take(noOfRecordTake).ToList();
+                        }
+                    }
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                    for (int i = 0; i < _objRet.Errors.Count(); i++)
+                    {
+                        if (_objRet.Errors[i].Contains("ERR185"))
+                        {
+                            _objRet.Errors[i] = _objRet.Errors[i].Replace("{0}", ConfigurationManager.AppSettings["maxSize"]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+
+            _assignworkFlowReturn.content = assignworkFlow;
+            _assignworkFlowReturn.paging.page = page;
+            _assignworkFlowReturn.paging.size = size;
+
+            _objRet.Response = _assignworkFlowReturn;
+
+            return _objRet;
+        }
+
+        public GenericReturn GetAssignWorkFlowById(int? id)
+        {
+            GenericReturn _objRet = new GenericReturn();
+            _objRet.Message = "Success";
+            _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            #region Input Validation
+
+            if (id == null || id <= 0)
+            {
+                _objRet = GlobalTool.SetError(_objRet, "ERR155");
+            }
+
+            #endregion
+
+            try
+            {
+                if (_objRet.IsSuccess)
+                {
+                    Workflow_Module objAssignWorkFlow = new Workflow_Module();
+
+                    objAssignWorkFlow = objAssignWorkFlowRepositories.Get(id.Value);
+
+                    if (objAssignWorkFlow == null)
+                    {
+                        _objRet = GlobalTool.SetError(_objRet, "ERR331");
+                    }
+
+                    _objRet.Response = objAssignWorkFlow;
+                }
+
+                if (!_objRet.IsSuccess)
+                {
+                    _objRet.Errors = GlobalTool.GetErrorList(_objRet.Errors);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
 
             return _objRet;

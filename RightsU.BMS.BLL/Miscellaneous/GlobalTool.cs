@@ -35,16 +35,21 @@ namespace RightsU.BMS.BLL.Miscellaneous
         }
 
         public static TimeSpan LinuxToTime(double LinuxTimestamp)
-        {
-            TimeSpan result = TimeSpan.FromHours(LinuxTimestamp);
-            return result;
+        {           
+            DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dt = dt.AddSeconds(LinuxTimestamp);
+
+            return dt.TimeOfDay;
         }
 
         public static double TimeToLinux(TimeSpan TimeToConvert)
         {
-            TimeSpan ts = TimeSpan.Parse(Convert.ToString(TimeToConvert), System.Globalization.CultureInfo.InvariantCulture);
-            double seconds = ts.TotalSeconds;
-            return seconds;
+            DateTime epochTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            string dateString = Convert.ToString(TimeToConvert);
+            DateTime date = Convert.ToDateTime(dateString);
+            var milliseconds = date.Subtract(epochTime).TotalSeconds;
+
+            return milliseconds;
         }
 
         public static List<string> GetErrorList(List<string> lstErrorCodes)

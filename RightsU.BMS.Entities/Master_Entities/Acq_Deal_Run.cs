@@ -114,7 +114,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "prime_start_time")]
-        public int prime_start_time { get; set; }
+        public string prime_start_time { get; set; }
 
         [JsonIgnore]
         public Nullable<System.TimeSpan> Prime_Start_Time { get; set; }
@@ -123,7 +123,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "prime_end_time")]
-        public int prime_end_time { get; set; }
+        public string prime_end_time { get; set; }
 
         [JsonIgnore]
         public Nullable<System.TimeSpan> Prime_End_Time { get; set; }
@@ -134,7 +134,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "off_prime_start_time")]
-        public int off_prime_start_time { get; set; }
+        public string off_prime_start_time { get; set; }
 
         [JsonIgnore]
         public Nullable<System.TimeSpan> Off_Prime_Start_Time { get; set; }
@@ -142,7 +142,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "off_prime_end_time")]
-        public int off_prime_end_time { get; set; }
+        public string off_prime_end_time { get; set; }
 
         [JsonIgnore]
         public Nullable<System.TimeSpan> Off_Prime_End_Time { get; set; }
@@ -153,7 +153,7 @@ namespace RightsU.BMS.Entities.Master_Entities
         [SimpleSaveIgnore]
         [SimpleLoadIgnore]
         [JsonProperty(PropertyName = "time_lag")]
-        public int time_lag { get; set; }
+        public string time_lag { get; set; }
 
         [JsonIgnore]
         public Nullable<System.TimeSpan> Time_Lag_Simulcast { get; set; }
