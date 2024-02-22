@@ -265,15 +265,21 @@ namespace RightsU_PurchaseOrder_Export
             string asmxPath = ConfigurationManager.AppSettings["asmxPath"];
             rs.Url = objRC.ReportingServer + "/" + asmxPath;
 
+            Error.WriteLog_Conditional("STEP 3.1.1 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Connecting Reporting Service.");
+
             rs.ExecutionHeaderValue = new ExecutionHeader();
             var executionInfo = new ExecutionInfo();
             string rdlPurchaseOrder = ConfigurationManager.AppSettings["rdlPurchaseOrder"];
             //rs.UseDefaultCredentials = true;
             executionInfo = rs.LoadReport(rdlPurchaseOrder, null);
 
+            Error.WriteLog_Conditional("STEP 3.1.2 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Load Report.");
+
             List<ParameterValue> parameters = new List<ParameterValue>();
             parameters.Add(new ParameterValue { Name = "AL_Purchase_Order_Details_Code", Value = ALPurchaseOrderDetailsCode });
             rs.SetExecutionParameters(parameters.ToArray(), "en-US");
+
+            Error.WriteLog_Conditional("STEP 3.1.3 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Set Execution Parameters.");
 
             string deviceInfo = "<DeviceInfo><Toolbar>False</Toolbar></DeviceInfo>";
             string mimeType;
@@ -284,18 +290,31 @@ namespace RightsU_PurchaseOrder_Export
             rs.Timeout = Timeout.Infinite;
             var result = rs.Render("pdf", deviceInfo, out mimeType, out encoding, out encoding, out warning, out streamId);
 
+            Error.WriteLog_Conditional("STEP 3.1.4 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Render PDF result.");
+
             string outputFilePath = ConfigurationManager.AppSettings["outputPath"];
             string outputFileName = "";
 
-            Regex reg = new Regex("[*'\",:&#^@/<>?|]");
-            Title_Name = reg.Replace(Title_Name, "_");
+            //Regex reg = new Regex("[*'\",:&#^@/<>?|]");
+            //Title_Name = reg.Replace(Title_Name, "_");
+            Title_Name = Title_Name.Replace("*", "＊");
+            Title_Name = Title_Name.Replace("|", "|");
+            Title_Name = Title_Name.Replace("?", "？");
+            Title_Name = Title_Name.Replace("/", "／");
+            Title_Name = Title_Name.Replace(@"\", "＼");
+            Title_Name = Title_Name.Replace("<", "＜");
+            Title_Name = Title_Name.Replace(">", "＞");
+            Title_Name = Title_Name.Replace(":", "：");
+            Title_Name = Title_Name.Replace('"', '＂');
 
-            outputFileName = PO_Number.Replace("/", "_") + "-" + Title_Name + ".pdf";
+            outputFileName = PO_Number.Replace("/", "／") + "-" + Title_Name + ".pdf";
+
+            Error.WriteLog_Conditional("STEP 3.1.5 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Replacing Special Charactors to Unicode Charactors.");
 
             File.WriteAllBytes(outputFilePath + outputFileName, result);
             Error.WriteLog_Conditional("STEP 3.2 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Created " + outputFileName + "file.");
             #region Update PurchaseOrderDetail
-            string query1 = "UPDATE AL_Purchase_Order_Details SET Status = 'C', PDF_File_Name = '" + outputFileName + "' WHERE AL_Purchase_Order_Details_Code = '" + ALPurchaseOrderDetailsCode + "'";
+            string query1 = "UPDATE AL_Purchase_Order_Details SET Status = 'C', PDF_File_Name = N'" + outputFileName.Replace("'", "''") + "' WHERE AL_Purchase_Order_Details_Code = '" + ALPurchaseOrderDetailsCode + "'";
             string query2 = "UPDATE AL_Purchase_Order SET Status = 'C' WHERE AL_Purchase_Order_Code = '" + AL_Purchase_Order_Code + "'";
             UpdatePurchaseOrderDetailRecord(query1);
             UpdatePurchaseOrderDetailRecord(query2);
@@ -334,17 +353,27 @@ namespace RightsU_PurchaseOrder_Export
             string outputFilePath = ConfigurationManager.AppSettings["outputPath"];
             string outputFileName = "";
 
-            Regex reg = new Regex("[*'\",:&#^@]");
-            Vendor_Name = reg.Replace(Vendor_Name, "_");
+            //Regex reg = new Regex("[*'\",:&#^@]");
+            //Vendor_Name = reg.Replace(Vendor_Name, "_");
 
-            outputFileName = PO_Number.Replace("/", "_") + "-" + Vendor_Name + ".pdf";
+            Vendor_Name = Vendor_Name.Replace("*", "＊");
+            Vendor_Name = Vendor_Name.Replace("|", "|");
+            Vendor_Name = Vendor_Name.Replace("?", "？");
+            Vendor_Name = Vendor_Name.Replace("/", "／");
+            Vendor_Name = Vendor_Name.Replace(@"\", "＼");
+            Vendor_Name = Vendor_Name.Replace("<", "＜");
+            Vendor_Name = Vendor_Name.Replace(">", "＞");
+            Vendor_Name = Vendor_Name.Replace(":", "：");
+            Vendor_Name = Vendor_Name.Replace('"', '＂');
+
+            outputFileName = PO_Number.Replace("/", "／") + "-" + Vendor_Name + ".pdf";
 
             File.WriteAllBytes(outputFilePath + outputFileName, result);
             Error.WriteLog_Conditional("STEP 4.2 : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Created " + outputFileName + "file.");
             #region Update PurchaseOrderDetail            
-            string query1 = "UPDATE apod SET Status = 'C' , PDF_File_Name = '" + outputFileName + "' , Vendor_Code = '" + Vendor_Code + "' FROM AL_Purchase_Order_Details apod WHERE apod.AL_Purchase_Order_Details_Code = '" + ALPurchaseOrderDetailsCode + "'";
+            string query1 = "UPDATE apod SET Status = 'C' , PDF_File_Name = N'" + outputFileName.Replace("'", "''") + "' , Vendor_Code = '" + Vendor_Code + "' FROM AL_Purchase_Order_Details apod WHERE apod.AL_Purchase_Order_Details_Code = '" + ALPurchaseOrderDetailsCode + "'";
             string query2 = "UPDATE AL_Purchase_Order SET Status = 'C' WHERE AL_Purchase_Order_Code = '" + AL_Purchase_Order_Code + "'";
-            string query3 = "UPDATE AL_Purchase_Order_Details SET Status = 'C', Vendor_Code = '" + Vendor_Code + "', PDF_File_Name = '" + outputFileName + "' WHERE Status = 'P' AND PO_Number = '" + PO_Number + "'";
+            string query3 = "UPDATE AL_Purchase_Order_Details SET Status = 'C', Vendor_Code = '" + Vendor_Code + "', PDF_File_Name = N'" + outputFileName.Replace("'", "''") + "' WHERE Status = 'P' AND PO_Number = '" + PO_Number + "'";
             UpdatePurchaseOrderDetailRecord(query1);
             UpdatePurchaseOrderDetailRecord(query2);
             UpdatePurchaseOrderDetailRecord(query3);
