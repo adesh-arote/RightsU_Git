@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USPAvailability]
+﻿ALTER PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
 	@EpisodeFrom INT,
@@ -108,6 +108,15 @@ BEGIN
 		SET @OthersRemarks = 'Y'
 	ELSE
 		SET @OthersRemarks = 'N'
+
+	IF(@CountryCodes LIKE '%T%')
+		SET @CountryCodes = ''
+
+	IF(@SubtitlingCodes LIKE '%G%')
+		SET @SubtitlingCodes = ''
+
+	IF(@DubbingCodes LIKE '%G%')
+		SET @DubbingCodes = ''
 
 	-- Title Language bit operator = 1 = Available / 0 = Not Aavailable
 	

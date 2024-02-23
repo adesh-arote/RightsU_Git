@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[USP_Get_Title_Availability_LanguageWise_Filter]
+﻿ALTER PROCEDURE [dbo].[USP_Get_Title_Availability_LanguageWise_Filter]
 (
 	@TitleCodes VARCHAR(MAX),
 	@PlatformCodes VARCHAR(MAX),
@@ -63,7 +63,7 @@ BEGIN
 	/*---TITLE START---*/
 
 	SET @TitleNAmes =ISNULL(STUFF((
-		SELECT DISTINCT ',' + t.Title_Name FROM Title t
+		SELECT DISTINCT ', ' + t.Title_Name FROM Title t
 		WHERE t.Title_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@TitleCodes,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -73,38 +73,41 @@ BEGIN
 	/*---SUBTITLING & SUBTITLING GROUP START---*/
      
 	SET @subtitlingGroupCode = ISNULL(STUFF((
-		SELECT DISTINCT ',' + REPLACE(number,'G','') FROM fn_Split_withdelemiter(@SubtitlingGroupCodes,',') 
+		SELECT DISTINCT ', ' + REPLACE(number,'G','') FROM fn_Split_withdelemiter(@SubtitlingGroupCodes,',') 
 		WHERE number LIKE 'G%' AND number NOT IN('0')
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)') , 1, 1, ''), '')    
      
 	SET @SubtitlingGroupName =ISNULL(STUFF((
-		SELECT DISTINCT ',' + lg.Language_Group_Name FROM Language_Group LG 
+		SELECT DISTINCT ', ' + lg.Language_Group_Name FROM Language_Group LG 
 		WHERE lg.Language_Group_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@subtitlingGroupCode,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
  
 	SET @subtitlingMustHaveNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + L.Language_Name FROM Language L 
+		SELECT DISTINCT ', ' + L.Language_Name FROM Language L 
 		WHERE L.Language_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@MustHaveSubtitling,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @subtitlingExclusionNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + L.Language_Name FROM Language L 
+		SELECT DISTINCT ', ' + L.Language_Name FROM Language L 
 		WHERE L.Language_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@ExclusionSubtitling,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 	
 	SELECT @SubtitlingCodes = LTRIM(RTRIM(@SubtitlingCodes))
 
+	IF(@SubtitlingCodes LIKE '%G%')
+		SET @SubtitlingCodes = ''
+
 	SET @subtiti_languageCodes = ISNULL(STUFF((
-		SELECT DISTINCT ',' + REPLACE(number,'L','') FROM fn_Split_withdelemiter(@SubtitlingCodes,',')
+		SELECT DISTINCT ', ' + REPLACE(number,'L','') FROM fn_Split_withdelemiter(@SubtitlingCodes,',')
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @Subtit_LanguageNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + l.Language_Name FROM Language l 
+		SELECT DISTINCT ', ' + l.Language_Name FROM Language l 
 		WHERE l.language_code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@subtiti_languageCodes,',') WHERE number NOT IN ('0',''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -114,38 +117,41 @@ BEGIN
 	/*---DUBBING & DUBBING GROUP START---*/
 
 	SET @dubbingGroupCode = ISNULL(STUFF((
-		SELECT DISTINCT ',' + REPLACE(number,'G','') FROM fn_Split_withdelemiter(@DubbingGroupCodes,',') 
+		SELECT DISTINCT ', ' + REPLACE(number,'G','') FROM fn_Split_withdelemiter(@DubbingGroupCodes,',') 
 		WHERE number LIKE 'G%' AND number NOT IN('0')
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')    
     
 	SET @DubbingGroupName = ISNULL(STUFF((
-		SELECT DISTINCT ',' + lg.Language_Group_Name FROM Language_Group LG 
+		SELECT DISTINCT ', ' + lg.Language_Group_Name FROM Language_Group LG 
 		WHERE lg.Language_Group_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@dubbingGroupCode,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
  
 	SET @dubbingMustHaveNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + L.Language_Name FROM Language L 
+		SELECT DISTINCT ', ' + L.Language_Name FROM Language L 
 		WHERE L.Language_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@MustHaveDubbing,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @dubbingExclusionNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + L.Language_Name FROM Language L 
+		SELECT DISTINCT ', ' + L.Language_Name FROM Language L 
 		WHERE L.Language_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@ExclusionDubbing,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 	
 	SELECT @DubbingCodes = LTRIM(RTRIM(@DubbingCodes))
 	
+	IF(@DubbingCodes LIKE '%G%')
+		SET @DubbingCodes = ''
+
 	SET @dubbing_languageCodes = ISNULL(STUFF((
-		SELECT DISTINCT ',' + REPLACE(number,'L','') FROM fn_Split_withdelemiter(@DubbingCodes,',')
+		SELECT DISTINCT ', ' + REPLACE(number,'L','') FROM fn_Split_withdelemiter(@DubbingCodes,',')
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @Dubbing_LanguageNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + l.Language_Name FROM Language l 
+		SELECT DISTINCT ', ' + l.Language_Name FROM Language l 
 		WHERE l.language_code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@dubbing_languageCodes,',') WHERE number NOT IN ('0',''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -155,25 +161,25 @@ BEGIN
 	/*---PLATFORM START---*/
 	
 	SET @PlatformNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + p.Platform_Hiearachy FROM Platform p 
+		SELECT DISTINCT ', ' + p.Platform_Hiearachy FROM Platform p 
 		WHERE p.Platform_Code IN (SELECT CAST(number AS INT) number FROM dbo.fn_Split_withdelemiter(@PlatformCodes,',') WHERE number NOT IN('0', '')) AND p.Is_Last_Level = 'Y'
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @PlatformGroupName = ISNULL(STUFF((
-		SELECT DISTINCT ',' + PG.Platform_Group_Name FROM Platform_Group PG 
+		SELECT DISTINCT ', ' + PG.Platform_Group_Name FROM Platform_Group PG 
 		WHERE PG.Platform_Group_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@ExactMatchPlatforms,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @PlatformMustHaveNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + P.Platform_Name FROM Platform P 
+		SELECT DISTINCT ', ' + P.Platform_Name FROM Platform P 
 		WHERE P.Platform_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@MustHavePlatforms,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
       
 	SET @MustHavePlatformsNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + p.Platform_Hiearachy FROM Platform p 
+		SELECT DISTINCT ', ' + p.Platform_Hiearachy FROM Platform p 
 		WHERE p.Platform_Code IN (SELECT CAST(number AS INT) number FROM dbo.fn_Split_withdelemiter(@MustHavePlatforms,',') WHERE number NOT IN('0', ''))
 		AND p.Is_Last_Level = 'Y'
 		FOR XML PATH(''), TYPE
@@ -182,27 +188,30 @@ BEGIN
 	/*---PLATFORM END---*/
 
 	/*---REGION START---*/
+	
+	IF(@CountryCodes LIKE '%T%')
+		SET @CountryCodes = ''
 
 	SET @countryCode =  ISNULL(STUFF((
-		SELECT DISTINCT ',' + REPLACE(number,'C','') FROM fn_Split_withdelemiter(@CountryCodes,',') 
+		SELECT DISTINCT ', ' + REPLACE(number,'C','') FROM fn_Split_withdelemiter(@CountryCodes,',') 
 		WHERE number NOT IN('0')
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 	
 	SET @CountryNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' + c.Country_Name FROM Country c 
+		SELECT DISTINCT ', ' + c.Country_Name FROM Country c 
 		WHERE c.Country_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@countryCode,',') WHERE number  NOT IN ( '0',''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
 
 	SET @RegionMustHaveNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' +  C.Country_Name FROM Country C 
+		SELECT DISTINCT ', ' +  C.Country_Name FROM Country C 
 		WHERE C.Country_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@MustHaveRegion,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
       
 	SET @RegionExclusionNames = ISNULL(STUFF((
-		SELECT DISTINCT ',' +  C.Country_Name FROM Country C 
+		SELECT DISTINCT ', ' +  C.Country_Name FROM Country C 
 		WHERE C.Country_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@Region_Exclusion,',') WHERE number NOT IN('0', ''))
 		FOR XML PATH(''), TYPE
 	).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -211,13 +220,13 @@ BEGIN
 	BEGIN
 		
 		SET @territoryCode = ISNULL(STUFF((
-			SELECT DISTINCT ',' + REPLACE(number,'T','') FROM fn_Split_withdelemiter(@TerritoryCodes,',')
+			SELECT DISTINCT ', ' + REPLACE(number,'T','') FROM fn_Split_withdelemiter(@TerritoryCodes,',')
 			WHERE number LIKE 'T%' AND number NOT IN('0')
 			FOR XML PATH(''), TYPE
 		).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
  
 		SET @TerritoryNames = ISNULL(STUFF((
-			SELECT DISTINCT ',' + t.Report_Territory_Name FROM Report_Territory t
+			SELECT DISTINCT ', ' + t.Report_Territory_Name FROM Report_Territory t
 			WHERE t.Report_Territory_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@territoryCode,',') WHERE number NOT IN ('0',''))
 			FOR XML PATH(''), TYPE
 		).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -227,13 +236,13 @@ BEGIN
 	BEGIN
 
 		SET @territoryCode = ISNULL(STUFF((
-			SELECT DISTINCT ',' + REPLACE(number,'T','') FROM fn_Split_withdelemiter(@TerritoryCodes,',')
+			SELECT DISTINCT ', ' + REPLACE(number,'T','') FROM fn_Split_withdelemiter(@TerritoryCodes,',')
 			WHERE number LIKE 'T%' AND number NOT IN('0')
 			FOR XML PATH(''), TYPE
 		).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
  
 		SET @TerritoryNames = ISNULL(STUFF((
-			SELECT DISTINCT ',' + t.Territory_Name FROM Territory t
+			SELECT DISTINCT ', ' + t.Territory_Name FROM Territory t
 			WHERE t.Territory_Code IN (SELECT number FROM dbo.fn_Split_withdelemiter(@territoryCode,',') WHERE number NOT IN ('0',''))
 			FOR XML PATH(''), TYPE
 		).value('.', 'NVARCHAR(MAX)'), 1, 1, ''), '')
@@ -262,4 +271,4 @@ BEGIN
 		   @Dubbing_LanguageNames Dubbing_LanguageNames, @DubbingGroupName Dubbing_Group_Name, @dubbingMustHaveNames Dubbing_Must_Have_Names, @dubbingExclusionNames Duubing_Exclusion_Names,
 		   @SubDub SubtitlingDubbing, getdate() Created_On
 
-END     
+END
