@@ -1,4 +1,4 @@
-﻿ALTER PROCEDURE [dbo].[USPAvailability]
+﻿CREATE PROCEDURE [dbo].[USPAvailability]
 (
 	@TitleCodes VARCHAR(MAX) = '0', 
 	@EpisodeFrom INT,
@@ -1877,7 +1877,7 @@ BEGIN
 		)
 
 		SELECT @FirstRow = 'INSERT INTO #TempOutput(OutputOrder, TitleType, Title, EpisodeFrom, EpisodeTo, ClusterNames, RegionName, StartDate, EndDate, TitleLanguage, SubTiltling, Dubbing, Genre, StarCast, Director, Duration, ReleaseYear, RestrictionRemarks, SubDealRestrictionRemarks, Remarks, RightsRemarks, Exclusive, SubLicense, HoldbackOn, HoldbackType, HoldbackReleaseDate, ReverseHoldback, ROFR, SelfUtilizationGroup, SelfUtilizationRemarks, ' + @Cols + ')' +
-		'SELECT 0, ''Title Type'', ''Title Name'', ''Episode From'', ''Episode To'', ''Cluster Name'', ''Region Name'', ''Start Date'', ''End Date'', ''Title Language Name'', ''Subtitling Language'', ''Dubbing Language'', ''Genre Name'', ''Star Cast'', ''Director'', ''Duration(in min)'', ''Production Year'', ''Restriction Remark'', ''Sub Deal Restriction Remark'', ''Deal Remarks'', ''Rights Remarks'', ''Exclusive'', ''Sub License'', ''Holdback On'', ''Holdback Type'', ''Holdback Release Date'', ''Reverse Holdback'', ''ROFR'', ''Self-Utilization Group'', ''Self-Utilization Remarks'', ' + @PlatformStr
+		'SELECT 0, ''Title Type'', ''Title Name'', ''Episode From'', ''Episode To'', ''Cluster Name'', ''Region Name'', ''Start Date'', ''End Date'', ''Title Language Name'', ''Subtitling Language'', ''Dubbing Language'', ''Genre Name'', ''Star Cast'', ''Director'', ''Duration(in min)'', ''Production Year'', ''Restriction Remark'', ''Sub Deal Restriction Remark'', ''Deal Remarks'', ''Rights Remarks'', ''Exclusive'', ''Sub License'', ''Holdback On'', ''Holdback Type'', ''Holdback Release Date'', ''Reverse Holdback'', ''ROFR'', ''Self-Utilization Group'', ''Self-Utilization Remarks'', '  + REPLACE(REPLACE(@PlatformStr, '[', ''), ']', '')
 
 		EXEC(@FirstRow)
 
