@@ -18,6 +18,7 @@ namespace RightsU_BMS_ScheduleProcess
     {
         public static void Main(string[] args)
         {
+            
             Error.WriteLog("Service Started", includeTime: true, addSeperater: true);
 
             ChannelRepositories objChannelRepositories = new ChannelRepositories();
@@ -36,50 +37,75 @@ namespace RightsU_BMS_ScheduleProcess
             lstChannel = objChannelRepositories.SearchFor(objSrch).ToList();
             Error.WriteLog_Conditional("STEP 1.2  : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Channel List Count:" + lstChannel.Count());
 
+            string FileExtension = ConfigurationManager.AppSettings["File_Extension"];            
 
             foreach (var channel in lstChannel)
             {
-                List<Upload_Files> lstUpload_Files = new List<Upload_Files>();
-
-                var objSrchUploadFiles = new
+                DirectoryInfo info = new DirectoryInfo(channel.Schedule_Source_FilePath);
+                FileInfo[] files = info.GetFiles().OrderBy(p => p.CreationTime).ToArray();
+                foreach (FileInfo file in files)
                 {
-                    Upload_Type = "S",
-                    ChannelCode = channel.Channel_Code,
-                    Record_Status = "P"
-                };
-
-                var lstUpload_Files_for_Reading = objUpload_FilesRepositories.SearchFor(objSrchUploadFiles).ToList();
-                if (lstUpload_Files_for_Reading.Count() > 0)
-                {
-                    foreach (var item in lstUpload_Files_for_Reading)
+                    if (file.Extension.ToLower() == FileExtension.ToLower())
                     {
-                        var File_Code = Read_UploadedFiles(item, channel.Channel_Code);
+                        Upload_Files objUploadFiles = new Upload_Files();
+
+                        objUploadFiles.File_Name = file.Name;
+                        objUploadFiles.Upload_Date = System.DateTime.Now;
+                        objUploadFiles.Uploaded_By = 0;
+                        objUploadFiles.Upload_Type = "S";
+                        objUploadFiles.ChannelCode = channel.Channel_Code;
+                        objUploadFiles.Record_Status = "N";
+                        objUploadFiles.StartDate = DateTime.Today.AddDays(-7);
+                        objUploadFiles.EndDate = DateTime.Today.AddDays(7);
+                        objUpload_FilesRepositories.Add(objUploadFiles);
+
+                        var File_Code = Read_UploadedFiles(objUploadFiles, channel.Channel_Code, channel.Schedule_Source_FilePath);
                     }
                 }
 
-                var objSrchUploadFiles_Schedule = new
-                {
-                    Upload_Type = "S",
-                    ChannelCode = channel.Channel_Code,
-                    Record_Status = "D"
-                };
+                //List<Upload_Files> lstUpload_Files = new List<Upload_Files>();
 
-                lstUpload_Files = objUpload_FilesRepositories.SearchFor(objSrchUploadFiles_Schedule).ToList();
+                //var objSrchUploadFiles = new
+                //{
+                //    Upload_Type = "S",
+                //    ChannelCode = channel.Channel_Code,
+                //    Record_Status = "P"
+                //};
 
-                foreach (var upload_Files in lstUpload_Files)
-                {
-                    objUSP_BMS_Schedule1_Validate_Temp_BV_ScheduleRepositories.USP_BMS_Schedule1_Validate_Temp_BV_Schedule(upload_Files.File_Code.Value, Convert.ToString(upload_Files.ChannelCode), null, null);
-                }
+                //var lstUpload_Files_for_Reading = objUpload_FilesRepositories.SearchFor(objSrchUploadFiles).ToList();
+                //if (lstUpload_Files_for_Reading.Count() > 0)
+                //{
+                //    foreach (var item in lstUpload_Files_for_Reading)
+                //    {
+                //        var File_Code = Read_UploadedFiles(item, channel.Channel_Code);
+                //    }
+                //}
+
+                //var objSrchUploadFiles_Schedule = new
+                //{
+                //    Upload_Type = "S",
+                //    ChannelCode = channel.Channel_Code,
+                //    Record_Status = "D"
+                //};
+
+                //lstUpload_Files = objUpload_FilesRepositories.SearchFor(objSrchUploadFiles_Schedule).ToList();
+
+                //foreach (var upload_Files in lstUpload_Files)
+                //{
+                //    objUSP_BMS_Schedule1_Validate_Temp_BV_ScheduleRepositories.USP_BMS_Schedule1_Validate_Temp_BV_Schedule(upload_Files.File_Code.Value, Convert.ToString(upload_Files.ChannelCode), null, null);
+                //}
             }
 
             Error.WriteLog_Conditional("STEP 1.3  : " + DateTime.Now.ToString("dd-MMM-yyyy  HH:mm:ss") + " : Calling Procedure USP_Music_Schedule");
 
-            objUSP_Music_ScheduleRepositories.USP_Music_Schedule();
+            //objUSP_Music_ScheduleRepositories.USP_Music_Schedule();
 
         }
 
-        public static Int32 Read_UploadedFiles(Upload_Files objUpload_Files, Int32 ChannelCode)
+        public static Int32 Read_UploadedFiles(Upload_Files objUpload_Files, Int32 ChannelCode, string filePath = "")
         {
+            string FolderPath = filePath;
+
             BMS_Schedule_Import_ConfigRepositories objBMS_Schedule_Import_ConfigRepositories = new BMS_Schedule_Import_ConfigRepositories();
             BMSUploadData_Repositories objBMSUploadData_Repositories = new BMSUploadData_Repositories();
             Upload_FilesRepositories objUpload_FilesRepositories = new Upload_FilesRepositories();
@@ -96,7 +122,8 @@ namespace RightsU_BMS_ScheduleProcess
 
                 Error.WriteLog_Conditional("STEP 1 :Txt File reading process start.");
 
-                var filePath = ConfigurationManager.AppSettings["TXT_Url"] + objUpload_Files.File_Name;
+                //var filePath = ConfigurationManager.AppSettings["TXT_Url"] + objUpload_Files.File_Name;
+                filePath = filePath+"\\" + objUpload_Files.File_Name;
 
                 if (!File.Exists(filePath))
                 {
@@ -120,6 +147,8 @@ namespace RightsU_BMS_ScheduleProcess
                     datarow.ItemArray = streamreader.ReadLine().Split(delimiter);
                     datatable.Rows.Add(datarow);
                 }
+
+                streamreader.Close();
 
                 if (datatable.Rows.Count > 0)
                 {
@@ -183,21 +212,27 @@ namespace RightsU_BMS_ScheduleProcess
                                 if (id > 0)
                                 {                                    
                                     Error.WriteLog_Conditional("STEP 1.6 : File detail uploaded into Temp_BV_Scheduler table with ID : " + Convert.ToString(id));
-                                    Upload_Files objUploadFiles = new Upload_Files();
 
+                                    Upload_Files objUploadFiles = new Upload_Files();                                    
                                     objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
-                                    objUploadFiles.Record_Status = "D";
-                                    objUpload_FilesRepositories.Update(objUploadFiles);
+                                    objUploadFiles.Err_YN = "N";
+                                    objUploadFiles.Record_Status = "P";
+                                    objUpload_FilesRepositories.Update(objUploadFiles);    
+                                    
+                                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Success_File"] + objUpload_Files.File_Name);                            
                                 }
                                 else
                                 {
                                     Error.WriteLog_Conditional("STEP 1.7 : File detail processing Unsuccessful");
 
                                     Upload_Files objUploadFiles = new Upload_Files();
-
                                     objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
+                                    objUploadFiles.Err_YN = "Y";
                                     objUploadFiles.Record_Status = "E";
                                     objUpload_FilesRepositories.Update(objUploadFiles);
+
+                                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
+
                                     return 0;
                                 }
                             }
@@ -213,7 +248,8 @@ namespace RightsU_BMS_ScheduleProcess
 
                 Error.WriteLog_Conditional("STEP 2 :Csv File reading process start.");
 
-                var filePath = ConfigurationManager.AppSettings["CSV_Url"] + objUpload_Files.File_Name;
+                //var filePath = ConfigurationManager.AppSettings["CSV_Url"] + objUpload_Files.File_Name;
+                filePath = filePath + "/" + objUpload_Files.File_Name;
 
                 if (!File.Exists(filePath))
                 {
@@ -237,6 +273,8 @@ namespace RightsU_BMS_ScheduleProcess
                     datarow.ItemArray = streamreader.ReadLine().Split(delimiter);
                     datatable.Rows.Add(datarow);
                 }
+
+                streamreader.Close();
 
                 if (datatable.Rows.Count > 0)
                 {
@@ -299,20 +337,27 @@ namespace RightsU_BMS_ScheduleProcess
                                 if (id > 0)
                                 {
                                     Error.WriteLog_Conditional("STEP 2.6 : File detail uploaded into Temp_BV_Scheduler table with ID : " + Convert.ToString(id));
-                                    Upload_Files objUploadFiles = new Upload_Files();
 
+                                    Upload_Files objUploadFiles = new Upload_Files();
                                     objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
-                                    objUploadFiles.Record_Status = "D";
+                                    objUploadFiles.Err_YN = "N";
+                                    objUploadFiles.Record_Status = "P";
                                     objUpload_FilesRepositories.Update(objUploadFiles);
+
+                                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Success_File"] + objUpload_Files.File_Name);
                                 }
                                 else
                                 {
                                     Error.WriteLog_Conditional("STEP 2.7 : File detail processing Unsuccessful");
-                                    Upload_Files objUploadFiles = new Upload_Files();
 
+                                    Upload_Files objUploadFiles = new Upload_Files();
                                     objUploadFiles = objUpload_FilesRepositories.GetUpload_FilesById(File_Code);
+                                    objUploadFiles.Err_YN = "Y";
                                     objUploadFiles.Record_Status = "E";
                                     objUpload_FilesRepositories.Update(objUploadFiles);
+
+                                    File.Move(filePath, FolderPath + ConfigurationManager.AppSettings["Failed_File"] + objUpload_Files.File_Name);
+
                                     return 0;
                                 }
                             }
