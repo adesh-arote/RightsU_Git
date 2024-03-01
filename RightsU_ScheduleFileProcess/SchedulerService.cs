@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using RightsU_ReadWriteFileProcess.Entities;
+using RightsU_ScheduleFileProcess.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,9 +11,9 @@ using System.Net;
 using System.Reflection;
 using System.ServiceProcess;
 using System.Text;
-using static RightsU_ReadWriteFileProcess.Repository.MasterRepositories;
+using static RightsU_ScheduleFileProcess.Repository.MasterRepositories;
 
-namespace RightsU_ReadWriteFileProcess
+namespace RightsU_ScheduleFileProcess
 {
     public partial class ScheduleFileProcess : ServiceBase
     {

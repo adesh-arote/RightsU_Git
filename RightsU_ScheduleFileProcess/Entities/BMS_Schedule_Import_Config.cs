@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess.Entities
+namespace RightsU_ScheduleFileProcess.Entities
 {
     [Table("BMS_Schedule_Import_Config")]
     public class BMS_Schedule_Import_Config

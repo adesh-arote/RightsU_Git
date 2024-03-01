@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess.Infrastructure
+namespace RightsU_ScheduleFileProcess.Infrastructure
 {
     class DBConnection
     {

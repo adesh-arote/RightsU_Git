@@ -154,7 +154,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU.Audit.WebAPI", "Rig
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_ScheduleProcess", "RightsU_ScheduleProcess\RightsU_ScheduleProcess.csproj", "{F2761F10-1B69-4265-8BEF-00C328D8F37D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_ReadWriteFileProcess", "RightsU_ReadWriteFileProcess\RightsU_ReadWriteFileProcess.csproj", "{68DFEC6D-3938-49D1-A44F-1A3F8FBA4768}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_ScheduleFileProcess", "RightsU_ScheduleFileProcess\RightsU_ScheduleFileProcess.csproj", "{68DFEC6D-3938-49D1-A44F-1A3F8FBA4768}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

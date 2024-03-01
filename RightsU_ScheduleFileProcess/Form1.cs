@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RightsU_ReadWriteFileProcess
+namespace RightsU_ScheduleFileProcess
 {
     public partial class Form1 : Form
     {

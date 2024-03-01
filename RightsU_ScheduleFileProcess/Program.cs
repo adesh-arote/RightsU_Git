@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace RightsU_ReadWriteFileProcess
+namespace RightsU_ScheduleFileProcess
 {
     static class Program
     {

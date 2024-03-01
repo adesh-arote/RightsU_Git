@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess.Entities
+namespace RightsU_ScheduleFileProcess.Entities
 {
     [Table("Channel")]
     public class Channel

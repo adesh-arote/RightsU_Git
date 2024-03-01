@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess
+namespace RightsU_ScheduleFileProcess
 {
     public class Error
     {

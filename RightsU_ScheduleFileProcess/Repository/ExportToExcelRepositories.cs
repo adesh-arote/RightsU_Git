@@ -1,7 +1,7 @@
 ﻿
 using Dapper;
-using RightsU_ReadWriteFileProcess.Entities;
-using RightsU_ReadWriteFileProcess.Infrastructure;
+using RightsU_ScheduleFileProcess.Entities;
+using RightsU_ScheduleFileProcess.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess.Repository
+namespace RightsU_ScheduleFileProcess.Repository
 {
     public class MasterRepositories
     {      

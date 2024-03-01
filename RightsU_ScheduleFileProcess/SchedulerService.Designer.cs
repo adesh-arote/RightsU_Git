@@ -1,4 +1,4 @@
-﻿namespace RightsU_ReadWriteFileProcess
+﻿namespace RightsU_ScheduleFileProcess
 {
     partial class ScheduleFileProcess
     {

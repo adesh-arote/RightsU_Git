@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ReadWriteFileProcess.Entities
+namespace RightsU_ScheduleFileProcess.Entities
 {
     public class Schedule_Data_UDT
     {
