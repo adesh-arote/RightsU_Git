@@ -1,4 +1,4 @@
-﻿namespace RightsU_ScheduleFileProcess
+﻿namespace RightsU_ScheduleProcess
 {
     partial class ProjectInstaller
     {
@@ -38,9 +38,9 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "Process Channel Schedule Files";
-            this.serviceInstaller1.DisplayName = "RightsU Schedule File Process";
-            this.serviceInstaller1.ServiceName = "RightsU Schedule File Process";
+            this.serviceInstaller1.Description = "Schedule Process Service";
+            this.serviceInstaller1.DisplayName = "RightsU Schedule Process Service";
+            this.serviceInstaller1.ServiceName = "RightsU Schedule Process Service";
             // 
             // ProjectInstaller
             // 

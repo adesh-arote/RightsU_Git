@@ -24,6 +24,7 @@ namespace RightsU_ScheduleProcess
 
         protected override void OnStart(string[] args)
         {
+            System.Diagnostics.Debugger.Launch();
             timer.Interval = Convert.ToInt32(ConfigurationSettings.AppSettings["Timer"]);
             timer.Elapsed += new System.Timers.ElapsedEventHandler(this.OnTimer);
             timer.Start();
@@ -37,6 +38,7 @@ namespace RightsU_ScheduleProcess
 
         public void OnTimer(object sender, System.Timers.ElapsedEventArgs args)
         {
+
             timer.Stop();
             Error.WriteLog("EXE Started", includeTime: true, addSeperater: true);
             try

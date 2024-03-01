@@ -12,7 +12,7 @@ namespace RightsU_ScheduleProcess.Entities
     {
         [PrimaryKey]
         public int Channel_Code { get; set; }
-        public int Channel_Name { get; set; }
+        public string Channel_Name { get; set; }
         public string Is_Active { get; set; }
         public string IsUseForAsRun { get; set; }
         public Nullable<int> Order_For_schedule { get; set; }
