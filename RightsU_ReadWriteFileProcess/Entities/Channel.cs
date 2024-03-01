@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_BMS_ScheduleProcess.Entities
+namespace RightsU_ReadWriteFileProcess.Entities
 {
     [Table("Channel")]
     public class Channel
