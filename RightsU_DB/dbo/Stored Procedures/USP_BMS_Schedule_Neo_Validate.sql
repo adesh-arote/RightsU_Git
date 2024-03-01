@@ -1,5 +1,4 @@
-﻿
-ALTER PROCEDURE [dbo].[USP_BMS_Schedule1_Validate_Temp_BV_Schedule]	
+﻿CREATE PROCEDURE [dbo].[USP_BMS_Schedule_Neo_Validate]	
 (
 	@File_Code BIGINT,
 	@Channel_Code VARCHAR(10),
@@ -62,7 +61,9 @@ BEGIN
 			Deal_Count INT DEFAULT(0),
 			IsDealApproved CHAR(1),
 			BMS_Asset_Code INT,
-			IsExceptionSent CHAR(1) DEFAULT('N')
+			IsExceptionSent CHAR(1) DEFAULT('N'),
+			IsInRightsPeriod CHAR(1) DEFAULT('Y'),
+			IsInValidChannel CHAR(1) DEFAULT('X')
 		)
 
 		CREATE TABLE #BVScheduleTransaction_Revert		----- BV_Schedule_Transaction Data 
@@ -286,7 +287,7 @@ BEGIN
 			FROM #Temp_BV_Schedule tbs (NOLOCK)
 			INNER JOIN BMS_Asset BA (NOLOCK) ON BA.BMS_Asset_Ref_Key COLLATE SQL_Latin1_General_CP1_CI_AS = tbs.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
 			where tbs.File_Code = @File_Code
-			--select * from #Temp_BV_Schedule
+			
 			Update BV SET BV.Deal_Count=T.Deal_Count
 			FROM #Temp_BV_Schedule BV
 			INNER JOIN (
@@ -298,6 +299,32 @@ BEGIN
 				WHERE BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date
 				GROUP BY BVST.BMS_Asset_Code,BVST.Program_Episode_ID, BVST.Schedule_Item_Log_Date
 			) T ON T.BMS_Asset_Code=BV.BMS_Asset_Code AND T.Program_Episode_ID=BV.Program_Episode_ID AND T.Schedule_Item_Log_Date=BV.Schedule_Item_Log_Date
+
+			Update BV SET BV.IsInRightsPeriod=CASE WHEN T.Deal_Count>0 THEN 'N' ELSE 'Y' END
+			FROM #Temp_BV_Schedule BV
+			INNER JOIN (
+				SELECT COUNT(DISTINCT BD.Acq_Deal_Code) Deal_Count,BVST.BMS_Asset_Code,BVST.Program_Episode_ID, BVST.Schedule_Item_Log_Date
+				FROM #Temp_BV_Schedule BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Asset_Code = BVST.BMS_Asset_Code AND BDCR.RU_Channel_Code = @Channel_Code AND BDCR.IS_Active='Y'
+				INNER JOIN BMS_Deal_Content BDC ON BDC.BMS_Deal_Content_Code = BDCR.BMS_Deal_Content_Code AND BDC.IS_Active='Y'
+				INNER JOIN BMS_Deal BD ON BD.BMS_Deal_Code = BDC.BMS_Deal_Code AND BD.IS_Active='Y'
+				--WHERE BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date
+				GROUP BY BVST.BMS_Asset_Code,BVST.Program_Episode_ID, BVST.Schedule_Item_Log_Date
+			) T ON T.BMS_Asset_Code=BV.BMS_Asset_Code AND T.Program_Episode_ID=BV.Program_Episode_ID AND T.Schedule_Item_Log_Date=BV.Schedule_Item_Log_Date
+			AND BV.Deal_Count = 0
+
+			Update BV SET BV.IsInValidChannel=CASE WHEN T.Deal_Count>0 THEN 'Y' ELSE 'N' END
+			FROM #Temp_BV_Schedule BV
+			INNER JOIN (
+				SELECT COUNT(DISTINCT BD.Acq_Deal_Code) Deal_Count,BVST.BMS_Asset_Code,BVST.Program_Episode_ID, BVST.Schedule_Item_Log_Date
+				FROM #Temp_BV_Schedule BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Asset_Code = BVST.BMS_Asset_Code AND BDCR.IS_Active='Y'
+				INNER JOIN BMS_Deal_Content BDC ON BDC.BMS_Deal_Content_Code = BDCR.BMS_Deal_Content_Code AND BDC.IS_Active='Y'
+				INNER JOIN BMS_Deal BD ON BD.BMS_Deal_Code = BDC.BMS_Deal_Code AND BD.IS_Active='Y'
+				WHERE BVST.Schedule_Item_Log_Date BETWEEN BDCR.Start_Date AND BDCR.End_Date
+				GROUP BY BVST.BMS_Asset_Code,BVST.Program_Episode_ID, BVST.Schedule_Item_Log_Date
+			) T ON T.BMS_Asset_Code=BV.BMS_Asset_Code AND T.Program_Episode_ID=BV.Program_Episode_ID AND T.Schedule_Item_Log_Date=BV.Schedule_Item_Log_Date
+			AND BV.Deal_Count = 0
 
 			UPDATE BVST SET BVST.Deal_Code = BD.Acq_Deal_Code
 			FROM #Temp_BV_Schedule BVST
@@ -359,7 +386,8 @@ BEGIN
 
 			--//Basis on Deal_code identify ACQ_deal_movie_code,IsDealApproved = 'N'
 
-			UPDATE tbs SET tbs.TitleCode = BVST.TitleCode,tbs.Deal_Code = BVST.Deal_Code ,tbs.DMCode = BVST.DMCode,tbs.IsDealApproved = BVST.IsDealApproved
+			UPDATE tbs SET tbs.TitleCode = BVST.TitleCode,tbs.Deal_Code = BVST.Deal_Code ,tbs.DMCode = BVST.DMCode,tbs.IsDealApproved = BVST.IsDealApproved,
+			tbs.IsInRightsPeriod = BVST.IsInRightsPeriod,tbs.IsInValidChannel = BVST.IsInValidChannel
 			FROM Temp_BV_Schedule tbs 
 			INNER JOIN #Temp_BV_Schedule BVST ON BVST.Temp_BV_Schedule_Code = tbs.Temp_BV_Schedule_Code
 
@@ -421,20 +449,20 @@ BEGIN
 			INNER JOIN BMS_Deal BD ON BD.Acq_Deal_Code=D.Acq_Deal_Code
 			INNER JOIN BMS_Deal_Content BDC ON BDC.BMS_Deal_Code=BD.BMS_Deal_Code
 			INNER JOIN BMS_Asset BA ON BA.BMS_Asset_Code=BDC.BMS_Asset_Code
-			WHERE 1=1 AND (D.is_active = 'Y') AND ((D.deal_workflow_status = 'A') OR CAST(D.[version] AS  NUMERIC(18, 2)) > 1)
+			WHERE (D.is_active = 'Y') AND ((D.deal_workflow_status = 'A') OR CAST(D.[version] AS  NUMERIC(18, 2)) > 1)
 
 			INSERT INTO BV_Schedule_Transaction 
 			(	
 				Program_Episode_ID,Program_Version_ID,Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category, 
 				Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, 
 				Scheduled_Version_House_Number_List, Found_Status, 
-				File_Code, Channel_Code, IsProcessed, Inserted_By, Inserted_On,Title_Code,Schedule_Item_Log_DateTime,IsDealApproved,Deal_Movie_Code,Deal_Code
+				File_Code, Channel_Code, IsProcessed, Inserted_By, Inserted_On,Title_Code,Schedule_Item_Log_DateTime,IsDealApproved,Deal_Movie_Code,Deal_Code,IsInRightsPeriod,IsInValidChannel
 			)
 			SELECT tbs.Program_Episode_ID,tbs.Program_Version_ID,tbs.Program_Episode_Title,CASE WHEN ISNULL(tbs.Program_Episode_Number,'') = '' THEN '1' ELSE tbs.Program_Episode_Number END,
 				   tbs.Program_Title,tbs.Program_Category,tbs.Schedule_Item_Log_Date,tbs.Schedule_Item_Log_Time,tbs.Schedule_Item_Duration, 
 				   '1' AS Scheduled_Version_House_Number_List,'Y', 
 				   tbs.File_Code, tbs.Channel_Code, 'N', tbs.Inserted_By , GETDATE(),tbs.TitleCode,
-				   CONVERT(datetime,(CONVERT(date,tbs.Schedule_Item_Log_Date)  + CAST(tbs.Schedule_Item_Log_Time as datetime)),101),tbs.IsDealApproved,tbs.DMCode,tbs.Deal_Code
+				   CONVERT(datetime,(CONVERT(date,tbs.Schedule_Item_Log_Date)  + CAST(tbs.Schedule_Item_Log_Time as datetime)),101),tbs.IsDealApproved,tbs.DMCode,tbs.Deal_Code,tbs.IsInRightsPeriod,tbs.IsInValidChannel
 			FROM Temp_BV_Schedule tbs (NOLOCK)			
 			WHERE 1=1 
 			AND 
@@ -474,7 +502,7 @@ BEGIN
 				SELECT DISTINCT @File_Code, 0, '~~' + UPT.Program_Title +' ~~~'+ '1' AS Scheduled_Version_House_Number_List ,'1HID_N','S','M'
 				FROM Temp_BV_Schedule UPT (NOLOCK)				
 				INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = UPT.Temp_BV_Schedule_Code
-				WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code--AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
+				WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code--AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
 				AND ISNULL(BV.TitleCode, 0) = 0 AND BV.IsExceptionSent = 'N'
 
 				----------------8.1 SEND EXCEPTION EMAIL HOUSEDID NOT FOUND------------
@@ -494,11 +522,11 @@ BEGIN
 				@EmailMsg_New, 'N', 'N', NULL
 				FROM Temp_BV_Schedule tbs (NOLOCK)				
 				INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = tbs.Temp_BV_Schedule_Code
-				WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code --AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
+				WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code --AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
 				AND ISNULL(BV.TitleCode, 0) = 0 AND BV.IsExceptionSent = 'N'	 
 
 				UPDATE #Temp_BV_Schedule SET IsExceptionSent = 'Y'
-				WHERE 1=1 AND File_Code = @File_Code AND Channel_Code = @Channel_Code --AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
+				WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code --AND ISNULL(UPT.IsDealApproved,'Y') = 'Y'
 				AND ISNULL(TitleCode, 0) = 0 AND IsExceptionSent = 'N'
 
 				----------------8.1 SEND EXCEPTION EMAIL HOUSEDID NOT FOUND------------	
@@ -506,7 +534,7 @@ BEGIN
 				PRINT '--===============8.0 Inserting all invalid houseds records into Upload_Err_Detail table --==============='
 			END
 			
-			PRINT '----------  PROCESS THOSE TITLES WHOSE DEALS NOT FOUND ---------------'
+			--===============8.5 Send an exception email on Schedule outside the right period ===============--
 
 			INSERT INTO Upload_Err_Detail 
 			(
@@ -515,10 +543,11 @@ BEGIN
 			SELECT DISTINCT @File_Code, 0, '~~' + BVST.Program_Title +' ~~~'+ '1' AS Scheduled_Version_House_Number_List ,'1DNF','S','M'
 			FROM Temp_BV_Schedule BVST  			
 			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
-			WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			AND BV.IsInRightsPeriod = 'N'
 
 			DECLARE @EmailMsg_New_Deal NVARCHAR(MAX)
-			SELECT @EmailMsg_New_Deal =  Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'Deal_Not_Found' and [Type] = 'S'
+			SELECT @EmailMsg_New_Deal =  Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'Right_Period' and [Type] = 'S'
 		
 			INSERT INTO Email_Notification_Schedule 
 			(
@@ -533,12 +562,91 @@ BEGIN
 			@EmailMsg_New_Deal, 'N', 'N', BVST.TitleCode
 			FROM Temp_BV_Schedule BVST 
 			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
-			WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			AND BV.IsInRightsPeriod = 'N'
 
 			UPDATE #Temp_BV_Schedule SET IsExceptionSent = 'Y'
-			WHERE 1=1 AND File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0 AND IsExceptionSent = 'N'
+			WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0 AND IsExceptionSent = 'N'
+			AND IsInRightsPeriod = 'N'
 
-			UPDATE BV_Schedule_Transaction SET IsException = 'Y' WHERE 1=1 AND File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0
+			UPDATE BV_Schedule_Transaction SET IsException = 'Y' WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0
+			AND IsInRightsPeriod = 'N'
+			
+			--===============8.5 Send an exception email on Schedule outside the right period ===============--
+
+			--===============8.5 Send an exception email on INVALID_CHANNEL ==============================--
+
+			INSERT INTO Upload_Err_Detail 
+			(
+				file_code, Row_Num,Row_Delimed,Err_Cols, Upload_Type, Upload_Title_Type
+			)
+			SELECT DISTINCT @File_Code, 0, '~~' + BVST.Program_Title +' ~~~'+ '1' AS Scheduled_Version_House_Number_List ,'1DNF','S','M'
+			FROM Temp_BV_Schedule BVST  			
+			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			AND BV.IsInValidChannel = 'Y'
+
+			DECLARE @EmailMsg_New_Deal_Invalid_Channel NVARCHAR(MAX)
+			SELECT @EmailMsg_New_Deal_Invalid_Channel =  Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'Invalid_Channel' and [Type] = 'S'
+		
+			INSERT INTO Email_Notification_Schedule 
+			(
+				BV_Schedule_Transaction_Code, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
+				Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
+				File_Code, Channel_Code, Inserted_On, Deal_Movie_Code, Deal_Movie_Rights_Code, 
+				Email_Notification_Msg, IsMailSent, IsRunCountCalculate, Title_Code
+			)
+			SELECT BVST.Temp_BV_Schedule_Code,BVST.Program_Episode_Title,BVST.Program_Episode_Number,BVST.Program_Title,BVST.Program_Category,
+			BVST.Schedule_Item_Log_Date,BVST.Schedule_Item_Log_Time,BVST.Schedule_Item_Duration,BVST.Scheduled_Version_House_Number_List,
+			BVST.File_Code,@Channel_Code,GETDATE(),BVST.DMCode,null,
+			@EmailMsg_New_Deal_Invalid_Channel, 'N', 'N', BVST.TitleCode
+			FROM Temp_BV_Schedule BVST 
+			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+			AND BV.IsInValidChannel = 'Y'
+
+			UPDATE #Temp_BV_Schedule SET IsExceptionSent = 'Y'
+			WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0 AND IsExceptionSent = 'N'
+			AND IsInValidChannel = 'Y'
+
+			UPDATE BV_Schedule_Transaction SET IsException = 'Y' WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0
+			AND IsInValidChannel = 'Y'
+			
+			--===============8.5 Send an exception email on INVALID_CHANNEL ==============================--
+
+			PRINT '----------  PROCESS THOSE TITLES WHOSE DEALS NOT FOUND ---------------'
+
+			INSERT INTO Upload_Err_Detail 
+			(
+				file_code, Row_Num,Row_Delimed,Err_Cols, Upload_Type, Upload_Title_Type
+			)
+			SELECT DISTINCT @File_Code, 0, '~~' + BVST.Program_Title +' ~~~'+ '1' AS Scheduled_Version_House_Number_List ,'1DNF','S','M'
+			FROM Temp_BV_Schedule BVST  			
+			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+
+			DECLARE @EmailMsg_New_Deal_Not_Found NVARCHAR(MAX)
+			SELECT @EmailMsg_New_Deal_Not_Found =  Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'Deal_Not_Found' and [Type] = 'S'
+		
+			INSERT INTO Email_Notification_Schedule 
+			(
+				BV_Schedule_Transaction_Code, Program_Episode_Title, Program_Episode_Number, Program_Title, Program_Category,
+				Schedule_Item_Log_Date, Schedule_Item_Log_Time, Schedule_Item_Duration, Scheduled_Version_House_Number_List,
+				File_Code, Channel_Code, Inserted_On, Deal_Movie_Code, Deal_Movie_Rights_Code, 
+				Email_Notification_Msg, IsMailSent, IsRunCountCalculate, Title_Code
+			)
+			SELECT BVST.Temp_BV_Schedule_Code,BVST.Program_Episode_Title,BVST.Program_Episode_Number,BVST.Program_Title,BVST.Program_Category,
+			BVST.Schedule_Item_Log_Date,BVST.Schedule_Item_Log_Time,BVST.Schedule_Item_Duration,BVST.Scheduled_Version_House_Number_List,
+			BVST.File_Code,@Channel_Code,GETDATE(),BVST.DMCode,null,
+			@EmailMsg_New_Deal_Not_Found, 'N', 'N', BVST.TitleCode
+			FROM Temp_BV_Schedule BVST 
+			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = BVST.Temp_BV_Schedule_Code
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.Deal_Code,0)=0 AND BV.IsExceptionSent = 'N'
+
+			UPDATE #Temp_BV_Schedule SET IsExceptionSent = 'Y'
+			WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0 AND IsExceptionSent = 'N'
+
+			UPDATE BV_Schedule_Transaction SET IsException = 'Y' WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(Deal_Code,0)=0
 
 			PRINT '----------  PROCESS THOSE TITLES WHOSE DEALS ARE NOT APPROVED ---------------'
 
@@ -549,7 +657,7 @@ BEGIN
 			SELECT DISTINCT @File_Code, 0, '~~' + Program_Title +' ~~~'+ '1' AS Scheduled_Version_House_Number_List ,'1DNA','S','M'
 			FROM Temp_BV_Schedule UPT  
 			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = UPT.Temp_BV_Schedule_Code
-			WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.IsDealApproved,'Y') = 'N'	AND BV.IsExceptionSent = 'N'
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.IsDealApproved,'Y') = 'N'	AND BV.IsExceptionSent = 'N'
 
 			DECLARE @EmailMsg NVARCHAR(MAX)
 			SELECT @EmailMsg =  Email_Msg FROM Email_Notification_Msg WHERE LTRIM(RTRIM(Email_Msg_For)) = 'Deal_Not_Approve' and [Type] = 'S'
@@ -570,12 +678,12 @@ BEGIN
 			INNER JOIN #Temp_BV_Schedule BV ON BV.Temp_BV_Schedule_Code = tbs.Temp_BV_Schedule_Code
 			INNER JOIN ACQ_Deal D (NOLOCK) ON D.Acq_deal_code = tbs.Deal_Code
 			INNER JOIN ACQ_Deal_Movie DM (NOLOCK) ON DM.Acq_deal_code = D.Acq_deal_code	AND tbs.Program_Episode_Number BETWEEN DM.Episode_Starts_From AND DM.Episode_End_To
-			WHERE 1=1 AND BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.IsDealApproved,'Y') = 'N'	AND BV.IsExceptionSent = 'N'
+			WHERE BV.File_Code = @File_Code AND BV.Channel_Code = @Channel_Code AND ISNULL(BV.IsDealApproved,'Y') = 'N'	AND BV.IsExceptionSent = 'N'
 			
 			PRINT '1'
 
 			UPDATE #Temp_BV_Schedule SET IsExceptionSent = 'Y'
-			WHERE 1=1 AND File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(IsDealApproved,'Y') = 'N'	AND IsExceptionSent = 'N'
+			WHERE File_Code = @File_Code AND Channel_Code = @Channel_Code AND ISNULL(IsDealApproved,'Y') = 'N'	AND IsExceptionSent = 'N'
 			
 			UPDATE BV_Schedule_Transaction SET IsException = 'Y' 
 			WHERE ISNULL(IsDealApproved,'Y') = 'N' AND File_Code = @File_Code AND Channel_Code = @Channel_Code
@@ -618,7 +726,7 @@ BEGIN
 			SELECT 'USP_BMS_Schedule1_Validate_Temp_BV_Schedule',@File_Code,@Channel_Code,@IsReprocess,@BV_Episode_ID,@CanProcessRun,'STEP 2 Before Schedule Process',GETDATE()
 
 			PRINT '--===============11.0 PROCESS_DATA --==============='
-			--EXEC USP_BMS_Schedule2_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
+			EXEC USP_BMS_Schedule_Neo_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
 		
 			IF((select isnull(Parameter_Value,'N') from System_Parameter_New where Parameter_Name ='IS_Schedule_Mail_Channelwise')  = 'Y' )
 			BEGIN
@@ -672,3 +780,5 @@ BEGIN
 		UPDATE Upload_Files set Err_YN = 'Y' WHERE File_code = @File_Code
 	END CATCH
 END
+GO
+
