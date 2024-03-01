@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace RightsU_ScheduleFileProcess
+namespace RightsU_AssetScheduler
 {
     using System;
     

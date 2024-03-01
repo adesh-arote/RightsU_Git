@@ -5,7 +5,7 @@ using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RightsU_ScheduleFileProcess
+namespace RightsU_AssetScheduler
 {
     static class Program
     {

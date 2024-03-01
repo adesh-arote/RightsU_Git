@@ -1,4 +1,4 @@
-﻿namespace RightsU_ScheduleFileProcess
+﻿namespace RightsU_AssetScheduler
 {
     partial class ScheduleFileProcess
     {

@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsUMQService", "MQMesse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsUMQService_Customer", "RightsUMQService_Customer\RightsUMQService_Customer.csproj", "{F2D41EB8-BA35-45C7-8EEB-C2A1FBA9DA15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_ScheduleFileProcess", "RightsU_ScheduleFileProcess\RightsU_ScheduleFileProcess.csproj", "{62F44E7A-2819-483D-A3E8-0118EF964894}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_AssetScheduler", "RightsU_AssetScheduler\RightsU_AssetScheduler.csproj", "{62F44E7A-2819-483D-A3E8-0118EF964894}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RightsU_Health_Checkup", "RightsU_Health_Checkup\RightsU_Health_Checkup.csproj", "{8A42ADDD-8403-4381-9E68-5E106D1E62EE}"
 EndProject
