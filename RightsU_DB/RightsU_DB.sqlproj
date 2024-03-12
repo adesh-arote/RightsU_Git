@@ -1758,6 +1758,7 @@
     <Build Include="dbo\Stored Procedures\USPAPI_ROFR_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Sub_License.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_List_Acq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule_Neo_Notification.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />
