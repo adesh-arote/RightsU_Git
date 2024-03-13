@@ -62,10 +62,18 @@ namespace RightsU.API.DAL.Repository
                 {
                     entity.Subtitling.ToList().ForEach(i =>
                     {
-                        if (i.language == null)
+                        if (i.Language_Type == "G")
                         {
-                            i.language = new LanguageRepositories().Get(i.Language_Code.Value);
+                            i.languageGroup = new LanguageGroupRepositories().Get(i.Language_Group_Code.Value);
                         }
+                        else
+                        {
+                            if (i.language == null)
+                            {
+                                i.language = new LanguageRepositories().Get(i.Language_Code.Value);
+                            }
+                        }
+
                     });
 
                     //entity.Subtitling.ToList().ForEach(i =>
@@ -81,10 +89,18 @@ namespace RightsU.API.DAL.Repository
                 {
                     entity.Dubbing.ToList().ForEach(i =>
                     {
-                        if (i.language == null)
+                        if (i.Language_Type == "G")
                         {
-                            i.language = new LanguageRepositories().Get(i.Language_Code.Value);
+                            i.languageGroup = new LanguageGroupRepositories().Get(i.Language_Group_Code.Value);
                         }
+                        else
+                        {
+                            if (i.language == null)
+                            {
+                                i.language = new LanguageRepositories().Get(i.Language_Code.Value);
+                            }
+                        }
+
                     });
                 }
             }
