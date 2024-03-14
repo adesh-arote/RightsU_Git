@@ -40,14 +40,16 @@ namespace RightsU.API.Filters
                     logObj.RequestId = HttpContext.Current.Request.Headers["LogRequestId"]; //Guid.NewGuid().ToString();
                     logObj.RequestUri = actionExecutedContext.Request.RequestUri.AbsoluteUri;
                     logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
-                    if (actionExecutedContext.Request.Method.Method == "GET")
-                    {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                        
-                    }
-                    else
-                    {
-                        logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                        
-                    }
+                    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
+
+                    ////if (actionExecutedContext.Request.Method.Method == "GET")
+                    ////{
+                    ////    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                        
+                    ////}
+                    ////else
+                    ////{
+                    ////    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                        
+                    ////}
 
                     //logObj.IsSuccess = Convert.ToString(((RightsU.API.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).IsSuccess);
                     //logObj.TimeTaken = Convert.ToString(((RightsU.API.Entities.FrameworkClasses.GenericReturn)((System.Net.Http.ObjectContent)actionExecutedContext.Response.Content).Value).TimeTaken);

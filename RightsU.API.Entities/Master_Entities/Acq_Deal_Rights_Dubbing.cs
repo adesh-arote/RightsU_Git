@@ -39,5 +39,10 @@ namespace RightsU.API.Entities
         [ManyToOne]
         [Column("Language_Code")]
         public virtual Language language { get; set; }
+
+        [SimpleSaveIgnore]
+        [ManyToOne]
+        [Column("language_group_code")]
+        public virtual LanguageGroup languageGroup { get; set; }
     }
 }

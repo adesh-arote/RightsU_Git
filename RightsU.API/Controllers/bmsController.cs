@@ -17,9 +17,11 @@ using System.ComponentModel;
 
 namespace RightsU.API.Controllers
 {
+    //[SwaggerConsumes("application/json")]
+    //[SwaggerProduces("application/json")]
+    //[HideInDocs]
     [DisplayName("BMS Integration")]
-    [HideInDocs]
-    public class bmsController : ApiController
+    public class bmsController : BaseController
     {
         public readonly BMSServices objBMSServices = new BMSServices();
         private readonly SystemParameterServices objSystemParameterServices = new SystemParameterServices();
@@ -32,25 +34,25 @@ namespace RightsU.API.Controllers
         /// <remarks>This Api returns Asset Details</remarks>
         /// <param name="since">Find assets updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
         /// <returns></returns>               
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<AssetsResult>))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<AssetsResult>))]
+        //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error / Bad Request")]
+        //[SwaggerResponse(HttpStatusCode.Unauthorized, "Unauthorized / Token Expried / Invalid Token")]
+        //[SwaggerResponse(HttpStatusCode.Forbidden, "Access Forbidden")]
+        //[SwaggerResponse(HttpStatusCode.ExpectationFailed, "Expectation Failed / Token Missing")]
+        //[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         [HttpPost]
         [ActionName("getassets")]
         public HttpResponseMessage GetAssets(string since = null)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            var response = new HttpResponseMessage();
 
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetAssets, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
-            Return _objRet = new Return();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            DateTime startTime;
+            startTime = DateTime.Now;
 
             AssetsInput AssetsInput = new AssetsInput();
             AssetsInput.since = since;
@@ -87,8 +89,9 @@ namespace RightsU.API.Controllers
                         {
                             _objRet.Message = "Since Date should not exceed more than " + BMS_API_Since_Days + " days.";
                             _objRet.IsSuccess = false;
+                            _objRet.StatusCode = HttpStatusCode.BadRequest;
                             objLog.Record_Status = "E";
-                            objLog.Error_Description = _objRet.Message;
+                            objLog.Error_Description = _objRet.Message;                            
                         }
                     }
                     catch (Exception ex)
@@ -104,44 +107,49 @@ namespace RightsU.API.Controllers
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                objLog.Request_Xml = JsonConvert.SerializeObject(AssetsInput);
-                objLog.Error_Description = _objRet.Message;
-                objLog.Record_Status = "E";
-                objLog.Response_Xml = JsonConvert.SerializeObject(lstAssetsResult);
-                objLog.Response_Time = DateTime.Now;
-                _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+                throw;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //objLog.Request_Xml = JsonConvert.SerializeObject(AssetsInput);
+                //objLog.Error_Description = _objRet.Message;
+                //objLog.Record_Status = "E";
+                //objLog.Response_Xml = JsonConvert.SerializeObject(lstAssetsResult);
+                //objLog.Response_Time = DateTime.Now;
+                //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
-                var response = Request.CreateResponse(HttpStatusCode.InternalServerError, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                //var response = Request.CreateResponse(HttpStatusCode.InternalServerError, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
 
-            objLog.Response_Xml = JsonConvert.SerializeObject(lstAssetsResult);
-            objLog.Response_Time = DateTime.Now;
-            _objRet.LogId = objBMSLogServices.InsertLog(objLog);
-
-
+            //objLog.Response_Xml = JsonConvert.SerializeObject(lstAssetsResult);
+            //objLog.Response_Time = DateTime.Now;
+            //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
             if (_objRet.IsSuccess)
             {
-                var response = Request.CreateResponse(HttpStatusCode.OK, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                _objRet.Response = lstAssetsResult;
+                //var response = Request.CreateResponse(HttpStatusCode.OK, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
-            else
-            {
-                var response = Request.CreateResponse(HttpStatusCode.BadRequest, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
-            }
+            //else
+            //{
+            //    var response = Request.CreateResponse(HttpStatusCode.BadRequest, new { AssetsData = lstAssetsResult }, Configuration.Formatters.JsonFormatter); ;
+            //    response.Headers.Add("LogId", _objRet.LogId.ToString());
+            //    response.Headers.Add("Message", _objRet.Message);
+            //    response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+            //    return response;
+            //}
+
+            _objRet.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(_objRet, true);
+
+            return response;
         }
 
         /// <summary>
@@ -151,26 +159,23 @@ namespace RightsU.API.Controllers
         /// <param name="since">Find deals updated after this date. Format is 'dd-MMM-yyyy'. If no value is given, the default value will be passed</param>
         /// <param name="assetId">AssetId used for fetching Deals Data for specific AssetId , Example:RUBMSA11</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealResult>))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealResult>))]
+        //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
+        //[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         //[AcceptVerbs("GET", "POST")]
         [HttpPost]
         [ActionName("getdeals")]
         public HttpResponseMessage GetDeals(string since = null, string assetId = null)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            var response = new HttpResponseMessage();
 
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDeals, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
-            Return _objRet = new Return();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            DateTime startTime;
+            startTime = DateTime.Now;
 
             DealsInput DealsInput = new DealsInput();
             DealsInput.since = since;
@@ -218,6 +223,7 @@ namespace RightsU.API.Controllers
                                     {
                                         _objRet.Message = "Invalid AssetId";
                                         _objRet.IsSuccess = false;
+                                        _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
@@ -231,6 +237,7 @@ namespace RightsU.API.Controllers
                                 {
                                     _objRet.Message = "Invalid AssetId";
                                     _objRet.IsSuccess = false;
+                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
@@ -240,6 +247,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Invalid AssetId";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -252,6 +260,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Since Date should not exceed more than " + BMS_API_Since_Days + " days.";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -271,44 +280,49 @@ namespace RightsU.API.Controllers
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                objLog.Request_Xml = JsonConvert.SerializeObject(DealsInput);
-                objLog.Record_Status = "E";
-                objLog.Error_Description = _objRet.Message;
-                objLog.Response_Xml = JsonConvert.SerializeObject(lstDealsResult);
-                objLog.Response_Time = DateTime.Now;
-                _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+                throw;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //objLog.Request_Xml = JsonConvert.SerializeObject(DealsInput);
+                //objLog.Record_Status = "E";
+                //objLog.Error_Description = _objRet.Message;
+                //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealsResult);
+                //objLog.Response_Time = DateTime.Now;
+                //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
-                var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new { DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                //var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new { DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
 
-            objLog.Response_Xml = JsonConvert.SerializeObject(lstDealsResult);
-            objLog.Response_Time = DateTime.Now;
-            _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+            //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealsResult);
+            //objLog.Response_Time = DateTime.Now;
+            //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
 
             if (_objRet.IsSuccess)
             {
-                var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                _objRet.Response = lstDealsResult;
+                //var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
-            else
-            {
-                var response= Request.CreateResponse(HttpStatusCode.BadRequest, new { DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
-            }
+            //else
+            //{
+            //    var response = Request.CreateResponse(HttpStatusCode.BadRequest, new { DealsData = lstDealsResult }, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("LogId", _objRet.LogId.ToString());
+            //    response.Headers.Add("Message", _objRet.Message);
+            //    response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+            //    return response;
+            //}
+            _objRet.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(_objRet, true);
 
+            return response;
 
         }
 
@@ -320,26 +334,23 @@ namespace RightsU.API.Controllers
         /// <param name="assetId">AssetId used for fetching deal contents Data for specific AssetId , Example:RUBMSA11</param>
         /// <param name="dealId">DealId used for fetching deal contents Data for specific DealId , Example:RUBMSD11</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealContentResult>))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealContentResult>))]
+        //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
+        //[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         //[AcceptVerbs("GET", "POST")]
         [HttpPost]
         [ActionName("getdealcontent")]
         public HttpResponseMessage GetDealContent(string since = null, string assetId = null, string dealId = null)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            var response = new HttpResponseMessage();
 
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealContent, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
-            Return _objRet = new Return();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            DateTime startTime;
+            startTime = DateTime.Now;
 
             DealContentInput DealContentInput = new DealContentInput();
             DealContentInput.since = since;
@@ -384,6 +395,7 @@ namespace RightsU.API.Controllers
                                     {
                                         _objRet.Message = "Invalid AssetId";
                                         _objRet.IsSuccess = false;
+                                        _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
@@ -397,6 +409,7 @@ namespace RightsU.API.Controllers
                                 {
                                     _objRet.Message = "Invalid AssetId";
                                     _objRet.IsSuccess = false;
+                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
@@ -406,6 +419,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Invalid AssetId";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -422,6 +436,7 @@ namespace RightsU.API.Controllers
                                     {
                                         _objRet.Message = "Invalid DealId";
                                         _objRet.IsSuccess = false;
+                                        _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
@@ -435,6 +450,7 @@ namespace RightsU.API.Controllers
                                 {
                                     _objRet.Message = "Invalid DealId";
                                     _objRet.IsSuccess = false;
+                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
@@ -444,6 +460,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Invalid DealId";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -457,6 +474,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Since Date should not exceed more than " + BMS_API_Since_Days + " days.";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -476,43 +494,48 @@ namespace RightsU.API.Controllers
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
-                objLog.Request_Xml = JsonConvert.SerializeObject(DealContentInput);
-                objLog.Record_Status = "E";
-                objLog.Error_Description = _objRet.Message;
-                objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
-                objLog.Response_Time = DateTime.Now;
-                _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+                throw;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
+                //objLog.Request_Xml = JsonConvert.SerializeObject(DealContentInput);
+                //objLog.Record_Status = "E";
+                //objLog.Error_Description = _objRet.Message;
+                //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
+                //objLog.Response_Time = DateTime.Now;
+                //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
-                var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new { DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                //var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new { DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
 
-            objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
-            objLog.Response_Time = DateTime.Now;
-            _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+            //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
+            //objLog.Response_Time = DateTime.Now;
+            //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
             if (_objRet.IsSuccess)
             {
-                var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                _objRet.Response = lstDealContentResult;
+                //var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
-            else
-            {
-                var response= Request.CreateResponse(HttpStatusCode.BadRequest, new {  DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
-            }
+            //else
+            //{
+            //    var response= Request.CreateResponse(HttpStatusCode.BadRequest, new {  DealContentData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("LogId", _objRet.LogId.ToString());
+            //    response.Headers.Add("Message", _objRet.Message);
+            //    response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+            //    return response;
+            //}
+            _objRet.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(_objRet, true);
 
+            return response;
         }
 
         /// <summary>
@@ -523,26 +546,23 @@ namespace RightsU.API.Controllers
         /// <param name="assetId">AssetId used for fetching deal rights Data for specific AssetId , Example:RUBMSA11</param>
         /// <param name="dealId">DealId used for fetching deal rights Data for specific DealId , Example:RUBMSD11</param>
         /// <returns></returns>
-        [SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealContentRightsResult>))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
+        //[SwaggerResponse(HttpStatusCode.OK, "Success", Type = typeof(List<DealContentRightsResult>))]
+        //[SwaggerResponse(HttpStatusCode.BadRequest, "Validation Error")]
+        //[SwaggerResponse(HttpStatusCode.InternalServerError, "Internal Server Error")]
         //[AcceptVerbs("GET", "POST")]
         [HttpPost]
         [ActionName("getdealrights")]
         public HttpResponseMessage GetDealRights(string since = null, string assetId = null, string dealId = null)
         {
-            //string authenticationToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("Authorization").FirstOrDefault()).Replace("Bearer ", "");
-            //string RefreshToken = Convert.ToString(HttpContext.Current.Request.Headers.GetValues("token").FirstOrDefault()).Replace("Bearer ", "");
+            var response = new HttpResponseMessage();
 
-            //if (!objSystemModuleServices.hasModuleRights(GlobalParams.BMS_GetDealRights, authenticationToken, RefreshToken))
-            //{
-            //    HttpContext.Current.Response.AddHeader("AuthorizationStatus", "Forbidden");
-            //    return Request.CreateResponse(HttpStatusCode.Forbidden, "Access Forbidden");
-            //}
-
-            Return _objRet = new Return();
+            GenericReturn _objRet = new GenericReturn();
             _objRet.Message = "Success";
             _objRet.IsSuccess = true;
+            _objRet.StatusCode = HttpStatusCode.OK;
+
+            DateTime startTime;
+            startTime = DateTime.Now;
 
             DealContentRightsInput DealContentRightsInput = new DealContentRightsInput();
             DealContentRightsInput.since = since;
@@ -556,7 +576,7 @@ namespace RightsU.API.Controllers
             objLog.Record_Status = "D";
             objLog.Request_Xml = JsonConvert.SerializeObject(DealContentRightsInput);
 
-            List<DealContentRightsResult> lstDealContentResult = new List<DealContentRightsResult>();
+            List<DealContentRightsResult> lstDealContentRightsResult = new List<DealContentRightsResult>();
             try
             {
                 Int32 BMS_API_Since_Days = 0;
@@ -587,6 +607,7 @@ namespace RightsU.API.Controllers
                                     {
                                         _objRet.Message = "Invalid AssetId";
                                         _objRet.IsSuccess = false;
+                                        _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
@@ -600,6 +621,7 @@ namespace RightsU.API.Controllers
                                 {
                                     _objRet.Message = "Invalid AssetId";
                                     _objRet.IsSuccess = false;
+                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
@@ -609,6 +631,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Invalid AssetId";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -625,6 +648,7 @@ namespace RightsU.API.Controllers
                                     {
                                         _objRet.Message = "Invalid DealId";
                                         _objRet.IsSuccess = false;
+                                        _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
@@ -638,6 +662,7 @@ namespace RightsU.API.Controllers
                                 {
                                     _objRet.Message = "Invalid DealId";
                                     _objRet.IsSuccess = false;
+                                    _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
@@ -647,6 +672,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Invalid DealId";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -660,6 +686,7 @@ namespace RightsU.API.Controllers
                             {
                                 _objRet.Message = "Since Date should not exceed more than " + BMS_API_Since_Days + " days.";
                                 _objRet.IsSuccess = false;
+                                _objRet.StatusCode = HttpStatusCode.BadRequest;
 
                                 objLog.Record_Status = "E";
                                 objLog.Error_Description = _objRet.Message;
@@ -674,48 +701,54 @@ namespace RightsU.API.Controllers
 
                 if (_objRet.IsSuccess)
                 {
-                    lstDealContentResult = objBMSServices.GetDealContentRights(DealContentRightsInput.since, DealContentRightsInput.assetId, DealContentRightsInput.dealId);
+                    lstDealContentRightsResult = objBMSServices.GetDealContentRights(DealContentRightsInput.since, DealContentRightsInput.assetId, DealContentRightsInput.dealId);
                 }
             }
             catch (Exception ex)
             {
-                _objRet.Message = ex.Message;
-                _objRet.IsSuccess = false;
+                throw;
+                //_objRet.Message = ex.Message;
+                //_objRet.IsSuccess = false;
 
-                objLog.Request_Xml = JsonConvert.SerializeObject(DealContentRightsInput);
-                objLog.Record_Status = "E";
-                objLog.Error_Description = _objRet.Message;
-                objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
-                objLog.Response_Time = DateTime.Now;
-                _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+                //objLog.Request_Xml = JsonConvert.SerializeObject(DealContentRightsInput);
+                //objLog.Record_Status = "E";
+                //objLog.Error_Description = _objRet.Message;
+                //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentRightsResult);
+                //objLog.Response_Time = DateTime.Now;
+                //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
-                var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new {  DealRightsData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                //var response= Request.CreateResponse(HttpStatusCode.InternalServerError, new {  DealRightsData = lstDealContentRightsResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
 
-            objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentResult);
-            objLog.Response_Time = DateTime.Now;
-            _objRet.LogId = objBMSLogServices.InsertLog(objLog);
+            //objLog.Response_Xml = JsonConvert.SerializeObject(lstDealContentRightsResult);
+            //objLog.Response_Time = DateTime.Now;
+            //_objRet.LogId = objBMSLogServices.InsertLog(objLog);
 
             if (_objRet.IsSuccess)
             {
-                var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealRightsData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
+                _objRet.Response = lstDealContentRightsResult;
+                //var response= Request.CreateResponse(HttpStatusCode.OK, new {  DealRightsData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
+                //response.Headers.Add("LogId", _objRet.LogId.ToString());
+                //response.Headers.Add("Message", _objRet.Message);
+                //response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+                //return response;
             }
-            else
-            {
-                var response= Request.CreateResponse(HttpStatusCode.BadRequest, new {  DealRightsData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
-                response.Headers.Add("LogId", _objRet.LogId.ToString());
-                response.Headers.Add("Message", _objRet.Message);
-                response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
-                return response;
-            }
+            //else
+            //{
+            //    var response= Request.CreateResponse(HttpStatusCode.BadRequest, new {  DealRightsData = lstDealContentResult }, Configuration.Formatters.JsonFormatter);
+            //    response.Headers.Add("LogId", _objRet.LogId.ToString());
+            //    response.Headers.Add("Message", _objRet.Message);
+            //    response.Headers.Add("IsSuccess", _objRet.IsSuccess.ToString());
+            //    return response;
+            //}
+            _objRet.TimeTaken = DateTime.Now.Subtract(startTime).TotalMilliseconds;
+            response = CreateResponse(_objRet, true);
+
+            return response;
         }
     }
 
