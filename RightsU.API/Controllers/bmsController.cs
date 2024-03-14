@@ -13,11 +13,11 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Web;
 using System.Web.Http;
+using System.ComponentModel;
 
 namespace RightsU.API.Controllers
 {
-    [SwaggerConsumes("application/json")]
-    [SwaggerProduces("application/json")]
+    [DisplayName("BMS Integration")]
     [HideInDocs]
     public class bmsController : ApiController
     {
