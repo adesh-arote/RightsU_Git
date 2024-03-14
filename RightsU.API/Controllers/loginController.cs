@@ -70,7 +70,7 @@ namespace RightsU.API.Controllers
 
                         if (Count > 0)
                         {
-                            var obj1 = new { LoginName = authorizeViewModel.UserName, AccessToken= token.access_token, RefreshToken= token.refresh_token };
+                            var obj1 = new { LoginName = authorizeViewModel.UserName, AccessToken = token.access_token, RefreshToken = token.refresh_token };
                             var CountForCurrentUser = objLoggedInUsersServices.SearchFor(obj1).ToList();
 
                             if (CountForCurrentUser.Count() == 0)
@@ -137,18 +137,21 @@ namespace RightsU.API.Controllers
                     else
                     {
                         HttpContext.Current.Response.AddHeader("AuthenticationStatus", "NotAuthorized");
-                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid Credentials");                        
+                        return Request.CreateResponse(HttpStatusCode.Unauthorized, "Invalid Credentials");
                     }
 
                 }
-                
+
                 return Request.CreateResponse(HttpStatusCode.Created, outputToken, Configuration.Formatters.JsonFormatter);
             }
-            //catch (Exception ex)
-            //{
-            //    httpResponses = httpResponseMapper.GetHttpFailureResponse("Error");
-            //    return Request.CreateResponse(HttpStatusCode.BadRequest, httpResponses);
-            //}
+            catch (Exception ex)
+            {
+                var response = new HttpResponseMessage();
+                response.Headers.Add("error", ex.Message);
+
+                //httpResponses = httpResponseMapper.GetHttpFailureResponse("Error");
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, response);
+            }
             finally
             {
 
