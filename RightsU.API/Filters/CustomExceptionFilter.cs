@@ -35,15 +35,15 @@ namespace RightsU.API.Filters
             logObj.RequestId = HttpContext.Current.Request.Headers["LogRequestId"]; //Guid.NewGuid().ToString();
             logObj.RequestUri = actionExecutedContext.Request.RequestUri.AbsoluteUri;
             logObj.RequestMethod = actionExecutedContext.Request.RequestUri.AbsolutePath;
-
-            if (actionExecutedContext.Request.Method.Method == "GET")
-            {
-                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);                
-            }
-            else
-            {
-                logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                
-            }
+            logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
+            //if (actionExecutedContext.Request.Method.Method == "GET")
+            //{
+            //    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments);
+            //}
+            //else
+            //{
+            //    logObj.RequestContent = JsonConvert.SerializeObject(actionExecutedContext.ActionContext.ActionArguments["Input"]);                
+            //}
             logObj.IsSuccess = false.ToString();
             logObj.TimeTaken = "0";
             logObj.RequestLength = Convert.ToString(logObj.RequestContent.ToString().Length);
@@ -73,7 +73,7 @@ namespace RightsU.API.Filters
             actionExecutedContext.Response = response;
             actionExecutedContext.Response.Headers.Add("requestid", logObj.RequestId);
             actionExecutedContext.Response.Headers.Add("message", "Internal Server Error.Please Contact your Administrator.");
-            actionExecutedContext.Response.Headers.Add("issuccess", "False");
+            actionExecutedContext.Response.Headers.Add("request_completion", "False");
 
             #endregion
 
