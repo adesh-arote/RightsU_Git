@@ -55,8 +55,8 @@ BEGIN
   
  if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_INSERT_SYN_DEAL]', 'Step 1', 0, 'Started Procedure', 0, ''  
  INSERT INTO [Syn_Deal]  
-      ([Agreement_No]  
-      ,[Deal_Type_Code]  
+      --([Agreement_No]  
+      ([Deal_Type_Code]  
       ,[Business_Unit_Code]  
       ,[Other_Deal]  
       ,[Version]  
@@ -97,8 +97,9 @@ BEGIN
       ,[Deal_Segment_Code]  
       ,[Revenue_Vertical_Code]
 	  ,[Material_Remarks])  
-   SELECT [dbo].[UFN_Auto_Genrate_Agreement_No]('S', @Agreement_Date, 0) [Agreement_No]  
-      ,@Deal_Type_Code  
+   --SELECT [dbo].[UFN_Auto_Genrate_Agreement_No]('S', @Agreement_Date, 0) [Agreement_No]  
+       SELECT
+	   @Deal_Type_Code  
       ,@Business_Unit_Code  
       ,@Other_Deal             
       ,@Version  

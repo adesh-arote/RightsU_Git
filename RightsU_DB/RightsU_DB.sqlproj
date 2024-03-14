@@ -1705,8 +1705,8 @@
     <Build Include="dbo\Stored Procedures\USP_BuybackRightsInsert.sql" />
     <Build Include="dbo\Stored Procedures\USP_BuyBackRights_List.sql" />
     <Build Include="dbo\Stored Procedures\USP_BMS_Upload_Data.sql" />
-    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule2_Process.sql" />
-    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule1_Validate_Temp_BV_Schedule.sql" />
+    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule_Neo_Process.sql" />
+    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule_Neo_Validate.sql" />
     <Build Include="dbo\Stored Procedures\USP_BMS_Insert_Log.sql" />
     <Build Include="dbo\Stored Procedures\USP_BMS_GetDeals.sql" />
     <Build Include="dbo\Stored Procedures\USP_BMS_GetDealContentsRights.sql" />
@@ -1758,6 +1758,7 @@
     <Build Include="dbo\Stored Procedures\USPAPI_ROFR_List.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_Sub_License.sql" />
     <Build Include="dbo\Stored Procedures\USPAPI_List_Acq.sql" />
+    <Build Include="dbo\Stored Procedures\USP_BMS_Schedule_Neo_Notification.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="RightsU_DB.refactorlog" />

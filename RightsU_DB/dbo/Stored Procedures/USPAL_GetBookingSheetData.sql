@@ -124,7 +124,7 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT @query = 'SELECT * INTO #TempFinalResult FROM (SELECT (SELECT TOP 1 ISNULL(Rule_Short_Name,'''') FROM AL_Vendor_Rule WHERE Rule_Name COLLATE SQL_Latin1_General_CP1_CI_AS = neo.[Title Category]) AS OrderByShortName, ' + @ColNames + ' FROM (Select Title_Content_Code, '+@ColNames+' from ( Select tb.Title_Content_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value from #TempBookingData tb ) a
-					pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS neo ) AS T ORDER BY OrderByShortName, [Display Order] ALTER TABLE #TempFinalResult DROP COLUMN OrderByShortName SELECT * FROM #TempFinalResult'
+					pivot (max(Columns_Value) for Columns_Name in ('+@ColNames+')) p) AS neo ) AS T ORDER BY OrderByShortName, [TITLE] ALTER TABLE #TempFinalResult DROP COLUMN OrderByShortName SELECT * FROM #TempFinalResult'
 	END
 
 	EXEC (@query)

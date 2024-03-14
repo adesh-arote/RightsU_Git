@@ -4,7 +4,18 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
+@{
+    LoginEntity objLoginEntity = new LoginEntity();
+    if (Session["objLoginEntity"] != null)
+    {
+        objLoginEntity = (LoginEntity)Session["objLoginEntity"];
+    }
+    MessageKey objMessageKey = new MessageKey();
+    if (Session["objMessageKey"] != null)
+    {
+        objMessageKey = (MessageKey)Session["objMessageKey"];
+    }
+}
 <link type="text/css" rel="stylesheet" href="~/css/chosen.min.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" />
 <link href="~/CSS/sumoselect.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
 <link href="~/CSS/AvailabilityRightPanel.css?v=@System.Configuration.ConfigurationManager.AppSettings["Version_No"]" rel="stylesheet" />
@@ -113,7 +124,7 @@
         moduleCode= '@ViewBag.Code';
     });
     function BindDealType() {
-       
+
             debugger;
             $.ajax({
                 type: "POST",
@@ -135,11 +146,11 @@
                                 $("#ddlSrchDealType").append($("<option>").val(this.Display_Value).text(this.Display_Text));
 
                         });
-                        
+
                             var obj_Search = $(result.Obj_Acq_Syn_List_Search);
                             $("#ddlSrchDealType").trigger("chosen:updated");
-                        
-                       
+
+
                     }
                 },
                 error: function (result) {
@@ -3172,7 +3183,7 @@
        var searchText = $("#searchCommon").val();
         var BU_Code = $("#ddlBusinessUnit").val();
         var a = $('#ddlTitleList').val();
-        var dealTypeCode = $('#ddlSrchDealType').val();  
+        var dealTypeCode = $('#ddlSrchDealType').val();
 
         $("#searchCommon").autocomplete({
             focus: function () {
@@ -3628,7 +3639,7 @@
                         @*class="right_nav pull-right"*@
                         <table>
                             <tr>
-                                <td style="width:100px"><label class="bold">Content Category</label></td>
+                                <td style="width:100px"><label class="bold">@objMessageKey.BusinessUnit</label></td>
                                 <td style="width:176px">
                                     @Html.DropDownList("BusinessUnit", (List<SelectListItem>)ViewBag.BusinessUnitList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select", @onchange = "BindTitleList()" })
 
@@ -3727,7 +3738,7 @@
                         @*</div>*@
                         @if (ViewBag.Is_Allow_Avail_Deal_Type_Title == "Y")
                         {
-                        <select id="ddlSrchDealType" class="form_input chosen-select"></select>
+                            <select id="ddlSrchDealType" class="form_input chosen-select"></select>
                         }
                         <div style="text-align:left;margin-top: 7px;">
                             <input type="text" placeholder="Title, Talent, StarCast, Genre, Director, Year of Production" style="width:430px; border-radius:3px;" class="search" name="srchCommon" id="searchCommon"
@@ -3736,7 +3747,7 @@
 
                             <input type="hidden" name="" value="" id="hdnsearchTitleCode" />
                         </div>
-                                      
+
                         <br />
                         @if (Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForIndiacastMovieAvailabilityReport || Convert.ToInt32(ViewBag.Code) == GlobalParams.ModuleCodeForTheatricalAvailabilityReport)
                         {
