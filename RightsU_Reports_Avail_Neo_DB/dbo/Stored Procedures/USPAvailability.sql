@@ -50,6 +50,8 @@ BEGIN
 	SET NOCOUNT ON;
 	SET FMTONLY OFF;
 
+	--SELECT @TitleCodes='564', @EpisodeFrom='0', @EpisodeTo='0', @DateType='FL', @StartDate='2023-12-21', @EndDate='', @PlatformCodes='0,0,19,20,0,0,83,85,0,87,89,0,0,90,91,92,0,217,219,221,223,224,225,226,94,0,0,95,96,97,98,99,100,101,102,103,0,0,227,228,229,230,231,232,105,106,107,109,0,0,110,111,112,113,114,115,116,117,118,119,0,0,233,234,235,236,237,238,121,122,0,0,123,0,239,240,241,242,125,0,243,244,245,246,247,248,249,0,0,250,251,252,253,254,255,128,0,0,129,130,0,256,257,132,0,133,134,0,258,259,136,0,0,137,138,139,140,141,0,142,143,144,145,146,0,0,147,148,149,150,151,0,152,153,154,155,156,0,36,37,38,39,40,41,42,43,44,45,46,0,157,158,0,48,49,50,51,52,53,54,0,159,160,161,162,0,0,163,164,0,165,166,0,167,168,59,60,61,0,169,170,171,63,64,65,66,0,0,172,0,260,261,174,175,0,262,263,264,265,177,0,0,266,267,268,269,270,271,179,0,272,273,274,181,182,183,0,275,276,277,278,185,0,0,186,187,188,189,0,279,280,191,192,0,0,281,282,283,284,285,286,194,0,0,0,287,288,196,0,0,0,289,290,291,0,292,293,294,0,199,0,200,0,295,296,297,298,299,300,301,0,202,0,302,303,304,305,306,307,308,309,310,0,204,205,0,206,0,311,312,313,314,315,316,317,0,208,0,318,319,320,321,322,323,324,0,210,0,325,326,327,328,329,330,331,80,0,0,0,332,333,213,214,215,0,0,334,335,218,220,222,0,84,86,88', @ExactMatchPlatforms='', @MustHavePlatforms='0', @IsIFTACluster='Y', @TerritoryCodes='0', @CountryCodes='0,45,258,143,259,260,219,144,261,146,10,147,64,5,220,221,49,72,148,218,26,150,222,262,68,151,152,216,76,153,70,263,223,224,155,225,61,156,253,157,158,17,264,265,159,160,266,161,22,162,163,33,23,257,25,164,165,166,74,167,168,169,267,226,227,268,170,269,270,271,59,40,6,228,272,273,229,230,274,4,171,275,32,276,172,173,277,174,231,232,175,53,278,176,57,31,279,42,18,56,19,62,11,29,233,177,13,178,9,179,280,281,69,180,282,182,283,235,183,284,285,236,237,286,287,2,184,238,239,288,240,241,20,289,185,326,290,186,217,187,21,291,60,188,292,54,3,293,294,65,189,243,190,295,191,296,297,35,50,55,298,77,299,192,181,193,300,301,36,30,302,51,256,303,242,304,7,8,194,305,199,201,306,307,247,52,308,248,37,195,249,47,24,309,310,196,46,197,311,28,27,198,200,202,250,251,312,39,203,204,14,205,41,254,255,252,313,314,315,207,208,34,209,210,316,211,12,48,43,212,213,317,325,214,73,154,318,319,320,321,215,322,323', @ExactMatchCountry='', @MustHaveCountry='', @ExclusionCountry='', @IsTitleLanguage='1', @TitleLanguageCode='0', @DubbingSubtitling='S,D', @SubtitlingGroupCodes='G1', @SubtitlingCodes='0,77,117,78,2,1159,10,55,1167,65,79,17,80,76,42,1136,56,1133,1146,48,1163,1165,73,118,70,68,81,82,1130,1184,1162,128,83,19,20,22,126,127,84,63,1168,4,119,37,1141,1181,1126,35,6,85,86,120,5,28,41,1134,87,88,66,1169,89,11,90,43,1170,1,1132,1137,91,27,92,93,1144,1152,1151,1150,25,13,67,94,51,1139,62,1171,9,59,95,96,97,61,1172,15,72,121,1182,1183,1149,122,98,1164,1166,99,46,3,1140,123,45,58,1173,38,1142,57,100,101,102,124,74,103,49,1174,1147,30,54,1127,1175,1161,104,1180,69,18,1148,31,26,47,1143,105,1131,1185,7,8,1145,1176,64,1128,1177,106,32,1153,1154,1156,107,50,60,1178,23,1160,1158,21,75,24,108,33,34,109,110,14,125,39,1138,40,1135,36,1129,1157,1187,29,12,53,1179,111,71,52,1186,112,113,114,1155,115,116', @ExactMatchSubtitling='          ', @MustHaveSubtitling='0', @ExclusionSubtitling='', @DubbingGroupCodes='G1', @DubbingCodes='0,77,117,78,2,1159,10,55,1167,65,79,17,80,76,42,1136,56,1133,1146,48,1163,1165,73,118,70,68,81,82,1130,1184,1162,128,83,19,20,22,126,127,84,63,1168,4,119,37,1141,1181,1126,35,6,85,86,120,5,28,41,1134,87,88,66,1169,89,11,90,43,1170,1,1132,1137,91,27,92,93,1144,1152,1151,1150,25,13,67,94,51,1139,62,1171,9,59,95,96,97,61,1172,15,72,121,1182,1183,1149,122,98,1164,1166,99,46,3,1140,123,45,58,1173,38,1142,57,100,101,102,124,74,103,49,1174,1147,30,54,1127,1175,1161,104,1180,69,18,1148,31,26,47,1143,105,1131,1185,7,8,1145,1176,64,1128,1177,106,32,1153,1154,1156,107,50,60,1178,23,1160,1158,21,75,24,108,33,34,109,110,14,125,39,1138,40,1135,36,1129,1157,1187,29,12,53,1179,111,71,52,1186,112,113,114,1155,115,116', @ExactMatchDubbing='          ', @MustHaveDubbing='0', @ExclusionDubbing='', @Exclusivity='B', @SubLicenseCode='', @RestrictionRemarks='True', @OthersRemarks='True', @BUCode='0', @IsDigital='0', @L1Output='N', @ReportType='M'
+
 	INSERT INTO TestParam(Params, ProcType)
 	SELECT '@TitleCodes=''' + CAST(@TitleCodes AS VARCHAR(MAX)) +
 	''', @EpisodeFrom=''' + CAST(ISNULL(@EpisodeFrom, '') AS VARCHAR(MAX)) +
@@ -108,6 +110,15 @@ BEGIN
 		SET @OthersRemarks = 'Y'
 	ELSE
 		SET @OthersRemarks = 'N'
+		
+	IF(@CountryCodes LIKE '%T%')
+		SET @CountryCodes = ''
+
+	IF(@SubtitlingCodes LIKE '%G%')
+		SET @SubtitlingCodes = ''
+
+	IF(@DubbingCodes LIKE '%G%')
+		SET @DubbingCodes = ''
 
 	-- Title Language bit operator = 1 = Available / 0 = Not Aavailable
 	
@@ -280,7 +291,7 @@ BEGIN
 			Episode_From INT,
 			Episode_To INT,
 			Avail_Dates_Code INT,
-			Is_Exclusive BIT,
+			Is_Exclusive INT,
 			Avail_Platform_Code INT,
 			Avail_Country_Code INT,
 			Is_Theatrical BIT,
@@ -295,7 +306,7 @@ BEGIN
 			Title_Code INT, 
 			Episode_From INT,
 			Episode_To INT,
-			Is_Exclusive BIT,
+			Is_Exclusive INT,
 			Platform_Code INT,
 			Available VARCHAR(50), 
 			Avail_Country_Code INT,
@@ -310,7 +321,12 @@ BEGIN
 			Holdback_On_Platform_Code INT,
 			Country_Cd_Str VARCHAR(MAX),
 			ClusterNames NVARCHAR(MAX),
-			RegionName NVARCHAR(MAX) 
+			RegionName NVARCHAR(MAX),
+			Objection_Platform NVARCHAR(MAX) default ' ~ ',
+			Objection_Region NVARCHAR(MAX),
+			Objection_Start_Date DATETIME,
+			Objection_End_Date DATETIME,
+			Under_Litigation  NVARCHAR(MAX) DEFAULT 'No'
 		)
 	
 		CREATE TABLE #TempMainL1(
@@ -319,7 +335,7 @@ BEGIN
 			Title_Code INT, 
 			Episode_From INT,
 			Episode_To INT,
-			Is_Exclusive BIT,
+			Is_Exclusive INT,
 			Platform_Code INT, 
 			Avail_Country_Code INT,
 			Start_Date DATE,
@@ -368,7 +384,8 @@ BEGIN
 			Remarks VARCHAR(4000), 
 			Rights_Remarks VARCHAR(4000),
 			Sub_Deal_Restriction_Remark VARCHAR(8000), 
-			Sub_License_Name VARCHAR(100)
+			Sub_License_Name VARCHAR(100),
+			CoExclusive_Remark VARCHAR(8000)
 		)
 		
 		CREATE TABLE #TempTitlesInfo
@@ -395,7 +412,7 @@ BEGIN
 			Title_Code INT, 
 			Episode_From INT,
 			Episode_To INT,
-			Is_Exclusive BIT,
+			Is_Exclusive INT,
 			Platform_Code INT, 
 			Country_Code INT,
 			Start_Date DATE,
@@ -469,6 +486,12 @@ BEGIN
 			ReverseHoldback NVARCHAR(MAX),
 			SelfUtilizationGroup NVARCHAR(MAX),
 			SelfUtilizationRemarks NVARCHAR(MAX),
+			ObjectionPlatform NVARCHAR(MAX) default ' ~ ',
+			ObjectionRegion NVARCHAR(MAX),
+			ObjectionStartDate NVARCHAR(MAX),
+			ObjectionEndDate NVARCHAR(MAX),
+			UnderLitigation  NVARCHAR(MAX) DEFAULT 'No',
+			CoExclusive_Remark VARCHAR(8000),
 			PL_1 NVARCHAR(1000),
 			PL_2 NVARCHAR(1000),
 			PL_3 NVARCHAR(1000),
@@ -948,7 +971,7 @@ BEGIN
 		BEGIN----------------- TITLE SEARCH IMPLEMENTATION 
 
 			INSERT INTO #SearchTitle(TitleCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@TitleCodes, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@TitleCodes, ',') WHERE [number] NOT IN('0', '')
 		
 			DELETE FROM #SearchTitle WHERE TitleCode = 0
 
@@ -963,7 +986,7 @@ BEGIN
 		BEGIN ----------------- SUBLICENSE SEARCH 
 
 			INSERT INTO #SearchSubLicense(SubLicenseCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@SubLicenseCode, ',') WHERE ISNULL([value], 0) NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@SubLicenseCode, ',') WHERE ISNULL([number], 0) NOT IN('0', '')
 		
 			IF NOT EXISTS(SELECT TOP 1 * FROM #SearchSubLicense)
 			BEGIN
@@ -1001,7 +1024,7 @@ BEGIN
 		END
 
 		INSERT INTO @DealType(DealTypeCode)
-		SELECT CAST(LTRIM(RTRIM(ISNULL([value], 0))) AS INT) FROM STRING_SPLIT(@DealTypes, ',')
+		SELECT CAST(LTRIM(RTRIM(ISNULL([number], 0))) AS INT) FROM fn_Split_withdelemiter(@DealTypes, ',')
 
 		INSERT INTO #AvailTitleData(Acq_Deal_Code, Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, Avail_Dates_Code, Is_Exclusive, 
 									Avail_Platform_Code, Avail_Country_Code, Is_Theatrical, Is_Title_Language, Avail_Subtitling_Code, Avail_Dubbing_Code)
@@ -1058,10 +1081,10 @@ BEGIN
 		BEGIN ----------------- PLATFORM SEARCH / MUST HAVE / EXACT MATCH IMPLEMENTATION 
 
 			INSERT INTO #SearchPlatform(PlatformCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@PlatformCodes,',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@PlatformCodes,',') WHERE [number] NOT IN('0', '')
 	
 			INSERT INTO #SearchPlatformMH(PlatformCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@MustHavePlatforms, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@MustHavePlatforms, ',') WHERE [number] NOT IN('0', '')
 			
 			DELETE FROM #SearchPlatform WHERE PlatformCode = 0
 			DELETE FROM #SearchPlatformMH WHERE PlatformCode = 0
@@ -1145,7 +1168,7 @@ BEGIN
 		BEGIN ----------------- COUNTRY SEARCH / MUST HAVE / EXACT MATCH IMPLEMENTATION 
 		
 			INSERT INTO #SearchCountry(CountryCode)
-			SELECT DISTINCT [value] FROM STRING_SPLIT(@CountryCodes , ',') WHERE [value] NOT IN('0')
+			SELECT DISTINCT [number] FROM fn_Split_withdelemiter(@CountryCodes , ',') WHERE [number] NOT IN('0')
 			
 			DELETE FROM #SearchCountry WHERE CountryCode = 0
 	
@@ -1168,12 +1191,12 @@ BEGIN
 
 					INSERT INTO #SearchCountry(CountryCode)
 					SELECT DISTINCT Country_Code FROM Territory_Details td WHERE td.Territory_Code IN (
-						SELECT [value] FROM STRING_SPLIT(@TerritoryCodes, ',') WHERE [value] NOT IN('0')
+						SELECT [number] FROM fn_Split_withdelemiter(@TerritoryCodes, ',') WHERE [number] NOT IN('0')
 					) AND td.Country_Code NOT IN (
 						SELECT tc.CountryCode FROM #SearchCountry tc
 					)
 					AND td.Country_Code IN (SELECT c.Country_Code FROM Country c WHERE ISNULL(c.Is_Active,'N')='Y')
-					AND td.Country_Code NOT IN (SELECT [value] FROM STRING_SPLIT(@ExclusionCountry, ',') WHERE [value] NOT IN ( '0', ''))
+					AND td.Country_Code NOT IN (SELECT [number] FROM fn_Split_withdelemiter(@ExclusionCountry, ',') WHERE [number] NOT IN ( '0', ''))
 
 				END
 				ELSE IF(@IsIFTACluster = 'Y')
@@ -1181,17 +1204,17 @@ BEGIN
 		
 					INSERT INTO #SearchCountry(CountryCode)
 					SELECT DISTINCT Country_Code FROM Report_Territory_Country td WHERE td.Report_Territory_Code IN (
-						SELECT [value] FROM STRING_SPLIT(@TerritoryCodes, ',') WHERE [value] NOT IN('0')
+						SELECT [number] FROM fn_Split_withdelemiter(@TerritoryCodes, ',') WHERE [number] NOT IN('0')
 					) AND td.Country_Code NOT IN (
 						SELECT tc.CountryCode FROM #SearchCountry tc
 					)
 					AND td.Country_Code IN (SELECT c.Country_Code FROM Country c WHERE ISNULL(c.Is_Active,'N')='Y')
-					AND td.Country_Code NOT IN (SELECT [value] FROM STRING_SPLIT(@ExclusionCountry, ',') WHERE [value] NOT IN ( '0', ''))
+					AND td.Country_Code NOT IN (SELECT [number] FROM fn_Split_withdelemiter(@ExclusionCountry, ',') WHERE [number] NOT IN ( '0', ''))
 
 				END
 			
 				INSERT INTO #SearchCountryMH(CountryCode)
-				SELECT CAST([value] AS INT) FROM STRING_SPLIT(@MustHaveCountry, ',') WHERE [value] NOT IN('0', '')
+				SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@MustHaveCountry, ',') WHERE [number] NOT IN('0', '')
 			
 				DELETE FROM #SearchCountryMH WHERE CountryCode = 0
 	
@@ -1201,7 +1224,7 @@ BEGIN
 
 				DECLARE CurCountry CURSOR FOR SELECT CountryCode FROM #SearchCountry
 												WHERE CountryCode Not In (
-													SELECT CAST([value] AS INT) [value] FROM STRING_SPLIT(@ExclusionCountry, ',')
+													SELECT CAST([number] AS INT) [value] FROM fn_Split_withdelemiter(@ExclusionCountry, ',')
 												)
 												ORDER BY Cast(CountryCode AS VARCHAR(10)) ASC
 				OPEN CurCountry
@@ -1266,35 +1289,35 @@ BEGIN
 				   @DubbingCodes = LTRIM(RTRIM(@DubbingCodes)), @DubbingGroupCodes = LTRIM(RTRIM(@DubbingGroupCodes))
 		
 			INSERT INTO #SearchTitleLanguage(LanguageCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@TitleLanguageCode,',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@TitleLanguageCode,',') WHERE [number] NOT IN('0', '')
 			
 			INSERT INTO #SearchSubtitling(LanguageCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@SubtitlingCodes, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@SubtitlingCodes, ',') WHERE [number] NOT IN('0', '')
 	
 			INSERT INTO #SearchSubtitling(LanguageCode)
 			SELECT DISTINCT Language_Code FROM Language_Group_Details td WHERE td.Language_Group_Code IN (
-				SELECT [value] FROM STRING_SPLIT(@SubtitlingGroupCodes, ',') WHERE [value] NOT IN('0')
+				SELECT [number] FROM fn_Split_withdelemiter(@SubtitlingGroupCodes, ',') WHERE [number] NOT IN('0')
 			) AND td.Language_Code NOT IN (
 				SELECT tc.LanguageCode FROM #SearchSubtitling tc
 			)
 			AND td.Language_Code IN (SELECT l.Language_Code FROM Language l WHERE ISNULL(l.Is_Active, 'N') = 'Y')
 
 			INSERT INTO #SearchDubbing(LanguageCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@DubbingCodes, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@DubbingCodes, ',') WHERE [number] NOT IN('0', '')
 	
 			INSERT INTO #SearchDubbing(LanguageCode)
 			SELECT DISTINCT Language_Code FROM Language_Group_Details td WHERE td.Language_Group_Code IN (
-				SELECT [value] FROM STRING_SPLIT(@DubbingGroupCodes, ',') WHERE [value] NOT IN('0')
+				SELECT [number] FROM fn_Split_withdelemiter(@DubbingGroupCodes, ',') WHERE [number] NOT IN('0')
 			) AND td.Language_Code NOT IN (
 				SELECT tc.LanguageCode FROM #SearchDubbing tc
 			)
 			AND td.Language_Code IN (SELECT l.Language_Code FROM Language l WHERE ISNULL(l.Is_Active, 'N') = 'Y')
 
 			INSERT INTO #SearchSubtitlingMH(LanguageCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@MustHaveSubtitling, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@MustHaveSubtitling, ',') WHERE [number] NOT IN('0', '')
 	
 			INSERT INTO #SearchDubbingMH(LanguageCode)
-			SELECT CAST([value] AS INT) FROM STRING_SPLIT(@MustHaveDubbing, ',') WHERE [value] NOT IN('0', '')
+			SELECT CAST([number] AS INT) FROM fn_Split_withdelemiter(@MustHaveDubbing, ',') WHERE [number] NOT IN('0', '')
 	
 			DELETE FROM #SearchTitleLanguage WHERE LanguageCode = 0
 			DELETE FROM #SearchSubtitling WHERE LanguageCode = 0
@@ -1311,7 +1334,7 @@ BEGIN
 
 				DECLARE CurLanguage CURSOR FOR SELECT LanguageCode FROM #SearchSubtitling 
 												WHERE LanguageCode Not In (
-													SELECT CAST([value] AS INT) [value] FROM STRING_SPLIT(@ExclusionSubtitling, ',')
+													SELECT CAST([number] AS INT) [number] FROM fn_Split_withdelemiter(@ExclusionSubtitling, ',')
 												)
 												ORDER BY Cast(LanguageCode AS VARCHAR(10)) ASC
 				OPEN CurLanguage
@@ -1370,7 +1393,7 @@ BEGIN
 
 				DECLARE CurLanguage CURSOR FOR SELECT LanguageCode FROM #SearchDubbing 
 												WHERE LanguageCode Not In (
-													SELECT CAST([value] AS INT) [value] FROM STRING_SPLIT(@ExclusionDubbing,',')
+													SELECT CAST([number] AS INT) [number] FROM fn_Split_withdelemiter(@ExclusionDubbing,',')
 												)
 												ORDER BY Cast(LanguageCode AS VARCHAR(10)) ASC
 				OPEN CurLanguage
@@ -1488,6 +1511,25 @@ BEGIN
 		END
 
 	END
+	
+	--IF(@DisplayCoExRemarks = 1)
+	--BEGIN
+
+	--	UPDATE trrOut
+	--	SET trrOut.CoExclusive_Remark =  STUFF
+	--	(
+	--		(
+	--			SELECT DISTINCT ',' + ISNULL(sdr.CoExclusive_Remarks, '')
+	--			FROM #TempRightRemarks trr
+	--			INNER JOIN Syn_Acq_Mapping sam ON trr.Acq_Deal_Rights_Code = sam.Deal_Rights_Code
+	--			INNER JOIN Syn_Deal_Rights sdr ON sam.Syn_Deal_Rights_Code = sdr.Syn_Deal_Rights_Code AND sdr.Is_Exclusive = 'C'
+	--			WHERE trr.Acq_Deal_Rights_Code = trrOut.Acq_Deal_Rights_Code
+	--			FOR XML PATH('')
+	--		), 1, 1, ''
+	--	)
+	--	FROM #TempRightRemarks trrOut
+
+	--END
 
 	PRINT 'STEP-5 POPULATE TITLE INFO --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)	
 	BEGIN
@@ -1500,8 +1542,8 @@ BEGIN
 									Director,
 									Duration_In_Min, Year_Of_Production, Language_Name)
 		SELECT t.Title_Code, t.Title_Language_Code, dt.Deal_Type_Name,
-			CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
-			,Genres_Name = [dbo].[UFNGetGenresForTitle](t.Title_Code),
+			--CASE WHEN ISNULL(Year_Of_Production, '') = '' THEN Title_Name ELSE Title_Name + ' ('+ CAST(Year_Of_Production AS VARCHAR(10)) + ')' END Title_Name
+			Title_Name, Genres_Name = [dbo].[UFNGetGenresForTitle](t.Title_Code),
 			Star_Cast = [dbo].[UFNGetTalentForTitle](t.Title_Code, 2),
 			Director = [dbo].[UFNGetTalentForTitle](t.Title_Code, 1),
 			COALESCE(t.Duration_In_Min, '0') Duration_In_Min, COALESCE(t.Year_Of_Production, '') Year_Of_Production, l.Language_Name
@@ -1524,10 +1566,10 @@ BEGIN
 		PRINT 'STEP-6.1 DELETE Platform --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)	
 
 		INSERT INTO #TempPlatformData(Avail_Platform_Code, PlatformCode)
-		SELECT dap.Avail_Platform_Code, a.value FROM #DBAvailPlatform dap
-		CROSS APPLY STRING_SPLIT(dap.PlatformCodes, ',') a
-		WHERE a.value <> '' 
-		AND LEN(a.value) <= 3 ----- Need to remove this condition when priyal sir recheck and 
+		SELECT dap.Avail_Platform_Code, a.number FROM #DBAvailPlatform dap
+		CROSS APPLY fn_Split_withdelemiter(dap.PlatformCodes, ',') a
+		WHERE a.number <> '' 
+		AND LEN(a.number) <= 3 ----- Need to remove this condition when priyal sir recheck and 
 		
 		PRINT 'STEP-6.2 Insert INTO Platform --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)	
 
@@ -1558,14 +1600,14 @@ BEGIN
 		
 		INSERT INTO #TempMainHB(Acq_Deal_Code, Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, Is_Exclusive, Platform_Code, Country_Code, Start_Date, End_Date, 
 							  Is_Title_Language, Avail_Subtitling_Code, Avail_Dubbing_Code)
-		SELECT tm.Acq_Deal_Code, tm.Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, Is_Exclusive, Platform_Code, a.[value], tm.Start_Date, tm.End_Date, 
+		SELECT tm.Acq_Deal_Code, tm.Acq_Deal_Rights_Code, Title_Code, Episode_From, Episode_To, Is_Exclusive, Platform_Code, a.[number], tm.Start_Date, tm.End_Date, 
 							  Is_Title_Language, Avail_Subtitling_Code, Avail_Dubbing_Code
 		FROM #TempMain tm
 		INNER JOIN Acq_Deal_Rights_Holdback hb ON hb.Acq_Deal_Rights_Code = tm.Acq_Deal_Rights_Code
 		INNER JOIN #DBAvailCountry dac ON tm.Avail_Country_Code = dac.Avail_Country_Code
-		CROSS APPLY STRING_SPLIT(dac.CountryCode, ',') a 
-		WHERE a.[value] <> ''
-		AND LEN(a.[value]) <= 3
+		CROSS APPLY fn_Split_withdelemiter(dac.CountryCode, ',') a 
+		WHERE a.[number] <> ''
+		AND LEN(a.[number]) <= 3
 		
 		PRINT 'STEP-7.1 HB Data Gen --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)	
 
@@ -1829,11 +1871,65 @@ BEGIN
 		END
 	END
 
-	PRINT 'STEP-12 WORKING FOR FIRST ROW --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
+	PRINT 'STEP-12 OBJECTION OUTPUT --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
+	DECLARE @Is_Allow_Title_Objection CHAR(1) = 'N'
+	SELECT @Is_Allow_Title_Objection = Parameter_Value FROM System_Parameter_New where Parameter_Name = 'Is_Allow_Title_Objection'
+	IF (@Is_Allow_Title_Objection = 'Y')
+	--IF (@DisplayObjection = 1)
+	BEGIN
+		IF OBJECT_ID('tempdb..#Title_Objection') IS NOT NULL DROP TABLE #Title_Objection
+		IF OBJECT_ID('tempdb..#Title_Objection_Rights_Period') IS NOT NULL DROP TABLE #Title_Objection_Rights_Period
+
+		SELECT * INTO #Title_Objection_Rights_Period FROM Title_Objection_Rights_Period
+	
+		SELECT DISTINCT A.Title_Objection_Code, A.Record_Code, A.Title_Code, A.Objection_Start_Date, A.Objection_End_Date 
+		, B.Rights_Start_Date, B.Rights_End_Date,
+		 STUFF((
+			SELECT ', ' + COALESCE(C.Country_Name, TR.Territory_Name)
+			FROM Title_Objection_Territory T
+			LEFT JOIN Country C ON C.Country_Code = T.Country_Code
+			LEFT JOIN Territory TR ON TR.Territory_Code = T.Territory_Code
+			WHERE T.Title_Objection_Code = A.Title_Objection_Code
+           FOR XML PATH('')
+           ), 1, 1, '') AS Region,
+		STUFF((
+			SELECT ',' + CAST(P.Platform_Code AS VARCHAR)
+			FROM Title_Objection_Platform P
+			WHERE P.Title_Objection_Code = A.Title_Objection_Code
+           FOR XML PATH('')
+           ), 1, 1, '') AS Platform_Name
+		INTO #Title_Objection
+		FROM Title_Objection A
+		INNER JOIN #Title_Objection_Rights_Period B ON A.Title_Objection_Code = B.Title_Objection_Code 
+		WHERE A.Record_Type = 'A'
+
+		UPDATE PT SET PT.Platform_Name = a.Platform_Hierarchy
+		from #Title_Objection PT
+		CROSS APPLY  [dbo].[UFNGetPlatformHierarchyWithNo](PT.Platform_Name) a
+		
+		UPDATE tm SET tm.Objection_Start_Date = TOB.Objection_Start_Date,
+						tm.Objection_End_Date = TOB.Objection_End_Date,
+						tm.Objection_Platform = TOB.Platform_Name,
+						tm.Objection_Region = TOB.Region,
+						tm.Under_Litigation = 'Yes. Please contact legal for further details'
+		FROM #TempMain tm
+		INNER JOIN Acq_Deal_Rights ADR ON ADR.Acq_Deal_Rights_Code = tm.Acq_Deal_Rights_Code
+		INNER JOIN #Title_Objection TOB ON TOB.Record_Code = tm.Acq_Deal_Code AND TOB.Title_Code = tm.Title_Code 
+			AND TOB.Rights_Start_Date = ADR.[Actual_Right_Start_Date] AND ISNULL(TOB.Rights_End_Date,'') = ISNULL(ADR.Actual_Right_End_Date,'')
+
+	END
+	--SELECT * FROM Avail_Title_Data WHERE Title_Code IN (
+	--	SELECT Title_Code FROM Title_Objection
+	--)
+	--SELECT * FROM #TempMain
+	--RETURN
+
+	PRINT 'STEP-13 WORKING FOR FIRST ROW --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
 	BEGIN
 
 		DECLARE @tblPlatformCodes AS TABLE
 		(
+			IntCode INT IDENTITY(1, 1),
 			Platform_Code INT
 		)
 
@@ -1859,35 +1955,57 @@ BEGIN
 		SELECT @Cols = STUFF
 		(
 			(
-				SELECT ', PL_' + CAST(ROW_NUMBER() OVER(ORDER BY Platform_Code) AS VARCHAR(10))
-				FROM (
-					SELECT Platform_Code FROM @tblPlatformCodes
-				) AS tm
+				SELECT ', PL_' + CAST(IntCode AS VARCHAR(10))
+				FROM @tblPlatformCodes
+				--SELECT ', PL_' + CAST(ROW_NUMBER() OVER(ORDER BY Platform_Code) AS VARCHAR(10))
+				--FROM (
+				--	SELECT Platform_Code FROM @tblPlatformCodes
+				--) AS tm
 				FOR XML PATH('')
 			), 1, 1, ''
 		)
 
-		SELECT @FirstRow = 'INSERT INTO #TempOutput(OutputOrder, TitleType, Title, EpisodeFrom, EpisodeTo, ClusterNames, RegionName, StartDate, EndDate, TitleLanguage, SubTiltling, Dubbing, Genre, StarCast, Director, Duration, ReleaseYear, RestrictionRemarks, SubDealRestrictionRemarks, Remarks, RightsRemarks, Exclusive, SubLicense, HoldbackOn, HoldbackType, HoldbackReleaseDate, ReverseHoldback, ROFR, SelfUtilizationGroup, SelfUtilizationRemarks, ' + @Cols + ')' +
-		'SELECT 0, ''Title Type'', ''Title Name'', ''Episode From'', ''Episode To'', ''Cluster Name'', ''Region Name'', ''Start Date'', ''End Date'', ''Title Language Name'', ''Subtitling Language'', ''Dubbing Language'', ''Genre Name'', ''Star Cast'', ''Director'', ''Duration(in min)'', ''Production Year'', ''Restriction Remark'', ''Sub Deal Restriction Remark'', ''Deal Remarks'', ''Rights Remarks'', ''Exclusive'', ''Sub License'', ''Holdback On'', ''Holdback Type'', ''Holdback Release Date'', ''Reverse Holdback'', ''ROFR'', ''Self-Utilization Group'', ''Self-Utilization Remarks'', ' + @PlatformStr
+		--DECLARE @PlCounter INT = 0, @CurCounter INT = 1, @strWhileDefSet VARCHAR(2000) = '';
+		--SELECT @PlCounter = MAX(IntCode) FROM @tblPlatformCodes
+		--WHILE (@CurCounter <= @PlCounter)
+		--BEGIN
 
+		--	SET @strWhileDefSet = 'ALTER TABLE #TempOutput ADD CONSTRAINT TM_BLA_PL_' + CAST(@CurCounter AS VARCHAR(10)) + ' DEFAULT(''No'') FOR PL_' + CAST(@CurCounter AS VARCHAR(10))
+		--	EXEC(@strWhileDefSet)
+
+		--	SET @CurCounter = @CurCounter + 1
+		--END
+
+		SELECT @FirstRow = 'INSERT INTO #TempOutput(OutputOrder, TitleType, Title, EpisodeFrom, EpisodeTo, ClusterNames, RegionName, StartDate, EndDate, TitleLanguage, SubTiltling, ' +
+						   'Dubbing, Genre, StarCast, Director, Duration, ReleaseYear, RestrictionRemarks, SubDealRestrictionRemarks, Remarks, RightsRemarks, Exclusive, SubLicense, HoldbackOn, ' +
+						   'HoldbackType, HoldbackReleaseDate, ReverseHoldback, ROFR, SelfUtilizationGroup, SelfUtilizationRemarks, ' +
+						   'ObjectionPlatform, ObjectionRegion, ObjectionStartDate, ObjectionEndDate, UnderLitigation, CoExclusive_Remark, ' + @Cols + ')' +
+		'SELECT 0, ''Title Type'', ''Title Name'', ''Episode From'', ''Episode To'', ''Reporting Cluster'', ''Country'', ''Start Date'', ''End Date'', ''Title Language Name'', ''Subtitling Language'', 
+		''Dubbing Language'', ''Genre Name'', ''Star Cast'', ''Director'', ''Duration(in min)'', ''Production Year'', ''Restriction Remark'', ''Sub Deal Restriction Remark'', ''Deal Remarks'', ''Rights Remarks'', ''Exclusive'', ''Sub License'', ''Holdback On'', 
+		''Holdback Type'', ''Holdback Release Date'', ''Reverse Holdback'', ''ROFR'', ''Self-Utilization Group'', ''Self-Utilization Remarks'', 
+		''Objection Platform'', ''Objection Region'', ''Objection Start Date'', ''Objection End Date'', ''Under Litigation'', ''CoExclusive Remark'', ' + REPLACE(REPLACE(@PlatformStr, '[', ''), ']', '')
+
+		--SELECT @FirstRow
 		EXEC(@FirstRow)
 
 		SET @PlatformStr = REPLACE(@PlatformStr, '''', '')
 
 	END
 
-	PRINT 'STEP-13 FINAL OUTPUT --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
+	PRINT 'STEP-14 FINAL OUTPUT --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
 	BEGIN
 
 		SET @FirstRow = ''
 		SELECT @FirstRow = 'INSERT INTO #TempOutput(OutputOrder, TitleType, Title, EpisodeFrom, EpisodeTo, ClusterNames, RegionName, StartDate, EndDate, ' +
 													'TitleLanguage, SubTiltling, Dubbing, Genre, StarCast, Director, ' +
 													'Duration, ReleaseYear, RestrictionRemarks, SubDealRestrictionRemarks, Remarks, RightsRemarks, Exclusive, SubLicense, ' +
-													'HoldbackOn, HoldbackType, HoldbackReleaseDate, ReverseHoldback, ' + @Cols + ') ' +
+													'HoldbackOn, HoldbackType, HoldbackReleaseDate, ReverseHoldback, '+
+													'ObjectionPlatform, ObjectionRegion, ObjectionStartDate, ObjectionEndDate, UnderLitigation, CoExclusive_Remark, ' + @Cols + ') ' +
 			'SELECT 1, Title_Type, Title_Name, Episode_From, Episode_To, ClusterNames, RegionName, REPLACE(CONVERT(VARCHAR(50), Right_Start_Date, 106), '' '', ''-''), REPLACE(CONVERT(VARCHAR(50), Rights_End_Date, 106), '' '', ''-''), ' + 
 				   'Title_Language_Names, Sub_Language_Names, Dub_Language_Names, Genres_Name, Star_Cast, Director, ' +
 				   'Duration_In_Min, Year_Of_Production, Restriction_Remark, Sub_Deal_Restriction_Remark, Remarks, Rights_Remarks, Exclusive, Sub_License, ' +
-				   'HoldbackOn, Holdback_Type, Holdback_Release_Date, Reverse_Holdback, ' + @PlatformStr + ' FROM ( ' +
+				   'HoldbackOn, Holdback_Type, Holdback_Release_Date, Reverse_Holdback, ' + 
+				   'Objection_Platform, Objection_Region, Objection_Start_Date, Objection_End_Date, Under_Litigation, CoExclusive_Remark, ' + @PlatformStr + ' FROM ( ' +
 			'SELECT tti.Title_Type, tti.Title_Name COLLATE SQL_Latin1_General_CP1_CI_AS Title_Name, tm.Episode_From, tm.Episode_To, pt.Platform_Hiearachy COLLATE SQL_Latin1_General_CP1_CI_AS  AS Platform_Name, Available AS Platform_Avail, ' +
 				   'tm.ClusterNames, tm.RegionName, ' +
 				   'CAST( ' +
@@ -1901,12 +2019,15 @@ BEGIN
 				   'tti.Genres_Name COLLATE SQL_Latin1_General_CP1_CI_AS Genres_Name, tti.Star_Cast COLLATE SQL_Latin1_General_CP1_CI_AS Star_Cast, ' +
 				   'tti.Director COLLATE SQL_Latin1_General_CP1_CI_AS Director, tti.Duration_In_Min, tti.Year_Of_Production, ' +
 				   'trr.Restriction_Remarks Restriction_Remark, trr.Sub_Deal_Restriction_Remark, ' +
-				   'trr.Remarks, trr.Rights_Remarks, CASE WHEN tm.Is_Exclusive = 1 THEN ''Exclusive'' ELSE ''Non Exclusive'' END AS Exclusive, ' +
+				   'trr.Remarks, trr.Rights_Remarks, CASE WHEN tm.Is_Exclusive = 1 THEN ''Exclusive'' WHEN tm.Is_Exclusive = 2 THEN ''Co-Exclusive'' ELSE ''Non Exclusive'' END AS  Exclusive, ' +
 				   'trr.Sub_License_Name AS Sub_License, ' +
 				   'CASE WHEN ISNULL(pt1.Platform_Hiearachy, '''') = '''' OR tm.Start_Date > tm.Holdback_Release_Date THEN '''' ELSE hb.HBComments + pt1.Platform_Hiearachy END COLLATE SQL_Latin1_General_CP1_CI_AS As HoldbackOn, ' +
 				   'tm.Holdback_Type COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Type, ' +
 				   'CASE WHEN ISNULL(tm.Holdback_Release_Date, '''') = '''' OR tm.Start_Date > tm.Holdback_Release_Date THEN '''' ELSE CONVERT(VARCHAR(20),tm.Holdback_Release_Date, 103) END ' +
-				   'COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Release_Date, rhb.strRHB COLLATE SQL_Latin1_General_CP1_CI_AS As Reverse_Holdback ' +
+				   'COLLATE SQL_Latin1_General_CP1_CI_AS AS Holdback_Release_Date, rhb.strRHB COLLATE SQL_Latin1_General_CP1_CI_AS As Reverse_Holdback, ' +
+				   'tm.Objection_Platform, tm.Objection_Region, REPLACE(CONVERT(VARCHAR(50), tm.Objection_Start_Date, 106), '' '', ''-'') AS Objection_Start_Date, ' +
+				   'REPLACE(CONVERT(VARCHAR(50), tm.Objection_End_Date, 106), '' '', ''-'') Objection_End_Date, tm.Under_Litigation, ' +
+				   'CASE WHEN tm.Is_Exclusive = 2 THEN trr.CoExclusive_Remark ELSE '''' END AS CoExclusive_Remark ' +
 			'FROM #TempMain tm ' +
 			'INNER JOIN #TempTitlesInfo tti ON tm.Title_Code = tti.Title_Code ' +
 			'INNER JOIN Platform pt ON pt.Platform_Code = tm.Platform_Code ' +
@@ -1924,10 +2045,11 @@ BEGIN
 		'ORDER BY Title_Name '
 
 		EXEC(@FirstRow)
+		--SELECT @FirstRow
 
 	END	
 
-	SELECT * FROM #TempOutput
+	SELECT * FROM #TempOutput ORDER BY OutputOrder, Title
 
 	BEGIN ------------------ CLEAR TEMP TABLE SECTION
 
@@ -1960,12 +2082,16 @@ BEGIN
 		IF OBJECT_ID('tempdb..#MainReleaseCountry') IS NOT NULL DROP TABLE #MainReleaseCountry
 		IF OBJECT_ID('tempdb..#TempRHB') IS NOT NULL DROP TABLE #TempRHB
 		IF OBJECT_ID('tempdb..#TempOutput') IS NOT NULL DROP TABLE #TempOutput
+		IF OBJECT_ID('tempdb..#Title_Objection') IS NOT NULL DROP TABLE #Title_Objection
+		IF OBJECT_ID('tempdb..#Title_Objection_Rights_Period') IS NOT NULL DROP TABLE #Title_Objection_Rights_Period
 
 	END
 
 END
 
 /*
+
+EXEC [dbo].[USPAvailability] @TitleCodes='58509', @EpisodeFrom='0', @EpisodeTo='0', @DateType='FL', @StartDate='2023-12-21', @EndDate='', @PlatformCodes='0,0,19,20,0,0,83,85,0,87,89,0,0,90,91,92,0,217,219,221,223,224,225,226,94,0,0,95,96,97,98,99,100,101,102,103,0,0,227,228,229,230,231,232,105,106,107,109,0,0,110,111,112,113,114,115,116,117,118,119,0,0,233,234,235,236,237,238,121,122,0,0,123,0,239,240,241,242,125,0,243,244,245,246,247,248,249,0,0,250,251,252,253,254,255,128,0,0,129,130,0,256,257,132,0,133,134,0,258,259,136,0,0,137,138,139,140,141,0,142,143,144,145,146,0,0,147,148,149,150,151,0,152,153,154,155,156,0,36,37,38,39,40,41,42,43,44,45,46,0,157,158,0,48,49,50,51,52,53,54,0,159,160,161,162,0,0,163,164,0,165,166,0,167,168,59,60,61,0,169,170,171,63,64,65,66,0,0,172,0,260,261,174,175,0,262,263,264,265,177,0,0,266,267,268,269,270,271,179,0,272,273,274,181,182,183,0,275,276,277,278,185,0,0,186,187,188,189,0,279,280,191,192,0,0,281,282,283,284,285,286,194,0,0,0,287,288,196,0,0,0,289,290,291,0,292,293,294,0,199,0,200,0,295,296,297,298,299,300,301,0,202,0,302,303,304,305,306,307,308,309,310,0,204,205,0,206,0,311,312,313,314,315,316,317,0,208,0,318,319,320,321,322,323,324,0,210,0,325,326,327,328,329,330,331,80,0,0,0,332,333,213,214,215,0,0,334,335,218,220,222,0,84,86,88', @ExactMatchPlatforms='', @MustHavePlatforms='0', @IsIFTACluster='Y', @TerritoryCodes='0', @CountryCodes='0,45,258,143,259,260,219,144,261,146,10,147,64,5,220,221,49,72,148,218,26,150,222,262,68,151,152,216,76,153,70,263,223,224,155,225,61,156,253,157,158,17,264,265,159,160,266,161,22,162,163,33,23,257,25,164,165,166,74,167,168,169,267,226,227,268,170,269,270,271,59,40,6,228,272,273,229,230,274,4,171,275,32,276,172,173,277,174,231,232,175,53,278,176,57,31,279,42,18,56,19,62,11,29,233,177,13,178,9,179,280,281,69,180,282,182,283,235,183,284,285,236,237,286,287,2,184,238,239,288,240,241,20,289,185,326,290,186,217,187,21,291,60,188,292,54,3,293,294,65,189,243,190,295,191,296,297,35,50,55,298,77,299,192,181,193,300,301,36,30,302,51,256,303,242,304,7,8,194,305,199,201,306,307,247,52,308,248,37,195,249,47,24,309,310,196,46,197,311,28,27,198,200,202,250,251,312,39,203,204,14,205,41,254,255,252,313,314,315,207,208,34,209,210,316,211,12,48,43,212,213,317,325,214,73,154,318,319,320,321,215,322,323', @ExactMatchCountry='', @MustHaveCountry='', @ExclusionCountry='', @IsTitleLanguage='1', @TitleLanguageCode='0', @DubbingSubtitling='S,D', @SubtitlingGroupCodes='G1', @SubtitlingCodes='0,77,117,78,2,1159,10,55,1167,65,79,17,80,76,42,1136,56,1133,1146,48,1163,1165,73,118,70,68,81,82,1130,1184,1162,128,83,19,20,22,126,127,84,63,1168,4,119,37,1141,1181,1126,35,6,85,86,120,5,28,41,1134,87,88,66,1169,89,11,90,43,1170,1,1132,1137,91,27,92,93,1144,1152,1151,1150,25,13,67,94,51,1139,62,1171,9,59,95,96,97,61,1172,15,72,121,1182,1183,1149,122,98,1164,1166,99,46,3,1140,123,45,58,1173,38,1142,57,100,101,102,124,74,103,49,1174,1147,30,54,1127,1175,1161,104,1180,69,18,1148,31,26,47,1143,105,1131,1185,7,8,1145,1176,64,1128,1177,106,32,1153,1154,1156,107,50,60,1178,23,1160,1158,21,75,24,108,33,34,109,110,14,125,39,1138,40,1135,36,1129,1157,1187,29,12,53,1179,111,71,52,1186,112,113,114,1155,115,116', @ExactMatchSubtitling='          ', @MustHaveSubtitling='0', @ExclusionSubtitling='', @DubbingGroupCodes='G1', @DubbingCodes='0,77,117,78,2,1159,10,55,1167,65,79,17,80,76,42,1136,56,1133,1146,48,1163,1165,73,118,70,68,81,82,1130,1184,1162,128,83,19,20,22,126,127,84,63,1168,4,119,37,1141,1181,1126,35,6,85,86,120,5,28,41,1134,87,88,66,1169,89,11,90,43,1170,1,1132,1137,91,27,92,93,1144,1152,1151,1150,25,13,67,94,51,1139,62,1171,9,59,95,96,97,61,1172,15,72,121,1182,1183,1149,122,98,1164,1166,99,46,3,1140,123,45,58,1173,38,1142,57,100,101,102,124,74,103,49,1174,1147,30,54,1127,1175,1161,104,1180,69,18,1148,31,26,47,1143,105,1131,1185,7,8,1145,1176,64,1128,1177,106,32,1153,1154,1156,107,50,60,1178,23,1160,1158,21,75,24,108,33,34,109,110,14,125,39,1138,40,1135,36,1129,1157,1187,29,12,53,1179,111,71,52,1186,112,113,114,1155,115,116', @ExactMatchDubbing='          ', @MustHaveDubbing='0', @ExclusionDubbing='', @Exclusivity='B', @SubLicenseCode='', @RestrictionRemarks='True', @OthersRemarks='True', @BUCode='0', @IsDigital='0', @L1Output='N', @ReportType='M'
 
 	EXEC [dbo].[USPAvailability]
 	@TitleCodes = '0', 
@@ -2009,4 +2135,19 @@ END
 	@IsDigital = 'N',
 	@L1Output = 'Y'
 
+
+	PRINT 'STEP-12 WORKING FOR FIRST ROW --> ' + CONVERT(VARCHAR(30), GETDATE() ,109)
+	BEGIN
+
+		
+
+		SELECT @FirstRow = 'INSERT INTO #TempOutput(OutputOrder, TitleType, Title, EpisodeFrom, EpisodeTo, ClusterNames, RegionName, StartDate, EndDate, TitleLanguage, SubTiltling, Dubbing, Genre, StarCast, Director, Duration, ReleaseYear, RestrictionRemarks, SubDealRestrictionRemarks, Remarks, RightsRemarks, Exclusive, SubLicense, HoldbackOn, HoldbackType, HoldbackReleaseDate, ReverseHoldback, ROFR, SelfUtilizationGroup, SelfUtilizationRemarks, ' + @Cols + ')' +
+		'SELECT 0, ''Title Type'', ''Title Name'', ''Episode From'', ''Episode To'', ''Reporting Cluster'', ''Country'', ''Start Date'', ''End Date'', ''Title Language Name'', ''Subtitling Language'', ''Dubbing Language'', ''Genre Name'', ''Star Cast'', ''Director'', ''Duration(in min)'', ''Production Year'', ''Restriction Remark'', ''Sub Deal Restriction Remark'', ''Deal Remarks'', ''Rights Remarks'', ''Exclusive'', ''Sub License'', ''Holdback On'', ''Holdback Type'', ''Holdback Release Date'', ''Reverse Holdback'', ''ROFR'', ''Self-Utilization Group'', ''Self-Utilization Remarks'', ' + REPLACE(REPLACE(@PlatformStr, '[', ''), ']', '')
+
+		EXEC(@FirstRow)
+
+		SET @PlatformStr = REPLACE(@PlatformStr, '''', '')
+
+	END
+	lllllll
 */

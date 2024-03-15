@@ -42,7 +42,7 @@ BEGIN
 		TitleLang3Char VARCHAR(100),
 		EmbSubs3Char VARCHAR(100),
 		Version VARCHAR(100),
-		EpisodeWOSpace VARCHAR(100),
+		EpisodeTitleWOSpace VARCHAR(100),
 		SeasonWOZero VARCHAR(100),
 		EpisodeWOZero VARCHAR(100),
 		TitleLang2Char VARCHAR(100),
@@ -178,7 +178,7 @@ BEGIN
 	FROM #TempFileName tmp
 	INNER JOIN Title_Content tc ON tmp.Title_Content_Code = tc.Title_Content_Code
 
-	UPDATE tmp SET tmp.EpisodeWOSpace = REPLACE(LTRIM(RTRIM(ext.Episode_Title)), ' ', '')
+	UPDATE tmp SET tmp.EpisodeTitleWOSpace = REPLACE(LTRIM(RTRIM(ext.Episode_Title)), ' ', '')
 	FROM (SELECT * FROM VWALTitleRecom WHERE AL_Recommendation_Code = @RecommendationCode) ext
 	INNER JOIN #TempFileName tmp ON tmp.Title_Code = ext.Title_Code AND tmp.Title_Content_Code = ext.Title_Content_Code
     WHERE AL_Recommendation_Code = @RecommendationCode
@@ -247,7 +247,7 @@ BEGIN
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang3Char}', ISNULL(TitleLang3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EmbSubs3Char}', ISNULL(EmbSubs3Char, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{Version}', ISNULL(Version, ''))
-	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeWOSpace}', ISNULL(EpisodeWOSpace, ''))
+	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeTitleWOSpace}', ISNULL(EpisodeTitleWOSpace, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{SeasonWOZero}', ISNULL(SeasonWOZero, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{EpisodeWOZero}', ISNULL(EpisodeWOZero, ''))
 	UPDATE #TempFileName SET File_Names = REPLACE(File_Names, '{TitleLang2Char}', ISNULL(TitleLang2Char, ''))
