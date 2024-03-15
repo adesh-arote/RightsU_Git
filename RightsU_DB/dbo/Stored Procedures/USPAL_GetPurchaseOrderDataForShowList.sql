@@ -141,13 +141,13 @@ BEGIN
   
   Select T.[Title] AS [TitleName], [Estimated Screening Cost per flight USD],  
      [Estimated Screening Total USD], CAST(ISNULL([Estimated Screening Total USD],0) AS DECIMAL(10,2)) AS [Total Purchase Order Value],  
-     T.Title_Content_Code AS [Title_Content_Code], CASE WHEN ISNULL([Season],'') <> '' THEN 'S' + [Season] + 'E' + T.EpisodeNo ELSE 'E' + T.EpisodeNo END AS [EpisodeNo], T.EpisodeTitle AS [EpisodeTitle],[MPM Code] AS [MPM_Code],[Master In-House] AS [Master_InHouse],CASE WHEN (ISNULL([Master In-House],'')='' OR UPPER([Master In-House])='NO') THEN 0 ELSE 1 END AS "MasterInHouseOrder"  
+     T.Title_Content_Code AS [Title_Content_Code], CASE WHEN ISNULL([Season],'') <> '' THEN 'S' + [Season] + 'E' + T.EpisodeNo ELSE 'E' + T.EpisodeNo END AS [EpisodeNo], T.EpisodeTitle AS [EpisodeTitle],[MPM Code] AS [MPM_Code],[Master In-House] AS [Master_InHouse],CASE WHEN (ISNULL([Master In-House],'')='' OR UPPER([Master In-House])='NO') THEN 0 ELSE 1 END AS "MasterInHouseOrder", [Delivery Fees] 
   From #TempPurchaseOrderData tpod   
   INNER JOIN  
   (Select * from ( Select tb.AL_Booking_Sheet_Code, tb.TitleName, tb.Columns_Name, tb.Columns_Value, tb.Title_Code, tb.Title_Content_Code, tb.EpisodeNo, tb.EpisodeTitle from #TempBookingData tb ) a  
   pivot (max(Columns_Value) for Columns_Name in ([Airline],[Version],[Lang1],[Embedded Subs],[Remarks],[File details],[PO Booking],[Estimated Screening Cost per flight USD],  
                 [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges],  
-                [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Distributor], [Season], [Title],[MPM Code],[Master In-House])) p) AS T  
+                [Master delivery date],[Trailer delivery date],[Delivery and Payment remarks], [Distributor], [Season], [Title],[MPM Code],[Master In-House], [Delivery Fees])) p) AS T  
   ON tpod.AL_Booking_Sheet_Code = T.AL_Booking_Sheet_Code --AND T.Distributor = @Distributor   
   WHERE tpod.Purchase_Order_No = @PO_Number  
   --ORDER BY 5;

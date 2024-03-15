@@ -35,7 +35,8 @@
       <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
+      <HintPath>..\..\..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Dapper.SimpleLoad, Version=2.0.140.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Dapper.SimpleLoad.2.0.140\lib\net451\Dapper.SimpleLoad.dll</HintPath>

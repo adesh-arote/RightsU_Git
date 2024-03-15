@@ -127,7 +127,10 @@ BEGIN
  Select [Client_Name], [Vendor_Name], [Vendor_Address], [Vendor_Phone_No], [Vendor_Email], [Period], CAST(ISNULL([Period_Month],0) AS INT) + 1 AS [Period_Month], CONVERT(VARCHAR(11), [PO_Generate_Date], 106) AS [PO_Generate_Date], [Purchase_Order_No],   
         [TitleName], [Airline], [Version], [Lang 1] AS [Lang1], [Embedded Subs], [Remarks], [File details], [PO Booking], [Estimated Screening Cost per flight USD],  
      [Estimated Screening Total USD],[Duplication Cost per flight USD],[Duplication Total USD],[Miscellaneous Items],[Miscellaneous Charges], [Master delivery date],  
-     [Trailer delivery date],[Delivery and Payment remarks], CAST(ISNULL([Estimated Screening Total USD],0) AS DECIMAL(10,2)) + CAST(ISNULL([Duplication Total USD],0) AS DECIMAL(10,2)) + CAST(ISNULL([Miscellaneous Charges],0) AS DECIMAL(10,2)) AS [Total Purchase Order Value],  
+     [Trailer delivery date],[Delivery and Payment remarks], 
+	 CAST(ISNULL(CASE WHEN ISNUMERIC([Estimated Screening Total USD]) = 0 THEN 0 ELSE [Estimated Screening Total USD] END, 0) AS DECIMAL(10,2)) + 
+	 CAST(ISNULL(CASE WHEN ISNUMERIC([Duplication Total USD]) = 0 THEN 0 ELSE [Duplication Total USD] END, 0) AS DECIMAL(10,2)) + 
+	 CAST(ISNULL(CASE WHEN ISNUMERIC([Miscellaneous Charges]) = 0 THEN 0 ELSE [Miscellaneous Charges] END, 0) AS DECIMAL(10,2)) AS [Total Purchase Order Value],  
      @Total_OEM_Count AS [Total_OEM_Count], (SELECT Vendor_Name FROM Vendor WHERE Vendor_Code = @VendorCode) AS [Client_Name_New], [Client_Name] AS [Vendor_Name_New]  
  From #TempPurchaseOrderData tpod   
  INNER JOIN  

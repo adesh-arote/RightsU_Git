@@ -525,7 +525,7 @@ BEGIN
 								SELECT Ref_BMS_Code FROM [dbo].[Extended_Columns_Value] WHERE Columns_Value_Code In (
 									SELECT Columns_Value_Code FROM Map_Extended_Columns WHERE Columns_Code = 1 And Record_Code = temp.RU_Title_Code)
 							),					
-							CASE WHEN Deal_Type_Code IN (1, 20, 21, 22) THEN NULL ELSE SUBSTRING([Title_Name],0,68)+' Episode ' + CAST([Episode_Number] AS VARCHAR) END,
+							CASE WHEN Deal_Type_Code IN (1,10,21,22,33,1034,1035) THEN NULL ELSE SUBSTRING([Title_Name],0,68)+' Episode ' + CAST([Episode_Number] AS VARCHAR) END,
 							NULL, [Episode_Number], [Synopsis], 'false', 'P',GETDATE(),null,'Y'
 						FROM #TempData temp WHERE 1=1
 						AND temp.BMS_Asset_Ref_Key is null

@@ -139,7 +139,7 @@ BEGIN
 	SELECT @Total_Purchase_Order_Value = SUM([Total Purchase Order Value])
 	FROM
 		(SELECT [TitleName],[Estimated Screening Cost per flight USD],
-		   [Estimated Screening Total USD], CAST(ISNULL([Estimated Screening Total USD],0) AS DECIMAL(10,2)) AS [Total Purchase Order Value],
+		   [Estimated Screening Total USD], CAST(ISNULL(CASE WHEN ISNUMERIC([Estimated Screening Total USD]) = 0 THEN 0 ELSE [Estimated Screening Total USD] END,0) AS DECIMAL(10,2)) AS [Total Purchase Order Value],
 		   T.Title_Content_Code AS [Title_Content_Code], T.EpisodeNo AS [EpisodeNo], T.EpisodeTitle AS [EpisodeTitle]
 		FROM #TempPurchaseOrderData tpod 
 		INNER JOIN
