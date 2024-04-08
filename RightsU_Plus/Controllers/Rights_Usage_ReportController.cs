@@ -396,7 +396,7 @@ namespace RightsU_Plus.Controllers
                 List<USP_Schedule_ShowDetails_Sche_Report_Result> USP_ScheduleAsRun_List = new List<USP_Schedule_ShowDetails_Sche_Report_Result>();
                 var ScheduleAsRunList = USP_ScheduleAsRun_List.Select(t => new
                 {
-                    t.Program_Title,
+                    t.Program_Episode_Title,
                     t.Program_Category,
                     t.Schedule_Item_Log_Date,
                     t.Schedule_Item_Log_Time,
@@ -407,7 +407,7 @@ namespace RightsU_Plus.Controllers
 
                 ScheduleAsRunList = objUSP.USP_Schedule_ShowDetails_Sche_Report(DMCode, 0, 0, 0, "", txtfrom, txtto, channelArray, false, runType).Select(t => new
                 {
-                    t.Program_Title,
+                    t.Program_Episode_Title,
                     t.Program_Category,
                     t.Schedule_Item_Log_Date,
                     t.Schedule_Item_Log_Time,
@@ -418,7 +418,7 @@ namespace RightsU_Plus.Controllers
 
                 System.Web.UI.WebControls.GridView gridvw = new System.Web.UI.WebControls.GridView();
                 gridvw.AutoGenerateColumns = false;
-                gridvw.Columns.Add(new BoundField { HeaderText = "Program Title", DataField = "Program_Title" });
+                gridvw.Columns.Add(new BoundField { HeaderText = "Program Title", DataField = "Program_Episode_Title" });
                 gridvw.Columns.Add(new BoundField { HeaderText = "Program Category", DataField = "Program_Category" });
                 gridvw.Columns.Add(new BoundField { HeaderText = "Schedule Item Log Date", DataField = "Schedule_Item_Log_Date" });
                 gridvw.Columns.Add(new BoundField { HeaderText = "Schedule Item Log Date", DataField = "Schedule_Item_Log_Time" });

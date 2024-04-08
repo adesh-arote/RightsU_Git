@@ -719,7 +719,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!title_name.Value</Value>
+                                  <Value>=Fields!File_Episode_Title.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -751,7 +751,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!File_Program_Title.Value</Value>
+                                  <Value>=Fields!File_Episode_Title.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -815,7 +815,7 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!File_Schedule_Item_Log_Date.Value</Value>
+                                  <Value>=Fields!LogDate.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -943,10 +943,14 @@ WHERE        (System_Language_Code = @SysLanguageCode)</CommandText>
             </TablixBody>
             <TablixColumnHierarchy>
               <TablixMembers>
-                <TablixMember />
                 <TablixMember>
                   <Visibility>
-                    <Hidden>= iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
+                    <Hidden>=iif(Parameters!TitleType.Value = "MOVIE", false, true)</Hidden>
+                  </Visibility>
+                </TablixMember>
+                <TablixMember>
+                  <Visibility>
+                    <Hidden>=iif(Parameters!TitleType.Value = "SHOW", false, true)</Hidden>
                   </Visibility>
                 </TablixMember>
                 <TablixMember>

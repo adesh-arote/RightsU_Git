@@ -16,6 +16,23 @@
 
 
 </script>
+
+<style>
+
+    div.scrollmenu {
+        white-space: nowrap;
+    }
+
+    thead th {
+        background: #2b64a5;
+        color: #FFF;
+        z-index: 1;
+        position: sticky;
+        top: 0px;
+        height: 35px;
+    }
+</style>
+
 <div class="modal_block modal_header">
     <a class="close" onclick="ClosePopup()">
         <span>X</span>
@@ -54,11 +71,11 @@
 
 
 <br />
-<div style="margin-left: 10px;margin-right: 10px;height:inherit;">
-    <table class="table table-bordered table-hover" id="div_List_RightsUsageDetails" style="table-layout:fixed">
+<div style="margin-left: 10px;margin-right: 10px;height:315px; overflow-y :auto" class="scrollmenu">
+    <table class="table table-bordered table-hover" id="div_List_RightsUsageDetails" style="border-collapse:collapse;">
         <thead>
-            <tr style="width:100%">
-                <th style="width:2%;font-size: 11px;">@objMessageKey.Srno</th>
+            <tr style="width:100%; position:sticky;">
+                <th style="width:3%;font-size: 11px;">@objMessageKey.Srno</th>
                 <th style="width:10%;font-size: 11px;">@objMessageKey.ProgramTitle</th>
                 <th style="width:10%;font-size: 11px;">@objMessageKey.ProgramCategory</th>
                 <th style="width:10%;font-size: 11px;">@objMessageKey.ScheduleItemLogDate</th>
@@ -69,11 +86,7 @@
                 @*<th style="width:15%;font-size: 11px;">Available Channels</th>*@
 
             </tr>
-        </thead>
-    </table>
-</div>
-<div id="scroll" style="margin-left: 10px;margin-right: 10px;height:inherit;">
-    <table class="table table-bordered table-hover" id="div_List_RightsUsageDetails" style="table-layout:fixed;">
+        </thead> 
         <tbody>
             @{
                 int counter = 0;
@@ -83,28 +96,28 @@
             {
                 counter = counter + 1;
                 <tr style="width:100%;">
-                    <td style="text-align:center;width:2%;">
+                    <td style="text-align:center;">
                         @counter
                     </td>
-                    <td style="width:10%;">
-                        @item.Program_Title
+                    <td align="center">
+                        @item.Program_Episode_Title
                     </td>
-                    <td align="center" style="width:10%;">
+                    <td align="center">
                         @item.Program_Category
                     </td>
-                    <td align="center" style="width:10%;">
+                    <td align="center">
                         @item.Schedule_Item_Log_Date
                     </td>
-                    <td style="width:15%;">
+                    <td>
                         @item.Schedule_Item_Log_Time
                     </td>
-                    <td style="width:10%;">
+                    <td align="center">
                         @item.Scheduled_Version_House_Number_List
                     </td>
-                    <td style="width:10%;">
+                    <td align="center">
                         @item.Channel_Name
                     </td>
-                    <td style="width:10%;">
+                    <td>
                         @item.RightsPeriod
                     </td>
                     @*<td>
