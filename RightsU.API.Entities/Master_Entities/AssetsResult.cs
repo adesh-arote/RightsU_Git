@@ -44,7 +44,7 @@ namespace RightsU.API.Entities
         /// Duration (min) ,Example:149
         /// </summary>
         [Required]
-        public Int32 Duration { get; set; }
+        public string Duration { get; set; }
         /// <summary>
         /// This is Updated date and time UTC format ,Example:2023-07-16T19:20
         /// </summary>

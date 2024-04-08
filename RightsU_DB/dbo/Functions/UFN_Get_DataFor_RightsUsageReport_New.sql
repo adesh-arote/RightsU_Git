@@ -207,7 +207,7 @@ BEGIN
 				Inner Join Acq_Deal_Movie ADM ON ADM.Acq_Deal_Code = D.Acq_Deal_Code And ADRT.Title_Code = ADM.Title_Code And ADM.Acq_Deal_Movie_Code = @Acq_Deal_Movie_Code
 				AND ADRP.Platform_Code in
 				(
-					SELECT platform_code FROM Platform WHERE isnull(applicable_for_asrun_schedule,'N') = 'Y'
+					SELECT platform_code FROM Platform WHERE isnull(Is_No_Of_Run,'N') = 'Y'
 				)
 				AND 
 				(

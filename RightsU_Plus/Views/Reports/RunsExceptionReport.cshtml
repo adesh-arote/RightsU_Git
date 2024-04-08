@@ -164,7 +164,7 @@
                     }
                     else {
                         $('#divResult').empty();
-                        $('#divResult').html(result);
+                        $('#divResult').html(result);                       
                     }
                 },
                 error: function (result) {
@@ -290,7 +290,7 @@
             <h2 style="direction:@objMessageKey.LayoutDirection">@objMessageKey.RunsExceptionReport</h2>
             <div id="divFilter" style="display:grid;">
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <div class="col-md-3">
                             <b>@objMessageKey.Type:</b>
                         </div>
@@ -299,7 +299,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="col-md-5">
                             <b>@objMessageKey.TitleType:</b>
                         </div>
@@ -310,16 +310,18 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
-                        <div class="col-md-2">
+                    <div class="col-md-5">
+                        <div class="col-md-3">
                             <b>@objMessageKey.Title:</b>
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             <input type="text" id="txtTitle" class="search" maxlength="100" placeholder="@objMessageKey.Title" onkeyup="PopulateTitleNameForRunsEx(event)" autocomplete="on" style="width:100%;" />
                             <input type="hidden" id="hdnTitleCode" value="0" />
                         </div>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-3">
                         <div class="col-md-3">
                             <b>@objMessageKey.episode#</b>
@@ -329,33 +331,33 @@
                             <input type="text" id="txtEpTo" class="episodeRange" placeholder="@objMessageKey.To" style="width:84px" />
                         </div>
                     </div>
+
+                    <div class="col-md-4">
+                        <div class="col-md-5">
+                            <b>@objMessageKey.FromDate:</b>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:115%;" placeholder="DD/MM/YYYY" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="col-md-3">
+                            <b>@objMessageKey.ToDate:</b>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:115%;" placeholder="DD/MM/YYYY" autocomplete="off" />
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="col-md-6">
-                            <b>@objMessageKey.FromDate:</b>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" title="@objMessageKey.FromDate" class="isDatepicker shortDate common" value="" id="txtfrom" style="width:115%;" placeholder="DD/MM/YYYY" />
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="col-md-5">
-                            <b>@objMessageKey.ToDate:</b>
-                        </div>
-                        <div class="col-md-7">
-                            <input type="text" title="@objMessageKey.ToDate" class="isDatepicker shortDate common" value="" id="txtto" style="width:75%;" placeholder="DD/MM/YYYY" />
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="col-md-4">
                             <b>@objMessageKey.DateFormat:</b>
                         </div>
-                        <div class="col-md-8">
-                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select"})
+                        <div class="col-md-7">
+                            @Html.DropDownList("DateFormat", (List<SelectListItem>)ViewBag.DateFormat, new { @id = "ddlDateFormat", @class = "form_input chosen-select" })
                         </div>
                     </div>
 
@@ -368,31 +370,7 @@
                         </div>
                     </div>
 
-                </div>
-
-                <div class="row">
-                    <div class="col-md-3">
-                        @*<div class="col-md-5">
-                            <b>@objMessageKey.DateTimeFormat:</b>
-                        </div>
-                        <div class="col-md-7">
-                            @Html.DropDownList("DateTimeFormat", (List<SelectListItem>)ViewBag.DateTimeFormat, new { @id = "ddlDateTimeFormat", @class = "form_input chosen-select" })
-                        </div>*@
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="col-md-12">
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="col-md-12">
-
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <div class="col-md-12" style="text-align: end;">
                             <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
                             <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
@@ -400,6 +378,7 @@
                     </div>
                 </div>
             </div>
+        
             <div id="divResult">
 
             </div>
