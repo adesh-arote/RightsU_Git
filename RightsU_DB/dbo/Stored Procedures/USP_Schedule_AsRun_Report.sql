@@ -134,7 +134,7 @@ BEGIN
 		AND (D.is_active = ''Y'')
 		And dm.Acq_Deal_Movie_Code in (SELECT TCM.Acq_Deal_Movie_Code FROM Title_Content_Mapping TCM (NOLOCK)
 									   INNER JOIN Title_Content tc (NOLOCK) ON tc.Title_Content_Code = TCM.Title_Content_Code
-									   AND ISNULL(Ref_BMS_Content_Code,'''') <> '''') 
+									   AND ISNULL(tc.Ref_BMS_Content_Code,'''') <> '''') 
 		--AND ((D.deal_workflow_status = ''A'') OR D.[version] > 1)
 		' + @filter
 

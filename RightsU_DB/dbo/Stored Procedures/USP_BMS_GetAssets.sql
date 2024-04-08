@@ -22,7 +22,8 @@ BEGIN
 		BA.Episode_Number as EpisodeNumber,
 		DT.Deal_Type_Name as 'Category',
 		L.Language_Name as 'Language',
-		LTRIM(DATEDIFF(MINUTE, 0, PARSE(BA.Duration as TIME))) as 'Duration',
+		--LTRIM(DATEDIFF(MINUTE, 0, PARSE(BA.Duration as TIME))) as 'Duration',
+		T.Duration_In_Min as 'Duration',
 		FORMAT(DATEADD(MI, (DATEDIFF(MI, SYSDATETIME(), SYSUTCDATETIME())), ISNULL(BA.Updated_On,Created_On)),'yyyy-MM-ddTHH:mm') as 'LastUpdatedOn',		
 		CASE WHEN BA.Is_Active='Y' THEN 'true' ELSE 'false' END as 'IsActive'
 	FROM BMS_Asset BA (NOLOCK)
