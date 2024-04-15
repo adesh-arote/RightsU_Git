@@ -250,7 +250,7 @@ BEGIN
 	END
 
 		
-		select * from #BVScheduleTransaction
+		--select * from #BVScheduleTransaction
 		------------Update Title_Code_HouseID----------------------------------------------------
 		
 		--- ADD BMS_Asset_Code
@@ -341,70 +341,140 @@ BEGIN
 
 		------------------------------RULE RIGHT CHECK ------------------------------------------------------------
 
-		IF((SELECT COUNT(BVST.BV_Schedule_Transaction_Code) 
-		FROM BV_Schedule_Transaction BVST
-		INNER JOIN #BVScheduleTransaction BV ON BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BV.BMS_Deal_Content_Rights_Code
-		WHERE ISNULL(BVST.IsProcessed,'N') ='Y' AND ISNULL(BVST.IsIgnore,'N') = 'N' AND BV.IsRuleRight = 'Y' AND ISNULL(BV.IsIgnoreUpdateRun,'N') = 'N') >0)
+		IF OBJECT_ID('tempdb..#Temp_Min_RightRule') IS NOT NULL
 		BEGIN
-		select 'Rule_Right' from #BVScheduleTransaction
-			
-			UPDATE BVST SET BVST.RR_Min_DT_Time = (
-				SELECT MAX(BV.Schedule_Item_Log_DateTime)
-				FROM BV_Schedule_Transaction BV				
-				WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND ISNULL(BV.IsIgnore,'N') = 'N' AND BV.Channel_Code IN (@Channel_Code)
-				AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
-			)
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='Y'
+			DROP TABLE #Temp_Min_RightRule
+		END
 
-			UPDATE BVST SET BVST.RR_Min_DT_Time = BVST.Schedule_Item_Log_DateTime
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='Y' AND BVST.RR_Min_DT_Time IS NULL
+		CREATE TABLE #Temp_Min_RightRule
+		(
+			 BV_Schedule_Transaction_Code INT
+		)
 
-			UPDATE BVST SET BVST.RR_Min_DT_Time = (			
-				SELECT TOP 1 CAST(BV.Schedule_Item_Log_Date+' '+CAST(BVST.RR_Start_Time AS VARCHAR(8)) AS DATETIME)
-				FROM BV_Schedule_Transaction BV				
-				WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND ISNULL(BV.IsIgnore,'N') = 'N' AND BV.Channel_Code IN (@Channel_Code)	
-				AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
-				ORDER BY BV.BV_Schedule_Transaction_Code DESC
-			)
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='N'
+		INSERT INTO #Temp_Min_RightRule(BV_Schedule_Transaction_Code)		
+		select Min(BV_Schedule_Transaction_Code) FROM #BVScheduleTransaction Where IsRuleRight='Y' Group by Program_Episode_ID
 
-			UPDATE BVST SET BVST.RR_Max_DT_Time = DATEADD(SECOND,-1,DATEADD(HOUR, BVST.RR_Duration_Of_Day, BVST.RR_Min_DT_Time))
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE BVST.IsRuleRight = 'Y'
+		DECLARE @BV_Schedule_Transaction_Code_Cr INT
 
-			IF((SELECT COUNT(BVST.BV_Schedule_Transaction_Code) 
+		PRINT 'Before Coursor'
+		DECLARE CR_BV_Schedule_Transaction CURSOR
+		FOR 
+			SELECT BV_Schedule_Transaction_Code 
+			FROM #BVScheduleTransaction
+			WHERE File_Code = @File_Code
+			AND ISNULL(IsProcessed, 'N') = 'N'
+			AND ISNULL(Found_Status, 'N') = 'Y'
+			AND ISNULL(IsException, 'N') = 'N'
+			AND ISNULL(IsRuleRight,'N') = 'Y'
+			ORDER BY BV_Schedule_Transaction_Code ASC
+		OPEN CR_BV_Schedule_Transaction        
+		FETCH NEXT FROM CR_BV_Schedule_Transaction INTO 
+		@BV_Schedule_Transaction_Code_Cr
+		WHILE @@FETCH_STATUS<>-1 
+		BEGIN
+			DECLARE @Min_dt_time DATETIME, @Max_dt_Time DATETIME
+			DECLARE @Count_schedule INT 
+
+			IF((SELECT COUNT(BV_Schedule_Transaction_Code) FROM #Temp_Min_RightRule WHERE BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr) > 0)
+			BEGIN
+				PRINT 'Process only Min or First Instance of Program Id from DB'
+
+				-- Find Min_Dt_Time for Is_First_AIR ='Y'
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = (
+					SELECT MAX(BV.Schedule_Item_Log_DateTime)
+					FROM BV_Schedule_Transaction BV				
+					WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND ISNULL(BV.IsIgnore,'N') = 'N' AND BV.Channel_Code IN (@Channel_Code)
+					AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+					AND BV.BV_Schedule_Transaction_Code < BVST.BV_Schedule_Transaction_Code
+				)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='Y' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = BVST.Schedule_Item_Log_DateTime
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='Y' AND BVST.RR_Min_DT_Time IS NULL AND BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+				-- Find Min_Dt_Time for Is_First_AIR ='N'
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = (			
+					SELECT TOP 1 CAST(BV.Schedule_Item_Log_Date+' '+CAST(BVST.RR_Start_Time AS VARCHAR(8)) AS DATETIME)
+					FROM BV_Schedule_Transaction BV				
+					WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND ISNULL(BV.IsIgnore,'N') = 'N' AND BV.Channel_Code IN (@Channel_Code)	
+					AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+					AND BV.BV_Schedule_Transaction_Code < BVST.BV_Schedule_Transaction_Code
+					ORDER BY BV.BV_Schedule_Transaction_Code DESC
+				)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='N' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = CAST(BVST.Schedule_Item_Log_Date+' '+CAST(BVST.RR_Start_Time AS VARCHAR(8)) AS DATETIME)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='N' AND BVST.RR_Min_DT_Time IS NULL AND BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+				
+				-- Find Max_Dt_Time for all records
+
+				UPDATE BVST SET BVST.RR_Max_DT_Time = DATEADD(SECOND,-1,DATEADD(HOUR, BVST.RR_Duration_Of_Day, BVST.RR_Min_DT_Time))
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+				SELECT @Min_dt_time = (BV.RR_Min_DT_Time) FROM #BVScheduleTransaction BV WHERE BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+				SELECT @Max_dt_Time = (BV.RR_Max_DT_Time) FROM #BVScheduleTransaction BV WHERE BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+				SET @Count_schedule = 0
+
+				IF((SELECT COUNT(BVST.BV_Schedule_Transaction_Code) 
 				FROM BV_Schedule_Transaction BVST
 				INNER JOIN #BVScheduleTransaction BV ON BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
 				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BV.BMS_Deal_Content_Rights_Code
 				WHERE ISNULL(BVST.IsProcessed,'N') ='Y' AND ISNULL(BVST.IsIgnore,'N') = 'N' AND BVST.Channel_Code IN (@Channel_Code)
-				AND BVST.Schedule_Item_Log_DateTime BETWEEN BV.RR_Min_DT_Time AND BV.RR_Max_DT_Time) > 0)
-			BEGIN
-				PRINT 'BV_Schedule_Transaction : Found Data 1'
-				IF((SELECT COUNT(BV_Schedule_Transaction_Code) FROM #BVScheduleTransaction BVST
+				AND BV.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+				AND BVST.Schedule_Item_Log_DateTime BETWEEN @Min_dt_time AND @Max_dt_Time) > 0)
+				BEGIN					
+					IF((SELECT COUNT(BV_Schedule_Transaction_Code) FROM #BVScheduleTransaction BVST
 					INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-					WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time) > 0)
-				BEGIN
-					PRINT 'BV_Schedule_Transaction : Found Data 1.1'
-					UPDATE BVST SET BVST.RR_Count_Schedule = (			
-						SELECT COUNT(*)
-						FROM BV_Schedule_Transaction BV				
-						WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND BV.Channel_Code IN (@Channel_Code)	
-						AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
-						AND BV.Schedule_Item_Log_DateTime BETWEEN BVST.RR_Min_DT_Time AND BVST.RR_Max_DT_Time
-						AND BV.BV_Schedule_Transaction_Code <= BVST.BV_Schedule_Transaction_Code
-					)
-					FROM #BVScheduleTransaction BVST
-					INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-					WHERE BVST.IsRuleRight = 'Y'
+					WHERE IsRuleRight = 'Y' AND BVST.IsIgnoreUpdateRun='N' AND Schedule_Item_Log_DateTime BETWEEN BVST.RR_Min_DT_Time AND BVST.RR_Max_DT_Time 
+					AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr) > 0)
+					BEGIN
+						PRINT 'BV_Schedule_Transaction : Found Data 1.1'
+						UPDATE BVST SET BVST.RR_Count_Schedule = (			
+							SELECT COUNT(*)
+							FROM BV_Schedule_Transaction BV				
+							WHERE ISNULL(BV.IsProcessed,'N') ='Y' AND ISNULL(BV.IsIgnore,'N')='N' AND BV.Channel_Code IN (@Channel_Code)	
+							AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+							AND BV.Schedule_Item_Log_DateTime BETWEEN BVST.RR_Min_DT_Time AND BVST.RR_Max_DT_Time
+							AND BV.BV_Schedule_Transaction_Code <= BVST.BV_Schedule_Transaction_Code
+						)
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE BVST.IsRuleRight = 'Y' AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
 
+						UPDATE BVST SET IsIgnoreUpdateRun = 'N'
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule > (RR_No_Of_Repeat + RR_Play_Per_Day))
+						AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+						UPDATE BVST SET IsIgnoreUpdateRun = 'Y'
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule <= (RR_No_Of_Repeat + RR_Play_Per_Day))
+						AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+					END
+					ELSE
+					BEGIN
+						PRINT 'BV_Schedule_Transaction : Found Data 1.2'
+						UPDATE BVST SET IsIgnoreUpdateRun = 'N' 
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+					END
 				END
 				ELSE
 				BEGIN
@@ -412,55 +482,164 @@ BEGIN
 					UPDATE BVST SET IsIgnoreUpdateRun = 'N' 
 					FROM #BVScheduleTransaction BVST
 					INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-					WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime NOT BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time
+					WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+					
 				END
 			END
 			ELSE
 			BEGIN
-				PRINT 'BV_Schedule_Transaction : Found Data 3'
-				UPDATE BV SET IsIgnoreUpdateRun = 'N' 
-				FROM BV_Schedule_Transaction BVST
-				INNER JOIN #BVScheduleTransaction BV ON BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+
+				PRINT 'Process Remaining or Repeated Instance of Program Id from #BVScheduleTransaction'
+
+				-- Find Min_Dt_Time for Is_First_AIR ='Y'
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = (
+					SELECT TOP 1 BV.Schedule_Item_Log_DateTime
+					FROM #BVScheduleTransaction BV				
+					WHERE BV.IsRuleRight = 'Y'
+					AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+					AND BV.BV_Schedule_Transaction_Code < BVST.BV_Schedule_Transaction_Code
+					ORder by BV_Schedule_Transaction_Code desc
+				)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='Y' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+
+				-- Find Min_Dt_Time for Is_First_AIR ='N'
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = (
+					SELECT TOP 1 CAST(BV.Schedule_Item_Log_Date+' '+CAST(BVST.RR_Start_Time AS VARCHAR(8)) AS DATETIME)
+					FROM #BVScheduleTransaction BV				
+					WHERE BV.IsRuleRight = 'Y'
+					AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+					AND BV.BV_Schedule_Transaction_Code < BVST.BV_Schedule_Transaction_Code
+					ORDER BY BV.BV_Schedule_Transaction_Code DESC
+				)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='N' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+				UPDATE BVST SET BVST.RR_Min_DT_Time = CAST(BVST.Schedule_Item_Log_Date+' '+CAST(BVST.RR_Start_Time AS VARCHAR(8)) AS DATETIME)
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.RR_Is_First_AIR ='N' AND BVST.RR_Min_DT_Time IS NULL AND BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+				UPDATE BVST SET BVST.RR_Max_DT_Time = DATEADD(SECOND,-1,DATEADD(HOUR, BVST.RR_Duration_Of_Day, BVST.RR_Min_DT_Time))
+				FROM #BVScheduleTransaction BVST
+				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+				WHERE BVST.IsRuleRight = 'Y' AND BVST.BV_Schedule_Transaction_Code = @BV_Schedule_Transaction_Code_Cr
+
+				SELECT @Min_dt_time = (BV.RR_Min_DT_Time) FROM #BVScheduleTransaction BV WHERE BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+				SELECT @Max_dt_Time = (BV.RR_Max_DT_Time) FROM #BVScheduleTransaction BV WHERE BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+				SET @Count_schedule = 0
+
+				IF((SELECT COUNT(BV.BV_Schedule_Transaction_Code) 
+				FROM #BVScheduleTransaction BV
 				INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BV.BMS_Deal_Content_Rights_Code
-				WHERE ISNULL(BVST.IsProcessed,'N') ='Y' AND ISNULL(BVST.IsIgnore,'N') = 'N' AND BVST.Channel_Code IN (@Channel_Code)
-				AND BVST.Schedule_Item_Log_DateTime NOT BETWEEN BV.RR_Min_DT_Time AND BV.RR_Max_DT_Time
+				WHERE BV.BV_Schedule_Transaction_Code < @BV_Schedule_Transaction_Code_Cr
+				AND BV.Schedule_Item_Log_DateTime BETWEEN @Min_dt_time AND @Max_dt_Time AND BV.IsIgnoreUpdateRun='N') > 0)
+				BEGIN
+
+					IF((SELECT COUNT(BV_Schedule_Transaction_Code) FROM #BVScheduleTransaction BVST
+					INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+					WHERE IsRuleRight = 'Y' AND BVST.IsIgnoreUpdateRun='N' AND Schedule_Item_Log_DateTime BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr) > 0)
+					BEGIN
+						
+						PRINT 'BV_Schedule_Transaction : Found Data 1.1'
+						UPDATE BVST SET BVST.RR_Count_Schedule = (			
+							SELECT COUNT(*)
+							FROM #BVScheduleTransaction BV				
+							WHERE BV.IsRuleRight = 'Y' AND BV.IsIgnoreUpdateRun='N'
+							AND BV.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS = BVST.Program_Episode_ID COLLATE SQL_Latin1_General_CP1_CI_AS
+							AND BV.Schedule_Item_Log_DateTime BETWEEN BVST.RR_Min_DT_Time AND BVST.RR_Max_DT_Time
+							AND BV.BV_Schedule_Transaction_Code < BVST.BV_Schedule_Transaction_Code
+						)
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE BVST.IsRuleRight = 'Y' AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+						UPDATE BVST SET IsIgnoreUpdateRun = 'N'
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule > (RR_No_Of_Repeat + RR_Play_Per_Day))
+						AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+						UPDATE BVST SET IsIgnoreUpdateRun = 'Y'
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule <= (RR_No_Of_Repeat + RR_Play_Per_Day))
+						AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+					END
+					ELSE
+					BEGIN
+						PRINT 'BV_Schedule_Transaction : Found Data 2'
+						UPDATE BVST SET IsIgnoreUpdateRun = 'N' 
+						FROM #BVScheduleTransaction BVST
+						INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+						WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime NOT BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+					END
+				END
+				ELSE
+				BEGIN
+					PRINT 'BV_Schedule_Transaction : Found Data 2'
+					UPDATE BVST SET IsIgnoreUpdateRun = 'N' 
+					FROM #BVScheduleTransaction BVST
+					INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
+					WHERE IsRuleRight = 'Y' AND Schedule_Item_Log_DateTime BETWEEN RR_Min_DT_Time AND RR_Max_DT_Time AND BVST.BV_Schedule_Transaction_Code=@BV_Schedule_Transaction_Code_Cr
+
+				END
+
 			END
 
-			UPDATE BVST SET IsIgnoreUpdateRun = 'N'
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule > (RR_No_Of_Repeat + RR_Play_Per_Day))
-
-			UPDATE BVST SET IsIgnoreUpdateRun = 'Y'
-			FROM #BVScheduleTransaction BVST
-			INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-			WHERE IsRuleRight = 'Y' AND (RR_Count_Schedule <= (RR_No_Of_Repeat + RR_Play_Per_Day))
-
-			UPDATE BVST SET BVST.IsIgnore ='Y'
-			FROM BV_Schedule_Transaction BVST
-			INNER JOIN #BVScheduleTransaction BV ON BV.BV_Schedule_Transaction_Code = BVST.BV_Schedule_Transaction_Code
-			WHERE BV.IsRuleRight = 'Y' AND BV.IsIgnoreUpdateRun = 'Y'
-
-			select * from #BVScheduleTransaction
+			FETCH NEXT FROM CR_BV_Schedule_Transaction INTO     
+			@BV_Schedule_Transaction_Code_Cr
 		END
+		CLOSE CR_BV_Schedule_Transaction
+		DEALLOCATE CR_BV_Schedule_Transaction
 
 
 		------------------------------RULE RIGHT CHECK ------------------------------------------------------------
 
 		---------------------- Update Schedule Count for IsIgnoreUpdateRun ='N' ------------------------------------
 				
-		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + 1)
-		FROM #BVScheduleTransaction BVST
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		WHERE BVST.IsIgnoreUpdateRun='N'
+		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + New_Utilised_Run)
+		FROM (
+			SELECT BMS_Deal_Content_Rights_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction WHERE IsIgnoreUpdateRun='N'
+			GROUP BY BMS_Deal_Content_Rights_Code
+		) BVST
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code
+		--WHERE BVST.IsIgnoreUpdateRun='N'
 
 		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
 
-		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + 1)
-		FROM #BVScheduleTransaction BVST
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code AND BDCR.IS_Active='Y'
-		WHERE BVST.IsIgnoreUpdateRun='N' AND BDCR.RU_Channel_Code NOT IN (@Channel_Code) AND BVST.Run_Definition_Type NOT IN ('C')
-		AND CAST(BVST.Schedule_Item_Log_DateTime as Date) BETWEEN BDCR.Start_Date AND BDCR.End_Date
+		--SELECT Acq_Deal_Run_Code, Schedule_Item_Log_DateTime, COUNT(*) New_Utilised_Run 
+		--FROM #BVScheduleTransaction 
+		--WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
+		--GROUP BY Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
+
+		--SELECT bvin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+		--FROM #BVScheduleTransaction bvin
+		--INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND BDCRin.Is_Active='Y'
+		--WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
+		--AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date
+		--GROUP BY bvin.Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
+
+		UPDATE BDCR SET BDCR.Utilised_Run = (ISNULL(BDCR.Utilised_Run,0) + BVST.New_Utilised_Run)
+		FROM (
+			SELECT bvin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction bvin
+			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.Acq_Deal_Run_Code = bvin.Acq_Deal_Run_Code AND BDCRin.Is_Active='Y'
+			WHERE IsIgnoreUpdateRun='N' AND Run_Definition_Type NOT IN ('C')
+			AND CAST(bvin.Schedule_Item_Log_DateTime as Date) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date
+			GROUP BY bvin.Acq_Deal_Run_Code, Schedule_Item_Log_DateTime
+		) BVST
+		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code AND BDCR.IS_Active='Y'
+		WHERE BDCR.RU_Channel_Code NOT IN (@Channel_Code) --AND BVST.IsIgnoreUpdateRun='N' --AND BVST.Run_Definition_Type NOT IN ('C')
+		--AND CAST(BVST.Schedule_Item_Log_DateTime as Date) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 		
 		----------------------Update Schedule Count for Non Channel wise Run definition--------------------------------
 
@@ -494,7 +673,7 @@ BEGIN
 
 		PRINT '-----SET Prime & OffPrime Both Defined--------------------------START-------------------------'
 
-		SELECT * From #BVScheduleTransaction
+		--SELECT * From #BVScheduleTransaction
 		UPDATE #BVScheduleTransaction 			
 			SET OffPrimeStartTime = CONVERT(DATETIME,(CONVERT(DATE,Schedule_Item_Log_DateTime) + CAST((SELECT CONVERT(VARCHAR(15),CAST('00:00:01.0000000' AS TIME),100)) AS DATETIME)) ,101)
 		WHERE IsIgnoreUpdateRun='N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
@@ -506,7 +685,7 @@ BEGIN
 		AND ISNULL(PrimeStartTime,'')<>'' AND ISNULL(OffPrimeStartTime,'')<>''
 		AND Schedule_Item_Log_DateTime BETWEEN CAST(DATEADD(DAY,-1,OffPrimeStartTime) as datetime) AND OffPrimeEndTime
 
-		select * from #BVScheduleTransaction
+		--select * from #BVScheduleTransaction
 
 		UPDATE #BVScheduleTransaction 			
 			SET IsPrime = 'Y' 
@@ -568,13 +747,20 @@ BEGIN
 
 		-------------------- IsPrime = N --------------------START----------------------------
 
-		UPDATE ADR SET ADR.Off_Prime_Time_Provisional_Run_Count =ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) + 1
-		FROM #BVScheduleTransaction BVST
-		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
-		WHERE BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		AND BVST.IsPrime = 'N'
-		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+		UPDATE ADR SET ADR.Off_Prime_Time_Provisional_Run_Count = ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) + New_Utilised_Run
+		FROM (
+			SELECT BDCRin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction BVSTin
+			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.BMS_Deal_Content_Rights_Code = BVSTin.BMS_Deal_Content_Rights_Code AND BDCRin.Is_Active = 'Y'
+			WHERE IsIgnoreUpdateRun='N' AND IsPrime = 'N' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+			AND CAST(BVSTin.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date		
+			GROUP BY BDCRin.Acq_Deal_Run_Code
+		) BVST
+		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
+		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
+		--WHERE --BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		--AND BVST.IsPrime = 'N' AND 
+		--CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
 		UPDATE BVST SET BVST.Schedule_Run =ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0),BVST.Allocated_Run = ISNULL(ADR.Off_Prime_Run,0),
 		BVST.Balance_Run = ISNULL(ADR.Off_Prime_Run,0) - ISNULL(ADR.Off_Prime_Time_Provisional_Run_Count,0) 
@@ -619,13 +805,21 @@ BEGIN
 
 		-------------------- IsPrime = Y --------------------START----------------------------
 
-		UPDATE ADR SET ADR.Prime_Time_Provisional_Run_Count =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) + 1
-		FROM #BVScheduleTransaction BVST
+		UPDATE ADR SET ADR.Prime_Time_Provisional_Run_Count =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) + New_Utilised_Run
+		FROM (
+			SELECT BDCRin.Acq_Deal_Run_Code, COUNT(*) New_Utilised_Run 
+			FROM #BVScheduleTransaction BVSTin
+			INNER JOIN BMS_Deal_Content_Rights BDCRin ON BDCRin.BMS_Deal_Content_Rights_Code = BVSTin.BMS_Deal_Content_Rights_Code AND BDCRin.Is_Active = 'Y'
+			WHERE IsIgnoreUpdateRun='N' AND IsPrime = 'Y' AND Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+			AND CAST(BVSTin.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCRin.Start_Date AND BDCRin.End_Date		
+			GROUP BY BDCRin.Acq_Deal_Run_Code
+
+		) BVST
 		INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code=BVST.Acq_Deal_Run_Code
-		INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
-		WHERE BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
-		AND BVST.IsPrime = 'Y'
-		AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
+		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code AND BDCR.IS_Active='Y'
+		--WHERE --BVST.IsIgnoreUpdateRun='N' AND BVST.Business_Unit_Code IN (SELECT Business_Unit_Code FROM Business_Unit WHERE Business_Unit_Name like '%English Movies%')
+		--AND BVST.IsPrime = 'Y' AND
+		--CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date		
 
 		UPDATE BVST SET BVST.Schedule_Run =ISNULL(ADR.Prime_Time_Provisional_Run_Count,0),BVST.Allocated_Run = ISNULL(ADR.Prime_Run,0),
 		BVST.Balance_Run = ISNULL(ADR.Prime_Run,0) - ISNULL(ADR.Prime_Time_Provisional_Run_Count,0) 
@@ -977,7 +1171,8 @@ BEGIN
 		FROM Acq_Deal_Run ADR
 		INNER JOIN
 		(
-			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
+			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1006,7 +1201,8 @@ BEGIN
 		FROM Acq_Deal_Run_Channel ADRC
 		INNER JOIN
 		(
-			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
+			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,RU_Channel_Code
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1035,7 +1231,8 @@ BEGIN
 		FROM Acq_Deal_Run_Yearwise_Run ADRY
 		INNER JOIN
 		(
-			SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			--SELECT SUM(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
+			SELECT MAX(ISNULL(BDRC.Utilised_Run,0)) Run_Count,BDRC.Acq_Deal_Run_Code,BDRC.Start_Date,BDRC.End_Date
 			FROM #BVScheduleTransaction bst 
 			INNER JOIN BMS_Deal_Content_Rights BDRC ON BDRC.BMS_Deal_Content_Rights_Code = bst.BMS_Deal_Content_Rights_Code 
 			--INNER JOIN Acq_Deal_Run ADR ON ADR.Acq_Deal_Run_Code = BDRC.Acq_Deal_Run_Code AND ADR.Run_Definition_Type = 'C'
@@ -1044,12 +1241,12 @@ BEGIN
 		)T2 ON T2.Acq_Deal_Run_Code = ADRY.Acq_Deal_Run_Code AND T2.Start_Date = ADRY.Start_Date AND T2.End_Date = ADRY.End_Date
 
 
-		UPDATE BV SET BV.IsProcessed = 'Y',IsIgnore = 'N',BV.IsException = CASE WHEN BVST.IsException = 'Y' THEN 'Y' ELSE BV.IsException END,
+		UPDATE BV SET BV.IsProcessed = 'Y',IsIgnore = BVST.IsIgnoreUpdateRun,BV.IsException = CASE WHEN BVST.IsException = 'Y' THEN 'Y' ELSE BV.IsException END,
 		BV.IsPrime = BVST.IsPrime,BV.BMS_Deal_Content_Rights_Code = BVST.BMS_Deal_Content_Rights_Code,BV.Acq_Deal_Run_Code = BVST.Acq_Deal_Run_Code
 		FROM BV_Schedule_Transaction BV 			
 		INNER JOIN #BVScheduleTransaction BVST ON BVST.BV_Schedule_Transaction_Code = BV.BV_Schedule_Transaction_Code
 		--INNER JOIN BMS_Deal_Content_Rights BDCR ON BDCR.BMS_Deal_Content_Rights_Code=BVST.BMS_Deal_Content_Rights_Code
-		WHERE IsIgnoreUpdateRun='N'
+		--WHERE IsIgnoreUpdateRun='N'
 		--AND CAST(BVST.Schedule_Item_Log_DateTime AS DATE) BETWEEN BDCR.Start_Date AND BDCR.End_Date
 
 		UPDATE UF SET UF.Err_YN = 'Y'			
@@ -1060,6 +1257,6 @@ BEGIN
 		---------------------- Update Schedule Count for IsIgnoreUpdateRun ='N' ------------------------------------
 		
 
-	SELECT * From #BVScheduleTransaction
+	--SELECT * From #BVScheduleTransaction
 	
 END

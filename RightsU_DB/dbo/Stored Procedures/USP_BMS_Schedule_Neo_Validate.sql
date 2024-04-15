@@ -690,6 +690,7 @@ BEGIN
 			
 			PRINT '2'
 			--===============4.2 DELETING all matched PROGRAMMIDS records from Temp_BV_Schedule --===============
+			-- Temp Commented by JD
 			DELETE FROM Temp_BV_Schedule WHERE File_Code = @File_Code AND Temp_BV_Schedule_Code IN
 			(
 				SELECT tbs.Temp_BV_Schedule_Code FROM Temp_BV_Schedule tbs (NOLOCK)				
@@ -726,7 +727,7 @@ BEGIN
 			SELECT 'USP_BMS_Schedule1_Validate_Temp_BV_Schedule',@File_Code,@Channel_Code,@IsReprocess,@BV_Episode_ID,@CanProcessRun,'STEP 2 Before Schedule Process',GETDATE()
 
 			PRINT '--===============11.0 PROCESS_DATA --==============='
-			EXEC USP_BMS_Schedule_Neo_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
+			--EXEC USP_BMS_Schedule_Neo_Process  @File_Code , @Channel_Code,0,'N', @CanProcessRun--,@Called_FROM_JOB
 		
 			IF((select isnull(Parameter_Value,'N') from System_Parameter_New where Parameter_Name ='IS_Schedule_Mail_Channelwise')  = 'Y' )
 			BEGIN
@@ -780,5 +781,3 @@ BEGIN
 		UPDATE Upload_Files set Err_YN = 'Y' WHERE File_code = @File_Code
 	END CATCH
 END
-GO
-
