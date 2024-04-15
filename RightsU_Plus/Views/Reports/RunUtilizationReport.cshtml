@@ -152,7 +152,8 @@
                 IsDealExpire: subDeal,
                 ClusterCode: SelectedCluster,
                 BU_Code: $('#ddlBusinessUnit').val(),
-                BUName: $('#ddlBusinessUnit  option:selected').text()
+                BUName: $('#ddlBusinessUnit  option:selected').text(),
+                TitleType: TitleType
             }),
             async: false,
             success: function (result) {
@@ -173,13 +174,14 @@
         debugger;
         var code = 1;
         $("#ddlRunType").val("");
-        $("#ddlBusinessUnit").val(code).trigger('chosen:updated');
+        //$("#ddlBusinessUnit").val(code).trigger('chosen:updated');
         $("#ddlRunType").val('').trigger('chosen:updated');
         //$('#ddlTitle')[0].sumo.unSelectAll();
         $('#txtChannel,#txtTitle').val('');
         $('#chkExpiryDeal').prop("checked", false);
         $('#hdnChannelCode,#hdnTitleCode').val(0);
     }
+
     function PopulateChannel(keyword) {
         var Type = "";
         if ($('#txtChannel').val().length == "0") {
@@ -384,6 +386,7 @@
 
 
 </script>
+
 <style>
     #divFilter {
         background: #eee;
@@ -404,6 +407,7 @@
         max-width: 70%;
     }
 </style>
+
 <div class="main_section">
     <section class="rightsU_container clearfix">
         <div class="container acq main_col">
@@ -415,22 +419,19 @@
                             <div>
                                 <table align="center" border="0" cellpadding="2" cellspacing="0" style="width: 100%; vertical-align: top;">
                                     <tr>
-                                        <td class="searchborder" style="width: 10%;">
-                                            <b>@objMessageKey.BusinessUnit</b>
+                                        <td class="searchborder" style="width: 15%;">
+                                            <b>@objMessageKey.BusinessUnit:</b>
                                         </td>
+
                                         <td class="searchborder" style="width:25%;">
                                             @Html.DropDownList("BusinessUnit", ViewBag.BusinessUnitList as SelectList, new { @id = "ddlBusinessUnit", @class = "form_input chosen-select" })
                                         </td>
+
                                         <td class="searchborder" style="width: 10%;">
-                                            @*@objMessageKey.Title*@
-                                            <b id="changeLabel">Movie Title</b>
-                                        </td>
-                                        <td class="searchborder" style="width: 28%;">
-                                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:295px" placeholder="Movie Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
-                                            <input type="hidden" id="hdnTitleCode" value="0" />
+                                            <b>TitleType:</b>
                                         </td>
 
-                                        <td style="width: 30%;">
+                                        <td class="searchborder" style="width: 28%;">
                                             <input type="radio" value="M" id="TitleType" class="TitleTypeCls" name="TitleTypeName" checked /> <b>@objMessageKey.Movie</b> &nbsp;&nbsp;&nbsp;&nbsp;
                                             <input type="radio" value="S" id="TitleType" class="TitleTypeCls" name="TitleTypeName" /> <b>Program</b> &nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -439,32 +440,49 @@
                                                 <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
                                                 <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />*@
                                         </td>
-                                    </tr>
-                                    <tr>
 
-                                        <td class="searchborder">
-                                            <b>@objMessageKey.RunType</b>
+                                        <td class="searchborder" style="width: 10%;">
+                                            @*@objMessageKey.Title*@
+                                            <b id="changeLabel">Movie Title:</b>
                                         </td>
+
+                                        <td class="searchborder" style="width: 30%;">
+                                            <input type="text" id="txtTitle" class="search" maxlength="100" style="width:295px" placeholder="Movie Title" onkeyup="PopulateTitle(event)" autocomplete="on" />
+                                            <input type="hidden" id="hdnTitleCode" value="0" />
+                                        </td>
+
+
+                                    </tr>
+
+                                    <tr>
+                                        <td class="searchborder">
+                                            <b>@objMessageKey.RunType:</b>
+                                        </td>
+
                                         <td>
                                             @Html.DropDownList("RunType", (List<SelectListItem>)ViewBag.RunType, new { @id = "ddlRunType", @class = "form_input chosen-select" })
                                         </td>
-                                        <td><b>@objMessageKey.Channel</b></td>
+
+                                        <td><b>@objMessageKey.Channel:</b></td>
+
                                         <td>
                                             <input type="text" id="txtChannel" class="search" maxlength="100" style="width:295px" placeholder="@objMessageKey.Channel" onkeyup="PopulateChannel(event)" autocomplete="on" />
                                             <input type="hidden" id="hdnChannelCode" value="0" />
                                         </td>
-                                        <td>
+
+                                        <td colspan="2">
                                             <input type="checkbox" id="chkExpiryDeal" name="ExpiryDeal" /> <text><b>@objMessageKey.ExcludeExpiredDeal</b></text>
                                             <span style="padding-left:2%;"></span>
-                                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
-                                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
                                         </td>
+
+                                        <td></td>
                                     </tr>
+
                                     <tr>
                                         @if (@ViewBag.count != 0)
                                         {
                                             <td>
-                                                <label id="lblCluster"><b>@objMessageKey.Cluster</b></label>
+                                                <label id="lblCluster"><b>@objMessageKey.Cluster:</b></label>
                                             </td>
                                             <td>
                                                 @Html.DropDownList("ClusterList", (List<SelectListItem>)ViewBag.ClusterList, "Please Select", new { @id = "ddlCluster", @class = "form_input chosen-select" })
@@ -475,8 +493,20 @@
                                             <input type="radio" name="year" id="rbExpandAll" value="EA" /><text>&nbsp;&nbsp; <b>Expand All</b> &nbsp;&nbsp;</text>
                                             <input type="radio" name="year" id="rbNA" checked="checked" value="N" />&nbsp;&nbsp; <b>@objMessageKey.NA</b> &nbsp;&nbsp;
                                         </td>
-                                    </tr>
 
+                                        <td></td>
+
+                                        <td></td>
+
+                                        <td></td>
+
+                                        <td class="pull-right" colspan="2">
+                                            <input type="button" id="btnShow" class="btn btn-primary" value="@objMessageKey.Show" onclick="return btnShow_OnClick()">
+                                            <input type="button" id="btnClear" class="btn btn-primary" value="@objMessageKey.ClearAll" onclick="Clear()" />
+                                        </td>
+
+                                        <td></td>
+                                    </tr>
                                 </table>
                             </div>
                         </td>
