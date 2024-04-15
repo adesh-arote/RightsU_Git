@@ -1884,7 +1884,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!NoOfRuns.Value</Value>
+                                  <Value>=IIF(Fields!NoOfRuns.Value = -1, "Unlimited", Fields!NoOfRuns.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
@@ -1992,7 +1992,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!Balance_Runs.Value</Value>
+                                  <Value>=IIF(Fields!Balance_Runs.Value = -1, "Unlimited", Fields!Balance_Runs.Value)</Value>
                                   <Style>
                                     <FontSize>11pt</FontSize>
                                   </Style>
