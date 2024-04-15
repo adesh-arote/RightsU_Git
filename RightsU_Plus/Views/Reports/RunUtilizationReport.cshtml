@@ -172,9 +172,9 @@
     }
     function Clear() {
         debugger;
-        var code = 1;
+        var code = 2;
         $("#ddlRunType").val("");
-        //$("#ddlBusinessUnit").val(code).trigger('chosen:updated');
+        $("#ddlBusinessUnit").val(code).trigger('chosen:updated');
         $("#ddlRunType").val('').trigger('chosen:updated');
         //$('#ddlTitle')[0].sumo.unSelectAll();
         $('#txtChannel,#txtTitle').val('');
