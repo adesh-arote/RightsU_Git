@@ -312,8 +312,15 @@ namespace RightsU_Plus.Controllers
 
                 if (IsConfirmingParty.ToUpper() == "Y")
                 {
-                    int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
-                    objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
+                    var isNumeric = int.TryParse(objAD_Session.Confirming_Party, out int n);
+                    if (isNumeric)
+                    {
+                        int Confirming_Code = Convert.ToInt32(objAD_Session.Confirming_Party);
+                        objAD_Session.Confirming_Party = new Vendor_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Vendor_Code == Confirming_Code).Select(x => x.Vendor_Name).FirstOrDefault();
+                    }
+                    
+
+
                 }
                 ViewBag.prevAcq_Deal = prevAcq_Deal;
                 viewName = "~/Views/Acq_Deal/_Acq_General_View.cshtml";
@@ -1216,7 +1223,7 @@ namespace RightsU_Plus.Controllers
 
 
                     #region ---------------------------- Validating titles in deal are scheduled or not in BV -------------------------------
-                    List<BV_Schedule_Transaction> lstBV_Schedule = new BV_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Deal_Code == objAD_MVC.Acq_Deal_Code).ToList(); 
+                    List<BV_Schedule_Transaction> lstBV_Schedule = new BV_Schedule_Transaction_Service(objLoginEntity.ConnectionStringName).SearchFor(s => true).Where(w => w.Deal_Code == objAD_MVC.Acq_Deal_Code).ToList();
 
                     if (lstBV_Schedule.Count > 0)
                     {
@@ -1460,11 +1467,11 @@ namespace RightsU_Plus.Controllers
                     {
 
                         foreach (Acq_Deal_Movie objADM in objAD_Session.Acq_Deal_Movie)
-                        {                            
+                        {
                             if (objADM.Is_Closed != "Y" && objADM.Is_Closed != "X")
                             {
                                 Acq_Deal_Digital_Service objTransactionService = new Acq_Deal_Digital_Service(objLoginEntity.ConnectionStringName);
-                                Acq_Deal_Digital objDigital = new Acq_Deal_Digital(); 
+                                Acq_Deal_Digital objDigital = new Acq_Deal_Digital();
 
                                 int Acq_Deal_Digital_Code = objTransactionService.SearchFor(a => a.Acq_Deal_Code == objADM.Acq_Deal_Code && a.Title_code == objADM.Title_Code).Select(b => b.Acq_Deal_Digital_Code).FirstOrDefault();
 
@@ -1482,7 +1489,7 @@ namespace RightsU_Plus.Controllers
                                         objDigital.Episode_To = (int)objADM.Episode_End_To;
                                     objDigital.EntityState = State.Modified;
                                     objTransactionService.Save(objDigital, out resultSet);
-                                }                               
+                                }
 
                                 objTransactionService = null;
                                 objDigital = null;
@@ -2001,7 +2008,7 @@ namespace RightsU_Plus.Controllers
             if (objADM.Acq_Deal_Movie_Code > 0)
             {
                 //int Flag = new USP_Service().USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").ElementAt(0).Value;
-                StatusMessage objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();         
+                StatusMessage objStatusMessage = new USP_Service(objLoginEntity.ConnectionStringName).USP_Validate_General_Delete_For_Title(objADM.Acq_Deal_Code, objADM.Title_Code, objADM.Episode_Starts_From, objADM.Episode_End_To, "A").FirstOrDefault();
                 if (objStatusMessage.Status == "E")
                 {
                     status = objStatusMessage.Status;

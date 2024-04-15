@@ -122,7 +122,7 @@ if(@Loglevel < 2)Exec [USPLogSQLSteps] '[USP_Get_Title_Avail_Language_Data_Show]
 		, Region_ExactMatch, Region_MustHave, Region_Exclusion, Subtit_Language_Code, Dubbing_Language_Code, BU_Code, Report_Type, Digital, IncludeMetadata, Is_IFTA_Cluster, Platform_Group_Code
 		, Subtitling_Group_Code, Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion, Territory_Code
 		, IndiaCast, Region_On, Include_Ancillary, Promoter_Code, MustHave_Promoter, Promoter_ExactMatch, Module_Code, Episode_From, Episode_To
-      FROM Y  (NOLOCK)'
+      FROM Y'
   print @SqlQuery        
   EXEC(@SqlQuery)        
   DEclare @RecCount INT 

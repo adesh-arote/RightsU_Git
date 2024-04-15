@@ -148,7 +148,7 @@ BEGIN
 				LEFT JOIN Deal_Type DT (NOLOCK) on DT.Deal_Type_Code = TT.Deal_Type_Code
 				LEFT JOIN Title_Geners TG (NOLOCK) on TG.Title_Code = TT.Title_Code
 				LEFT JOIN Genres G (NOLOCK) on G.Genres_Code = TG.Genres_Code
-				Where ISNULL(CCR.Is_Archive, 'N') = 'N'
+				Where ISNULL(CCR.Is_Archive, 'N') = 'N' AND ( ISNULL(@Run_Type, '') = '' OR CCR.Run_Type = @Run_Type )
 			) AS X
 			GROUP BY X.Agreement_No, 
 			X.Title_Name, X.Deal_Code, X.Title_Content_Code, X.Channel_Code, X.Channel_Name, X.Channels_Beam, X.Channel_Id, X.Run_Def_Type, X.Order_For_schedule,
