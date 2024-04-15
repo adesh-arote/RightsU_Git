@@ -2,7 +2,7 @@
   <Entity>
     <ShortName>UTO</ShortName>
     <FullName>UTO</FullName>
-    <DatabaseName>RightsU_Plus_Dev</DatabaseName>
+    <DatabaseName>RightsU_SH_Prod_14Aug23</DatabaseName>
     <ConnectionStringName>RightsU_MotionPicture</ConnectionStringName>
     <ReportingServerFolder>/RightsU_V18</ReportingServerFolder>
   </Entity>
