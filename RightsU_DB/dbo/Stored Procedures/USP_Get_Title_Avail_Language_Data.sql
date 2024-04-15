@@ -116,7 +116,7 @@ BEGIN
 			, Region_ExactMatch, Region_MustHave, Region_Exclusion, Subtit_Language_Code, Dubbing_Language_Code, BU_Code, Report_Type, Digital, IncludeMetadata, Is_IFTA_Cluster, Platform_Group_Code
 			, Subtitling_Group_Code, Subtitling_ExactMatch, Subtitling_MustHave, Subtitling_Exclusion, Dubbing_Group_Code, Dubbing_ExactMatch, Dubbing_MustHave, Dubbing_Exclusion, Territory_Code
 			, IndiaCast, Region_On, Include_Ancillary, Promoter_Code, MustHave_Promoter, Promoter_ExactMatch, Module_Code
-			From Y  (NOLOCK)'    
+			From Y'    
 		
 		print 'reshma-1'  
 		print @SqlQuery      

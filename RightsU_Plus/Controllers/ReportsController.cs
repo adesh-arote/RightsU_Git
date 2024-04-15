@@ -1260,7 +1260,13 @@ namespace RightsU_Plus.Controllers
             string ReportType = "S";
             string from = "";
             string to = "";
-            string title_names = TitleAutosuggest(TitleCodes);
+            List<string> lstTitleTypeCode = new List<string>();
+            if (TitleType == "M")
+                TitleType = "Movie";
+            else
+                TitleType = "Program";
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+            string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             if (FromDate != "")
                 from = GlobalUtil.MakedateFormat(FromDate);
             if (ToDate != "")
@@ -1724,9 +1730,14 @@ namespace RightsU_Plus.Controllers
                 return Json(result);
             }
         }
-        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string ParamExpandOrCollapse, string RunType, string IsDealExpire, string ClusterCode, string BUName)
+        public ActionResult BindRunUtilizationReport(string BU_Code, string TitleCodes, string ChannelCodes, string AllYears, string ParamExpandOrCollapse, string RunType, string IsDealExpire, string ClusterCode, string BUName, string TitleType)
         {
-            string title_names = TitleAutosuggest(TitleCodes);
+            if (TitleType == "M")
+                TitleType = "Movie";
+            else
+                TitleType = "Program";
+            int DealTypeCode = new Deal_Type_Service(objLoginEntity.ConnectionStringName).SearchFor(x => x.Deal_Type_Name == TitleType).Select(s => s.Deal_Type_Code).FirstOrDefault();
+            string title_names = TypeWiseTitleAutosuggest(TitleCodes, DealTypeCode);
             string channel_names = ChannelAutosuggest(ChannelCodes);
             string ReportName = "CHANNEL_WISE_CONSUMPTION";
             if (ClusterCode != "")
@@ -3422,6 +3433,21 @@ namespace RightsU_Plus.Controllers
         }
 
         #endregion
+
+        public string TypeWiseTitleAutosuggest(string Title, int DealTypeCode)
+        {
+            Title = Title.Trim().Trim('﹐').Trim();
+            string title_names = "";
+            if (Title != "")
+            {
+                string[] terms = Title.Split('﹐');
+                string[] Title_Codes = new Title_Service(objLoginEntity.ConnectionStringName).SearchFor(x => (terms.Contains(x.Title_Name)) && x.Deal_Type_Code == DealTypeCode).Select(s => s.Title_Code.ToString()).ToArray();
+                title_names = string.Join(", ", Title_Codes);
+                if (title_names == "")
+                    title_names = "-1";
+            }
+            return title_names;
+        }
     }
 
     public class DDLEnumData
