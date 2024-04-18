@@ -91,7 +91,7 @@ namespace RightsU.API.Controllers
                             _objRet.IsSuccess = false;
                             _objRet.StatusCode = HttpStatusCode.BadRequest;
                             objLog.Record_Status = "E";
-                            objLog.Error_Description = _objRet.Message;                            
+                            objLog.Error_Description = _objRet.Message;
                         }
                     }
                     catch (Exception ex)
@@ -214,33 +214,46 @@ namespace RightsU.API.Controllers
                     {
                         if (!string.IsNullOrEmpty(DealsInput.assetId))
                         {
+                            //string step1 = "1";
                             try
                             {
-                                if (DealsInput.assetId.Contains(BMS_API_Asset_Prefix))
+                                if (DealsInput.assetId.Contains(BMS_API_Asset_Prefix) || BMS_API_Asset_Prefix == "")
                                 {
-                                    int AssetId = Convert.ToInt32(DealsInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    //step1 = "2 - " + BMS_API_Asset_Prefix;
+                                    int AssetId = 0;
+                                    if (BMS_API_Asset_Prefix != "")
+                                        AssetId = Convert.ToInt32(DealsInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    else
+                                        AssetId = Convert.ToInt32(DealsInput.assetId);
+                                    //step1 = "2.1";
                                     if (AssetId == 0)
                                     {
+                                        //step1 = "3";
                                         _objRet.Message = "Invalid AssetId";
                                         _objRet.IsSuccess = false;
                                         _objRet.StatusCode = HttpStatusCode.BadRequest;
-
+                                        //step1 = "4";
                                         objLog.Record_Status = "E";
                                         objLog.Error_Description = _objRet.Message;
+                                        //step1 = "5";
                                     }
                                     else
                                     {
+                                        //step1 = "6";
                                         DealsInput.assetId = Convert.ToString(AssetId);
+                                        //step1 = "7";
                                     }
                                 }
                                 else
                                 {
+                                    //step1 = "8";
                                     _objRet.Message = "Invalid AssetId";
                                     _objRet.IsSuccess = false;
                                     _objRet.StatusCode = HttpStatusCode.BadRequest;
-
+                                    //step1 = "9";
                                     objLog.Record_Status = "E";
                                     objLog.Error_Description = _objRet.Message;
+                                    //step1 = "10";
                                 }
                             }
                             catch (Exception ex)
@@ -388,9 +401,16 @@ namespace RightsU.API.Controllers
                         {
                             try
                             {
-                                if (DealContentInput.assetId.Contains(BMS_API_Asset_Prefix))
+                                if (DealContentInput.assetId.Contains(BMS_API_Asset_Prefix) || BMS_API_Asset_Prefix == "")
                                 {
-                                    int AssetId = Convert.ToInt32(DealContentInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    //int AssetId = Convert.ToInt32(DealContentInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+
+                                    int AssetId = 0;
+                                    if (BMS_API_Asset_Prefix != "")
+                                        AssetId = Convert.ToInt32(DealContentInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    else
+                                        AssetId = Convert.ToInt32(DealContentInput.assetId);
+
                                     if (AssetId == 0)
                                     {
                                         _objRet.Message = "Invalid AssetId";
@@ -429,9 +449,16 @@ namespace RightsU.API.Controllers
                         {
                             try
                             {
-                                if (DealContentInput.dealId.Contains(BMS_API_Deal_Prefix))
+                                if (DealContentInput.dealId.Contains(BMS_API_Deal_Prefix) || BMS_API_Deal_Prefix == "")
                                 {
-                                    int DealId = Convert.ToInt32(DealContentInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+                                    //int DealId = Convert.ToInt32(DealContentInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+
+                                    int DealId = 0;
+                                    if (BMS_API_Deal_Prefix != "")
+                                        DealId = Convert.ToInt32(DealContentInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+                                    else
+                                        DealId = Convert.ToInt32(DealContentInput.dealId);
+
                                     if (DealId == 0)
                                     {
                                         _objRet.Message = "Invalid DealId";
@@ -600,9 +627,16 @@ namespace RightsU.API.Controllers
                         {
                             try
                             {
-                                if (DealContentRightsInput.assetId.Contains(BMS_API_Asset_Prefix))
+                                if (DealContentRightsInput.assetId.Contains(BMS_API_Asset_Prefix) || BMS_API_Asset_Prefix == "")
                                 {
-                                    int AssetId = Convert.ToInt32(DealContentRightsInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    //int AssetId = Convert.ToInt32(DealContentRightsInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+
+                                    int AssetId = 0;
+                                    if (BMS_API_Asset_Prefix != "")
+                                        AssetId = Convert.ToInt32(DealContentRightsInput.assetId.Replace(BMS_API_Asset_Prefix, ""));
+                                    else
+                                        AssetId = Convert.ToInt32(DealContentRightsInput.assetId);
+
                                     if (AssetId == 0)
                                     {
                                         _objRet.Message = "Invalid AssetId";
@@ -641,9 +675,16 @@ namespace RightsU.API.Controllers
                         {
                             try
                             {
-                                if (DealContentRightsInput.dealId.Contains(BMS_API_Deal_Prefix))
+                                if (DealContentRightsInput.dealId.Contains(BMS_API_Deal_Prefix) || BMS_API_Deal_Prefix == "")
                                 {
-                                    int DealId = Convert.ToInt32(DealContentRightsInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+                                    //int DealId = Convert.ToInt32(DealContentRightsInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+
+                                    int DealId = 0;
+                                    if (BMS_API_Deal_Prefix != "")
+                                        DealId = Convert.ToInt32(DealContentRightsInput.dealId.Replace(BMS_API_Deal_Prefix, ""));
+                                    else
+                                        DealId = Convert.ToInt32(DealContentRightsInput.dealId);
+
                                     if (DealId == 0)
                                     {
                                         _objRet.Message = "Invalid DealId";
