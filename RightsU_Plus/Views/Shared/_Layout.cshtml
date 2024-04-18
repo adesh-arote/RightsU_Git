@@ -81,8 +81,9 @@
     , URL_Deal_For_Approval_Music = '@Url.Action("Deal_For_Approval", "Global", new {
                                     DealCode = "Deal_Code", ModuleCode = GlobalParams.ModuleCodeForMusicDeal, Record_Locking_Code = "RecordLockingCode" })'
     , URL_Syn_Approve_Reject = '@Url.Action("Syn_Approve_Reject_Deal", "Global")'
-            , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")',
-    URL_BindAeroplay = '@Url.Action("BindAeroplay", "Global")';
+    , URL_Approve_Reject_Reopen = '@Url.Action("Approve_Reject_Deal", "Global")'
+    , URL_BindAeroplay = '@Url.Action("BindAeroplay", "Global")'
+    , URL_RedirectToROP = '@Url.Action("RedirectToROP", "Global")';
 
         $(document).ready(function () {
             //  $("#triangle").css({ "top": "-13px" });
@@ -915,6 +916,49 @@
             $('#Aeroplaypopup').modal('hide');
             $('#AeroplaypupupHtml').empty();
         }
+
+        function RedirectToROP(UserCode, UserName, UserPassword) {
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: URL_RedirectToROP,
+                traditional: true,
+                enctype: 'multipart/form-data',
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                data: JSON.stringify({
+                    UserCode: UserCode,
+                    UserName: UserName,
+                    UserPassword: UserPassword
+                }),
+                success: function (result) {
+                    debugger;
+                    if (result == "true") {
+                        redirectToLogin();
+                    }
+                    else {
+                        var uniqueKey = 'key_' + Date.now();
+                        localStorage.setItem(uniqueKey, result);
+                        var url = '@System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]?uniqueKey=' + uniqueKey;
+                        window.open(url, '_blank');
+
+                        // Construct URL with data stored in local storage
+                        //var baseUrl = 'System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]';
+                        //var storedData = JSON.parse(localStorage.getItem('response_data'));
+                        //var url = baseUrl + '?' + $.param(storedData);
+                        //window.open(url, '_blank');
+
+                        //var f = $('<form action="System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]" method="POST" target="_blank" >' + '?' +
+                        //    result +
+                        //'</form>').appendTo('body').submit();                      
+                    }
+                },
+                error: function (result) {
+                    alert('Error: ' + result.responseText);
+                }
+            });
+        }       
     </script>
 </head>
 
@@ -986,33 +1030,33 @@
                             <li class="seperator"></li>
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForAeroplay))
                             {
-                            <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-globe" href="#"></a>
-                            </li>
+                                <li title="Aeroplay" class="showhidetooltip menu_margin" onclick="LoadAeroplayAjax(@objLoginUser.Users_Code)" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-globe" href="#"></a>
+                                </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForBookingSheet))
                             {
-                            <li title="Booking Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
-                            </li>
+                                <li title="Booking Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-list" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "BookingSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForBookingSheet })"></a>
+                                </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForPurchaseOrder))
                             {
-                            <li title="Purchase Order" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-usd" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "PurchaseOrder", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForPurchaseOrder })"></a>
-                            </li>   
+                                <li title="Purchase Order" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-usd" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "PurchaseOrder", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForPurchaseOrder })"></a>
+                                </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForLoadSheet))
                             {
-                            <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-bookmark" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "LoadSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
-                            </li>
+                                <li title="Load Sheet" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-bookmark" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "LoadSheet", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForLoadSheet })"></a>
+                                </li>
                             }
                             if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForDeliveryTracking))
                             {
-                            <li title="Delivery Tracking" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
-                                <a class="glyphicon glyphicon-briefcase" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "DeliveryTracking", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForDeliveryTracking })"></a>
-                            </li>
+                                <li title="Delivery Tracking" class="showhidetooltip menu_margin" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-briefcase" href="@Url.Action("Redirect_Page", "Base", new { ActionName = "Index", ControllerName = "DeliveryTracking", IsMenu = "Y", modulecode = GlobalParams.ModuleCodeForDeliveryTracking })"></a>
+                                </li>
                             }
                             @*<li title="Schedule" class="showhidetooltip menu_margin" onclick="Schedule()" data-placement="@dataPlacement">
                     <a class="glyphicon glyphicon-calendar" href="#"></a>
@@ -1109,6 +1153,12 @@
                             {
                                 <li onclick="javascript: loadNavMenu('D','pnlSettings');" title="@objMessageKey.Settings" data-placement="@dataPlacement" class="menu_margin">
                                     <a class="glyphicon glyphicon-cog" href="#"></a>
+                                </li>
+                            }
+                            if (Menulist.Contains(UTOFrameWork.FrameworkClasses.GlobalParams.ModuleCodeForSystemSetting))
+                            {
+                                <li title="ROP" class="showhidetooltip menu_margin" onclick="RedirectToROP(@objLoginUser.Users_Code, '@objLoginUser.Login_Name', '@objLoginUser.Password')" data-placement="@dataPlacement">
+                                    <a class="glyphicon glyphicon-home" href="#"></a>
                                 </li>
                             }
                         }

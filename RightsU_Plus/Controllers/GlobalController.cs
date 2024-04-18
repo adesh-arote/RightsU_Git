@@ -19,6 +19,9 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace RightsU_Plus.Controllers
 {
@@ -956,7 +959,105 @@ namespace RightsU_Plus.Controllers
             return Username;
         }
         #endregion
-    }
+
+        #region -----RedirectToROP
+        public ActionResult RedirectToROP(int UserCode, string UserName, string UserPassword)
+        {
+            string Msg = "", StatusCode = "";
+            var myObject = new { };
+            RootObject rootObject = new RootObject();
+            string TokenUrl = ConfigurationSettings.AppSettings["ROPLoginTokenAPIURL"];
+            string LoginDetailsUrl = ConfigurationSettings.AppSettings["ROPLoginDetailsAPIURL"];
+            string password = Decrypt(UserPassword);
+
+            var formData = new Dictionary<string, string>
+            {
+                { "client_id", "rightsumusichub" },
+                { "client_secret", "secret" },
+                { "grant_type", "password" },
+                { "scope", "offline_access" },
+                { "username", UserName},
+                { "password", password }
+            };
+            var encodedFormData = new FormUrlEncodedContent(formData);
+
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(TokenUrl);
+                client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/x-www-form-urlencoded");
+                var response = client.PostAsync(TokenUrl, encodedFormData);
+                response.Wait();
+
+                var result = response.Result;
+                if (result.IsSuccessStatusCode)
+                {
+                    var responseBody = result.Content.ReadAsStringAsync();
+                    LoginTokenReturn objLoginToken = JsonConvert.DeserializeObject<LoginTokenReturn>(responseBody.Result);
+
+                    using (var client1 = new HttpClient())
+                    {
+                        JObject jsonObject = new JObject(
+                            new JProperty("Login_Name", UserName)
+                        );
+                        string jsonData = JsonConvert.SerializeObject(jsonObject, Formatting.Indented); 
+                        var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                        client1.BaseAddress = new Uri(LoginDetailsUrl);
+                        client1.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+                        client1.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", objLoginToken.access_token);
+                        client1.DefaultRequestHeaders.Add("token", objLoginToken.refresh_token);
+                        var response1 = client1.PostAsync(LoginDetailsUrl, content);
+                        response1.Wait();
+
+                        var responseBody1 = response1.Result.Content.ReadAsStringAsync();
+                        rootObject = JsonConvert.DeserializeObject<RootObject>(responseBody1.Result);
+                        rootObject.Return.Message = "RuCore Login Successful";
+                        rootObject.LoginTokens = objLoginToken;
+                    }
+                    StatusCode = Convert.ToString(result.StatusCode);
+                    Msg = "Success";
+                }
+                else
+                {
+                    Msg = "Error";
+                    StatusCode = Convert.ToString(result.StatusCode);
+                }
+            }
+
+            var obj = new
+            {
+                Status = StatusCode,
+                Message = Msg,
+                Data = rootObject             
+            };
+
+            return Json(obj);
+        }
+
+        public static string Decrypt(string cipherText)
+        {
+            string EncryptionKey = "";//"uto123";
+            cipherText = cipherText.Replace(" ", "+");
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                }
+            }
+            return cipherText;
+        }      
+        #endregion
+}
 
     public class GetReturn
     {
@@ -989,6 +1090,6 @@ namespace RightsU_Plus.Controllers
         public int page { get; set; }
         public int size { get; set; }
         public Int64 total { get; set; }
-    }    
+    }
 
 }
