@@ -940,7 +940,7 @@
                     else {
                         var uniqueKey = 'key_' + Date.now();
                         localStorage.setItem(uniqueKey, result);
-                        var url = '@System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]?uniqueKey=' + uniqueKey;
+                        var url = '@System.Configuration.ConfigurationManager.AppSettings["ROPDashboardURL"]?uniqueKey=' + encodeURIComponent(uniqueKey);
                         window.open(url, '_blank');
 
                         // Construct URL with data stored in local storage
