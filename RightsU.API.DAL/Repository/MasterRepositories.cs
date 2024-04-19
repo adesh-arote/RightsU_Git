@@ -407,7 +407,7 @@ namespace RightsU.API.DAL
         public Program GetById(Int32? Id)
         {
             var obj = new { Program_Code = Id.Value };
-            var entity = base.GetById<Program>(obj);
+            var entity = base.GetById<Program, Genres, Deal_Type>(obj);
 
             return entity;
         }
@@ -448,8 +448,22 @@ namespace RightsU.API.DAL
             param.Add("@date_lt", Date_LT);
             param.Add("@RecordCount", dbType: System.Data.DbType.Int64, direction: System.Data.ParameterDirection.Output);
             param.Add("@id", id);
-            ObjProgramReturn.content = base.ExecuteSQLProcedure<Program>("USPAPI_Program_List", param).ToList();
+            var entity = base.ExecuteSQLProcedure<Program>("USPAPI_Program_List", param).ToList();
+
+            entity.ToList().ForEach(i => {
+                if (i.deal_type==null && (i.Deal_Type_Code!=null || i.Deal_Type_Code>0))
+                {
+                    i.deal_type = new Deal_TypeRepositories().Get(i.Deal_Type_Code.Value);
+                }
+
+                if (i.Genres == null && (i.Genres_Code != null || i.Genres_Code > 0))
+                {
+                    i.Genres = new GenresRepositories().Get(i.Genres_Code.Value);
+                }
+            });
+            ObjProgramReturn.content = entity;
             ObjProgramReturn.paging.total = param.Get<Int64>("@RecordCount");
+
             return ObjProgramReturn;
         }
     }
@@ -895,7 +909,7 @@ namespace RightsU.API.DAL
         {
             return base.GetAll<Deal_Type>();
         }
-        
+
     }
     #endregion
 
@@ -1017,7 +1031,7 @@ namespace RightsU.API.DAL
     #endregion
 
     #region -------- Sub License -----------
-    public class SubLicenseRepositories : MainRepository<Business_Unit>
+    public class SubLicenseRepositories : MainRepository<Sub_License>
     {
         public SubLicenseReturn GetSub_License(string order, Int32 page, string search_value, Int32 size, string sort, Int32 id)
         {
@@ -1973,7 +1987,7 @@ namespace RightsU.API.DAL
 
     #region -------- Assign Work Flow --------
     public class AssignWorkFlowRepositories : MainRepository<Workflow_Module>
-  
+
     {
         public Workflow_Module Get(int Id)
         {
@@ -1983,7 +1997,7 @@ namespace RightsU.API.DAL
         }
         public IEnumerable<Workflow_Module> GetAll()
         {
-            return base.GetAll<Workflow_Module, Workflow , Business_Unit, System_Module>();
+            return base.GetAll<Workflow_Module, Workflow, Business_Unit, System_Module>();
         }
     }
 
